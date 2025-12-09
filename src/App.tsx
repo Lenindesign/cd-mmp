@@ -7,9 +7,6 @@ import Incentives from './components/Incentives';
 import AdSidebar from './components/AdSidebar';
 import Overview from './components/Overview';
 import TrimSelector from './components/TrimSelector';
-import Specs, { defaultSpecCategories } from './components/Specs';
-import Interior, { defaultInteriorFeatures } from './components/Interior';
-import Safety, { defaultCrashRatings, defaultSafetyFeatures } from './components/Safety';
 import Warranty, { defaultWarrantyItems } from './components/Warranty';
 import Comparison, { defaultCompetitors } from './components/Comparison';
 import Footer from './components/Footer';
@@ -121,13 +118,6 @@ function App() {
     },
   ];
 
-  // Interior images
-  const interiorImages = [
-    'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=500&fit=crop&auto=format',
-    'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800&h=500&fit=crop&auto=format',
-    'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=500&fit=crop&auto=format',
-  ];
-
   return (
     <div className="app">
       <Header />
@@ -175,29 +165,6 @@ function App() {
           <TrimSelector 
             trims={trimData}
             subtitle="The LT trim offers the best balance of features and value, making it our recommended choice for most buyers."
-          />
-        </section>
-        
-        <section id="specs">
-          <Specs 
-            categories={defaultSpecCategories}
-            description="The Trax is powered by a responsive turbocharged engine that delivers adequate power for daily driving with excellent fuel efficiency."
-          />
-        </section>
-        
-        <section id="interior">
-          <Interior 
-            features={defaultInteriorFeatures}
-            images={interiorImages}
-            description="Despite its compact dimensions, the Trax offers impressive interior space with modern technology and thoughtful storage solutions throughout the cabin."
-          />
-        </section>
-        
-        <section id="safety">
-          <Safety 
-            overallRating={4}
-            crashRatings={defaultCrashRatings}
-            features={defaultSafetyFeatures}
           />
         </section>
         
