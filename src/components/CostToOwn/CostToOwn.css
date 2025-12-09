@@ -58,7 +58,21 @@
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   margin: 0;
+  padding-bottom: var(--spacing-3);
+  position: relative;
+}
+
+.cost-to-own__title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--color-blue-cobalt);
 }
 
 .cost-to-own__trademark {

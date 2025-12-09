@@ -32,12 +32,12 @@
 }
 
 .overview__section-title {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   color: var(--color-black);
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.5px;
 }
 
 .overview__section-title::after {
