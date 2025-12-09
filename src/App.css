@@ -1,0 +1,74 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+}
+
+/* Remove section wrapper styling to let inner sections control their own padding */
+.main > section {
+  display: contents;
+}
+
+/* Content with Sidebar Layout */
+.content-with-sidebar {
+  display: flex;
+  gap: var(--spacing-6);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.content-main {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+
+/* Remove container padding inside content-main */
+.content-main .container {
+  padding: 0;
+}
+
+@media (max-width: 1200px) {
+  .content-with-sidebar {
+    flex-direction: column;
+  }
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color - Car and Driver red */
+::selection {
+  background: var(--color-red);
+  color: var(--color-white);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-red);
+  outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Car and Driver specific: Red accent underline on hover for links */
+a:hover {
+  text-decoration-color: var(--color-red);
+}

@@ -1,0 +1,212 @@
+/* Car and Driver Authentic Comparison */
+.comparison {
+  padding: var(--spacing-12) 0;
+  background: var(--color-white);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Header */
+.comparison__header {
+  margin-bottom: var(--spacing-8);
+}
+
+.comparison__title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--spacing-2);
+}
+
+.comparison__title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--color-blue-cobalt);
+  margin-top: var(--spacing-2);
+}
+
+.comparison__subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+}
+
+/* Grid */
+.comparison__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
+}
+
+@media (max-width: 1024px) {
+  .comparison__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .comparison__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card */
+.comparison__card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.comparison__card:hover {
+  border-color: var(--color-gray-400);
+  box-shadow: var(--shadow-md);
+}
+
+.comparison__card-image {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--color-gray-100);
+  overflow: hidden;
+}
+
+.comparison__card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.comparison__card:hover .comparison__card-image img {
+  transform: scale(1.05);
+}
+
+/* Content */
+.comparison__card-content {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-4);
+}
+
+.comparison__card-header {
+  margin-bottom: var(--spacing-2);
+}
+
+.comparison__card-year {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.comparison__card-name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-black);
+  text-transform: uppercase;
+  line-height: var(--line-height-tight);
+}
+
+/* Rating */
+.comparison__card-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--color-gray-100);
+  width: fit-content;
+  margin-bottom: var(--spacing-3);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.comparison__card-star {
+  fill: var(--color-gold);
+  color: var(--color-gold);
+}
+
+/* Specs */
+.comparison__card-specs {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.comparison__card-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.comparison__card-spec-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.comparison__card-spec-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+/* Action */
+.comparison__card-action {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: auto;
+  padding-top: var(--spacing-3);
+  transition: gap var(--transition-fast);
+}
+
+.comparison__card:hover .comparison__card-action {
+  gap: var(--spacing-2);
+}
+
+/* CTA */
+.comparison__cta {
+  display: flex;
+  justify-content: center;
+}
+
+.comparison__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-fast);
+}
+
+.comparison__cta-btn:hover {
+  background: var(--color-blue-cobalt);
+  gap: var(--spacing-3);
+}

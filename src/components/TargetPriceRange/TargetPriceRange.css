@@ -1,0 +1,330 @@
+/* Target Price Range - Car and Driver Design System */
+.target-price {
+  background: var(--color-white);
+}
+
+.target-price__card {
+  width: 100%;
+  background: #F5F5F5;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-top: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+}
+
+/* Header */
+.target-price__header {
+  margin-bottom: var(--spacing-6);
+}
+
+.target-price__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-2);
+}
+
+.target-price__description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+}
+
+/* Visual Range */
+.target-price__range-visual {
+  position: relative;
+  margin-bottom: var(--spacing-10);
+  padding: var(--spacing-12) 0 var(--spacing-8);
+}
+
+/* Markers */
+.target-price__markers {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  position: relative;
+  margin-bottom: var(--spacing-2);
+  padding-left: 10%;
+  padding-right: 35%;
+}
+
+.target-price__marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.target-price__marker-price {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-1);
+}
+
+.target-price__marker-icon {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+  border-radius: var(--border-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  margin-bottom: var(--spacing-1);
+}
+
+.target-price__marker-icon--green {
+  background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+}
+
+.target-price__marker-pin {
+  width: 2px;
+  height: 16px;
+  background: var(--color-gray-400);
+}
+
+.target-price__marker-pin--green {
+  background: #22C55E;
+}
+
+.target-price__marker-pin::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: var(--color-gray-400);
+  border-radius: var(--border-radius-full);
+  margin-left: -3px;
+  margin-top: -2px;
+}
+
+.target-price__marker-pin--green::after {
+  background: #22C55E;
+}
+
+/* Target Label */
+.target-price__target-label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin: 0 var(--spacing-2);
+  position: relative;
+  top: -20px;
+}
+
+.target-price__dashed-line {
+  flex: 1;
+  height: 1px;
+  border-top: 2px dashed var(--color-gray-300);
+}
+
+.target-price__target-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  padding: 0 var(--spacing-3);
+  white-space: nowrap;
+}
+
+/* Range Bar */
+.target-price__bar {
+  position: relative;
+  height: 12px;
+  width: 100%;
+}
+
+.target-price__bar-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: var(--border-radius-full);
+  transform: translateY(-50%);
+}
+
+.target-price__bar-range {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 55%;
+  height: 8px;
+  background: linear-gradient(90deg, #22C55E 0%, #4ADE80 50%, #86EFAC 100%);
+  border-radius: var(--border-radius-full);
+  transform: translateY(-50%);
+}
+
+/* Dealer Price Indicator */
+.target-price__bar-dealer {
+  position: absolute;
+  top: 50%;
+  right: 12%;
+  transform: translateY(-50%);
+}
+
+.target-price__dealer-dot {
+  width: 16px;
+  height: 16px;
+  background: #EF4444;
+  border: 3px solid var(--color-white);
+  border-radius: var(--border-radius-full);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.target-price__dealer-tooltip {
+  position: absolute;
+  top: calc(100% + var(--spacing-4));
+  right: -60px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-3) var(--spacing-4);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.target-price__dealer-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: var(--color-white);
+  border-left: 1px solid var(--color-gray-200);
+  border-top: 1px solid var(--color-gray-200);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.target-price__dealer-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-1);
+}
+
+.target-price__dealer-value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+/* Info Boxes */
+.target-price__info-boxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6) 0;
+  border-top: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
+  margin-bottom: var(--spacing-6);
+}
+
+@media (max-width: 768px) {
+  .target-price__info-boxes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.target-price__info-box {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+}
+
+.target-price__info-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-600);
+}
+
+.target-price__info-icon--green {
+  color: #22C55E;
+}
+
+.target-price__info-icon svg {
+  stroke-width: 1.5;
+}
+
+.target-price__info-value--range {
+  color: #16A34A;
+}
+
+.target-price__info-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.target-price__info-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.target-price__info-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.target-price__info-btn {
+  background: none;
+  border: none;
+  color: var(--color-gray-400);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.target-price__info-btn:hover {
+  color: var(--color-gray-600);
+}
+
+/* CTA Section */
+.target-price__cta-section {
+  text-align: center;
+}
+
+.target-price__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-blue-cobalt);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.target-price__cta-btn:hover {
+  background: var(--color-blue-cobalt-dark);
+}
+

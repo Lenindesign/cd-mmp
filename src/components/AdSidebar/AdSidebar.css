@@ -1,0 +1,45 @@
+/* Ad Sidebar - Car and Driver Design System */
+.ad-sidebar {
+  position: sticky;
+  top: 120px;
+  align-self: flex-start;
+}
+
+.ad-sidebar__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.ad-sidebar__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ad-sidebar__link {
+  display: block;
+  transition: opacity var(--transition-fast);
+}
+
+.ad-sidebar__link:hover {
+  opacity: 0.9;
+}
+
+.ad-sidebar__image {
+  width: 300px;
+  height: 600px;
+  object-fit: cover;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 1200px) {
+  .ad-sidebar {
+    display: none;
+  }
+}
+

@@ -1,0 +1,127 @@
+/* Quick Specs - Car and Driver Style */
+.quick-specs {
+  background: var(--color-white);
+}
+
+.quick-specs__wrapper {
+  width: 100%;
+  background: #F5F5F5;
+  padding: var(--spacing-6);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-gray-200);
+  margin-top: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+}
+
+/* Header */
+.quick-specs__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-5);
+}
+
+.quick-specs__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.quick-specs__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+.quick-specs__info-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.quick-specs__info-btn:hover {
+  color: var(--color-black);
+}
+
+.quick-specs__cta {
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.quick-specs__cta:hover {
+  background: var(--color-blue-cobalt-dark);
+}
+
+/* Grid */
+.quick-specs__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+}
+
+@media (max-width: 900px) {
+  .quick-specs__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .quick-specs__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Spec Item */
+.quick-specs__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.quick-specs__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-black);
+}
+
+.quick-specs__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quick-specs__label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.quick-specs__value {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-600);
+}
+
+

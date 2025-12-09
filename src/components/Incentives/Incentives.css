@@ -1,0 +1,306 @@
+/* Incentives - Car and Driver Design System */
+.incentives {
+  background: var(--color-white);
+}
+
+.incentives__card {
+  width: 100%;
+  background: #F5F5F5;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-top: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+}
+
+/* Header */
+.incentives__header {
+  margin-bottom: var(--spacing-4);
+}
+
+.incentives__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+/* Description */
+.incentives__description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-5);
+}
+
+.incentives__description strong {
+  text-decoration: underline;
+  color: var(--color-black);
+}
+
+/* Filters */
+.incentives__filters {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-5);
+  flex-wrap: wrap;
+}
+
+.incentives__select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  position: relative;
+}
+
+.incentives__select-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-black);
+  white-space: nowrap;
+}
+
+.incentives__select-divider {
+  color: var(--color-gray-400);
+}
+
+.incentives__select {
+  appearance: none;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  padding-right: var(--spacing-5);
+  cursor: pointer;
+  outline: none;
+}
+
+.incentives__select-icon {
+  position: absolute;
+  right: var(--spacing-3);
+  color: var(--color-blue-cobalt);
+  pointer-events: none;
+}
+
+/* Tabs Row */
+.incentives__tabs-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+}
+
+.incentives__tabs {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.incentives__tab {
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-full);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.incentives__tab:hover {
+  border-color: var(--color-gray-400);
+}
+
+.incentives__tab--active {
+  background: var(--color-black);
+  border-color: var(--color-black);
+  color: var(--color-white);
+}
+
+/* Location */
+.incentives__location {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.incentives__zip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.incentives__change-location {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-blue-cobalt);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.incentives__change-location:hover {
+  text-decoration: underline;
+}
+
+/* Incentives List */
+.incentives__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.incentives__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-4) 0;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.incentives__item:last-child {
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.incentives__item-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+}
+
+/* Badge */
+.incentives__badge {
+  display: inline-block;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.incentives__badge--lease {
+  background: #FEF3E7;
+  color: #C27A0E;
+  border: 1px solid #F5D5A8;
+}
+
+.incentives__badge--cash {
+  background: #FEF3E7;
+  color: #C27A0E;
+  border: 1px solid #F5D5A8;
+}
+
+.incentives__badge--finance {
+  background: #E8F4FD;
+  color: #1B5F8A;
+  border: 1px solid #B8D9F0;
+}
+
+/* Item Info */
+.incentives__item-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.incentives__item-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+.incentives__item-info-btn {
+  background: none;
+  border: none;
+  color: var(--color-gray-400);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.incentives__item-info-btn:hover {
+  color: var(--color-gray-600);
+}
+
+.incentives__item-details {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+.incentives__item-exp {
+  color: var(--color-gray-500);
+}
+
+/* Item Link */
+.incentives__item-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.incentives__item-link:hover {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .incentives__filters {
+    flex-direction: column;
+  }
+
+  .incentives__select-wrapper {
+    width: 100%;
+  }
+
+  .incentives__tabs-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .incentives__item-content {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .incentives__item-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-1);
+  }
+}
+

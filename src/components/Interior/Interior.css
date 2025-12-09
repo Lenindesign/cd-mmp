@@ -1,0 +1,224 @@
+/* Car and Driver Authentic Interior */
+.interior {
+  padding: var(--spacing-12) 0;
+  background: var(--color-white);
+}
+
+/* Header */
+.interior__header {
+  margin-bottom: var(--spacing-8);
+}
+
+.interior__title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--spacing-2);
+}
+
+.interior__title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--color-blue-cobalt);
+  margin-top: var(--spacing-2);
+}
+
+.interior__description {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  max-width: 600px;
+}
+
+/* Content */
+.interior__content {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--spacing-8);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .interior__content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Gallery */
+.interior__gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.interior__gallery-main {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--color-gray-100);
+  overflow: hidden;
+}
+
+.interior__gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.interior__gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-black);
+  color: var(--color-white);
+  transition: all var(--transition-fast);
+  opacity: 0;
+}
+
+.interior__gallery-main:hover .interior__gallery-nav {
+  opacity: 1;
+}
+
+.interior__gallery-nav:hover {
+  background: var(--color-blue-cobalt);
+}
+
+.interior__gallery-nav--prev {
+  left: var(--spacing-3);
+}
+
+.interior__gallery-nav--next {
+  right: var(--spacing-3);
+}
+
+.interior__gallery-dots {
+  position: absolute;
+  bottom: var(--spacing-3);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.interior__gallery-dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all var(--transition-fast);
+}
+
+.interior__gallery-dot--active {
+  background: var(--color-white);
+  width: 20px;
+}
+
+.interior__gallery-thumbnails {
+  display: flex;
+  gap: var(--spacing-2);
+  overflow-x: auto;
+}
+
+.interior__gallery-thumbnail {
+  flex-shrink: 0;
+  width: 80px;
+  height: 60px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.6;
+  transition: all var(--transition-fast);
+}
+
+.interior__gallery-thumbnail:hover {
+  opacity: 0.8;
+}
+
+.interior__gallery-thumbnail--active {
+  border-color: var(--color-blue-cobalt);
+  opacity: 1;
+}
+
+.interior__gallery-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Features */
+.interior__features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.interior__features-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: var(--spacing-3);
+  border-bottom: 2px solid var(--color-gray-200);
+}
+
+.interior__features-grid {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.interior__feature {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-gray-100);
+  border-left: 3px solid var(--color-blue-cobalt);
+  transition: transform var(--transition-fast);
+}
+
+.interior__feature:hover {
+  transform: translateX(4px);
+}
+
+.interior__feature-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+}
+
+.interior__feature-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.interior__feature-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.interior__feature-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: var(--line-height-snug);
+}
+
+@media (max-width: 640px) {
+  .interior__gallery-thumbnails {
+    display: none;
+  }
+}

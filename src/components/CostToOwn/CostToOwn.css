@@ -1,0 +1,400 @@
+/* Cost to Own - Using Car and Driver Design System */
+.cost-to-own {
+  background: var(--color-white);
+}
+
+.cost-to-own__card {
+  position: relative;
+  width: 100%;
+  background: #F5F5F5;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-gray-200);
+  overflow: visible;
+  margin-top: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+}
+
+/* Side Tab - Using Car and Driver Blue Cobalt */
+.cost-to-own__tab {
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  padding: var(--spacing-5) var(--spacing-3);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+}
+
+/* Main Content */
+.cost-to-own__main {
+  padding: var(--spacing-6);
+  padding-right: calc(var(--spacing-6) + 40px);
+}
+
+/* Header */
+.cost-to-own__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.cost-to-own__title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-1);
+}
+
+.cost-to-own__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+.cost-to-own__trademark {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  margin-top: 2px;
+}
+
+.cost-to-own__info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border: 1px solid var(--color-gray-500);
+  border-radius: var(--border-radius-full);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  margin-left: var(--spacing-1);
+  margin-top: var(--spacing-1);
+  transition: all var(--transition-fast);
+}
+
+.cost-to-own__info:hover {
+  border-color: var(--color-black);
+  color: var(--color-black);
+}
+
+/* Trim Selector */
+.cost-to-own__trim {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.cost-to-own__trim-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-black);
+}
+
+.cost-to-own__select-wrapper {
+  position: relative;
+}
+
+.cost-to-own__select {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-black);
+  cursor: pointer;
+  min-width: 120px;
+  justify-content: space-between;
+  transition: border-color var(--transition-fast);
+}
+
+.cost-to-own__select:hover {
+  border-color: var(--color-gray-400);
+}
+
+.cost-to-own__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  list-style: none;
+  padding: var(--spacing-1) 0;
+  margin: var(--spacing-1) 0 0 0;
+}
+
+.cost-to-own__option {
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-black);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.cost-to-own__option:hover,
+.cost-to-own__option.active {
+  background: var(--color-gray-100);
+}
+
+/* Summary */
+.cost-to-own__summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--spacing-8);
+  margin-bottom: var(--spacing-8);
+  text-align: left;
+}
+
+.cost-to-own__rating {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.cost-to-own__cost {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--spacing-3);
+}
+
+.cost-to-own__amount {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  text-align: left;
+}
+
+.cost-to-own__period {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+/* Chart */
+.cost-to-own__chart {
+  position: relative;
+  margin-bottom: var(--spacing-6);
+}
+
+.cost-to-own__chart-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  margin-bottom: 60px;
+}
+
+/* Labels Container */
+.cost-to-own__labels-top,
+.cost-to-own__labels-bottom {
+  position: relative;
+  height: 60px;
+}
+
+.cost-to-own__labels-top {
+  margin-bottom: var(--spacing-2);
+}
+
+.cost-to-own__labels-bottom {
+  margin-top: var(--spacing-2);
+}
+
+/* Marker */
+.cost-to-own__marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+
+.cost-to-own__marker--top {
+  bottom: 0;
+}
+
+.cost-to-own__marker--top .cost-to-own__marker-name {
+  order: 1;
+}
+
+.cost-to-own__marker--top .cost-to-own__marker-value {
+  order: 2;
+}
+
+.cost-to-own__marker--top .cost-to-own__marker-line {
+  order: 3;
+}
+
+.cost-to-own__marker--top .cost-to-own__marker-dot {
+  order: 4;
+}
+
+.cost-to-own__marker--bottom {
+  top: 0;
+}
+
+.cost-to-own__marker--bottom .cost-to-own__marker-dot {
+  order: 1;
+}
+
+.cost-to-own__marker--bottom .cost-to-own__marker-line {
+  order: 2;
+}
+
+.cost-to-own__marker--bottom .cost-to-own__marker-name {
+  order: 3;
+}
+
+.cost-to-own__marker--bottom .cost-to-own__marker-value {
+  order: 4;
+}
+
+.cost-to-own__marker-name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  white-space: nowrap;
+}
+
+.cost-to-own__marker-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.cost-to-own__marker-line {
+  width: 1px;
+  height: 16px;
+  background: var(--color-black);
+}
+
+.cost-to-own__marker-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--color-black);
+  border-radius: var(--border-radius-full);
+}
+
+/* Bar */
+.cost-to-own__bar {
+  display: flex;
+  height: 28px;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.cost-to-own__segment {
+  height: 100%;
+  transition: width var(--transition-normal);
+}
+
+/* Footer */
+.cost-to-own__footer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-5);
+}
+
+.cost-to-own__powered {
+  font-family: var(--font-body);
+  font-size: 8px;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.cost-to-own__logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.cost-to-own__logo-name {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.cost-to-own__logo-tagline {
+  font-family: var(--font-body);
+  font-size: 6px;
+  color: var(--color-gray-500);
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cost-to-own__tab {
+    display: none;
+  }
+
+  .cost-to-own__main {
+    padding: var(--spacing-6);
+  }
+
+  .cost-to-own__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+  }
+
+  .cost-to-own__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .cost-to-own__summary {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .cost-to-own__amount {
+    font-size: var(--font-size-2xl);
+  }
+
+  .cost-to-own__chart-label {
+    margin-bottom: 80px;
+  }
+
+  .cost-to-own__labels-top,
+  .cost-to-own__labels-bottom {
+    height: 70px;
+  }
+
+  .cost-to-own__marker-name {
+    font-size: 9px;
+  }
+
+  .cost-to-own__marker-value {
+    font-size: var(--font-size-xs);
+  }
+}

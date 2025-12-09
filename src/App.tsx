@@ -1,0 +1,202 @@
+import Header from './components/Header';
+import Hero from './components/Hero';
+import QuickSpecs from './components/QuickSpecs';
+import CostToOwn from './components/CostToOwn';
+import TargetPriceRange from './components/TargetPriceRange';
+import Incentives from './components/Incentives';
+import AdSidebar from './components/AdSidebar';
+import Overview from './components/Overview';
+import TrimSelector from './components/TrimSelector';
+import Specs, { defaultSpecCategories } from './components/Specs';
+import Interior, { defaultInteriorFeatures } from './components/Interior';
+import Safety, { defaultCrashRatings, defaultSafetyFeatures } from './components/Safety';
+import Warranty, { defaultWarrantyItems } from './components/Warranty';
+import Comparison, { defaultCompetitors } from './components/Comparison';
+import Footer from './components/Footer';
+import './App.css';
+
+function App() {
+  // Vehicle data for the 2025 Chevrolet Trax
+  const vehicleData = {
+    make: 'Chevrolet',
+    model: 'Trax',
+    year: 2025,
+    tagline: 'The Trax is an affordable subcompact SUV that delivers impressive interior space, practical features, and excellent value for budget-conscious buyers seeking reliable transportation without compromising on modern amenities.',
+    rating: 10,
+    priceRange: '$21,895–$25,895',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg',
+    images: [
+      'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg',
+      'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
+      'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
+    ],
+    photographer: 'MICHAEL SIMARI',
+  };
+
+  // Overview data
+  const overviewData = {
+    pros: [
+      'Attractively low starting price',
+      'Spacious interior for its class',
+      'User-friendly infotainment system',
+      'Composed ride quality',
+      'Standard safety features',
+    ],
+    cons: [
+      'Modest engine power',
+      'No all-wheel-drive option',
+      'Basic interior materials',
+      'Limited towing capacity',
+    ],
+    whatsNew: [
+      'Two new exterior colors: Cypress Gray and Marina Blue Metallic',
+      'Engine now capable of running on E85 fuel',
+      'Enhanced standard safety features',
+    ],
+    verdict: 'The 2025 Chevrolet Trax stands out as one of the most affordable new vehicles on the market while still offering a surprisingly spacious interior and modern technology. Its attractively low price makes it an excellent choice for first-time buyers or anyone seeking practical, no-frills transportation.',
+  };
+
+  // Trim data
+  const trimData = [
+    {
+      id: 'ls',
+      name: 'LS',
+      price: '$21,895',
+      features: [
+        '8.0-inch touchscreen display',
+        'Wireless Apple CarPlay & Android Auto',
+        'Lane Keep Assist',
+        'Automatic Emergency Braking',
+        'Rear Vision Camera',
+      ],
+    },
+    {
+      id: '1rs',
+      name: '1RS',
+      price: '$23,195',
+      features: [
+        'All LS features plus:',
+        'Sporty exterior styling',
+        '17-inch alloy wheels',
+        'Enhanced interior accents',
+        'Sport pedals',
+      ],
+    },
+    {
+      id: 'lt',
+      name: 'LT',
+      price: '$23,395',
+      recommended: true,
+      features: [
+        '11.0-inch diagonal touchscreen',
+        'Wireless device charging',
+        'Remote start',
+        'Available heated seats',
+        'Available heated steering wheel',
+      ],
+    },
+    {
+      id: 'rs',
+      name: 'RS',
+      price: '$24,995',
+      features: [
+        'All LT features plus:',
+        'Sport-tuned suspension',
+        '19-inch black painted wheels',
+        'Black exterior accents',
+        'Unique RS interior trim',
+      ],
+    },
+    {
+      id: 'activ',
+      name: 'ACTIV',
+      price: '$24,995',
+      features: [
+        'All LT features plus:',
+        'Rugged exterior styling',
+        'Faux skid plate',
+        'Chrome accents',
+        'All-terrain inspired design',
+      ],
+    },
+  ];
+
+  // Interior images
+  const interiorImages = [
+    'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=500&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800&h=500&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=500&fit=crop&auto=format',
+  ];
+
+  return (
+    <div className="app">
+      <Header />
+      
+      <main className="main">
+        <Hero vehicle={vehicleData} />
+        
+        {/* Content with Sidebar */}
+        <div className="content-with-sidebar">
+          <div className="content-main">
+            <QuickSpecs />
+            <CostToOwn vehicleName="Chevrolet Trax" />
+            <TargetPriceRange dealerPrice={42244} />
+            <Incentives make="Chevrolet" model="Trax" />
+          </div>
+          <AdSidebar />
+        </div>
+        
+        <Overview 
+          pros={overviewData.pros}
+          cons={overviewData.cons}
+          whatsNew={overviewData.whatsNew}
+          verdict={overviewData.verdict}
+          year={vehicleData.year}
+        />
+        
+        <section id="pricing">
+          <TrimSelector 
+            trims={trimData}
+            subtitle="The LT trim offers the best balance of features and value, making it our recommended choice for most buyers."
+          />
+        </section>
+        
+        <section id="specs">
+          <Specs 
+            categories={defaultSpecCategories}
+            description="The Trax is powered by a responsive turbocharged engine that delivers adequate power for daily driving with excellent fuel efficiency."
+          />
+        </section>
+        
+        <section id="interior">
+          <Interior 
+            features={defaultInteriorFeatures}
+            images={interiorImages}
+            description="Despite its compact dimensions, the Trax offers impressive interior space with modern technology and thoughtful storage solutions throughout the cabin."
+          />
+        </section>
+        
+        <section id="safety">
+          <Safety 
+            overallRating={4}
+            crashRatings={defaultCrashRatings}
+            features={defaultSafetyFeatures}
+          />
+        </section>
+        
+        <section id="warranty">
+          <Warranty items={defaultWarrantyItems} />
+        </section>
+        
+        <Comparison 
+          competitors={defaultCompetitors}
+          currentVehicle={{ make: 'Chevrolet', model: 'Trax' }}
+        />
+      </main>
+      
+      <Footer />
+    </div>
+  );
+}
+
+export default App;
