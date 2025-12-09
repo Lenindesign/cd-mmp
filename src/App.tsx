@@ -10,6 +10,7 @@ import TrimSelector from './components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from './components/Warranty';
 import Comparison, { defaultCompetitors } from './components/Comparison';
 import Footer from './components/Footer';
+import ExitIntentModal from './components/ExitIntentModal';
 import './App.css';
 
 function App() {
@@ -179,6 +180,9 @@ function App() {
       </main>
       
       <Footer />
+      
+      {/* Exit Intent Modal */}
+      <ExitIntentModal vehicleName="2025 Chevrolet Trax" />
     </div>
   );
 }
