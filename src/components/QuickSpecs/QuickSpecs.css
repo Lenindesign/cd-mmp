@@ -29,7 +29,7 @@
 
 .quick-specs__title {
   font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
+  font-size: 36px;
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
   text-transform: uppercase;
