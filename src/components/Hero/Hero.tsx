@@ -149,10 +149,12 @@ const Hero = ({ vehicle }: HeroProps) => {
                 </div>
                 <div className="hero__accolade">
                   <div className="hero__accolade-icon hero__accolade-icon--10best">
-                    <svg viewBox="0 0 40 40" width="40" height="40">
-                      <polygon points="20,0 26,14 40,14 28,24 32,40 20,30 8,40 12,24 0,14 14,14" fill="#c41230"/>
-                      <polygon points="20,8 24,18 34,18 26,24 29,34 20,28 11,34 14,24 6,18 16,18" fill="#1e3a8a"/>
-                    </svg>
+                    <img 
+                      src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" 
+                      alt="10Best"
+                      width="48"
+                      height="54"
+                    />
                   </div>
                   <span className="hero__accolade-label">10Best</span>
                 </div>
