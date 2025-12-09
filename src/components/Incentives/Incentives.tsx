@@ -94,6 +94,23 @@ const Incentives = ({
             <h2 className="incentives__title">Manufacturer Incentives & Rebates</h2>
           </div>
 
+          {/* Urgency CTA */}
+          <div className="incentives__urgency">
+            <div className="incentives__urgency-alert">
+              <AlertCircle size={20} />
+              <span>These incentives expire soon!</span>
+            </div>
+            <div className="incentives__urgency-content">
+              <div className="incentives__urgency-text">
+                <Clock size={18} />
+                <p>Don't miss out on <strong>up to $2,500</strong> in savings. Year-end deals won't last forever!</p>
+              </div>
+              <button className="incentives__urgency-cta">
+                Claim Your Incentive Now
+              </button>
+            </div>
+          </div>
+
           {/* Description */}
           <p className="incentives__description">
             For <strong>{month} {year}</strong>, {make} is offering competitive financing rates on the {model}, 
@@ -188,23 +205,6 @@ const Incentives = ({
                 </button>
               </div>
             ))}
-          </div>
-
-          {/* Urgency CTA */}
-          <div className="incentives__urgency">
-            <div className="incentives__urgency-alert">
-              <AlertCircle size={20} />
-              <span>These incentives expire soon!</span>
-            </div>
-            <div className="incentives__urgency-content">
-              <div className="incentives__urgency-text">
-                <Clock size={18} />
-                <p>Don't miss out on <strong>up to $2,500</strong> in savings. Year-end deals won't last forever!</p>
-              </div>
-              <button className="incentives__urgency-cta">
-                Claim Your Incentive Now
-              </button>
-            </div>
           </div>
         </div>
       </div>
