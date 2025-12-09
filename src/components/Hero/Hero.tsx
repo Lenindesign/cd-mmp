@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, Heart, ArrowRight } from 'lucide-react';
+import { ChevronDown, Heart, ArrowRight } from 'lucide-react';
 import './Hero.css';
 
 interface HeroProps {

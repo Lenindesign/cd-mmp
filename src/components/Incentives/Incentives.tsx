@@ -39,38 +39,45 @@ const Incentives = ({
   const incentives: Incentive[] = [
     {
       id: '1',
-      type: 'lease',
-      title: 'Standard Lease Rate',
-      details: 'APR · 6.96% · Months · 36',
-      expiration: '12/31/2025',
+      type: 'finance',
+      title: 'Low APR Financing',
+      details: 'APR · 2.9% · Months · 60',
+      expiration: '01/02/2026',
     },
     {
       id: '2',
-      type: 'cash',
-      title: 'Military Appreciation Incentive Program',
-      details: 'Up to $500 customer cash',
-      expiration: '10/31/2025',
+      type: 'lease',
+      title: 'Standard Lease Rate',
+      details: '$219/mo · 36 months · $2,499 due at signing',
+      expiration: '01/02/2026',
     },
     {
       id: '3',
       type: 'cash',
-      title: 'Vehicles for Change Donation Bonus Cash Support',
-      details: 'Up to $500 customer cash',
-      expiration: '10/31/2025',
+      title: 'Chevrolet Customer Cash',
+      details: 'Up to $1,000 customer cash',
+      expiration: '01/02/2026',
     },
     {
       id: '4',
       type: 'cash',
-      title: 'Chevrolet Northeast Loyalty Promo Code Program',
-      details: 'Up to $250 customer cash',
-      expiration: '10/31/2025',
+      title: 'Military Appreciation Incentive Program',
+      details: 'Up to $500 customer cash',
+      expiration: '01/02/2026',
     },
     {
       id: '5',
       type: 'cash',
-      title: 'Chevrolet Northeast Loyalty Promo Code Program - EEQ 10A',
-      details: 'Up to $2500 customer cash',
-      expiration: '10/31/2025',
+      title: 'First Responder Appreciation Program',
+      details: 'Up to $500 customer cash',
+      expiration: '01/02/2026',
+    },
+    {
+      id: '6',
+      type: 'cash',
+      title: 'College Student Discount',
+      details: 'Up to $500 customer cash',
+      expiration: '01/02/2026',
     },
   ];
 
@@ -89,11 +96,10 @@ const Incentives = ({
 
           {/* Description */}
           <p className="incentives__description">
-            For <strong>{month} {year}</strong>, {make} is offering competitive financing rates for models, 
-            with interest rates starting as low as 1.9%. Lease deals are also available for models, with an 
-            APR of 4.03%. Additionally, {make} is providing 8 cash incentives {model}, including 
-            loyalty/conquest offers and special programs like the {make} Northeast Loyalty Promo Code 
-            Program - EEQ 10A of $2,500.
+            For <strong>{month} {year}</strong>, {make} is offering competitive financing rates on the {model}, 
+            with interest rates starting as low as 2.9% APR for 60 months. Lease deals are also available starting 
+            at $219/month. Additionally, {make} is providing up to $2,500 in combined cash incentives on the {model}, including 
+            military, first responder, and college student discounts.
           </p>
 
           {/* Filters */}

@@ -9,10 +9,11 @@ interface TargetPriceRangeProps {
 }
 
 const TargetPriceRange = ({ 
-  dealerPrice = 42244,
-  targetPriceLow = 38500,
-  targetPriceHigh = 40200,
-  vehicleName = 'Chevrolet Trax'
+  dealerPrice = 23495,
+  targetPriceLow = 21500,
+  targetPriceHigh = 22800,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  vehicleName: _vehicleName = 'Chevrolet Trax'
 }: TargetPriceRangeProps) => {
   
   const formatPrice = (price: number) => {

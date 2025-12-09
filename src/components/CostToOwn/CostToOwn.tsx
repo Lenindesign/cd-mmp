@@ -20,16 +20,16 @@ interface CostToOwnProps {
 const CostToOwn = ({
   vehicleName = 'Chevrolet Trax',
   trims = ['LS FWD', '1RS FWD', 'LT FWD', 'RS FWD', 'ACTIV FWD'],
-  totalCost = 38750,
+  totalCost = 30700,
   rating = 'Below Average',
   costs = [
-    { name: 'Depreciation', value: 12850, color: '#1B5F8A', position: 'bottom' },  /* --color-blue-cobalt */
-    { name: 'Financing', value: 3920, color: '#3D8B8B', position: 'top' },         /* Teal variant */
-    { name: 'Taxes & Fees', value: 2150, color: '#D4A84B', position: 'bottom' },   /* Gold */
-    { name: 'Fuel', value: 9480, color: '#E67E22', position: 'top' },              /* Orange */
-    { name: 'Insurance', value: 5890, color: '#C0392B', position: 'bottom' },      /* Red-orange */
-    { name: 'Repairs', value: 720, color: '#922B21', position: 'top' },            /* Dark red */
-    { name: 'Maintenance', value: 3740, color: '#5C1E1E', position: 'bottom' },    /* Maroon */
+    { name: 'Depreciation', value: 8500, color: '#1B5F8A', position: 'bottom' },   /* ~37% depreciation over 5 years */
+    { name: 'Financing', value: 2800, color: '#3D8B8B', position: 'top' },         /* 2.9% APR estimate */
+    { name: 'Taxes & Fees', value: 1650, color: '#D4A84B', position: 'bottom' },   /* ~7% of MSRP */
+    { name: 'Fuel', value: 7500, color: '#E67E22', position: 'top' },              /* 30 MPG, 15k mi/yr */
+    { name: 'Insurance', value: 6200, color: '#C0392B', position: 'bottom' },      /* ~$103/mo average */
+    { name: 'Repairs', value: 1200, color: '#922B21', position: 'top' },           /* Low for new vehicle */
+    { name: 'Maintenance', value: 2850, color: '#5C1E1E', position: 'bottom' },    /* Oil, tires, etc. */
   ],
 }: CostToOwnProps) => {
   const [selectedTrim, setSelectedTrim] = useState(trims[0]);
