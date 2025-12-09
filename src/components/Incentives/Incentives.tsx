@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Info, ArrowUpRight } from 'lucide-react';
+import { ChevronDown, Info, ArrowUpRight, Clock, AlertCircle } from 'lucide-react';
 import './Incentives.css';
 
 interface Incentive {
@@ -19,7 +19,7 @@ interface IncentivesProps {
 }
 
 const Incentives = ({
-  month = 'October',
+  month = 'December',
   year = 2025,
   make = 'Chevrolet',
   model = 'Trax',
@@ -188,6 +188,23 @@ const Incentives = ({
                 </button>
               </div>
             ))}
+          </div>
+
+          {/* Urgency CTA */}
+          <div className="incentives__urgency">
+            <div className="incentives__urgency-alert">
+              <AlertCircle size={20} />
+              <span>These incentives expire soon!</span>
+            </div>
+            <div className="incentives__urgency-content">
+              <div className="incentives__urgency-text">
+                <Clock size={18} />
+                <p>Don't miss out on <strong>up to $2,500</strong> in savings. Year-end deals won't last forever!</p>
+              </div>
+              <button className="incentives__urgency-cta">
+                Claim Your Incentive Now
+              </button>
+            </div>
           </div>
         </div>
       </div>
