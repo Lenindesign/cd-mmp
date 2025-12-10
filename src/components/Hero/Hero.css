@@ -167,7 +167,7 @@
 /* Gallery */
 .hero__gallery {
   display: grid;
-  grid-template-columns: 1fr 200px;
+  grid-template-columns: 1fr 280px;
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-2);
 }
