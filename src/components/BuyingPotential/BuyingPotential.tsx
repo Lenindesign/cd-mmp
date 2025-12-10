@@ -37,7 +37,7 @@ const BuyingPotential = () => {
   // Vehicle matches based on buying power
   const allVehicleMatches: VehicleMatch[] = [
     { name: '2025 Chevrolet Trax', price: 21895, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'LS FWD' },
-    { name: '2025 Nissan Kicks', price: 22280, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66dba90dc83c4b00088a59d5/2025-nissan-kicks-s-fwd-front-view.jpg', trim: 'S FWD' },
+    { name: '2025 Nissan Kicks', price: 22280, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/681cfb3d25a1bb0008567099/002-2025-nissan-kicks.jpg', trim: 'S FWD' },
     { name: '2025 Chevrolet Trax', price: 23195, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: '1RS FWD' },
     { name: '2025 Chevrolet Trax', price: 23395, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'LT FWD' },
     { name: '2025 Toyota Corolla Cross', price: 24035, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67577eabfdefd7000823540c/1-2025-toyota-corolla-cross-hybrid-front-view.jpg', trim: 'L FWD' },
