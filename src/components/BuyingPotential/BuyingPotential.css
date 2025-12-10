@@ -316,17 +316,52 @@
 }
 
 .buying-potential__toggle input:checked + .buying-potential__toggle-slider {
-  background-color: var(--color-blue-cobalt);
+  background-color: var(--color-black);
 }
 
 .buying-potential__toggle input:checked + .buying-potential__toggle-slider::before {
   transform: translateX(20px);
 }
 
+.buying-potential__toggle input:checked + .buying-potential__toggle-slider::after {
+  content: '✓';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-white);
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .buying-potential__toggle-label {
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   color: var(--color-gray-700);
+}
+
+/* Trade-in Amount Field */
+.buying-potential__trade-in-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.buying-potential__input-wrapper--full {
+  width: 100%;
 }
 
 /* CTA Button */

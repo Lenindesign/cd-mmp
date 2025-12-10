@@ -8,6 +8,7 @@ const BuyingPotential = () => {
   const [creditScore, setCreditScore] = useState('Good (670-739)');
   const [monthlyPayment, setMonthlyPayment] = useState(450);
   const [includeTradeIn, setIncludeTradeIn] = useState(false);
+  const [tradeInAmount, setTradeInAmount] = useState(0);
   const [buyingPower, setBuyingPower] = useState(0);
   
   const [vehicleTypeOpen, setVehicleTypeOpen] = useState(false);
@@ -39,10 +40,10 @@ const BuyingPotential = () => {
     
     // Using loan formula: P = PMT * [(1 - (1 + r)^-n) / r]
     const loanAmount = monthlyPayment * ((1 - Math.pow(1 + apr, -months)) / apr);
-    const totalBuyingPower = loanAmount + downPayment + (includeTradeIn ? 3000 : 0);
+    const totalBuyingPower = loanAmount + downPayment + (includeTradeIn ? tradeInAmount : 0);
     
     setBuyingPower(Math.round(totalBuyingPower));
-  }, [monthlyPayment, downPayment, creditScore, includeTradeIn]);
+  }, [monthlyPayment, downPayment, creditScore, includeTradeIn, tradeInAmount]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -208,6 +209,25 @@ const BuyingPotential = () => {
                 </label>
                 <span className="buying-potential__toggle-label">Include trade-in</span>
               </div>
+
+              {/* Trade-in Amount Input - Shows when toggle is on */}
+              {includeTradeIn && (
+                <div className="buying-potential__trade-in-field">
+                  <label className="buying-potential__label">Trade-in amount</label>
+                  <div className="buying-potential__input-wrapper buying-potential__input-wrapper--full">
+                    <span className="buying-potential__input-prefix">$</span>
+                    <input
+                      type="number"
+                      className="buying-potential__input"
+                      value={tradeInAmount}
+                      onChange={(e) => setTradeInAmount(Number(e.target.value))}
+                      min={0}
+                      step={100}
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* CTA Button */}
