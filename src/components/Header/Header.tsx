@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, User, Menu, X } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 import './Header.css';
 
 interface HeaderProps {
@@ -61,7 +61,9 @@ const Header = ({ onShopNewCars }: HeaderProps) => {
           <div className="header__actions">
             <button className="header__subscribe-btn">Subscribe</button>
             <button className="header__user-btn" aria-label="User account">
-              <User size={24} />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path d="M21.649 19.875c-1.428-2.468-3.629-4.239-6.196-5.078a6.75 6.75 0 1 0-6.906 0c-2.568.839-4.768 2.609-6.196 5.078a.75.75 0 1 0 1.299.75C5.416 17.573 8.538 15.75 12 15.75c3.462 0 6.584 1.823 8.35 4.875a.75.75 0 1 0 1.299-.75ZM6.749 9a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" fill="currentColor"/>
+              </svg>
             </button>
           </div>
         </div>
