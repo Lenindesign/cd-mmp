@@ -112,6 +112,85 @@
   object-fit: contain;
 }
 
+/* Vehicle Matches */
+.buying-potential__matches {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.buying-potential__matches-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-4);
+}
+
+.buying-potential__matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.buying-potential__match {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
+}
+
+.buying-potential__match:hover {
+  background: var(--color-gray-100);
+}
+
+.buying-potential__match-image {
+  width: 60px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm);
+}
+
+.buying-potential__match-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.buying-potential__match-name {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.buying-potential__match-trim {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.buying-potential__match-price {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.buying-potential__match-check {
+  color: #22C55E;
+  flex-shrink: 0;
+}
+
 /* Right Side */
 .buying-potential__right {
   padding: var(--spacing-6);
@@ -149,11 +228,23 @@
   margin-bottom: var(--spacing-1);
 }
 
-.buying-potential__power-apr {
-  display: block;
+.buying-potential__power-details {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.buying-potential__power-apr,
+.buying-potential__power-term,
+.buying-potential__power-monthly {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: var(--color-gray-500);
+}
+
+.buying-potential__power-separator {
+  color: var(--color-gray-300);
 }
 
 /* Form */
@@ -384,25 +475,64 @@
   width: 100%;
 }
 
-/* CTA Button */
-.buying-potential__cta {
-  width: 100%;
-  padding: var(--spacing-4) var(--spacing-6);
-  background: var(--color-black);
-  color: var(--color-white);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
+/* CTA Buttons */
+.buying-potential__cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
   margin-top: auto;
 }
 
-.buying-potential__cta:hover {
+.buying-potential__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-4) var(--spacing-6);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.buying-potential__cta--primary {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border: none;
+}
+
+.buying-potential__cta--primary:hover {
   background: var(--color-black);
   transform: translateY(-1px);
+}
+
+.buying-potential__cta--secondary {
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+  border: 2px solid var(--color-blue-cobalt);
+}
+
+.buying-potential__cta--secondary:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+/* Disclaimer */
+.buying-potential__disclaimer {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  line-height: 1.5;
+  margin-top: var(--spacing-4);
+  text-align: center;
+}
+
+/* Single Row */
+.buying-potential__row--single {
+  grid-template-columns: 1fr;
 }
 
 /* Responsive */
