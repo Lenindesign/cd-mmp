@@ -152,7 +152,7 @@
 }
 
 .vehicle-ranking__card-badge--best-value {
-  background: var(--color-blue-cobalt);
+  background: var(--color-black);
   color: var(--color-white);
 }
 
@@ -170,7 +170,7 @@
 }
 
 .vehicle-ranking__card-badge--most-popular {
-  background: var(--color-blue-cobalt);
+  background: var(--color-black);
   color: var(--color-white);
 }
 
