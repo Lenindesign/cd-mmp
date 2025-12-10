@@ -1,0 +1,69 @@
+/* VehicleOverview - Car and Driver Design System */
+.vehicle-overview {
+  background: var(--color-white);
+}
+
+.vehicle-overview__card {
+  background: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.25rem;
+  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
+  padding: var(--spacing-6);
+}
+
+.vehicle-overview__author {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-600);
+  margin: 0 0 var(--spacing-4) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.vehicle-overview__title {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 var(--spacing-4) 0;
+  padding-bottom: var(--spacing-3);
+  line-height: 1.2;
+  position: relative;
+}
+
+.vehicle-overview__title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: var(--color-blue-cobalt);
+}
+
+.vehicle-overview__content {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-700);
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .vehicle-overview__card {
+    padding: var(--spacing-4);
+  }
+
+  .vehicle-overview__title {
+    font-size: 28px;
+  }
+
+  .vehicle-overview__content {
+    font-size: var(--font-size-base);
+  }
+}
+

@@ -13,6 +13,7 @@ import Warranty, { defaultWarrantyItems } from './components/Warranty';
 import Comparison, { defaultCompetitors } from './components/Comparison';
 import VehicleRanking from './components/VehicleRanking';
 import MarketSpeed from './components/MarketSpeed';
+import VehicleOverview from './components/VehicleOverview';
 import Footer from './components/Footer';
 import ExitIntentModal from './components/ExitIntentModal';
 import './App.css';
@@ -143,6 +144,7 @@ function App() {
         <div className="content-with-sidebar">
           <div className="content-main">
             <QuickSpecs />
+            <VehicleOverview />
             <CostToOwn vehicleName="Chevrolet Trax" />
             <TargetPriceRange />
             <Incentives make="Chevrolet" model="Trax" />
