@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .hero__breadcrumb-link {
