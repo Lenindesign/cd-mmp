@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Sparkles } from 'lucide-react';
 import './VehicleOverview.css';
 
 interface VehicleOverviewProps {
@@ -8,6 +8,9 @@ interface VehicleOverviewProps {
   content?: string;
   highs?: string[];
   lows?: string[];
+  whatsNew?: string[];
+  verdict?: string;
+  year?: number;
 }
 
 const defaultHighs = [
@@ -25,6 +28,14 @@ const defaultLows = [
   'Limited towing capacity',
 ];
 
+const defaultWhatsNew = [
+  'Two new exterior colors: Cypress Gray and Marina Blue Metallic',
+  'Engine now capable of running on E85 fuel',
+  'Enhanced standard safety features',
+];
+
+const defaultVerdict = `The 2025 Chevrolet Trax stands out as one of the most affordable new vehicles on the market while still offering a surprisingly spacious interior and modern technology. Its attractively low price makes it an excellent choice for first-time buyers or anyone seeking practical, no-frills transportation.`;
+
 const VehicleOverview = ({
   author = 'Austin Parsons',
   authorAvatar = 'https://hips.hearstapps.com/rover/profile_photos/f9f436d8-0271-47a0-a9fa-63e509b9d841_1735830112.jpg',
@@ -32,6 +43,9 @@ const VehicleOverview = ({
   content = `As one of the most affordable subcompact SUVs on the market, the Chevrolet Trax delivers a high level of value with both style and grace. The Trax's appeal starts with its sharp exterior styling, a theme that continues into its quiet and well-equipped cabin. With heaps of rear legroom for adult passengers and a capacious cargo area for recreational equipment, the Trax's utility is undeniable. So, too, is its pleasant ride quality and surprisingly nimble handling. By deftly blending all those characteristics in a package that costs less than some upscale riding lawnmowers, the Trax is about as good as it gets when it comes to bang for your buck.`,
   highs = defaultHighs,
   lows = defaultLows,
+  whatsNew = defaultWhatsNew,
+  verdict = defaultVerdict,
+  year = 2025,
 }: VehicleOverviewProps) => {
   return (
     <section className="vehicle-overview">
@@ -81,6 +95,27 @@ const VehicleOverview = ({
               ))}
             </ul>
           </div>
+        </div>
+
+        {/* What's New */}
+        <div className="vehicle-overview__whats-new">
+          <div className="vehicle-overview__whats-new-header">
+            <Sparkles size={18} />
+            <span>What's New for {year}?</span>
+          </div>
+          <ul className="vehicle-overview__whats-new-list">
+            {whatsNew.map((item, index) => (
+              <li key={index} className="vehicle-overview__whats-new-item">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Verdict */}
+        <div className="vehicle-overview__verdict">
+          <h3 className="vehicle-overview__verdict-title">The Verdict</h3>
+          <p className="vehicle-overview__verdict-text">{verdict}</p>
         </div>
       </div>
     </section>

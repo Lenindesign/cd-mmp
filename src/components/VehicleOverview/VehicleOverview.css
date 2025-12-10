@@ -147,6 +147,89 @@
   color: #EA580C;
 }
 
+/* What's New */
+.vehicle-overview__whats-new {
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.vehicle-overview__whats-new-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-blue-cobalt);
+  margin-bottom: var(--spacing-4);
+}
+
+.vehicle-overview__whats-new-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.vehicle-overview__whats-new-item {
+  position: relative;
+  padding-left: var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  line-height: 1.5;
+}
+
+.vehicle-overview__whats-new-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-blue-cobalt);
+  font-weight: bold;
+}
+
+/* Verdict */
+.vehicle-overview__verdict {
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.vehicle-overview__verdict-title {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 var(--spacing-3) 0;
+  padding-bottom: var(--spacing-2);
+  position: relative;
+}
+
+.vehicle-overview__verdict-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--color-blue-cobalt);
+}
+
+.vehicle-overview__verdict-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-700);
+  line-height: 1.8;
+  margin: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .vehicle-overview__card {
