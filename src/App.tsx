@@ -10,13 +10,17 @@ import AdSidebar from './components/AdSidebar';
 import Overview from './components/Overview';
 import TrimSelector from './components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from './components/Warranty';
-import Comparison, { defaultCompetitors } from './components/Comparison';
+import Comparison from './components/Comparison';
 import VehicleRanking from './components/VehicleRanking';
 import MarketSpeed from './components/MarketSpeed';
 import VehicleOverview from './components/VehicleOverview';
 import Footer from './components/Footer';
 import ExitIntentModal from './components/ExitIntentModal';
+import { suvs } from './services/vehicleService';
 import './App.css';
+
+// Get the 2025 Chevrolet Trax from database
+const traxFromDB = suvs.find(v => v.make === 'Chevrolet' && v.model === 'Trax' && v.year === '2025');
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,21 +32,28 @@ function App() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-  // Vehicle data for the 2025 Chevrolet Trax
+  // Vehicle data for the 2025 Chevrolet Trax (enhanced with database)
   const vehicleData = {
-    make: 'Chevrolet',
-    model: 'Trax',
-    year: 2025,
+    make: traxFromDB?.make || 'Chevrolet',
+    model: traxFromDB?.model || 'Trax',
+    year: parseInt(traxFromDB?.year || '2025'),
     tagline: 'The Trax is an affordable subcompact SUV that delivers impressive interior space, practical features, and excellent value for budget-conscious buyers seeking reliable transportation without compromising on modern amenities.',
-    rating: 10,
+    rating: 10, // Editorial rating override
     priceRange: '$21,895–$25,895',
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg',
-    images: [
+    image: traxFromDB?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg',
+    images: traxFromDB?.galleryImages?.slice(0, 3) || [
       'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg',
       'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
       'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
     ],
     photographer: 'MICHAEL SIMARI',
+    // Additional data from database
+    mpg: traxFromDB?.mpg,
+    horsepower: traxFromDB?.horsepower,
+    seatingCapacity: traxFromDB?.seatingCapacity,
+    cargoSpace: traxFromDB?.cargoSpace,
+    fuelType: traxFromDB?.fuelType,
+    drivetrain: traxFromDB?.drivetrain,
   };
 
   // Overview data
@@ -175,8 +186,7 @@ function App() {
         </section>
         
         <Comparison 
-          competitors={defaultCompetitors}
-          currentVehicle={{ make: 'Chevrolet', model: 'Trax' }}
+          currentVehicle={{ make: vehicleData.make, model: vehicleData.model }}
         />
       </main>
       

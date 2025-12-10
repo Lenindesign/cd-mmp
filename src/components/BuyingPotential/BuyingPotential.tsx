@@ -1,13 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Info, ChevronDown, Car, CheckCircle, ArrowRight } from 'lucide-react';
+import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../services/vehicleService';
 import './BuyingPotential.css';
-
-interface VehicleMatch {
-  name: string;
-  price: number;
-  image: string;
-  trim: string;
-}
 
 const BuyingPotential = () => {
   const [vehicleType, setVehicleType] = useState('New car');
@@ -34,23 +28,11 @@ const BuyingPotential = () => {
   ];
   const loanTerms = [36, 48, 60, 72, 84];
 
-  // Vehicle matches based on buying power
-  const allVehicleMatches: VehicleMatch[] = [
-    { name: '2025 Chevrolet Trax', price: 21895, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'LS FWD' },
-    { name: '2025 Nissan Kicks', price: 22280, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/681cfb3d25a1bb0008567099/002-2025-nissan-kicks.jpg', trim: 'S FWD' },
-    { name: '2025 Chevrolet Trax', price: 23195, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: '1RS FWD' },
-    { name: '2025 Chevrolet Trax', price: 23395, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'LT FWD' },
-    { name: '2025 Toyota Corolla Cross', price: 24035, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67577eabfdefd7000823540c/1-2025-toyota-corolla-cross-hybrid-front-view.jpg', trim: 'L FWD' },
-    { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'RS FWD' },
-    { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'ACTIV FWD' },
-    { name: '2025 Honda HR-V', price: 25050, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg', trim: 'LX 2WD' },
-    { name: '2025 Hyundai Kona', price: 25175, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67fe9c57961d350008c4017f/007-2025-hyundai-kona-front-three-quarter.jpg', trim: 'SE' },
-    { name: '2025 Kia Seltos', price: 26085, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/668c500afc8dbb0009e48f26/005-2025-kia-seltos-1-6l-turbo-front-view-motion.jpg', trim: 'LX FWD' },
-  ];
-
-  const getVehicleMatches = () => {
-    return allVehicleMatches.filter(v => v.price <= buyingPower);
-  };
+  // Get vehicle matches from database based on buying power
+  const vehicleMatches = useMemo<BuyingPotentialVehicle[]>(() => {
+    if (buyingPower <= 0) return [];
+    return getBuyingPotentialVehicles(buyingPower, 20);
+  }, [buyingPower]);
 
   // Get APR based on credit score
   const getAPR = () => {
@@ -112,8 +94,6 @@ const BuyingPotential = () => {
       maximumFractionDigits: 0,
     }).format(value);
   };
-
-  const vehicleMatches = getVehicleMatches();
 
   return (
     <section className="buying-potential">

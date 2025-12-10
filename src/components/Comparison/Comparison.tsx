@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react';
+import { getComparisonVehicles } from '../../services/vehicleService';
 import './Comparison.css';
 
 interface CompetitorVehicle {
@@ -16,7 +17,7 @@ interface CompetitorVehicle {
 }
 
 interface ComparisonProps {
-  competitors: CompetitorVehicle[];
+  competitors?: CompetitorVehicle[];
   currentVehicle: {
     make: string;
     model: string;
@@ -28,6 +29,15 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Use database if no competitors provided
+  const displayCompetitors = useMemo<CompetitorVehicle[]>(() => {
+    if (competitors && competitors.length > 0) {
+      return competitors;
+    }
+    // Get competitors from database
+    return getComparisonVehicles(currentVehicle, 8) as CompetitorVehicle[];
+  }, [competitors, currentVehicle]);
 
   const checkScrollPosition = () => {
     if (carouselRef.current) {
@@ -80,7 +90,7 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
             ref={carouselRef}
             onScroll={checkScrollPosition}
           >
-            {competitors.map((vehicle) => (
+            {displayCompetitors.map((vehicle) => (
               <div key={vehicle.id} className="comparison__card">
                 {/* Card Header */}
                 <div className="comparison__card-top">
