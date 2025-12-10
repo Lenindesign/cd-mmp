@@ -97,7 +97,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     price: '$25,050',
     mpg: '28',
     rating: 8.0,
-    image: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=400&h=250&fit=crop&auto=format',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg',
   },
   {
     id: '2',
