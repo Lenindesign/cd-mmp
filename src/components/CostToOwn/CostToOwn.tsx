@@ -22,9 +22,63 @@ interface TrimCostData {
 
 interface CostToOwnProps {
   vehicleName?: string;
-  minPrice?: number;
-  maxPrice?: number;
 }
+
+// Cost data by trim level (based on MSRP differences)
+const trimCostData: Record<string, TrimCostData> = {
+  'LS FWD': {
+    msrp: 21895,
+    depreciation: 8100,
+    financing: 2650,
+    taxesFees: 1535,
+    fuel: 7500,
+    insurance: 6000,
+    repairs: 1150,
+    maintenance: 2750,
+  },
+  '1RS FWD': {
+    msrp: 23195,
+    depreciation: 8580,
+    financing: 2800,
+    taxesFees: 1625,
+    fuel: 7500,
+    insurance: 6150,
+    repairs: 1180,
+    maintenance: 2800,
+  },
+  'LT FWD': {
+    msrp: 23395,
+    depreciation: 8650,
+    financing: 2830,
+    taxesFees: 1640,
+    fuel: 7500,
+    insurance: 6200,
+    repairs: 1200,
+    maintenance: 2850,
+  },
+  'RS FWD': {
+    msrp: 24995,
+    depreciation: 9240,
+    financing: 3020,
+    taxesFees: 1750,
+    fuel: 7650,
+    insurance: 6450,
+    repairs: 1250,
+    maintenance: 2950,
+  },
+  'ACTIV FWD': {
+    msrp: 24995,
+    depreciation: 9240,
+    financing: 3020,
+    taxesFees: 1750,
+    fuel: 7650,
+    insurance: 6400,
+    repairs: 1240,
+    maintenance: 2920,
+  },
+};
+
+const trims = ['LS FWD', '1RS FWD', 'LT FWD', 'RS FWD', 'ACTIV FWD'];
 
 // Year-by-year breakdown multipliers for realistic cost distribution
 const getYearlyBreakdown = (costName: string, totalValue: number): number[] => {
@@ -43,71 +97,33 @@ const getYearlyBreakdown = (costName: string, totalValue: number): number[] => {
 };
 
 const CostToOwn = ({
-  vehicleName = 'Vehicle',
-  minPrice = 21895,
-  maxPrice = 24995,
+  vehicleName = 'Chevrolet Trax',
 }: CostToOwnProps) => {
-  // Generate dynamic trim and cost data based on price range
-  const { trims, trimCostData } = useMemo(() => {
-    const priceRange = maxPrice - minPrice;
-    const trimCount = priceRange > 20000 ? 5 : priceRange > 10000 ? 4 : 3;
-    const priceStep = priceRange / (trimCount - 1);
-    
-    const trimNames = ['Base', 'Sport', 'Premium', 'Luxury', 'Ultimate'].slice(0, trimCount);
-    const generatedTrims: string[] = [];
-    const generatedCostData: Record<string, TrimCostData> = {};
-    
-    trimNames.forEach((name, index) => {
-      const trimName = `${name}`;
-      generatedTrims.push(trimName);
-      
-      const msrp = Math.round(minPrice + (priceStep * index));
-      
-      // Calculate costs based on MSRP
-      generatedCostData[trimName] = {
-        msrp,
-        depreciation: Math.round(msrp * 0.37), // ~37% depreciation over 5 years
-        financing: Math.round(msrp * 0.12), // ~12% financing costs
-        taxesFees: Math.round(msrp * 0.07), // ~7% taxes and fees
-        fuel: Math.round(7500 + (msrp * 0.001)), // Base fuel + slight increase for premium
-        insurance: Math.round(5500 + (msrp * 0.025)), // Base insurance + percentage of MSRP
-        repairs: Math.round(1000 + (msrp * 0.008)), // Base repairs + percentage
-        maintenance: Math.round(2500 + (msrp * 0.012)), // Base maintenance + percentage
-      };
-    });
-    
-    return { trims: generatedTrims, trimCostData: generatedCostData };
-  }, [minPrice, maxPrice]);
-
   const [selectedTrim, setSelectedTrim] = useState(trims[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  // Get cost data for selected trim
-  const costData = trimCostData[selectedTrim] || trimCostData[trims[0]];
+  // Get costs for selected trim
+  const trimData = trimCostData[selectedTrim];
   
   const costs: CostCategory[] = useMemo(() => [
-    { name: 'Depreciation', value: costData.depreciation, color: '#1B5F8A', position: 'top' },
-    { name: 'Financing', value: costData.financing, color: '#E63946', position: 'bottom' },
-    { name: 'Taxes & Fees', value: costData.taxesFees, color: '#2A9D8F', position: 'top' },
-    { name: 'Fuel', value: costData.fuel, color: '#E9C46A', position: 'bottom' },
-    { name: 'Insurance', value: costData.insurance, color: '#F4A261', position: 'top' },
-    { name: 'Repairs', value: costData.repairs, color: '#264653', position: 'bottom' },
-    { name: 'Maintenance', value: costData.maintenance, color: '#9B5DE5', position: 'top' },
-  ], [costData]);
+    { name: 'Depreciation', value: trimData.depreciation, color: '#1B5F8A', position: 'bottom' },
+    { name: 'Financing', value: trimData.financing, color: '#3D8B8B', position: 'top' },
+    { name: 'Taxes & Fees', value: trimData.taxesFees, color: '#D4A84B', position: 'bottom' },
+    { name: 'Fuel', value: trimData.fuel, color: '#E67E22', position: 'top' },
+    { name: 'Insurance', value: trimData.insurance, color: '#C0392B', position: 'bottom' },
+    { name: 'Repairs', value: trimData.repairs, color: '#922B21', position: 'top' },
+    { name: 'Maintenance', value: trimData.maintenance, color: '#5C1E1E', position: 'bottom' },
+  ], [trimData]);
 
-  const totalCost = costs.reduce((sum, cost) => sum + cost.value, 0);
+  // Calculate totals
+  const totalCost = costs.reduce((acc, cost) => acc + cost.value, 0);
+  const costTotal = totalCost;
+  
+  // Determine rating based on total cost
+  const rating = totalCost < 30000 ? 'Below Average' : totalCost < 32000 ? 'Average' : 'Above Average';
 
-  // Calculate segment positions
-  const getSegmentPosition = (index: number) => {
-    let startPercent = 0;
-    for (let i = 0; i < index; i++) {
-      startPercent += (costs[i].value / totalCost) * 100;
-    }
-    const widthPercent = (costs[index].value / totalCost) * 100;
-    return { left: startPercent, width: widthPercent };
-  };
-
+  // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -117,158 +133,178 @@ const CostToOwn = ({
     }).format(value);
   };
 
+  // Get rating color - using Car and Driver design system colors
+  const getRatingColor = () => {
+    if (rating === 'Below Average') return '#22C55E'; // Green - good/low cost
+    if (rating === 'Average') return 'var(--color-warning)'; // Orange - neutral
+    return '#EF4444'; // Red - above average cost
+  };
+
+  // Calculate cumulative position for each segment
+  const getSegmentPosition = (index: number) => {
+    let position = 0;
+    for (let i = 0; i < index; i++) {
+      position += (costs[i].value / costTotal) * 100;
+    }
+    return position + (costs[index].value / costTotal) * 100 / 2;
+  };
+
   return (
     <section className="cost-to-own">
       <div className="container">
         <div className="cost-to-own__card">
-          {/* Header */}
-          <div className="cost-to-own__header">
-            <div className="cost-to-own__title-row">
+          {/* Main Content */}
+          <div className="cost-to-own__main">
+            {/* Header Row */}
+            <div className="cost-to-own__header">
               <div className="cost-to-own__title-group">
                 <h2 className="cost-to-own__title">
-                  {vehicleName}<br />
-                  <span className="cost-to-own__title-highlight">5-Year Cost to Own</span>
+                  <span className="cost-to-own__title-vehicle">{vehicleName}</span>
+                  <span className="cost-to-own__title-label">5-Year Cost to Own<sup className="cost-to-own__trademark">®</sup></span>
                 </h2>
-                <button className="cost-to-own__info-btn" aria-label="More information">
-                  <Info size={18} />
+                <button className="cost-to-own__info" aria-label="More info">
+                  <Info size={14} />
                 </button>
               </div>
-              
-              {/* Trim Selector */}
-              <div className="cost-to-own__trim-selector">
-                <button 
-                  className="cost-to-own__trim-btn"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                >
-                  <span>{selectedTrim}</span>
-                  <ChevronDown size={14} className={isDropdownOpen ? 'rotated' : ''} />
-                </button>
-                {isDropdownOpen && (
-                  <div className="cost-to-own__trim-dropdown">
-                    {trims.map((trim) => (
-                      <button
-                        key={trim}
-                        className={`cost-to-own__trim-option ${selectedTrim === trim ? 'active' : ''}`}
-                        onClick={() => {
-                          setSelectedTrim(trim);
-                          setIsDropdownOpen(false);
-                        }}
-                      >
-                        {trim}
-                      </button>
-                    ))}
-                  </div>
-                )}
+
+              {/* Trim Dropdown */}
+              <div className="cost-to-own__trim">
+                <span className="cost-to-own__trim-label">Trim:</span>
+                <div className="cost-to-own__select-wrapper">
+                  <button
+                    className="cost-to-own__select"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    {selectedTrim}
+                    <ChevronDown size={16} />
+                  </button>
+                  {isDropdownOpen && (
+                    <ul className="cost-to-own__options">
+                      {trims.map((trim) => (
+                        <li key={trim}>
+                          <button
+                            className={`cost-to-own__option ${selectedTrim === trim ? 'active' : ''}`}
+                            onClick={() => {
+                              setSelectedTrim(trim);
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            {trim}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Total Cost Display */}
-          <div className="cost-to-own__total">
-            <span className="cost-to-own__total-label">Total 5-Year Cost</span>
-            <span className="cost-to-own__total-value">{formatCurrency(totalCost)}</span>
-            <span className="cost-to-own__total-note">MSRP: {formatCurrency(costData.msrp)}</span>
-          </div>
-
-          {/* Cost Breakdown Bar */}
-          <div className="cost-to-own__breakdown">
-            <h3 className="cost-to-own__breakdown-title">Cost Breakdown</h3>
-            
-            {/* Top Labels */}
-            <div className="cost-to-own__labels cost-to-own__labels--top">
-              {costs.filter(c => c.position === 'top').map((cost) => {
-                const originalIndex = costs.findIndex(c => c.name === cost.name);
-                const { left, width } = getSegmentPosition(originalIndex);
-                return (
-                  <div 
-                    key={cost.name}
-                    className="cost-to-own__label"
-                    style={{ left: `${left + width/2}%` }}
-                  >
-                    <span className="cost-to-own__label-name">{cost.name}</span>
-                    <span className="cost-to-own__label-value">{formatCurrency(cost.value)}</span>
-                  </div>
-                );
-              })}
+            {/* Summary Row */}
+            <div className="cost-to-own__summary">
+              <span className="cost-to-own__rating" style={{ color: getRatingColor() }}>
+                {rating}
+              </span>
+              <div className="cost-to-own__cost">
+                <span className="cost-to-own__amount">{formatCurrency(totalCost)}</span>
+                <span className="cost-to-own__period">5-Year Ownership Costs</span>
+              </div>
             </div>
 
-            {/* Bar */}
-            <div className="cost-to-own__bar">
-              {costs.map((cost, index) => {
-                const { left, width } = getSegmentPosition(index);
-                const yearlyBreakdown = getYearlyBreakdown(cost.name, cost.value);
-                
-                return (
-                  <div
-                    key={cost.name}
-                    className="cost-to-own__segment"
-                    style={{
-                      left: `${left}%`,
-                      width: `${width}%`,
-                      backgroundColor: cost.color,
-                    }}
-                    onMouseEnter={() => setActiveTooltip(cost.name)}
-                    onMouseLeave={() => setActiveTooltip(null)}
-                  >
-                    {/* Tooltip */}
-                    {activeTooltip === cost.name && (
-                      <div className={`cost-to-own__tooltip ${cost.position === 'bottom' ? 'cost-to-own__tooltip--above' : ''}`}>
-                        <div className="cost-to-own__tooltip-header">
-                          <span 
-                            className="cost-to-own__tooltip-color" 
-                            style={{ backgroundColor: cost.color }}
-                          />
-                          <span className="cost-to-own__tooltip-name">{cost.name}</span>
-                          <span className="cost-to-own__tooltip-total">{formatCurrency(cost.value)}</span>
-                        </div>
-                        <div className="cost-to-own__tooltip-breakdown">
-                          <span className="cost-to-own__tooltip-breakdown-title">Year-by-Year Breakdown</span>
-                          <div className="cost-to-own__tooltip-years">
-                            {yearlyBreakdown.map((yearCost, yearIndex) => (
-                              <div key={yearIndex} className="cost-to-own__tooltip-year">
-                                <span className="cost-to-own__tooltip-year-label">Year {yearIndex + 1}</span>
-                                <span className="cost-to-own__tooltip-year-value">{formatCurrency(yearCost)}</span>
+            {/* Chart Section */}
+            <div className="cost-to-own__chart">
+              <span className="cost-to-own__chart-label">Cost Breakdown</span>
+
+              {/* Top Labels */}
+              <div className="cost-to-own__labels-top">
+                {costs.filter(c => c.position === 'top').map((cost) => {
+                  const yearlyBreakdown = getYearlyBreakdown(cost.name, cost.value);
+                  return (
+                    <div
+                      key={cost.name}
+                      className="cost-to-own__marker cost-to-own__marker--top"
+                      style={{ left: `${getSegmentPosition(costs.indexOf(cost))}%` }}
+                      onMouseEnter={() => setActiveTooltip(cost.name)}
+                      onMouseLeave={() => setActiveTooltip(null)}
+                    >
+                      {activeTooltip === cost.name && (
+                        <div className="cost-to-own__tooltip cost-to-own__tooltip--top">
+                          <div className="cost-to-own__tooltip-header">
+                            <span className="cost-to-own__tooltip-title">{cost.name}</span>
+                            <span className="cost-to-own__tooltip-total">{formatCurrency(cost.value)}</span>
+                          </div>
+                          <div className="cost-to-own__tooltip-breakdown">
+                            {yearlyBreakdown.map((amount, idx) => (
+                              <div key={idx} className="cost-to-own__tooltip-row">
+                                <span className="cost-to-own__tooltip-year">Year {idx + 1}</span>
+                                <span className="cost-to-own__tooltip-amount">{formatCurrency(amount)}</span>
                               </div>
                             ))}
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Bottom Labels */}
-            <div className="cost-to-own__labels cost-to-own__labels--bottom">
-              {costs.filter(c => c.position === 'bottom').map((cost) => {
-                const originalIndex = costs.findIndex(c => c.name === cost.name);
-                const { left, width } = getSegmentPosition(originalIndex);
-                return (
-                  <div 
-                    key={cost.name}
-                    className="cost-to-own__label"
-                    style={{ left: `${left + width/2}%` }}
-                  >
-                    <span className="cost-to-own__label-value">{formatCurrency(cost.value)}</span>
-                    <span className="cost-to-own__label-name">{cost.name}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Legend */}
-          <div className="cost-to-own__legend">
-            {costs.map((cost) => (
-              <div key={cost.name} className="cost-to-own__legend-item">
-                <span 
-                  className="cost-to-own__legend-color" 
-                  style={{ backgroundColor: cost.color }}
-                />
-                <span className="cost-to-own__legend-name">{cost.name}</span>
+                      )}
+                      <span className="cost-to-own__marker-name">{cost.name}</span>
+                      <span className="cost-to-own__marker-value">{formatCurrency(cost.value)}</span>
+                      <div className="cost-to-own__marker-line"></div>
+                      <div className="cost-to-own__marker-dot"></div>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
+
+              {/* Bar */}
+              <div className="cost-to-own__bar">
+                {costs.map((cost) => (
+                  <div
+                    key={cost.name}
+                    className={`cost-to-own__segment ${activeTooltip === cost.name ? 'cost-to-own__segment--active' : ''}`}
+                    style={{
+                      width: `${(cost.value / costTotal) * 100}%`,
+                      backgroundColor: cost.color,
+                    }}
+                    onMouseEnter={() => setActiveTooltip(cost.name)}
+                    onMouseLeave={() => setActiveTooltip(null)}
+                  />
+                ))}
+              </div>
+
+              {/* Bottom Labels */}
+              <div className="cost-to-own__labels-bottom">
+                {costs.filter(c => c.position === 'bottom').map((cost) => {
+                  const yearlyBreakdown = getYearlyBreakdown(cost.name, cost.value);
+                  return (
+                    <div
+                      key={cost.name}
+                      className="cost-to-own__marker cost-to-own__marker--bottom"
+                      style={{ left: `${getSegmentPosition(costs.indexOf(cost))}%` }}
+                      onMouseEnter={() => setActiveTooltip(cost.name)}
+                      onMouseLeave={() => setActiveTooltip(null)}
+                    >
+                      <div className="cost-to-own__marker-dot"></div>
+                      <div className="cost-to-own__marker-line"></div>
+                      <span className="cost-to-own__marker-name">{cost.name}</span>
+                      <span className="cost-to-own__marker-value">{formatCurrency(cost.value)}</span>
+                      {activeTooltip === cost.name && (
+                        <div className="cost-to-own__tooltip cost-to-own__tooltip--bottom">
+                          <div className="cost-to-own__tooltip-header">
+                            <span className="cost-to-own__tooltip-title">{cost.name}</span>
+                            <span className="cost-to-own__tooltip-total">{formatCurrency(cost.value)}</span>
+                          </div>
+                          <div className="cost-to-own__tooltip-breakdown">
+                            {yearlyBreakdown.map((amount, idx) => (
+                              <div key={idx} className="cost-to-own__tooltip-row">
+                                <span className="cost-to-own__tooltip-year">Year {idx + 1}</span>
+                                <span className="cost-to-own__tooltip-amount">{formatCurrency(amount)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
