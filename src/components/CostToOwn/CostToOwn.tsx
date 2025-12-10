@@ -243,14 +243,6 @@ const CostToOwn = ({
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="cost-to-own__footer">
-              <span className="cost-to-own__powered">Powered by</span>
-              <div className="cost-to-own__logo">
-                <span className="cost-to-own__logo-name">IntelliChoice</span>
-                <span className="cost-to-own__logo-tagline">YOUR MONEY. YOUR WHEELS.</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
