@@ -44,7 +44,7 @@ const defaultVehicles: RankedVehicle[] = [
     rank: 4,
     name: 'Volkswagen Taos',
     price: '$26,920',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/2025-volkswagen-taos-se-102-6706b4eaaf1f1.jpg?crop=0.668xw:0.751xh;0.180xw,0.148xh&resize=768:*',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/68893d6023d6d400023e4b53/03-2026-volkswagen-taos.jpg',
   },
   {
     id: '5',
