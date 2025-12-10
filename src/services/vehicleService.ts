@@ -232,16 +232,7 @@ export interface RankedVehicle {
 }
 
 export const formatForRanking = (vehicle: Vehicle, rank: number, currentVehicleId?: string): RankedVehicle => {
-  // Determine badge based on criteria
-  let badge: 'best-value' | 'editors-choice' | 'most-popular' | undefined;
-  if (vehicle.award === "Editor's Choice" || vehicle.staffRating >= 9.5) {
-    badge = 'editors-choice';
-  } else if (vehicle.priceMin < 25000 && vehicle.staffRating >= 8) {
-    badge = 'best-value';
-  } else if (vehicle.reviewCount && vehicle.reviewCount > 100) {
-    badge = 'most-popular';
-  }
-  
+  // Badge is determined after all vehicles are processed (see getRankingVehiclesFormatted)
   return {
     id: vehicle.id,
     rank,
@@ -250,7 +241,7 @@ export const formatForRanking = (vehicle: Vehicle, rank: number, currentVehicleI
     image: vehicle.image,
     rating: vehicle.staffRating,
     isCurrentVehicle: vehicle.id === currentVehicleId,
-    badge,
+    badge: undefined,
   };
 };
 
@@ -261,8 +252,32 @@ export const getRankingVehiclesFormatted = (
   limit: number = 10,
   maxPrice?: number
 ): RankedVehicle[] => {
-  return getRankingVehicles(bodyStyle, limit, maxPrice)
-    .map((vehicle, index) => formatForRanking(vehicle, index + 1, currentVehicleId));
+  const vehicles = getRankingVehicles(bodyStyle, limit, maxPrice);
+  const rankedVehicles = vehicles.map((vehicle, index) => 
+    formatForRanking(vehicle, index + 1, currentVehicleId)
+  );
+  
+  // Find the best candidate for each badge (only one of each type)
+  const editorsChoiceIdx = vehicles.findIndex(v => v.award === "Editor's Choice" || v.staffRating >= 9.5);
+  const bestValueIdx = vehicles.findIndex(v => v.priceMin < 25000 && v.staffRating >= 8);
+  const mostPopularIdx = vehicles.findIndex(v => v.reviewCount && v.reviewCount > 150);
+  
+  // Assign Editor's Choice badge
+  if (editorsChoiceIdx !== -1) {
+    rankedVehicles[editorsChoiceIdx].badge = 'editors-choice';
+  }
+  
+  // Assign Best Value to a different vehicle if available
+  if (bestValueIdx !== -1 && bestValueIdx !== editorsChoiceIdx) {
+    rankedVehicles[bestValueIdx].badge = 'best-value';
+  }
+  
+  // Assign Most Popular to a different vehicle if available
+  if (mostPopularIdx !== -1 && mostPopularIdx !== editorsChoiceIdx && mostPopularIdx !== bestValueIdx) {
+    rankedVehicles[mostPopularIdx].badge = 'most-popular';
+  }
+  
+  return rankedVehicles;
 };
 
 // Get the Chevrolet Trax (main vehicle for our page)
