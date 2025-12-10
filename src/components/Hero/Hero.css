@@ -141,7 +141,7 @@
 
 .hero__rating-score {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 48px;
+  font-size: 32px;
   font-weight: 700;
   color: var(--color-black);
   line-height: 1;
