@@ -153,7 +153,7 @@
 
 .comparison__card-title {
   font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
+  font-size: 22px;
   font-weight: 700;
   color: var(--color-black);
   line-height: var(--line-height-tight);
