@@ -258,6 +258,13 @@
   color: var(--color-gray-500);
 }
 
+.vehicle-ranking__card-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
 .vehicle-ranking__card-price {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
@@ -269,6 +276,28 @@
 .vehicle-ranking__card-price-label {
   text-transform: uppercase;
   font-weight: var(--font-weight-medium);
+}
+
+.vehicle-ranking__card-details-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.vehicle-ranking__card:hover .vehicle-ranking__card-details-btn {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
 }
 
 /* Enhanced hover state for entire card */

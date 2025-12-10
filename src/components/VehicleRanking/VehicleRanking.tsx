@@ -145,9 +145,15 @@ const VehicleRanking = ({
                     <span className="vehicle-ranking__card-rating-max">/10</span>
                   </div>
                 </div>
-                <p className="vehicle-ranking__card-price">
-                  <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
-                </p>
+                <div className="vehicle-ranking__card-price-row">
+                  <p className="vehicle-ranking__card-price">
+                    <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
+                  </p>
+                  <span className="vehicle-ranking__card-details-btn">
+                    View Details
+                    <ChevronRight size={14} />
+                  </span>
+                </div>
               </div>
             </a>
           ))}
