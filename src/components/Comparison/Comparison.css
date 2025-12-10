@@ -1,8 +1,11 @@
 /* Car and Driver Authentic Comparison */
 .comparison {
-  padding: var(--spacing-12) 0;
+  padding: var(--spacing-16) 0;
   background: var(--color-white);
-  border-top: 1px solid var(--color-gray-200);
+}
+
+.comparison > .container {
+  padding: 0 var(--spacing-6);
 }
 
 /* Header */
