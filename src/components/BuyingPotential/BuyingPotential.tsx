@@ -367,7 +367,7 @@ const BuyingPotential = () => {
             {/* CTA Buttons */}
             <div className="buying-potential__cta-group">
               <button className="buying-potential__cta buying-potential__cta--primary">
-                See Vehicles Under {formatCurrency(buyingPower)}
+                See All Vehicles Under {formatCurrency(buyingPower)}
                 <ArrowRight size={18} />
               </button>
               <button className="buying-potential__cta buying-potential__cta--secondary">
