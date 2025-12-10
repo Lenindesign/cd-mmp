@@ -111,9 +111,22 @@ export const getVehiclesInBudget = (budget: number, bodyStyle?: string): Vehicle
 };
 
 // Get ranking vehicles (for "Where This Vehicle Ranks" component)
-export const getRankingVehicles = (bodyStyle: string, limit: number = 10): Vehicle[] => {
+export const getRankingVehicles = (bodyStyle: string, limit: number = 10, maxPrice?: number): Vehicle[] => {
   return vehicleDatabase
-    .filter(v => v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase())
+    .filter(v => {
+      const matchesBodyStyle = v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase();
+      const matchesPrice = !maxPrice || v.priceMin <= maxPrice;
+      return matchesBodyStyle && matchesPrice;
+    })
+    .sort((a, b) => b.staffRating - a.staffRating)
+    .slice(0, limit);
+};
+
+// Get subcompact SUVs (SUVs under $35,000)
+export const getSubcompactSUVs = (limit: number = 10): Vehicle[] => {
+  const SUBCOMPACT_MAX_PRICE = 35000;
+  return vehicleDatabase
+    .filter(v => v.bodyStyle === 'SUV' && v.priceMin <= SUBCOMPACT_MAX_PRICE)
     .sort((a, b) => b.staffRating - a.staffRating)
     .slice(0, limit);
 };
@@ -245,9 +258,10 @@ export const formatForRanking = (vehicle: Vehicle, rank: number, currentVehicleI
 export const getRankingVehiclesFormatted = (
   bodyStyle: string,
   currentVehicleId?: string,
-  limit: number = 10
+  limit: number = 10,
+  maxPrice?: number
 ): RankedVehicle[] => {
-  return getRankingVehicles(bodyStyle, limit)
+  return getRankingVehicles(bodyStyle, limit, maxPrice)
     .map((vehicle, index) => formatForRanking(vehicle, index + 1, currentVehicleId));
 };
 

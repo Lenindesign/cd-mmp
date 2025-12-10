@@ -9,6 +9,7 @@ interface VehicleRankingProps {
   vehicles?: RankedVehicle[];
   bodyStyle?: string;
   currentVehicleId?: string;
+  maxPrice?: number;
 }
 
 const getBadgeLabel = (badge: string) => {
@@ -20,21 +21,25 @@ const getBadgeLabel = (badge: string) => {
   }
 };
 
+// Subcompact SUVs are typically priced under $35,000
+const SUBCOMPACT_MAX_PRICE = 35000;
+
 const VehicleRanking = ({
   category = 'Best Subcompact SUVs',
   currentRank = 1,
   vehicles,
   bodyStyle = 'SUV',
   currentVehicleId,
+  maxPrice = SUBCOMPACT_MAX_PRICE,
 }: VehicleRankingProps) => {
   // Get vehicles from database if not provided
   const displayVehicles = useMemo<RankedVehicle[]>(() => {
     if (vehicles && vehicles.length > 0) {
       return vehicles;
     }
-    // Get top ranked vehicles from database for the given body style
-    return getRankingVehiclesFormatted(bodyStyle, currentVehicleId, 6);
-  }, [vehicles, bodyStyle, currentVehicleId]);
+    // Get top ranked subcompact SUVs from database (filtered by price)
+    return getRankingVehiclesFormatted(bodyStyle, currentVehicleId, 6, maxPrice);
+  }, [vehicles, bodyStyle, currentVehicleId, maxPrice]);
   return (
     <section className="vehicle-ranking">
       <div className="vehicle-ranking__card-wrapper">
