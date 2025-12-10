@@ -58,7 +58,7 @@ const defaultVehicles: RankedVehicle[] = [
     rank: 6,
     name: 'Kia Niro Hybrid',
     price: '$28,435',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/2023-kia-niro-hybrid-ex-touring-101-1654274803.jpg?crop=0.668xw:0.751xh;0.189xw,0.148xh&resize=768:*',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6737be9bdb89a1000897284d/1-2025-kia-niro-hybrid-front-view.jpg',
   },
 ];
 
@@ -87,7 +87,7 @@ const VehicleRanking = ({
               className={`vehicle-ranking__card ${vehicle.isCurrentVehicle ? 'vehicle-ranking__card--current' : ''}`}
             >
               <div className="vehicle-ranking__card-image">
-                <span className="vehicle-ranking__card-rank">{vehicle.rank}</span>
+                <span className={`vehicle-ranking__card-rank ${vehicle.isCurrentVehicle ? 'vehicle-ranking__card-rank--current' : ''}`}>{vehicle.rank}</span>
                 <img src={vehicle.image} alt={vehicle.name} />
               </div>
               <div className="vehicle-ranking__card-info">
