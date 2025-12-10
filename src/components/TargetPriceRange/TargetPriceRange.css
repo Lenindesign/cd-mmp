@@ -19,12 +19,12 @@
 .target-price__header-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--spacing-4);
   margin-bottom: var(--spacing-2);
 }
 
-/* Trim Selector */
+/* Trim Selector - Matching Cost to Own style */
 .target-price__trim {
   display: flex;
   align-items: center;
@@ -32,9 +32,10 @@
 }
 
 .target-price__trim-label {
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-black);
 }
 
 .target-price__select-wrapper {
@@ -48,12 +49,12 @@
   padding: var(--spacing-2) var(--spacing-3);
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-base);
   color: var(--color-black);
   cursor: pointer;
+  min-width: 120px;
   transition: all var(--transition-fast);
 }
 
@@ -63,17 +64,17 @@
 
 .target-price__options {
   position: absolute;
-  top: calc(100% + 4px);
+  top: 100%;
+  left: 0;
   right: 0;
-  min-width: 140px;
   background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-sm);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
   list-style: none;
   padding: var(--spacing-1) 0;
-  margin: 0;
-  z-index: 100;
+  margin: var(--spacing-1) 0 0 0;
 }
 
 .target-price__option {
@@ -82,20 +83,16 @@
   background: none;
   border: none;
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   color: var(--color-black);
   text-align: left;
   cursor: pointer;
   transition: background-color var(--transition-fast);
 }
 
-.target-price__option:hover {
-  background: var(--color-gray-100);
-}
-
+.target-price__option:hover,
 .target-price__option.active {
   background: var(--color-gray-100);
-  font-weight: var(--font-weight-medium);
 }
 
 .target-price__title {
