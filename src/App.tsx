@@ -141,11 +141,7 @@ function App() {
           <div className="content-main">
             <QuickSpecs />
             <CostToOwn vehicleName="Chevrolet Trax" />
-            <TargetPriceRange 
-              dealerPrice={23495} 
-              targetPriceLow={21500} 
-              targetPriceHigh={22800}
-            />
+            <TargetPriceRange />
             <Incentives make="Chevrolet" model="Trax" />
           </div>
           <AdSidebar />

@@ -1,22 +1,58 @@
 import { useState } from 'react';
-import { Info, DollarSign, Target, Search, TrendingDown, CheckCircle, Clock, Percent } from 'lucide-react';
+import { Info, DollarSign, Target, Search, TrendingDown, CheckCircle, Clock, Percent, ChevronDown } from 'lucide-react';
 import './TargetPriceRange.css';
 
-interface TargetPriceRangeProps {
-  dealerPrice?: number;
-  targetPriceLow?: number;
-  targetPriceHigh?: number;
-  vehicleName?: string;
+interface TrimPriceData {
+  msrp: number;
+  dealerPrice: number;
+  targetPriceLow: number;
+  targetPriceHigh: number;
 }
 
-const TargetPriceRange = ({ 
-  dealerPrice = 23495,
-  targetPriceLow = 21500,
-  targetPriceHigh = 22800,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  vehicleName: _vehicleName = 'Chevrolet Trax'
-}: TargetPriceRangeProps) => {
+// Price data by trim level
+const trimPriceData: Record<string, TrimPriceData> = {
+  'LS FWD': {
+    msrp: 21895,
+    dealerPrice: 22195,
+    targetPriceLow: 20300,
+    targetPriceHigh: 21400,
+  },
+  '1RS FWD': {
+    msrp: 23195,
+    dealerPrice: 23495,
+    targetPriceLow: 21500,
+    targetPriceHigh: 22700,
+  },
+  'LT FWD': {
+    msrp: 23395,
+    dealerPrice: 23695,
+    targetPriceLow: 21700,
+    targetPriceHigh: 22900,
+  },
+  'RS FWD': {
+    msrp: 24995,
+    dealerPrice: 25395,
+    targetPriceLow: 23200,
+    targetPriceHigh: 24500,
+  },
+  'ACTIV FWD': {
+    msrp: 24995,
+    dealerPrice: 25395,
+    targetPriceLow: 23200,
+    targetPriceHigh: 24500,
+  },
+};
+
+const trims = ['LS FWD', '1RS FWD', 'LT FWD', 'RS FWD', 'ACTIV FWD'];
+
+const TargetPriceRange = () => {
+  const [selectedTrim, setSelectedTrim] = useState(trims[0]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  // Get prices for selected trim
+  const trimData = trimPriceData[selectedTrim];
+  const { dealerPrice, targetPriceLow, targetPriceHigh } = trimData;
   
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -39,7 +75,40 @@ const TargetPriceRange = ({
         <div className="target-price__card">
           {/* Header */}
           <div className="target-price__header">
-            <h2 className="target-price__title">Target Price Range</h2>
+            <div className="target-price__header-row">
+              <h2 className="target-price__title">Target Price Range</h2>
+              
+              {/* Trim Selector */}
+              <div className="target-price__trim">
+                <span className="target-price__trim-label">Trim:</span>
+                <div className="target-price__select-wrapper">
+                  <button
+                    className="target-price__select"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    {selectedTrim}
+                    <ChevronDown size={16} />
+                  </button>
+                  {isDropdownOpen && (
+                    <ul className="target-price__options">
+                      {trims.map((trim) => (
+                        <li key={trim}>
+                          <button
+                            className={`target-price__option ${selectedTrim === trim ? 'active' : ''}`}
+                            onClick={() => {
+                              setSelectedTrim(trim);
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            {trim}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </div>
             <p className="target-price__description">
               The Target Price is the deal you should aim for after negotiating.
             </p>
