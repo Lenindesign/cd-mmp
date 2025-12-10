@@ -240,3 +240,4 @@ const MarketSpeed = ({
 
 export default MarketSpeed;
 
+
