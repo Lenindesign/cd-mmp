@@ -56,7 +56,7 @@ const VehicleRanking = ({
             >
               <div className="vehicle-ranking__card-image">
                 {/* Rank Badge */}
-                <span className={`vehicle-ranking__card-rank ${vehicle.isCurrentVehicle ? 'vehicle-ranking__card-rank--current' : ''}`}>
+                <span className={`vehicle-ranking__card-rank ${vehicle.rank === 1 ? 'vehicle-ranking__card-rank--first' : ''}`}>
                   {vehicle.rank}
                 </span>
                 
