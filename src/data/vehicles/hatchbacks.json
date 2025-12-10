@@ -297,33 +297,6 @@
     "slug": "2024/Fiat/500"
   },
   {
-    "id": "77",
-    "year": "2024",
-    "make": "Peugeot",
-    "model": "208",
-    "bodyStyle": "Hatchback",
-    "imageSource": "2024 Peugeot 208",
-    "image": null,
-    "priceRange": "$22,500 - $28,900",
-    "priceMin": 22500,
-    "priceMax": 28900,
-    "staffRating": 8.2,
-    "communityRating": 8,
-    "reviewCount": 87,
-    "fuelType": "Electric",
-    "drivetrain": "FWD",
-    "transmission": "Automatic",
-    "mpg": "125 MPGe",
-    "horsepower": 136,
-    "seatingCapacity": 5,
-    "features": [
-      "i-Cockpit",
-      "Focal Audio",
-      "Active Safety Brake"
-    ],
-    "slug": "2024/Peugeot/208"
-  },
-  {
     "id": "79",
     "year": "2024",
     "make": "Seat",
