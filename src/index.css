@@ -116,8 +116,8 @@
      ============================================ */
   
   --border-radius-sm: 2px;
-  --border-radius-md: 4px;
-  --border-radius-lg: 8px;
+  --border-radius-md: 0.25rem;
+  --border-radius-lg: 0.5rem;
   --border-radius-xl: 12px;
   --border-radius-full: 9999px;
   

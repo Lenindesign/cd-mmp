@@ -52,7 +52,7 @@
   gap: 6px;
   padding: 6px 10px;
   border: 1.5px solid var(--color-blue-cobalt);
-  border-radius: 6px;
+  border-radius: 0.25rem;
   background: var(--color-white);
   font-family: var(--font-heading);
   font-size: 12px;
