@@ -22,7 +22,7 @@
 
 /* Left Side */
 .buying-potential__left {
-  padding: var(--spacing-6);
+  padding: var(--spacing-6) 0 var(--spacing-6) var(--spacing-6);
   display: flex;
   flex-direction: column;
 }
