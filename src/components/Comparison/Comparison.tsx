@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react';
 import { getComparisonVehicles } from '../../services/vehicleService';
 import './Comparison.css';
@@ -12,6 +13,7 @@ interface CompetitorVehicle {
   mpg: string;
   rating: number;
   image: string;
+  slug: string;
   review?: string;
   hasEditorChoice?: boolean;
 }
@@ -95,7 +97,9 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
                 {/* Card Header */}
                 <div className="comparison__card-top">
                   <h3 className="comparison__card-title">
-                    {vehicle.year} {vehicle.make} {vehicle.model}
+                    <Link to={`/${vehicle.slug}`}>
+                      {vehicle.year} {vehicle.make} {vehicle.model}
+                    </Link>
                   </h3>
                   <div className="comparison__card-rating">
                     <div className="comparison__card-rating-row">
@@ -120,7 +124,7 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
                     <span className="comparison__card-price-label">Starting at</span>
                     <div className="comparison__card-price-action">
                       <span className="comparison__card-price-value">{vehicle.price}</span>
-                      <a href="#" className="comparison__card-shop-btn">Shop Now</a>
+                      <Link to={`/${vehicle.slug}`} className="comparison__card-shop-btn">Shop Now</Link>
                     </div>
                   </div>
                   {vehicle.hasEditorChoice && (
@@ -149,7 +153,7 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
                 <div className="comparison__card-review">
                   <p className="comparison__card-review-text">
                     <strong>C/D SAYS:</strong> {vehicle.review}
-                    <a href="#" className="comparison__card-review-link">Learn More</a>
+                    <Link to={`/${vehicle.slug}`} className="comparison__card-review-link">Learn More</Link>
                   </p>
                 </div>
 
@@ -196,6 +200,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     mpg: '26–30',
     rating: 8.0,
     image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg',
+    slug: '2025/Honda/HR-V',
     review: 'The Honda HR-V offers a spacious interior and excellent fuel economy, making it a practical choice for daily commuters.',
     hasEditorChoice: false,
   },
@@ -208,6 +213,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     mpg: '29–32',
     rating: 7.5,
     image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67577eabfdefd7000823540c/1-2025-toyota-corolla-cross-hybrid-front-view.jpg',
+    slug: '2025/Toyota/Corolla-Cross',
     review: 'The Corolla Cross delivers Toyota reliability with available hybrid efficiency and a comfortable ride quality.',
     hasEditorChoice: false,
   },
@@ -220,6 +226,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     mpg: '28–32',
     rating: 8.0,
     image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67fe9c57961d350008c4017f/007-2025-hyundai-kona-front-three-quarter.jpg',
+    slug: '2025/Hyundai/Kona',
     review: 'The Kona stands out with its bold styling and tech-forward cabin, offering good value in a compact package.',
     hasEditorChoice: true,
   },
@@ -232,6 +239,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     mpg: '27–31',
     rating: 7.5,
     image: 'https://d2kde5ohu8qb21.cloudfront.net/files/668c500afc8dbb0009e48f26/005-2025-kia-seltos-1-6l-turbo-front-view-motion.jpg',
+    slug: '2025/Kia/Seltos',
     review: 'The Seltos offers a turbocharged engine option and a feature-rich interior at a competitive price point.',
     hasEditorChoice: false,
   },

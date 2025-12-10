@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { getRankingVehiclesFormatted, type RankedVehicle } from '../../services/vehicleService';
 import './VehicleRanking.css';
@@ -54,8 +55,8 @@ const VehicleRanking = ({
 
         <div className="vehicle-ranking__grid">
           {displayVehicles.map((vehicle) => (
-            <a 
-              href="#" 
+            <Link 
+              to={`/${vehicle.slug}`}
               key={vehicle.id} 
               className={`vehicle-ranking__card ${vehicle.isCurrentVehicle ? 'vehicle-ranking__card--current' : ''}`}
             >
@@ -100,7 +101,7 @@ const VehicleRanking = ({
                   </span>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

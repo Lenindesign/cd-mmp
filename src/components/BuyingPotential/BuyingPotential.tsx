@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { Info, ChevronDown, Car, CheckCircle, ArrowRight } from 'lucide-react';
 import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../services/vehicleService';
 import './BuyingPotential.css';
@@ -127,7 +128,7 @@ const BuyingPotential = () => {
                 </h3>
                 <div className="buying-potential__matches-list">
                   {vehicleMatches.map((vehicle, index) => (
-                    <div key={index} className="buying-potential__match">
+                    <Link key={index} to={`/${vehicle.slug}`} className="buying-potential__match">
                       <img src={vehicle.image} alt={vehicle.name} className="buying-potential__match-image" />
                       <div className="buying-potential__match-info">
                         <span className="buying-potential__match-name">{vehicle.name}</span>
@@ -138,7 +139,7 @@ const BuyingPotential = () => {
                         <span className="buying-potential__match-price">{formatCurrency(vehicle.price)}</span>
                       </div>
                       <CheckCircle size={18} className="buying-potential__match-check" />
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>

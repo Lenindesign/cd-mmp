@@ -158,6 +158,7 @@ export interface BuyingPotentialVehicle {
   image: string;
   trim: string;
   rating: number;
+  slug: string;
 }
 
 export const formatForBuyingPotential = (vehicle: Vehicle): BuyingPotentialVehicle => ({
@@ -166,6 +167,7 @@ export const formatForBuyingPotential = (vehicle: Vehicle): BuyingPotentialVehic
   image: vehicle.image,
   trim: vehicle.trim || vehicle.drivetrain || '',
   rating: vehicle.staffRating,
+  slug: vehicle.slug,
 });
 
 // Get vehicles formatted for BuyingPotential
@@ -185,6 +187,7 @@ export interface ComparisonVehicle {
   mpg: string;
   rating: number;
   image: string;
+  slug: string;
   review?: string;
   hasEditorChoice?: boolean;
 }
@@ -198,6 +201,7 @@ export const formatForComparison = (vehicle: Vehicle): ComparisonVehicle => ({
   mpg: vehicle.mpg || 'N/A',
   rating: vehicle.staffRating,
   image: vehicle.image,
+  slug: vehicle.slug,
   review: `The ${vehicle.make} ${vehicle.model} offers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features'}.`,
   hasEditorChoice: vehicle.award === "Editor's Choice" || vehicle.staffRating >= 9,
 });
@@ -227,6 +231,7 @@ export interface RankedVehicle {
   price: string;
   image: string;
   rating: number;
+  slug: string;
   isCurrentVehicle?: boolean;
   badge?: 'best-value' | 'editors-choice' | 'most-popular';
 }
@@ -240,6 +245,7 @@ export const formatForRanking = (vehicle: Vehicle, rank: number, currentVehicleI
     price: `$${vehicle.priceMin.toLocaleString()}`,
     image: vehicle.image,
     rating: vehicle.staffRating,
+    slug: vehicle.slug,
     isCurrentVehicle: vehicle.id === currentVehicleId,
     badge: undefined,
   };
