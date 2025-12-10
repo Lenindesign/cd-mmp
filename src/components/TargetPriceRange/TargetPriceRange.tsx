@@ -1,4 +1,5 @@
-import { Info, DollarSign, Target, Search } from 'lucide-react';
+import { useState } from 'react';
+import { Info, DollarSign, Target, Search, TrendingDown, CheckCircle, Clock, Percent } from 'lucide-react';
 import './TargetPriceRange.css';
 
 interface TargetPriceRangeProps {
@@ -15,6 +16,7 @@ const TargetPriceRange = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   vehicleName: _vehicleName = 'Chevrolet Trax'
 }: TargetPriceRangeProps) => {
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -24,6 +26,12 @@ const TargetPriceRange = ({
       maximumFractionDigits: 0,
     }).format(price);
   };
+
+  // Calculate savings and percentages
+  const savingsLow = dealerPrice - targetPriceLow;
+  const savingsHigh = dealerPrice - targetPriceHigh;
+  const discountLow = ((savingsLow / dealerPrice) * 100).toFixed(1);
+  const discountHigh = ((savingsHigh / dealerPrice) * 100).toFixed(1);
 
   return (
     <section className="target-price">
@@ -41,7 +49,11 @@ const TargetPriceRange = ({
           <div className="target-price__range-visual">
             {/* Target Range Markers */}
             <div className="target-price__markers">
-              <div className="target-price__marker target-price__marker--start">
+              <div 
+                className="target-price__marker target-price__marker--start"
+                onMouseEnter={() => setActiveTooltip('low')}
+                onMouseLeave={() => setActiveTooltip(null)}
+              >
                 <div className="target-price__marker-price">{formatPrice(targetPriceLow)}</div>
                 <div className="target-price__marker-icon target-price__marker-icon--green">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -49,6 +61,33 @@ const TargetPriceRange = ({
                   </svg>
                 </div>
                 <div className="target-price__marker-pin target-price__marker-pin--green"></div>
+                
+                {/* Tooltip for Low Price */}
+                {activeTooltip === 'low' && (
+                  <div className="target-price__tooltip">
+                    <div className="target-price__tooltip-header">
+                      <CheckCircle size={16} className="target-price__tooltip-icon target-price__tooltip-icon--success" />
+                      <span className="target-price__tooltip-title">Best Possible Deal</span>
+                    </div>
+                    <div className="target-price__tooltip-content">
+                      <div className="target-price__tooltip-row">
+                        <TrendingDown size={14} />
+                        <span>Save <strong>{formatPrice(savingsLow)}</strong> vs dealer price</span>
+                      </div>
+                      <div className="target-price__tooltip-row">
+                        <Percent size={14} />
+                        <span><strong>{discountLow}%</strong> below asking price</span>
+                      </div>
+                      <div className="target-price__tooltip-row">
+                        <Clock size={14} />
+                        <span>Achievable at month-end or during clearance events</span>
+                      </div>
+                    </div>
+                    <div className="target-price__tooltip-tip">
+                      💡 Ask about dealer incentives & rebates
+                    </div>
+                  </div>
+                )}
               </div>
               
               <div className="target-price__target-label">
@@ -57,7 +96,11 @@ const TargetPriceRange = ({
                 <span className="target-price__dashed-line target-price__dashed-line--right"></span>
               </div>
               
-              <div className="target-price__marker target-price__marker--end">
+              <div 
+                className="target-price__marker target-price__marker--end"
+                onMouseEnter={() => setActiveTooltip('high')}
+                onMouseLeave={() => setActiveTooltip(null)}
+              >
                 <div className="target-price__marker-price">{formatPrice(targetPriceHigh)}</div>
                 <div className="target-price__marker-icon target-price__marker-icon--green">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -65,6 +108,33 @@ const TargetPriceRange = ({
                   </svg>
                 </div>
                 <div className="target-price__marker-pin target-price__marker-pin--green"></div>
+                
+                {/* Tooltip for High Price */}
+                {activeTooltip === 'high' && (
+                  <div className="target-price__tooltip">
+                    <div className="target-price__tooltip-header">
+                      <Target size={16} className="target-price__tooltip-icon target-price__tooltip-icon--fair" />
+                      <span className="target-price__tooltip-title">Fair Market Deal</span>
+                    </div>
+                    <div className="target-price__tooltip-content">
+                      <div className="target-price__tooltip-row">
+                        <TrendingDown size={14} />
+                        <span>Save <strong>{formatPrice(savingsHigh)}</strong> vs dealer price</span>
+                      </div>
+                      <div className="target-price__tooltip-row">
+                        <Percent size={14} />
+                        <span><strong>{discountHigh}%</strong> below asking price</span>
+                      </div>
+                      <div className="target-price__tooltip-row">
+                        <Clock size={14} />
+                        <span>Achievable with standard negotiation</span>
+                      </div>
+                    </div>
+                    <div className="target-price__tooltip-tip">
+                      💡 Most buyers achieve this price range
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

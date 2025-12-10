@@ -67,6 +67,12 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.target-price__marker:hover {
+  z-index: 9999;
 }
 
 .target-price__marker-price {
@@ -116,6 +122,93 @@
 
 .target-price__marker-pin--green::after {
   background: #22C55E;
+}
+
+/* Tooltips */
+.target-price__tooltip {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  padding: var(--spacing-4);
+  z-index: 9999;
+}
+
+.target-price__tooltip::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--color-white);
+}
+
+.target-price__tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.target-price__tooltip-icon--success {
+  color: #22C55E;
+}
+
+.target-price__tooltip-icon--fair {
+  color: var(--color-blue-cobalt);
+}
+
+.target-price__tooltip-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.target-price__tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+}
+
+.target-price__tooltip-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
+  line-height: 1.4;
+}
+
+.target-price__tooltip-row svg {
+  flex-shrink: 0;
+  color: var(--color-gray-500);
+  margin-top: 1px;
+}
+
+.target-price__tooltip-row strong {
+  color: var(--color-black);
+  font-weight: var(--font-weight-bold);
+}
+
+.target-price__tooltip-tip {
+  padding: var(--spacing-2);
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
 }
 
 /* Target Label */
