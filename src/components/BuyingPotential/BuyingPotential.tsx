@@ -37,14 +37,19 @@ const BuyingPotential = () => {
   // Vehicle matches based on buying power
   const allVehicleMatches: VehicleMatch[] = [
     { name: '2025 Chevrolet Trax', price: 21895, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'LS FWD' },
+    { name: '2025 Nissan Kicks', price: 22280, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66dba90dc83c4b00088a59d5/2025-nissan-kicks-s-fwd-front-view.jpg', trim: 'S FWD' },
+    { name: '2025 Chevrolet Trax', price: 23195, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: '1RS FWD' },
     { name: '2025 Chevrolet Trax', price: 23395, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'LT FWD' },
+    { name: '2025 Toyota Corolla Cross', price: 24035, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67577eabfdefd7000823540c/1-2025-toyota-corolla-cross-hybrid-front-view.jpg', trim: 'L FWD' },
     { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'RS FWD' },
-    { name: '2025 Honda HR-V', price: 25050, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg', trim: 'LX' },
+    { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'ACTIV FWD' },
+    { name: '2025 Honda HR-V', price: 25050, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg', trim: 'LX 2WD' },
     { name: '2025 Hyundai Kona', price: 25175, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67fe9c57961d350008c4017f/007-2025-hyundai-kona-front-three-quarter.jpg', trim: 'SE' },
+    { name: '2025 Kia Seltos', price: 26085, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/668c500afc8dbb0009e48f26/005-2025-kia-seltos-1-6l-turbo-front-view-motion.jpg', trim: 'LX FWD' },
   ];
 
   const getVehicleMatches = () => {
-    return allVehicleMatches.filter(v => v.price <= buyingPower).slice(0, 3);
+    return allVehicleMatches.filter(v => v.price <= buyingPower);
   };
 
   // Get APR based on credit score
@@ -134,8 +139,11 @@ const BuyingPotential = () => {
             {vehicleMatches.length > 0 ? (
               <div className="buying-potential__matches">
                 <h3 className="buying-potential__matches-title">
-                  <Car size={18} />
-                  Vehicles in Your Budget
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Car size={18} />
+                    Vehicles in Your Budget
+                  </span>
+                  <span className="buying-potential__matches-count">{vehicleMatches.length} found</span>
                 </h3>
                 <div className="buying-potential__matches-list">
                   {vehicleMatches.map((vehicle, index) => (
