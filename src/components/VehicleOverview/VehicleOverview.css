@@ -155,16 +155,32 @@
 }
 
 .vehicle-overview__whats-new-header {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
   font-family: var(--font-heading);
-  font-size: var(--font-size-base);
+  font-size: 36px;
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--color-blue-cobalt);
+  color: var(--color-black);
   margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  position: relative;
+}
+
+.vehicle-overview__whats-new-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: var(--color-blue-cobalt);
+}
+
+.vehicle-overview__whats-new-header svg {
+  color: var(--color-blue-cobalt);
 }
 
 .vehicle-overview__whats-new-list {
