@@ -170,7 +170,7 @@
 }
 
 .vehicle-ranking__card-badge--most-popular {
-  background: #F59E0B;
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
@@ -195,8 +195,8 @@
   align-items: center;
   gap: var(--spacing-2);
   padding: 12px 24px;
-  background: var(--color-white);
-  color: var(--color-black);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
   font-family: var(--font-heading);
   font-size: 14px;
   font-weight: var(--font-weight-bold);
@@ -212,7 +212,7 @@
 }
 
 .vehicle-ranking__card-overlay-btn:hover {
-  background: var(--color-blue-cobalt);
+  background: var(--color-black);
   color: var(--color-white);
 }
 
