@@ -17,23 +17,41 @@ interface CostToOwnProps {
   costs?: CostCategory[];
 }
 
+// Year-by-year breakdown multipliers for realistic cost distribution
+const getYearlyBreakdown = (costName: string, totalValue: number): number[] => {
+  // Different cost categories have different distribution patterns over 5 years
+  const patterns: Record<string, number[]> = {
+    'Depreciation': [0.30, 0.25, 0.20, 0.15, 0.10], // Highest in year 1, decreases
+    'Financing': [0.22, 0.21, 0.20, 0.19, 0.18],    // Slightly decreasing (principal paydown)
+    'Taxes & Fees': [0.60, 0.10, 0.10, 0.10, 0.10], // High in year 1 (registration), then maintenance
+    'Fuel': [0.20, 0.20, 0.20, 0.20, 0.20],         // Consistent each year
+    'Insurance': [0.22, 0.21, 0.20, 0.19, 0.18],    // Slightly decreases as car ages
+    'Repairs': [0.05, 0.10, 0.15, 0.30, 0.40],      // Increases as warranty expires
+    'Maintenance': [0.15, 0.18, 0.20, 0.22, 0.25],  // Increases as car ages
+  };
+  
+  const pattern = patterns[costName] || [0.20, 0.20, 0.20, 0.20, 0.20];
+  return pattern.map(multiplier => Math.round(totalValue * multiplier));
+};
+
 const CostToOwn = ({
   vehicleName = 'Chevrolet Trax',
   trims = ['LS FWD', '1RS FWD', 'LT FWD', 'RS FWD', 'ACTIV FWD'],
   totalCost = 30700,
   rating = 'Below Average',
   costs = [
-    { name: 'Depreciation', value: 8500, color: '#1B5F8A', position: 'bottom' },   /* ~37% depreciation over 5 years */
-    { name: 'Financing', value: 2800, color: '#3D8B8B', position: 'top' },         /* 2.9% APR estimate */
-    { name: 'Taxes & Fees', value: 1650, color: '#D4A84B', position: 'bottom' },   /* ~7% of MSRP */
-    { name: 'Fuel', value: 7500, color: '#E67E22', position: 'top' },              /* 30 MPG, 15k mi/yr */
-    { name: 'Insurance', value: 6200, color: '#C0392B', position: 'bottom' },      /* ~$103/mo average */
-    { name: 'Repairs', value: 1200, color: '#922B21', position: 'top' },           /* Low for new vehicle */
-    { name: 'Maintenance', value: 2850, color: '#5C1E1E', position: 'bottom' },    /* Oil, tires, etc. */
+    { name: 'Depreciation', value: 8500, color: '#1B5F8A', position: 'bottom' },
+    { name: 'Financing', value: 2800, color: '#3D8B8B', position: 'top' },
+    { name: 'Taxes & Fees', value: 1650, color: '#D4A84B', position: 'bottom' },
+    { name: 'Fuel', value: 7500, color: '#E67E22', position: 'top' },
+    { name: 'Insurance', value: 6200, color: '#C0392B', position: 'bottom' },
+    { name: 'Repairs', value: 1200, color: '#922B21', position: 'top' },
+    { name: 'Maintenance', value: 2850, color: '#5C1E1E', position: 'bottom' },
   ],
 }: CostToOwnProps) => {
   const [selectedTrim, setSelectedTrim] = useState(trims[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   // Calculate total for percentage widths
   const costTotal = costs.reduce((acc, cost) => acc + cost.value, 0);
@@ -138,18 +156,39 @@ const CostToOwn = ({
 
               {/* Top Labels */}
               <div className="cost-to-own__labels-top">
-                {costs.filter(c => c.position === 'top').map((cost) => (
-                  <div
-                    key={cost.name}
-                    className="cost-to-own__marker cost-to-own__marker--top"
-                    style={{ left: `${getSegmentPosition(costs.indexOf(cost))}%` }}
-                  >
-                    <span className="cost-to-own__marker-name">{cost.name}</span>
-                    <span className="cost-to-own__marker-value">{formatCurrency(cost.value)}</span>
-                    <div className="cost-to-own__marker-line"></div>
-                    <div className="cost-to-own__marker-dot"></div>
-                  </div>
-                ))}
+                {costs.filter(c => c.position === 'top').map((cost) => {
+                  const yearlyBreakdown = getYearlyBreakdown(cost.name, cost.value);
+                  return (
+                    <div
+                      key={cost.name}
+                      className="cost-to-own__marker cost-to-own__marker--top"
+                      style={{ left: `${getSegmentPosition(costs.indexOf(cost))}%` }}
+                      onMouseEnter={() => setActiveTooltip(cost.name)}
+                      onMouseLeave={() => setActiveTooltip(null)}
+                    >
+                      {activeTooltip === cost.name && (
+                        <div className="cost-to-own__tooltip cost-to-own__tooltip--top">
+                          <div className="cost-to-own__tooltip-header">
+                            <span className="cost-to-own__tooltip-title">{cost.name}</span>
+                            <span className="cost-to-own__tooltip-total">{formatCurrency(cost.value)}</span>
+                          </div>
+                          <div className="cost-to-own__tooltip-breakdown">
+                            {yearlyBreakdown.map((amount, idx) => (
+                              <div key={idx} className="cost-to-own__tooltip-row">
+                                <span className="cost-to-own__tooltip-year">Year {idx + 1}</span>
+                                <span className="cost-to-own__tooltip-amount">{formatCurrency(amount)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <span className="cost-to-own__marker-name">{cost.name}</span>
+                      <span className="cost-to-own__marker-value">{formatCurrency(cost.value)}</span>
+                      <div className="cost-to-own__marker-line"></div>
+                      <div className="cost-to-own__marker-dot"></div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Bar */}
@@ -168,18 +207,39 @@ const CostToOwn = ({
 
               {/* Bottom Labels */}
               <div className="cost-to-own__labels-bottom">
-                {costs.filter(c => c.position === 'bottom').map((cost) => (
-                  <div
-                    key={cost.name}
-                    className="cost-to-own__marker cost-to-own__marker--bottom"
-                    style={{ left: `${getSegmentPosition(costs.indexOf(cost))}%` }}
-                  >
-                    <div className="cost-to-own__marker-dot"></div>
-                    <div className="cost-to-own__marker-line"></div>
-                    <span className="cost-to-own__marker-name">{cost.name}</span>
-                    <span className="cost-to-own__marker-value">{formatCurrency(cost.value)}</span>
-                  </div>
-                ))}
+                {costs.filter(c => c.position === 'bottom').map((cost) => {
+                  const yearlyBreakdown = getYearlyBreakdown(cost.name, cost.value);
+                  return (
+                    <div
+                      key={cost.name}
+                      className="cost-to-own__marker cost-to-own__marker--bottom"
+                      style={{ left: `${getSegmentPosition(costs.indexOf(cost))}%` }}
+                      onMouseEnter={() => setActiveTooltip(cost.name)}
+                      onMouseLeave={() => setActiveTooltip(null)}
+                    >
+                      <div className="cost-to-own__marker-dot"></div>
+                      <div className="cost-to-own__marker-line"></div>
+                      <span className="cost-to-own__marker-name">{cost.name}</span>
+                      <span className="cost-to-own__marker-value">{formatCurrency(cost.value)}</span>
+                      {activeTooltip === cost.name && (
+                        <div className="cost-to-own__tooltip cost-to-own__tooltip--bottom">
+                          <div className="cost-to-own__tooltip-header">
+                            <span className="cost-to-own__tooltip-title">{cost.name}</span>
+                            <span className="cost-to-own__tooltip-total">{formatCurrency(cost.value)}</span>
+                          </div>
+                          <div className="cost-to-own__tooltip-breakdown">
+                            {yearlyBreakdown.map((amount, idx) => (
+                              <div key={idx} className="cost-to-own__tooltip-row">
+                                <span className="cost-to-own__tooltip-year">Year {idx + 1}</span>
+                                <span className="cost-to-own__tooltip-amount">{formatCurrency(amount)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
