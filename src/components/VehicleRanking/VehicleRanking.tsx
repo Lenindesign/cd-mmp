@@ -69,7 +69,7 @@ const VehicleRanking = ({
 }: VehicleRankingProps) => {
   return (
     <section className="vehicle-ranking">
-      <div className="container">
+      <div className="vehicle-ranking__card-wrapper">
         <div className="vehicle-ranking__header">
           <h2 className="vehicle-ranking__title">Where This Vehicle Ranks</h2>
           <a href="#" className="vehicle-ranking__category-link">

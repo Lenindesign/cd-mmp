@@ -146,6 +146,7 @@ function App() {
             <TargetPriceRange />
             <Incentives make="Chevrolet" model="Trax" />
             <BuyingPotential />
+            <VehicleRanking />
           </div>
           <AdSidebar />
         </div>
@@ -157,8 +158,6 @@ function App() {
           verdict={overviewData.verdict}
           year={vehicleData.year}
         />
-
-        <VehicleRanking />
         
         <section id="pricing">
           <TrimSelector 
