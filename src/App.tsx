@@ -11,6 +11,7 @@ import Overview from './components/Overview';
 import TrimSelector from './components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from './components/Warranty';
 import Comparison, { defaultCompetitors } from './components/Comparison';
+import VehicleRanking from './components/VehicleRanking';
 import Footer from './components/Footer';
 import ExitIntentModal from './components/ExitIntentModal';
 import './App.css';
@@ -156,6 +157,8 @@ function App() {
           verdict={overviewData.verdict}
           year={vehicleData.year}
         />
+
+        <VehicleRanking />
         
         <section id="pricing">
           <TrimSelector 

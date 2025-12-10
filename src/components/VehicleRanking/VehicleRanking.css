@@ -1,0 +1,145 @@
+/* Vehicle Ranking - Car and Driver Design System */
+.vehicle-ranking {
+  padding: var(--spacing-12) 0;
+  background: var(--color-white);
+}
+
+/* Header */
+.vehicle-ranking__header {
+  margin-bottom: var(--spacing-6);
+}
+
+.vehicle-ranking__title {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-2) 0;
+  line-height: 1.2;
+}
+
+.vehicle-ranking__category-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.vehicle-ranking__category-link:hover {
+  color: var(--color-black);
+}
+
+.vehicle-ranking__category-rank {
+  font-weight: var(--font-weight-bold);
+}
+
+.vehicle-ranking__category-name {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Grid */
+.vehicle-ranking__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-6);
+}
+
+@media (max-width: 900px) {
+  .vehicle-ranking__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .vehicle-ranking__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card */
+.vehicle-ranking__card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+
+.vehicle-ranking__card:hover {
+  transform: translateY(-2px);
+}
+
+.vehicle-ranking__card--current .vehicle-ranking__card-image {
+  border: 2px solid var(--color-black);
+}
+
+/* Card Image */
+.vehicle-ranking__card-image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--color-gray-100);
+}
+
+.vehicle-ranking__card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.vehicle-ranking__card:hover .vehicle-ranking__card-image img {
+  transform: scale(1.03);
+}
+
+/* Rank Badge */
+.vehicle-ranking__card-rank {
+  position: absolute;
+  top: var(--spacing-3);
+  left: var(--spacing-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  border-radius: 50%;
+  border: 3px solid var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+/* Card Info */
+.vehicle-ranking__card-info {
+  padding: var(--spacing-4) 0;
+  text-align: center;
+}
+
+.vehicle-ranking__card-name {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.vehicle-ranking__card-price {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+.vehicle-ranking__card-price-label {
+  text-transform: uppercase;
+  font-weight: var(--font-weight-medium);
+}
+
