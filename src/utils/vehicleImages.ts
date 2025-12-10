@@ -914,7 +914,14 @@ const vehicleImageMap: Record<string, string> = {
   '2025 cadillac ct-6': 'https://d2kde5ohu8qb21.cloudfront.net/files/65caa9930b94520008716341/2018-cadillac-ct6-with-super-cruise-22.jpg',
   'cadillac ct6': 'https://d2kde5ohu8qb21.cloudfront.net/files/65caa9930b94520008716341/2018-cadillac-ct6-with-super-cruise-22.jpg',
   'cadillac ct-6': 'https://d2kde5ohu8qb21.cloudfront.net/files/65caa9930b94520008716341/2018-cadillac-ct6-with-super-cruise-22.jpg',
-  'ct6': 'https://d2kde5ohu8qb21.cloudfront.net/files/65caa9930b94520008716341/2018-cadillac-ct6-with-super-cruise-22.jpg'
+  'ct6': 'https://d2kde5ohu8qb21.cloudfront.net/files/65caa9930b94520008716341/2018-cadillac-ct6-with-super-cruise-22.jpg',
+  
+  // Fiat
+  '2024 fiat 500e': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
+  '2024 fiat 500': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
+  'fiat 500e': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
+  'fiat 500': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
+  '500e': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg'
 };
 
 export const vehicleImageFor = (vehicleName: string): string => {
