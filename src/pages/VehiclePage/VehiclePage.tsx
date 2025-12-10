@@ -128,8 +128,15 @@ const VehiclePage = () => {
               year={parseInt(vehicle.year)}
               verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${vehicle.staffRating}/10, it delivers good value for its class.`}
             />
-            <CostToOwn vehicleName={`${vehicle.make} ${vehicle.model}`} />
-            <TargetPriceRange />
+            <CostToOwn 
+              vehicleName={`${vehicle.make} ${vehicle.model}`}
+              minPrice={vehicle.priceMin}
+              maxPrice={vehicle.priceMax}
+            />
+            <TargetPriceRange 
+              minPrice={vehicle.priceMin}
+              maxPrice={vehicle.priceMax}
+            />
             <Incentives make={vehicle.make} model={vehicle.model} />
             <BuyingPotential />
             <VehicleRanking 
