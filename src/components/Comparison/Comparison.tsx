@@ -1,4 +1,5 @@
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react';
 import './Comparison.css';
 
 interface CompetitorVehicle {
@@ -24,6 +25,34 @@ interface ComparisonProps {
 }
 
 const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehicles" }: ComparisonProps) => {
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScrollPosition = () => {
+    if (carouselRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const cardWidth = carouselRef.current.querySelector('.comparison__card')?.clientWidth || 400;
+      const gap = 20; // spacing between cards
+      const scrollAmount = cardWidth + gap;
+      
+      carouselRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+
+      // Check scroll position after animation
+      setTimeout(checkScrollPosition, 350);
+    }
+  };
+
   return (
     <section className="comparison">
       <div className="container">
@@ -34,72 +63,101 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
           </p>
         </div>
         
-        <div className="comparison__grid">
-          {competitors.map((vehicle) => (
-            <div key={vehicle.id} className="comparison__card">
-              {/* Card Header */}
-              <div className="comparison__card-top">
-                <h3 className="comparison__card-title">
-                  {vehicle.year} {vehicle.make} {vehicle.model}
-                </h3>
-                <div className="comparison__card-rating">
-                  <span className="comparison__card-rating-score">{vehicle.rating.toFixed(1)}</span>
-                  <span className="comparison__card-rating-max">/10</span>
-                  <span className="comparison__card-rating-label">C/D RATING</span>
-                </div>
-              </div>
+        <div className="comparison__carousel-wrapper">
+          {/* Left Arrow */}
+          <button 
+            className={`comparison__nav comparison__nav--left ${!canScrollLeft ? 'comparison__nav--disabled' : ''}`}
+            onClick={() => scroll('left')}
+            disabled={!canScrollLeft}
+            aria-label="Previous vehicles"
+          >
+            <ChevronLeft size={24} />
+          </button>
 
-              {/* Image */}
-              <div className="comparison__card-image">
-                <img 
-                  src={vehicle.image} 
-                  alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                />
-              </div>
-              
-              {/* Price Section */}
-              <div className="comparison__card-price-row">
-                <div className="comparison__card-price-info">
-                  <span className="comparison__card-price-label">Starting at</span>
-                  <div className="comparison__card-price-action">
-                    <span className="comparison__card-price-value">{vehicle.price}</span>
-                    <a href="#" className="comparison__card-shop-btn">Shop Now</a>
+          {/* Carousel */}
+          <div 
+            className="comparison__carousel" 
+            ref={carouselRef}
+            onScroll={checkScrollPosition}
+          >
+            {competitors.map((vehicle) => (
+              <div key={vehicle.id} className="comparison__card">
+                {/* Card Header */}
+                <div className="comparison__card-top">
+                  <h3 className="comparison__card-title">
+                    {vehicle.year} {vehicle.make} {vehicle.model}
+                  </h3>
+                  <div className="comparison__card-rating">
+                    <div className="comparison__card-rating-row">
+                      <span className="comparison__card-rating-score">{vehicle.rating.toFixed(1)}</span>
+                      <span className="comparison__card-rating-max">/10</span>
+                    </div>
+                    <span className="comparison__card-rating-label">C/D RATING</span>
                   </div>
                 </div>
-                {vehicle.hasEditorChoice && (
-                  <div className="comparison__card-badge">
-                    <span className="comparison__card-badge-icon">EC</span>
-                  </div>
-                )}
-              </div>
 
-              {/* MPG Section */}
-              <div className="comparison__card-mpg">
-                <span className="comparison__card-mpg-label">EPA MPG</span>
-                <div className="comparison__card-mpg-value">
-                  <span className="comparison__card-mpg-number">{vehicle.mpg}</span>
-                  <span className="comparison__card-mpg-unit">combined</span>
+                {/* Image */}
+                <div className="comparison__card-image">
+                  <img 
+                    src={vehicle.image} 
+                    alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                  />
                 </div>
+                
+                {/* Price Section */}
+                <div className="comparison__card-price-row">
+                  <div className="comparison__card-price-info">
+                    <span className="comparison__card-price-label">Starting at</span>
+                    <div className="comparison__card-price-action">
+                      <span className="comparison__card-price-value">{vehicle.price}</span>
+                      <a href="#" className="comparison__card-shop-btn">Shop Now</a>
+                    </div>
+                  </div>
+                  {vehicle.hasEditorChoice && (
+                    <div className="comparison__card-badge">
+                      <span className="comparison__card-badge-icon">EC</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* MPG Section */}
+                <div className="comparison__card-mpg">
+                  <span className="comparison__card-mpg-label">EPA MPG</span>
+                  <div className="comparison__card-mpg-value">
+                    <span className="comparison__card-mpg-number">{vehicle.mpg}</span>
+                    <span className="comparison__card-mpg-unit">combined</span>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="comparison__card-divider"></div>
+
+                {/* Review Section */}
+                <div className="comparison__card-review">
+                  <p className="comparison__card-review-text">
+                    <strong>C/D SAYS:</strong> {vehicle.review}
+                    <a href="#" className="comparison__card-review-link">Learn More</a>
+                  </p>
+                </div>
+
+                {/* Expand Section */}
+                <button className="comparison__card-expand">
+                  <span>EXPAND ALL MODEL YEARS</span>
+                  <ChevronDown size={16} />
+                </button>
               </div>
+            ))}
+          </div>
 
-              {/* Divider */}
-              <div className="comparison__card-divider"></div>
-
-              {/* Review Section */}
-              <div className="comparison__card-review">
-                <p className="comparison__card-review-text">
-                  <strong>C/D SAYS:</strong> {vehicle.review}
-                  <a href="#" className="comparison__card-review-link">Learn More</a>
-                </p>
-              </div>
-
-              {/* Expand Section */}
-              <button className="comparison__card-expand">
-                <span>EXPAND ALL MODEL YEARS</span>
-                <ChevronDown size={16} />
-              </button>
-            </div>
-          ))}
+          {/* Right Arrow */}
+          <button 
+            className={`comparison__nav comparison__nav--right ${!canScrollRight ? 'comparison__nav--disabled' : ''}`}
+            onClick={() => scroll('right')}
+            disabled={!canScrollRight}
+            aria-label="Next vehicles"
+          >
+            <ChevronRight size={24} />
+          </button>
         </div>
         
         <div className="comparison__cta">
