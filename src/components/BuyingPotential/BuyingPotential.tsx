@@ -10,6 +10,8 @@ const BuyingPotential = () => {
   const [includeTradeIn, setIncludeTradeIn] = useState(false);
   const [tradeInAmount, setTradeInAmount] = useState(0);
   const [buyingPower, setBuyingPower] = useState(0);
+  const [displayedPower, setDisplayedPower] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   
   const [vehicleTypeOpen, setVehicleTypeOpen] = useState(false);
   const [creditScoreOpen, setCreditScoreOpen] = useState(false);
@@ -44,6 +46,36 @@ const BuyingPotential = () => {
     
     setBuyingPower(Math.round(totalBuyingPower));
   }, [monthlyPayment, downPayment, creditScore, includeTradeIn, tradeInAmount]);
+
+  // Animate the displayed buying power when it changes
+  useEffect(() => {
+    if (buyingPower === displayedPower) return;
+    
+    setIsAnimating(true);
+    const startValue = displayedPower;
+    const endValue = buyingPower;
+    const duration = 500; // Animation duration in ms
+    const startTime = performance.now();
+    
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function (ease-out)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      
+      const currentValue = Math.round(startValue + (endValue - startValue) * easeOut);
+      setDisplayedPower(currentValue);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setIsAnimating(false);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [buyingPower]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -86,7 +118,9 @@ const BuyingPotential = () => {
           <div className="buying-potential__right">
             {/* Buying Power Display */}
             <div className="buying-potential__power">
-              <span className="buying-potential__power-amount">{formatCurrency(buyingPower)}</span>
+              <span className={`buying-potential__power-amount ${isAnimating ? 'buying-potential__power-amount--animating' : ''}`}>
+                {formatCurrency(displayedPower)}
+              </span>
               <span className="buying-potential__power-label">Est. buying power</span>
               <span className="buying-potential__power-apr">Based on {getAPR()}% APR</span>
             </div>
