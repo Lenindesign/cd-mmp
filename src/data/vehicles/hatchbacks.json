@@ -324,33 +324,6 @@
     "slug": "2024/Peugeot/208"
   },
   {
-    "id": "78",
-    "year": "2024",
-    "make": "Renault",
-    "model": "Clio",
-    "bodyStyle": "Hatchback",
-    "imageSource": "2024 Renault Clio",
-    "image": null,
-    "priceRange": "$20,900 - $26,500",
-    "priceMin": 20900,
-    "priceMax": 26500,
-    "staffRating": 8.1,
-    "communityRating": 7.9,
-    "reviewCount": 112,
-    "fuelType": "Hybrid",
-    "drivetrain": "FWD",
-    "transmission": "Automatic",
-    "mpg": "52/48",
-    "horsepower": 140,
-    "seatingCapacity": 5,
-    "features": [
-      "E-Tech Hybrid",
-      "Bose Audio",
-      "Easy Park Assist"
-    ],
-    "slug": "2024/Renault/Clio"
-  },
-  {
     "id": "79",
     "year": "2024",
     "make": "Seat",
