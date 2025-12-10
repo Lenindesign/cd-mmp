@@ -50,19 +50,25 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--color-black);
+  padding: 10px 16px;
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: 8px;
   background: var(--color-white);
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
+.hero__year-selector svg {
+  color: var(--color-blue-cobalt);
+}
+
 .hero__year-selector:hover {
-  background: var(--color-gray-100);
+  background: var(--color-gray-50);
+  border-color: var(--color-blue-dark);
 }
 
 /* Favorites Button */
