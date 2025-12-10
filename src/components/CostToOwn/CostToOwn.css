@@ -34,6 +34,8 @@
 }
 
 .cost-to-own__title {
+  display: flex;
+  flex-direction: column;
   font-family: var(--font-heading);
   font-size: 36px;
   font-weight: var(--font-weight-bold);
@@ -43,6 +45,14 @@
   margin: 0;
   padding-bottom: var(--spacing-3);
   position: relative;
+}
+
+.cost-to-own__title-vehicle {
+  display: block;
+}
+
+.cost-to-own__title-label {
+  display: block;
 }
 
 .cost-to-own__title::after {

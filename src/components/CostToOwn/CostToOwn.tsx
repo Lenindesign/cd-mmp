@@ -81,9 +81,9 @@ const CostToOwn = ({
             <div className="cost-to-own__header">
               <div className="cost-to-own__title-group">
                 <h2 className="cost-to-own__title">
-                  {vehicleName} 5-Year Cost to Own
+                  <span className="cost-to-own__title-vehicle">{vehicleName}</span>
+                  <span className="cost-to-own__title-label">5-Year Cost to Own<sup className="cost-to-own__trademark">®</sup></span>
                 </h2>
-                <sup className="cost-to-own__trademark">®</sup>
                 <button className="cost-to-own__info" aria-label="More info">
                   <Info size={14} />
                 </button>
