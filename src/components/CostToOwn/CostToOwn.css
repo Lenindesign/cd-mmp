@@ -398,7 +398,14 @@
 
 .cost-to-own__segment {
   height: 100%;
-  transition: width var(--transition-normal);
+  transition: width var(--transition-normal), filter var(--transition-fast), transform var(--transition-fast);
+  cursor: pointer;
+}
+
+.cost-to-own__segment:hover,
+.cost-to-own__segment--active {
+  filter: brightness(1.15);
+  transform: scaleY(1.1);
 }
 
 /* Footer */

@@ -256,11 +256,13 @@ const CostToOwn = ({
                 {costs.map((cost) => (
                   <div
                     key={cost.name}
-                    className="cost-to-own__segment"
+                    className={`cost-to-own__segment ${activeTooltip === cost.name ? 'cost-to-own__segment--active' : ''}`}
                     style={{
                       width: `${(cost.value / costTotal) * 100}%`,
                       backgroundColor: cost.color,
                     }}
+                    onMouseEnter={() => setActiveTooltip(cost.name)}
+                    onMouseLeave={() => setActiveTooltip(null)}
                   />
                 ))}
               </div>
