@@ -117,13 +117,13 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: var(--color-white);
-  color: var(--color-blue-cobalt);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
   font-family: var(--font-heading);
   font-size: 20px;
   font-weight: var(--font-weight-bold);
   border-radius: 50%;
-  border: 2px solid var(--color-blue-cobalt);
+  border: 2px solid var(--color-white);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
