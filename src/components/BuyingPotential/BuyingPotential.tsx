@@ -75,7 +75,7 @@ const BuyingPotential = () => {
 
             <div className="buying-potential__image">
               <img 
-                src="https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg" 
+                src="https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png" 
                 alt="2025 Chevrolet Trax"
               />
             </div>
