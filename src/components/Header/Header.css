@@ -105,6 +105,7 @@
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .header__subscribe-btn {
