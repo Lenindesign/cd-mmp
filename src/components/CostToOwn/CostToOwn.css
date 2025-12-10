@@ -1,6 +1,8 @@
 /* Cost to Own - Using Car and Driver Design System */
 .cost-to-own {
   background: var(--color-white);
+  position: relative;
+  z-index: 10;
 }
 
 .cost-to-own__card {
@@ -239,6 +241,12 @@
   flex-direction: column;
   align-items: center;
   transform: translateX(-50%);
+  z-index: 1;
+  cursor: pointer;
+}
+
+.cost-to-own__marker:hover {
+  z-index: 9999;
 }
 
 .cost-to-own__marker--top {
@@ -319,7 +327,7 @@
   border-radius: var(--border-radius-md);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   padding: var(--spacing-3);
-  z-index: 100;
+  z-index: 9999;
   pointer-events: none;
 }
 
