@@ -9,7 +9,6 @@ import TargetPriceRange from '../../components/TargetPriceRange';
 import Incentives from '../../components/Incentives';
 import BuyingPotential from '../../components/BuyingPotential';
 import AdSidebar from '../../components/AdSidebar';
-import Overview from '../../components/Overview';
 import TrimSelector from '../../components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from '../../components/Warranty';
 import Comparison from '../../components/Comparison';
@@ -63,28 +62,6 @@ const VehiclePage = () => {
     cargoSpace: vehicle.cargoSpace,
     fuelType: vehicle.fuelType,
     drivetrain: vehicle.drivetrain,
-  };
-
-  // Generate dynamic overview data based on vehicle
-  const overviewData = {
-    pros: vehicle.features?.slice(0, 5).map(f => f) || [
-      'Competitive pricing',
-      'Modern features',
-      'Good fuel economy',
-      'Reliable performance',
-      'Spacious interior',
-    ],
-    cons: [
-      'Limited availability in some regions',
-      'Base model lacks some features',
-      'Competition is strong in this segment',
-    ],
-    whatsNew: [
-      `New styling updates for ${vehicle.year}`,
-      'Enhanced safety features',
-      'Updated infotainment system',
-    ],
-    verdict: `The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${vehicle.staffRating}/10, it delivers good value for its class.`,
   };
 
   // Generate dynamic trim data
@@ -168,14 +145,6 @@ const VehiclePage = () => {
           </div>
           <AdSidebar />
         </div>
-        
-        <Overview 
-          pros={overviewData.pros}
-          cons={overviewData.cons}
-          whatsNew={overviewData.whatsNew}
-          verdict={overviewData.verdict}
-          year={parseInt(vehicle.year)}
-        />
         
         <section id="pricing">
           <TrimSelector 
