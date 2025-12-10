@@ -109,6 +109,26 @@
   color: var(--color-black);
 }
 
+/* MSRP Display */
+.cost-to-own__msrp {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.cost-to-own__msrp-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.cost-to-own__msrp-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
 .cost-to-own__select-wrapper {
   position: relative;
 }

@@ -148,7 +148,11 @@ const HomePage = () => {
           <div className="content-main">
             <QuickSpecs />
             <VehicleOverview />
-            <CostToOwn vehicleName="Chevrolet Trax" />
+            <CostToOwn 
+              vehicleName="Chevrolet Trax"
+              msrp={traxFromDB?.priceMin || 21895}
+              fuelType={traxFromDB?.fuelType || 'Gas'}
+            />
             <TargetPriceRange />
             <Incentives make="Chevrolet" model="Trax" />
             <BuyingPotential />

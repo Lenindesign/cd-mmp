@@ -9,76 +9,87 @@ interface CostCategory {
   position: 'top' | 'bottom';
 }
 
-interface TrimCostData {
+interface TrimData {
+  name: string;
   msrp: number;
-  depreciation: number;
-  financing: number;
-  taxesFees: number;
-  fuel: number;
-  insurance: number;
-  repairs: number;
-  maintenance: number;
 }
 
 interface CostToOwnProps {
   vehicleName?: string;
+  msrp?: number;
+  fuelType?: string;
+  trims?: TrimData[];
 }
 
-// Cost data by trim level (based on MSRP differences)
-const trimCostData: Record<string, TrimCostData> = {
-  'LS FWD': {
-    msrp: 21895,
-    depreciation: 8100,
-    financing: 2650,
-    taxesFees: 1535,
-    fuel: 7500,
-    insurance: 6000,
-    repairs: 1150,
-    maintenance: 2750,
-  },
-  '1RS FWD': {
-    msrp: 23195,
-    depreciation: 8580,
-    financing: 2800,
-    taxesFees: 1625,
-    fuel: 7500,
-    insurance: 6150,
-    repairs: 1180,
-    maintenance: 2800,
-  },
-  'LT FWD': {
-    msrp: 23395,
-    depreciation: 8650,
-    financing: 2830,
-    taxesFees: 1640,
-    fuel: 7500,
-    insurance: 6200,
-    repairs: 1200,
-    maintenance: 2850,
-  },
-  'RS FWD': {
-    msrp: 24995,
-    depreciation: 9240,
-    financing: 3020,
-    taxesFees: 1750,
-    fuel: 7650,
-    insurance: 6450,
-    repairs: 1250,
-    maintenance: 2950,
-  },
-  'ACTIV FWD': {
-    msrp: 24995,
-    depreciation: 9240,
-    financing: 3020,
-    taxesFees: 1750,
-    fuel: 7650,
-    insurance: 6400,
-    repairs: 1240,
-    maintenance: 2920,
-  },
-};
+// Default trims for Chevrolet Trax
+const defaultTrims: TrimData[] = [
+  { name: 'LS FWD', msrp: 21895 },
+  { name: '1RS FWD', msrp: 23195 },
+  { name: 'LT FWD', msrp: 23395 },
+  { name: 'RS FWD', msrp: 24995 },
+  { name: 'ACTIV FWD', msrp: 24995 },
+];
 
-const trims = ['LS FWD', '1RS FWD', 'LT FWD', 'RS FWD', 'ACTIV FWD'];
+// Calculate 5-year ownership costs based on MSRP
+const calculateCosts = (msrp: number, fuelType: string = 'Gas') => {
+  // Depreciation: Higher for luxury/expensive vehicles (40-50% of MSRP over 5 years)
+  const depreciationRate = msrp > 100000 ? 0.55 : msrp > 50000 ? 0.45 : 0.37;
+  const depreciation = Math.round(msrp * depreciationRate);
+  
+  // Financing: Based on 60-month loan at ~6% APR
+  const financing = Math.round(msrp * 0.15);
+  
+  // Taxes & Fees: Higher for expensive vehicles
+  const taxesFees = Math.round(msrp * 0.07);
+  
+  // Fuel costs: Based on price tier and fuel type
+  let fuel = 7500; // Default for economy vehicles
+  if (fuelType === 'Electric') {
+    fuel = Math.round(msrp > 100000 ? 4500 : 3500);
+  } else if (fuelType === 'Hybrid') {
+    fuel = Math.round(msrp > 50000 ? 5500 : 4500);
+  } else {
+    // Gas vehicles - performance cars use more fuel
+    if (msrp > 200000) fuel = 18000;
+    else if (msrp > 100000) fuel = 14000;
+    else if (msrp > 50000) fuel = 10000;
+    else fuel = 7500;
+  }
+  
+  // Insurance: Significantly higher for expensive/performance vehicles
+  let insurance = 6000; // Default
+  if (msrp > 400000) insurance = 45000;
+  else if (msrp > 200000) insurance = 28000;
+  else if (msrp > 100000) insurance = 18000;
+  else if (msrp > 50000) insurance = 12000;
+  else insurance = 6000;
+  
+  // Repairs: Higher for luxury/exotic vehicles
+  let repairs = 1150; // Default
+  if (msrp > 400000) repairs = 25000;
+  else if (msrp > 200000) repairs = 15000;
+  else if (msrp > 100000) repairs = 8000;
+  else if (msrp > 50000) repairs = 4000;
+  else repairs = 1150;
+  
+  // Maintenance: Higher for luxury/exotic vehicles
+  let maintenance = 2750; // Default
+  if (msrp > 400000) maintenance = 20000;
+  else if (msrp > 200000) maintenance = 12000;
+  else if (msrp > 100000) maintenance = 7000;
+  else if (msrp > 50000) maintenance = 4500;
+  else maintenance = 2750;
+  
+  return {
+    depreciation,
+    financing,
+    taxesFees,
+    fuel,
+    insurance,
+    repairs,
+    maintenance,
+  };
+};
 
 // Year-by-year breakdown multipliers for realistic cost distribution
 const getYearlyBreakdown = (costName: string, totalValue: number): number[] => {
@@ -96,32 +107,84 @@ const getYearlyBreakdown = (costName: string, totalValue: number): number[] => {
   return pattern.map(multiplier => Math.round(totalValue * multiplier));
 };
 
+// Determine rating thresholds based on MSRP
+const getRating = (totalCost: number, msrp: number) => {
+  // Cost-to-MSRP ratio helps determine if costs are reasonable for the vehicle class
+  const costRatio = totalCost / msrp;
+  
+  if (costRatio < 1.0) return 'Below Average';
+  if (costRatio < 1.3) return 'Average';
+  return 'Above Average';
+};
+
+// Generate trims based on base MSRP for vehicles without specific trim data
+const generateTrimsFromMSRP = (baseMsrp: number, _vehicleName: string): TrimData[] => {
+  // For economy vehicles (under $35k), use standard trim structure
+  if (baseMsrp < 35000) {
+    return [
+      { name: 'Base', msrp: baseMsrp },
+      { name: 'Sport', msrp: Math.round(baseMsrp * 1.08) },
+      { name: 'Premium', msrp: Math.round(baseMsrp * 1.15) },
+    ];
+  }
+  // For mid-range vehicles ($35k-$80k)
+  if (baseMsrp < 80000) {
+    return [
+      { name: 'Base', msrp: baseMsrp },
+      { name: 'Sport', msrp: Math.round(baseMsrp * 1.10) },
+      { name: 'Premium', msrp: Math.round(baseMsrp * 1.18) },
+      { name: 'Performance', msrp: Math.round(baseMsrp * 1.25) },
+    ];
+  }
+  // For luxury/exotic vehicles ($80k+)
+  return [
+    { name: 'Base', msrp: baseMsrp },
+    { name: 'Performance', msrp: Math.round(baseMsrp * 1.15) },
+    { name: 'Track', msrp: Math.round(baseMsrp * 1.30) },
+  ];
+};
+
 const CostToOwn = ({
   vehicleName = 'Chevrolet Trax',
+  msrp = 21895,
+  fuelType = 'Gas',
+  trims,
 }: CostToOwnProps) => {
-  const [selectedTrim, setSelectedTrim] = useState(trims[0]);
+  // Determine which trims to use
+  const availableTrims = useMemo(() => {
+    if (trims && trims.length > 0) return trims;
+    // Use default trims for Chevrolet Trax
+    if (vehicleName === 'Chevrolet Trax') return defaultTrims;
+    // Generate trims for other vehicles
+    return generateTrimsFromMSRP(msrp, vehicleName);
+  }, [trims, vehicleName, msrp]);
+
+  const [selectedTrimIndex, setSelectedTrimIndex] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  // Get costs for selected trim
-  const trimData = trimCostData[selectedTrim];
+  const selectedTrim = availableTrims[selectedTrimIndex];
+  const currentMsrp = selectedTrim.msrp;
+
+  // Calculate costs based on selected trim's MSRP
+  const calculatedCosts = useMemo(() => calculateCosts(currentMsrp, fuelType), [currentMsrp, fuelType]);
   
   const costs: CostCategory[] = useMemo(() => [
-    { name: 'Depreciation', value: trimData.depreciation, color: '#1B5F8A', position: 'bottom' },
-    { name: 'Financing', value: trimData.financing, color: '#3D8B8B', position: 'top' },
-    { name: 'Taxes & Fees', value: trimData.taxesFees, color: '#D4A84B', position: 'bottom' },
-    { name: 'Fuel', value: trimData.fuel, color: '#E67E22', position: 'top' },
-    { name: 'Insurance', value: trimData.insurance, color: '#C0392B', position: 'bottom' },
-    { name: 'Repairs', value: trimData.repairs, color: '#922B21', position: 'top' },
-    { name: 'Maintenance', value: trimData.maintenance, color: '#5C1E1E', position: 'bottom' },
-  ], [trimData]);
+    { name: 'Depreciation', value: calculatedCosts.depreciation, color: '#1B5F8A', position: 'bottom' },
+    { name: 'Financing', value: calculatedCosts.financing, color: '#3D8B8B', position: 'top' },
+    { name: 'Taxes & Fees', value: calculatedCosts.taxesFees, color: '#D4A84B', position: 'bottom' },
+    { name: 'Fuel', value: calculatedCosts.fuel, color: '#E67E22', position: 'top' },
+    { name: 'Insurance', value: calculatedCosts.insurance, color: '#C0392B', position: 'bottom' },
+    { name: 'Repairs', value: calculatedCosts.repairs, color: '#922B21', position: 'top' },
+    { name: 'Maintenance', value: calculatedCosts.maintenance, color: '#5C1E1E', position: 'bottom' },
+  ], [calculatedCosts]);
 
   // Calculate totals
   const totalCost = costs.reduce((acc, cost) => acc + cost.value, 0);
   const costTotal = totalCost;
   
-  // Determine rating based on total cost
-  const rating = totalCost < 30000 ? 'Below Average' : totalCost < 32000 ? 'Average' : 'Above Average';
+  // Determine rating based on total cost relative to MSRP
+  const rating = getRating(totalCost, currentMsrp);
 
   // Format currency
   const formatCurrency = (value: number) => {
@@ -175,21 +238,21 @@ const CostToOwn = ({
                     className="cost-to-own__select"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    {selectedTrim}
+                    {selectedTrim.name}
                     <ChevronDown size={16} />
                   </button>
                   {isDropdownOpen && (
                     <ul className="cost-to-own__options">
-                      {trims.map((trim) => (
-                        <li key={trim}>
+                      {availableTrims.map((trim, index) => (
+                        <li key={trim.name}>
                           <button
-                            className={`cost-to-own__option ${selectedTrim === trim ? 'active' : ''}`}
+                            className={`cost-to-own__option ${selectedTrimIndex === index ? 'active' : ''}`}
                             onClick={() => {
-                              setSelectedTrim(trim);
+                              setSelectedTrimIndex(index);
                               setIsDropdownOpen(false);
                             }}
                           >
-                            {trim}
+                            {trim.name}
                           </button>
                         </li>
                       ))}
