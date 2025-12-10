@@ -131,7 +131,10 @@ const BuyingPotential = () => {
                       <img src={vehicle.image} alt={vehicle.name} className="buying-potential__match-image" />
                       <div className="buying-potential__match-info">
                         <span className="buying-potential__match-name">{vehicle.name}</span>
-                        <span className="buying-potential__match-trim">{vehicle.trim}</span>
+                        <span className="buying-potential__match-trim">
+                          {vehicle.trim}
+                          <span className="buying-potential__match-rating">{vehicle.rating}/10</span>
+                        </span>
                         <span className="buying-potential__match-price">{formatCurrency(vehicle.price)}</span>
                       </div>
                       <CheckCircle size={18} className="buying-potential__match-check" />

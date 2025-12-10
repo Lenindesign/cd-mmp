@@ -144,6 +144,7 @@ export interface BuyingPotentialVehicle {
   price: number;
   image: string;
   trim: string;
+  rating: number;
 }
 
 export const formatForBuyingPotential = (vehicle: Vehicle): BuyingPotentialVehicle => ({
@@ -151,6 +152,7 @@ export const formatForBuyingPotential = (vehicle: Vehicle): BuyingPotentialVehic
   price: vehicle.priceMin,
   image: vehicle.image,
   trim: vehicle.trim || vehicle.drivetrain || '',
+  rating: vehicle.staffRating,
 });
 
 // Get vehicles formatted for BuyingPotential

@@ -212,9 +212,24 @@
 }
 
 .buying-potential__match-trim {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
   color: var(--color-gray-500);
+}
+
+.buying-potential__match-rating {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-600);
 }
 
 .buying-potential__match-price {
