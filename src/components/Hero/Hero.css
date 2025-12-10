@@ -339,6 +339,7 @@
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.05em;
   border: none;
+  border-radius: 0.25rem;
   cursor: pointer;
   transition: background-color var(--transition-fast);
 }
