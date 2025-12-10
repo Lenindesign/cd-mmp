@@ -455,7 +455,7 @@
 
 .target-price__info-value {
   font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
+  font-size: 36px;
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
 }
