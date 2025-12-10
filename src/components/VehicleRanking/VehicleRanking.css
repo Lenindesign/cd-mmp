@@ -105,7 +105,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-normal);
 }
 
 /* Rank Badge - Default (non-current vehicles) */
@@ -170,48 +169,6 @@
 }
 
 .vehicle-ranking__card-badge--most-popular {
-  background: var(--color-black);
-  color: var(--color-white);
-}
-
-/* Hover Overlay */
-.vehicle-ranking__card-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-overlay {
-  opacity: 1;
-}
-
-.vehicle-ranking__card-overlay-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: 12px 24px;
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  font-family: var(--font-heading);
-  font-size: 14px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: var(--border-radius-md);
-  transition: all var(--transition-fast);
-  transform: translateY(10px);
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-overlay-btn {
-  transform: translateY(0);
-}
-
-.vehicle-ranking__card-overlay-btn:hover {
   background: var(--color-black);
   color: var(--color-white);
 }
@@ -303,10 +260,6 @@
 /* Enhanced hover state for entire card */
 .vehicle-ranking__card:hover {
   transform: translateY(-4px);
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-image img {
-  transform: scale(1.08);
 }
 
 .vehicle-ranking__card:hover .vehicle-ranking__card-name {

@@ -1,4 +1,4 @@
-import { ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import './VehicleRanking.css';
 
 interface RankedVehicle {
@@ -126,14 +126,6 @@ const VehicleRanking = ({
                 )}
                 
                 <img src={vehicle.image} alt={vehicle.name} />
-                
-                {/* Hover Overlay */}
-                <div className="vehicle-ranking__card-overlay">
-                  <span className="vehicle-ranking__card-overlay-btn">
-                    View Details
-                    <ArrowRight size={16} />
-                  </span>
-                </div>
               </div>
               
               <div className="vehicle-ranking__card-info">
