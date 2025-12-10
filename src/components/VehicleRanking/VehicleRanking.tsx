@@ -61,8 +61,8 @@ const VehicleRanking = ({
               className={`vehicle-ranking__card ${vehicle.isCurrentVehicle ? 'vehicle-ranking__card--current' : ''}`}
             >
               <div className="vehicle-ranking__card-image">
-                {/* Rank Badge */}
-                <span className={`vehicle-ranking__card-rank ${vehicle.rank === 1 ? 'vehicle-ranking__card-rank--first' : ''}`}>
+                {/* Rank Badge - Blue for current vehicle, white for others */}
+                <span className={`vehicle-ranking__card-rank ${vehicle.isCurrentVehicle ? 'vehicle-ranking__card-rank--current' : ''}`}>
                   {vehicle.rank}
                 </span>
                 
