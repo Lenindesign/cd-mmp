@@ -28,10 +28,10 @@ const BuyingPotential = () => {
   ];
   const loanTerms = [36, 48, 60, 72, 84];
 
-  // Get vehicle matches from database based on buying power
+  // Get vehicle matches from database based on buying power (filtered to SUVs only)
   const vehicleMatches = useMemo<BuyingPotentialVehicle[]>(() => {
     if (buyingPower <= 0) return [];
-    return getBuyingPotentialVehicles(buyingPower, 20);
+    return getBuyingPotentialVehicles(buyingPower, 20, 'SUV');
   }, [buyingPower]);
 
   // Get APR based on credit score

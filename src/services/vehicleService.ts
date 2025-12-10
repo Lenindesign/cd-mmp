@@ -154,8 +154,8 @@ export const formatForBuyingPotential = (vehicle: Vehicle): BuyingPotentialVehic
 });
 
 // Get vehicles formatted for BuyingPotential
-export const getBuyingPotentialVehicles = (budget: number, limit: number = 15): BuyingPotentialVehicle[] => {
-  return getVehiclesInBudget(budget)
+export const getBuyingPotentialVehicles = (budget: number, limit: number = 15, bodyStyle?: string): BuyingPotentialVehicle[] => {
+  return getVehiclesInBudget(budget, bodyStyle)
     .slice(0, limit)
     .map(formatForBuyingPotential);
 };
