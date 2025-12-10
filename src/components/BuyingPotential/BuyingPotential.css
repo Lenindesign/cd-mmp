@@ -1,0 +1,362 @@
+/* Buying Potential - Car and Driver Design System */
+.buying-potential {
+  background: var(--color-white);
+}
+
+.buying-potential__card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-8);
+  background: #F5F5F5;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .buying-potential__card {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left Side */
+.buying-potential__left {
+  padding: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.buying-potential__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-1) var(--spacing-3);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--border-radius-sm);
+  width: fit-content;
+  margin-bottom: var(--spacing-4);
+}
+
+.buying-potential__header {
+  margin-bottom: var(--spacing-6);
+}
+
+.buying-potential__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-3) 0;
+  line-height: 1.2;
+}
+
+.buying-potential__info-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--transition-fast);
+}
+
+.buying-potential__info-btn:hover {
+  color: var(--color-black);
+}
+
+.buying-potential__description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.buying-potential__image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.buying-potential__image img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+/* Right Side */
+.buying-potential__right {
+  padding: var(--spacing-6);
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Buying Power Display */
+.buying-potential__power {
+  margin-bottom: var(--spacing-6);
+}
+
+.buying-potential__power-amount {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 56px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  line-height: 1;
+  margin-bottom: var(--spacing-1);
+}
+
+.buying-potential__power-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-1);
+}
+
+.buying-potential__power-apr {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+/* Form */
+.buying-potential__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
+
+.buying-potential__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+}
+
+@media (max-width: 600px) {
+  .buying-potential__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.buying-potential__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.buying-potential__label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-black);
+}
+
+/* Select Dropdown */
+.buying-potential__select-wrapper {
+  position: relative;
+}
+
+.buying-potential__select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-black);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.buying-potential__select:hover {
+  border-color: var(--color-gray-400);
+}
+
+.buying-potential__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  list-style: none;
+  padding: var(--spacing-1) 0;
+  margin: var(--spacing-1) 0 0 0;
+}
+
+.buying-potential__option {
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-4);
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-black);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.buying-potential__option:hover,
+.buying-potential__option.active {
+  background: var(--color-gray-100);
+}
+
+/* Input */
+.buying-potential__input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  transition: border-color var(--transition-fast);
+}
+
+.buying-potential__input-wrapper:focus-within {
+  border-color: var(--color-blue-cobalt);
+}
+
+.buying-potential__input-prefix {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-500);
+  margin-right: var(--spacing-1);
+}
+
+.buying-potential__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-black);
+  background: transparent;
+}
+
+.buying-potential__input::-webkit-outer-spin-button,
+.buying-potential__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.buying-potential__input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Toggle */
+.buying-potential__toggle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-2);
+}
+
+.buying-potential__toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+}
+
+.buying-potential__toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.buying-potential__toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-gray-300);
+  transition: var(--transition-fast);
+  border-radius: 28px;
+}
+
+.buying-potential__toggle-slider::before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--color-white);
+  transition: var(--transition-fast);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.buying-potential__toggle input:checked + .buying-potential__toggle-slider {
+  background-color: var(--color-blue-cobalt);
+}
+
+.buying-potential__toggle input:checked + .buying-potential__toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.buying-potential__toggle-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+}
+
+/* CTA Button */
+.buying-potential__cta {
+  width: 100%;
+  padding: var(--spacing-4) var(--spacing-6);
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: auto;
+}
+
+.buying-potential__cta:hover {
+  background: var(--color-gray-800);
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .buying-potential__title {
+    font-size: 28px;
+  }
+  
+  .buying-potential__power-amount {
+    font-size: 42px;
+  }
+}
+

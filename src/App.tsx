@@ -5,6 +5,7 @@ import QuickSpecs from './components/QuickSpecs';
 import CostToOwn from './components/CostToOwn';
 import TargetPriceRange from './components/TargetPriceRange';
 import Incentives from './components/Incentives';
+import BuyingPotential from './components/BuyingPotential';
 import AdSidebar from './components/AdSidebar';
 import Overview from './components/Overview';
 import TrimSelector from './components/TrimSelector';
@@ -143,6 +144,7 @@ function App() {
             <CostToOwn vehicleName="Chevrolet Trax" />
             <TargetPriceRange />
             <Incentives make="Chevrolet" model="Trax" />
+            <BuyingPotential />
           </div>
           <AdSidebar />
         </div>
