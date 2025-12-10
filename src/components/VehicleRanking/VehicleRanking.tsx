@@ -51,7 +51,7 @@ const defaultVehicles: RankedVehicle[] = [
     rank: 5,
     name: 'Buick Envista',
     price: '$25,195',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/2024-buick-envista-avenir-102-6543653d18584.jpg?crop=0.651xw:0.732xh;0.180xw,0.166xh&resize=768:*',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6866dcfac8f85a0002812ef5/001-2026-buick-envista-front-view.jpg',
   },
   {
     id: '6',
