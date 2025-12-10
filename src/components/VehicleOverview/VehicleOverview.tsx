@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown, Sparkles } from 'lucide-react';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import './VehicleOverview.css';
 
 interface VehicleOverviewProps {
@@ -99,10 +99,9 @@ const VehicleOverview = ({
 
         {/* What's New */}
         <div className="vehicle-overview__whats-new">
-          <div className="vehicle-overview__whats-new-header">
-            <Sparkles size={18} />
-            <span>What's New for {year}?</span>
-          </div>
+          <h3 className="vehicle-overview__whats-new-header">
+            What's New for {year}?
+          </h3>
           <ul className="vehicle-overview__whats-new-list">
             {whatsNew.map((item, index) => (
               <li key={index} className="vehicle-overview__whats-new-item">
