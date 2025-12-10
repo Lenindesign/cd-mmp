@@ -12,6 +12,7 @@ import TrimSelector from './components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from './components/Warranty';
 import Comparison, { defaultCompetitors } from './components/Comparison';
 import VehicleRanking from './components/VehicleRanking';
+import MarketSpeed from './components/MarketSpeed';
 import Footer from './components/Footer';
 import ExitIntentModal from './components/ExitIntentModal';
 import './App.css';
@@ -147,6 +148,7 @@ function App() {
             <Incentives make="Chevrolet" model="Trax" />
             <BuyingPotential />
             <VehicleRanking />
+            <MarketSpeed vehicleName="2025 Chevrolet Trax" make="Chevrolet" model="Trax" />
           </div>
           <AdSidebar />
         </div>
