@@ -127,7 +127,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     price: '$24,590',
     mpg: '29',
     rating: 7.5,
-    image: 'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=400&h=250&fit=crop&auto=format',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/668c500afc8dbb0009e48f26/005-2025-kia-seltos-1-6l-turbo-front-view-motion.jpg',
   },
 ];
 
