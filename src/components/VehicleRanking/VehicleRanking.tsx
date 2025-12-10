@@ -30,7 +30,7 @@ const defaultVehicles: RankedVehicle[] = [
     rank: 2,
     name: 'Mazda CX-30',
     price: '$26,690',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/2025-mazda-cx-30-101-6705d1a4e617b.jpg?crop=0.679xw:0.764xh;0.142xw,0.137xh&resize=768:*',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67787d391248840008bc9cf3/1-2025-mazda-cx-30-turbo-front-view.jpg',
   },
   {
     id: '3',
