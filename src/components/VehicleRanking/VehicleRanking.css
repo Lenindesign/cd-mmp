@@ -157,8 +157,16 @@
 }
 
 .vehicle-ranking__card-badge--editors-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--color-blue-cobalt);
   color: var(--color-white);
+}
+
+.vehicle-ranking__card-badge-icon {
+  display: block;
+  flex-shrink: 0;
 }
 
 .vehicle-ranking__card-badge--most-popular {
