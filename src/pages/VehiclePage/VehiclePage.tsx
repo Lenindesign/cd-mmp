@@ -1,20 +1,35 @@
 import { useParams, Link } from 'react-router-dom';
-import { useMemo } from 'react';
-import { ArrowLeft, Star, Fuel, Gauge, Users, Package, Settings } from 'lucide-react';
-import { getVehicleBySlug, getSimilarVehicles } from '../../services/vehicleService';
+import { useMemo, useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
+import { getVehicleBySlug } from '../../services/vehicleService';
+import Hero from '../../components/Hero';
+import QuickSpecs from '../../components/QuickSpecs';
+import CostToOwn from '../../components/CostToOwn';
+import TargetPriceRange from '../../components/TargetPriceRange';
+import Incentives from '../../components/Incentives';
+import BuyingPotential from '../../components/BuyingPotential';
+import AdSidebar from '../../components/AdSidebar';
+import Overview from '../../components/Overview';
+import TrimSelector from '../../components/TrimSelector';
+import Warranty, { defaultWarrantyItems } from '../../components/Warranty';
+import Comparison from '../../components/Comparison';
+import VehicleRanking from '../../components/VehicleRanking';
+import MarketSpeed from '../../components/MarketSpeed';
+import VehicleOverview from '../../components/VehicleOverview';
+import ExitIntentModal from '../../components/ExitIntentModal';
 import './VehiclePage.css';
 
 const VehiclePage = () => {
   const { year, make, model } = useParams<{ year: string; make: string; model: string }>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const slug = `${year}/${make}/${model}`;
   
   const vehicle = useMemo(() => getVehicleBySlug(slug), [slug]);
-  
-  const similarVehicles = useMemo(() => {
-    if (!vehicle) return [];
-    return getSimilarVehicles(vehicle, 4);
-  }, [vehicle]);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   if (!vehicle) {
     return (
@@ -31,191 +46,161 @@ const VehiclePage = () => {
     );
   }
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
+  // Build vehicle data for Hero component
+  const vehicleData = {
+    make: vehicle.make,
+    model: vehicle.model,
+    year: parseInt(vehicle.year),
+    tagline: `The ${vehicle.make} ${vehicle.model} offers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features and value'}. A compelling choice in the ${vehicle.bodyStyle.toLowerCase()} segment.`,
+    rating: vehicle.staffRating,
+    priceRange: vehicle.priceRange,
+    image: vehicle.image,
+    images: vehicle.galleryImages?.slice(0, 3) || [],
+    photographer: 'CAR AND DRIVER',
+    mpg: vehicle.mpg,
+    horsepower: vehicle.horsepower,
+    seatingCapacity: vehicle.seatingCapacity,
+    cargoSpace: vehicle.cargoSpace,
+    fuelType: vehicle.fuelType,
+    drivetrain: vehicle.drivetrain,
   };
 
+  // Generate dynamic overview data based on vehicle
+  const overviewData = {
+    pros: vehicle.features?.slice(0, 5).map(f => f) || [
+      'Competitive pricing',
+      'Modern features',
+      'Good fuel economy',
+      'Reliable performance',
+      'Spacious interior',
+    ],
+    cons: [
+      'Limited availability in some regions',
+      'Base model lacks some features',
+      'Competition is strong in this segment',
+    ],
+    whatsNew: [
+      `New styling updates for ${vehicle.year}`,
+      'Enhanced safety features',
+      'Updated infotainment system',
+    ],
+    verdict: `The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${vehicle.staffRating}/10, it delivers good value for its class.`,
+  };
+
+  // Generate dynamic trim data
+  const trimData = [
+    {
+      id: 'base',
+      name: 'Base',
+      price: `$${vehicle.priceMin.toLocaleString()}`,
+      features: vehicle.features?.slice(0, 5) || [
+        'Standard infotainment',
+        'Safety features',
+        'Cloth seats',
+        'Manual climate control',
+        'Bluetooth connectivity',
+      ],
+    },
+    {
+      id: 'mid',
+      name: vehicle.trim || 'Sport',
+      price: `$${Math.round((vehicle.priceMin + vehicle.priceMax) / 2).toLocaleString()}`,
+      recommended: true,
+      features: [
+        'All Base features plus:',
+        'Upgraded infotainment',
+        'Enhanced safety suite',
+        'Premium audio system',
+        'Remote start',
+      ],
+    },
+    {
+      id: 'top',
+      name: 'Premium',
+      price: `$${vehicle.priceMax.toLocaleString()}`,
+      features: [
+        'All Sport features plus:',
+        'Leather seats',
+        'Panoramic sunroof',
+        'Advanced driver assistance',
+        'Premium interior trim',
+      ],
+    },
+  ];
+
   return (
-    <div className="vehicle-page">
-      {/* Breadcrumb */}
-      <div className="vehicle-page__breadcrumb">
-        <div className="container">
-          <Link to="/">Home</Link>
-          <span>/</span>
-          <Link to="/vehicles">Vehicles</Link>
-          <span>/</span>
-          <Link to={`/vehicles?make=${vehicle.make}`}>{vehicle.make}</Link>
-          <span>/</span>
-          <span>{vehicle.model}</span>
+    <>
+      <main className="main">
+        <Hero vehicle={vehicleData} />
+        
+        {/* Content with Sidebar */}
+        <div className="content-with-sidebar">
+          <div className="content-main">
+            <QuickSpecs 
+              specs={{
+                mpg: vehicle.mpg || 'N/A',
+                seating: vehicle.seatingCapacity ? `${vehicle.seatingCapacity} Seats` : 'N/A',
+                powertrain: vehicle.fuelType || 'Gas',
+                drivetrain: vehicle.drivetrain || 'N/A',
+                warranty: '3 Years/36,000 Miles',
+              }}
+            />
+            <VehicleOverview 
+              content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}
+              highs={vehicle.features?.slice(0, 5) || undefined}
+              year={parseInt(vehicle.year)}
+              verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${vehicle.staffRating}/10, it delivers good value for its class.`}
+            />
+            <CostToOwn vehicleName={`${vehicle.make} ${vehicle.model}`} />
+            <TargetPriceRange />
+            <Incentives make={vehicle.make} model={vehicle.model} />
+            <BuyingPotential />
+            <VehicleRanking 
+              bodyStyle={vehicle.bodyStyle}
+              currentVehicleId={vehicle.id}
+              maxPrice={vehicle.priceMax + 15000}
+            />
+            <MarketSpeed 
+              vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} 
+              make={vehicle.make} 
+              model={vehicle.model} 
+            />
+          </div>
+          <AdSidebar />
         </div>
-      </div>
-
-      {/* Hero Section */}
-      <section className="vehicle-page__hero">
-        <div className="container">
-          <div className="vehicle-page__hero-content">
-            <div className="vehicle-page__hero-info">
-              <Link to="/vehicles" className="vehicle-page__back-link">
-                <ArrowLeft size={18} />
-                Back to Vehicles
-              </Link>
-              
-              <h1 className="vehicle-page__title">
-                {vehicle.year} {vehicle.make} {vehicle.model}
-              </h1>
-              
-              {vehicle.trim && (
-                <span className="vehicle-page__trim">{vehicle.trim}</span>
-              )}
-              
-              <div className="vehicle-page__rating">
-                <div className="vehicle-page__rating-score">
-                  <span className="vehicle-page__rating-number">{vehicle.staffRating}</span>
-                  <span className="vehicle-page__rating-max">/10</span>
-                </div>
-                <span className="vehicle-page__rating-label">C/D RATING</span>
-              </div>
-              
-              <div className="vehicle-page__price">
-                <span className="vehicle-page__price-label">MSRP</span>
-                <span className="vehicle-page__price-value">{vehicle.priceRange}</span>
-              </div>
-              
-              <div className="vehicle-page__cta-group">
-                <button className="vehicle-page__cta vehicle-page__cta--primary">
-                  Shop Now
-                </button>
-                <button className="vehicle-page__cta vehicle-page__cta--secondary">
-                  Build & Price
-                </button>
-              </div>
-            </div>
-            
-            <div className="vehicle-page__hero-image">
-              <img src={vehicle.image} alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Specs */}
-      <section className="vehicle-page__specs">
-        <div className="container">
-          <h2 className="vehicle-page__section-title">Quick Specs</h2>
-          <div className="vehicle-page__specs-grid">
-            {vehicle.mpg && (
-              <div className="vehicle-page__spec-card">
-                <Fuel size={24} />
-                <span className="vehicle-page__spec-value">{vehicle.mpg}</span>
-                <span className="vehicle-page__spec-label">MPG (City/Hwy)</span>
-              </div>
-            )}
-            {vehicle.horsepower && (
-              <div className="vehicle-page__spec-card">
-                <Gauge size={24} />
-                <span className="vehicle-page__spec-value">{vehicle.horsepower}</span>
-                <span className="vehicle-page__spec-label">Horsepower</span>
-              </div>
-            )}
-            {vehicle.seatingCapacity && (
-              <div className="vehicle-page__spec-card">
-                <Users size={24} />
-                <span className="vehicle-page__spec-value">{vehicle.seatingCapacity}</span>
-                <span className="vehicle-page__spec-label">Passengers</span>
-              </div>
-            )}
-            {vehicle.cargoSpace && (
-              <div className="vehicle-page__spec-card">
-                <Package size={24} />
-                <span className="vehicle-page__spec-value">{vehicle.cargoSpace} cu ft</span>
-                <span className="vehicle-page__spec-label">Cargo Space</span>
-              </div>
-            )}
-            <div className="vehicle-page__spec-card">
-              <Settings size={24} />
-              <span className="vehicle-page__spec-value">{vehicle.transmission}</span>
-              <span className="vehicle-page__spec-label">Transmission</span>
-            </div>
-            <div className="vehicle-page__spec-card">
-              <Star size={24} />
-              <span className="vehicle-page__spec-value">{vehicle.drivetrain}</span>
-              <span className="vehicle-page__spec-label">Drivetrain</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      {vehicle.features && vehicle.features.length > 0 && (
-        <section className="vehicle-page__features">
-          <div className="container">
-            <h2 className="vehicle-page__section-title">Key Features</h2>
-            <ul className="vehicle-page__features-list">
-              {vehicle.features.map((feature, index) => (
-                <li key={index} className="vehicle-page__feature-item">
-                  <span className="vehicle-page__feature-check">✓</span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
+        
+        <Overview 
+          pros={overviewData.pros}
+          cons={overviewData.cons}
+          whatsNew={overviewData.whatsNew}
+          verdict={overviewData.verdict}
+          year={parseInt(vehicle.year)}
+        />
+        
+        <section id="pricing">
+          <TrimSelector 
+            trims={trimData}
+            subtitle={`The ${vehicle.trim || 'Sport'} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
+          />
         </section>
-      )}
-
-      {/* Gallery */}
-      {vehicle.galleryImages && vehicle.galleryImages.length > 0 && (
-        <section className="vehicle-page__gallery">
-          <div className="container">
-            <h2 className="vehicle-page__section-title">Gallery</h2>
-            <div className="vehicle-page__gallery-grid">
-              {vehicle.galleryImages.slice(0, 6).map((image, index) => (
-                <div key={index} className="vehicle-page__gallery-item">
-                  <img src={image} alt={`${vehicle.make} ${vehicle.model} - Image ${index + 1}`} />
-                </div>
-              ))}
-            </div>
-          </div>
+        
+        <section id="warranty">
+          <Warranty items={defaultWarrantyItems} />
         </section>
-      )}
-
-      {/* Similar Vehicles */}
-      {similarVehicles.length > 0 && (
-        <section className="vehicle-page__similar">
-          <div className="container">
-            <h2 className="vehicle-page__section-title">Similar Vehicles</h2>
-            <div className="vehicle-page__similar-grid">
-              {similarVehicles.map((similar) => (
-                <Link 
-                  key={similar.id} 
-                  to={`/${similar.slug}`}
-                  className="vehicle-page__similar-card"
-                >
-                  <div className="vehicle-page__similar-image">
-                    <img src={similar.image} alt={`${similar.year} ${similar.make} ${similar.model}`} />
-                  </div>
-                  <div className="vehicle-page__similar-info">
-                    <h3 className="vehicle-page__similar-name">
-                      {similar.year} {similar.make} {similar.model}
-                    </h3>
-                    <div className="vehicle-page__similar-meta">
-                      <span className="vehicle-page__similar-rating">{similar.staffRating}/10</span>
-                      <span className="vehicle-page__similar-price">{formatCurrency(similar.priceMin)}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-    </div>
+        
+        <Comparison 
+          currentVehicle={{ make: vehicle.make, model: vehicle.model }}
+        />
+      </main>
+      
+      {/* Exit Intent Modal */}
+      <ExitIntentModal 
+        vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+    </>
   );
 };
 
 export default VehiclePage;
-
