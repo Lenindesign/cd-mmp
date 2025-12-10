@@ -140,20 +140,7 @@ function App() {
         <div className="content-with-sidebar">
           <div className="content-main">
             <QuickSpecs />
-            <CostToOwn 
-              vehicleName="Chevrolet Trax" 
-              totalCost={30700}
-              rating="Below Average"
-              costs={[
-                { name: 'Depreciation', value: 8500, color: '#1B5F8A', position: 'bottom' },
-                { name: 'Financing', value: 2800, color: '#3D8B8B', position: 'top' },
-                { name: 'Taxes & Fees', value: 1650, color: '#D4A84B', position: 'bottom' },
-                { name: 'Fuel', value: 7500, color: '#E67E22', position: 'top' },
-                { name: 'Insurance', value: 6200, color: '#C0392B', position: 'bottom' },
-                { name: 'Repairs', value: 1200, color: '#922B21', position: 'top' },
-                { name: 'Maintenance', value: 2850, color: '#5C1E1E', position: 'bottom' },
-              ]}
-            />
+            <CostToOwn vehicleName="Chevrolet Trax" />
             <TargetPriceRange 
               dealerPrice={23495} 
               targetPriceLow={21500} 
