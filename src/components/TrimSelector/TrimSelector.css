@@ -186,7 +186,7 @@
 }
 
 .trim-card__btn--primary:hover {
-  background: var(--color-dark-gray);
+  background: var(--color-black);
 }
 
 .trim-card--selected .trim-card__btn--primary,
@@ -196,7 +196,7 @@
 
 .trim-card--selected .trim-card__btn--primary:hover,
 .trim-card--recommended .trim-card__btn--primary:hover {
-  background: var(--color-blue-cobalt-dark);
+  background: var(--color-black);
 }
 
 .trim-card__btn--ghost {

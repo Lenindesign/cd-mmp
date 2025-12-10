@@ -123,7 +123,7 @@
 }
 
 .header__subscribe-btn:hover {
-  background: #154d70;
+  background: var(--color-black);
 }
 
 .header__user-btn {

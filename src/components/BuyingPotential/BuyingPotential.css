@@ -387,7 +387,7 @@
 }
 
 .buying-potential__cta:hover {
-  background: var(--color-gray-800);
+  background: var(--color-black);
   transform: translateY(-1px);
 }
 
