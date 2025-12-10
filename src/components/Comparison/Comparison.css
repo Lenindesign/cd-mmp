@@ -41,12 +41,12 @@
 /* Grid */
 .comparison__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-5);
   margin-bottom: var(--spacing-8);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
   .comparison__grid {
     grid-template-columns: repeat(2, 1fr);
   }
