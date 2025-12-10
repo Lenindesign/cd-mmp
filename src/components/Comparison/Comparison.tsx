@@ -117,7 +117,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     price: '$25,175',
     mpg: '30',
     rating: 8.0,
-    image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&h=250&fit=crop&auto=format',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67fe9c57961d350008c4017f/007-2025-hyundai-kona-front-three-quarter.jpg',
   },
   {
     id: '4',
