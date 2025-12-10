@@ -11,14 +11,43 @@
   padding: var(--spacing-6);
 }
 
-.vehicle-overview__author {
+/* Byline */
+.vehicle-overview__byline {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+}
+
+.vehicle-overview__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-gray-200);
+}
+
+.vehicle-overview__author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vehicle-overview__author-name {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.vehicle-overview__author-name:hover {
+  color: var(--color-blue-cobalt);
+}
+
+.vehicle-overview__author-title {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-600);
-  margin: 0 0 var(--spacing-4) 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--color-gray-500);
 }
 
 .vehicle-overview__title {
