@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Info, DollarSign, Target, Search, TrendingDown, CheckCircle, Clock, Percent, ChevronDown } from 'lucide-react';
+import { Info, Tag, Target, Search, TrendingDown, CheckCircle, Clock, Percent, ChevronDown } from 'lucide-react';
 import './TargetPriceRange.css';
 
 interface TrimPriceData {
@@ -225,7 +225,7 @@ const TargetPriceRange = () => {
           <div className="target-price__info-boxes">
             <div className="target-price__info-box">
               <div className="target-price__info-icon">
-                <DollarSign size={20} />
+                <Tag size={20} />
               </div>
               <div className="target-price__info-content">
                 <span className="target-price__info-value">{formatPrice(dealerPrice)}</span>
