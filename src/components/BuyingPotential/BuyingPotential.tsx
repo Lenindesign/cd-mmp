@@ -121,7 +121,7 @@ const BuyingPotential = () => {
                 <h3 className="buying-potential__matches-title">
                   <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Car size={18} />
-                    Vehicles in Your Budget
+                    Subcompact SUVs In Your Budget
                   </span>
                   <span className="buying-potential__matches-count">{vehicleMatches.length} found</span>
                 </h3>
