@@ -6,8 +6,8 @@
 .incentives__card {
   width: 100%;
   background: #F5F5F5;
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
   padding: var(--spacing-6);
 }
 
