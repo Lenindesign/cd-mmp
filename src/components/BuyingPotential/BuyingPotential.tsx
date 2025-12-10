@@ -36,13 +36,13 @@ const BuyingPotential = () => {
 
   // Vehicle matches based on buying power
   const allVehicleMatches: VehicleMatch[] = [
-    { name: '2025 Chevrolet Trax', price: 21895, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'LS FWD' },
+    { name: '2025 Chevrolet Trax', price: 21895, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'LS FWD' },
     { name: '2025 Nissan Kicks', price: 22280, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66dba90dc83c4b00088a59d5/2025-nissan-kicks-s-fwd-front-view.jpg', trim: 'S FWD' },
-    { name: '2025 Chevrolet Trax', price: 23195, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: '1RS FWD' },
-    { name: '2025 Chevrolet Trax', price: 23395, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'LT FWD' },
+    { name: '2025 Chevrolet Trax', price: 23195, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: '1RS FWD' },
+    { name: '2025 Chevrolet Trax', price: 23395, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'LT FWD' },
     { name: '2025 Toyota Corolla Cross', price: 24035, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67577eabfdefd7000823540c/1-2025-toyota-corolla-cross-hybrid-front-view.jpg', trim: 'L FWD' },
-    { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'RS FWD' },
-    { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png', trim: 'ACTIV FWD' },
+    { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'RS FWD' },
+    { name: '2025 Chevrolet Trax', price: 24995, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg', trim: 'ACTIV FWD' },
     { name: '2025 Honda HR-V', price: 25050, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg', trim: 'LX 2WD' },
     { name: '2025 Hyundai Kona', price: 25175, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67fe9c57961d350008c4017f/007-2025-hyundai-kona-front-three-quarter.jpg', trim: 'SE' },
     { name: '2025 Kia Seltos', price: 26085, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/668c500afc8dbb0009e48f26/005-2025-kia-seltos-1-6l-turbo-front-view-motion.jpg', trim: 'LX FWD' },
