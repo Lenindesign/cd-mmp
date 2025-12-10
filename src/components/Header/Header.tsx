@@ -2,12 +2,16 @@ import { useState } from 'react';
 import { Search, User, Menu, X } from 'lucide-react';
 import './Header.css';
 
-const Header = () => {
+interface HeaderProps {
+  onShopNewCars?: () => void;
+}
+
+const Header = ({ onShopNewCars }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const navItems = [
-    { label: 'Shop New Cars', href: '#' },
+    { label: 'Shop New Cars', href: '#', onClick: onShopNewCars },
     { label: 'Shop Used Cars', href: '#' },
     { label: 'Research Cars', href: '#' },
     { label: 'Expert Reviews', href: '#' },
@@ -67,7 +71,16 @@ const Header = () => {
           <ul className="header__nav-list">
             {navItems.map((item, index) => (
               <li key={index} className="header__nav-item">
-                <a href={item.href} className="header__nav-link">
+                <a 
+                  href={item.href} 
+                  className="header__nav-link"
+                  onClick={(e) => {
+                    if (item.onClick) {
+                      e.preventDefault();
+                      item.onClick();
+                    }
+                  }}
+                >
                   {item.label}
                 </a>
               </li>

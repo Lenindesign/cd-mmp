@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import QuickSpecs from './components/QuickSpecs';
@@ -14,6 +15,15 @@ import ExitIntentModal from './components/ExitIntentModal';
 import './App.css';
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleShopNewCars = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
   // Vehicle data for the 2025 Chevrolet Trax
   const vehicleData = {
     make: 'Chevrolet',
@@ -121,7 +131,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header />
+      <Header onShopNewCars={handleShopNewCars} />
       
       <main className="main">
         <Hero vehicle={vehicleData} />
@@ -182,7 +192,11 @@ function App() {
       <Footer />
       
       {/* Exit Intent Modal */}
-      <ExitIntentModal vehicleName="2025 Chevrolet Trax" />
+      <ExitIntentModal 
+        vehicleName="2025 Chevrolet Trax" 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }

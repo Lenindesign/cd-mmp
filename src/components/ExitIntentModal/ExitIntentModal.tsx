@@ -4,12 +4,25 @@ import './ExitIntentModal.css';
 
 interface ExitIntentModalProps {
   vehicleName?: string;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-const ExitIntentModal = ({ vehicleName = '2025 Chevrolet Trax' }: ExitIntentModalProps) => {
+const ExitIntentModal = ({ 
+  vehicleName = '2025 Chevrolet Trax',
+  isOpen = false,
+  onClose
+}: ExitIntentModalProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [hasShown, setHasShown] = useState(false);
+
+  // Handle external isOpen prop
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     // Check if modal has been shown before in this session
@@ -41,6 +54,9 @@ const ExitIntentModal = ({ vehicleName = '2025 Chevrolet Trax' }: ExitIntentModa
 
   const handleClose = () => {
     setIsVisible(false);
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
