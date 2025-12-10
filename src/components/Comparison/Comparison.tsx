@@ -107,7 +107,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     price: '$24,035',
     mpg: '32',
     rating: 7.5,
-    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=250&fit=crop&auto=format',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67577eabfdefd7000823540c/1-2025-toyota-corolla-cross-hybrid-front-view.jpg',
   },
   {
     id: '3',
