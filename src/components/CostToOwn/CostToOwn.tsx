@@ -75,11 +75,6 @@ const CostToOwn = ({
     <section className="cost-to-own">
       <div className="container">
         <div className="cost-to-own__card">
-          {/* Side Tab */}
-          <div className="cost-to-own__tab">
-            <span>COST TO OWN</span>
-          </div>
-
           {/* Main Content */}
           <div className="cost-to-own__main">
             {/* Header Row */}

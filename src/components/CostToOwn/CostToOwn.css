@@ -13,28 +13,10 @@
 }
 
 /* Side Tab - Using Car and Driver Blue Cobalt */
-.cost-to-own__tab {
-  position: absolute;
-  right: -1px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  padding: var(--spacing-5) var(--spacing-3);
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
-}
 
 /* Main Content */
 .cost-to-own__main {
   padding: var(--spacing-6);
-  padding-right: calc(var(--spacing-6) + 40px);
 }
 
 /* Header */
@@ -366,10 +348,6 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .cost-to-own__tab {
-    display: none;
-  }
-
   .cost-to-own__main {
     padding: var(--spacing-6);
   }
