@@ -14,15 +14,32 @@
   overflow: hidden;
 }
 
+/* Swap column order - Calculator on left, Matches on right */
+.buying-potential__left {
+  order: 2;
+}
+
+.buying-potential__right {
+  order: 1;
+}
+
 @media (max-width: 900px) {
   .buying-potential__card {
     grid-template-columns: 1fr;
   }
+
+  .buying-potential__left {
+    padding: 1.5rem;
+  }
+
+  .buying-potential__right {
+    padding: 1.5rem;
+  }
 }
 
-/* Left Side */
+/* Left Side (visually on right due to order swap) */
 .buying-potential__left {
-  padding: var(--spacing-6) 0 var(--spacing-6) var(--spacing-6);
+  padding: 2.5rem 3rem 2.5rem 0;
   display: flex;
   flex-direction: column;
 }
@@ -54,7 +71,7 @@
   gap: var(--spacing-2);
   font-family: var(--font-heading);
   font-size: 36px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin: 0 0 var(--spacing-3) 0;
   line-height: 1.2;
@@ -110,6 +127,100 @@
   max-width: 100%;
   max-height: 300px;
   object-fit: contain;
+}
+
+/* No Matches State */
+.buying-potential__no-matches {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.buying-potential__no-matches-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+.buying-potential__no-matches-image img {
+  max-width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  filter: grayscale(50%);
+}
+
+.buying-potential__no-matches-content {
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+  border: 1px dashed var(--color-gray-300);
+}
+
+.buying-potential__no-matches-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-2);
+}
+
+.buying-potential__no-matches-title svg {
+  color: var(--color-gray-500);
+}
+
+.buying-potential__no-matches-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-3);
+}
+
+.buying-potential__no-matches-tips {
+  background: var(--color-white);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+}
+
+.buying-potential__no-matches-tip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-2);
+}
+
+.buying-potential__no-matches-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.buying-potential__no-matches-list li {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  padding-left: var(--spacing-4);
+  position: relative;
+}
+
+.buying-potential__no-matches-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--color-blue-cobalt);
+}
+
+.buying-potential__no-matches-list li strong {
+  color: var(--color-blue-cobalt);
 }
 
 /* Vehicle Matches */
@@ -232,6 +343,10 @@
   color: var(--color-gray-600);
 }
 
+.buying-potential__match-rating-score {
+  color: var(--color-blue-cobalt);
+}
+
 .buying-potential__match-price {
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
@@ -239,14 +354,32 @@
   color: var(--color-blue-cobalt);
 }
 
+.buying-potential__match-dealer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-neutrals-4);
+}
+
+.buying-potential__match-dealer svg {
+  flex-shrink: 0;
+}
+
+.buying-potential__match--used .buying-potential__match-trim {
+  color: var(--color-neutrals-4);
+  font-size: 12px;
+}
+
 .buying-potential__match-check {
   color: #22C55E;
   flex-shrink: 0;
 }
 
-/* Right Side */
+/* Right Side (visually on left due to order swap) */
 .buying-potential__right {
-  padding: var(--spacing-6);
+  padding: 2.5rem 0 2.5rem 3rem;
   background: var(--color-white);
   display: flex;
   flex-direction: column;

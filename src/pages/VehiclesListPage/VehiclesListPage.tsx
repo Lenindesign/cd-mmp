@@ -1,26 +1,185 @@
 import { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Filter, ChevronDown, Grid, List } from 'lucide-react';
+import { Search, Filter, ChevronDown, Grid, List, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, MapPin, Clock, Tag, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
 import { getAllVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
+import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
+import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import './VehiclesListPage.css';
+
+// Vehicle History Tooltip Component
+interface TooltipProps {
+  listing: Listing;
+  position: 'left' | 'right';
+}
+
+const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
+  if (!listing.history) return null;
+  
+  const { history } = listing;
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  return (
+    <div className={`vht vht--${position}`}>
+      {/* Arrow */}
+      <div className="vht__arrow" />
+      
+      {/* Header */}
+      <div className="vht__header">
+        <Shield size={18} />
+        <span>Vehicle History Report</span>
+      </div>
+      
+      {/* Stats Grid */}
+      <div className="vht__grid">
+        {/* Owners */}
+        <div className="vht__stat">
+          <User size={20} className="vht__stat-icon" />
+          <div className="vht__stat-content">
+            <span className="vht__stat-label">Owners</span>
+            <span className="vht__stat-value">{history.owners}</span>
+          </div>
+        </div>
+        
+        {/* Accidents */}
+        <div className={`vht__stat ${history.accidents === 0 ? 'vht__stat--success' : 'vht__stat--warning'}`}>
+          {history.accidents === 0 ? (
+            <Check size={20} className="vht__stat-icon" />
+          ) : (
+            <AlertTriangle size={20} className="vht__stat-icon" />
+          )}
+          <div className="vht__stat-content">
+            <span className="vht__stat-label">Accidents</span>
+            <span className="vht__stat-value">
+              {history.accidents === 0 ? 'None Reported' : `${history.accidents} Reported`}
+            </span>
+          </div>
+        </div>
+        
+        {/* Title Status */}
+        <div className={`vht__stat ${history.titleStatus === 'Clean' ? 'vht__stat--success' : 'vht__stat--warning'}`}>
+          <Check size={20} className="vht__stat-icon" />
+          <div className="vht__stat-content">
+            <span className="vht__stat-label">Title</span>
+            <span className="vht__stat-value">{history.titleStatus}</span>
+          </div>
+        </div>
+        
+        {/* Service Records */}
+        <div className="vht__stat">
+          <Wrench size={20} className="vht__stat-icon" />
+          <div className="vht__stat-content">
+            <span className="vht__stat-label">Service Records</span>
+            <span className="vht__stat-value">{history.serviceRecords}</span>
+          </div>
+        </div>
+        
+        {/* Days on Market */}
+        <div className="vht__stat">
+          <Clock size={20} className="vht__stat-icon" />
+          <div className="vht__stat-content">
+            <span className="vht__stat-label">Days on Market</span>
+            <span className="vht__stat-value">{history.daysOnMarket}</span>
+          </div>
+        </div>
+        
+        {/* Last Service */}
+        <div className="vht__stat">
+          <Wrench size={20} className="vht__stat-icon" />
+          <div className="vht__stat-content">
+            <span className="vht__stat-label">Last Service</span>
+            <span className="vht__stat-value">{history.lastServiceDate || 'N/A'}</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Vehicle Usage */}
+      <div className="vht__usage">
+        <span className="vht__usage-label">Vehicle Usage</span>
+        <div className="vht__usage-tags">
+          {history.personalUse && <span className="vht__tag vht__tag--success">Personal Use</span>}
+          {history.fleetUse && <span className="vht__tag vht__tag--warning">Fleet Vehicle</span>}
+          {history.rentalUse && <span className="vht__tag vht__tag--warning">Rental History</span>}
+        </div>
+      </div>
+      
+      {/* Price History */}
+      {history.priceHistory.length > 0 && (
+        <div className="vht__price">
+          <div className="vht__price-header">
+            <TrendingDown size={18} />
+            <span>Price History</span>
+          </div>
+          <div className="vht__price-list">
+            {history.priceHistory.map((entry, idx) => (
+              <div key={idx} className="vht__price-row">
+                <span className="vht__price-date">{entry.date}</span>
+                <span className="vht__price-amount">{formatCurrency(entry.price)}</span>
+                {entry.change && entry.change > 0 && (
+                  <span className="vht__price-savings">-${entry.change.toLocaleString()}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const VehiclesListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [hoveredListing, setHoveredListing] = useState<string | null>(null);
   
   // Get filter values from URL params
+  const inventoryType = searchParams.get('type') || 'new'; // 'new' or 'used'
   const selectedMake = searchParams.get('make') || '';
   const selectedBodyStyle = searchParams.get('bodyStyle') || '';
-  const sortBy = searchParams.get('sort') || 'rating';
+  const selectedLifestyle = searchParams.get('lifestyle') || '';
+  const maxMileage = searchParams.get('maxMileage') || '';
+  const sortBy = searchParams.get('sort') || (inventoryType === 'new' ? 'rating' : 'price-low');
   
   const allVehicles = getAllVehicles();
-  const makes = getUniqueMakes();
+  const allListings = useMemo(() => getAllListings(), []);
+  const makes = inventoryType === 'new' ? getUniqueMakes() : getUniqueMakesFromListings();
   const bodyStyles = getUniqueBodyStyles();
+
+  // Mileage ranges for used cars
+  const mileageRanges = [
+    { value: '', label: 'Any Mileage' },
+    { value: '10000', label: 'Under 10,000 mi' },
+    { value: '25000', label: 'Under 25,000 mi' },
+    { value: '50000', label: 'Under 50,000 mi' },
+    { value: '75000', label: 'Under 75,000 mi' },
+  ];
+
+  // Lifestyle icon mapping
+  const getLifestyleIcon = (lifestyle: string) => {
+    switch (lifestyle) {
+      case 'Family': return <Users size={16} />;
+      case 'Adventure': return <Mountain size={16} />;
+      case 'Luxury': return <Gem size={16} />;
+      case 'Eco-Friendly': return <Leaf size={16} />;
+      case 'Performance': return <Gauge size={16} />;
+      case 'Commuter': return <Briefcase size={16} />;
+      case 'Value': return <PiggyBank size={16} />;
+      default: return null;
+    }
+  };
   
-  // Filter and sort vehicles
+  // Filter and sort NEW vehicles
   const filteredVehicles = useMemo(() => {
+    if (inventoryType !== 'new') return [];
+    
     let result = [...allVehicles];
     
     // Search filter
@@ -39,6 +198,13 @@ const VehiclesListPage = () => {
     // Body style filter
     if (selectedBodyStyle) {
       result = result.filter(v => v.bodyStyle === selectedBodyStyle);
+    }
+    
+    // Lifestyle filter
+    if (selectedLifestyle) {
+      result = result.filter(v => 
+        getVehicleLifestyles(v).includes(selectedLifestyle as Lifestyle)
+      );
     }
     
     // Sort
@@ -61,7 +227,65 @@ const VehiclesListPage = () => {
     }
     
     return result;
-  }, [allVehicles, searchQuery, selectedMake, selectedBodyStyle, sortBy]);
+  }, [inventoryType, allVehicles, searchQuery, selectedMake, selectedBodyStyle, selectedLifestyle, sortBy]);
+
+  // Filter and sort USED listings
+  const filteredListings = useMemo(() => {
+    if (inventoryType !== 'used') return [];
+    
+    let result = [...allListings];
+    
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(l => 
+        `${l.year} ${l.make} ${l.model} ${l.trim}`.toLowerCase().includes(query)
+      );
+    }
+    
+    // Make filter
+    if (selectedMake) {
+      result = result.filter(l => l.make === selectedMake);
+    }
+    
+    // Body style filter
+    if (selectedBodyStyle) {
+      result = result.filter(l => l.bodyStyle === selectedBodyStyle);
+    }
+    
+    // Mileage filter
+    if (maxMileage) {
+      const maxMiles = parseInt(maxMileage);
+      result = result.filter(l => l.mileage <= maxMiles);
+    }
+    
+    // Sort
+    switch (sortBy) {
+      case 'price-low':
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case 'mileage-low':
+        result.sort((a, b) => a.mileage - b.mileage);
+        break;
+      case 'year':
+        result.sort((a, b) => b.year - a.year);
+        break;
+      case 'distance':
+        result.sort((a, b) => a.distance - b.distance);
+        break;
+      case 'name':
+        result.sort((a, b) => `${a.make} ${a.model}`.localeCompare(`${b.make} ${b.model}`));
+        break;
+    }
+    
+    return result;
+  }, [inventoryType, allListings, searchQuery, selectedMake, selectedBodyStyle, maxMileage, sortBy]);
+
+  // Get the count for display
+  const totalCount = inventoryType === 'new' ? filteredVehicles.length : filteredListings.length;
   
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -87,15 +311,49 @@ const VehiclesListPage = () => {
     }).format(value);
   };
 
+  const formatMileage = (value: number) => {
+    return new Intl.NumberFormat('en-US').format(value);
+  };
+
+  // Handle inventory type change
+  const handleInventoryTypeChange = (type: 'new' | 'used') => {
+    const newParams = new URLSearchParams();
+    newParams.set('type', type);
+    // Reset sort to appropriate default
+    if (type === 'new') {
+      newParams.set('sort', 'rating');
+    } else {
+      newParams.set('sort', 'price-low');
+    }
+    setSearchParams(newParams);
+    setSearchQuery('');
+  };
+
   return (
     <div className="vehicles-list-page">
       {/* Header */}
       <div className="vehicles-list-page__header">
         <div className="container">
           <h1 className="vehicles-list-page__title">Browse All Vehicles</h1>
-          <p className="vehicles-list-page__subtitle">
-            Explore {allVehicles.length} vehicles in our database
-          </p>
+          <div className="vehicles-list-page__subtitle-row">
+            <p className="vehicles-list-page__subtitle">
+              Explore {inventoryType === 'new' ? allVehicles.length.toLocaleString() : allListings.length.toLocaleString()} {inventoryType === 'new' ? 'new vehicles' : 'listings'} in our database
+            </p>
+            <div className="vehicles-list-page__type-toggle">
+              <button
+                className={`vehicles-list-page__type-btn ${inventoryType === 'new' ? 'active' : ''}`}
+                onClick={() => handleInventoryTypeChange('new')}
+              >
+                All New
+              </button>
+              <button
+                className={`vehicles-list-page__type-btn ${inventoryType === 'used' ? 'active' : ''}`}
+                onClick={() => handleInventoryTypeChange('used')}
+              >
+                All Used
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -148,17 +406,57 @@ const VehiclesListPage = () => {
               ))}
             </select>
             
+            {/* Lifestyle Filter (New Cars Only) */}
+            {inventoryType === 'new' && (
+              <select
+                className="vehicles-list-page__select vehicles-list-page__select--lifestyle"
+                value={selectedLifestyle}
+                onChange={(e) => updateFilter('lifestyle', e.target.value)}
+              >
+                <option value="">All Lifestyles</option>
+                {LIFESTYLES.map(lifestyle => (
+                  <option key={lifestyle} value={lifestyle}>{lifestyle}</option>
+                ))}
+              </select>
+            )}
+
+            {/* Mileage Filter (Used Cars Only) */}
+            {inventoryType === 'used' && (
+              <select
+                className="vehicles-list-page__select"
+                value={maxMileage}
+                onChange={(e) => updateFilter('maxMileage', e.target.value)}
+              >
+                {mileageRanges.map(range => (
+                  <option key={range.value} value={range.value}>{range.label}</option>
+                ))}
+              </select>
+            )}
+            
             {/* Sort */}
             <select
               className="vehicles-list-page__select"
               value={sortBy}
               onChange={(e) => updateFilter('sort', e.target.value)}
             >
-              <option value="rating">Highest Rated</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="name">Name A-Z</option>
-              <option value="year">Newest First</option>
+              {inventoryType === 'new' ? (
+                <>
+                  <option value="rating">Highest Rated</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="name">Name A-Z</option>
+                  <option value="year">Newest First</option>
+                </>
+              ) : (
+                <>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="mileage-low">Mileage: Low to High</option>
+                  <option value="year">Year: Newest First</option>
+                  <option value="distance">Distance: Nearest</option>
+                  <option value="name">Name A-Z</option>
+                </>
+              )}
             </select>
             
             {/* View Mode */}
@@ -181,11 +479,17 @@ const VehiclesListPage = () => {
           </div>
           
           {/* Active Filters */}
-          {(selectedMake || selectedBodyStyle || searchQuery) && (
+          {(selectedMake || selectedBodyStyle || selectedLifestyle || maxMileage || searchQuery) && (
             <div className="vehicles-list-page__active-filters">
               <span className="vehicles-list-page__results-count">
-                {filteredVehicles.length} vehicles found
+                {totalCount.toLocaleString()} {inventoryType === 'new' ? 'vehicles' : 'listings'} found
               </span>
+              {selectedLifestyle && inventoryType === 'new' && (
+                <span className="vehicles-list-page__active-lifestyle">
+                  {getLifestyleIcon(selectedLifestyle)}
+                  {selectedLifestyle}
+                </span>
+              )}
               <button 
                 className="vehicles-list-page__clear-filters"
                 onClick={clearFilters}
@@ -201,7 +505,8 @@ const VehiclesListPage = () => {
       <div className="vehicles-list-page__content">
         <div className="container">
           <div className={`vehicles-list-page__grid ${viewMode === 'list' ? 'vehicles-list-page__grid--list' : ''}`}>
-            {filteredVehicles.map((vehicle) => (
+            {/* New Vehicles */}
+            {inventoryType === 'new' && filteredVehicles.map((vehicle) => (
               <Link 
                 key={vehicle.id}
                 to={`/${vehicle.slug}`}
@@ -247,11 +552,93 @@ const VehiclesListPage = () => {
                 </div>
               </Link>
             ))}
+
+            {/* Used Listings */}
+            {inventoryType === 'used' && filteredListings.map((listing, index) => {
+              // Determine tooltip position based on column (4-column grid)
+              // Columns 0, 1 → right; Columns 2, 3 → left
+              const columnIndex = index % 4;
+              const tooltipPosition: 'left' | 'right' = columnIndex < 2 ? 'right' : 'left';
+              
+              return (
+                <div 
+                  key={listing.id}
+                  className={`vehicles-list-page__card-wrapper vehicles-list-page__card-wrapper--tooltip-${tooltipPosition}`}
+                  onMouseEnter={() => setHoveredListing(listing.id)}
+                  onMouseLeave={() => setHoveredListing(null)}
+                >
+                  <Link 
+                    to={`/${listing.slug}`}
+                    className="vehicles-list-page__card vehicles-list-page__card--used"
+                  >
+                    <div className="vehicles-list-page__card-image">
+                      <img 
+                        src={listing.image} 
+                        alt={`${listing.year} ${listing.make} ${listing.model}`}
+                        loading="lazy"
+                      />
+                      {/* Badges */}
+                      <div className="vehicles-list-page__card-badges">
+                        {listing.isNew && (
+                          <span className="vehicles-list-page__card-badge vehicles-list-page__card-badge--new">
+                            New
+                          </span>
+                        )}
+                        {listing.isCertified && (
+                          <span className="vehicles-list-page__card-badge vehicles-list-page__card-badge--certified">
+                            CPO
+                          </span>
+                        )}
+                        {listing.priceReduced && (
+                          <span className="vehicles-list-page__card-badge vehicles-list-page__card-badge--reduced">
+                            <Tag size={10} /> Price Drop
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="vehicles-list-page__card-info">
+                      <h3 className="vehicles-list-page__card-title">
+                        {listing.year} {listing.make} {listing.model}
+                      </h3>
+                    <p className="vehicles-list-page__card-trim">{listing.trim}</p>
+                    
+                    <div className="vehicles-list-page__card-price-row">
+                      <span className="vehicles-list-page__card-price vehicles-list-page__card-price--used">
+                        {formatCurrency(listing.price)}
+                      </span>
+                      {listing.originalPrice && (
+                        <span className="vehicles-list-page__card-original-price">
+                          {formatCurrency(listing.originalPrice)}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="vehicles-list-page__card-mileage">
+                      <Clock size={14} />
+                      <span>{formatMileage(listing.mileage)} miles</span>
+                    </div>
+                    
+                    <div className="vehicles-list-page__card-dealer">
+                      <MapPin size={14} />
+                      <span>{listing.dealerName}</span>
+                      <span className="vehicles-list-page__card-distance">
+                        {listing.distance} mi
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+                {/* Vehicle History Tooltip */}
+                {hoveredListing === listing.id && listing.history && (
+                  <VehicleHistoryTooltip listing={listing} position={tooltipPosition} />
+                )}
+                </div>
+              );
+            })}
           </div>
           
-          {filteredVehicles.length === 0 && (
+          {totalCount === 0 && (
             <div className="vehicles-list-page__empty">
-              <h3>No vehicles found</h3>
+              <h3>No {inventoryType === 'new' ? 'vehicles' : 'listings'} found</h3>
               <p>Try adjusting your filters or search query</p>
               <button onClick={clearFilters}>Clear Filters</button>
             </div>

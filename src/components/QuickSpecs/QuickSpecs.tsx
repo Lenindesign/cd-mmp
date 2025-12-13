@@ -1,4 +1,5 @@
-import { Info } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Info, X } from 'lucide-react';
 import './QuickSpecs.css';
 
 interface QuickSpecsProps {
@@ -12,6 +13,10 @@ interface QuickSpecsProps {
 }
 
 const QuickSpecs = ({ specs }: QuickSpecsProps) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const defaultSpecs = {
     mpg: '30 Combined',
     seating: '5 Seats',
@@ -22,6 +27,28 @@ const QuickSpecs = ({ specs }: QuickSpecsProps) => {
 
   const data = specs || defaultSpecs;
 
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        tooltipRef.current && 
+        !tooltipRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setShowTooltip(false);
+      }
+    };
+
+    if (showTooltip) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showTooltip]);
+
   return (
     <section className="quick-specs">
       <div className="container">
@@ -30,9 +57,30 @@ const QuickSpecs = ({ specs }: QuickSpecsProps) => {
           <div className="quick-specs__header">
             <div className="quick-specs__title-row">
               <h2 className="quick-specs__title">Specs</h2>
-              <button className="quick-specs__info-btn" aria-label="More information about specs">
-                <Info size={18} />
-              </button>
+              <div className="quick-specs__info-wrapper">
+                <button 
+                  ref={buttonRef}
+                  className="quick-specs__info-btn" 
+                  aria-label="More information about specs"
+                  onClick={() => setShowTooltip(!showTooltip)}
+                >
+                  <Info size={18} />
+                </button>
+                {showTooltip && (
+                  <div ref={tooltipRef} className="quick-specs__tooltip">
+                    <button 
+                      className="quick-specs__tooltip-close"
+                      onClick={() => setShowTooltip(false)}
+                      aria-label="Close tooltip"
+                    >
+                      <X size={16} />
+                    </button>
+                    <p className="quick-specs__tooltip-text">
+                      Specifications shown here indicate a range of offerings based on different trims. Click the <a href="#pricing" className="quick-specs__tooltip-link">See all specs</a> link to view specifications for each trim.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
             <button className="quick-specs__cta">SEE ALL SPECS</button>
           </div>
@@ -129,6 +177,7 @@ const QuickSpecs = ({ specs }: QuickSpecsProps) => {
 };
 
 export default QuickSpecs;
+
 
 
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Bookmark, Heart, FileText, Car, Mail } from 'lucide-react';
+import { X, Bookmark, Heart, FileText, Mail } from 'lucide-react';
 import './ExitIntentModal.css';
 
 interface ExitIntentModalProps {
@@ -80,7 +80,7 @@ const ExitIntentModal = ({
           {/* Header */}
           <div className="exit-modal__header">
             <div className="exit-modal__icon">
-              <Car size={32} />
+              <span className="material-symbols-outlined">garage_home</span>
             </div>
             <h2 className="exit-modal__title">Don't Lose Your Research!</h2>
             <p className="exit-modal__subtitle">

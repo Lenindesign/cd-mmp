@@ -1,30 +1,16 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronDown, Info, ChevronRight } from 'lucide-react';
+import { getMarketSpeedVehicles, type MarketSpeedVehicle } from '../../services/vehicleService';
 import './MarketSpeed.css';
-
-interface VehicleSalesData {
-  rank: number;
-  make: string;
-  model: string;
-  marketDaySupply: number;
-  totalForSale: number;
-  totalSold: number;
-  avgSellingPrice: number;
-}
 
 interface MarketSpeedProps {
   vehicleName?: string;
   make?: string;
   model?: string;
+  bodyStyle?: string;
+  msrp?: number;
 }
-
-const defaultSalesData: VehicleSalesData[] = [
-  { rank: 1, make: 'Chevrolet', model: 'Trax', marketDaySupply: 15, totalForSale: 3245, totalSold: 8750, avgSellingPrice: 22195 },
-  { rank: 2, make: 'Honda', model: 'HR-V', marketDaySupply: 19, totalForSale: 4890, totalSold: 9420, avgSellingPrice: 25050 },
-  { rank: 3, make: 'Toyota', model: 'Corolla Cross', marketDaySupply: 21, totalForSale: 5120, totalSold: 8930, avgSellingPrice: 24035 },
-  { rank: 4, make: 'Hyundai', model: 'Kona', marketDaySupply: 24, totalForSale: 3890, totalSold: 6540, avgSellingPrice: 25175 },
-  { rank: 5, make: 'Kia', model: 'Seltos', marketDaySupply: 26, totalForSale: 2980, totalSold: 5210, avgSellingPrice: 26085 },
-];
 
 const states = ['California', 'Texas', 'Florida', 'New York', 'Illinois', 'Pennsylvania', 'Ohio', 'Georgia', 'North Carolina', 'Michigan'];
 
@@ -32,12 +18,19 @@ const MarketSpeed = ({
   vehicleName = '2025 Chevrolet Trax',
   make = 'Chevrolet',
   model = 'Trax',
+  bodyStyle = 'SUV',
+  msrp = 21895,
 }: MarketSpeedProps) => {
   const [selectedState, setSelectedState] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  // Get vehicles from database for the market speed table
+  const salesData = useMemo<MarketSpeedVehicle[]>(() => {
+    return getMarketSpeedVehicles(bodyStyle, make, model, msrp, 5);
+  }, [bodyStyle, make, model, msrp]);
 
   const cities = selectedState 
     ? ['All Cities', `${selectedState} City 1`, `${selectedState} City 2`, `${selectedState} City 3`]
@@ -207,18 +200,18 @@ const MarketSpeed = ({
               </tr>
             </thead>
             <tbody>
-              {defaultSalesData.map((vehicle) => (
-                <tr key={vehicle.rank} className={vehicle.rank === 1 ? 'market-speed__row--highlight' : ''}>
+              {salesData.map((vehicle) => (
+                <tr key={vehicle.rank} className={vehicle.isCurrentVehicle ? 'market-speed__row--highlight' : ''}>
                   <td className="market-speed__rank">{vehicle.rank}</td>
                   <td>
-                    <a href="#" className="market-speed__link">{vehicle.make}</a>
+                    <Link to={`/${vehicle.slug}`} className="market-speed__link">{vehicle.make}</Link>
                   </td>
                   <td>
-                    <a href="#" className="market-speed__link">{vehicle.model}</a>
+                    <Link to={`/${vehicle.slug}`} className="market-speed__link">{vehicle.model}</Link>
                   </td>
                   <td>{vehicle.marketDaySupply}</td>
                   <td>
-                    <a href="#" className="market-speed__link">{formatNumber(vehicle.totalForSale)}</a>
+                    <Link to={`/${vehicle.slug}`} className="market-speed__link">{formatNumber(vehicle.totalForSale)}</Link>
                   </td>
                   <td>{formatNumber(vehicle.totalSold)}</td>
                   <td className="market-speed__price">{formatCurrency(vehicle.avgSellingPrice)}</td>
@@ -229,15 +222,13 @@ const MarketSpeed = ({
         </div>
 
         {/* Footer Link */}
-        <a href="#" className="market-speed__footer-link">
+        <Link to="/vehicles" className="market-speed__footer-link">
           Show all fastest selling cars in my area
           <ChevronRight size={20} />
-        </a>
+        </Link>
       </div>
     </section>
   );
 };
 
 export default MarketSpeed;
-
-

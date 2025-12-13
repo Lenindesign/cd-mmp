@@ -88,10 +88,14 @@
   margin-bottom: var(--spacing-4);
 }
 
+.exit-modal__icon .material-symbols-outlined {
+  font-size: 32px;
+}
+
 .exit-modal__title {
   font-family: var(--font-heading);
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin: 0 0 var(--spacing-2);
 }

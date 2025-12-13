@@ -8,7 +8,7 @@
   background: var(--color-white);
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.25rem;
-  padding: var(--spacing-6);
+  padding: 2.5rem 3rem;
   box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
 }
 
@@ -99,7 +99,7 @@
 .target-price__title {
   font-family: var(--font-heading);
   font-size: 36px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -456,7 +456,7 @@
 
 .target-price__info-value {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: 32px;
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
 }
@@ -511,5 +511,11 @@
 
 .target-price__cta-btn:hover {
   background: var(--color-black);
+}
+
+@media (max-width: 768px) {
+  .target-price__card {
+    padding: 1.5rem;
+  }
 }
 

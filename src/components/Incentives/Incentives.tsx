@@ -1,14 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronDown, Info, ArrowUpRight, Clock, AlertCircle } from 'lucide-react';
+import { getVehicleIncentives, getCurrentPeriod } from '../../services/incentivesService';
+import type { Incentive } from '../../services/incentivesService';
 import './Incentives.css';
-
-interface Incentive {
-  id: string;
-  type: 'lease' | 'cash' | 'finance';
-  title: string;
-  details: string;
-  expiration: string;
-}
 
 interface IncentivesProps {
   month?: string;
@@ -16,74 +10,70 @@ interface IncentivesProps {
   make?: string;
   model?: string;
   zipCode?: string;
+  msrp?: number;
+  bodyStyle?: string;
+  fuelType?: string;
 }
 
 const Incentives = ({
-  month = 'December',
-  year = 2025,
   make = 'Chevrolet',
   model = 'Trax',
-  zipCode = '10940'
+  zipCode = '10940',
+  msrp = 21895,
+  fuelType = 'Gas',
 }: IncentivesProps) => {
   const [activeTab, setActiveTab] = useState('all');
   const [creditScore, setCreditScore] = useState('Select Est. Credit Score');
   const [monthlyTerm, setMonthlyTerm] = useState('Select Monthly Term');
+
+  // Get current period
+  const { month, year } = getCurrentPeriod();
 
   const tabs = [
     { id: 'all', label: 'All' },
     { id: 'cash', label: 'Cash' },
     { id: 'finance', label: 'Finance' },
     { id: 'lease', label: 'Lease' },
+    { id: 'special', label: 'Special' },
   ];
 
-  const incentives: Incentive[] = [
-    {
-      id: '1',
-      type: 'finance',
-      title: 'Low APR Financing',
-      details: 'APR · 2.9% · Months · 60',
-      expiration: '01/02/2026',
-    },
-    {
-      id: '2',
-      type: 'lease',
-      title: 'Standard Lease Rate',
-      details: '$219/mo · 36 months · $2,499 due at signing',
-      expiration: '01/02/2026',
-    },
-    {
-      id: '3',
-      type: 'cash',
-      title: 'Chevrolet Customer Cash',
-      details: 'Up to $1,000 customer cash',
-      expiration: '01/02/2026',
-    },
-    {
-      id: '4',
-      type: 'cash',
-      title: 'Military Appreciation Incentive Program',
-      details: 'Up to $500 customer cash',
-      expiration: '01/02/2026',
-    },
-    {
-      id: '5',
-      type: 'cash',
-      title: 'First Responder Appreciation Program',
-      details: 'Up to $500 customer cash',
-      expiration: '01/02/2026',
-    },
-    {
-      id: '6',
-      type: 'cash',
-      title: 'College Student Discount',
-      details: 'Up to $500 customer cash',
-      expiration: '01/02/2026',
-    },
-  ];
+  // Get real incentives from service
+  const vehicleIncentives = useMemo(
+    () => getVehicleIncentives(make, model),
+    [make, model]
+  );
+
+  const { incentives, totalSavings } = vehicleIncentives;
+
+  // Get APR and lease info from incentives if available
+  const financeIncentive = incentives.find(i => i.type === 'finance');
+  const leaseIncentive = incentives.find(i => i.type === 'lease');
+  
+  const aprRate = financeIncentive?.value.match(/[\d.]+/)?.[0] || '5.9';
+  const leasePayment = leaseIncentive?.value.match(/\$[\d,]+/)?.[0] || `$${Math.round(msrp * 0.01)}`;
 
   const filteredIncentives = activeTab === 'all' 
     ? incentives 
     : incentives.filter(inc => inc.type === activeTab);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const getIncentiveTypeLabel = (type: Incentive['type']) => {
+    const labels: Record<Incentive['type'], string> = {
+      cash: 'Cash',
+      finance: 'Finance',
+      lease: 'Lease',
+      special: 'Special',
+    };
+    return labels[type];
+  };
 
   return (
     <section className="incentives">
@@ -103,7 +93,7 @@ const Incentives = ({
             <div className="incentives__urgency-content">
               <div className="incentives__urgency-text">
                 <Clock size={18} />
-                <p>Don't miss out on <strong>up to $2,500</strong> in savings. Year-end deals won't last forever!</p>
+                <p>Don't miss out on <strong>up to {formatCurrency(totalSavings)}</strong> in savings. Year-end deals won't last forever!</p>
               </div>
               <button className="incentives__urgency-cta">
                 Claim Your Incentive Now
@@ -114,9 +104,11 @@ const Incentives = ({
           {/* Description */}
           <p className="incentives__description">
             For <strong>{month} {year}</strong>, {make} is offering competitive financing rates on the {model}, 
-            with interest rates starting as low as 2.9% APR for 60 months. Lease deals are also available starting 
-            at $219/month. Additionally, {make} is providing up to $2,500 in combined cash incentives on the {model}, including 
-            military, first responder, and college student discounts.
+            with interest rates starting as low as {aprRate}% APR. Lease deals are also available starting 
+            at {leasePayment}/month. Additionally, {make} is providing up to {formatCurrency(totalSavings)} in combined cash incentives on the {model}
+            {fuelType === 'Electric' && ', including federal EV tax credits'}
+            {fuelType === 'Hybrid' && ', including clean vehicle credits'}
+            , including military and first responder discounts.
           </p>
 
           {/* Filters */}
@@ -183,21 +175,27 @@ const Incentives = ({
               <div key={incentive.id} className="incentives__item">
                 <div className="incentives__item-content">
                   <span className={`incentives__badge incentives__badge--${incentive.type}`}>
-                    {incentive.type.charAt(0).toUpperCase() + incentive.type.slice(1)}
+                    {getIncentiveTypeLabel(incentive.type)}
                   </span>
                   <div className="incentives__item-info">
                     <h3 className="incentives__item-title">
                       {incentive.title}
-                      {incentive.type === 'lease' && (
-                        <button className="incentives__item-info-btn" aria-label="More info">
-                          <Info size={14} />
-                        </button>
-                      )}
+                      <button className="incentives__item-info-btn" aria-label="More info">
+                        <Info size={14} />
+                      </button>
                     </h3>
                     <p className="incentives__item-details">
-                      {incentive.details}
-                      <span className="incentives__item-exp">Exp · {incentive.expiration}</span>
+                      {incentive.description}
+                      <span className="incentives__item-exp">Exp · {incentive.expirationDate}</span>
                     </p>
+                    {incentive.terms && (
+                      <p className="incentives__item-terms">{incentive.terms}</p>
+                    )}
+                    {incentive.eligibility && (
+                      <p className="incentives__item-eligibility">
+                        <strong>Eligibility:</strong> {incentive.eligibility}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <button className="incentives__item-link" aria-label="View details">
@@ -206,6 +204,11 @@ const Incentives = ({
               </div>
             ))}
           </div>
+
+          {/* Source Attribution */}
+          <div className="incentives__source">
+            <p>Incentive data sourced from manufacturer websites and verified through Edmunds, KBB, and dealer networks. Offers may vary by region and dealer participation.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -213,4 +216,3 @@ const Incentives = ({
 };
 
 export default Incentives;
-

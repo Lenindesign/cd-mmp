@@ -50,6 +50,8 @@ interface RawVehicle {
   slug: string;
   featured?: boolean;
   award?: string;
+  editorsChoice?: boolean;
+  tenBest?: boolean;
   tags?: string[];
 }
 
@@ -88,6 +90,8 @@ function processVehicle(raw: RawVehicle): Vehicle {
     slug: raw.slug,
     featured: raw.featured,
     award: raw.award,
+    editorsChoice: raw.editorsChoice,
+    tenBest: raw.tenBest,
     tags: raw.tags,
   };
 }

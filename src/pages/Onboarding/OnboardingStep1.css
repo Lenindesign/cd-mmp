@@ -1,0 +1,219 @@
+/* ============================================
+   ONBOARDING STEP 1 STYLES
+   Car and Driver Design System
+   ============================================ */
+
+.onboarding-step1 {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4F5F6;
+  padding: var(--spacing-6);
+}
+
+.step1-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Step Indicator - Speedometer */
+.step-indicator {
+  margin-bottom: var(--spacing-4);
+}
+
+.step-indicator-img {
+  display: block;
+  width: 160px;
+  height: auto;
+}
+
+/* Header */
+.step1-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.step1-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-700);
+  line-height: 1.4;
+}
+
+.step1-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-blue-cobalt);
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Form Card */
+.step1-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-6);
+}
+
+/* Form Fields */
+.step1-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.step1-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.step1-input-wrapper {
+  position: relative;
+}
+
+.step1-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-400);
+  border-radius: var(--border-radius-sm);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.step1-input::placeholder {
+  color: var(--color-gray-500);
+}
+
+.step1-input:focus {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.1);
+}
+
+.step1-input-with-icon .step1-input {
+  padding-right: 48px;
+}
+
+.step1-location-icon {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Navigation */
+.step1-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-4);
+}
+
+.step1-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  height: 40px;
+  padding: 0 var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.step1-btn-back {
+  background: transparent;
+  color: var(--color-gray-600);
+  border: 1px solid var(--color-gray-400);
+  min-width: 100px;
+}
+
+.step1-btn-back:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-500);
+}
+
+.step1-btn-next {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border: none;
+  min-width: 100px;
+}
+
+.step1-btn-next:hover {
+  background: var(--color-blue-cobalt-dark);
+}
+
+.step1-skip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+}
+
+.step1-skip:hover {
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .onboarding-step1 {
+    padding: var(--spacing-4);
+  }
+  
+  .step1-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .step1-navigation {
+    flex-wrap: wrap;
+  }
+  
+  .step1-btn {
+    flex: 1;
+    min-width: 90px;
+  }
+  
+  .step1-skip {
+    order: 3;
+    width: 100%;
+    margin-top: var(--spacing-2);
+    text-align: center;
+  }
+}

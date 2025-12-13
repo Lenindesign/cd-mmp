@@ -1,0 +1,105 @@
+/* ============================================
+   ONBOARDING STEP 2 - USER TYPE SELECTION
+   Car and Driver Design System
+   ============================================ */
+
+.onboarding-step2 {
+  max-width: 560px;
+}
+
+.onboarding-step2__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
+}
+
+.onboarding-step2__option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--cd-white, #FFFFFF);
+  border: 1px solid var(--cd-grey-border, #CDCDCD);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.onboarding-step2__option:hover {
+  border-color: var(--cd-blue-cobalt, #1B5F8A);
+  background: var(--cd-light-blue, #F1F7F7);
+}
+
+.onboarding-step2__option--selected {
+  border-color: var(--cd-blue-cobalt, #1B5F8A);
+  background: var(--cd-light-blue, #F1F7F7);
+  box-shadow: 0 0 0 2px var(--cd-blue-cobalt, #1B5F8A);
+}
+
+.onboarding-step2__option-icon {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cd-light-grey, #F5F5F5);
+  border-radius: 4px;
+}
+
+.onboarding-step2__option--selected .onboarding-step2__option-icon {
+  background: rgba(27, 95, 138, 0.1);
+}
+
+.onboarding-step2__option-icon img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.onboarding-step2__option-content {
+  flex: 1;
+}
+
+.onboarding-step2__option-title {
+  font-family: 'Inter', var(--font-body);
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--cd-dark-grey, #222222);
+  margin-bottom: var(--spacing-1);
+}
+
+.onboarding-step2__option-description {
+  font-family: 'Lora', var(--font-article);
+  font-size: var(--font-size-sm);
+  color: var(--cd-dark-grey, #222222);
+  opacity: 0.7;
+}
+
+.onboarding-step2__option-check {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--cd-blue-cobalt, #1B5F8A);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .onboarding-step2__option {
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .onboarding-step2__option-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .onboarding-step2__option-icon img {
+    width: 28px;
+    height: 28px;
+  }
+}
+

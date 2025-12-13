@@ -1,0 +1,284 @@
+/* ============================================
+   SIGN IN PAGE STYLES
+   Car and Driver Design System
+   ============================================ */
+
+.signin-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-gray-100);
+  padding: var(--spacing-6);
+}
+
+.signin-container {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--spacing-10);
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Logo */
+.signin-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.signin-logo-img {
+  width: 180px;
+  height: auto;
+}
+
+/* Title */
+.signin-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-dark);
+  text-align: center;
+  margin: 0 0 var(--spacing-6) 0;
+}
+
+/* Form */
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* Form Fields */
+.signin-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.signin-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-dark);
+}
+
+.signin-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.signin-input::placeholder {
+  color: var(--color-gray-400);
+}
+
+.signin-input:focus {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.1);
+}
+
+/* Password Field */
+.signin-password-wrapper {
+  position: relative;
+}
+
+.signin-password-wrapper .signin-input {
+  padding-right: 48px;
+}
+
+.signin-password-toggle {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-gray-500);
+  transition: color var(--transition-fast);
+}
+
+.signin-password-toggle:hover {
+  color: var(--color-gray-700);
+}
+
+/* Forgot Password Link */
+.signin-forgot-link {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  align-self: flex-start;
+  transition: color var(--transition-fast);
+}
+
+.signin-forgot-link:hover {
+  color: var(--color-blue-cobalt-dark);
+}
+
+/* Submit Button */
+.signin-submit-btn {
+  width: 100%;
+  height: 48px;
+  margin-top: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-white);
+  background: var(--color-dark);
+  border: none;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+}
+
+.signin-submit-btn:hover {
+  background: var(--color-gray-800);
+}
+
+.signin-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Sign Up Link */
+.signin-signup-text {
+  margin-top: var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  text-align: center;
+}
+
+.signin-signup-link {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.signin-signup-link:hover {
+  color: var(--color-blue-cobalt);
+}
+
+/* Divider */
+.signin-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin: var(--spacing-6) 0;
+}
+
+.signin-divider::before,
+.signin-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-gray-200);
+}
+
+.signin-divider span {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+/* Social Login Buttons */
+.signin-social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.signin-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  height: 48px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.signin-social-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Google Button */
+.signin-social-btn--google {
+  background: var(--color-white);
+  color: var(--color-dark);
+  border: 1px solid var(--color-gray-300);
+}
+
+.signin-social-btn--google:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-400);
+}
+
+/* Facebook Button */
+.signin-social-btn--facebook {
+  background: #1877F2;
+  color: var(--color-white);
+  border: none;
+}
+
+.signin-social-btn--facebook:hover {
+  background: #166FE5;
+}
+
+/* Apple Button */
+.signin-social-btn--apple {
+  background: var(--color-black);
+  color: var(--color-white);
+  border: none;
+}
+
+.signin-social-btn--apple:hover {
+  background: var(--color-gray-900);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .signin-container {
+    padding: var(--spacing-6);
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .signin-page {
+    padding: 0;
+  }
+}
+
+
+
+
+
+

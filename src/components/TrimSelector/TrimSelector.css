@@ -12,7 +12,7 @@
 .trim-selector__title {
   font-family: var(--font-heading);
   font-size: 36px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   text-transform: uppercase;
   letter-spacing: 0.5px;

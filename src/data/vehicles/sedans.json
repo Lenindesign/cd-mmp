@@ -6,7 +6,13 @@
     "model": "Corolla",
     "bodyStyle": "Sedan",
     "imageSource": "2026 Toyota Corolla",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68d4789daa39b80002b684f4/2026-toyota-gr-corolla-premium-plus-at-supersonicred-014.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68d4789daa39b80002b684f4/2026-toyota-gr-corolla-premium-plus-at-supersonicred-014.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68d479370038900002fa8e3b/2026-toyota-gr-corolla-premium-plus-at-supersonicred-013.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68d4793ac8828f0002677238/2026-toyota-gr-corolla-premium-plus-at-supersonicred-017.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68d4793daa39b80002b684f7/2026-toyota-gr-corolla-premium-plus-at-supersonicred-018.jpg"
+    ],
     "priceRange": "$22,050 - $28,360",
     "priceMin": 22050,
     "priceMax": 28360,
@@ -33,7 +39,14 @@
     "model": "Accord",
     "bodyStyle": "Sedan",
     "imageSource": "2026 Honda Accord",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/679d37b803565f0008090975/21-2025-honda-accord-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/679d37bb03565f0008090977/22-2025-honda-accord-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/671a754a2647660009869398/003-2025-honda-accord-hybrid.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66e8824d603db5000878f458/2025hondaaccordhybridfrontthreequarters.jpg"
+    ],
     "priceRange": "$27,295 - $38,050",
     "priceMin": 27295,
     "priceMax": 38050,
@@ -60,7 +73,13 @@
     "model": "Model 3",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Tesla Model 3",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b657738dbbae000872fcff/40-2025-tesla-model-3-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b6575266bfb80008473959/25-2025-tesla-model-3-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b65720bc495600085cc853/3-2025-tesla-model-3-side-view.jpg"
+    ],
     "priceRange": "$38,990 - $50,990",
     "priceMin": 38990,
     "priceMax": 50990,
@@ -312,7 +331,13 @@
     "model": "ES",
     "bodyStyle": "Sedan",
     "imageSource": "2024 Lexus ES",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/678feac50dce9000085e7d9f/015-2024-lexus-es350-black-line.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/678feac50dce9000085e7d9f/015-2024-lexus-es350-black-line.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/678feac2a4ee55000897d084/014-2024-lexus-es350-black-line.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/678feaa90dce9000085e7d98/003-2024-lexus-es350-black-line-interior-dash.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/678feaa793d0c30008d157ba/002-2024-lexus-es350-black-line-hard-nose-static.jpg"
+    ],
     "priceRange": "$42,490 - $48,990",
     "priceMin": 42490,
     "priceMax": 48990,
@@ -564,47 +589,6 @@
     "slug": "2024/Alfa-Romeo/Giulia"
   },
   {
-    "id": "66",
-    "year": "2026",
-    "make": "Volkswagen",
-    "model": "Golf GTI / R",
-    "bodyStyle": "Sedan",
-    "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68ed9028b76c7c0002cf2104/003-2026volkswagen-golf-gti-r-coty.jpg",
-    "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed9028b76c7c0002cf2104/003-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed904b8d111500026e76b7/026-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed9046b76c7c0002cf2113/023-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed90448d111500026e76b5/022-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed90438d111500026e76b3/020-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed90415887080002480fc8/018-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed90355887080002480fc2/009-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed902e5887080002480fc0/006-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed90268d111500026e76af/002-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed8f376d04c00002404504/024-2026volkswagen-golf-gti-r-coty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68ed8e9e6d04c000024044ff/021-2026volkswagen-golf-gti-r-coty.jpg"
-    ],
-    "priceRange": "$44,640 - $46,640",
-    "priceMin": 44640,
-    "priceMax": 46640,
-    "staffRating": 9,
-    "communityRating": 9.5,
-    "reviewCount": 245,
-    "fuelType": "Gas",
-    "drivetrain": "AWD",
-    "transmission": "Manual",
-    "mpg": "22/29",
-    "horsepower": 315,
-    "seatingCapacity": 5,
-    "features": [
-      "4MOTION AWD",
-      "DCC Adaptive Chassis",
-      "Harman Kardon Audio",
-      "2026 MotorTrend Car of the Year"
-    ],
-    "slug": "2026/Volkswagen/Golf-GTI-R"
-  },
-  {
     "id": "69a",
     "year": "2025",
     "make": "Audi",
@@ -639,7 +623,13 @@
     "model": "Corolla",
     "bodyStyle": "Sedan",
     "imageSource": "2023 Toyota Corolla",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0c997954e00088d54f8/2023-toyota-gr-corolla-21.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0c997954e00088d54f8/2023-toyota-gr-corolla-21.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0cbc919e400085d6021/2023-toyota-gr-corolla-26.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0c9c919e400085d601e/2023-toyota-gr-corolla-23.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0d597954e00088d54fc/2023-toyota-gr-corolla-45.jpg"
+    ],
     "priceRange": "$21,550 - $26,950",
     "priceMin": 21550,
     "priceMax": 26950,
@@ -855,7 +845,13 @@
     "model": "Civic",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Honda Civic",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68dc3c39bf5f820002ce5468/004-2025-honda-civic-hybrid-hatchback.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc3c39bf5f820002ce5468/004-2025-honda-civic-hybrid-hatchback.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc3c3cbf5f820002ce5469/005-2025-honda-civic-hybrid-hatchback.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc3c3f1004d50002e77b45/006-2025-honda-civic-hybrid-hatchback.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc3c1211cda900022e504f/014-2025-honda-civic-hybrid-hatchback.jpg"
+    ],
     "priceRange": "$23,950 - $30,950",
     "priceMin": 23950,
     "priceMax": 30950,
@@ -882,7 +878,13 @@
     "model": "Corolla",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Toyota Corolla",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68dc663f3643650002f24a60/004-2025-toyota-gr-corolla.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc663f3643650002f24a60/004-2025-toyota-gr-corolla.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc66453643650002f24a64/006-2025-toyota-gr-corolla.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc66413643650002f24a62/005-2025-toyota-gr-corolla.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc666a6c42000002d17e9a/025-2025-toyota-gr-corolla.jpg"
+    ],
     "priceRange": "$22,050 - $28,360",
     "priceMin": 22050,
     "priceMax": 28360,
@@ -909,7 +911,13 @@
     "model": "Sentra",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Nissan Sentra",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/676361824957a90008df5083/1-2025-nissan-sentra-sr-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/676361824957a90008df5083/1-2025-nissan-sentra-sr-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6763618d29d77f0008cf7282/2-2025-nissan-sentra-sr-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/676361cabb90cd00082cc047/18-2025-nissan-sentra-sr-side-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66ccf0233c604c000823c7db/2025nissansentrasedan6.jpg"
+    ],
     "priceRange": "$20,910 - $26,430",
     "priceMin": 20910,
     "priceMax": 26430,
@@ -1076,7 +1084,13 @@
     "model": "Model 3",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Tesla Model 3",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b657738dbbae000872fcff/40-2025-tesla-model-3-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b6575266bfb80008473959/25-2025-tesla-model-3-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67b6576273572b0008fe325e/32-2025-tesla-model-3-front-view.jpg"
+    ],
     "priceRange": "$38,990 - $50,990",
     "priceMin": 38990,
     "priceMax": 50990,
@@ -1103,7 +1117,13 @@
     "model": "Model S",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Tesla Model S",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6793fa8794846c00084135f8/3-2025-tesla-model-s-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6793fa8794846c00084135f8/3-2025-tesla-model-s-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6793faa1c1de7500083a5055/13-2025-tesla-model-s-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6793fa847a9e170008f93d19/2-2025-tesla-model-s-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6793faa5c1de7500083a5057/14-2025-tesla-model-s-front-view.jpg"
+    ],
     "priceRange": "$74,990 - $94,990",
     "priceMin": 74990,
     "priceMax": 94990,
@@ -1184,7 +1204,13 @@
     "model": "e-tron GT",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Audi e-tron GT",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bd56ffccf0008567e3a/29-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bd56ffccf0008567e3a/29-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bdc2fa6440009959baa/32-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bd92fa6440009959ba9/31-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bbf79a6060008748e37/20-2025-audi-rs-e-tron-gt-performance-first-drive.jpg"
+    ],
     "priceRange": "$104,900 - $142,800",
     "priceMin": 104900,
     "priceMax": 142800,
@@ -1248,7 +1274,13 @@
     "model": "Air",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Lucid Air",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67eebedbbbad650008978af4/006-2025-lucid-air-pure.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67eebedbbbad650008978af4/006-2025-lucid-air-pure.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67eebe7faf98e400084a3e75/001-2025-lucid-air-pure-front-three-quarter-static-lead.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67c222e6ae874400087d4c95/8-2025-lucid-air-interior.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67c222f7ae874400087d4ca0/17-2025-lucid-air-side-view.jpg"
+    ],
     "priceRange": "$77,400 - $139,000",
     "priceMin": 77400,
     "priceMax": 139000,

@@ -124,7 +124,13 @@
     "model": "Trailblazer",
     "bodyStyle": "SUV",
     "imageSource": "2024 Chevrolet Trailblazer",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4f9417c9000085e7bba/003-2024-chevrolet-trailblazer-front-three-quarters-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4f9417c9000085e7bba/003-2024-chevrolet-trailblazer-front-three-quarters-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4f9cc1a540008a57c2c/002-2024-chevrolet-trailblazer-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4f9cc1a540008a57c2d/004-2024-chevrolet-trailblazer-rear-three-qaurters-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4e9417c9000085e7bb5/025-2024-chevrolet-trailblazer-side-profile.jpg"
+    ],
     "priceRange": "$22,800 - $30,400",
     "priceMin": 22800,
     "priceMax": 30400,
@@ -471,6 +477,11 @@
     "bodyStyle": "SUV",
     "imageSource": null,
     "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccd79afa860008125aac/2024-kia-telluride-12.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccd79afa860008125aab/2024-kia-telluride-37.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccd69afa860008125aaa/2024-kia-telluride-18.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccf33e8d5a0008ffb611/2024-kia-telluride-23.jpg"
+    ],
     "priceRange": "$36,690 - $53,990",
     "priceMin": 36690,
     "priceMax": 53990,
@@ -802,14 +813,11 @@
     "model": "Escalade IQ",
     "bodyStyle": "SUV",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/69124d99efef440002fc4a65/001-2026cadillacescaladeiq-2026-suvoty.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/690e7b730a10940002564378/026-2026-cadillac-escalade-iq-sport-1.jpg",
     "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/69124d99efef440002fc4a65/001-2026cadillacescaladeiq-2026-suvoty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/69124dcd1c4f49000277c388/021-2026cadillacescaladeiq-2026-suvoty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/69124d9fefef440002fc4a66/003-2026cadillacescaladeiq-2026-suvoty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/691237ffad30750002d818b1/004-2026cadillacescaladeiq-2026-suvoty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6912377e4a6ec90002aae171/015-2026cadillacescaladeiq-2026-suvoty.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/691237976df2ee00020cd664/005-2026cadillacescaladeiq-2026-suvoty.jpg"
+      "https://d2kde5ohu8qb21.cloudfront.net/files/690e7b730a10940002564378/026-2026-cadillac-escalade-iq-sport-1.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/690e7b76ac5fa300023874af/027-2026-cadillac-escalade-iq-sport-1.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/690e7b581737f4000252a9ac/015-2026-cadillac-escalade-iq-sport-1.jpg"
     ],
     "priceRange": "$134,985 - $149,950",
     "priceMin": 134985,
@@ -1116,7 +1124,13 @@
     "model": "Sequoia",
     "bodyStyle": "SUV",
     "imageSource": "2024 Toyota Sequoia",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a466bc7f8e48000893d621/006-2024-toyota-sequoia-trd-pro-front-three-quarters.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a466bc7f8e48000893d621/006-2024-toyota-sequoia-trd-pro-front-three-quarters.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a466bc4208890008fffacc/003-2024-toyota-sequoia-trd-pro-in-action.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a466c339c2000008a7f8fe/031-2024-toyota-sequoia-trd-pro-driver-cabin.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a466b6bee55f0009403a5c/002-2024-toyota-sequoia-trd-pro-in-action.jpg"
+    ],
     "priceRange": "$58,300 - $76,575",
     "priceMin": 58300,
     "priceMax": 76575,
@@ -1169,7 +1183,7 @@
     "slug": "2025/Toyota/Highlander"
   },
   {
-    "id": "59f",
+    "id": "59g",
     "year": "2024",
     "make": "Nissan",
     "model": "Armada",
@@ -1202,13 +1216,19 @@
     "slug": "2024/Nissan/Armada"
   },
   {
-    "id": "59g",
+    "id": "59h",
     "year": "2024",
     "make": "Jeep",
     "model": "Grand Wagoneer",
     "bodyStyle": "SUV",
     "imageSource": "2024 Jeep Grand Wagoneer",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a4d1a929c1880008e3ed0d/2024-jeep-grand-wagoneer-l-front-view-8.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a4d1a929c1880008e3ed0d/2024-jeep-grand-wagoneer-l-front-view-8.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a4d1b7ffdf40000861072b/2024-jeep-grand-wagoneer-l-side-view-10.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a4d1b7fc59180008160642/2024-jeep-grand-wagoneer-l-rear-view-12.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a4f2eeed15000008b72340/2024-jeep-grand-wagoneer-l-interior-2.jpg"
+    ],
     "priceRange": "$93,995 - $111,995",
     "priceMin": 93995,
     "priceMax": 111995,
@@ -1623,7 +1643,13 @@
     "model": "Model Y",
     "bodyStyle": "SUV",
     "imageSource": "2025 Tesla Model Y",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/690bfd68f33e300002f8eeed/029-2025-tesla-model-y-awd.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/690bfd68f33e300002f8eeed/029-2025-tesla-model-y-awd.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/690bfd63a96ea50002e279f2/026-2025-tesla-model-y-awd.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/690bfd5cfc8a290002c2ae71/022-2025-tesla-model-y-awd.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/690bfd3ea96ea50002e279e7/011-2025-tesla-model-y-awd.jpg"
+    ],
     "priceRange": "$43,990 - $52,490",
     "priceMin": 43990,
     "priceMax": 52490,
@@ -1775,7 +1801,12 @@
     "model": "ID.4",
     "bodyStyle": "SUV",
     "imageSource": "2025 Volkswagen ID.4",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6760ab39fe4b93000856f15a/16-2025-volkswagen-id4-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6760ab39fe4b93000856f15a/16-2025-volkswagen-id4-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6760aaf82660350008cc3165/2-2025-volkswagen-id4-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6760ab012660350008cc3167/5-2025-volkswagen-id4-interior.jpg"
+    ],
     "priceRange": "$38,995 - $52,295",
     "priceMin": 38995,
     "priceMax": 52295,

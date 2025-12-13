@@ -8,7 +8,7 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.25rem;
   box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
-  padding: var(--spacing-6);
+  padding: 2.5rem 3rem;
 }
 
 /* Header */
@@ -19,7 +19,7 @@
 .vehicle-ranking__title {
   font-family: var(--font-heading);
   font-size: 36px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -72,6 +72,12 @@
 @media (max-width: 900px) {
   .vehicle-ranking__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .vehicle-ranking__card-wrapper {
+    padding: 1.5rem;
   }
 }
 

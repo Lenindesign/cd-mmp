@@ -1,32 +1,85 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
+import { searchVehicles, type Vehicle } from '../../services/vehicleService';
+import ExitIntentModal from '../ExitIntentModal';
 import './Header.css';
 
-interface HeaderProps {
-  onShopNewCars?: () => void;
-}
-
-const Header = ({ onShopNewCars }: HeaderProps) => {
+const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<Vehicle[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
+  const searchRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
 
   const navItems = [
     { label: 'Browse All Vehicles', href: '/vehicles', isRoute: true },
-    { label: 'Shop New Cars', href: '#', onClick: onShopNewCars },
-    { label: 'Shop Used Cars', href: '#' },
+    { label: 'Shop New Cars', href: '/', isRoute: true },
+    { label: 'Shop Used Cars', href: '/used-cars', isRoute: true },
     { label: 'Research Cars', href: '#' },
     { label: 'Expert Reviews', href: '#' },
     { label: "What's My Car Worth?", href: '#' },
     { label: 'News + Stories', href: '#' },
   ];
 
+  // Handle search input changes
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2) {
+      const results = searchVehicles(searchQuery).slice(0, 8);
+      setSuggestions(results);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+    setActiveSuggestion(-1);
+  }, [searchQuery]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/vehicles?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (vehicle: Vehicle) => {
+    navigate(`/${vehicle.slug}`);
+    setSearchQuery('');
+    setShowSuggestions(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveSuggestion(prev => 
+        prev < suggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveSuggestion(prev => (prev > 0 ? prev - 1 : -1));
+    } else if (e.key === 'Enter' && activeSuggestion >= 0) {
+      e.preventDefault();
+      handleSuggestionClick(suggestions[activeSuggestion]);
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false);
     }
   };
 
@@ -54,22 +107,86 @@ const Header = ({ onShopNewCars }: HeaderProps) => {
           </Link>
 
           {/* Search Bar */}
-          <form className="header__search-bar" onSubmit={handleSearch}>
+          <form className="header__search-bar" onSubmit={handleSearch} ref={searchRef}>
             <input
               type="text"
               className="header__search-input"
               placeholder="Search vehicles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onFocus={() => searchQuery.trim().length >= 2 && setShowSuggestions(true)}
             />
             <button type="submit" className="header__search-btn" aria-label="Search">
               <Search size={20} />
             </button>
+            
+            {/* Autocomplete Suggestions */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="header__suggestions">
+                {suggestions.map((vehicle, index) => (
+                  <div
+                    key={vehicle.id}
+                    className={`header__suggestion ${index === activeSuggestion ? 'header__suggestion--active' : ''}`}
+                  >
+                    <img 
+                      src={vehicle.image || '/placeholder-car.png'} 
+                      alt={`${vehicle.make} ${vehicle.model}`}
+                      className="header__suggestion-image"
+                      onClick={() => handleSuggestionClick(vehicle)}
+                    />
+                    <div className="header__suggestion-info" onClick={() => handleSuggestionClick(vehicle)}>
+                      <span className="header__suggestion-name">
+                        {vehicle.year} {vehicle.make} {vehicle.model}
+                      </span>
+                      <span className="header__suggestion-price">
+                        {vehicle.priceRange}
+                      </span>
+                    </div>
+                    <span className="header__suggestion-rating">
+                      <span className="header__suggestion-rating-score">{vehicle.staffRating}</span>/10
+                    </span>
+                    <div className="header__suggestion-ctas">
+                      <button
+                        type="button"
+                        className="header__suggestion-cta header__suggestion-cta--buy"
+                        onClick={() => {
+                          navigate(`/${vehicle.slug}#pricing`);
+                          setSearchQuery('');
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        Buy
+                      </button>
+                      <button
+                        type="button"
+                        className="header__suggestion-cta header__suggestion-cta--research"
+                        onClick={() => handleSuggestionClick(vehicle)}
+                      >
+                        Research
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="submit"
+                  className="header__suggestion header__suggestion--all"
+                >
+                  <Search size={16} />
+                  <span>See all results for "{searchQuery}"</span>
+                </button>
+              </div>
+            )}
           </form>
 
           {/* Actions */}
           <div className="header__actions">
-            <button className="header__subscribe-btn">Subscribe</button>
+            <button 
+              className="header__subscribe-btn"
+              onClick={() => setIsSubscribeModalOpen(true)}
+            >
+              Subscribe
+            </button>
             <button className="header__user-btn" aria-label="User account">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path d="M21.649 19.875c-1.428-2.468-3.629-4.239-6.196-5.078a6.75 6.75 0 1 0-6.906 0c-2.568.839-4.768 2.609-6.196 5.078a.75.75 0 1 0 1.299.75C5.416 17.573 8.538 15.75 12 15.75c3.462 0 6.584 1.823 8.35 4.875a.75.75 0 1 0 1.299-.75ZM6.749 9a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" fill="currentColor"/>
@@ -91,12 +208,6 @@ const Header = ({ onShopNewCars }: HeaderProps) => {
                   <a 
                     href={item.href} 
                     className="header__nav-link"
-                    onClick={(e) => {
-                      if (item.onClick) {
-                        e.preventDefault();
-                        item.onClick();
-                      }
-                    }}
                   >
                     {item.label}
                   </a>
@@ -106,6 +217,12 @@ const Header = ({ onShopNewCars }: HeaderProps) => {
           </ul>
         </nav>
       </div>
+
+      {/* Subscribe Modal */}
+      <ExitIntentModal 
+        isOpen={isSubscribeModalOpen}
+        onClose={() => setIsSubscribeModalOpen(false)}
+      />
     </header>
   );
 };

@@ -1,0 +1,107 @@
+/* ============================================
+   ONBOARDING STEP 4 - VEHICLE PREFERENCES
+   Car and Driver Design System
+   ============================================ */
+
+.onboarding-step4 {
+  max-width: 680px;
+}
+
+.onboarding-step4__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
+}
+
+.onboarding-step4__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-5) var(--spacing-3);
+  background: var(--cd-white, #FFFFFF);
+  border: 1px solid var(--cd-grey-border, #CDCDCD);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 100px;
+}
+
+.onboarding-step4__card:hover {
+  border-color: var(--cd-blue-cobalt, #1B5F8A);
+  background: var(--cd-light-blue, #F1F7F7);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.onboarding-step4__card--selected {
+  border-color: var(--cd-blue-cobalt, #1B5F8A);
+  background: var(--cd-light-blue, #F1F7F7);
+  box-shadow: 0 0 0 2px var(--cd-blue-cobalt, #1B5F8A);
+}
+
+.onboarding-step4__card-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.onboarding-step4__card-label {
+  font-family: 'Inter', var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--cd-dark-grey, #222222);
+  text-align: center;
+}
+
+.onboarding-step4__card-check {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cd-blue-cobalt, #1B5F8A);
+  border-radius: 50%;
+  color: var(--cd-white, #FFFFFF);
+}
+
+.onboarding-step4__count {
+  font-family: 'Inter', var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--cd-blue-cobalt, #1B5F8A);
+  font-weight: 500;
+  margin-bottom: var(--spacing-4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .onboarding-step4__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .onboarding-step4__card {
+    padding: var(--spacing-4) var(--spacing-2);
+    min-height: 80px;
+  }
+
+  .onboarding-step4__card-icon {
+    font-size: 24px;
+  }
+
+  .onboarding-step4__card-label {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .onboarding-step4__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-2);
+  }
+}
+

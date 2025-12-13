@@ -8,7 +8,7 @@
   background: var(--color-white);
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.25rem;
-  padding: var(--spacing-6);
+  padding: 2.5rem 3rem;
   box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
 }
 
@@ -20,7 +20,7 @@
 .incentives__title {
   font-family: var(--font-heading);
   font-size: 36px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -223,6 +223,12 @@
   border: 1px solid #B8D9F0;
 }
 
+.incentives__badge--special {
+  background: #F0FDF4;
+  color: #166534;
+  border: 1px solid #BBF7D0;
+}
+
 /* Item Info */
 .incentives__item-info {
   display: flex;
@@ -267,6 +273,25 @@
 
 .incentives__item-exp {
   color: var(--color-gray-500);
+}
+
+.incentives__item-terms {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: var(--spacing-1) 0 0 0;
+  font-style: italic;
+}
+
+.incentives__item-eligibility {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  margin: var(--spacing-1) 0 0 0;
+}
+
+.incentives__item-eligibility strong {
+  color: var(--color-gray-700);
 }
 
 /* Item Link */
@@ -380,8 +405,28 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Source Attribution */
+.incentives__source {
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.incentives__source p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0;
+  text-align: center;
+  font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+  .incentives__card {
+    padding: 1.5rem;
+  }
+
   .incentives__filters {
     flex-direction: column;
   }

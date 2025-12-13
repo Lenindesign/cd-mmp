@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Info, Tag, Target, Search, TrendingDown, CheckCircle, Clock, Percent, ChevronDown } from 'lucide-react';
 import './TargetPriceRange.css';
+
+interface TrimData {
+  name: string;
+  msrp: number;
+}
 
 interface TrimPriceData {
   msrp: number;
@@ -9,49 +14,108 @@ interface TrimPriceData {
   targetPriceHigh: number;
 }
 
-// Price data by trim level
-const trimPriceData: Record<string, TrimPriceData> = {
-  'LS FWD': {
-    msrp: 21895,
-    dealerPrice: 22195,
-    targetPriceLow: 20300,
-    targetPriceHigh: 21400,
-  },
-  '1RS FWD': {
-    msrp: 23195,
-    dealerPrice: 23495,
-    targetPriceLow: 21500,
-    targetPriceHigh: 22700,
-  },
-  'LT FWD': {
-    msrp: 23395,
-    dealerPrice: 23695,
-    targetPriceLow: 21700,
-    targetPriceHigh: 22900,
-  },
-  'RS FWD': {
-    msrp: 24995,
-    dealerPrice: 25395,
-    targetPriceLow: 23200,
-    targetPriceHigh: 24500,
-  },
-  'ACTIV FWD': {
-    msrp: 24995,
-    dealerPrice: 25395,
-    targetPriceLow: 23200,
-    targetPriceHigh: 24500,
-  },
+interface TargetPriceRangeProps {
+  msrp?: number;
+  trims?: TrimData[];
+  vehicleName?: string;
+}
+
+// Default trims for Chevrolet Trax
+const defaultTrims: TrimData[] = [
+  { name: 'LS FWD', msrp: 21895 },
+  { name: '1RS FWD', msrp: 23195 },
+  { name: 'LT FWD', msrp: 23395 },
+  { name: 'RS FWD', msrp: 24995 },
+  { name: 'ACTIV FWD', msrp: 24995 },
+];
+
+// Calculate pricing based on MSRP
+const calculatePricing = (msrp: number): TrimPriceData => {
+  // Pricing varies by vehicle price tier
+  if (msrp > 200000) {
+    // Exotic/supercar - minimal or no discount, possible market adjustment
+    return {
+      msrp,
+      dealerPrice: Math.round(msrp * 1.05), // 5% markup for hot exotics
+      targetPriceLow: Math.round(msrp * 0.98), // Best case: MSRP - 2%
+      targetPriceHigh: msrp, // Fair: At MSRP
+    };
+  } else if (msrp > 100000) {
+    // Luxury vehicles - smaller discounts
+    return {
+      msrp,
+      dealerPrice: Math.round(msrp * 1.02), // 2% markup
+      targetPriceLow: Math.round(msrp * 0.95), // 5% below MSRP
+      targetPriceHigh: Math.round(msrp * 0.98), // 2% below MSRP
+    };
+  } else if (msrp > 50000) {
+    // Mid-luxury vehicles
+    return {
+      msrp,
+      dealerPrice: Math.round(msrp * 1.015), // 1.5% markup
+      targetPriceLow: Math.round(msrp * 0.93), // 7% below MSRP
+      targetPriceHigh: Math.round(msrp * 0.97), // 3% below MSRP
+    };
+  } else {
+    // Economy/mainstream vehicles - best negotiation room
+    return {
+      msrp,
+      dealerPrice: Math.round(msrp * 1.01), // 1% markup
+      targetPriceLow: Math.round(msrp * 0.92), // 8% below MSRP
+      targetPriceHigh: Math.round(msrp * 0.97), // 3% below MSRP
+    };
+  }
 };
 
-const trims = ['LS FWD', '1RS FWD', 'LT FWD', 'RS FWD', 'ACTIV FWD'];
+// Generate trims based on base MSRP for vehicles without specific trim data
+const generateTrimsFromMSRP = (baseMsrp: number): TrimData[] => {
+  // For economy vehicles (under $35k)
+  if (baseMsrp < 35000) {
+    return [
+      { name: 'Base', msrp: baseMsrp },
+      { name: 'Sport', msrp: Math.round(baseMsrp * 1.08) },
+      { name: 'Premium', msrp: Math.round(baseMsrp * 1.15) },
+    ];
+  }
+  // For mid-range vehicles ($35k-$80k)
+  if (baseMsrp < 80000) {
+    return [
+      { name: 'Base', msrp: baseMsrp },
+      { name: 'Sport', msrp: Math.round(baseMsrp * 1.10) },
+      { name: 'Premium', msrp: Math.round(baseMsrp * 1.18) },
+      { name: 'Performance', msrp: Math.round(baseMsrp * 1.25) },
+    ];
+  }
+  // For luxury/exotic vehicles ($80k+)
+  return [
+    { name: 'Base', msrp: baseMsrp },
+    { name: 'Performance', msrp: Math.round(baseMsrp * 1.15) },
+    { name: 'Track', msrp: Math.round(baseMsrp * 1.30) },
+  ];
+};
 
-const TargetPriceRange = () => {
-  const [selectedTrim, setSelectedTrim] = useState(trims[0]);
+const TargetPriceRange = ({
+  msrp = 21895,
+  trims,
+  vehicleName = 'Chevrolet Trax',
+}: TargetPriceRangeProps) => {
+  // Determine which trims to use
+  const availableTrims = useMemo(() => {
+    if (trims && trims.length > 0) return trims;
+    // Use default trims for Chevrolet Trax
+    if (vehicleName === 'Chevrolet Trax') return defaultTrims;
+    // Generate trims for other vehicles
+    return generateTrimsFromMSRP(msrp);
+  }, [trims, vehicleName, msrp]);
+
+  const [selectedTrimIndex, setSelectedTrimIndex] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  // Get prices for selected trim
-  const trimData = trimPriceData[selectedTrim];
+  const selectedTrim = availableTrims[selectedTrimIndex];
+  
+  // Calculate pricing based on selected trim's MSRP
+  const trimData = useMemo(() => calculatePricing(selectedTrim.msrp), [selectedTrim.msrp]);
   const { dealerPrice, targetPriceLow, targetPriceHigh } = trimData;
   
   const formatPrice = (price: number) => {
@@ -86,21 +150,21 @@ const TargetPriceRange = () => {
                     className="target-price__select"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    {selectedTrim}
+                    {selectedTrim.name}
                     <ChevronDown size={16} />
                   </button>
                   {isDropdownOpen && (
                     <ul className="target-price__options">
-                      {trims.map((trim) => (
-                        <li key={trim}>
+                      {availableTrims.map((trim, index) => (
+                        <li key={trim.name}>
                           <button
-                            className={`target-price__option ${selectedTrim === trim ? 'active' : ''}`}
+                            className={`target-price__option ${selectedTrimIndex === index ? 'active' : ''}`}
                             onClick={() => {
-                              setSelectedTrim(trim);
+                              setSelectedTrimIndex(index);
                               setIsDropdownOpen(false);
                             }}
                           >
-                            {trim}
+                            {trim.name}
                           </button>
                         </li>
                       ))}
@@ -265,4 +329,3 @@ const TargetPriceRange = () => {
 };
 
 export default TargetPriceRange;
-

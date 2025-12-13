@@ -6,7 +6,13 @@
     "model": "F-150",
     "bodyStyle": "Truck",
     "imageSource": "2025 Ford F-150",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/672a816393573c000880b87c/015-2025-ford-f-150-hybrid-king-ranch-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/672a81605c482d000858ef19/014-2025-ford-f-150-hybrid-king-ranch-side-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/672a816e93573c000880b87d/021-2025-ford-f-150-hybrid-king-ranch-rear-view.jpg"
+    ],
     "priceRange": "$36,970 - $78,975",
     "priceMin": 36970,
     "priceMax": 78975,
@@ -256,7 +262,12 @@
     "model": "Santa Cruz",
     "bodyStyle": "Truck",
     "imageSource": "2024 Hyundai Santa Cruz",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a1d532c1bf74000896f4c8/2024-hyundai-santa-cruz-xrt-compact-pickup-truck-2.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1d532c1bf74000896f4c8/2024-hyundai-santa-cruz-xrt-compact-pickup-truck-2.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a43f560d18360008facd88/56333-2024-hyundai-santa-cruz-xrt-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a43f5de5ab5600084fa480/56256-2024-hyundai-santa-cruz-xrt-rear-view.jpg"
+    ],
     "priceRange": "$27,750 - $42,245",
     "priceMin": 27750,
     "priceMax": 42245,
@@ -337,7 +348,13 @@
     "model": "F-150 Lightning",
     "bodyStyle": "Truck",
     "imageSource": "2025 Ford F-150 Lightning",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68f7f7d98e933e0002e8c24b/001-2026f-150lightningstx-side-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68f7f7d98e933e0002e8c24b/001-2026f-150lightningstx-side-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68b9ebdc67563d00021a1ff1/2026fordf-150lightningstxevelectricvehiclepickuptruck-15.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68b9ebd957699100020d0296/2026fordf-150lightningstxevelectricvehiclepickuptruck-13.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68b9ebda3755c20002596962/2026fordf-150lightningstxevelectricvehiclepickuptruck-14.jpg"
+    ],
     "priceRange": "$49,995 - $96,874",
     "priceMin": 49995,
     "priceMax": 96874,
@@ -365,7 +382,13 @@
     "model": "R1T",
     "bodyStyle": "Truck",
     "imageSource": "2025 Rivian R1T",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67815f7e2f127e000834af6f/002-2025-rivian-r1t-tri-motor-front-three-quarter-motion.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67815f7e2f127e000834af6f/002-2025-rivian-r1t-tri-motor-front-three-quarter-motion.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67815f822f127e000834af71/003-2025-rivian-r1t-tri-motor-interior-dash.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67815f962f127e000834af76/013-2025-rivian-r1t-tri-motor.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67815f992f127e000834af79/015-2025-rivian-r1t-tri-motor.jpg"
+    ],
     "priceRange": "$73,000 - $87,000",
     "priceMin": 73000,
     "priceMax": 87000,

@@ -1,10 +1,58 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Info, ChevronDown, Car, CheckCircle, ArrowRight } from 'lucide-react';
+import { ChevronDown, CheckCircle, ArrowRight, MapPin } from 'lucide-react';
 import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../services/vehicleService';
+import { getAllListings, type Listing } from '../../services/listingsService';
 import './BuyingPotential.css';
 
-const BuyingPotential = () => {
+interface BuyingPotentialProps {
+  bodyStyle?: string;
+  vehicleName?: string;
+  vehicleImage?: string;
+}
+
+// Map body styles to display names
+const bodyStyleLabels: Record<string, string> = {
+  'SUV': 'SUVs',
+  'Sedan': 'Sedans',
+  'Truck': 'Trucks',
+  'Coupe': 'Coupes',
+  'Hatchback': 'Hatchbacks',
+  'Convertible': 'Convertibles',
+  'Wagon': 'Wagons',
+};
+
+// Get category description based on body style and price range
+const getCategoryLabel = (bodyStyle: string, maxPrice: number): string => {
+  const styleLabel = bodyStyleLabels[bodyStyle] || bodyStyle;
+  
+  if (bodyStyle === 'SUV') {
+    if (maxPrice < 35000) return 'Subcompact SUVs';
+    if (maxPrice < 50000) return 'Compact SUVs';
+    if (maxPrice < 80000) return 'Midsize SUVs';
+    return 'Luxury SUVs';
+  }
+  
+  if (bodyStyle === 'Sedan') {
+    if (maxPrice < 35000) return 'Compact Sedans';
+    if (maxPrice < 50000) return 'Midsize Sedans';
+    return 'Luxury Sedans';
+  }
+  
+  if (bodyStyle === 'Truck') {
+    if (maxPrice < 45000) return 'Compact Trucks';
+    if (maxPrice < 70000) return 'Full-Size Trucks';
+    return 'Heavy-Duty Trucks';
+  }
+  
+  return styleLabel;
+};
+
+const BuyingPotential = ({
+  bodyStyle = 'SUV',
+  vehicleName = '2025 Chevrolet Trax',
+  vehicleImage = 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png',
+}: BuyingPotentialProps) => {
   const [vehicleType, setVehicleType] = useState('New car');
   const [downPayment, setDownPayment] = useState(2500);
   const [creditScore, setCreditScore] = useState('Good (670-739)');
@@ -29,11 +77,35 @@ const BuyingPotential = () => {
   ];
   const loanTerms = [36, 48, 60, 72, 84];
 
-  // Get vehicle matches from database based on buying power (filtered to SUVs only)
+  // Get vehicle matches from database based on buying power and body style
   const vehicleMatches = useMemo<BuyingPotentialVehicle[]>(() => {
     if (buyingPower <= 0) return [];
-    return getBuyingPotentialVehicles(buyingPower, 20, 'SUV');
-  }, [buyingPower]);
+    return getBuyingPotentialVehicles(buyingPower, 20, bodyStyle);
+  }, [buyingPower, bodyStyle]);
+
+  // Get used car listings based on buying power and body style
+  const usedCarMatches = useMemo<Listing[]>(() => {
+    if (buyingPower <= 0) return [];
+    const allListings = getAllListings();
+    return allListings
+      .filter(listing => {
+        const matchesPrice = listing.price <= buyingPower;
+        const matchesBodyStyle = !bodyStyle || listing.bodyStyle === bodyStyle;
+        return matchesPrice && matchesBodyStyle && !listing.isNew;
+      })
+      .sort((a, b) => b.price - a.price) // Show higher priced first (closer to budget)
+      .slice(0, 20);
+  }, [buyingPower, bodyStyle]);
+
+  // Determine which matches to show based on vehicle type
+  const isUsedMode = vehicleType === 'Used car';
+  const currentMatches = isUsedMode ? usedCarMatches : vehicleMatches;
+  const matchCount = currentMatches.length;
+
+  // Get dynamic category label
+  const categoryLabel = useMemo(() => {
+    return getCategoryLabel(bodyStyle, buyingPower);
+  }, [bodyStyle, buyingPower]);
 
   // Get APR based on credit score
   const getAPR = () => {
@@ -102,14 +174,9 @@ const BuyingPotential = () => {
         <div className="buying-potential__card">
           {/* Left Side - Info & Image */}
           <div className="buying-potential__left">
-            <span className="buying-potential__badge">NEW</span>
-            
             <div className="buying-potential__header">
               <h2 className="buying-potential__title">
                 See Your Buying Potential
-                <button className="buying-potential__info-btn" aria-label="More info">
-                  <Info size={18} />
-                </button>
               </h2>
               <p className="buying-potential__description">
                 Calculate your budget and instantly see vehicles that fit your financial comfort zone.
@@ -117,38 +184,80 @@ const BuyingPotential = () => {
             </div>
 
             {/* Vehicle Matches */}
-            {vehicleMatches.length > 0 ? (
+            {matchCount > 0 ? (
               <div className="buying-potential__matches">
                 <h3 className="buying-potential__matches-title">
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Car size={18} />
-                    Subcompact SUVs In Your Budget
+                  <span>
+                    {isUsedMode ? `Used ${categoryLabel}` : categoryLabel} In Your Budget
                   </span>
-                  <span className="buying-potential__matches-count">{vehicleMatches.length} found</span>
+                  <span className="buying-potential__matches-count">{matchCount} found</span>
                 </h3>
                 <div className="buying-potential__matches-list">
-                  {vehicleMatches.map((vehicle, index) => (
-                    <Link key={index} to={`/${vehicle.slug}`} className="buying-potential__match">
-                      <img src={vehicle.image} alt={vehicle.name} className="buying-potential__match-image" />
-                      <div className="buying-potential__match-info">
-                        <span className="buying-potential__match-name">{vehicle.name}</span>
-                        <span className="buying-potential__match-trim">
-                          {vehicle.trim}
-                          <span className="buying-potential__match-rating">{vehicle.rating}/10</span>
-                        </span>
-                        <span className="buying-potential__match-price">{formatCurrency(vehicle.price)}</span>
-                      </div>
-                      <CheckCircle size={18} className="buying-potential__match-check" />
-                    </Link>
-                  ))}
+                  {isUsedMode ? (
+                    // Used car listings
+                    usedCarMatches.map((listing, index) => (
+                      <Link key={index} to={`/${listing.slug}`} className="buying-potential__match buying-potential__match--used">
+                        <img src={listing.image} alt={`${listing.year} ${listing.make} ${listing.model}`} className="buying-potential__match-image" />
+                        <div className="buying-potential__match-info">
+                          <span className="buying-potential__match-name">{listing.year} {listing.make} {listing.model}</span>
+                          <span className="buying-potential__match-trim">
+                            {listing.mileage.toLocaleString()} miles
+                          </span>
+                          <span className="buying-potential__match-dealer">
+                            <MapPin size={12} />
+                            {listing.dealerName} • {listing.distance} mi
+                          </span>
+                          <span className="buying-potential__match-price">{formatCurrency(listing.price)}</span>
+                        </div>
+                        <CheckCircle size={18} className="buying-potential__match-check" />
+                      </Link>
+                    ))
+                  ) : (
+                    // New vehicles
+                    vehicleMatches.map((vehicle, index) => (
+                      <Link key={index} to={`/${vehicle.slug}`} className="buying-potential__match">
+                        <img src={vehicle.image} alt={vehicle.name} className="buying-potential__match-image" />
+                        <div className="buying-potential__match-info">
+                          <span className="buying-potential__match-name">{vehicle.name}</span>
+                          <span className="buying-potential__match-trim">
+                            {vehicle.trim}
+                            <span className="buying-potential__match-rating"><span className="buying-potential__match-rating-score">{vehicle.rating}</span>/10</span>
+                          </span>
+                          <span className="buying-potential__match-price">{formatCurrency(vehicle.price)}</span>
+                        </div>
+                        <CheckCircle size={18} className="buying-potential__match-check" />
+                      </Link>
+                    ))
+                  )}
                 </div>
               </div>
             ) : (
-              <div className="buying-potential__image">
-                <img 
-                  src="https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png" 
-                  alt="2025 Chevrolet Trax"
-                />
+              <div className="buying-potential__no-matches">
+                <div className="buying-potential__no-matches-image">
+                  <img 
+                    src={vehicleImage} 
+                    alt={vehicleName}
+                  />
+                </div>
+                <div className="buying-potential__no-matches-content">
+                  <h3 className="buying-potential__no-matches-title">
+                    No {isUsedMode ? `Used ${categoryLabel}` : categoryLabel} Found
+                  </h3>
+                  <p className="buying-potential__no-matches-text">
+                    Your current budget of <strong>{formatCurrency(buyingPower)}</strong> doesn't match any {isUsedMode ? 'used ' : ''}{categoryLabel.toLowerCase()} in our database.
+                  </p>
+                  <div className="buying-potential__no-matches-tips">
+                    <p className="buying-potential__no-matches-tip">
+                      <strong>💡 Tips to see more vehicles:</strong>
+                    </p>
+                    <ul className="buying-potential__no-matches-list">
+                      <li>Increase your <strong>monthly payment</strong></li>
+                      <li>Add a larger <strong>down payment</strong></li>
+                      <li>Consider a longer <strong>loan term</strong></li>
+                      <li>Include a <strong>trade-in</strong> vehicle</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -350,10 +459,16 @@ const BuyingPotential = () => {
 
             {/* CTA Buttons */}
             <div className="buying-potential__cta-group">
-              <button className="buying-potential__cta buying-potential__cta--primary">
-                See All Vehicles Under {formatCurrency(buyingPower)}
+              <Link 
+                to={isUsedMode 
+                  ? `/vehicles?type=used&maxPrice=${buyingPower}&bodyStyle=${bodyStyle}`
+                  : `/vehicles?maxPrice=${buyingPower}&bodyStyle=${bodyStyle}`
+                }
+                className="buying-potential__cta buying-potential__cta--primary"
+              >
+                See All {isUsedMode ? 'Used ' : ''}{categoryLabel} Under {formatCurrency(buyingPower)}
                 <ArrowRight size={18} />
-              </button>
+              </Link>
               <button className="buying-potential__cta buying-potential__cta--secondary">
                 Get Pre-Approved
               </button>
@@ -372,4 +487,3 @@ const BuyingPotential = () => {
 };
 
 export default BuyingPotential;
-

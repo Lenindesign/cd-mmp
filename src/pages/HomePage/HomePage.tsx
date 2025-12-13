@@ -6,13 +6,13 @@ import TargetPriceRange from '../../components/TargetPriceRange';
 import Incentives from '../../components/Incentives';
 import BuyingPotential from '../../components/BuyingPotential';
 import AdSidebar from '../../components/AdSidebar';
-import Overview from '../../components/Overview';
 import TrimSelector from '../../components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from '../../components/Warranty';
 import Comparison from '../../components/Comparison';
 import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
+import ForSaleNearYou from '../../components/ForSaleNearYou';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import { suvs } from '../../services/vehicleService';
 
@@ -48,29 +48,6 @@ const HomePage = () => {
     cargoSpace: traxFromDB?.cargoSpace,
     fuelType: traxFromDB?.fuelType,
     drivetrain: traxFromDB?.drivetrain,
-  };
-
-  // Overview data
-  const overviewData = {
-    pros: [
-      'Attractively low starting price',
-      'Spacious interior for its class',
-      'User-friendly infotainment system',
-      'Composed ride quality',
-      'Standard safety features',
-    ],
-    cons: [
-      'Modest engine power',
-      'No all-wheel-drive option',
-      'Basic interior materials',
-      'Limited towing capacity',
-    ],
-    whatsNew: [
-      'Two new exterior colors: Cypress Gray and Marina Blue Metallic',
-      'Engine now capable of running on E85 fuel',
-      'Enhanced standard safety features',
-    ],
-    verdict: 'The 2025 Chevrolet Trax stands out as one of the most affordable new vehicles on the market while still offering a surprisingly spacious interior and modern technology. Its attractively low price makes it an excellent choice for first-time buyers or anyone seeking practical, no-frills transportation.',
   };
 
   // Trim data
@@ -153,22 +130,33 @@ const HomePage = () => {
               msrp={traxFromDB?.priceMin || 21895}
               fuelType={traxFromDB?.fuelType || 'Gas'}
             />
-            <TargetPriceRange />
-            <Incentives make="Chevrolet" model="Trax" />
-            <BuyingPotential />
+            <TargetPriceRange 
+              msrp={traxFromDB?.priceMin || 21895}
+              vehicleName="Chevrolet Trax"
+            />
+            <Incentives 
+              make="Chevrolet" 
+              model="Trax"
+              msrp={traxFromDB?.priceMin || 21895}
+              bodyStyle={traxFromDB?.bodyStyle || 'SUV'}
+              fuelType={traxFromDB?.fuelType || 'Gas'}
+            />
+            <BuyingPotential 
+              bodyStyle={traxFromDB?.bodyStyle || 'SUV'}
+              vehicleName="2025 Chevrolet Trax"
+              vehicleImage={traxFromDB?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png'}
+            />
             <VehicleRanking />
-            <MarketSpeed vehicleName="2025 Chevrolet Trax" make="Chevrolet" model="Trax" />
+            <MarketSpeed 
+              vehicleName="2025 Chevrolet Trax" 
+              make="Chevrolet" 
+              model="Trax"
+              bodyStyle={traxFromDB?.bodyStyle || 'SUV'}
+              msrp={traxFromDB?.priceMin || 21895}
+            />
           </div>
           <AdSidebar />
         </div>
-        
-        <Overview 
-          pros={overviewData.pros}
-          cons={overviewData.cons}
-          whatsNew={overviewData.whatsNew}
-          verdict={overviewData.verdict}
-          year={vehicleData.year}
-        />
         
         <section id="pricing">
           <TrimSelector 
@@ -183,6 +171,15 @@ const HomePage = () => {
         
         <Comparison 
           currentVehicle={{ make: vehicleData.make, model: vehicleData.model }}
+        />
+        
+        <ForSaleNearYou 
+          vehicleName={`${vehicleData.year} ${vehicleData.make} ${vehicleData.model}`}
+          make={vehicleData.make}
+          model={vehicleData.model}
+          bodyStyle={traxFromDB?.bodyStyle || 'SUV'}
+          maxPrice={35000}
+          location="Miami, FL"
         />
       </main>
       

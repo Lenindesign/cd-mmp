@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { getRankingVehiclesFormatted, type RankedVehicle } from '../../services/vehicleService';
+import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
 import './VehicleRanking.css';
 
 interface VehicleRankingProps {
@@ -22,12 +22,31 @@ const getBadgeLabel = (badge: string) => {
   }
 };
 
+// Get category label based on body style and price range
+const getCategoryLabel = (bodyStyle: string, maxPrice?: number): string => {
+  const priceLabel = maxPrice && maxPrice < 35000 ? 'Subcompact ' : 
+                     maxPrice && maxPrice < 50000 ? 'Compact ' :
+                     maxPrice && maxPrice < 80000 ? 'Midsize ' :
+                     maxPrice && maxPrice > 100000 ? 'Luxury ' : '';
+  
+  switch (bodyStyle.toLowerCase()) {
+    case 'suv': return `Best ${priceLabel}SUVs`;
+    case 'sedan': return `Best ${priceLabel}Sedans`;
+    case 'truck': return `Best ${priceLabel}Trucks`;
+    case 'coupe': return `Best ${priceLabel}Coupes`;
+    case 'hatchback': return `Best ${priceLabel}Hatchbacks`;
+    case 'convertible': return `Best ${priceLabel}Convertibles`;
+    case 'wagon': return `Best ${priceLabel}Wagons`;
+    default: return `Best ${bodyStyle}s`;
+  }
+};
+
 // Subcompact SUVs are typically priced under $35,000
 const SUBCOMPACT_MAX_PRICE = 35000;
 
 const VehicleRanking = ({
-  category = 'Best Subcompact SUVs',
-  currentRank = 1,
+  category,
+  currentRank,
   vehicles,
   bodyStyle = 'SUV',
   currentVehicleId,
@@ -38,17 +57,27 @@ const VehicleRanking = ({
     if (vehicles && vehicles.length > 0) {
       return vehicles;
     }
-    // Get top ranked subcompact SUVs from database (filtered by price)
+    // Get top ranked vehicles from database (filtered by body style and price)
     return getRankingVehiclesFormatted(bodyStyle, currentVehicleId, 6, maxPrice);
   }, [vehicles, bodyStyle, currentVehicleId, maxPrice]);
+
+  // Get the actual rank of the current vehicle for display in header
+  const actualCurrentRank = useMemo(() => {
+    if (currentRank) return currentRank;
+    if (!currentVehicleId) return 1;
+    return getCurrentVehicleRank(bodyStyle, currentVehicleId, maxPrice);
+  }, [currentRank, bodyStyle, currentVehicleId, maxPrice]);
+
+  // Dynamic category label based on body style and price
+  const categoryLabel = category || getCategoryLabel(bodyStyle, maxPrice);
   return (
     <section className="vehicle-ranking">
       <div className="vehicle-ranking__card-wrapper">
         <div className="vehicle-ranking__header">
           <h2 className="vehicle-ranking__title">Where This Vehicle Ranks</h2>
           <a href="#" className="vehicle-ranking__category-link">
-            <span className="vehicle-ranking__category-rank">#{currentRank}</span>
-            <span className="vehicle-ranking__category-name">in {category}</span>
+            <span className="vehicle-ranking__category-rank">#{actualCurrentRank}</span>
+            <span className="vehicle-ranking__category-name">in {categoryLabel}</span>
             <ChevronRight size={20} />
           </a>
         </div>

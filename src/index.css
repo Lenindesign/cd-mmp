@@ -3,8 +3,8 @@
    Based on Figma Design File
    ============================================ */
 
-/* Import Fonts - Car and Driver style fonts */
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Serif+Text:ital@0;1&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+/* Import Fonts - Car and Driver Design System Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
   /* ============================================
@@ -47,7 +47,7 @@
   
   /* ============================================
      TYPOGRAPHY - Car and Driver Style
-     Using Inter 700 for headlines
+     Using Inter 800 (Extrabold) for headlines
      ============================================ */
   
   /* Font Families */
@@ -60,6 +60,7 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
   
   /* Font Sizes */
   --font-size-xs: 0.6875rem;    /* 11px */
@@ -181,7 +182,7 @@ ul, ol {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   line-height: var(--line-height-snug);
 }
 
@@ -226,6 +227,7 @@ h1, h2, h3, h4, h5, h6 {
 .section-title {
   font-family: var(--font-display);
   font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin-bottom: var(--spacing-4);
 }

@@ -19,7 +19,7 @@
 
 /* Main Content */
 .cost-to-own__main {
-  padding: var(--spacing-6);
+  padding: 2.5rem 3rem;
 }
 
 /* Header */
@@ -41,7 +41,7 @@
   flex-direction: column;
   font-family: var(--font-heading);
   font-size: 36px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -466,7 +466,7 @@
 /* Responsive */
 @media (max-width: 768px) {
   .cost-to-own__main {
-    padding: var(--spacing-6);
+    padding: 1.5rem;
   }
 
   .cost-to-own__header {

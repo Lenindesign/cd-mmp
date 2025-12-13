@@ -6,7 +6,13 @@
     "model": "Prius",
     "bodyStyle": "Hatchback",
     "imageSource": "2025 Toyota Prius",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6736957ca044ac0008cbef57/009-2025-toyota-prius-limited-fwd-side-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/673695791d14ea00080a7013/008-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6736955fa044ac0008cbef56/001-2025-toyota-prius-limited-fwd-interior.jpg"
+    ],
     "priceRange": "$28,545 - $35,000",
     "priceMin": 28545,
     "priceMax": 35000,
@@ -87,7 +93,13 @@
     "model": "Golf R",
     "bodyStyle": "Hatchback",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4c/14-2024-volkswagen-golf-r-front-view.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a49394868c9f0008520249/18-2024-volkswagen-golf-r-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a49394868c9f0008520249/18-2024-volkswagen-golf-r-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4c/14-2024-volkswagen-golf-r-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4d/22-2024-volkswagen-golf-r-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a493862d6fea0008acca49/21-2024-volkswagen-golf-r-front-view.jpg"
+    ],
     "priceRange": "$44,640 - $46,640",
     "priceMin": 44640,
     "priceMax": 46640,
@@ -195,7 +207,12 @@
     "model": "1 Series",
     "bodyStyle": "Hatchback",
     "imageSource": "2024 BMW 1 Series",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a0e4ab97ef0a00087b620f/2024-bmw-5-series-1.jpeg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0e4ab97ef0a00087b620f/2024-bmw-5-series-1.jpeg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65f7f1ed8a0b89000868fea7/1-2025-bmw-4-series-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a4af51bc61bd00089f409d/1-2024-bmw-3-series-m340i-interior.jpg"
+    ],
     "priceRange": "$35,900 - $42,500",
     "priceMin": 35900,
     "priceMax": 42500,
@@ -243,33 +260,6 @@
     "slug": "2024/Mini/Cooper-Hardtop"
   },
   {
-    "id": "73",
-    "year": "2024",
-    "make": "Ford",
-    "model": "Focus ST",
-    "bodyStyle": "Hatchback",
-    "imageSource": "2024 Ford Focus ST",
-    "image": null,
-    "priceRange": "$28,500 - $32,500",
-    "priceMin": 28500,
-    "priceMax": 32500,
-    "staffRating": 8.5,
-    "communityRating": 8.3,
-    "reviewCount": 178,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "Manual",
-    "mpg": "22/30",
-    "horsepower": 252,
-    "seatingCapacity": 5,
-    "features": [
-      "Launch Control",
-      "SYNC 4",
-      "Recaro Seats"
-    ],
-    "slug": "2024/Ford/Focus-ST"
-  },
-  {
     "id": "76",
     "year": "2024",
     "make": "Fiat",
@@ -295,59 +285,5 @@
       "Panoramic Roof"
     ],
     "slug": "2024/Fiat/500"
-  },
-  {
-    "id": "79",
-    "year": "2024",
-    "make": "Seat",
-    "model": "Leon",
-    "bodyStyle": "Hatchback",
-    "imageSource": "2024 Seat Leon",
-    "image": null,
-    "priceRange": "$24,500 - $32,000",
-    "priceMin": 24500,
-    "priceMax": 32000,
-    "staffRating": 8.3,
-    "communityRating": 8.1,
-    "reviewCount": 95,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "Automatic",
-    "mpg": "29/39",
-    "horsepower": 148,
-    "seatingCapacity": 5,
-    "features": [
-      "Travel Assist",
-      "Digital Cockpit",
-      "Beats Audio"
-    ],
-    "slug": "2024/Seat/Leon"
-  },
-  {
-    "id": "80",
-    "year": "2024",
-    "make": "Skoda",
-    "model": "Octavia",
-    "bodyStyle": "Hatchback",
-    "imageSource": "2024 Skoda Octavia",
-    "image": null,
-    "priceRange": "$26,000 - $34,500",
-    "priceMin": 26000,
-    "priceMax": 34500,
-    "staffRating": 8.4,
-    "communityRating": 8.2,
-    "reviewCount": 134,
-    "fuelType": "Hybrid",
-    "drivetrain": "AWD",
-    "transmission": "Automatic",
-    "mpg": "48/44",
-    "horsepower": 204,
-    "seatingCapacity": 5,
-    "features": [
-      "Travel Assist",
-      "Canton Sound System",
-      "Virtual Cockpit"
-    ],
-    "slug": "2024/Skoda/Octavia"
   }
 ]

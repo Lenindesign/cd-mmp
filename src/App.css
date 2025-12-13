@@ -9,7 +9,8 @@
 }
 
 /* Remove section wrapper styling to let inner sections control their own padding */
-.main > section {
+/* Exception: Don't apply display:contents to named sections like comparison, for-sale */
+.main > section:not(.comparison):not(.for-sale) {
   display: contents;
 }
 
@@ -20,6 +21,10 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 24px var(--spacing-12) 24px;
+}
+
+.content-with-sidebar--no-bottom-padding {
+  padding-bottom: 0;
 }
 
 .content-main {

@@ -1,0 +1,732 @@
+/* Used Cars Page Styles */
+.used-cars-page {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+}
+
+/* Header */
+.used-cars-page__header {
+  background: var(--color-white);
+  padding: var(--spacing-8) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.used-cars-page__title {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-2);
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+  padding-bottom: var(--spacing-2);
+}
+
+.used-cars-page__title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: var(--color-primary-1);
+}
+
+.used-cars-page__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-600);
+}
+
+/* Filters Bar */
+.used-cars-page__filters-bar {
+  background: var(--color-white);
+  padding: var(--spacing-4) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.used-cars-page__filters-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.used-cars-page__search {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background: var(--color-gray-100);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius-md);
+  flex: 1;
+  max-width: 350px;
+}
+
+.used-cars-page__search svg {
+  color: var(--color-gray-500);
+  flex-shrink: 0;
+}
+
+.used-cars-page__search input {
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-black);
+  width: 100%;
+  outline: none;
+}
+
+.used-cars-page__search input::placeholder {
+  color: var(--color-gray-500);
+}
+
+.used-cars-page__filter-toggle {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  cursor: pointer;
+}
+
+.used-cars-page__filter-toggle .rotated {
+  transform: rotate(180deg);
+}
+
+.used-cars-page__select {
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  min-width: 130px;
+}
+
+.used-cars-page__select:focus {
+  outline: none;
+  border-color: var(--color-primary-1);
+}
+
+.used-cars-page__view-modes {
+  display: flex;
+  gap: var(--spacing-1);
+  margin-left: auto;
+}
+
+.used-cars-page__view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.used-cars-page__view-btn:hover {
+  border-color: var(--color-primary-1);
+  color: var(--color-primary-1);
+}
+
+.used-cars-page__view-btn.active {
+  background: var(--color-primary-1);
+  border-color: var(--color-primary-1);
+  color: var(--color-white);
+}
+
+.used-cars-page__active-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.used-cars-page__results-count {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.used-cars-page__clear-filters {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary-1);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Content */
+.used-cars-page__content {
+  padding: var(--spacing-6) 0;
+}
+
+/* Grid View */
+.used-cars-page__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+}
+
+.used-cars-page__grid--list {
+  grid-template-columns: 1fr;
+}
+
+/* Card */
+.used-cars-page__card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.used-cars-page__card:hover {
+  border-color: var(--color-primary-1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.used-cars-page__grid--list .used-cars-page__card {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+.used-cars-page__card-image {
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+}
+
+.used-cars-page__grid--list .used-cars-page__card-image {
+  aspect-ratio: auto;
+  height: 180px;
+}
+
+.used-cars-page__card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.used-cars-page__card:hover .used-cars-page__card-image img {
+  transform: scale(1.05);
+}
+
+/* Badges */
+.used-cars-page__card-badges {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+}
+
+.used-cars-page__card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.used-cars-page__card-badge--new {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.used-cars-page__card-badge--certified {
+  background: #22c55e;
+  color: var(--color-white);
+}
+
+.used-cars-page__card-badge--reduced {
+  background: var(--color-primary-1);
+  color: var(--color-white);
+}
+
+.used-cars-page__card-info {
+  padding: var(--spacing-4);
+}
+
+.used-cars-page__card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-1);
+}
+
+.used-cars-page__card-trim {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-2);
+}
+
+.used-cars-page__card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+}
+
+.used-cars-page__card-price {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.used-cars-page__card-original-price {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+  text-decoration: line-through;
+}
+
+.used-cars-page__card-mileage {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-2);
+}
+
+.used-cars-page__card-mileage svg {
+  color: var(--color-gray-400);
+}
+
+.used-cars-page__card-dealer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.used-cars-page__card-dealer svg {
+  color: var(--color-gray-400);
+  flex-shrink: 0;
+}
+
+.used-cars-page__card-distance {
+  color: var(--color-gray-400);
+}
+
+.used-cars-page__card-distance::before {
+  content: '•';
+  margin: 0 var(--spacing-1);
+}
+
+.used-cars-page__card-dealer-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+}
+
+.used-cars-page__card-stars {
+  color: #fbbf24;
+}
+
+.used-cars-page__card-rating-label {
+  color: var(--color-gray-400);
+  margin-left: var(--spacing-1);
+}
+
+/* Empty State */
+.used-cars-page__empty {
+  text-align: center;
+  padding: var(--spacing-8);
+}
+
+.used-cars-page__empty h3 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-2);
+}
+
+.used-cars-page__empty p {
+  font-family: var(--font-body);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-4);
+}
+
+.used-cars-page__empty button {
+  background: var(--color-primary-1);
+  color: var(--color-white);
+  border: none;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+/* Card Wrapper for Hover Tooltip */
+.used-cars-page__card-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.used-cars-page__card-wrapper .used-cars-page__card {
+  flex: 1;
+}
+
+/* ============================================
+   Vehicle History Tooltip (VHT)
+   ============================================ */
+
+.vht {
+  position: absolute;
+  top: 0;
+  z-index: 100;
+  width: 380px;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  padding: var(--spacing-4);
+  transform-origin: left center;
+}
+
+.vht--right {
+  left: calc(100% + 16px);
+  animation: vhtSlideRight 0.25s ease-out;
+}
+
+.vht--left {
+  right: calc(100% + 16px);
+  left: auto;
+  transform-origin: right center;
+  animation: vhtSlideLeft 0.25s ease-out;
+}
+
+.vht__arrow {
+  position: absolute;
+  top: 28px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-white);
+  transform: rotate(45deg);
+  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.vht--right .vht__arrow {
+  left: -6px;
+}
+
+.vht--left .vht__arrow {
+  right: -6px;
+}
+
+@keyframes vhtSlideRight {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes vhtSlideLeft {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.vht__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+}
+
+.vht__header svg {
+  color: var(--color-neutrals-3);
+}
+
+.vht__header span {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.vht__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4) var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.vht__stat {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+}
+
+.vht__stat-icon {
+  color: var(--color-neutrals-4);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.vht__stat--success .vht__stat-icon {
+  color: #22c55e;
+}
+
+.vht__stat--warning .vht__stat-icon {
+  color: #ef4444;
+}
+
+.vht__stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vht__stat-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-neutrals-4);
+}
+
+.vht__stat-value {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.vht__stat--success .vht__stat-value {
+  color: #22c55e;
+}
+
+.vht__stat--warning .vht__stat-value {
+  color: #ef4444;
+}
+
+.vht__usage {
+  margin-bottom: var(--spacing-4);
+}
+
+.vht__usage-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-neutrals-4);
+  display: block;
+  margin-bottom: var(--spacing-2);
+}
+
+.vht__usage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.vht__tag {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  padding: 6px 14px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-neutrals-6);
+  background: var(--color-white);
+  color: var(--color-neutrals-4);
+}
+
+.vht__tag--success {
+  border-color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.08);
+  color: #16a34a;
+}
+
+.vht__tag--warning {
+  border-color: #fed7aa;
+  background: rgba(245, 158, 11, 0.08);
+  color: #c2410c;
+}
+
+.vht__price {
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-neutrals-6);
+}
+
+.vht__price-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+}
+
+.vht__price-header svg {
+  color: var(--color-neutrals-4);
+}
+
+.vht__price-header span {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.vht__price-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.vht__price-row {
+  display: flex;
+  align-items: center;
+}
+
+.vht__price-date {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-neutrals-4);
+  min-width: 110px;
+}
+
+.vht__price-amount {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  flex: 1;
+}
+
+.vht__price-savings {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: #16a34a;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 4px 10px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .used-cars-page__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .vht {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: auto;
+    margin-top: var(--spacing-2);
+    transform-origin: top center;
+    animation: vhtFadeDown 0.25s ease-out;
+  }
+  
+  .vht--right,
+  .vht--left {
+    left: 0;
+    right: 0;
+    animation: vhtFadeDown 0.25s ease-out;
+  }
+  
+  .vht__arrow {
+    display: none;
+  }
+  
+  @keyframes vhtFadeDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@media (max-width: 992px) {
+  .used-cars-page__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .used-cars-page__select {
+    min-width: 110px;
+  }
+}
+
+@media (max-width: 768px) {
+  .used-cars-page__title {
+    font-size: 1.75rem;
+  }
+  
+  .used-cars-page__filters-row {
+    flex-wrap: wrap;
+  }
+  
+  .used-cars-page__search {
+    max-width: 100%;
+    order: 1;
+    width: 100%;
+  }
+  
+  .used-cars-page__filter-toggle {
+    display: flex;
+    order: 2;
+  }
+  
+  .used-cars-page__select {
+    display: none;
+  }
+  
+  .used-cars-page__view-modes {
+    order: 3;
+    margin-left: 0;
+  }
+  
+  .used-cars-page__grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .used-cars-page__grid--list .used-cars-page__card {
+    grid-template-columns: 1fr;
+  }
+  
+  .used-cars-page__grid--list .used-cars-page__card-image {
+    height: 200px;
+  }
+  
+  /* Hide tooltip on mobile */
+  .vht {
+    display: none;
+  }
+}
+

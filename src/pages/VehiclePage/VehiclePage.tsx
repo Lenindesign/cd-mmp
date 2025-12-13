@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { getVehicleBySlug } from '../../services/vehicleService';
+import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
 import Hero from '../../components/Hero';
 import QuickSpecs from '../../components/QuickSpecs';
 import CostToOwn from '../../components/CostToOwn';
@@ -15,12 +16,25 @@ import Comparison from '../../components/Comparison';
 import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
+import ForSaleNearYou from '../../components/ForSaleNearYou';
 import ExitIntentModal from '../../components/ExitIntentModal';
+import AdBanner from '../../components/AdBanner';
 import './VehiclePage.css';
 
-const VehiclePage = () => {
-  const { year, make, model } = useParams<{ year: string; make: string; model: string }>();
+interface VehiclePageProps {
+  defaultYear?: string;
+  defaultMake?: string;
+  defaultModel?: string;
+}
+
+const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProps) => {
+  const params = useParams<{ year: string; make: string; model: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Use props if provided (for home page), otherwise use URL params
+  const year = defaultYear || params.year;
+  const make = defaultMake || params.make;
+  const model = defaultModel || params.model;
   
   const slug = `${year}/${make}/${model}`;
   
@@ -62,56 +76,27 @@ const VehiclePage = () => {
     cargoSpace: vehicle.cargoSpace,
     fuelType: vehicle.fuelType,
     drivetrain: vehicle.drivetrain,
+    editorsChoice: vehicle.editorsChoice,
+    tenBest: vehicle.tenBest,
   };
 
-  // Generate dynamic trim data
-  const trimData = [
-    {
-      id: 'base',
-      name: 'Base',
-      price: `$${vehicle.priceMin.toLocaleString()}`,
-      features: vehicle.features?.slice(0, 5) || [
-        'Standard infotainment',
-        'Safety features',
-        'Cloth seats',
-        'Manual climate control',
-        'Bluetooth connectivity',
-      ],
-    },
-    {
-      id: 'mid',
-      name: vehicle.trim || 'Sport',
-      price: `$${Math.round((vehicle.priceMin + vehicle.priceMax) / 2).toLocaleString()}`,
-      recommended: true,
-      features: [
-        'All Base features plus:',
-        'Upgraded infotainment',
-        'Enhanced safety suite',
-        'Premium audio system',
-        'Remote start',
-      ],
-    },
-    {
-      id: 'top',
-      name: 'Premium',
-      price: `$${vehicle.priceMax.toLocaleString()}`,
-      features: [
-        'All Sport features plus:',
-        'Leather seats',
-        'Panoramic sunroof',
-        'Advanced driver assistance',
-        'Premium interior trim',
-      ],
-    },
-  ];
+  // Get accurate trim data from service
+  const trimData = useMemo(() => {
+    return getVehicleTrims(vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax);
+  }, [vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax]);
+
+  // Get recommended trim name
+  const recommendedTrimName = useMemo(() => {
+    return getRecommendedTrimName(vehicle.make, vehicle.model);
+  }, [vehicle.make, vehicle.model]);
 
   return (
     <>
       <main className="main">
         <Hero vehicle={vehicleData} />
         
-        {/* Content with Sidebar */}
-        <div className="content-with-sidebar">
+        {/* Content with Sidebar - Part 1 */}
+        <div className="content-with-sidebar content-with-sidebar--no-bottom-padding">
           <div className="content-main">
             <QuickSpecs 
               specs={{
@@ -128,14 +113,55 @@ const VehiclePage = () => {
               year={parseInt(vehicle.year)}
               verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${vehicle.staffRating}/10, it delivers good value for its class.`}
             />
+          </div>
+          <AdSidebar />
+        </div>
+        
+        {/* Full Width Ad Banner */}
+        <AdBanner 
+          imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
+          altText="Nissan Advertisement"
+          link="https://www.nissanusa.com"
+        />
+        
+        {/* Content with Sidebar - Part 2 */}
+        <div className="content-with-sidebar content-with-sidebar--no-bottom-padding">
+          <div className="content-main">
             <CostToOwn 
               vehicleName={`${vehicle.make} ${vehicle.model}`}
               msrp={vehicle.priceMin}
               fuelType={vehicle.fuelType}
             />
-            <TargetPriceRange />
-            <Incentives make={vehicle.make} model={vehicle.model} />
-            <BuyingPotential />
+            <TargetPriceRange 
+              msrp={vehicle.priceMin}
+              vehicleName={`${vehicle.make} ${vehicle.model}`}
+            />
+            <Incentives 
+              make={vehicle.make} 
+              model={vehicle.model}
+              msrp={vehicle.priceMin}
+              bodyStyle={vehicle.bodyStyle}
+              fuelType={vehicle.fuelType}
+            />
+          </div>
+          <AdSidebar />
+        </div>
+        
+        {/* Full Width Ad Banner - After Incentives */}
+        <AdBanner 
+          imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
+          altText="Nissan Advertisement"
+          link="https://www.nissanusa.com"
+        />
+        
+        {/* Content with Sidebar - Part 3 */}
+        <div className="content-with-sidebar content-with-sidebar--no-bottom-padding">
+          <div className="content-main">
+            <BuyingPotential 
+              bodyStyle={vehicle.bodyStyle}
+              vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+              vehicleImage={vehicle.image}
+            />
             <VehicleRanking 
               bodyStyle={vehicle.bodyStyle}
               currentVehicleId={vehicle.id}
@@ -144,16 +170,25 @@ const VehiclePage = () => {
             <MarketSpeed 
               vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} 
               make={vehicle.make} 
-              model={vehicle.model} 
+              model={vehicle.model}
+              bodyStyle={vehicle.bodyStyle}
+              msrp={vehicle.priceMin}
             />
           </div>
           <AdSidebar />
         </div>
         
+        {/* Full Width Ad Banner - After MarketSpeed */}
+        <AdBanner 
+          imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
+          altText="Nissan Advertisement"
+          link="https://www.nissanusa.com"
+        />
+        
         <section id="pricing">
           <TrimSelector 
             trims={trimData}
-            subtitle={`The ${vehicle.trim || 'Sport'} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
+            subtitle={`The ${recommendedTrimName} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
           />
         </section>
         
@@ -163,6 +198,15 @@ const VehiclePage = () => {
         
         <Comparison 
           currentVehicle={{ make: vehicle.make, model: vehicle.model }}
+        />
+        
+        <ForSaleNearYou 
+          vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+          make={vehicle.make}
+          model={vehicle.model}
+          bodyStyle={vehicle.bodyStyle}
+          maxPrice={vehicle.priceMax + 10000}
+          location="Miami, FL"
         />
       </main>
       

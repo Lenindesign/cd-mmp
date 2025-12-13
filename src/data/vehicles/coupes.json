@@ -33,7 +33,13 @@
     "model": "M4",
     "bodyStyle": "Coupe",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67854c4a3d35710008ae01f4/001-2024-carbahn-bmw-m4-front-three-quarter-static-lead.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67854c7350d11b0008c30aa4/019-2024-carbahn-bmw-m4.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67854c7350d11b0008c30aa4/019-2024-carbahn-bmw-m4.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67854c714e22720008c0ff2a/018-2024-carbahn-bmw-m4.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67854c774e22720008c0ff2b/021-2024-carbahn-bmw-m4.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67854c5f50d11b0008c30a9f/008-2024-carbahn-bmw-m4.jpg"
+    ],
     "priceRange": "$76,900 - $94,900",
     "priceMin": 76900,
     "priceMax": 94900,
@@ -149,7 +155,13 @@
     "model": "Mustang",
     "bodyStyle": "Coupe",
     "imageSource": "2025 Ford Mustang",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c7f8c0aa4a0002763d55/002-2025-ford-mustang-gtd-front-three-quarter-action.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c7f8c0aa4a0002763d55/002-2025-ford-mustang-gtd-front-three-quarter-action.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c8a27e5bb30002cbff7f/012-2025-ford-mustang-gtd.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c82fd9517400023d6d68/005-2025-ford-mustang-gtd.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c8a47e5bb30002cbff81/013-2025-ford-mustang-gtd.jpg"
+    ],
     "priceRange": "$30,920 - $82,395",
     "priceMin": 30920,
     "priceMax": 82395,
@@ -176,7 +188,13 @@
     "model": "Z",
     "bodyStyle": "Coupe",
     "imageSource": "2024 Nissan Z",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66705fbbfec4f40008f6e9a8/2024-nissan-z-heritage-hero.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66705fbbfec4f40008f6e9a8/2024-nissan-z-heritage-hero.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/678163243f3d6900088efa07/2024-nissan-z-heritage-edition-9.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/678163263f3d6900088efa08/2024-nissan-z-heritage-edition-14.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/666cbc761375a400084d3a8f/2024nissanzheritageedition-16.jpg"
+    ],
     "priceRange": "$43,970 - $63,020",
     "priceMin": 43970,
     "priceMax": 63020,
@@ -305,40 +323,20 @@
     "slug": "2024/Chevrolet/Camaro"
   },
   {
-    "id": "coupe3",
-    "year": "2025",
-    "make": "Dodge",
-    "model": "Challenger",
-    "bodyStyle": "Coupe",
-    "imageSource": "2025 Dodge Challenger",
-    "image": null,
-    "priceRange": "$30,090 - $87,090",
-    "priceMin": 30090,
-    "priceMax": 87090,
-    "staffRating": 8.6,
-    "communityRating": 8.4,
-    "reviewCount": 398,
-    "fuelType": "Gas",
-    "drivetrain": "RWD",
-    "transmission": "Automatic",
-    "mpg": "15/23",
-    "horsepower": 485,
-    "seatingCapacity": 5,
-    "features": [
-      "Uconnect 5",
-      "Performance Pages",
-      "Launch Control"
-    ],
-    "slug": "2025/Dodge/Challenger"
-  },
-  {
     "id": "coupe4",
     "year": "2025",
     "make": "Chevrolet",
     "model": "Corvette",
     "bodyStyle": "Coupe",
     "imageSource": "2025 Chevrolet Corvette",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/673bbb2647b20100081663f6/3-2025-chevrolet-corvette-z06-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/673bbb2647b20100081663f6/3-2025-chevrolet-corvette-z06-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/673bbb2859689b00084aa9b0/4-2025-chevrolet-corvette-z06-rear-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/673bbb6b36c74000082362cd/27-2025-chevrolet-corvette-z06-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/673bbb4236c74000082362c2/13-2025-chevrolet-corvette-z06-side-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/673bbb3447b20100081663f7/8-2025-chevrolet-corvette-z06-interior.jpg"
+    ],
     "priceRange": "$65,895 - $124,995",
     "priceMin": 65895,
     "priceMax": 124995,
@@ -365,7 +363,13 @@
     "model": "911",
     "bodyStyle": "Coupe",
     "imageSource": "2025 Porsche 911",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/687fd5b7f06ac7000269687d/3-2025-porsche-911-carrera-4-gts-cabriolet-first-test.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/687fd5b7f06ac7000269687d/3-2025-porsche-911-carrera-4-gts-cabriolet-first-test.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/687fd5e0fb4403000207bbc0/14-2025-porsche-911-carrera-4-gts-cabriolet-first-test.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/687fd60567416900021ee657/24-2025-porsche-911-carrera-4-gts-cabriolet-first-test.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/687fd5bff06ac70002696880/5-2025-porsche-911-carrera-4-gts-cabriolet-first-test.jpg"
+    ],
     "priceRange": "$106,100 - $223,450",
     "priceMin": 106100,
     "priceMax": 223450,
@@ -392,7 +396,13 @@
     "model": "M2",
     "bodyStyle": "Coupe",
     "imageSource": "2025 BMW M2",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6916251cd336da000207b93a/041-2025-bmw-m2-long-term-update-6-m-school.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6916251cd336da000207b93a/041-2025-bmw-m2-long-term-update-6-m-school.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/69162518d336da000207b938/040-2025-bmw-m2-long-term-update-6-m-school.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/691624d2eea5d8000241b223/008-2025-bmw-m2-long-term-update-6-m-school.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/691625147dcf99000238ec2d/039-2025-bmw-m2-long-term-update-6-m-school.jpg"
+    ],
     "priceRange": "$63,200 - $76,200",
     "priceMin": 63200,
     "priceMax": 76200,
@@ -419,7 +429,13 @@
     "model": "AMG GT",
     "bodyStyle": "Coupe",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/678f1ddfe862c800097f2100/mercedes-benz-amg-gt-coupe-2025.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6706f3c9d968160008669dca/1-2025-mercedes-benz-amg-gt-63-e-4-door-coupe-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6706f3c9d968160008669dca/1-2025-mercedes-benz-amg-gt-63-e-4-door-coupe-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6706f3cef5b6380008b7a928/2-2025-mercedes-benz-amg-gt-63-e-4-door-coupe-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6706f3d1f5b6380008b7a929/3-2025-mercedes-benz-amg-gt-63-e-4-door-coupe-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6706f3d4f5b6380008b7a92a/4-2025-mercedes-benz-amg-gt-63-e-4-door-coupe-rear-view.jpg"
+    ],
     "priceRange": "$134,900 - $184,900",
     "priceMin": 134900,
     "priceMax": 184900,
@@ -571,7 +587,13 @@
     "model": "e-tron GT",
     "bodyStyle": "Coupe",
     "imageSource": "2025 Audi e-tron GT",
-    "image": null,
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bd56ffccf0008567e3a/29-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bd56ffccf0008567e3a/29-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bdc2fa6440009959baa/32-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bd92fa6440009959ba9/31-2025-audi-rs-e-tron-gt-performance-first-drive.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/67ec4bbf79a6060008748e37/20-2025-audi-rs-e-tron-gt-performance-first-drive.jpg"
+    ],
     "priceRange": "$104,900 - $142,800",
     "priceMin": 104900,
     "priceMax": 142800,
@@ -598,9 +620,12 @@
     "model": "Roadster",
     "bodyStyle": "Coupe",
     "imageSource": null,
-    "image": "https://hips.hearstapps.com/mtg-prod/65dc63c4ef90350008a52d6b/2020-tesla-roadster-side-1.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65dc63c35a76df0008d56fbe/tesla-roadster.jpg",
     "galleryImages": [
-      "https://hips.hearstapps.com/mtg-prod/65dc63c4ef90350008a52d6b/2020-tesla-roadster-side-1.jpg"
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65dc63c35a76df0008d56fbe/tesla-roadster.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65caa26b7707db0008883c18/2020-tesla-roadster-05-1.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65caa26c18bd0e0008c3ee2e/2020-tesla-roadster-02-1.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65baab288167b6000872e2d4/2020-tesla-roadster-above.jpg"
     ],
     "priceRange": "$200,000 - $250,000",
     "priceMin": 200000,
@@ -628,9 +653,12 @@
     "model": "Evija",
     "bodyStyle": "Coupe",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6691c37a0768b100086c8201/001-2024-lotus-emira-lead.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65b2ab525b89140008ab7d1c/lotus-evija-05.jpg",
     "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6691c37a0768b100086c8201/001-2024-lotus-emira-lead.jpg"
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65b2ab525b89140008ab7d1c/lotus-evija-05.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65b2ab52364f910008ca377b/lotus-evija-06.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65b2ab4945b9d200083231ab/lotus-evija-12.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65b2ab52811a87000898c6b8/lotus-evija-02.jpg"
     ],
     "priceRange": "$2,000,000 - $2,500,000",
     "priceMin": 2000000,
@@ -692,9 +720,12 @@
     "model": "Battista",
     "bodyStyle": "Coupe",
     "imageSource": null,
-    "image": "https://www.motortrend.com/uploads/sites/5/2019/03/Pininfarina-Battista-Bianca-Front-right-three-quarter.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65c2fe1880b5ba0008fe8e38/pininfarina-battista-bianca-front-left-three-quarter-1.jpg",
     "galleryImages": [
-      "https://www.motortrend.com/uploads/sites/5/2019/03/Pininfarina-Battista-Bianca-Front-right-three-quarter.jpg"
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65c2fe1880b5ba0008fe8e38/pininfarina-battista-bianca-front-left-three-quarter-1.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65c2fe19c4898a0008b2a0cd/pininfarina-battista-bianca-rear-right-three-quarter-1.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65c2fe18ce7dc900083d21a4/pininfarina-battista-bianca-rear-left-three-quarter.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65c2fe184d86ad0008891358/pininfarina-battista-bianca-left-profile.jpg"
     ],
     "priceRange": "$2,200,000 - $2,600,000",
     "priceMin": 2200000,
@@ -756,9 +787,13 @@
     "model": "SF90 Stradale",
     "bodyStyle": "Coupe",
     "imageSource": null,
-    "image": "https://hips.hearstapps.com/mtg-prod/65a1cd973e8d5a0008ffb63a/029-2025-ferrari-sf90-xx-white-top-down.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a1cd97d44c0100084da54c/022-2025-ferrari-sf90-xx-white-front-lead.jpg",
     "galleryImages": [
-      "https://hips.hearstapps.com/mtg-prod/65a1cd973e8d5a0008ffb63a/029-2025-ferrari-sf90-xx-white-top-down.jpg"
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1cd97d44c0100084da54c/022-2025-ferrari-sf90-xx-white-front-lead.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1cd97697a700008ebcca4/023-2025-ferrari-sf90-xx-white-front-three-quarter.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1cd97697a700008ebcca5/026-2025-ferrari-sf90-xx-white-rear.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1cd97c1bf74000896f3f9/025-2025-ferrari-sf90-xx-white-interior.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/65a1cd97ece9e90008bb196b/021-2025-ferrari-sf90-xx-white-cockpit.jpg"
     ],
     "priceRange": "$625,000 - $845,000",
     "priceMin": 625000,
@@ -786,9 +821,12 @@
     "model": "Revuelto",
     "bodyStyle": "Coupe",
     "imageSource": null,
-    "image": "https://hips.hearstapps.com/mtg-prod/659f9ebb61b8bf0008ec8ca0/003-2024-lamborghini-revuelto-e1680099154794.jpg",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg",
     "galleryImages": [
-      "https://hips.hearstapps.com/mtg-prod/659f9ebb61b8bf0008ec8ca0/003-2024-lamborghini-revuelto-e1680099154794.jpg"
+      "https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed4413da60008b79481/011-2024-lamborghini-revuelto.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/659f9eddafe10e0008391d83/022-2024-lamborghini-revuelto.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/659f9ee759558a0008c53203/035-2024-lamborghini-revuelto.jpg"
     ],
     "priceRange": "$608,358 - $738,000",
     "priceMin": 608358,

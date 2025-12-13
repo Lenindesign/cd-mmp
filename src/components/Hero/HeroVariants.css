@@ -7,12 +7,7 @@
 .hero-v1,
 .hero-v2,
 .hero-v3,
-.hero-v4,
 .hero-v5,
-.hero-v6,
-.hero-v7,
-.hero-v8,
-.hero-v9,
 .hero-v10 {
   display: flex;
   align-items: center;
@@ -34,6 +29,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--border-radius-md);
@@ -58,7 +54,7 @@
 .hero-v1__btn--used {
   background: var(--color-white);
   color: var(--color-blue-cobalt);
-  border: 2px solid var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
 }
 
 .hero-v1__btn--used:hover {
@@ -69,12 +65,15 @@
 
 .hero-v1__btn-label {
   font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
+  font-size: 14px;
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.05em;
 }
 
 .hero-v1__btn-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-family: var(--font-body);
   font-size: 10px;
   opacity: 0.8;
@@ -154,19 +153,25 @@
 .hero-v2__btn--used {
   background: var(--color-white);
   color: var(--color-blue-cobalt);
-  border: 2px solid var(--color-gray-300);
+  border: 2px solid var(--color-blue-cobalt);
 }
 
-.hero-v2__btn--used .hero-v2__btn-count-large,
-.hero-v2__btn--used .hero-v2__btn-label,
-.hero-v2__btn--used .hero-v2__btn-sublabel {
-  color: var(--color-blue-cobalt);
+.hero-v2__btn .hero-v2__btn-count-large,
+.hero-v2__btn .hero-v2__btn-label,
+.hero-v2__btn .hero-v2__btn-sublabel {
+  color: var(--color-white);
 }
 
 .hero-v2__btn--used:hover {
   border-color: var(--color-gray-600);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.hero-v2__btn--used .hero-v2__btn-count-large,
+.hero-v2__btn--used .hero-v2__btn-label,
+.hero-v2__btn--used .hero-v2__btn-sublabel {
+  color: var(--color-blue-cobalt);
 }
 
 .hero-v2__btn-count-large {
@@ -261,8 +266,10 @@
 
 .hero-v3__btn--used {
   background: var(--color-white);
-  color: var(--color-gray-800);
-  border: 2px solid var(--color-gray-300);
+  color: var(--color-blue-cobalt);
+  border-color: var(--cd-blue-cobalt);
+  border-width: 2px;
+  border-style: solid;
 }
 
 .hero-v3__btn--used:hover {
@@ -277,7 +284,7 @@
   min-width: 24px;
   height: 24px;
   padding: 0 8px;
-  background: rgba(255, 255, 255, 0.2);
+  background: transparent;
   border-radius: var(--border-radius-full);
   font-family: var(--font-body);
   font-size: 12px;
@@ -285,8 +292,8 @@
 }
 
 .hero-v3__badge--used {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
+  background: transparent;
+  color: var(--color-blue-cobalt);
 }
 
 .hero-v3__trade-in {
@@ -307,84 +314,6 @@
 
 .hero-v3__trade-in:hover {
   color: var(--color-blue-cobalt);
-}
-
-/* =============================================
-   VARIANT 4: Card style with icons
-   ============================================= */
-.hero-v4__ctas {
-  display: flex;
-  align-items: stretch;
-  gap: var(--spacing-3);
-}
-
-.hero-v4__card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3) var(--spacing-4);
-  background: var(--color-white);
-  border: 2px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  min-width: 150px;
-}
-
-.hero-v4__card:hover {
-  border-color: var(--color-blue-cobalt);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.hero-v4__card--new {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border-color: var(--color-blue-cobalt);
-}
-
-.hero-v4__card--new svg.lucide-sparkles {
-  visibility: hidden;
-}
-
-.hero-v4__card--new:hover {
-  background: var(--color-blue-cobalt-dark);
-  border-color: var(--color-blue-cobalt-dark);
-}
-
-.hero-v4__card--used {
-  color: var(--color-gray-800);
-}
-
-.hero-v4__card--trade {
-  border-style: dashed;
-  color: var(--color-gray-600);
-}
-
-.hero-v4__card--trade:hover {
-  color: var(--color-success);
-  border-color: var(--color-success);
-}
-
-.hero-v4__card-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-}
-
-.hero-v4__card-title {
-  font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: var(--font-weight-bold);
-}
-
-.hero-v4__card-count {
-  font-family: var(--font-body);
-  font-size: 11px;
-  opacity: 0.8;
 }
 
 /* =============================================
@@ -411,8 +340,8 @@
 }
 
 .hero-v5__btn--new {
-  background-color: var(--color-white);
-  color: var(--color-blue-cobalt);
+  background-color: var(--color-blue-cobalt);
+  color: var(--color-white);
   border: none;
 }
 
@@ -426,6 +355,7 @@
   background: var(--color-white);
   color: var(--color-blue-cobalt);
   border: 2px solid var(--color-blue-cobalt);
+  justify-content: center;
 }
 
 .hero-v5__btn--used:hover {
@@ -451,7 +381,7 @@
   gap: var(--spacing-2);
   height: 42px;
   padding: var(--spacing-3) var(--spacing-4);
-  background: var(--color-white);
+  background-color: var(--color-white);
   color: var(--color-blue-cobalt);
   border: none;
   border-radius: var(--border-radius-md);
@@ -466,333 +396,6 @@
 .hero-v5__trade-in:hover {
   background: var(--color-gray-100);
   color: var(--color-blue-cobalt-dark);
-}
-
-/* =============================================
-   VARIANT 6: Solid buttons with outline used
-   ============================================= */
-.hero-v6__ctas {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-}
-
-.hero-v6__btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: var(--spacing-3) var(--spacing-5);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  min-width: 140px;
-  min-height: 52px;
-}
-
-.hero-v6__btn--new {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border: none;
-  box-shadow: 0 4px 15px rgba(27, 95, 138, 0.4);
-}
-
-.hero-v6__btn--new:hover {
-  background: var(--color-blue-cobalt-dark);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(27, 95, 138, 0.5);
-}
-
-.hero-v6__btn--used {
-  background: transparent;
-  color: var(--color-blue-cobalt);
-  border: 2px solid var(--color-blue-cobalt);
-  box-shadow: none;
-}
-
-.hero-v6__btn--used:hover {
-  background: rgba(27, 95, 138, 0.05);
-  transform: translateY(-3px);
-}
-
-.hero-v6__btn--used .hero-v6__btn-label,
-.hero-v6__btn--used .hero-v6__btn-count {
-  color: var(--color-blue-cobalt);
-}
-
-.hero-v6__btn-label {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.05em;
-}
-
-.hero-v6__btn-count {
-  font-family: var(--font-body);
-  font-size: 10px;
-  opacity: 0.8;
-}
-
-.hero-v6__trade-in {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-3) var(--spacing-4);
-  background-color: var(--color-gray-100);
-  color: var(--color-gray-700);
-  border: 2px solid var(--color-gray-100);
-  border-radius: var(--border-radius-md);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  height: 56px;
-}
-
-.hero-v6__trade-in:hover {
-  background-color: var(--color-gray-200);
-  border-color: var(--color-gray-200);
-  transform: translateY(-2px);
-}
-
-/* =============================================
-   VARIANT 7: Pill/rounded style
-   ============================================= */
-.hero-v7__ctas {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-}
-
-.hero-v7__pill {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
-  border-radius: var(--border-radius-full);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.hero-v7__pill--new {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border: none;
-}
-
-.hero-v7__pill--new:hover {
-  background: var(--color-blue-cobalt-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.hero-v7__pill--used {
-  background: var(--color-white);
-  color: var(--color-gray-800);
-  border: 2px solid var(--color-gray-300);
-}
-
-.hero-v7__pill--used:hover {
-  border-color: var(--color-gray-600);
-  transform: translateY(-2px);
-}
-
-.hero-v7__pill-label {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-}
-
-.hero-v7__pill-count {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  padding: 0 10px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: var(--border-radius-full);
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: var(--font-weight-bold);
-}
-
-.hero-v7__pill--used .hero-v7__pill-count {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-}
-
-.hero-v7__trade-in {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-4);
-  background: transparent;
-  color: var(--color-gray-600);
-  border: none;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.hero-v7__trade-in:hover {
-  color: var(--color-blue-cobalt);
-}
-
-/* =============================================
-   VARIANT 8: With location emphasis
-   ============================================= */
-.hero-v8__ctas {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-}
-
-.hero-v8__btn {
-  display: flex;
-  flex-direction: column;
-  height: 59px;
-  padding: var(--spacing-3) var(--spacing-4);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  min-width: 140px;
-}
-
-.hero-v8__btn--new {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border: none;
-}
-
-.hero-v8__btn--new:hover {
-  background: var(--color-blue-cobalt-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.hero-v8__btn--used {
-  background: var(--color-white);
-  color: var(--color-gray-800);
-  border: 2px solid var(--color-gray-300);
-}
-
-.hero-v8__btn--used:hover {
-  border-color: var(--color-gray-600);
-  transform: translateY(-2px);
-}
-
-.hero-v8__btn-main {
-  display: flex;
-  align-items: baseline;
-  gap: var(--spacing-2);
-}
-
-.hero-v8__btn-label {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-}
-
-.hero-v8__btn-count {
-  font-family: var(--font-body);
-  font-size: 11px;
-  opacity: 0.8;
-}
-
-.hero-v8__btn-location {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-  font-family: var(--font-body);
-  font-size: 10px;
-  opacity: 0.7;
-}
-
-.hero-v8__trade-in {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  height: 59px;
-  padding: var(--spacing-3) var(--spacing-4);
-  background: transparent;
-  color: var(--color-gray-700);
-  border: 1px dashed var(--color-gray-400);
-  border-radius: var(--border-radius-md);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.hero-v8__trade-in:hover {
-  background: var(--color-gray-100);
-  border-color: var(--color-gray-600);
-}
-
-/* =============================================
-   VARIANT 9: Compact inline with arrows
-   ============================================= */
-.hero-v9__ctas {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-}
-
-.hero-v9__btn {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) 0;
-  background: transparent;
-  border: none;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.hero-v9__btn--new {
-  color: var(--color-blue-cobalt);
-}
-
-.hero-v9__btn--new:hover {
-  color: var(--color-blue-cobalt-dark);
-}
-
-.hero-v9__btn--used {
-  color: var(--color-gray-800);
-}
-
-.hero-v9__btn--used:hover {
-  color: var(--color-gray-600);
-}
-
-.hero-v9__btn--trade {
-  color: var(--color-gray-600);
-}
-
-.hero-v9__btn--trade:hover {
-  color: var(--color-success);
-}
-
-.hero-v9__count {
-  font-family: var(--font-body);
-  font-weight: var(--font-weight-regular);
-  opacity: 0.8;
 }
 
 /* =============================================
@@ -845,6 +448,11 @@
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.hero-v10__btn--new .hero-v10__btn-label {
+  color: var(--color-white);
 }
 
 .hero-v10__btn-count {
@@ -854,9 +462,7 @@
   min-width: 28px;
   height: 28px;
   padding: 0 8px;
-  background: unset;
-  background-clip: unset;
-  -webkit-background-clip: unset;
+  background: transparent;
   color: var(--color-white);
   border-radius: var(--border-radius-full);
   font-family: var(--font-body);
@@ -865,8 +471,8 @@
 }
 
 .hero-v10__btn--used .hero-v10__btn-count {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
+  background: transparent;
+  color: var(--color-blue-cobalt);
 }
 
 .hero-v10__trade-in {
@@ -898,12 +504,7 @@
 @media (max-width: 1024px) {
   .hero-v1,
   .hero-v3,
-  .hero-v4,
   .hero-v5,
-  .hero-v6,
-  .hero-v7,
-  .hero-v8,
-  .hero-v9,
   .hero-v10 {
     flex-direction: column;
     align-items: flex-start;
@@ -921,12 +522,7 @@
   .hero-v1__ctas,
   .hero-v2__ctas,
   .hero-v3__ctas,
-  .hero-v4__ctas,
   .hero-v5__ctas,
-  .hero-v6__ctas,
-  .hero-v7__ctas,
-  .hero-v8__ctas,
-  .hero-v9__ctas,
   .hero-v10__ctas {
     flex-wrap: wrap;
   }
@@ -936,12 +532,7 @@
   .hero-v1__ctas,
   .hero-v2__ctas,
   .hero-v3__ctas,
-  .hero-v4__ctas,
   .hero-v5__ctas,
-  .hero-v6__ctas,
-  .hero-v7__ctas,
-  .hero-v8__ctas,
-  .hero-v9__ctas,
   .hero-v10__ctas {
     width: 100%;
   }
@@ -949,11 +540,7 @@
   .hero-v1__btn,
   .hero-v2__btn,
   .hero-v3__btn,
-  .hero-v4__card,
-  .hero-v5__btn,
-  .hero-v6__btn,
-  .hero-v7__pill,
-  .hero-v8__btn {
+  .hero-v5__btn {
     flex: 1;
     min-width: 120px;
   }

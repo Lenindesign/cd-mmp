@@ -166,6 +166,12 @@ export interface Vehicle {
   /** Award designation (e.g., "Car of the Year") */
   award?: string;
   
+  /** Editors' Choice award winner (one per subcategory) */
+  editorsChoice?: boolean;
+  
+  /** 10Best award winner (only 10 vehicles total) */
+  tenBest?: boolean;
+  
   /** Tags for filtering/categorization */
   tags?: string[];
 }
