@@ -300,6 +300,28 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* Current vehicle CTA - Blue by default */
+.vehicle-ranking__card--current .vehicle-ranking__card-cta {
+  background: var(--color-blue-cobalt);
+}
+
+.vehicle-ranking__card--current .vehicle-ranking__card-cta-label,
+.vehicle-ranking__card--current .vehicle-ranking__card-cta-count {
+  color: var(--color-white);
+}
+
+.vehicle-ranking__card--current .vehicle-ranking__card-cta-count {
+  opacity: 1;
+}
+
+.vehicle-ranking__card--current .vehicle-ranking__card-cta-divider {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.vehicle-ranking__card--current:hover .vehicle-ranking__card-cta {
+  background: var(--color-black);
+}
+
 /* Enhanced hover state for entire card */
 .vehicle-ranking__card:hover {
   transform: translateY(-4px);
