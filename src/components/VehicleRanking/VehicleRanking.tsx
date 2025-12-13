@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, MapPin } from 'lucide-react';
 import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
 import './VehicleRanking.css';
 
@@ -120,13 +120,16 @@ const VehicleRanking = ({
                     <span className="vehicle-ranking__card-rating-max">/10</span>
                   </div>
                 </div>
-                <div className="vehicle-ranking__card-price-row">
-                  <p className="vehicle-ranking__card-price">
-                    <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
-                  </p>
-                  <span className="vehicle-ranking__card-details-btn">
-                    View Details
-                    <ChevronRight size={14} />
+                <p className="vehicle-ranking__card-price">
+                  <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
+                </p>
+                <div className="vehicle-ranking__card-cta">
+                  <span className="vehicle-ranking__card-cta-label">SHOP USED</span>
+                  <span className="vehicle-ranking__card-cta-divider"></span>
+                  <span className="vehicle-ranking__card-cta-count">
+                    <MapPin size={12} />
+                    {/* Generate consistent random number based on vehicle id */}
+                    {Math.floor(((parseInt(vehicle.id, 36) % 150) + 50))} near you
                   </span>
                 </div>
               </div>
