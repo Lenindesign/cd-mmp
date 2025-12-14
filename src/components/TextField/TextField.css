@@ -92,20 +92,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--spacing-10);
+  width: 40px;
   height: 100%;
   color: var(--color-gray-500);
   pointer-events: none;
 }
 
 .text-field__icon--left {
-  left: 0;
-  padding-left: var(--spacing-3);
+  left: var(--spacing-2);
 }
 
 .text-field__icon--right {
-  right: 0;
-  padding-right: var(--spacing-3);
+  right: var(--spacing-2);
 }
 
 .text-field__icon svg {
