@@ -443,7 +443,7 @@ const DesignSystem = () => {
             <h4 className="design-system__variant-title">Sizes</h4>
             <div className="design-system__button-group">
               <Button variant="primary" size="small">Small</Button>
-              <Button variant="primary" size="default">Default</Button>
+              <Button variant="primary" size="medium">Medium</Button>
               <Button variant="primary" size="large">Large</Button>
             </div>
           </div>
@@ -469,7 +469,7 @@ const DesignSystem = () => {
 
 // Sizes
 <Button size="small">Small</Button>
-<Button size="default">Default</Button>
+<Button size="medium">Medium</Button>
 <Button size="large">Large</Button>
 
 // States

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Gauge, Zap, Fuel, Settings, Timer, Weight, Ruler } from 'lucide-react';
+import { Gauge, Zap, Fuel, Timer, Weight, Ruler } from 'lucide-react';
 import Specs from './Specs';
 
 const meta: Meta<typeof Specs> = {

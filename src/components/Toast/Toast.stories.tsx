@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from 'storybook/test';
-import { useState } from 'react';
 import { Toast, ToastProvider, useToast } from './Toast';
 import { Button } from '../Button';
 
@@ -98,32 +97,32 @@ export const MessageOnly: Story = {
 // ============================================
 
 const ToastDemo = () => {
-  const { showToast, toasts, removeToast } = useToast();
+  const { addToast, toasts, removeToast } = useToast();
   
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
         <Button 
           variant="primary"
-          onClick={() => showToast({ type: 'success', title: 'Saved!', message: 'Your preferences have been saved.' })}
+          onClick={() => addToast({ type: 'success', title: 'Saved!', message: 'Your preferences have been saved.' })}
         >
           Show Success
         </Button>
         <Button 
-          variant="destructive"
-          onClick={() => showToast({ type: 'error', title: 'Error', message: 'Failed to save changes.' })}
+          variant="danger"
+          onClick={() => addToast({ type: 'error', title: 'Error', message: 'Failed to save changes.' })}
         >
           Show Error
         </Button>
         <Button 
           variant="outline"
-          onClick={() => showToast({ type: 'warning', title: 'Warning', message: 'Check your connection.' })}
+          onClick={() => addToast({ type: 'warning', title: 'Warning', message: 'Check your connection.' })}
         >
           Show Warning
         </Button>
         <Button 
           variant="secondary"
-          onClick={() => showToast({ type: 'info', title: 'Info', message: 'New updates available!' })}
+          onClick={() => addToast({ type: 'info', title: 'Info', message: 'New updates available!' })}
         >
           Show Info
         </Button>

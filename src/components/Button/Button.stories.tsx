@@ -18,7 +18,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline', 'ghost', 'destructive', 'white'],
+      options: ['primary', 'secondary', 'outline', 'ghost', 'danger'],
     },
     size: {
       control: 'select',
@@ -68,17 +68,17 @@ export const Ghost: Story = {
   },
 };
 
-export const Destructive: Story = {
+export const Danger: Story = {
   args: {
     children: 'Delete Item',
-    variant: 'destructive',
+    variant: 'danger',
   },
 };
 
-export const White: Story = {
+export const OnDark: Story = {
   args: {
-    children: 'White Button',
-    variant: 'white',
+    children: 'Button on Dark',
+    variant: 'outline',
   },
   parameters: {
     backgrounds: { default: 'dark' },
@@ -172,8 +172,7 @@ export const AllVariants: Story = {
       <Button variant="secondary">Secondary</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
-      <Button variant="destructive">Destructive</Button>
-      <Button variant="white">White</Button>
+      <Button variant="danger">Danger</Button>
     </div>
   ),
 };

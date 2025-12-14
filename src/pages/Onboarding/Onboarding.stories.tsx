@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { SignIn, OnboardingStep1, OnboardingStep2, OnboardingStep3, OnboardingStep4, OnboardingWelcome, OnboardingResults } from './index';
+import { SignIn } from './index';
 
 // Shared router decorator
 const routerDecorator = (path: string) => (Story: React.ComponentType) => (
