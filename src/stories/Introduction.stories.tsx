@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import '../index.css';
 
 const meta: Meta = {
-  title: 'Welcome',
+  title: 'Introduction',
   parameters: {
     layout: 'fullscreen',
     options: {
@@ -173,8 +173,8 @@ const StatCard = ({ value, label }: { value: string; label: string }) => (
   </div>
 );
 
-export const DesignSystem: Story = {
-  name: '👋 Welcome',
+export const Welcome: Story = {
+  name: '👋 Design System',
   render: () => (
     <div style={{ 
       minHeight: '100vh',
