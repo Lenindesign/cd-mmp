@@ -1,0 +1,473 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation "Global" [ref=e6]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e12]:
+          - link "Skip to canvas" [ref=e13] [cursor=pointer]:
+            - /url: "#storybook-preview-wrapper"
+          - link "Car and Driver" [ref=e15] [cursor=pointer]:
+            - /url: https://cd-mmp-2025.netlify.app/
+            - img "Car and Driver" [ref=e16]
+          - switch "Settings" [ref=e17] [cursor=pointer]:
+            - img [ref=e18]
+        - generic [ref=e21]: Search for components
+        - generic [ref=e22]:
+          - combobox "Search for components" [ref=e23]:
+            - generic:
+              - img
+            - searchbox "Search for components" [ref=e24]
+            - code:
+              - generic: ⌘
+              - text: K
+            - button "Tag filters" [ref=e26] [cursor=pointer]:
+              - img [ref=e27]
+          - button "Create a new story" [ref=e29] [cursor=pointer]:
+            - img [ref=e30]
+        - generic [ref=e36]:
+          - img
+          - button "Introduction" [ref=e38] [cursor=pointer]:
+            - generic [ref=e39]:
+              - img [ref=e41]
+              - img [ref=e43]
+            - text: Introduction
+          - generic [ref=e45]:
+            - button "Collapse" [expanded] [ref=e46] [cursor=pointer]:
+              - img [ref=e48]
+              - text: Atoms
+            - button "Expand all" [ref=e50] [cursor=pointer]:
+              - img [ref=e51]
+          - button "AdBanner" [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]:
+              - img [ref=e57]
+              - img [ref=e59]
+            - text: AdBanner
+          - button "AdSidebar" [ref=e62] [cursor=pointer]:
+            - generic [ref=e63]:
+              - img [ref=e65]
+              - img [ref=e67]
+            - text: AdSidebar
+          - button "Button" [ref=e70] [cursor=pointer]:
+            - generic [ref=e71]:
+              - img [ref=e73]
+              - img [ref=e75]
+            - text: Button
+          - button "ErrorState" [ref=e78] [cursor=pointer]:
+            - generic [ref=e79]:
+              - img [ref=e81]
+              - img [ref=e83]
+            - text: ErrorState
+          - button "LoadingSpinner" [ref=e86] [cursor=pointer]:
+            - generic [ref=e87]:
+              - img [ref=e89]
+              - img [ref=e91]
+            - text: LoadingSpinner
+          - button "OptimizedImage" [ref=e94] [cursor=pointer]:
+            - generic [ref=e95]:
+              - img [ref=e97]
+              - img [ref=e99]
+            - text: OptimizedImage
+          - button "TextField" [expanded] [ref=e102] [cursor=pointer]:
+            - generic [ref=e103]:
+              - img [ref=e105]
+              - img [ref=e107]
+            - text: TextField
+          - link "Docs" [ref=e110] [cursor=pointer]:
+            - /url: /?path=/docs/atoms-textfield--docs
+            - img [ref=e112]
+            - text: Docs
+          - generic [ref=e114]:
+            - button "Default" [ref=e115] [cursor=pointer]:
+              - img [ref=e117]
+              - text: Default
+            - link "Skip to canvas" [ref=e119] [cursor=pointer]:
+              - /url: "#storybook-preview-wrapper"
+          - button "With Value" [ref=e121] [cursor=pointer]:
+            - img [ref=e123]
+            - text: With Value
+          - button "Required" [ref=e126] [cursor=pointer]:
+            - img [ref=e128]
+            - text: Required
+          - button "With Error" [ref=e131] [cursor=pointer]:
+            - img [ref=e133]
+            - text: With Error
+          - button "With Helper Text" [ref=e136] [cursor=pointer]:
+            - img [ref=e138]
+            - text: With Helper Text
+          - button "Disabled" [ref=e141] [cursor=pointer]:
+            - img [ref=e143]
+            - text: Disabled
+          - button "With Icon Left" [ref=e146] [cursor=pointer]:
+            - img [ref=e148]
+            - text: With Icon Left
+          - button "With Icon Right" [ref=e151] [cursor=pointer]:
+            - img [ref=e153]
+            - text: With Icon Right
+          - button "Password With Toggle" [ref=e156] [cursor=pointer]:
+            - img [ref=e158]
+            - text: Password With Toggle
+          - button "Select Default" [ref=e161] [cursor=pointer]:
+            - img [ref=e163]
+            - text: Select Default
+          - button "Select With Value" [ref=e166] [cursor=pointer]:
+            - img [ref=e168]
+            - text: Select With Value
+          - button "Text Area Default" [ref=e171] [cursor=pointer]:
+            - img [ref=e173]
+            - text: Text Area Default
+          - button "Text Area With Value" [ref=e176] [cursor=pointer]:
+            - img [ref=e178]
+            - text: Text Area With Value
+          - button "Complete Form" [ref=e181] [cursor=pointer]:
+            - img [ref=e183]
+            - text: Complete Form
+          - button "All States" [ref=e186] [cursor=pointer]:
+            - img [ref=e188]
+            - text: All States
+          - button "Toast" [ref=e191] [cursor=pointer]:
+            - generic [ref=e192]:
+              - img [ref=e194]
+              - img [ref=e196]
+            - text: Toast
+          - generic [ref=e198]:
+            - button "Collapse" [expanded] [ref=e199] [cursor=pointer]:
+              - img [ref=e201]
+              - text: Molecules
+            - button "Expand all" [ref=e203] [cursor=pointer]:
+              - img [ref=e204]
+          - button "BuyingPotential" [ref=e207] [cursor=pointer]:
+            - generic [ref=e208]:
+              - img [ref=e210]
+              - img [ref=e212]
+            - text: BuyingPotential
+          - button "CostToOwn" [ref=e215] [cursor=pointer]:
+            - generic [ref=e216]:
+              - img [ref=e218]
+              - img [ref=e220]
+            - text: CostToOwn
+          - button "Incentives" [ref=e223] [cursor=pointer]:
+            - generic [ref=e224]:
+              - img [ref=e226]
+              - img [ref=e228]
+            - text: Incentives
+          - button "Interior" [ref=e231] [cursor=pointer]:
+            - generic [ref=e232]:
+              - img [ref=e234]
+              - img [ref=e236]
+            - text: Interior
+          - button "MarketSpeed" [ref=e239] [cursor=pointer]:
+            - generic [ref=e240]:
+              - img [ref=e242]
+              - img [ref=e244]
+            - text: MarketSpeed
+          - button "Overview" [ref=e247] [cursor=pointer]:
+            - generic [ref=e248]:
+              - img [ref=e250]
+              - img [ref=e252]
+            - text: Overview
+          - button "QuickSpecs" [ref=e255] [cursor=pointer]:
+            - generic [ref=e256]:
+              - img [ref=e258]
+              - img [ref=e260]
+            - text: QuickSpecs
+          - button "Safety" [ref=e263] [cursor=pointer]:
+            - generic [ref=e264]:
+              - img [ref=e266]
+              - img [ref=e268]
+            - text: Safety
+          - button "Specs" [ref=e271] [cursor=pointer]:
+            - generic [ref=e272]:
+              - img [ref=e274]
+              - img [ref=e276]
+            - text: Specs
+          - button "TargetPriceRange" [ref=e279] [cursor=pointer]:
+            - generic [ref=e280]:
+              - img [ref=e282]
+              - img [ref=e284]
+            - text: TargetPriceRange
+          - button "TrimSelector" [ref=e287] [cursor=pointer]:
+            - generic [ref=e288]:
+              - img [ref=e290]
+              - img [ref=e292]
+            - text: TrimSelector
+          - button "VehicleOverview" [ref=e295] [cursor=pointer]:
+            - generic [ref=e296]:
+              - img [ref=e298]
+              - img [ref=e300]
+            - text: VehicleOverview
+          - button "Warranty" [ref=e303] [cursor=pointer]:
+            - generic [ref=e304]:
+              - img [ref=e306]
+              - img [ref=e308]
+            - text: Warranty
+          - generic [ref=e310]:
+            - button "Collapse" [expanded] [ref=e311] [cursor=pointer]:
+              - img [ref=e313]
+              - text: Organisms
+            - button "Expand all" [ref=e315] [cursor=pointer]:
+              - img [ref=e316]
+          - button "Comparison" [ref=e319] [cursor=pointer]:
+            - generic [ref=e320]:
+              - img [ref=e322]
+              - img [ref=e324]
+            - text: Comparison
+          - button "ExitIntentModal" [ref=e327] [cursor=pointer]:
+            - generic [ref=e328]:
+              - img [ref=e330]
+              - img [ref=e332]
+            - text: ExitIntentModal
+          - button "Footer" [ref=e335] [cursor=pointer]:
+            - generic [ref=e336]:
+              - img [ref=e338]
+              - img [ref=e340]
+            - text: Footer
+          - button "ForSaleNearYou" [ref=e343] [cursor=pointer]:
+            - generic [ref=e344]:
+              - img [ref=e346]
+              - img [ref=e348]
+            - text: ForSaleNearYou
+          - button "Header" [ref=e351] [cursor=pointer]:
+            - generic [ref=e352]:
+              - img [ref=e354]
+              - img [ref=e356]
+            - text: Header
+          - button "Hero" [ref=e359] [cursor=pointer]:
+            - generic [ref=e360]:
+              - img [ref=e362]
+              - img [ref=e364]
+            - text: Hero
+          - button "PricingCTA" [ref=e367] [cursor=pointer]:
+            - generic [ref=e368]:
+              - img [ref=e370]
+              - img [ref=e372]
+            - text: PricingCTA
+          - button "TopTenCarouselLeads" [ref=e375] [cursor=pointer]:
+            - generic [ref=e376]:
+              - img [ref=e378]
+              - img [ref=e380]
+            - text: TopTenCarouselLeads
+          - button "VehicleRanking" [ref=e383] [cursor=pointer]:
+            - generic [ref=e384]:
+              - img [ref=e386]
+              - img [ref=e388]
+            - text: VehicleRanking
+          - generic [ref=e390]:
+            - button "Collapse" [expanded] [ref=e391] [cursor=pointer]:
+              - img [ref=e393]
+              - text: Pages
+            - button "Expand all" [ref=e395] [cursor=pointer]:
+              - img [ref=e396]
+          - button "DesignSystem" [ref=e399] [cursor=pointer]:
+            - generic [ref=e400]:
+              - img [ref=e402]
+              - img [ref=e404]
+            - text: DesignSystem
+          - button "Onboarding" [ref=e407] [cursor=pointer]:
+            - generic [ref=e408]:
+              - img [ref=e410]
+              - img [ref=e412]
+            - text: Onboarding
+          - button "VehiclePage" [ref=e415] [cursor=pointer]:
+            - generic [ref=e416]:
+              - img [ref=e418]
+              - img [ref=e420]
+            - text: VehiclePage
+          - button "VehiclesListPage" [ref=e423] [cursor=pointer]:
+            - generic [ref=e424]:
+              - img [ref=e426]
+              - img [ref=e428]
+            - text: VehiclesListPage
+          - generic [ref=e430]:
+            - button "Collapse" [expanded] [ref=e431] [cursor=pointer]:
+              - img [ref=e433]
+              - text: Tokens
+            - button "Expand all" [ref=e435] [cursor=pointer]:
+              - img [ref=e436]
+          - button "Colors" [ref=e439] [cursor=pointer]:
+            - generic [ref=e440]:
+              - img [ref=e442]
+              - img [ref=e444]
+            - text: Colors
+          - button "Spacing" [ref=e447] [cursor=pointer]:
+            - generic [ref=e448]:
+              - img [ref=e450]
+              - img [ref=e452]
+            - text: Spacing
+          - button "Typography" [ref=e455] [cursor=pointer]:
+            - generic [ref=e456]:
+              - img [ref=e458]
+              - img [ref=e460]
+            - text: Typography
+      - generic [ref=e464]:
+        - generic [ref=e465] [cursor=pointer]:
+          - button "Run tests" [ref=e469]:
+            - img [ref=e471]
+            - text: Run tests
+          - button "Expand testing module" [ref=e475]:
+            - img [ref=e476]
+        - generic [ref=e481]:
+          - generic [ref=e482]: Visual tests
+          - generic [ref=e484]: Login required
+  - main [ref=e486]:
+    - region "Toolbar" [ref=e487]:
+      - heading "Toolbar" [level=2] [ref=e488]
+      - toolbar [ref=e489]:
+        - generic [ref=e490]:
+          - button "Reload story" [ref=e491] [cursor=pointer]:
+            - img [ref=e492]
+          - button "Zoom in" [ref=e494] [cursor=pointer]:
+            - img [ref=e495]
+          - button "Zoom out" [ref=e498] [cursor=pointer]:
+            - img [ref=e499]
+          - button "Reset zoom" [ref=e502] [cursor=pointer]:
+            - img [ref=e503]
+          - switch "Grid visibility" [ref=e506] [cursor=pointer]:
+            - img [ref=e507]
+          - button "Preview background" [ref=e509] [cursor=pointer]:
+            - img [ref=e510]
+          - switch "Measure tool" [ref=e513] [cursor=pointer]:
+            - img [ref=e514]
+          - switch "Outline tool" [ref=e517] [cursor=pointer]:
+            - img [ref=e518]
+          - button "Viewport size" [ref=e520] [cursor=pointer]:
+            - img [ref=e521]
+          - button "Vision simulator" [ref=e525] [cursor=pointer]:
+            - img [ref=e526]
+          - generic:
+            - img
+        - generic [ref=e530]:
+          - button "Enter full screen" [ref=e531] [cursor=pointer]:
+            - img [ref=e532]
+          - button "Share" [ref=e534] [cursor=pointer]:
+            - img [ref=e535]
+          - button "Open in editor" [ref=e538] [cursor=pointer]:
+            - img [ref=e539]
+    - region "Main preview area" [ref=e542]:
+      - heading "Main preview area" [level=2] [ref=e543]
+      - generic [ref=e545]:
+        - link "Skip to sidebar" [ref=e546] [cursor=pointer]:
+          - /url: "#atoms-textfield--default"
+        - iframe [ref=e547]:
+          - generic [ref=f1e4]:
+            - generic [ref=f1e5]: Full Name
+            - textbox "Full Name" [ref=f1e7]:
+              - /placeholder: Enter your name
+  - region "Addon panel" [ref=e550]:
+    - heading "Addon panel" [level=2] [ref=e551]
+    - generic [ref=e552]:
+      - generic [ref=e553]:
+        - generic [ref=e554]:
+          - button "Move addon panel to right" [ref=e555] [cursor=pointer]:
+            - img [ref=e556]
+          - button "Hide addon panel" [ref=e559] [cursor=pointer]:
+            - img [ref=e560]
+        - tablist "Available addons" [ref=e565]:
+          - tab "Controls 13" [selected] [ref=e566] [cursor=pointer]:
+            - generic [ref=e567]:
+              - generic [ref=e568]: Controls
+              - generic [ref=e569]: "13"
+          - tab "Actions" [ref=e570] [cursor=pointer]:
+            - generic [ref=e572]: Actions
+          - tab "Interactions" [ref=e573] [cursor=pointer]:
+            - generic [ref=e575]: Interactions
+          - tab "Visual tests" [ref=e576] [cursor=pointer]
+          - tab "Accessibility" [ref=e577] [cursor=pointer]:
+            - generic [ref=e579]: Accessibility
+      - tabpanel "Controls 13" [ref=e580]:
+        - generic [ref=e587]:
+          - button "Reset controls" [ref=e589] [cursor=pointer]:
+            - img [ref=e590]
+          - table [ref=e592]:
+            - rowgroup [ref=e593]:
+              - row "Name Control" [ref=e594]:
+                - columnheader "Name" [ref=e595]
+                - columnheader "Control" [ref=e596]
+            - rowgroup [ref=e597]:
+              - row "onChange -" [ref=e598]:
+                - cell "onChange" [ref=e599]
+                - cell "-" [ref=e600]
+              - row "onBlur -" [ref=e601]:
+                - cell "onBlur" [ref=e602]
+                - cell "-" [ref=e603]
+              - row "onFocus -" [ref=e604]:
+                - cell "onFocus" [ref=e605]
+                - cell "-" [ref=e606]
+              - row "label Full Name" [ref=e607]:
+                - cell "label" [ref=e608]
+                - cell "Full Name" [ref=e609]:
+                  - textbox [ref=e611]:
+                    - /placeholder: Edit string...
+                    - text: Full Name
+              - row "placeholder Enter your name" [ref=e612]:
+                - cell "placeholder" [ref=e613]
+                - cell "Enter your name" [ref=e614]:
+                  - textbox [ref=e616]:
+                    - /placeholder: Edit string...
+                    - text: Enter your name
+              - row "helperText Set string" [ref=e617]:
+                - cell "helperText" [ref=e618]
+                - cell "Set string" [ref=e619]:
+                  - button "Set string" [ref=e620] [cursor=pointer]
+              - row "error Set string" [ref=e621]:
+                - cell "error" [ref=e622]
+                - cell "Set string" [ref=e623]:
+                  - button "Set string" [ref=e624] [cursor=pointer]
+              - row "size size" [ref=e625]:
+                - cell "size" [ref=e626]
+                - cell "size" [ref=e627]:
+                  - group "size" [ref=e628]:
+                    - generic [ref=e629]: size
+                    - generic [ref=e630] [cursor=pointer]:
+                      - radio "small" [ref=e631]
+                      - generic [ref=e632]: small
+                    - generic [ref=e633] [cursor=pointer]:
+                      - radio "default" [ref=e634]
+                      - generic [ref=e635]: default
+                    - generic [ref=e636] [cursor=pointer]:
+                      - radio "large" [ref=e637]
+                      - generic [ref=e638]: large
+              - row "fullWidth Set boolean" [ref=e639]:
+                - cell "fullWidth" [ref=e640]
+                - cell "Set boolean" [ref=e641]:
+                  - button "Set boolean" [ref=e642] [cursor=pointer]
+              - row "iconLeft Set object" [ref=e643]:
+                - cell "iconLeft" [ref=e644]
+                - cell "Set object" [ref=e645]:
+                  - button "Set object" [ref=e646] [cursor=pointer]
+              - row "iconRight Set object" [ref=e647]:
+                - cell "iconRight" [ref=e648]
+                - cell "Set object" [ref=e649]:
+                  - button "Set object" [ref=e650] [cursor=pointer]
+              - row "wrapperClassName Set string" [ref=e651]:
+                - cell "wrapperClassName" [ref=e652]
+                - cell "Set string" [ref=e653]:
+                  - button "Set string" [ref=e654] [cursor=pointer]
+              - row "className Set object" [ref=e655]:
+                - cell "className" [ref=e656]
+                - cell "Set object" [ref=e657]:
+                  - button "Set object" [ref=e658] [cursor=pointer]
+              - row "type type Choose option..." [ref=e659]:
+                - cell "type" [ref=e660]
+                - cell "type Choose option..." [ref=e661]:
+                  - generic [ref=e662]:
+                    - img
+                    - generic [ref=e663]: type
+                    - combobox "type" [ref=e664]:
+                      - option "Choose option..." [disabled] [selected]
+                      - option "text"
+                      - option "email"
+                      - option "password"
+                      - option "number"
+                      - option "tel"
+                      - option "url"
+              - row "disabled Set boolean" [ref=e665]:
+                - cell "disabled" [ref=e666]
+                - cell "Set boolean" [ref=e667]:
+                  - button "Set boolean" [ref=e668] [cursor=pointer]
+              - row "required Set boolean" [ref=e669]:
+                - cell "required" [ref=e670]
+                - cell "Set boolean" [ref=e671]:
+                  - button "Set boolean" [ref=e672] [cursor=pointer]
+```

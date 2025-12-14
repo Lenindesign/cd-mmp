@@ -1,0 +1,485 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation "Global" [ref=e6]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e12]:
+          - link "Skip to canvas" [ref=e13] [cursor=pointer]:
+            - /url: "#storybook-preview-wrapper"
+          - link "Car and Driver" [ref=e15] [cursor=pointer]:
+            - /url: https://cd-mmp-2025.netlify.app/
+            - img "Car and Driver" [ref=e16]
+          - switch "Settings" [ref=e17] [cursor=pointer]:
+            - img [ref=e18]
+        - generic [ref=e21]: Search for components
+        - generic [ref=e22]:
+          - combobox "Search for components" [ref=e23]:
+            - generic:
+              - img
+            - searchbox "Search for components" [ref=e24]
+            - code:
+              - generic: ⌘
+              - text: K
+            - button "Tag filters" [ref=e26] [cursor=pointer]:
+              - img [ref=e27]
+          - button "Create a new story" [ref=e29] [cursor=pointer]:
+            - img [ref=e30]
+        - generic [ref=e36]:
+          - img
+          - button "Introduction" [ref=e38] [cursor=pointer]:
+            - generic [ref=e39]:
+              - img [ref=e41]
+              - img [ref=e43]
+            - text: Introduction
+          - generic [ref=e45]:
+            - button "Collapse" [expanded] [ref=e46] [cursor=pointer]:
+              - img [ref=e48]
+              - text: Atoms
+            - button "Expand all" [ref=e50] [cursor=pointer]:
+              - img [ref=e51]
+          - button "AdBanner" [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]:
+              - img [ref=e57]
+              - img [ref=e59]
+            - text: AdBanner
+          - button "AdSidebar" [ref=e62] [cursor=pointer]:
+            - generic [ref=e63]:
+              - img [ref=e65]
+              - img [ref=e67]
+            - text: AdSidebar
+          - button "Button" [ref=e70] [cursor=pointer]:
+            - generic [ref=e71]:
+              - img [ref=e73]
+              - img [ref=e75]
+            - text: Button
+          - button "ErrorState" [ref=e78] [cursor=pointer]:
+            - generic [ref=e79]:
+              - img [ref=e81]
+              - img [ref=e83]
+            - text: ErrorState
+          - button "LoadingSpinner" [ref=e86] [cursor=pointer]:
+            - generic [ref=e87]:
+              - img [ref=e89]
+              - img [ref=e91]
+            - text: LoadingSpinner
+          - button "OptimizedImage" [ref=e94] [cursor=pointer]:
+            - generic [ref=e95]:
+              - img [ref=e97]
+              - img [ref=e99]
+            - text: OptimizedImage
+          - button "TextField" [ref=e102] [cursor=pointer]:
+            - generic [ref=e103]:
+              - img [ref=e105]
+              - img [ref=e107]
+            - text: TextField
+          - button "Toast" [ref=e110] [cursor=pointer]:
+            - generic [ref=e111]:
+              - img [ref=e113]
+              - img [ref=e115]
+            - text: Toast
+          - generic [ref=e117]:
+            - button "Collapse" [expanded] [ref=e118] [cursor=pointer]:
+              - img [ref=e120]
+              - text: Molecules
+            - button "Expand all" [ref=e122] [cursor=pointer]:
+              - img [ref=e123]
+          - button "BuyingPotential" [ref=e126] [cursor=pointer]:
+            - generic [ref=e127]:
+              - img [ref=e129]
+              - img [ref=e131]
+            - text: BuyingPotential
+          - button "CostToOwn" [ref=e134] [cursor=pointer]:
+            - generic [ref=e135]:
+              - img [ref=e137]
+              - img [ref=e139]
+            - text: CostToOwn
+          - button "Incentives" [ref=e142] [cursor=pointer]:
+            - generic [ref=e143]:
+              - img [ref=e145]
+              - img [ref=e147]
+            - text: Incentives
+          - button "Interior" [ref=e150] [cursor=pointer]:
+            - generic [ref=e151]:
+              - img [ref=e153]
+              - img [ref=e155]
+            - text: Interior
+          - button "MarketSpeed" [ref=e158] [cursor=pointer]:
+            - generic [ref=e159]:
+              - img [ref=e161]
+              - img [ref=e163]
+            - text: MarketSpeed
+          - button "Overview" [ref=e166] [cursor=pointer]:
+            - generic [ref=e167]:
+              - img [ref=e169]
+              - img [ref=e171]
+            - text: Overview
+          - button "QuickSpecs" [ref=e174] [cursor=pointer]:
+            - generic [ref=e175]:
+              - img [ref=e177]
+              - img [ref=e179]
+            - text: QuickSpecs
+          - button "Safety" [ref=e182] [cursor=pointer]:
+            - generic [ref=e183]:
+              - img [ref=e185]
+              - img [ref=e187]
+            - text: Safety
+          - button "Specs" [ref=e190] [cursor=pointer]:
+            - generic [ref=e191]:
+              - img [ref=e193]
+              - img [ref=e195]
+            - text: Specs
+          - button "TargetPriceRange" [ref=e198] [cursor=pointer]:
+            - generic [ref=e199]:
+              - img [ref=e201]
+              - img [ref=e203]
+            - text: TargetPriceRange
+          - button "TrimSelector" [ref=e206] [cursor=pointer]:
+            - generic [ref=e207]:
+              - img [ref=e209]
+              - img [ref=e211]
+            - text: TrimSelector
+          - button "VehicleOverview" [ref=e214] [cursor=pointer]:
+            - generic [ref=e215]:
+              - img [ref=e217]
+              - img [ref=e219]
+            - text: VehicleOverview
+          - button "Warranty" [ref=e222] [cursor=pointer]:
+            - generic [ref=e223]:
+              - img [ref=e225]
+              - img [ref=e227]
+            - text: Warranty
+          - generic [ref=e229]:
+            - button "Collapse" [expanded] [ref=e230] [cursor=pointer]:
+              - img [ref=e232]
+              - text: Organisms
+            - button "Expand all" [ref=e234] [cursor=pointer]:
+              - img [ref=e235]
+          - button "Comparison" [ref=e238] [cursor=pointer]:
+            - generic [ref=e239]:
+              - img [ref=e241]
+              - img [ref=e243]
+            - text: Comparison
+          - button "ExitIntentModal" [ref=e246] [cursor=pointer]:
+            - generic [ref=e247]:
+              - img [ref=e249]
+              - img [ref=e251]
+            - text: ExitIntentModal
+          - button "Footer" [ref=e254] [cursor=pointer]:
+            - generic [ref=e255]:
+              - img [ref=e257]
+              - img [ref=e259]
+            - text: Footer
+          - button "ForSaleNearYou" [ref=e262] [cursor=pointer]:
+            - generic [ref=e263]:
+              - img [ref=e265]
+              - img [ref=e267]
+            - text: ForSaleNearYou
+          - button "Header" [ref=e270] [cursor=pointer]:
+            - generic [ref=e271]:
+              - img [ref=e273]
+              - img [ref=e275]
+            - text: Header
+          - button "Hero" [expanded] [ref=e278] [cursor=pointer]:
+            - generic [ref=e279]:
+              - img [ref=e281]
+              - img [ref=e283]
+            - text: Hero
+          - link "Docs" [ref=e286] [cursor=pointer]:
+            - /url: /?path=/docs/organisms-hero--docs
+            - img [ref=e288]
+            - text: Docs
+          - generic [ref=e290]:
+            - button "Default" [ref=e291] [cursor=pointer]:
+              - img [ref=e293]
+              - text: Default
+            - link "Skip to canvas" [ref=e295] [cursor=pointer]:
+              - /url: "#storybook-preview-wrapper"
+          - button "With Ten Best" [ref=e297] [cursor=pointer]:
+            - img [ref=e299]
+            - text: With Ten Best
+          - button "With Both Awards" [ref=e302] [cursor=pointer]:
+            - img [ref=e304]
+            - text: With Both Awards
+          - button "No Awards" [ref=e307] [cursor=pointer]:
+            - img [ref=e309]
+            - text: No Awards
+          - button "SUV" [ref=e312] [cursor=pointer]:
+            - img [ref=e314]
+            - text: SUV
+          - button "PricingCTA" [ref=e317] [cursor=pointer]:
+            - generic [ref=e318]:
+              - img [ref=e320]
+              - img [ref=e322]
+            - text: PricingCTA
+          - button "TopTenCarouselLeads" [ref=e325] [cursor=pointer]:
+            - generic [ref=e326]:
+              - img [ref=e328]
+              - img [ref=e330]
+            - text: TopTenCarouselLeads
+          - button "VehicleRanking" [ref=e333] [cursor=pointer]:
+            - generic [ref=e334]:
+              - img [ref=e336]
+              - img [ref=e338]
+            - text: VehicleRanking
+          - generic [ref=e340]:
+            - button "Collapse" [expanded] [ref=e341] [cursor=pointer]:
+              - img [ref=e343]
+              - text: Pages
+            - button "Expand all" [ref=e345] [cursor=pointer]:
+              - img [ref=e346]
+          - button "DesignSystem" [ref=e349] [cursor=pointer]:
+            - generic [ref=e350]:
+              - img [ref=e352]
+              - img [ref=e354]
+            - text: DesignSystem
+          - button "Onboarding" [ref=e357] [cursor=pointer]:
+            - generic [ref=e358]:
+              - img [ref=e360]
+              - img [ref=e362]
+            - text: Onboarding
+          - button "VehiclePage" [ref=e365] [cursor=pointer]:
+            - generic [ref=e366]:
+              - img [ref=e368]
+              - img [ref=e370]
+            - text: VehiclePage
+          - button "VehiclesListPage" [ref=e373] [cursor=pointer]:
+            - generic [ref=e374]:
+              - img [ref=e376]
+              - img [ref=e378]
+            - text: VehiclesListPage
+          - generic [ref=e380]:
+            - button "Collapse" [expanded] [ref=e381] [cursor=pointer]:
+              - img [ref=e383]
+              - text: Tokens
+            - button "Expand all" [ref=e385] [cursor=pointer]:
+              - img [ref=e386]
+          - button "Colors" [ref=e389] [cursor=pointer]:
+            - generic [ref=e390]:
+              - img [ref=e392]
+              - img [ref=e394]
+            - text: Colors
+          - button "Spacing" [ref=e397] [cursor=pointer]:
+            - generic [ref=e398]:
+              - img [ref=e400]
+              - img [ref=e402]
+            - text: Spacing
+          - button "Typography" [ref=e405] [cursor=pointer]:
+            - generic [ref=e406]:
+              - img [ref=e408]
+              - img [ref=e410]
+            - text: Typography
+      - generic [ref=e414]:
+        - generic [ref=e415] [cursor=pointer]:
+          - button "Run tests" [ref=e419]:
+            - img [ref=e421]
+            - text: Run tests
+          - button "Expand testing module" [ref=e425]:
+            - img [ref=e426]
+        - generic [ref=e431]:
+          - generic [ref=e432]: Visual tests
+          - generic [ref=e434]: Login required
+  - main [ref=e436]:
+    - region "Toolbar" [ref=e437]:
+      - heading "Toolbar" [level=2] [ref=e438]
+      - toolbar [ref=e439]:
+        - generic [ref=e440]:
+          - button "Reload story" [ref=e441] [cursor=pointer]:
+            - img [ref=e442]
+          - button "Zoom in" [ref=e444] [cursor=pointer]:
+            - img [ref=e445]
+          - button "Zoom out" [ref=e448] [cursor=pointer]:
+            - img [ref=e449]
+          - button "Reset zoom" [ref=e452] [cursor=pointer]:
+            - img [ref=e453]
+          - switch "Grid visibility" [ref=e456] [cursor=pointer]:
+            - img [ref=e457]
+          - button "Preview background" [ref=e459] [cursor=pointer]:
+            - img [ref=e460]
+          - switch "Measure tool" [ref=e463] [cursor=pointer]:
+            - img [ref=e464]
+          - switch "Outline tool" [ref=e467] [cursor=pointer]:
+            - img [ref=e468]
+          - button "Viewport size" [ref=e470] [cursor=pointer]:
+            - img [ref=e471]
+          - button "Vision simulator" [ref=e475] [cursor=pointer]:
+            - img [ref=e476]
+          - generic:
+            - img
+        - generic [ref=e480]:
+          - button "Enter full screen" [ref=e481] [cursor=pointer]:
+            - img [ref=e482]
+          - button "Share" [ref=e484] [cursor=pointer]:
+            - img [ref=e485]
+          - button "Open in editor" [ref=e488] [cursor=pointer]:
+            - img [ref=e489]
+    - region "Main preview area" [ref=e492]:
+      - heading "Main preview area" [level=2] [ref=e493]
+      - generic [ref=e495]:
+        - link "Skip to sidebar" [ref=e496] [cursor=pointer]:
+          - /url: "#organisms-hero--default"
+        - iframe [ref=e497]:
+          - generic [ref=f1e3]:
+            - navigation "Breadcrumb" [ref=f1e6]:
+              - link "Home" [ref=f1e7] [cursor=pointer]:
+                - /url: "#"
+              - generic [ref=f1e8]: /
+              - link "Toyota" [ref=f1e9] [cursor=pointer]:
+                - /url: "#"
+              - generic [ref=f1e10]: /
+              - link "Camry" [ref=f1e11] [cursor=pointer]:
+                - /url: "#"
+            - generic [ref=f1e14]:
+              - button "2024" [ref=f1e16] [cursor=pointer]:
+                - generic [ref=f1e17]: "2024"
+                - img [ref=f1e18]
+              - button "ADDED TO FAVORITES" [ref=f1e20] [cursor=pointer]:
+                - img [ref=f1e21]
+                - generic [ref=f1e23]: ADDED TO FAVORITES
+            - generic [ref=f1e25]:
+              - generic [ref=f1e26]:
+                - heading "2024 Toyota Camry" [level=1] [ref=f1e27]
+                - generic [ref=f1e28]:
+                  - generic [ref=f1e29]:
+                    - generic [ref=f1e30]: "8.5"
+                    - generic [ref=f1e31]: /10
+                  - generic [ref=f1e32]:
+                    - img [ref=f1e33]
+                    - generic [ref=f1e35]: C/D RATING
+              - generic [ref=f1e36]:
+                - img "2024 Toyota Camry" [ref=f1e39]
+                - generic [ref=f1e40]:
+                  - img "Camry view 1" [ref=f1e43] [cursor=pointer]
+                  - img "Camry view 2" [ref=f1e46] [cursor=pointer]
+                  - generic [ref=f1e47] [cursor=pointer]:
+                    - img "Camry view 3" [ref=f1e49]
+                    - generic [ref=f1e50]:
+                      - generic [ref=f1e51]: View Photos
+                      - img [ref=f1e52]
+              - generic [ref=f1e54]:
+                - generic [ref=f1e55]: CAR AND DRIVER
+                - generic [ref=f1e56]: "|"
+                - generic [ref=f1e57]: CAR AND DRIVER
+              - generic [ref=f1e58]:
+                - generic [ref=f1e59]:
+                  - generic [ref=f1e60]: MSRP
+                  - generic [ref=f1e61]:
+                    - generic [ref=f1e62]: $28,500 - $36,000
+                    - button "SHOP NOW" [ref=f1e63] [cursor=pointer]:
+                      - generic [ref=f1e64]: SHOP NOW
+                - generic [ref=f1e65]:
+                  - generic [ref=f1e66]:
+                    - generic [ref=f1e67]:
+                      - emphasis [ref=f1e68]: Car and Driver
+                      - text: Accolades
+                    - link "What's this?" [ref=f1e69] [cursor=pointer]:
+                      - /url: "#"
+                  - generic [ref=f1e71]:
+                    - img [ref=f1e73]
+                    - generic [ref=f1e77]:
+                      - text: Editors'
+                      - text: Choice
+  - region "Addon panel" [ref=e500]:
+    - heading "Addon panel" [level=2] [ref=e501]
+    - generic [ref=e502]:
+      - generic [ref=e503]:
+        - generic [ref=e504]:
+          - button "Move addon panel to right" [ref=e505] [cursor=pointer]:
+            - img [ref=e506]
+          - button "Hide addon panel" [ref=e509] [cursor=pointer]:
+            - img [ref=e510]
+        - tablist "Available addons" [ref=e515]:
+          - tab "Controls 1" [selected] [ref=e516] [cursor=pointer]:
+            - generic [ref=e517]:
+              - generic [ref=e518]: Controls
+              - generic [ref=e519]: "1"
+          - tab "Actions" [ref=e520] [cursor=pointer]:
+            - generic [ref=e522]: Actions
+          - tab "Interactions" [ref=e523] [cursor=pointer]:
+            - generic [ref=e525]: Interactions
+          - tab "Visual tests" [ref=e526] [cursor=pointer]
+          - tab "Accessibility" [ref=e527] [cursor=pointer]:
+            - generic [ref=e529]: Accessibility
+      - tabpanel "Controls 1" [ref=e530]:
+        - generic [ref=e537]:
+          - button "Reset controls" [ref=e539] [cursor=pointer]:
+            - img [ref=e540]
+          - table [ref=e542]:
+            - rowgroup [ref=e543]:
+              - row "Name Control" [ref=e544]:
+                - columnheader "Name" [ref=e545]
+                - columnheader "Control" [ref=e546]
+            - rowgroup [ref=e547]:
+              - row [ref=e548]:
+                - cell "vehicle*" [ref=e549]
+                - cell [ref=e550]:
+                  - generic [ref=e551]:
+                    - switch "Edit the vehicle properties in JSON format" [ref=e552] [cursor=pointer]: Edit JSON
+                    - generic [ref=e554]:
+                      - button "vehicle :" [expanded] [ref=e555]
+                      - region "vehicle :" [ref=e556]:
+                        - text: "{"
+                        - button "add a new property to the object 'vehicle'" [ref=e557] [cursor=pointer]:
+                          - img [ref=e558]
+                        - list [ref=e561]:
+                          - listitem [ref=e562]:
+                            - generic [ref=e563]: "make :"
+                            - generic [ref=e564]: "\"Toyota\""
+                            - button "remove the property 'make' with value 'Toyota' from 'undefined'" [ref=e565] [cursor=pointer]:
+                              - img [ref=e566]
+                          - listitem [ref=e569]:
+                            - generic [ref=e570]: "model :"
+                            - generic [ref=e571]: "\"Camry\""
+                            - button "remove the property 'model' with value 'Camry' from 'undefined'" [ref=e572] [cursor=pointer]:
+                              - img [ref=e573]
+                          - listitem [ref=e576]:
+                            - generic [ref=e577]: "year :"
+                            - generic [ref=e578]: "2024"
+                            - button "remove the property 'year' with value '2024' from 'undefined'" [ref=e579] [cursor=pointer]:
+                              - img [ref=e580]
+                          - listitem [ref=e583]:
+                            - generic [ref=e584]: "tagline :"
+                            - generic [ref=e585]: "\"The Toyota Camry offers excellent fuel economy and reliability. A compelling choice in the sedan segment.\""
+                            - button "remove the property 'tagline' with value 'The Toyota Camry offers excellent fuel economy and reliability. A compelling choice in the sedan segment.' from 'undefined'" [ref=e586] [cursor=pointer]:
+                              - img [ref=e587]
+                          - listitem [ref=e590]:
+                            - generic [ref=e591]: "rating :"
+                            - generic [ref=e592]: "8.5"
+                            - button "remove the property 'rating' with value '8.5' from 'undefined'" [ref=e593] [cursor=pointer]:
+                              - img [ref=e594]
+                          - listitem [ref=e597]:
+                            - generic [ref=e598]: "priceRange :"
+                            - generic [ref=e599]: "\"$28,500 - $36,000\""
+                            - button "remove the property 'priceRange' with value '$28,500 - $36,000' from 'undefined'" [ref=e600] [cursor=pointer]:
+                              - img [ref=e601]
+                          - listitem [ref=e604]:
+                            - generic [ref=e605]: "image :"
+                            - generic [ref=e606]: "\"https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=1200\""
+                            - button "remove the property 'image' with value 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=1200' from 'undefined'" [ref=e607] [cursor=pointer]:
+                              - img [ref=e608]
+                          - listitem [ref=e611]:
+                            - button "images :" [ref=e612]
+                            - region "images :" [ref=e613]:
+                              - generic [ref=e614]: "[...] 3 items"
+                              - button "remove the array 'images'" [ref=e615] [cursor=pointer]:
+                                - img [ref=e616]
+                          - listitem [ref=e619]:
+                            - generic [ref=e620]: "photographer :"
+                            - generic [ref=e621]: "\"CAR AND DRIVER\""
+                            - button "remove the property 'photographer' with value 'CAR AND DRIVER' from 'undefined'" [ref=e622] [cursor=pointer]:
+                              - img [ref=e623]
+                          - listitem [ref=e626]:
+                            - generic [ref=e627]: "editorsChoice :"
+                            - generic [ref=e628]: "true"
+                            - button "remove the property 'editorsChoice' with value 'true' from 'undefined'" [ref=e629] [cursor=pointer]:
+                              - img [ref=e630]
+                          - listitem [ref=e633]:
+                            - generic [ref=e634]: "tenBest :"
+                            - generic [ref=e635]: "false"
+                            - button "remove the property 'tenBest' with value 'false' from 'undefined'" [ref=e636] [cursor=pointer]:
+                              - img [ref=e637]
+                        - text: "}"
+                        - button "remove the object 'vehicle'" [ref=e640] [cursor=pointer]:
+                          - img [ref=e641]
+```

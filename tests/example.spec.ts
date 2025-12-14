@@ -14,15 +14,36 @@ test.describe('Storybook Visual Tests', () => {
     await expect(page).toHaveScreenshot('welcome-page.png');
   });
 
-  test('should load the Button component', async ({ page }) => {
-    await page.goto('/?path=/docs/atoms-button--docs');
+  test('should load the Button component story', async ({ page }) => {
+    await page.goto('/?path=/story/atoms-button--primary');
     
     await page.waitForLoadState('networkidle');
     
-    // Check that the docs are visible
-    await expect(page.locator('h1')).toContainText('Button');
+    // Check that the button is visible in the canvas
+    await expect(page.frameLocator('#storybook-preview-iframe').locator('button')).toBeVisible();
     
-    await expect(page).toHaveScreenshot('button-docs.png');
+    await expect(page).toHaveScreenshot('button-primary.png');
+  });
+
+  test('should load the TextField component', async ({ page }) => {
+    await page.goto('/?path=/story/atoms-textfield--default');
+    
+    await page.waitForLoadState('networkidle');
+    
+    // Check that the input is visible
+    await expect(page.frameLocator('#storybook-preview-iframe').locator('input')).toBeVisible();
+    
+    await expect(page).toHaveScreenshot('textfield-default.png');
+  });
+
+  test('should load the Hero component', async ({ page }) => {
+    await page.goto('/?path=/story/organisms-hero--default');
+    
+    await page.waitForLoadState('networkidle');
+    
+    // Check that the hero section is visible
+    await expect(page.frameLocator('#storybook-preview-iframe').locator('.hero')).toBeVisible();
+    
+    await expect(page).toHaveScreenshot('hero-default.png');
   });
 });
-
