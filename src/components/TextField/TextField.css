@@ -100,10 +100,12 @@
 
 .text-field__icon--left {
   left: 0;
+  padding-left: var(--spacing-3);
 }
 
 .text-field__icon--right {
   right: 0;
+  padding-right: var(--spacing-3);
 }
 
 .text-field__icon svg {
