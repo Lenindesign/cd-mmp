@@ -433,6 +433,7 @@ const VehiclesListPage = () => {
               className="vehicles-list-page__select"
               value={selectedMake}
               onChange={(e) => updateFilter('make', e.target.value)}
+              aria-label="Filter by make"
             >
               <option value="">All Makes</option>
               {makes.map(make => (
@@ -445,6 +446,7 @@ const VehiclesListPage = () => {
               className="vehicles-list-page__select"
               value={selectedBodyStyle}
               onChange={(e) => updateFilter('bodyStyle', e.target.value)}
+              aria-label="Filter by body style"
             >
               <option value="">All Body Styles</option>
               {bodyStyles.map(style => (
@@ -458,6 +460,7 @@ const VehiclesListPage = () => {
                 className="vehicles-list-page__select vehicles-list-page__select--lifestyle"
                 value={selectedLifestyle}
                 onChange={(e) => updateFilter('lifestyle', e.target.value)}
+                aria-label="Filter by lifestyle"
               >
                 <option value="">All Lifestyles</option>
                 {LIFESTYLES.map(lifestyle => (
@@ -472,6 +475,7 @@ const VehiclesListPage = () => {
                 className="vehicles-list-page__select"
                 value={maxMileage}
                 onChange={(e) => updateFilter('maxMileage', e.target.value)}
+                aria-label="Filter by maximum mileage"
               >
                 {mileageRanges.map(range => (
                   <option key={range.value} value={range.value}>{range.label}</option>
@@ -484,6 +488,7 @@ const VehiclesListPage = () => {
               className="vehicles-list-page__select"
               value={sortBy}
               onChange={(e) => updateFilter('sort', e.target.value)}
+              aria-label="Sort results"
             >
               {inventoryType === 'new' ? (
                 <>

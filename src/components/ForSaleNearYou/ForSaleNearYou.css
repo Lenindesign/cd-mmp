@@ -215,11 +215,11 @@
 
 .for-sale__card-favorite:hover {
   transform: scale(1.1);
-  color: var(--color-primary-1);
+  color: var(--color-blue-cobalt);
 }
 
 .for-sale__card-favorite--active {
-  color: var(--color-primary-1);
+  color: var(--color-blue-cobalt);
 }
 
 /* Badge */

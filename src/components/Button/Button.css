@@ -37,9 +37,9 @@
   font-size: var(--font-size-xs);
 }
 
-.btn--default {
+.btn--medium {
   height: 40px;
-  padding: 0 var(--spacing-4);
+  padding: 0 var(--spacing-5);
   font-size: var(--font-size-sm);
 }
 

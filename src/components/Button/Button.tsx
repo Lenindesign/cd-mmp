@@ -5,7 +5,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   /** Button style variant */
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   /** Button size */
-  size?: 'small' | 'default' | 'large';
+  size?: 'small' | 'medium' | 'large';
   /** Full width button */
   fullWidth?: boolean;
   /** Loading state - shows spinner and disables button */
@@ -44,7 +44,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
-  size = 'default',
+  size = 'medium',
   fullWidth = false,
   loading = false,
   disabled = false,

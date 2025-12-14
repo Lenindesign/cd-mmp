@@ -102,11 +102,11 @@ const ColorsPage = () => (
     <ColorGroup 
       title="Semantic - Status" 
       colors={[
-        { name: 'Success', value: '#22c55e', cssVar: '--color-success', textColor: '#fff' },
+        { name: 'Success', value: '#22c55e', cssVar: '--color-success', textColor: '#000' },
         { name: 'Success Light', value: 'rgba(34, 197, 94, 0.08)', cssVar: '--color-success-light', textColor: '#16a34a' },
         { name: 'Warning', value: '#f59e0b', cssVar: '--color-warning', textColor: '#000' },
         { name: 'Warning Light', value: 'rgba(245, 158, 11, 0.08)', cssVar: '--color-warning-light', textColor: '#c2410c' },
-        { name: 'Error', value: '#ef4444', cssVar: '--color-error', textColor: '#fff' },
+        { name: 'Error', value: '#ef4444', cssVar: '--color-error', textColor: '#000' },
         { name: 'Error Light', value: 'rgba(239, 68, 68, 0.1)', cssVar: '--color-error-light', textColor: '#dc2626' },
         { name: 'Info', value: '#0288d1', cssVar: '--color-info', textColor: '#fff' },
       ]}

@@ -30,7 +30,7 @@
   left: 0;
   width: 80px;
   height: 4px;
-  background: var(--color-primary-1);
+  background: var(--color-blue-cobalt);
 }
 
 .used-cars-page__subtitle {
@@ -118,7 +118,7 @@
 
 .used-cars-page__select:focus {
   outline: none;
-  border-color: var(--color-primary-1);
+  border-color: var(--color-blue-cobalt);
 }
 
 .used-cars-page__view-modes {
@@ -142,13 +142,13 @@
 }
 
 .used-cars-page__view-btn:hover {
-  border-color: var(--color-primary-1);
-  color: var(--color-primary-1);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
 }
 
 .used-cars-page__view-btn.active {
-  background: var(--color-primary-1);
-  border-color: var(--color-primary-1);
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
@@ -172,7 +172,7 @@
   border: none;
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  color: var(--color-primary-1);
+  color: var(--color-blue-cobalt);
   cursor: pointer;
   text-decoration: underline;
 }
@@ -204,7 +204,7 @@
 }
 
 .used-cars-page__card:hover {
-  border-color: var(--color-primary-1);
+  border-color: var(--color-blue-cobalt);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
@@ -270,7 +270,7 @@
 }
 
 .used-cars-page__card-badge--reduced {
-  background: var(--color-primary-1);
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
@@ -390,7 +390,7 @@
 }
 
 .used-cars-page__empty button {
-  background: var(--color-primary-1);
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
   border: none;
   padding: var(--spacing-2) var(--spacing-4);

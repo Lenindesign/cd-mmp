@@ -1,7 +1,7 @@
 /* Top Ten Carousel Leads - Lead Generation Component */
 .top-ten {
   padding: var(--spacing-8) 0;
-  background: linear-gradient(180deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  background: var(--color-gray-50);
 }
 
 .top-ten > .container {
@@ -263,7 +263,7 @@
 }
 
 .top-ten__card-badge--most-popular {
-  background: var(--color-primary-1);
+  background: var(--color-black);
   color: var(--color-white);
 }
 
@@ -408,7 +408,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-blue-cobalt) 0%, var(--color-blue-cobalt-darker) 100%);
+  background: var(--color-blue-cobalt);
   border: none;
   min-height: 100%;
 }
@@ -427,7 +427,7 @@
 }
 
 .top-ten__view-all-icon {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-white);
   margin-bottom: var(--spacing-4);
 }
 
@@ -442,7 +442,7 @@
 .top-ten__view-all-text {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--color-white);
   margin: 0 0 var(--spacing-4) 0;
   line-height: 1.5;
 }

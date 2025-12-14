@@ -58,11 +58,11 @@
 .vehicles-list-page__type-btn {
   padding: var(--spacing-2) var(--spacing-4);
   border: none;
-  background: transparent;
+  background: var(--color-gray-100);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-600);
+  color: var(--color-gray-700);
   cursor: pointer;
   border-radius: var(--border-radius-full);
   transition: all var(--transition-fast);
@@ -107,13 +107,13 @@
 }
 
 .vehicles-list-page__search svg {
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   flex-shrink: 0;
 }
 
 .vehicles-list-page__search input {
   border: none;
-  background: transparent;
+  background: var(--color-gray-100);
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: var(--color-black);
@@ -122,7 +122,7 @@
 }
 
 .vehicles-list-page__search input::placeholder {
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .vehicles-list-page__filter-toggle {
@@ -175,7 +175,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-sm);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
@@ -207,7 +207,7 @@
 }
 
 .vehicles-list-page__clear-filters {
-  background: none;
+  background: var(--color-white);
   border: none;
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
@@ -315,7 +315,7 @@
   position: absolute;
   top: var(--spacing-2);
   left: var(--spacing-2);
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--color-gray-900);
   color: var(--color-white);
   padding: var(--spacing-1) var(--spacing-2);
   border-radius: var(--border-radius-sm);
@@ -395,7 +395,7 @@
 .vehicles-list-page__card-rating-max {
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-400);
+  color: var(--color-gray-600);
 }
 
 .vehicles-list-page__card-meta {
@@ -414,7 +414,7 @@
 .vehicles-list-page__card-mpg {
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-700);
   background: var(--color-gray-100);
   padding: 2px 8px;
   border-radius: var(--border-radius-sm);
@@ -426,7 +426,7 @@
   gap: var(--spacing-2);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 /* Used Car Card Styles */
@@ -473,7 +473,7 @@
 .vehicles-list-page__card-trim {
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   margin-bottom: var(--spacing-2);
 }
 
@@ -494,7 +494,7 @@
 .vehicles-list-page__card-original-price {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-400);
+  color: var(--color-gray-600);
   text-decoration: line-through;
 }
 
@@ -509,7 +509,7 @@
 }
 
 .vehicles-list-page__card-mileage svg {
-  color: var(--color-gray-400);
+  color: var(--color-gray-600);
 }
 
 .vehicles-list-page__card-dealer {
@@ -518,16 +518,16 @@
   gap: var(--spacing-1);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .vehicles-list-page__card-dealer svg {
-  color: var(--color-gray-400);
+  color: var(--color-gray-600);
   flex-shrink: 0;
 }
 
 .vehicles-list-page__card-distance {
-  color: var(--color-gray-400);
+  color: var(--color-gray-600);
   margin-left: auto;
 }
 
@@ -724,7 +724,7 @@
 }
 
 .vht__stat-icon {
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -746,7 +746,7 @@
 .vht__stat-label {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .vht__stat-value {
@@ -772,7 +772,7 @@
 .vht__usage-label {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   display: block;
   margin-bottom: var(--spacing-2);
 }
@@ -791,7 +791,7 @@
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--color-gray-200);
   background: var(--color-white);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .vht__tag--success {
@@ -820,7 +820,7 @@
 }
 
 .vht__price-header svg {
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .vht__price-header span {
@@ -844,7 +844,7 @@
 .vht__price-date {
   font-family: var(--font-body);
   font-size: var(--font-size-base);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   min-width: 110px;
 }
 
