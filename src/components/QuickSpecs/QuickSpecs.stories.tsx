@@ -8,11 +8,23 @@ const meta: Meta<typeof QuickSpecs> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Quick specifications grid for vehicle details.',
+        component: 'Quick specifications grid for vehicle details with customizable spec values.',
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    specs: {
+      description: 'Specification values for the vehicle',
+      control: 'object',
+      table: {
+        type: { 
+          summary: 'object',
+          detail: '{ mpg: string; seating: string; powertrain: string; drivetrain: string; warranty: string; }'
+        },
+      },
+    },
+  },
 };
 
 export default meta;
