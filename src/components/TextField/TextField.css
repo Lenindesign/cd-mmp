@@ -78,12 +78,12 @@
 }
 
 /* Input with Icons */
-.text-field__input--has-icon-left {
-  padding-left: var(--spacing-10);
+.text-field__input.text-field__input--has-icon-left {
+  padding-left: 48px !important;
 }
 
-.text-field__input--has-icon-right {
-  padding-right: var(--spacing-10);
+.text-field__input.text-field__input--has-icon-right {
+  padding-right: 48px !important;
 }
 
 /* Icons */

@@ -13,9 +13,9 @@ const config: StorybookConfig = {
   ],
   "framework": "@storybook/react-vite",
   "staticDirs": ["../public"],
-  async viteFinal(config) {
+  async viteFinal(config, { configType }) {
     // Set base path for GitHub Pages deployment
-    if (process.env.NODE_ENV === 'production') {
+    if (configType === 'PRODUCTION') {
       config.base = '/cd-mmp/';
     }
     return config;

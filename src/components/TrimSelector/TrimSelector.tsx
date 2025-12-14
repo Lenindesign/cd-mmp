@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Check, Info, ChevronRight } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Check, Info, ChevronRight, ChevronLeft } from 'lucide-react';
 import './TrimSelector.css';
 
 interface Trim {
@@ -20,6 +20,38 @@ const TrimSelector = ({ trims, title = "Pricing and Which One to Buy", subtitle 
   const [selectedTrim, setSelectedTrim] = useState(
     trims.find(t => t.recommended)?.id || trims[0]?.id
   );
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Sort trims to put recommended first
+  const sortedTrims = [...trims].sort((a, b) => {
+    if (a.recommended && !b.recommended) return -1;
+    if (!a.recommended && b.recommended) return 1;
+    return 0;
+  });
+
+  const handleScroll = () => {
+    if (carouselRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = 320; // Card width + gap
+      const newScrollLeft = direction === 'left' 
+        ? carouselRef.current.scrollLeft - scrollAmount
+        : carouselRef.current.scrollLeft + scrollAmount;
+      
+      carouselRef.current.scrollTo({
+        left: newScrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <section className="trim-selector">
@@ -29,54 +61,80 @@ const TrimSelector = ({ trims, title = "Pricing and Which One to Buy", subtitle 
           {subtitle && <p className="trim-selector__subtitle">{subtitle}</p>}
         </div>
         
-        <div className="trim-selector__grid">
-          {trims.map((trim) => (
-            <div 
-              key={trim.id}
-              className={`trim-card ${selectedTrim === trim.id ? 'trim-card--selected' : ''} ${trim.recommended ? 'trim-card--recommended' : ''}`}
-              onClick={() => setSelectedTrim(trim.id)}
+        <div className="trim-selector__carousel-wrapper">
+          {canScrollLeft && (
+            <button 
+              className="trim-selector__nav trim-selector__nav--left"
+              onClick={() => scroll('left')}
+              aria-label="Scroll left"
             >
-              {trim.recommended && (
-                <div className="trim-card__badge">
-                  <span>Recommended</span>
+              <ChevronLeft size={24} />
+            </button>
+          )}
+          
+          <div 
+            className="trim-selector__carousel"
+            ref={carouselRef}
+            onScroll={handleScroll}
+          >
+            {sortedTrims.map((trim, index) => (
+              <div 
+                key={trim.id}
+                className={`trim-card ${selectedTrim === trim.id ? 'trim-card--selected' : ''} ${trim.recommended ? 'trim-card--recommended trim-card--sticky' : ''}`}
+                onClick={() => setSelectedTrim(trim.id)}
+              >
+                {trim.recommended && (
+                  <div className="trim-card__badge">
+                    <span>Recommended</span>
+                  </div>
+                )}
+                
+                <div className="trim-card__header">
+                  <h3 className="trim-card__name">{trim.name}</h3>
+                  <div className="trim-card__price">
+                    <span className="trim-card__price-label">Starting at</span>
+                    <span className="trim-card__price-value">{trim.price}</span>
+                  </div>
                 </div>
-              )}
-              
-              <div className="trim-card__header">
-                <h3 className="trim-card__name">{trim.name}</h3>
-                <div className="trim-card__price">
-                  <span className="trim-card__price-label">Starting at</span>
-                  <span className="trim-card__price-value">{trim.price}</span>
+                
+                <ul className="trim-card__features">
+                  {trim.features.map((feature, index) => (
+                    <li key={index} className="trim-card__feature">
+                      <Check size={16} className="trim-card__feature-icon" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="trim-card__actions">
+                  <button className="trim-card__btn trim-card__btn--primary">
+                    Build This Trim
+                    <ChevronRight size={16} />
+                  </button>
+                  <button className="trim-card__btn trim-card__btn--ghost">
+                    <Info size={16} />
+                    More Details
+                  </button>
                 </div>
+                
+                {selectedTrim === trim.id && (
+                  <div className="trim-card__selected-indicator">
+                    <Check size={16} />
+                  </div>
+                )}
               </div>
-              
-              <ul className="trim-card__features">
-                {trim.features.map((feature, index) => (
-                  <li key={index} className="trim-card__feature">
-                    <Check size={16} className="trim-card__feature-icon" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <div className="trim-card__actions">
-                <button className="trim-card__btn trim-card__btn--primary">
-                  Build This Trim
-                  <ChevronRight size={16} />
-                </button>
-                <button className="trim-card__btn trim-card__btn--ghost">
-                  <Info size={16} />
-                  More Details
-                </button>
-              </div>
-              
-              {selectedTrim === trim.id && (
-                <div className="trim-card__selected-indicator">
-                  <Check size={16} />
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
+          
+          {canScrollRight && (
+            <button 
+              className="trim-selector__nav trim-selector__nav--right"
+              onClick={() => scroll('right')}
+              aria-label="Scroll right"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
         </div>
         
         <div className="trim-selector__disclaimer">
@@ -89,6 +147,7 @@ const TrimSelector = ({ trims, title = "Pricing and Which One to Buy", subtitle 
 };
 
 export default TrimSelector;
+
 
 
 

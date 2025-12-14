@@ -7,6 +7,18 @@ const meta: Meta<typeof VehiclePage> = {
   component: VehiclePage,
   parameters: {
     layout: 'fullscreen',
+    viewport: {
+      viewports: {
+        desktop: {
+          name: 'Desktop (1440px)',
+          styles: {
+            width: '1440px',
+            height: '100%',
+          },
+        },
+      },
+      defaultViewport: 'desktop',
+    },
     docs: {
       description: {
         component: 'Vehicle detail page with hero, specs, pricing, comparisons, and marketplace integration.',
@@ -32,20 +44,20 @@ const createVehicleStory = (year: string, make: string, model: string): Story =>
   ],
 });
 
-export const ToyotaCamry: Story = createVehicleStory('2024', 'Toyota', 'Camry');
+export const ToyotaCorolla: Story = createVehicleStory('2026', 'Toyota', 'Corolla');
 
-export const HondaCRV: Story = createVehicleStory('2024', 'Honda', 'CR-V');
+export const HondaCRV: Story = createVehicleStory('2026', 'Honda', 'CR-V');
 
-export const FordF150: Story = createVehicleStory('2024', 'Ford', 'F-150');
+export const FordF150: Story = createVehicleStory('2025', 'Ford', 'F-150');
 
 export const ChevroletTrax: Story = createVehicleStory('2025', 'Chevrolet', 'Trax');
 
-export const TeslaModel3: Story = createVehicleStory('2024', 'Tesla', 'Model-3');
+export const TeslaModel3: Story = createVehicleStory('2025', 'Tesla', 'Model 3');
 
-export const BMWSeries5: Story = createVehicleStory('2024', 'BMW', '5-Series');
+export const BMW3Series: Story = createVehicleStory('2026', 'BMW', '3 Series');
 
 // Vehicle not found - tests error handling for invalid vehicle
 export const NotFound: Story = createVehicleStory('2024', 'InvalidMake', 'InvalidModel');
 
-// With default props - same as ToyotaCamry but named for backwards compatibility
-export const WithDefaultProps: Story = createVehicleStory('2024', 'Toyota', 'Camry');
+// With default props - same as ToyotaCorolla but named for backwards compatibility
+export const WithDefaultProps: Story = createVehicleStory('2026', 'Toyota', 'Corolla');

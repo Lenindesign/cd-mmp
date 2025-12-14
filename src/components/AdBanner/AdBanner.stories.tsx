@@ -5,7 +5,7 @@ const meta: Meta<typeof AdBanner> = {
   title: 'Atoms/AdBanner',
   component: AdBanner,
   parameters: {
-    layout: 'padded',
+    layout: 'fullscreen',
     docs: {
       description: {
         component: 'Advertisement banner placeholder component.',
@@ -35,17 +35,20 @@ export const WithLink: Story = {
 
 export const InContext: Story = {
   render: () => (
-    <div style={{ maxWidth: '728px', margin: '0 auto' }}>
-      <div style={{ background: '#f5f5f5', padding: '20px', marginBottom: '16px' }}>
+    <div>
+      <div style={{ maxWidth: '728px', margin: '0 auto', background: '#f5f5f5', padding: '20px', marginBottom: '16px' }}>
         <p>Content above the ad</p>
       </div>
       <AdBanner 
         imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
         altText="Nissan Advertisement"
       />
-      <div style={{ background: '#f5f5f5', padding: '20px', marginTop: '16px' }}>
+      <div style={{ maxWidth: '728px', margin: '0 auto', background: '#f5f5f5', padding: '20px', marginTop: '16px' }}>
         <p>Content below the ad</p>
       </div>
     </div>
   ),
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
