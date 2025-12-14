@@ -1,13 +1,20 @@
 import { addons } from 'storybook/manager-api';
 import { create } from 'storybook/theming';
 
+// Car and Driver logo as data URI
+const carAndDriverLogo = `data:image/svg+xml,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 20" fill="#000000">
+  <text x="0" y="16" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-weight="800" font-size="14" letter-spacing="0.5">CAR AND DRIVER</text>
+</svg>
+`)}`;
+
 const theme = create({
   base: 'light',
   
   // Brand
-  brandTitle: 'Car and Driver Design System',
+  brandTitle: 'Car and Driver',
   brandUrl: 'https://cd-mmp-2025.netlify.app/',
-  brandImage: 'https://www.caranddriver.com/graphics/images/svg/car-and-driver-logo.svg',
+  brandImage: carAndDriverLogo,
   brandTarget: '_blank',
   
   // Colors - using Car and Driver design system
@@ -48,4 +55,3 @@ addons.setConfig({
     showRoots: true,
   },
 });
-
