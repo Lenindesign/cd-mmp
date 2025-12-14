@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Specs, { defaultSedanSpecs } from './Specs';
+import Specs, { defaultSedanSpecs, defaultElectricSpecs } from './Specs';
 
 const meta: Meta<typeof Specs> = {
   title: 'Molecules/Specs',
@@ -27,6 +27,14 @@ export const SedanSpecs: Story = {
     categories: defaultSedanSpecs,
     title: 'Sedan Specifications',
     description: 'Complete specifications for sedan vehicles',
+  },
+};
+
+export const ElectricSpecs: Story = {
+  args: {
+    categories: defaultElectricSpecs,
+    title: 'Electric Vehicle Specifications',
+    description: 'Complete specifications for electric vehicles',
   },
 };
 

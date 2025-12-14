@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { GasPumpIcon, SeatingIcon, VolumeIcon, EngineIcon, DrivetrainIcon, WarrantyIcon } from './SpecIcons';
+import { GasPumpIcon, SeatingIcon, VolumeIcon, EngineIcon, DrivetrainIcon, WarrantyIcon, BatteryIcon } from './SpecIcons';
 import './Specs.css';
 
 interface SpecCategory {
@@ -80,6 +80,65 @@ export const defaultSedanSpecs: SpecCategory[] = [
       { label: 'Basic Warranty', value: '3 years / 36,000 miles' },
       { label: 'Powertrain Warranty', value: '5 years / 60,000 miles' },
       { label: 'Roadside Assistance', value: '3 years / 36,000 miles' },
+    ],
+  },
+];
+
+// Default electric vehicle spec categories with Car and Driver icons
+export const defaultElectricSpecs: SpecCategory[] = [
+  {
+    id: 'range',
+    title: 'EPA Est. Range',
+    icon: <BatteryIcon />,
+    specs: [
+      { label: 'EPA Range', value: '300 miles' },
+      { label: 'Battery Capacity', value: '82 kWh' },
+      { label: 'Fast Charging', value: '10-80% in 30 min' },
+      { label: 'Home Charging (240V)', value: '0-100% in 10 hrs' },
+      { label: 'MPGe Combined', value: '110 MPGe' },
+    ],
+  },
+  {
+    id: 'seating',
+    title: 'Seating',
+    icon: <SeatingIcon />,
+    specs: [
+      { label: 'Seating Capacity', value: '5 passengers' },
+      { label: 'Front Legroom', value: '41.6 in' },
+      { label: 'Rear Legroom', value: '36.4 in' },
+      { label: 'Front Headroom', value: '39.1 in' },
+      { label: 'Rear Headroom', value: '37.2 in' },
+    ],
+  },
+  {
+    id: 'cargo',
+    title: 'Cargo Capacity',
+    icon: <VolumeIcon />,
+    specs: [
+      { label: 'Cargo Volume', value: '28 cu ft' },
+      { label: 'Passenger Volume', value: '98 cu ft' },
+      { label: 'Frunk Volume', value: '3.1 cu ft' },
+    ],
+  },
+  {
+    id: 'drivetrain',
+    title: 'Drivetrain',
+    icon: <DrivetrainIcon />,
+    specs: [
+      { label: 'Drive Type', value: 'Dual Motor AWD' },
+      { label: 'Motor Power', value: '450 hp (combined)' },
+      { label: '0-60 mph', value: '4.2 seconds' },
+      { label: 'Top Speed', value: '135 mph' },
+    ],
+  },
+  {
+    id: 'warranty',
+    title: 'Limited Warranty',
+    icon: <WarrantyIcon />,
+    specs: [
+      { label: 'Basic Warranty', value: '4 years / 50,000 miles' },
+      { label: 'Battery Warranty', value: '8 years / 100,000 miles' },
+      { label: 'Roadside Assistance', value: '4 years / 50,000 miles' },
     ],
   },
 ];
