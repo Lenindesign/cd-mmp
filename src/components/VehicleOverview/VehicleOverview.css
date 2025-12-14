@@ -242,14 +242,14 @@
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #22C55E;
+  color: var(--color-success);
   padding-bottom: var(--spacing-3);
   margin-bottom: var(--spacing-3);
   border-bottom: 1px solid var(--color-gray-200);
 }
 
 .vehicle-overview__highlights-header--low {
-  color: #EA580C;
+  color: var(--color-warning);
 }
 
 .vehicle-overview__list {
@@ -277,11 +277,11 @@
 }
 
 .vehicle-overview__list-item--high .vehicle-overview__list-marker {
-  color: #22C55E;
+  color: var(--color-success);
 }
 
 .vehicle-overview__list-item--low .vehicle-overview__list-marker {
-  color: #EA580C;
+  color: var(--color-warning);
 }
 
 /* What's New */

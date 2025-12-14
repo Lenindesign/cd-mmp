@@ -1,0 +1,996 @@
+/* =============================================
+   TRIM SELECTOR MARKETPLACE CTA VARIANTS
+   All 5 variants based on V5D layout
+   ============================================= */
+
+.trim-marketplace {
+  margin-top: var(--spacing-8);
+}
+
+/* Common Styles */
+.trim-marketplace__title {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.trim-marketplace__title--compact {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-3);
+}
+
+.trim-marketplace__subtitle-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+.trim-marketplace__next-step-badge {
+  display: inline-block;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-3);
+}
+
+.trim-marketplace__next-step-banner {
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+}
+
+/* Buttons */
+.trim-marketplace__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+}
+
+.trim-marketplace__btn--primary {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.trim-marketplace__btn--primary:hover {
+  background: var(--color-black);
+}
+
+.trim-marketplace__btn--secondary {
+  background: var(--color-gray-100);
+  color: var(--color-black);
+  border: 1px solid var(--color-gray-300);
+}
+
+.trim-marketplace__btn--secondary:hover {
+  background: var(--color-gray-200);
+}
+
+.trim-marketplace__btn--ghost {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.trim-marketplace__btn--ghost:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.trim-marketplace__btn--white {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.trim-marketplace__btn--white:hover {
+  background: var(--color-gray-100);
+}
+
+.trim-marketplace__btn--outline-white {
+  background: transparent;
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.trim-marketplace__btn--outline-white:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-white);
+}
+
+.trim-marketplace__btn--full {
+  width: 100%;
+}
+
+.trim-marketplace__btn--large {
+  padding: var(--spacing-4) var(--spacing-8);
+  font-size: var(--font-size-sm);
+}
+
+.trim-marketplace__actions {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
+}
+
+.trim-marketplace__actions--full {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .trim-marketplace__actions--full {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .trim-marketplace__actions--full .trim-marketplace__btn {
+    min-width: 280px;
+  }
+}
+
+/* Quick Stats (shared by V1D, V5D) - Consistent card style */
+.trim-marketplace__quick-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__quick-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.trim-marketplace__quick-stat:hover {
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.trim-marketplace__quick-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-blue-cobalt);
+}
+
+.trim-marketplace__quick-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-top: var(--spacing-1);
+}
+
+/* eLot Preview (shared) */
+.trim-marketplace__elot {
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__elot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.trim-marketplace__elot-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+.trim-marketplace__elot-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+}
+
+.trim-marketplace__elot-link:hover {
+  text-decoration: underline;
+}
+
+.trim-marketplace__elot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+}
+
+.trim-marketplace__elot-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.trim-marketplace__elot-card:hover {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: var(--shadow-md);
+}
+
+.trim-marketplace__elot-card-image {
+  position: relative;
+  height: 100px;
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-400);
+  overflow: hidden;
+}
+
+.trim-marketplace__elot-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trim-marketplace__elot-card-image--large {
+  height: 120px;
+}
+
+.trim-marketplace__elot-card-badge {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-2);
+  background: var(--color-success-dark);
+  color: var(--color-white);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.trim-marketplace__elot-card-info {
+  padding: var(--spacing-3);
+}
+
+.trim-marketplace__elot-card-title {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-1);
+}
+
+.trim-marketplace__elot-card-price {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.trim-marketplace__elot-card-mileage {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.trim-marketplace__elot-card--more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  cursor: pointer;
+  min-height: 180px;
+  border: none;
+}
+
+.trim-marketplace__elot-card--more:hover {
+  background: var(--color-black);
+}
+
+.trim-marketplace__elot-card--large {
+  min-height: 200px;
+}
+
+.trim-marketplace__elot-more-count {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.trim-marketplace__elot-more-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Value Props - Consistent card style */
+.trim-marketplace__value-props {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.trim-marketplace__value-prop {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+}
+
+.trim-marketplace__value-prop svg {
+  color: var(--color-success-dark);
+  flex-shrink: 0;
+}
+
+/* =============================================
+   V1D: STATS-FOCUSED LAYOUT
+   ============================================= */
+.trim-marketplace--v1d {
+  background: linear-gradient(180deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-6);
+  margin-top: var(--spacing-8);
+  border-top: none;
+}
+
+.trim-marketplace__stats-grid--large {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__stat-card {
+  display: flex;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
+}
+
+.trim-marketplace__stat-card:hover {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: var(--shadow-sm);
+}
+
+.trim-marketplace__stat-card--highlight {
+  background: var(--color-info-light);
+  border-color: var(--color-blue-cobalt);
+}
+
+.trim-marketplace__stat-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-md);
+  color: var(--color-blue-cobalt);
+  flex-shrink: 0;
+}
+
+.trim-marketplace__stat-card--highlight .trim-marketplace__stat-card-icon {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.trim-marketplace__stat-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.trim-marketplace__stat-card-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.trim-marketplace__stat-card-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trim-marketplace__stat-card-range {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin-top: var(--spacing-1);
+}
+
+/* V1D Compact eLot */
+.trim-marketplace__elot--compact {
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__elot-row {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+.trim-marketplace__elot-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.trim-marketplace__elot-item:hover {
+  background: var(--color-gray-100);
+}
+
+.trim-marketplace__elot-item-badge {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success-dark);
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-1);
+}
+
+.trim-marketplace__elot-item-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.trim-marketplace__elot-item-price {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+/* =============================================
+   V2D: ELOT-FOCUSED LAYOUT
+   ============================================= */
+.trim-marketplace--v2d {
+  background: linear-gradient(180deg, var(--color-gray-50) 0%, var(--color-white) 100%);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-6);
+  margin-top: var(--spacing-8);
+  border-top: none;
+}
+
+.trim-marketplace__header-with-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__header-content {
+  flex: 1;
+}
+
+.trim-marketplace__inline-stats {
+  display: flex;
+  gap: var(--spacing-6);
+}
+
+.trim-marketplace__inline-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.trim-marketplace__inline-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.trim-marketplace__inline-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.trim-marketplace__elot--large .trim-marketplace__elot-grid--large {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* =============================================
+   V3D: COMPACT SINGLE-ROW LAYOUT
+   ============================================= */
+.trim-marketplace--v3d {
+  background: var(--color-white);
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-5);
+  margin-top: var(--spacing-8);
+  border-top: 2px solid var(--color-blue-cobalt);
+}
+
+.trim-marketplace__compact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr 280px;
+  gap: var(--spacing-6);
+  align-items: center;
+}
+
+.trim-marketplace__compact-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.trim-marketplace__compact-stats {
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.trim-marketplace__compact-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.trim-marketplace__compact-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.trim-marketplace__compact-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.trim-marketplace__compact-elot {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+.trim-marketplace__compact-card {
+  flex: 1;
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.trim-marketplace__compact-card:hover {
+  background: var(--color-gray-100);
+}
+
+.trim-marketplace__compact-card-image {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-gray-200);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-gray-400);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.trim-marketplace__compact-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trim-marketplace__compact-card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.trim-marketplace__compact-card-badge {
+  font-family: var(--font-heading);
+  font-size: 8px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success-dark);
+  text-transform: uppercase;
+}
+
+.trim-marketplace__compact-card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.trim-marketplace__compact-card-price {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.trim-marketplace__compact-cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+@media (max-width: 992px) {
+  .trim-marketplace__compact-layout {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+  
+  .trim-marketplace__compact-elot {
+    flex-direction: column;
+  }
+}
+
+/* =============================================
+   V4D: DARK THEME LAYOUT
+   ============================================= */
+.trim-marketplace--v4d {
+  margin-top: var(--spacing-8);
+  border-top: none;
+}
+
+.trim-marketplace__dark-module {
+  background: var(--color-neutrals-1);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-6);
+  color: var(--color-white);
+}
+
+.trim-marketplace__dark-header {
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__dark-badge {
+  display: inline-block;
+  background: var(--color-white);
+  color: var(--color-black);
+  padding: var(--spacing-1) var(--spacing-4);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--spacing-3);
+}
+
+.trim-marketplace__dark-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.trim-marketplace__dark-subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.trim-marketplace__dark-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__dark-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.trim-marketplace__dark-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+}
+
+.trim-marketplace__dark-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: var(--spacing-1);
+}
+
+.trim-marketplace__dark-elot {
+  margin-bottom: var(--spacing-6);
+}
+
+.trim-marketplace__dark-elot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.trim-marketplace__dark-elot-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  margin: 0;
+}
+
+.trim-marketplace__dark-elot-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.trim-marketplace__dark-elot-link:hover {
+  opacity: 1;
+}
+
+.trim-marketplace__dark-elot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+}
+
+.trim-marketplace__dark-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.trim-marketplace__dark-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.trim-marketplace__dark-card-image {
+  position: relative;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+}
+
+.trim-marketplace__dark-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trim-marketplace__dark-card-badge {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-2);
+  background: var(--color-success-dark);
+  color: var(--color-white);
+  padding: 2px var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 8px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.trim-marketplace__dark-card-info {
+  padding: var(--spacing-3);
+}
+
+.trim-marketplace__dark-card-title {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  margin-bottom: var(--spacing-1);
+}
+
+.trim-marketplace__dark-card-price {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt-light);
+}
+
+.trim-marketplace__dark-card-mileage {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.trim-marketplace__dark-card--more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+  color: var(--color-black);
+  min-height: 160px;
+  border: none;
+}
+
+.trim-marketplace__dark-card--more:hover {
+  background: var(--color-gray-100);
+}
+
+.trim-marketplace__dark-more-count {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.trim-marketplace__dark-more-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-2);
+}
+
+.trim-marketplace__dark-actions {
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: center;
+}
+
+@media (max-width: 992px) {
+  .trim-marketplace__dark-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .trim-marketplace__dark-elot-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .trim-marketplace__dark-actions {
+    flex-direction: column;
+  }
+  
+  .trim-marketplace__dark-actions .trim-marketplace__btn {
+    width: 100%;
+  }
+}
+
+/* =============================================
+   V5D: FULL MARKETPLACE MODULE (Original)
+   ============================================= */
+.trim-marketplace--v5d {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-top: var(--spacing-8);
+  box-shadow: var(--shadow-sm);
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 992px) {
+  .trim-marketplace__quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .trim-marketplace__elot-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .trim-marketplace__value-props {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+  }
+  
+  .trim-marketplace__stats-grid--large {
+    grid-template-columns: 1fr;
+  }
+  
+  .trim-marketplace__header-with-stats {
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+  
+  .trim-marketplace__inline-stats {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .trim-marketplace__inline-stat {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .trim-marketplace__elot-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .trim-marketplace__elot-card:nth-child(3) {
+    display: none;
+  }
+  
+  .trim-marketplace__elot-row {
+    flex-direction: column;
+  }
+}

@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown, Heart, ArrowRight, ChevronLeft, ChevronRight, Image } from 'lucide-react';
 import { getAvailableYears } from '../../services/vehicleService';
+import { Button } from '../Button';
+import { OptimizedImage } from '../OptimizedImage';
 import './Hero.css';
 
 interface HeroProps {
@@ -191,10 +193,12 @@ const Hero = ({ vehicle }: HeroProps) => {
           <div className="hero__gallery hero__gallery--desktop">
             {/* Main Image */}
             <div className="hero__gallery-main">
-              <img 
+              <OptimizedImage 
                 src={vehicle.image} 
                 alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                 className="hero__gallery-main-img"
+                loading="eager"
+                aspectRatio="16/10"
               />
             </div>
 
@@ -202,7 +206,11 @@ const Hero = ({ vehicle }: HeroProps) => {
             <div className="hero__gallery-thumbs">
               {galleryImages.slice(0, 3).map((img, index) => (
                 <div key={index} className="hero__gallery-thumb">
-                  <img src={img} alt={`${vehicle.model} view ${index + 1}`} />
+                  <OptimizedImage 
+                    src={img} 
+                    alt={`${vehicle.model} view ${index + 1}`}
+                    aspectRatio="16/10"
+                  />
                   {index === 2 && (
                     <div className="hero__gallery-thumb-overlay">
                       <span>View Photos</span>
@@ -229,10 +237,12 @@ const Hero = ({ vehicle }: HeroProps) => {
             >
               {allImages.map((img, index) => (
                 <div key={index} className="hero__carousel-slide">
-                  <img 
+                  <OptimizedImage 
                     src={img} 
                     alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - View ${index + 1}`}
                     className="hero__carousel-img"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    aspectRatio="16/9"
                   />
                 </div>
               ))}
@@ -287,7 +297,9 @@ const Hero = ({ vehicle }: HeroProps) => {
               <span className="hero__msrp-label">MSRP</span>
               <div className="hero__msrp-price-row">
                 <span className="hero__msrp-price">{vehicle.priceRange}</span>
-                <button className="hero__shop-btn">SHOP NOW</button>
+                <Button variant="primary" size="small" className="hero__shop-btn">
+                  SHOP NOW
+                </Button>
               </div>
             </div>
 

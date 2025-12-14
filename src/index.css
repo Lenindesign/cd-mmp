@@ -13,8 +13,10 @@
   
   /* Primary Accent - Blue Cobalt */
   --color-blue-cobalt: #1B5F8A;
+  --cd-blue-cobalt: #1B5F8A;  /* Alias for Car and Driver design system compatibility */
   --color-blue-cobalt-dark: #154d70;
-  --color-blue-cobalt-light: #2a7aab;
+  --color-blue-cobalt-darker: #0D47A1;
+  --color-blue-cobalt-light: #60A5FA;
   
   /* Red (Secondary accent) */
   --color-red: #D22730;
@@ -39,11 +41,61 @@
   --color-teal-light: #F1F7F7;
   --color-gray-xlight: #f5f5f5;
   
-  /* Semantic */
-  --color-success: #2e7d32;
-  --color-warning: #ed6c02;
+  /* Semantic - Status Colors */
+  --color-success: #22c55e;
+  --color-success-dark: #16a34a;
+  --color-success-light: rgba(34, 197, 94, 0.08);
+  --color-success-border: #bbf7d0;
+  
+  --color-warning: #f59e0b;
+  --color-warning-dark: #c2410c;
+  --color-warning-light: rgba(245, 158, 11, 0.08);
+  --color-warning-border: #fed7aa;
+  
+  --color-error: #ef4444;
+  --color-error-dark: #dc2626;
+  --color-error-light: rgba(239, 68, 68, 0.1);
+  --color-error-border: #fecaca;
+  
   --color-info: #0288d1;
+  --color-info-light: rgba(2, 136, 209, 0.08);
+  
   --color-gold: #ffc107;
+  --color-gold-light: #FEF3C7;
+  
+  /* Social Media Colors */
+  --color-facebook: #1877F2;
+  --color-facebook-dark: #166FE5;
+  
+  /* Badge Colors */
+  --color-badge-new: var(--color-blue-cobalt);
+  --color-badge-certified: var(--color-success);
+  --color-badge-certified-bg: var(--color-success);
+  --color-badge-reduced: var(--color-error-dark);
+  --color-badge-reduced-bg: var(--color-error-dark);
+  
+  /* Status Colors (for tooltips and indicators) */
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-error);
+  --color-status-success-light: var(--color-success-light);
+  --color-status-warning-light: var(--color-warning-light);
+  
+  /* Incentive Badge Colors */
+  --color-badge-lease-bg: #FEF3E7;
+  --color-badge-lease-text: #C27A0E;
+  --color-badge-lease-border: #F5D5A8;
+  
+  --color-badge-finance-bg: rgba(27, 95, 138, 0.08);
+  --color-badge-finance-text: var(--color-blue-cobalt);
+  --color-badge-finance-border: rgba(27, 95, 138, 0.25);
+  
+  --color-badge-special-bg: var(--color-success-light);
+  --color-badge-special-text: var(--color-success-dark);
+  --color-badge-special-border: var(--color-success-border);
+  
+  /* Gradient Backgrounds */
+  --gradient-info: linear-gradient(135deg, rgba(27, 95, 138, 0.08) 0%, rgba(27, 95, 138, 0.04) 100%);
+  --color-info-border: rgba(27, 95, 138, 0.2);
   
   /* ============================================
      TYPOGRAPHY - Car and Driver Style
@@ -116,7 +168,7 @@
      EFFECTS
      ============================================ */
   
-  --border-radius-sm: 2px;
+  --border-radius-sm: 4px;
   --border-radius-md: 0.25rem;
   --border-radius-lg: 0.5rem;
   --border-radius-xl: 12px;
@@ -202,9 +254,74 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Skip Link - Appears on focus for keyboard users */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: var(--spacing-4);
+  z-index: 10000;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: var(--spacing-4);
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+/* Focus Styles - Consistent visible focus for all interactive elements */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+/* Dark background focus */
+.dark-bg :focus-visible,
+[data-theme="dark"] :focus-visible {
+  outline-color: var(--color-white);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-gray-200: #c0c0c0;
+    --color-gray-300: #a0a0a0;
+    --color-gray-600: #404040;
+  }
+}
+
+/* ============================================
    UTILITY CLASSES
    ============================================ */
 
+/* Screen reader only */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -217,10 +334,131 @@ h1, h2, h3, h4, h5, h6 {
   border: 0;
 }
 
+/* Show on focus (for skip links and similar) */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
 /* Text utilities */
 .text-uppercase {
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+/* ============================================
+   CTA UTILITY CLASSES
+   Shared button/CTA styles for use across components
+   ============================================ */
+
+/* Base CTA - use with variant classes */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+/* CTA Sizes */
+.cta--sm {
+  height: 32px;
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-xs);
+}
+
+.cta--md {
+  height: 40px;
+  padding: 0 var(--spacing-4);
+  font-size: var(--font-size-sm);
+}
+
+.cta--lg {
+  height: 48px;
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-base);
+}
+
+/* CTA Variants */
+.cta--primary {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.cta--primary:hover {
+  background: var(--color-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta--secondary {
+  background: var(--color-gray-100);
+  color: var(--color-dark);
+}
+
+.cta--secondary:hover {
+  background: var(--color-gray-200);
+}
+
+.cta--outline {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.cta--outline:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.cta--ghost {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+}
+
+.cta--ghost:hover {
+  background: var(--color-teal-light);
+}
+
+.cta--white {
+  background: var(--color-white);
+  color: var(--color-dark);
+}
+
+.cta--white:hover {
+  background: var(--color-gray-100);
+}
+
+/* CTA Modifiers */
+.cta--full {
+  width: 100%;
+}
+
+.cta--disabled,
+.cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 /* Car and Driver styled section title */

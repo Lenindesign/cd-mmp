@@ -206,27 +206,27 @@
 }
 
 .incentives__badge--lease {
-  background: #FEF3E7;
-  color: #C27A0E;
-  border: 1px solid #F5D5A8;
+  background: var(--color-badge-lease-bg);
+  color: var(--color-badge-lease-text);
+  border: 1px solid var(--color-badge-lease-border);
 }
 
 .incentives__badge--cash {
-  background: #FEF3E7;
-  color: #C27A0E;
-  border: 1px solid #F5D5A8;
+  background: var(--color-badge-lease-bg);
+  color: var(--color-badge-lease-text);
+  border: 1px solid var(--color-badge-lease-border);
 }
 
 .incentives__badge--finance {
-  background: #E8F4FD;
-  color: #1B5F8A;
-  border: 1px solid #B8D9F0;
+  background: var(--color-badge-finance-bg);
+  color: var(--color-badge-finance-text);
+  border: 1px solid var(--color-badge-finance-border);
 }
 
 .incentives__badge--special {
-  background: #F0FDF4;
-  color: #166534;
-  border: 1px solid #BBF7D0;
+  background: var(--color-badge-special-bg);
+  color: var(--color-badge-special-text);
+  border: 1px solid var(--color-badge-special-border);
 }
 
 /* Item Info */
@@ -318,8 +318,8 @@
 /* Urgency CTA */
 .incentives__urgency {
   margin-bottom: var(--spacing-5);
-  background: linear-gradient(135deg, #E8F4FD 0%, #F0F8FF 100%);
-  border: 1px solid #B8D4E8;
+  background: var(--gradient-info);
+  border: 1px solid var(--color-info-border);
   border-radius: var(--border-radius-md);
   overflow: hidden;
 }

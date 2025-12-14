@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, MapPin, Gauge, Calendar, Heart } from 'lucide-react';
 import { getListingsNearYou } from '../../services/listingsService';
 import type { Listing } from '../../services/listingsService';
+import { OptimizedImage } from '../OptimizedImage';
 import './ForSaleNearYou.css';
 
 interface ForSaleNearYouProps {
@@ -117,9 +118,10 @@ const ForSaleNearYou = ({
               <div key={listing.id} className="for-sale__card">
                 {/* Card Image */}
                 <div className="for-sale__card-image">
-                  <img 
+                  <OptimizedImage 
                     src={listing.image} 
                     alt={`${listing.year} ${listing.make} ${listing.model}`}
+                    aspectRatio="4/3"
                   />
                   <button 
                     className={`for-sale__card-favorite ${favorites.has(listing.id) ? 'for-sale__card-favorite--active' : ''}`}

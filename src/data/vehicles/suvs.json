@@ -1510,7 +1510,9 @@
       "Safety Assist",
       "Wireless Charging"
     ],
-    "slug": "2025/Chevrolet/Trax"
+    "slug": "2025/Chevrolet/Trax",
+    "editorsChoice": true,
+    "tenBest": true
   },
   {
     "id": "suv-sub8",
@@ -2056,6 +2058,8 @@
       "All-Wheel Drive",
       "Apple CarPlay"
     ],
-    "slug": "2025/Toyota/RAV4-Hybrid"
+    "slug": "2025/Toyota/RAV4-Hybrid",
+    "editorsChoice": true,
+    "tenBest": true
   }
 ]

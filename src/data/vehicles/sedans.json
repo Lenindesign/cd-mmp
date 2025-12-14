@@ -64,7 +64,9 @@
       "Wireless Charging",
       "Panoramic Sunroof"
     ],
-    "slug": "2026/Honda/Accord"
+    "slug": "2026/Honda/Accord",
+    "editorsChoice": true,
+    "tenBest": true
   },
   {
     "id": "5",

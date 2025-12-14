@@ -325,6 +325,43 @@
   letter-spacing: 0.5px;
 }
 
+/* Accolades Badges (Editor's Choice, 10Best) */
+.vehicles-list-page__card-accolades {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  display: flex;
+  gap: var(--spacing-1);
+  z-index: 2;
+}
+
+.vehicles-list-page__card-accolade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.vehicles-list-page__card-accolade:hover {
+  transform: scale(1.1);
+}
+
+.vehicles-list-page__card-accolade--ec svg {
+  display: block;
+  width: 24px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.vehicles-list-page__card-accolade--10best img {
+  display: block;
+  width: 22px;
+  height: 25px;
+  flex-shrink: 0;
+}
+
 .vehicles-list-page__card-info {
   padding: var(--spacing-3);
 }
@@ -422,14 +459,14 @@
 }
 
 .vehicles-list-page__card-badge--certified {
-  background: #22c55e;
+  background: var(--color-success);
   color: var(--color-white);
 }
 
 .vehicles-list-page__card-badge--reduced {
-  background: #dc2626;
+  background: var(--color-error-dark);
   color: var(--color-white);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.5);
+  box-shadow: 0 2px 8px var(--color-error-light);
   font-weight: var(--font-weight-bold);
 }
 
@@ -662,7 +699,7 @@
 }
 
 .vht__header svg {
-  color: var(--color-neutrals-3);
+  color: var(--color-gray-700);
 }
 
 .vht__header span {
@@ -687,17 +724,17 @@
 }
 
 .vht__stat-icon {
-  color: var(--color-neutrals-4);
+  color: var(--color-gray-500);
   flex-shrink: 0;
   margin-top: 2px;
 }
 
 .vht__stat--success .vht__stat-icon {
-  color: #22c55e;
+  color: var(--color-success);
 }
 
 .vht__stat--warning .vht__stat-icon {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .vht__stat-content {
@@ -709,7 +746,7 @@
 .vht__stat-label {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--color-neutrals-4);
+  color: var(--color-gray-500);
 }
 
 .vht__stat-value {
@@ -720,11 +757,11 @@
 }
 
 .vht__stat--success .vht__stat-value {
-  color: #22c55e;
+  color: var(--color-success);
 }
 
 .vht__stat--warning .vht__stat-value {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 /* Vehicle Usage */
@@ -735,7 +772,7 @@
 .vht__usage-label {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--color-neutrals-4);
+  color: var(--color-gray-500);
   display: block;
   margin-bottom: var(--spacing-2);
 }
@@ -752,27 +789,27 @@
   font-weight: var(--font-weight-medium);
   padding: 6px 14px;
   border-radius: var(--border-radius-sm);
-  border: 1px solid var(--color-neutrals-6);
+  border: 1px solid var(--color-gray-200);
   background: var(--color-white);
-  color: var(--color-neutrals-4);
+  color: var(--color-gray-500);
 }
 
 .vht__tag--success {
-  border-color: #bbf7d0;
-  background: rgba(34, 197, 94, 0.08);
-  color: #16a34a;
+  border-color: var(--color-success-border);
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
 }
 
 .vht__tag--warning {
-  border-color: #fed7aa;
-  background: rgba(245, 158, 11, 0.08);
-  color: #c2410c;
+  border-color: var(--color-warning-border);
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark);
 }
 
 /* Price History */
 .vht__price {
   padding-top: var(--spacing-4);
-  border-top: 1px solid var(--color-neutrals-6);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .vht__price-header {
@@ -783,7 +820,7 @@
 }
 
 .vht__price-header svg {
-  color: var(--color-neutrals-4);
+  color: var(--color-gray-500);
 }
 
 .vht__price-header span {
@@ -806,8 +843,8 @@
 
 .vht__price-date {
   font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--color-neutrals-4);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-500);
   min-width: 110px;
 }
 
@@ -823,9 +860,9 @@
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: var(--font-weight-medium);
-  color: #16a34a;
-  background: rgba(34, 197, 94, 0.1);
-  padding: 4px 10px;
+  color: var(--color-success-dark);
+  background: var(--color-success-light);
+  padding: var(--spacing-1) var(--spacing-2);
   border-radius: var(--border-radius-sm);
 }
 

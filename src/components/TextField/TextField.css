@@ -1,0 +1,195 @@
+/* ============================================
+   TEXT FIELD COMPONENT - Car and Driver Design System
+   ============================================ */
+
+.text-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.text-field--full-width {
+  width: 100%;
+}
+
+/* Label */
+.text-field__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+}
+
+.text-field__required {
+  color: var(--color-error);
+  margin-left: 2px;
+}
+
+/* Input Wrapper */
+.text-field__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Base Input */
+.text-field__input,
+.text-field__textarea,
+.text-field__select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.text-field__input:focus,
+.text-field__textarea:focus,
+.text-field__select:focus {
+  outline: none;
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.1);
+}
+
+.text-field__input::placeholder,
+.text-field__textarea::placeholder {
+  color: var(--color-gray-400);
+}
+
+/* Sizes */
+.text-field--small .text-field__input {
+  height: 36px;
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-sm);
+}
+
+.text-field--default .text-field__input {
+  height: 44px;
+  padding: 0 var(--spacing-4);
+}
+
+.text-field--large .text-field__input {
+  height: 52px;
+  padding: 0 var(--spacing-5);
+  font-size: var(--font-size-lg);
+}
+
+/* Input with Icons */
+.text-field__input--has-icon-left {
+  padding-left: var(--spacing-10);
+}
+
+.text-field__input--has-icon-right {
+  padding-right: var(--spacing-10);
+}
+
+/* Icons */
+.text-field__icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: 100%;
+  color: var(--color-gray-500);
+  pointer-events: none;
+}
+
+.text-field__icon--left {
+  left: 0;
+}
+
+.text-field__icon--right {
+  right: 0;
+}
+
+.text-field__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Error State */
+.text-field--error .text-field__input,
+.text-field--error .text-field__textarea,
+.text-field--error .text-field__select {
+  border-color: var(--color-error);
+}
+
+.text-field--error .text-field__input:focus,
+.text-field--error .text-field__textarea:focus,
+.text-field--error .text-field__select:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Helper/Error Text */
+.text-field__helper,
+.text-field__error {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
+.text-field__helper {
+  color: var(--color-gray-500);
+}
+
+.text-field__error {
+  color: var(--color-error);
+}
+
+/* Textarea */
+.text-field__textarea {
+  min-height: 100px;
+  padding: var(--spacing-3) var(--spacing-4);
+  resize: vertical;
+}
+
+/* Select */
+.text-field__select-wrapper {
+  position: relative;
+}
+
+.text-field__select {
+  height: 44px;
+  padding: 0 var(--spacing-10) 0 var(--spacing-4);
+  appearance: none;
+  cursor: pointer;
+}
+
+.text-field__select-arrow {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-gray-500);
+}
+
+.text-field__select-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Disabled State */
+.text-field__input:disabled,
+.text-field__textarea:disabled,
+.text-field__select:disabled {
+  background: var(--color-gray-100);
+  color: var(--color-gray-500);
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .text-field--default .text-field__input {
+    height: 48px;
+  }
+  
+  .text-field__select {
+    height: 48px;
+  }
+}
+

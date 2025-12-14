@@ -812,7 +812,9 @@
       "Track Mode",
       "Active Aerodynamics"
     ],
-    "slug": "2025/Ferrari/SF90-Stradale"
+    "slug": "2025/Ferrari/SF90-Stradale",
+    "editorsChoice": true,
+    "tenBest": true
   },
   {
     "id": "coupe-elec10",

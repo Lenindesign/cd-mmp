@@ -58,10 +58,10 @@
   max-width: 749px;
   height: 37px;
   background: var(--color-white);
-  border: 1px solid #cdcdcd;
-  border-radius: 100px;
-  padding-left: 24px;
-  box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-full);
+  padding-left: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
   margin: 0 auto;
   position: relative;
   transition: border-color var(--transition-fast);
@@ -76,8 +76,8 @@
   flex: 1;
   border: none;
   background: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
   font-style: italic;
   color: var(--color-black);
   outline: none;
@@ -85,7 +85,7 @@
 }
 
 .header__search-input::placeholder {
-  color: #595959;
+  color: var(--color-gray-600);
 }
 
 .header__search-btn {
@@ -98,7 +98,7 @@
   background: none;
   border: none;
   border-radius: 50%;
-  color: #595959;
+  color: var(--color-gray-600);
   cursor: pointer;
   transition: color var(--transition-fast);
 }
@@ -116,16 +116,16 @@
 }
 
 .header__subscribe-btn {
-  padding: 12px 12px;
-  background: #1B5F8A;
+  padding: var(--spacing-3);
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 800;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.44px;
   border: 1px solid var(--color-white);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: background-color var(--transition-fast);
 }
@@ -147,7 +147,7 @@
 }
 
 .header__user-btn:hover {
-  color: #1B5F8A;
+  color: var(--color-blue-cobalt);
 }
 
 /* Navigation */
@@ -171,19 +171,19 @@
 }
 
 .header__nav-link {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.26px;
-  color: #222222;
+  color: var(--color-dark);
   text-decoration: none;
   transition: color var(--transition-fast);
   white-space: nowrap;
 }
 
 .header__nav-link:hover {
-  color: #1B5F8A;
+  color: var(--color-blue-cobalt);
 }
 
 /* Active link indicator */
@@ -198,7 +198,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: #1B5F8A;
+  background: var(--color-blue-cobalt);
 }
 
 /* Mobile Navigation */

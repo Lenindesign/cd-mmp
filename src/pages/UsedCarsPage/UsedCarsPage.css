@@ -265,7 +265,7 @@
 }
 
 .used-cars-page__card-badge--certified {
-  background: #22c55e;
+  background: var(--color-badge-certified-bg);
   color: var(--color-white);
 }
 
@@ -362,7 +362,7 @@
 }
 
 .used-cars-page__card-stars {
-  color: #fbbf24;
+  color: var(--color-gold);
 }
 
 .used-cars-page__card-rating-label {
@@ -505,11 +505,11 @@
 }
 
 .vht__stat--success .vht__stat-icon {
-  color: #22c55e;
+  color: var(--color-status-success);
 }
 
 .vht__stat--warning .vht__stat-icon {
-  color: #ef4444;
+  color: var(--color-status-warning);
 }
 
 .vht__stat-content {
@@ -532,11 +532,11 @@
 }
 
 .vht__stat--success .vht__stat-value {
-  color: #22c55e;
+  color: var(--color-status-success);
 }
 
 .vht__stat--warning .vht__stat-value {
-  color: #ef4444;
+  color: var(--color-status-warning);
 }
 
 .vht__usage {
@@ -569,15 +569,15 @@
 }
 
 .vht__tag--success {
-  border-color: #bbf7d0;
-  background: rgba(34, 197, 94, 0.08);
-  color: #16a34a;
+  border-color: var(--color-badge-special-border);
+  background: var(--color-status-success-light);
+  color: var(--color-badge-special-text);
 }
 
 .vht__tag--warning {
-  border-color: #fed7aa;
-  background: rgba(245, 158, 11, 0.08);
-  color: #c2410c;
+  border-color: var(--color-badge-lease-border);
+  background: var(--color-status-warning-light);
+  color: var(--color-badge-lease-text);
 }
 
 .vht__price {
@@ -633,8 +633,8 @@
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: var(--font-weight-medium);
-  color: #16a34a;
-  background: rgba(34, 197, 94, 0.1);
+  color: var(--color-badge-special-text);
+  background: var(--color-status-success-light);
   padding: 4px 10px;
   border-radius: var(--border-radius-sm);
 }

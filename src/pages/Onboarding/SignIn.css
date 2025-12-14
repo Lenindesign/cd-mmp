@@ -240,13 +240,13 @@
 
 /* Facebook Button */
 .signin-social-btn--facebook {
-  background: #1877F2;
+  background: var(--color-facebook);
   color: var(--color-white);
   border: none;
 }
 
 .signin-social-btn--facebook:hover {
-  background: #166FE5;
+  background: var(--color-facebook-dark);
 }
 
 /* Apple Button */
@@ -276,6 +276,8 @@
     padding: 0;
   }
 }
+
+
 
 
 

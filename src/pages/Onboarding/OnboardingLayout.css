@@ -203,7 +203,7 @@
 }
 
 .onboarding-btn--secondary {
-  background: #EAEAEA;
+  background: var(--color-gray-200);
   color: var(--cd-blue-cobalt);
 }
 

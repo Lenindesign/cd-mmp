@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, ChevronDown, Grid, List, MapPin, Tag, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
-import { getUniqueBodyStyles } from '../../services/vehicleService';
+import { getUniqueBodyStyles, getAllVehicles } from '../../services/vehicleService';
 import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
+import TopTenCarouselLeads from '../../components/TopTenCarouselLeads';
 import './UsedCarsPage.css';
 
 // Vehicle History Tooltip Component
@@ -149,6 +150,16 @@ const UsedCarsPage = () => {
   const allListings = useMemo(() => getAllListings(), []);
   const makes = useMemo(() => getUniqueMakesFromListings(), []);
   const bodyStyles = getUniqueBodyStyles();
+  const allVehicles = useMemo(() => getAllVehicles(), []);
+
+  // Helper to get vehicle rating by make/model
+  const getVehicleRating = (make: string, model: string): number => {
+    const vehicle = allVehicles.find(
+      v => v.make.toLowerCase() === make.toLowerCase() && 
+           v.model.toLowerCase() === model.toLowerCase()
+    );
+    return vehicle?.staffRating || 0;
+  };
 
   // Mileage ranges for filter
   const mileageRanges = [
@@ -209,6 +220,13 @@ const UsedCarsPage = () => {
     
     // Sort
     switch (sortBy) {
+      case 'ranking':
+        result.sort((a, b) => {
+          const ratingA = getVehicleRating(a.make, a.model);
+          const ratingB = getVehicleRating(b.make, b.model);
+          return ratingB - ratingA; // Higher rating first
+        });
+        break;
       case 'price-low':
         result.sort((a, b) => a.price - b.price);
         break;
@@ -355,6 +373,7 @@ const UsedCarsPage = () => {
               value={sortBy}
               onChange={(e) => updateFilter('sort', e.target.value)}
             >
+              <option value="ranking">Top Ranked</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
               <option value="mileage-low">Mileage: Low to High</option>
@@ -400,6 +419,15 @@ const UsedCarsPage = () => {
           )}
         </div>
       </div>
+
+      {/* Top Ten Carousel */}
+      <TopTenCarouselLeads
+        title="Top 10 Best-Selling Used Vehicles"
+        subtitle="Explore the most popular used vehicles ranked by our experts. Find your perfect match and start shopping today."
+        bodyStyle={selectedBodyStyle || 'SUV'}
+        maxPrice={50000}
+        onViewRankings={() => updateFilter('sort', 'ranking')}
+      />
       
       {/* Listings Grid/List */}
       <div className="used-cars-page__content">

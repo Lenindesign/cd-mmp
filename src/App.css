@@ -8,6 +8,15 @@
   flex: 1;
 }
 
+/* Page Loader for lazy-loaded routes */
+.page-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  background: var(--color-white);
+}
+
 /* Remove section wrapper styling to let inner sections control their own padding */
 /* Exception: Don't apply display:contents to named sections like comparison, for-sale */
 .main > section:not(.comparison):not(.for-sale) {

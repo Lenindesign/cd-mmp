@@ -30,7 +30,9 @@
       "SYNC 4",
       "Co-Pilot360"
     ],
-    "slug": "2025/Ford/F-150"
+    "slug": "2025/Ford/F-150",
+    "editorsChoice": true,
+    "tenBest": true
   },
   {
     "id": "6",
@@ -118,7 +120,9 @@
       "10.3-inch Passenger Screen",
       "2025 MotorTrend Truck of the Year"
     ],
-    "slug": "2025/Ram/1500"
+    "slug": "2025/Ram/1500",
+    "editorsChoice": true,
+    "tenBest": true
   },
   {
     "id": "10",

@@ -1,4 +1,5 @@
 import { Facebook, Twitter, Instagram, Youtube, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 const Footer = () => {
@@ -91,6 +92,7 @@ const Footer = () => {
               <a href="#" className="footer__legal-link">Terms of Use</a>
               <a href="#" className="footer__legal-link">Cookie Policy</a>
               <a href="#" className="footer__legal-link">Accessibility</a>
+              <Link to="/design-system" className="footer__legal-link">Design System</Link>
             </div>
           </div>
         </div>

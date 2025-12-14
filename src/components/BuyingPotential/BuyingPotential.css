@@ -373,7 +373,7 @@
 }
 
 .buying-potential__match-check {
-  color: #22C55E;
+  color: var(--color-success);
   flex-shrink: 0;
 }
 

@@ -10,7 +10,7 @@ import TargetPriceRange from '../../components/TargetPriceRange';
 import Incentives from '../../components/Incentives';
 import BuyingPotential from '../../components/BuyingPotential';
 import AdSidebar from '../../components/AdSidebar';
-import TrimSelector from '../../components/TrimSelector';
+import { TrimSelectorWithCTA } from '../../components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from '../../components/Warranty';
 import Comparison from '../../components/Comparison';
 import VehicleRanking from '../../components/VehicleRanking';
@@ -19,6 +19,7 @@ import VehicleOverview from '../../components/VehicleOverview';
 import ForSaleNearYou from '../../components/ForSaleNearYou';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
+import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import './VehiclePage.css';
 
 interface VehiclePageProps {
@@ -90,8 +91,30 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     return getRecommendedTrimName(vehicle.make, vehicle.model);
   }, [vehicle.make, vehicle.model]);
 
+  // SEO structured data
+  const structuredData = createVehicleStructuredData({
+    name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
+    description: `Expert review, specs, and pricing for the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Starting at ${vehicle.priceRange}.`,
+    image: vehicle.image,
+    brand: vehicle.make,
+    model: vehicle.model,
+    year: vehicle.year,
+    priceMin: vehicle.priceMin,
+    priceMax: vehicle.priceMax,
+    rating: vehicle.staffRating,
+    reviewCount: vehicle.reviewCount,
+  });
+
   return (
     <>
+      <SEO
+        title={`${vehicle.year} ${vehicle.make} ${vehicle.model} Review, Pricing, and Specs`}
+        description={`Read Car and Driver's expert review of the ${vehicle.year} ${vehicle.make} ${vehicle.model}. Get pricing starting at ${vehicle.priceRange}, specs, photos, and more.`}
+        image={vehicle.image}
+        type="article"
+        keywords={[vehicle.make, vehicle.model, vehicle.bodyStyle, vehicle.fuelType, 'car review', 'pricing']}
+        structuredData={structuredData}
+      />
       <main className="main">
         <Hero vehicle={vehicleData} />
         
@@ -186,9 +209,14 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         />
         
         <section id="pricing">
-          <TrimSelector 
+          <TrimSelectorWithCTA 
             trims={trimData}
             subtitle={`The ${recommendedTrimName} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
+            variant="v5d"
+            make={vehicle.make}
+            model={vehicle.model}
+            msrp={vehicle.priceMin}
+            location="Miami, FL"
           />
         </section>
         

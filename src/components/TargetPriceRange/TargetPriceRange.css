@@ -166,7 +166,7 @@
 .target-price__marker-icon {
   width: 28px;
   height: 28px;
-  background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+  background: linear-gradient(135deg, var(--color-gray-600) 0%, var(--color-gray-700) 100%);
   border-radius: var(--border-radius-full);
   display: flex;
   align-items: center;
@@ -176,7 +176,7 @@
 }
 
 .target-price__marker-icon--green {
-  background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
 }
 
 .target-price__marker-pin {
@@ -186,7 +186,7 @@
 }
 
 .target-price__marker-pin--green {
-  background: #22C55E;
+  background: var(--color-success);
 }
 
 .target-price__marker-pin::after {
@@ -201,7 +201,7 @@
 }
 
 .target-price__marker-pin--green::after {
-  background: #22C55E;
+  background: var(--color-success);
 }
 
 /* Tooltips */
@@ -240,7 +240,7 @@
 }
 
 .target-price__tooltip-icon--success {
-  color: #22C55E;
+  color: var(--color-success);
 }
 
 .target-price__tooltip-icon--fair {
@@ -339,7 +339,7 @@
   left: 10%;
   width: 55%;
   height: 8px;
-  background: linear-gradient(90deg, #22C55E 0%, #4ADE80 50%, #86EFAC 100%);
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-success) 50%, var(--color-success-border) 100%);
   border-radius: var(--border-radius-full);
   transform: translateY(-50%);
 }
@@ -355,10 +355,10 @@
 .target-price__dealer-dot {
   width: 16px;
   height: 16px;
-  background: #EF4444;
+  background: var(--color-error);
   border: 3px solid var(--color-white);
   border-radius: var(--border-radius-full);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 .target-price__dealer-tooltip {
@@ -438,7 +438,7 @@
 }
 
 .target-price__info-icon--green {
-  color: #22C55E;
+  color: var(--color-success);
 }
 
 .target-price__info-icon svg {
@@ -446,7 +446,7 @@
 }
 
 .target-price__info-value--range {
-  color: #16A34A;
+  color: var(--color-success-dark);
 }
 
 .target-price__info-content {

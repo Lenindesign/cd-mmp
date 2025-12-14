@@ -193,7 +193,7 @@
 
 .vehicle-ranking__card-name {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: 16px;
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
   margin: 0;
