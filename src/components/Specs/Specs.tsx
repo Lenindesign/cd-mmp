@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Gauge, Zap, Fuel, Settings, Timer, Weight, Ruler, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { GasPumpIcon, SeatingIcon, VolumeIcon, EngineIcon, DrivetrainIcon, WarrantyIcon } from './SpecIcons';
 import './Specs.css';
 
 interface SpecCategory {
@@ -10,12 +11,80 @@ interface SpecCategory {
 }
 
 interface SpecsProps {
-  categories: SpecCategory[];
+  categories?: SpecCategory[];
   title?: string;
   description?: string;
 }
 
-const Specs = ({ categories, title = "Specs & Performance", description }: SpecsProps) => {
+// Default sedan spec categories with Car and Driver icons
+export const defaultSedanSpecs: SpecCategory[] = [
+  {
+    id: 'gas',
+    title: 'Fuel Economy',
+    icon: <GasPumpIcon />,
+    specs: [
+      { label: 'City MPG', value: '28 mpg' },
+      { label: 'Highway MPG', value: '32 mpg' },
+      { label: 'Combined MPG', value: '30 mpg' },
+      { label: 'Fuel Tank Capacity', value: '12.4 gallons' },
+      { label: 'Range', value: '372 miles' },
+    ],
+  },
+  {
+    id: 'seating',
+    title: 'Seating',
+    icon: <SeatingIcon />,
+    specs: [
+      { label: 'Seating Capacity', value: '5 passengers' },
+      { label: 'Front Legroom', value: '41.6 in' },
+      { label: 'Rear Legroom', value: '36.4 in' },
+      { label: 'Front Headroom', value: '39.1 in' },
+      { label: 'Rear Headroom', value: '37.2 in' },
+    ],
+  },
+  {
+    id: 'cargo',
+    title: 'Cargo',
+    icon: <VolumeIcon />,
+    specs: [
+      { label: 'Cargo Volume', value: '13.2 cu ft' },
+      { label: 'Passenger Volume', value: '95.7 cu ft' },
+    ],
+  },
+  {
+    id: 'powertrain',
+    title: 'Powertrain',
+    icon: <EngineIcon />,
+    specs: [
+      { label: 'Engine Type', value: 'Turbocharged 1.2L Inline-3' },
+      { label: 'Horsepower', value: '137 hp @ 5,000 rpm' },
+      { label: 'Torque', value: '162 lb-ft @ 2,500 rpm' },
+      { label: 'Transmission', value: '6-Speed Automatic' },
+    ],
+  },
+  {
+    id: 'drivetrain',
+    title: 'Drivetrain',
+    icon: <DrivetrainIcon />,
+    specs: [
+      { label: 'Drive Type', value: 'Front-Wheel Drive' },
+      { label: '0-60 mph', value: '9.0 seconds' },
+      { label: 'Top Speed', value: '112 mph' },
+    ],
+  },
+  {
+    id: 'warranty',
+    title: 'Limited Warranty',
+    icon: <WarrantyIcon />,
+    specs: [
+      { label: 'Basic Warranty', value: '3 years / 36,000 miles' },
+      { label: 'Powertrain Warranty', value: '5 years / 60,000 miles' },
+      { label: 'Roadside Assistance', value: '3 years / 36,000 miles' },
+    ],
+  },
+];
+
+const Specs = ({ categories = defaultSedanSpecs, title = "Specs & Performance", description }: SpecsProps) => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(categories[0]?.id);
 
   const toggleCategory = (id: string) => {
@@ -34,7 +103,7 @@ const Specs = ({ categories, title = "Specs & Performance", description }: Specs
           <div className="specs__highlights">
             <div className="specs__highlight">
               <div className="specs__highlight-icon">
-                <Gauge size={28} />
+                <EngineIcon />
               </div>
               <div className="specs__highlight-content">
                 <span className="specs__highlight-value">137</span>
@@ -44,7 +113,7 @@ const Specs = ({ categories, title = "Specs & Performance", description }: Specs
             
             <div className="specs__highlight">
               <div className="specs__highlight-icon">
-                <Zap size={28} />
+                <EngineIcon />
               </div>
               <div className="specs__highlight-content">
                 <span className="specs__highlight-value">162</span>
@@ -54,7 +123,7 @@ const Specs = ({ categories, title = "Specs & Performance", description }: Specs
             
             <div className="specs__highlight">
               <div className="specs__highlight-icon">
-                <Timer size={28} />
+                <DrivetrainIcon />
               </div>
               <div className="specs__highlight-content">
                 <span className="specs__highlight-value">9.0</span>
@@ -64,7 +133,7 @@ const Specs = ({ categories, title = "Specs & Performance", description }: Specs
             
             <div className="specs__highlight">
               <div className="specs__highlight-icon">
-                <Fuel size={28} />
+                <GasPumpIcon />
               </div>
               <div className="specs__highlight-content">
                 <span className="specs__highlight-value">30</span>
@@ -111,69 +180,6 @@ const Specs = ({ categories, title = "Specs & Performance", description }: Specs
 };
 
 export default Specs;
-
-export const defaultSpecCategories: SpecCategory[] = [
-  {
-    id: 'engine',
-    title: 'Engine & Transmission',
-    icon: <Settings size={20} />,
-    specs: [
-      { label: 'Engine Type', value: 'Turbocharged 1.2L Inline-3' },
-      { label: 'Horsepower', value: '137 hp @ 5,000 rpm' },
-      { label: 'Torque', value: '162 lb-ft @ 2,500 rpm' },
-      { label: 'Transmission', value: '6-Speed Automatic' },
-      { label: 'Drivetrain', value: 'Front-Wheel Drive' },
-      { label: 'Fuel Type', value: 'Regular Unleaded / E85 Flex Fuel' },
-    ],
-  },
-  {
-    id: 'performance',
-    title: 'Performance',
-    icon: <Gauge size={20} />,
-    specs: [
-      { label: '0-60 mph', value: '9.0 seconds' },
-      { label: 'Top Speed', value: '112 mph' },
-      { label: 'Quarter Mile', value: '17.0 seconds' },
-    ],
-  },
-  {
-    id: 'fuel',
-    title: 'Fuel Economy',
-    icon: <Fuel size={20} />,
-    specs: [
-      { label: 'City MPG', value: '28 mpg' },
-      { label: 'Highway MPG', value: '32 mpg' },
-      { label: 'Combined MPG', value: '30 mpg' },
-      { label: 'Fuel Tank Capacity', value: '12.4 gallons' },
-      { label: 'Range', value: '372 miles' },
-    ],
-  },
-  {
-    id: 'dimensions',
-    title: 'Dimensions & Weight',
-    icon: <Ruler size={20} />,
-    specs: [
-      { label: 'Length', value: '173.0 in' },
-      { label: 'Width', value: '71.2 in' },
-      { label: 'Height', value: '65.4 in' },
-      { label: 'Wheelbase', value: '104.1 in' },
-      { label: 'Ground Clearance', value: '7.5 in' },
-      { label: 'Curb Weight', value: '2,951 lbs' },
-    ],
-  },
-  {
-    id: 'cargo',
-    title: 'Cargo & Storage',
-    icon: <Weight size={20} />,
-    specs: [
-      { label: 'Cargo Volume (Rear Seats Up)', value: '26.5 cu ft' },
-      { label: 'Cargo Volume (Rear Seats Down)', value: '54.4 cu ft' },
-      { label: 'Seating Capacity', value: '5 passengers' },
-      { label: 'Front Legroom', value: '41.6 in' },
-      { label: 'Rear Legroom', value: '36.4 in' },
-    ],
-  },
-];
 
 
 
