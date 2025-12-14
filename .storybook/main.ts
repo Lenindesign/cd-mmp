@@ -12,6 +12,13 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding"
   ],
   "framework": "@storybook/react-vite",
-  "staticDirs": ["../public"]
+  "staticDirs": ["../public"],
+  async viteFinal(config) {
+    // Set base path for GitHub Pages deployment
+    if (process.env.NODE_ENV === 'production') {
+      config.base = '/cd-mmp/';
+    }
+    return config;
+  }
 };
 export default config;
