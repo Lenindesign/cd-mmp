@@ -20,7 +20,10 @@ test.describe('Storybook Visual Tests', () => {
     await page.waitForLoadState('networkidle');
     
     // Check that the button is visible in the canvas
-    await expect(page.frameLocator('#storybook-preview-iframe').locator('button')).toBeVisible();
+    await expect(
+      page.frameLocator('#storybook-preview-iframe')
+        .getByRole('button', { name: 'Primary Button' })
+    ).toBeVisible();
     
     await expect(page).toHaveScreenshot('button-primary.png');
   });
