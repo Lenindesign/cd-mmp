@@ -68,6 +68,11 @@
     gap: var(--spacing-4);
   }
   
+  /* Smaller title on mobile */
+  .vehicle-ranking__title {
+    font-size: 28px;
+  }
+  
   /* Small button on mobile */
   .vehicle-ranking__card-cta {
     padding: 6px 12px;
