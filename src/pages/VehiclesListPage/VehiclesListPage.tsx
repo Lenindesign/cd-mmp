@@ -142,6 +142,8 @@ const VehiclesListPage = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [hoveredListing, setHoveredListing] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 24; // Show 24 items per page (6 rows x 4 columns)
   
   // Get filter values from URL params
   const inventoryType = searchParams.get('type') || 'new'; // 'new' or 'used'
@@ -315,6 +317,18 @@ const VehiclesListPage = () => {
   // Get the count for display
   const totalCount = inventoryType === 'new' ? filteredVehicles.length : filteredListings.length;
   
+  // Calculate pagination
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  
+  // Get paginated results
+  const paginatedVehicles = filteredVehicles.slice(startIndex, endIndex);
+  const paginatedListings = filteredListings.slice(startIndex, endIndex);
+  
+  // Reset to page 1 when filters change
+  const resetPage = () => setCurrentPage(1);
+  
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
     if (value) {
@@ -323,11 +337,13 @@ const VehiclesListPage = () => {
       newParams.delete(key);
     }
     setSearchParams(newParams);
+    resetPage();
   };
   
   const clearFilters = () => {
     setSearchParams({});
     setSearchQuery('');
+    resetPage();
   };
 
   const formatCurrency = (value: number) => {
@@ -355,6 +371,7 @@ const VehiclesListPage = () => {
     }
     setSearchParams(newParams);
     setSearchQuery('');
+    resetPage();
   };
 
   // Dynamic SEO title based on filters
@@ -567,7 +584,7 @@ const VehiclesListPage = () => {
         <div className="container">
           <div className={`vehicles-list-page__grid ${viewMode === 'list' ? 'vehicles-list-page__grid--list' : ''}`}>
             {/* New Vehicles */}
-            {inventoryType === 'new' && filteredVehicles.map((vehicle) => (
+            {inventoryType === 'new' && paginatedVehicles.map((vehicle) => (
               <Link 
                 key={vehicle.id}
                 to={`/${vehicle.slug}`}
@@ -639,7 +656,7 @@ const VehiclesListPage = () => {
             ))}
 
             {/* Used Listings */}
-            {inventoryType === 'used' && filteredListings.map((listing, index) => {
+            {inventoryType === 'used' && paginatedListings.map((listing, index) => {
               // Determine tooltip position based on column (4-column grid)
               // Columns 0, 1 → right; Columns 2, 3 → left
               const columnIndex = index % 4;
@@ -727,6 +744,64 @@ const VehiclesListPage = () => {
               <h3>No {inventoryType === 'new' ? 'vehicles' : 'listings'} found</h3>
               <p>Try adjusting your filters or search query</p>
               <button onClick={clearFilters}>Clear Filters</button>
+            </div>
+          )}
+          
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="vehicles-list-page__pagination">
+              <button
+                className="vehicles-list-page__pagination-btn"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                aria-label="Previous page"
+              >
+                Previous
+              </button>
+              
+              <div className="vehicles-list-page__pagination-pages">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                  // Show first page, last page, current page, and pages around current
+                  const showPage = 
+                    page === 1 || 
+                    page === totalPages || 
+                    (page >= currentPage - 1 && page <= currentPage + 1);
+                  
+                  const showEllipsis = 
+                    (page === currentPage - 2 && currentPage > 3) ||
+                    (page === currentPage + 2 && currentPage < totalPages - 2);
+                  
+                  if (showEllipsis) {
+                    return <span key={page} className="vehicles-list-page__pagination-ellipsis">...</span>;
+                  }
+                  
+                  if (!showPage) return null;
+                  
+                  return (
+                    <button
+                      key={page}
+                      className={`vehicles-list-page__pagination-page ${currentPage === page ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentPage(page);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      aria-label={`Go to page ${page}`}
+                      aria-current={currentPage === page ? 'page' : undefined}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <button
+                className="vehicles-list-page__pagination-btn"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                aria-label="Next page"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>
