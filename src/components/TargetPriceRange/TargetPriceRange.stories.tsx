@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import TargetPriceRange from './TargetPriceRange';
 
 const meta: Meta<typeof TargetPriceRange> = {
-  title: 'Molecules/TargetPriceRange',
+  title: 'Organisms/TargetPriceRange',
   component: TargetPriceRange,
   parameters: {
     layout: 'padded',

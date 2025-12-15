@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import CostToOwn from './CostToOwn';
 
 const meta: Meta<typeof CostToOwn> = {
-  title: 'Molecules/CostToOwn',
+  title: 'Organisms/CostToOwn',
   component: CostToOwn,
   parameters: {
     layout: 'padded',

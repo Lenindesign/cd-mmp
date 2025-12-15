@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import BuyingPotential from './BuyingPotential';
 
 const meta: Meta<typeof BuyingPotential> = {
-  title: 'Molecules/BuyingPotential',
+  title: 'Organisms/BuyingPotential',
   component: BuyingPotential,
   parameters: {
     layout: 'padded',
