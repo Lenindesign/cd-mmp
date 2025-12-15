@@ -14,13 +14,13 @@
   overflow: hidden;
 }
 
-/* Swap column order - Calculator on left, Matches on right */
+/* Column order - Headline/Matches on left, Calculator on right */
 .buying-potential__left {
-  order: 2;
+  order: 1;
 }
 
 .buying-potential__right {
-  order: 1;
+  order: 2;
 }
 
 @media (max-width: 900px) {
