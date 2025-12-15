@@ -75,7 +75,7 @@
 .header__search-input {
   flex: 1;
   border: none;
-  background: var(--color-gray-100);
+  background: transparent;
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   font-style: italic;
