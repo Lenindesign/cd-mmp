@@ -5,38 +5,21 @@
 
 .vehicle-ranking__card-wrapper {
   background: var(--color-white);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
-  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
-  padding: 2.5rem 3rem;
+  padding: 0;
 }
 
 /* Header */
 .vehicle-ranking__header {
-  margin-bottom: var(--spacing-6);
+  margin-bottom: var(--spacing-5);
 }
 
 .vehicle-ranking__title {
   font-family: var(--font-heading);
-  font-size: 36px;
-  font-weight: var(--font-weight-extrabold);
+  font-size: 28px;
+  font-weight: var(--font-weight-bold);
   color: var(--color-black);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   margin: 0 0 var(--spacing-2) 0;
-  padding-bottom: var(--spacing-3);
-  line-height: 1.2;
-  position: relative;
-}
-
-.vehicle-ranking__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
+  line-height: 1.3;
 }
 
 .vehicle-ranking__category-link {
@@ -92,11 +75,20 @@
   display: flex;
   flex-direction: column;
   text-decoration: none;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  background: var(--color-white);
 }
 
-.vehicle-ranking__card--current .vehicle-ranking__card-image {
-  border: 4px solid var(--color-blue-cobalt);
+.vehicle-ranking__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.vehicle-ranking__card--current {
+  border: 2px solid var(--color-blue-cobalt);
 }
 
 /* Card Image */
@@ -104,13 +96,14 @@
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: var(--color-gray-100);
+  background: var(--color-gray-50);
 }
 
 .vehicle-ranking__card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 /* Rank Badge - Default (ranks 2+) */
@@ -181,7 +174,7 @@
 
 /* Card Info */
 .vehicle-ranking__card-info {
-  padding: var(--spacing-4) 0;
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-4);
 }
 
 .vehicle-ranking__card-header {
@@ -193,10 +186,11 @@
 
 .vehicle-ranking__card-name {
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
   margin: 0;
+  line-height: 1.3;
 }
 
 /* C/D Rating */
@@ -223,111 +217,21 @@
 
 .vehicle-ranking__card-price {
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
+  font-size: 14px;
   color: var(--color-gray-600);
-  margin: 0 0 var(--spacing-3) 0;
-  letter-spacing: 0.03em;
+  margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .vehicle-ranking__card-price-label {
   text-transform: uppercase;
-  font-weight: var(--font-weight-medium);
-}
-
-/* New Shop Used CTA - Matches Figma design */
-.vehicle-ranking__card-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 12px 25px;
-  background: var(--color-white);
-  border: 1px solid var(--color-blue-cobalt);
-  border-radius: 4px;
-  transition: all var(--transition-fast);
-  gap: 2px;
-}
-
-.vehicle-ranking__card-cta-label {
-  font-family: var(--font-heading);
-  font-size: 14px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-blue-cobalt);
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-  flex: 1;
-  text-align: center;
-}
-
-.vehicle-ranking__card-cta-divider {
-  width: 1px;
-  height: 26px;
-  background: var(--color-blue-cobalt);
-  flex-shrink: 0;
-}
-
-.vehicle-ranking__card-cta-count {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
   font-size: 12px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-blue-cobalt);
-  opacity: 0.8;
-  flex: 1;
+  letter-spacing: 0.05em;
 }
 
-.vehicle-ranking__card-cta-count svg {
-  flex-shrink: 0;
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-cta {
-  background: var(--color-blue-cobalt);
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-cta-label,
-.vehicle-ranking__card:hover .vehicle-ranking__card-cta-count {
-  color: var(--color-white);
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-cta-count {
-  opacity: 1;
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-cta-divider {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-/* Current vehicle CTA - Blue by default */
-.vehicle-ranking__card--current .vehicle-ranking__card-cta {
-  background: var(--color-blue-cobalt);
-}
-
-.vehicle-ranking__card--current .vehicle-ranking__card-cta-label,
-.vehicle-ranking__card--current .vehicle-ranking__card-cta-count {
-  color: var(--color-white);
-}
-
-.vehicle-ranking__card--current .vehicle-ranking__card-cta-count {
-  opacity: 1;
-}
-
-.vehicle-ranking__card--current .vehicle-ranking__card-cta-divider {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.vehicle-ranking__card--current:hover .vehicle-ranking__card-cta {
-  background: var(--color-black);
-}
-
-/* Enhanced hover state for entire card */
-.vehicle-ranking__card:hover {
-  transform: translateY(-4px);
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-name {
-  color: var(--color-blue-cobalt);
+/* Hide CTA button - not in design */
+.vehicle-ranking__card-cta {
+  display: none;
 }
 
