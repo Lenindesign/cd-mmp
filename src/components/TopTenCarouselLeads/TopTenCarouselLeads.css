@@ -369,13 +369,14 @@
 }
 
 .top-ten__card-cta--primary {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border: none;
+  background: transparent;
+  color: var(--color-black);
+  border: 2px solid var(--color-black);
 }
 
 .top-ten__card-cta--primary:hover {
   background: var(--color-black);
+  color: var(--color-white);
 }
 
 .top-ten__card-cta-text {
