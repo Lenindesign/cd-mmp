@@ -81,7 +81,7 @@
 /* Filters Bar */
 .vehicles-list-page__filters-bar {
   background: var(--color-white);
-  padding: var(--spacing-3) 0;
+  padding: var(--spacing-4) 0;
   border-bottom: 1px solid var(--color-gray-200);
   position: sticky;
   top: 0;
@@ -91,47 +91,38 @@
 .vehicles-list-page__filters-row {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-
-.vehicles-list-page__filters-row::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
 }
 
 .vehicles-list-page__search {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  background: var(--color-white);
-  padding: 10px var(--spacing-3);
-  border: 1px solid var(--color-gray-300);
+  background: var(--color-gray-100);
+  padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--border-radius-md);
-  flex-shrink: 0;
-  min-width: 200px;
+  flex: 1;
+  max-width: 300px;
 }
 
 .vehicles-list-page__search svg {
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   flex-shrink: 0;
 }
 
 .vehicles-list-page__search input {
   border: none;
-  background: transparent;
+  background: var(--color-gray-100);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   color: var(--color-black);
   width: 100%;
   outline: none;
 }
 
 .vehicles-list-page__search input::placeholder {
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .vehicles-list-page__filter-toggle {
@@ -153,65 +144,50 @@
 }
 
 .vehicles-list-page__select {
-  padding: 10px 36px 10px var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-3);
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-md);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-700);
   cursor: pointer;
-  min-width: 160px;
-  flex-shrink: 0;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
+  min-width: 140px;
 }
 
 .vehicles-list-page__select:focus {
   outline: none;
   border-color: var(--color-blue-cobalt);
-  box-shadow: 0 0 0 3px rgba(24, 108, 234, 0.1);
 }
 
 .vehicles-list-page__view-modes {
   display: flex;
-  gap: 0;
+  gap: var(--spacing-1);
   margin-left: auto;
-  flex-shrink: 0;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
 }
 
 .vehicles-list-page__view-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
-  border-right: 1px solid var(--color-gray-300);
-  border-radius: 0;
+  width: 36px;
+  height: 36px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
   color: var(--color-gray-600);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.vehicles-list-page__view-btn:last-child {
-  border-right: none;
-}
-
 .vehicles-list-page__view-btn:hover {
-  background: var(--color-gray-50);
+  border-color: var(--color-blue-cobalt);
   color: var(--color-blue-cobalt);
 }
 
 .vehicles-list-page__view-btn.active {
   background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 

@@ -1,15 +1,23 @@
 import { useState, useMemo } from 'react';
-import { Save, Search, AlertCircle, CheckCircle } from 'lucide-react';
-import sedansData from '../../data/vehicles/sedans.json';
-import suvsData from '../../data/vehicles/suvs.json';
-import trucksData from '../../data/vehicles/trucks.json';
-import coupesData from '../../data/vehicles/coupes.json';
-import convertiblesData from '../../data/vehicles/convertibles.json';
-import wagonsData from '../../data/vehicles/wagons.json';
+import { Save, Search, AlertCircle, CheckCircle, ChevronDown, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank } from 'lucide-react';
+import { sedans, suvs, trucks, coupes, convertibles, wagons } from '../../data/vehicles';
+import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
+import { OptimizedImage } from '../../components/OptimizedImage';
 import type { Vehicle } from '../../types/vehicle';
 import './VehicleRatingEditor.css';
 
 type Category = 'sedans' | 'suvs' | 'trucks' | 'coupes' | 'convertibles' | 'wagons';
+
+// Lifestyle icons mapping
+const lifestyleIcons: Record<Lifestyle, React.ReactNode> = {
+  'Family': <Users size={16} />,
+  'Adventure': <Mountain size={16} />,
+  'Luxury': <Gem size={16} />,
+  'Eco-Friendly': <Leaf size={16} />,
+  'Performance': <Gauge size={16} />,
+  'Professional': <Briefcase size={16} />,
+  'Budget': <PiggyBank size={16} />,
+};
 
 interface EditedRating {
   id: string;
@@ -19,38 +27,91 @@ interface EditedRating {
 }
 
 const VehicleRatingEditor = () => {
+  // #region agent log
+  fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:42',message:'Component mounted',data:{timestamp:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'H1,H2'})}).catch(()=>{});
+  // #endregion
   const [activeCategory, setActiveCategory] = useState<Category>('sedans');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMake, setSelectedMake] = useState<string>('all');
+  const [selectedLifestyle, setSelectedLifestyle] = useState<string>('all');
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
   const [editedRatings, setEditedRatings] = useState<Map<string, EditedRating>>(new Map());
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
 
-  // Combine all vehicles with their category
+  // Combine all vehicles with their category (already processed with images)
   const allVehicles = useMemo(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:55',message:'Loading processed vehicles',data:{sedansCount:sedans.length,suvsCount:suvs.length,trucksCount:trucks.length,coupesCount:coupes.length,convertiblesCount:convertibles.length,wagonsCount:wagons.length,firstSedanHasImage:!!sedans[0]?.image,firstSedanImage:sedans[0]?.image?.substring(0,50)},timestamp:Date.now(),sessionId:'debug-session',runId:'image-fix',hypothesisId:'H6-SOLUTION'})}).catch(()=>{});
+    // #endregion
     return {
-      sedans: sedansData as Vehicle[],
-      suvs: suvsData as Vehicle[],
-      trucks: trucksData as Vehicle[],
-      coupes: coupesData as Vehicle[],
-      convertibles: convertiblesData as Vehicle[],
-      wagons: wagonsData as Vehicle[],
+      sedans,
+      suvs,
+      trucks,
+      coupes,
+      convertibles,
+      wagons,
     };
   }, []);
 
-  // Get vehicles for active category
-  const vehicles = useMemo(() => {
+  // Get unique makes for filters
+  const uniqueMakes = useMemo(() => {
     const categoryVehicles = allVehicles[activeCategory];
-    
-    if (!searchQuery) return categoryVehicles;
+    const makes = new Set(categoryVehicles.map(v => v.make));
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:75',message:'Unique makes calculated',data:{activeCategory,makesCount:makes.size,makes:Array.from(makes)},timestamp:Date.now(),sessionId:'debug-session',runId:'remove-body-style',hypothesisId:'H12'})}).catch(()=>{});
+    // #endregion
+    return Array.from(makes).sort();
+  }, [allVehicles, activeCategory]);
 
-    return categoryVehicles.filter(vehicle => {
+  // Get vehicles for active category with all filters applied
+  const vehicles = useMemo(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:85',message:'Filtering vehicles',data:{activeCategory,searchQuery,selectedMake,selectedLifestyle,selectedPriceRange},timestamp:Date.now(),sessionId:'debug-session',runId:'remove-body-style',hypothesisId:'H12'})}).catch(()=>{});
+    // #endregion
+    let categoryVehicles = allVehicles[activeCategory];
+
+    // Apply search filter
+    if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
-      return (
+      categoryVehicles = categoryVehicles.filter(vehicle => 
         vehicle.make.toLowerCase().includes(searchLower) ||
         vehicle.model.toLowerCase().includes(searchLower) ||
         `${vehicle.year}`.includes(searchLower)
       );
-    });
-  }, [allVehicles, activeCategory, searchQuery]);
+    }
+
+    // Apply make filter
+    if (selectedMake !== 'all') {
+      categoryVehicles = categoryVehicles.filter(v => v.make === selectedMake);
+    }
+
+    // Apply lifestyle filter
+    if (selectedLifestyle !== 'all') {
+      categoryVehicles = categoryVehicles.filter(v => 
+        getVehicleLifestyles(v).includes(selectedLifestyle as Lifestyle)
+      );
+    }
+
+    // Apply price range filter
+    if (selectedPriceRange !== 'all') {
+      categoryVehicles = categoryVehicles.filter(v => {
+        switch (selectedPriceRange) {
+          case 'under25k': return v.priceMin < 25000;
+          case '25k-50k': return v.priceMin >= 25000 && v.priceMin < 50000;
+          case '50k-75k': return v.priceMin >= 50000 && v.priceMin < 75000;
+          case '75k-100k': return v.priceMin >= 75000 && v.priceMin < 100000;
+          case 'over100k': return v.priceMin >= 100000;
+          default: return true;
+        }
+      });
+    }
+
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:128',message:'Filtered vehicles result',data:{count:categoryVehicles.length},timestamp:Date.now(),sessionId:'debug-session',runId:'remove-body-style',hypothesisId:'H12'})}).catch(()=>{});
+    // #endregion
+
+    return categoryVehicles;
+  }, [allVehicles, activeCategory, searchQuery, selectedMake, selectedLifestyle, selectedPriceRange]);
 
   // Get current rating (edited or original)
   const getCurrentRating = (vehicle: Vehicle): number => {
@@ -179,34 +240,88 @@ const VehicleRatingEditor = () => {
           </div>
         )}
 
-        {/* Filters Bar */}
-        <div className="editor__filters-bar">
-          <div className="editor__filters-row">
-            {/* Search */}
-            <div className="editor__search">
-              <Search size={18} />
-              <input
-                type="text"
-                placeholder="Search vehicles..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        {/* Search and Filters */}
+        <div className="editor__filters-container">
+          {/* Search Bar */}
+          <div className="editor__search">
+            <Search size={18} className="editor__search-icon" />
+            <input
+              type="text"
+              className="editor__search-input"
+              placeholder="Search vehicles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {/* Filters Row */}
+          <div className="editor__filters">
+            {/* Make Filter */}
+            <div className="editor__filter">
+              <select
+                className="editor__filter-select"
+                value={selectedMake}
+                onChange={(e) => setSelectedMake(e.target.value)}
+                aria-label="Filter by make"
+              >
+                <option value="all">All Makes</option>
+                {uniqueMakes.map(make => (
+                  <option key={make} value={make}>{make}</option>
+                ))}
+              </select>
+              <ChevronDown size={16} className="editor__filter-icon" />
             </div>
 
-            {/* Category Tabs as Select Dropdown */}
-            <select
-              className="editor__select"
-              value={activeCategory}
-              onChange={(e) => setActiveCategory(e.target.value as Category)}
-              aria-label="Filter by category"
-            >
-              {categories.map((category) => (
-                <option key={category.key} value={category.key}>
-                  {category.label} ({category.count})
-                </option>
-              ))}
-            </select>
+            {/* Lifestyle Filter */}
+            <div className="editor__filter">
+              <select
+                className="editor__filter-select"
+                value={selectedLifestyle}
+                onChange={(e) => setSelectedLifestyle(e.target.value)}
+                aria-label="Filter by lifestyle"
+              >
+                <option value="all">All Lifestyles</option>
+                {LIFESTYLES.map(lifestyle => (
+                  <option key={lifestyle} value={lifestyle}>
+                    {lifestyle}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={16} className="editor__filter-icon" />
+            </div>
+
+            {/* Price Range Filter */}
+            <div className="editor__filter">
+              <select
+                className="editor__filter-select"
+                value={selectedPriceRange}
+                onChange={(e) => setSelectedPriceRange(e.target.value)}
+                aria-label="Filter by price range"
+              >
+                <option value="all">Price: Low to High</option>
+                <option value="under25k">Under $25,000</option>
+                <option value="25k-50k">$25,000 - $50,000</option>
+                <option value="50k-75k">$50,000 - $75,000</option>
+                <option value="75k-100k">$75,000 - $100,000</option>
+                <option value="over100k">Over $100,000</option>
+              </select>
+              <ChevronDown size={16} className="editor__filter-icon" />
+            </div>
           </div>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="editor__tabs">
+          {categories.map((category) => (
+            <button
+              key={category.key}
+              className={`editor__tab ${activeCategory === category.key ? 'editor__tab--active' : ''}`}
+              onClick={() => setActiveCategory(category.key)}
+            >
+              {category.label}
+              <span className="editor__tab-count">{category.count}</span>
+            </button>
+          ))}
         </div>
 
         {/* Vehicle Table */}
@@ -214,6 +329,7 @@ const VehicleRatingEditor = () => {
           <table className="editor__table">
             <thead>
               <tr>
+                <th className="editor__th-thumbnail">Vehicle</th>
                 <th>Year</th>
                 <th>Make</th>
                 <th>Model</th>
@@ -226,45 +342,65 @@ const VehicleRatingEditor = () => {
             <tbody>
               {vehicles.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="editor__empty">
-                    No vehicles found matching "{searchQuery}"
+                  <td colSpan={8} className="editor__empty">
+                    No vehicles found matching your filters
                   </td>
                 </tr>
               ) : (
-                vehicles.map((vehicle) => (
-                  <tr
-                    key={vehicle.id}
-                    className={isEdited(vehicle) ? 'editor__row--edited' : ''}
-                  >
-                    <td>{vehicle.year}</td>
-                    <td className="editor__make">{vehicle.make}</td>
-                    <td className="editor__model">{vehicle.model}</td>
-                    <td className="editor__price">{vehicle.priceRange}</td>
-                    <td>
-                      <span className="editor__rating editor__rating--original">
-                        {vehicle.staffRating.toFixed(1)}
-                      </span>
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        className={`editor__rating-input ${isEdited(vehicle) ? 'editor__rating-input--edited' : ''}`}
-                        value={getCurrentRating(vehicle).toFixed(1)}
-                        onChange={(e) => handleRatingChange(vehicle, parseFloat(e.target.value) || 0)}
-                        min="0"
-                        max="10"
-                        step="0.1"
-                      />
-                    </td>
-                    <td>
-                      {isEdited(vehicle) && (
-                        <span className="editor__status-badge editor__status-badge--edited">
-                          Modified
+                vehicles.map((vehicle) => {
+                  // #region agent log
+                  fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:290',message:'Rendering vehicle row',data:{vehicleId:vehicle.id,hasImage:!!vehicle.image,make:vehicle.make,model:vehicle.model},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'H2'})}).catch(()=>{});
+                  // #endregion
+                  // #region agent log
+                  const imageUrl = vehicle.image || '';
+                  const hasValidImage = !!vehicle.image;
+                  fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:295',message:'Image URL check',data:{vehicleId:vehicle.id,imageUrl,hasValidImage,imageIsNull:vehicle.image===null,imageIsEmpty:vehicle.image===''},timestamp:Date.now(),sessionId:'debug-session',runId:'image-fix',hypothesisId:'H6,H8'})}).catch(()=>{});
+                  // #endregion
+                  return (
+                    <tr
+                      key={vehicle.id}
+                      className={isEdited(vehicle) ? 'editor__row--edited' : ''}
+                    >
+                      <td className="editor__thumbnail-cell">
+                        <div className="editor__thumbnail">
+                          <OptimizedImage
+                            src={imageUrl}
+                            alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                            aspectRatio="4/3"
+                            fallbackSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f5f5f7' width='400' height='300'/%3E%3Cpath fill='%2386868b' d='M160 140h80l10-30h-100zM130 140v30h140v-30h-20v15h-100v-15z'/%3E%3Ccircle fill='%23a0a0a0' cx='155' cy='170' r='15'/%3E%3Ccircle fill='%23a0a0a0' cx='245' cy='170' r='15'/%3E%3Ctext x='200' y='230' text-anchor='middle' fill='%2386868b' font-family='system-ui' font-size='14' font-weight='500'%3ENo Image%3C/text%3E%3C/svg%3E"
+                          />
+                        </div>
+                      </td>
+                      <td className="editor__year">{vehicle.year}</td>
+                      <td className="editor__make">{vehicle.make}</td>
+                      <td className="editor__model">{vehicle.model}</td>
+                      <td className="editor__price">{vehicle.priceRange}</td>
+                      <td>
+                        <span className="editor__rating editor__rating--original">
+                          {vehicle.staffRating.toFixed(1)}
                         </span>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          className={`editor__rating-input ${isEdited(vehicle) ? 'editor__rating-input--edited' : ''}`}
+                          value={getCurrentRating(vehicle).toFixed(1)}
+                          onChange={(e) => handleRatingChange(vehicle, parseFloat(e.target.value) || 0)}
+                          min="0"
+                          max="10"
+                          step="0.1"
+                        />
+                      </td>
+                      <td>
+                        {isEdited(vehicle) && (
+                          <span className="editor__status-badge editor__status-badge--edited">
+                            Modified
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

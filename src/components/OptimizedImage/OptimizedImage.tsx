@@ -110,7 +110,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     onImageError?.();
   };
 
-  const imageSrc = hasError ? fallbackSrc : src;
+  // If src is empty or null, use fallback immediately
+  const imageSrc = (!src || hasError) ? fallbackSrc : src;
   const shouldRenderImage = isInView || loading === 'eager';
 
   return (
