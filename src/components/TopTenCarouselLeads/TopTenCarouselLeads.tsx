@@ -277,7 +277,7 @@ const TopTenCarouselLeads = ({
                       className="top-ten__card-cta top-ten__card-cta--primary"
                       onClick={(e) => handleShopUsed(e, vehicle)}
                     >
-                      <span className="top-ten__card-cta-text">Shop Used</span>
+                      <span className="top-ten__card-cta-text">Shop Now</span>
                       <span className="top-ten__card-cta-count">
                         <MapPin size={12} />
                         {Math.floor(((parseInt(vehicle.id, 36) % 150) + 50))} near you
