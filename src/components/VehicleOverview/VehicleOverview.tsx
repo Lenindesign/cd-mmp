@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown, Bookmark, Printer, Clock } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Bookmark, Printer, Clock, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import './VehicleOverview.css';
 
@@ -104,6 +104,30 @@ const VehicleOverview = ({
     window.print();
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: `${year} Vehicle Review - Car and Driver`,
+      text: `Check out this ${year} vehicle review on Car and Driver`,
+      url: window.location.href,
+    };
+
+    try {
+      // Check if native share is supported
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      // User cancelled or error occurred
+      if ((err as Error).name !== 'AbortError') {
+        console.error('Error sharing:', err);
+      }
+    }
+  };
+
   return (
     <section className="vehicle-overview">
       <div className="vehicle-overview__card">
@@ -145,6 +169,13 @@ const VehicleOverview = ({
                 aria-label={isSaved ? 'Remove from saved' : 'Save article'}
               >
                 <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
+              </button>
+              <button 
+                className="vehicle-overview__action-btn"
+                onClick={handleShare}
+                aria-label="Share this article"
+              >
+                <Share2 size={18} />
               </button>
               <button 
                 className="vehicle-overview__action-btn"
