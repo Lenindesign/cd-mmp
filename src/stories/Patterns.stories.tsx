@@ -120,11 +120,41 @@ const mockVehicle = {
 };
 
 const mockTrims = [
-  { id: '1', name: 'LE', price: 28500, isRecommended: false },
-  { id: '2', name: 'SE', price: 30500, isRecommended: false },
-  { id: '3', name: 'XLE', price: 32500, isRecommended: true },
-  { id: '4', name: 'XSE', price: 34500, isRecommended: false },
-  { id: '5', name: 'TRD', price: 36500, isRecommended: false },
+  { 
+    id: '1', 
+    name: 'LE', 
+    price: '$28,500', 
+    features: ['Standard Features', 'Cloth Seats', 'Basic Audio'],
+    recommended: false 
+  },
+  { 
+    id: '2', 
+    name: 'SE', 
+    price: '$30,500', 
+    features: ['Sport Styling', 'Upgraded Wheels', 'Enhanced Audio'],
+    recommended: false 
+  },
+  { 
+    id: '3', 
+    name: 'XLE', 
+    price: '$32,500', 
+    features: ['Leather Seats', 'Sunroof', 'Premium Audio', 'Navigation'],
+    recommended: true 
+  },
+  { 
+    id: '4', 
+    name: 'XSE', 
+    price: '$34,500', 
+    features: ['Sport Package', 'Paddle Shifters', 'Sport Seats'],
+    recommended: false 
+  },
+  { 
+    id: '5', 
+    name: 'TRD', 
+    price: '$36,500', 
+    features: ['TRD Styling', 'Performance Suspension', 'Sport Exhaust'],
+    recommended: false 
+  },
 ];
 
 const mockListings = [
@@ -223,11 +253,7 @@ export const VehicleDetailPattern: Story = {
             { label: 'Transmission', value: mockVehicle.specs.transmission, icon: 'gear' },
           ]}
         />
-        <TrimSelector 
-          trims={mockTrims}
-          currentTrim={mockVehicle.trim}
-          onTrimSelect={() => {}}
-        />
+        <TrimSelector trims={mockTrims} />
       </div>
     </div>
   ),
