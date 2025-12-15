@@ -188,8 +188,58 @@
   display: inline;
 }
 
-/* Hide CTA button - not in design */
+/* CTA Button */
 .vehicle-ranking__card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  margin-top: var(--spacing-3);
+  background: transparent;
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: 8px;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.vehicle-ranking__card-cta-label {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Hide the divider and count for this design */
+.vehicle-ranking__card-cta-divider,
+.vehicle-ranking__card-cta-count {
   display: none;
+}
+
+/* Outlined button hover */
+.vehicle-ranking__card:hover .vehicle-ranking__card-cta {
+  background: var(--color-blue-cobalt);
+}
+
+.vehicle-ranking__card:hover .vehicle-ranking__card-cta-label {
+  color: var(--color-white);
+}
+
+/* Solid button for current vehicle */
+.vehicle-ranking__card--current .vehicle-ranking__card-cta {
+  background: var(--color-blue-cobalt);
+  border: 2px solid var(--color-blue-cobalt);
+}
+
+.vehicle-ranking__card--current .vehicle-ranking__card-cta-label {
+  color: var(--color-white);
+}
+
+.vehicle-ranking__card--current:hover .vehicle-ranking__card-cta {
+  background: #145a9e;
+  border-color: #145a9e;
 }
 

@@ -124,7 +124,7 @@ const VehicleRanking = ({
                   <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
                 </p>
                 <div className="vehicle-ranking__card-cta">
-                  <span className="vehicle-ranking__card-cta-label">SHOP USED</span>
+                  <span className="vehicle-ranking__card-cta-label">SHOP {vehicle.name.toUpperCase()}</span>
                   <span className="vehicle-ranking__card-cta-divider"></span>
                   <span className="vehicle-ranking__card-cta-count">
                     <MapPin size={12} />
