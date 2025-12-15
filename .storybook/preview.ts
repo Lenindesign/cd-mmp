@@ -3,6 +3,12 @@ import '../src/index.css'
 
 const preview: Preview = {
   parameters: {
+    // Disable "Open in Editor" feature to prevent CLI errors
+    options: {
+      storySort: {
+        order: ['Atoms', 'Molecules', 'Organisms', 'Pages'],
+      },
+    },
     controls: {
       matchers: {
        color: /(background|color)$/i,

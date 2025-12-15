@@ -16,7 +16,7 @@
     "test:playwright": "playwright test",
     "test:playwright:ui": "playwright test --ui",
     "test:playwright:debug": "playwright test --debug",
-    "storybook": "EDITOR=code storybook dev -p 6006",
+    "storybook": "EDITOR=none REACT_EDITOR=none storybook dev -p 6006",
     "build-storybook": "storybook build",
     "deploy-storybook": "npm run build-storybook && npx gh-pages -d storybook-static",
     "chromatic": "npx chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}"

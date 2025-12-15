@@ -15,7 +15,11 @@ const config: StorybookConfig = {
   "framework": "@storybook/react-vite",
   "staticDirs": ["../public"],
   "core": {
-    "disableTelemetry": true
+    "disableTelemetry": true,
+    "disableWhatsNewNotifications": true
+  },
+  "features": {
+    "buildStoriesJson": true
   },
   async viteFinal(config) {
     // Don't set base path - let it default to '/' for all builds
