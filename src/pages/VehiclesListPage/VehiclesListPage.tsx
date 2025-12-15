@@ -151,7 +151,7 @@ const VehiclesListPage = () => {
   const selectedBodyStyle = searchParams.get('bodyStyle') || '';
   const selectedLifestyle = searchParams.get('lifestyle') || '';
   const maxMileage = searchParams.get('maxMileage') || '';
-  const sortBy = searchParams.get('sort') || (inventoryType === 'new' ? 'rating' : 'price-low');
+  const sortBy = searchParams.get('sort') || 'price-low';
   
   const allVehicles = getAllVehicles();
   const allListings = useMemo(() => getAllListings(), []);
