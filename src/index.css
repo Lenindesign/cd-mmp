@@ -76,7 +76,7 @@
   
   /* Status Colors (for tooltips and indicators) */
   --color-status-success: var(--color-success);
-  --color-status-warning: var(--color-error);
+  --color-status-warning: var(--color-warning);
   --color-status-success-light: var(--color-success-light);
   --color-status-warning-light: var(--color-warning-light);
   
