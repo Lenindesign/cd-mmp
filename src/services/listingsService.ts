@@ -35,6 +35,8 @@ export interface Listing {
   bodyStyle: string;
   features: string[];
   dealerName: string;
+  dealerPhone?: string;
+  dealerAddress?: string;
   dealerRating?: number;
   distance: number;
   isNew?: boolean;
@@ -158,6 +160,17 @@ const generateListingsFromDatabase = (): Listing[] => {
         rentalUse: Math.random() > 0.92,
       };
       
+      // Generate dealer phone number (Miami area code 305 or 786)
+      const areaCode = Math.random() > 0.5 ? '305' : '786';
+      const exchange = Math.floor(Math.random() * 900) + 100;
+      const lineNumber = Math.floor(Math.random() * 9000) + 1000;
+      const dealerPhone = `${areaCode}-${exchange}-${lineNumber}`;
+
+      // Generate dealer address
+      const streetNumber = Math.floor(Math.random() * 9000) + 1000;
+      const streets = ['Biscayne Blvd', 'Coral Way', 'Flagler St', 'SW 8th St', 'Collins Ave', 'Bird Rd', 'Kendall Dr'];
+      const dealerAddress = `${streetNumber} ${streets[Math.floor(Math.random() * streets.length)]}, Miami, FL`;
+
       listings.push({
         id: `listing-${listingId++}`,
         year: parseInt(vehicle.year),
@@ -172,6 +185,8 @@ const generateListingsFromDatabase = (): Listing[] => {
         bodyStyle: vehicle.bodyStyle,
         features: vehicle.features?.slice(0, 3) || ['Bluetooth', 'Backup Camera', 'Keyless Entry'],
         dealerName,
+        dealerPhone,
+        dealerAddress,
         dealerRating: Math.round((Math.random() * 1.5 + 3.5) * 10) / 10, // 3.5 - 5.0
         history: isNew ? undefined : history,
         distance,

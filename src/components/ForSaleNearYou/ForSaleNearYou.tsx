@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, MapPin, Gauge, Calendar, Heart } from 'lucide-react';
+import { ChevronRight, ChevronLeft, MapPin, Gauge, Calendar, Heart, Phone, Navigation } from 'lucide-react';
 import { getListingsNearYou } from '../../services/listingsService';
 import type { Listing } from '../../services/listingsService';
 import { OptimizedImage } from '../OptimizedImage';
@@ -187,6 +187,34 @@ const ForSaleNearYou = ({
                       </div>
                     )}
                   </div>
+
+                  {/* Mobile Contact Actions */}
+                  {(listing.dealerPhone || listing.dealerAddress) && (
+                    <div className="for-sale__card-contact">
+                      {listing.dealerPhone && (
+                        <a 
+                          href={`tel:${listing.dealerPhone.replace(/-/g, '')}`}
+                          className="for-sale__card-contact-btn"
+                          aria-label={`Call ${listing.dealerName}`}
+                        >
+                          <Phone size={16} />
+                          <span>Call Dealer</span>
+                        </a>
+                      )}
+                      {listing.dealerAddress && (
+                        <a 
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(listing.dealerAddress)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="for-sale__card-contact-btn"
+                          aria-label={`Get directions to ${listing.dealerName}`}
+                        >
+                          <Navigation size={16} />
+                          <span>Directions</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
 
                   {/* CTA */}
                   <div className="for-sale__card-actions">
