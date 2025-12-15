@@ -257,7 +257,7 @@
 }
 
 .vehicle-overview__highlights-header--low svg {
-  color: var(--color-black);
+  color: var(--color-warning);
 }
 
 .vehicle-overview__list {
