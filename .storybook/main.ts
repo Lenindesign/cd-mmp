@@ -16,7 +16,8 @@ const config: StorybookConfig = {
   "staticDirs": ["../public"],
   async viteFinal(config, { configType }) {
     // Set base path for GitHub Pages deployment only (not for Chromatic)
-    if (configType === 'PRODUCTION' && !process.env.CHROMATIC_PROJECT_TOKEN) {
+    // Chromatic sets CHROMATIC environment variable, so we check for that
+    if (configType === 'PRODUCTION' && !process.env.CHROMATIC) {
       config.base = '/cd-mmp/';
     }
     return config;
