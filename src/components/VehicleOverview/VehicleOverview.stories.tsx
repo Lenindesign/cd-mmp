@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import VehicleOverview from './VehicleOverview';
 
 const meta: Meta<typeof VehicleOverview> = {
-  title: 'Molecules/VehicleOverview',
+  title: 'Organisms/VehicleOverview',
   component: VehicleOverview,
   parameters: {
     layout: 'padded',

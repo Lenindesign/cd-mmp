@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import TrimSelector from './TrimSelector';
 
 const meta: Meta<typeof TrimSelector> = {
-  title: 'Molecules/TrimSelector',
+  title: 'Organisms/TrimSelector',
   component: TrimSelector,
   parameters: {
     layout: 'padded',

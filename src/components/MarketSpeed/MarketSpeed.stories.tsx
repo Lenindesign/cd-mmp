@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import MarketSpeed from './MarketSpeed';
 
 const meta: Meta<typeof MarketSpeed> = {
-  title: 'Molecules/MarketSpeed',
+  title: 'Organisms/MarketSpeed',
   component: MarketSpeed,
   parameters: {
     layout: 'padded',

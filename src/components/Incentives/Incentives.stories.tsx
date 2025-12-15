@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Incentives from './Incentives';
 
 const meta: Meta<typeof Incentives> = {
-  title: 'Molecules/Incentives',
+  title: 'Organisms/Incentives',
   component: Incentives,
   parameters: {
     layout: 'padded',

@@ -4,7 +4,7 @@ import { Toast, ToastProvider, useToast } from './Toast';
 import { Button } from '../Button';
 
 const meta: Meta<typeof Toast> = {
-  title: 'Atoms/Toast',
+  title: 'Molecules/Toast',
   component: Toast,
   parameters: {
     layout: 'centered',
