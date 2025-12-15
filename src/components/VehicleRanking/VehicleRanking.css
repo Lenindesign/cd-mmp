@@ -255,7 +255,8 @@
 
 /* Outlined button hover */
 .vehicle-ranking__card:hover .vehicle-ranking__card-cta {
-  background: var(--color-blue-cobalt);
+  background: var(--color-black);
+  border-color: var(--color-black);
 }
 
 .vehicle-ranking__card:hover .vehicle-ranking__card-cta-label {
@@ -273,7 +274,7 @@
 }
 
 .vehicle-ranking__card--current:hover .vehicle-ranking__card-cta {
-  background: #145a9e;
-  border-color: #145a9e;
+  background: var(--color-black);
+  border-color: var(--color-black);
 }
 
