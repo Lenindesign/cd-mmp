@@ -120,8 +120,8 @@
   background: var(--color-white);
   color: var(--color-black);
   font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: var(--font-weight-bold);
+  font-size: 24px;
+  font-weight: 800;
   border-radius: 50%;
   border: 2px solid var(--color-black);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
