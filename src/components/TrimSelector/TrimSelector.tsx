@@ -77,7 +77,7 @@ const TrimSelector = ({ trims, title = "Pricing and Which One to Buy", subtitle 
             ref={carouselRef}
             onScroll={handleScroll}
           >
-            {sortedTrims.map((trim, index) => (
+            {sortedTrims.map((trim) => (
               <div 
                 key={trim.id}
                 className={`trim-card ${selectedTrim === trim.id ? 'trim-card--selected' : ''} ${trim.recommended ? 'trim-card--recommended trim-card--sticky' : ''}`}

@@ -29,9 +29,9 @@ export default meta;
 type Story = StoryObj;
 
 // TODO: Add your mock data here
-const mockData = {
-  // Your data structure
-};
+// const mockData = {
+//   // Your data structure
+// };
 
 // Pattern Overview - Explains what this pattern is for
 export const Overview: Story = {

@@ -41,6 +41,20 @@ export const NewCars: Story = {
 };
 
 export const UsedCars: Story = {
+  decorators: [
+    (Story) => {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclesListPage.stories.tsx:46',message:'UsedCars story decorator',data:{initialEntry:'/?type=used'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,E'})}).catch(()=>{});
+      // #endregion
+      return (
+        <MemoryRouter initialEntries={['/?type=used']}>
+          <Routes>
+            <Route path="*" element={<Story />} />
+          </Routes>
+        </MemoryRouter>
+      );
+    },
+  ],
   parameters: {
     docs: {
       description: {
