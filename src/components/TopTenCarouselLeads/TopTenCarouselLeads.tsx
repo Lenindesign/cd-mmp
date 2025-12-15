@@ -23,7 +23,6 @@ interface TopTenCarouselLeadsProps {
   maxPrice?: number;
   currentVehicleId?: string;
   onShopUsed?: (vehicle: FilteredRankedVehicle) => void;
-  onGetPricing?: (vehicle: FilteredRankedVehicle) => void;
   onViewRankings?: () => void;
 }
 
@@ -57,7 +56,6 @@ const TopTenCarouselLeads = ({
   maxPrice,
   currentVehicleId,
   onShopUsed,
-  onGetPricing,
   onViewRankings,
 }: TopTenCarouselLeadsProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -173,14 +171,6 @@ const TopTenCarouselLeads = ({
     }
   };
 
-  const handleGetPricing = (e: React.MouseEvent, vehicle: FilteredRankedVehicle) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onGetPricing) {
-      onGetPricing(vehicle);
-    }
-  };
-
   // Don't render if no vehicles match filters
   if (vehicles.length === 0) {
     return null;
@@ -292,13 +282,6 @@ const TopTenCarouselLeads = ({
                         <MapPin size={12} />
                         {Math.floor(((parseInt(vehicle.id, 36) % 150) + 50))} near you
                       </span>
-                    </button>
-                    <button
-                      className="top-ten__card-cta top-ten__card-cta--secondary"
-                      onClick={(e) => handleGetPricing(e, vehicle)}
-                    >
-                      Get Pricing
-                      <ArrowRight size={14} />
                     </button>
                   </div>
                 </div>
