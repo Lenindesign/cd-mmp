@@ -532,6 +532,14 @@
   width: 100%;
   overflow: hidden;
   background: var(--color-gray-100);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y pinch-zoom;
+}
+
+.hero__carousel.dragging {
+  cursor: grabbing;
 }
 
 .hero__carousel-track {

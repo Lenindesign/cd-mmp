@@ -26,6 +26,7 @@ const Hero = ({ vehicle }: HeroProps) => {
   const [isFavorited, setIsFavorited] = useState(true);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
@@ -79,9 +80,11 @@ const Hero = ({ vehicle }: HeroProps) => {
     setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
   }, [totalSlides]);
 
-  // Touch handlers for swipe
+  // Touch handlers for swipe with visual feedback
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+    setIsDragging(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -89,16 +92,23 @@ const Hero = ({ vehicle }: HeroProps) => {
   };
 
   const handleTouchEnd = () => {
+    setIsDragging(false);
     const diff = touchStartX.current - touchEndX.current;
     const minSwipeDistance = 50;
 
     if (Math.abs(diff) > minSwipeDistance) {
       if (diff > 0) {
+        // Swiped left - go to next
         goToNextSlide();
       } else {
+        // Swiped right - go to previous
         goToPrevSlide();
       }
     }
+    
+    // Reset touch positions
+    touchStartX.current = 0;
+    touchEndX.current = 0;
   };
 
   return (
@@ -224,7 +234,7 @@ const Hero = ({ vehicle }: HeroProps) => {
 
           {/* Image Gallery - Mobile Carousel */}
           <div 
-            className="hero__carousel hero__carousel--mobile"
+            className={`hero__carousel hero__carousel--mobile ${isDragging ? 'dragging' : ''}`}
             ref={carouselRef}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
