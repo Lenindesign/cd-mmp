@@ -62,11 +62,9 @@
   .vehicle-ranking__card-wrapper {
     padding: 1.5rem;
   }
-}
-
-@media (max-width: 600px) {
+  
   .vehicle-ranking__grid {
-    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
   }
 }
 
