@@ -76,7 +76,7 @@
   flex-direction: column;
   text-decoration: none;
   border: 2px solid var(--color-gray-300);
-  border-radius: var(--border-radius-md);
+  border-radius: 0;
   overflow: hidden;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   background: var(--color-white);
