@@ -213,9 +213,6 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
 /* Show full name by default */
