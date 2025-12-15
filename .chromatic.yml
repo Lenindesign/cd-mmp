@@ -1,0 +1,48 @@
+# Chromatic Configuration for Car and Driver Design System
+# Visual regression testing configuration
+
+# Project settings
+projectId: "your-project-id-here"
+
+# Build settings
+buildScriptName: "build-storybook"
+
+# Only run Chromatic on specific branches
+branchPattern: "main|develop|feature/*"
+
+# Ignore certain stories from visual testing
+ignorePatterns:
+  - "**/*.test.stories.tsx"
+  - "**/Introduction.stories.tsx"
+
+# Viewport settings for responsive testing
+viewports:
+  - name: "Mobile"
+    width: 375
+    height: 667
+  - name: "Tablet"
+    width: 768
+    height: 1024
+  - name: "Desktop"
+    width: 1280
+    height: 800
+  - name: "Wide"
+    width: 1920
+    height: 1080
+
+# Threshold for visual changes (in pixels)
+threshold: 0.2
+
+# Auto-accept changes on specific branches
+autoAcceptChanges: "main"
+
+# Enable TurboSnap for faster builds
+turboSnap: true
+
+# Capture settings
+captureDelay: 500  # Wait 500ms before capturing screenshots
+
+# Exit with error code if changes are detected
+exitOnceUploaded: false
+exitZeroOnChanges: false
+

@@ -18,9 +18,11 @@
     "test:playwright:debug": "playwright test --debug",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "deploy-storybook": "npm run build-storybook && npx gh-pages -d storybook-static"
+    "deploy-storybook": "npm run build-storybook && npx gh-pages -d storybook-static",
+    "chromatic": "npx chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}"
   },
   "dependencies": {
+    "@storybook/addon-designs": "^11.1.0",
     "lucide-react": "^0.556.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
