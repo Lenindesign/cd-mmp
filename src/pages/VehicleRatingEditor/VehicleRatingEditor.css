@@ -232,7 +232,7 @@
 
 .editor__tab--active .editor__tab-count {
   color: var(--color-primary-1);
-  background: rgba(233, 12, 23, 0.08);
+  background: transparent;
 }
 
 /* Table - Apple-inspired */
