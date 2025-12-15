@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Save, Search, AlertCircle, CheckCircle, ChevronDown, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank } from 'lucide-react';
+import { Save, Search, AlertCircle, CheckCircle, ChevronDown } from 'lucide-react';
 import { sedans, suvs, trucks, coupes, convertibles, wagons } from '../../data/vehicles';
 import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import { OptimizedImage } from '../../components/OptimizedImage';
@@ -7,17 +7,6 @@ import type { Vehicle } from '../../types/vehicle';
 import './VehicleRatingEditor.css';
 
 type Category = 'sedans' | 'suvs' | 'trucks' | 'coupes' | 'convertibles' | 'wagons';
-
-// Lifestyle icons mapping
-const lifestyleIcons: Record<Lifestyle, React.ReactNode> = {
-  'Family': <Users size={16} />,
-  'Adventure': <Mountain size={16} />,
-  'Luxury': <Gem size={16} />,
-  'Eco-Friendly': <Leaf size={16} />,
-  'Performance': <Gauge size={16} />,
-  'Professional': <Briefcase size={16} />,
-  'Budget': <PiggyBank size={16} />,
-};
 
 interface EditedRating {
   id: string;
