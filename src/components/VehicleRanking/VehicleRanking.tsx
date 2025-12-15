@@ -83,7 +83,12 @@ const VehicleRanking = ({
         </div>
 
         <div className="vehicle-ranking__grid">
-          {displayVehicles.map((vehicle) => (
+          {displayVehicles.map((vehicle) => {
+            // Extract model name from full vehicle name (e.g., "Honda Accord" -> "Accord")
+            const nameParts = vehicle.name.split(' ');
+            const modelName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : vehicle.name;
+            
+            return (
             <Link 
               to={`/${vehicle.slug}`}
               key={vehicle.id} 
@@ -124,7 +129,7 @@ const VehicleRanking = ({
                   <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
                 </p>
                 <div className="vehicle-ranking__card-cta">
-                  <span className="vehicle-ranking__card-cta-label">SHOP {vehicle.name.toUpperCase()}</span>
+                  <span className="vehicle-ranking__card-cta-label">SHOP {modelName.toUpperCase()}</span>
                   <span className="vehicle-ranking__card-cta-divider"></span>
                   <span className="vehicle-ranking__card-cta-count">
                     <MapPin size={12} />
@@ -134,7 +139,8 @@ const VehicleRanking = ({
                 </div>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

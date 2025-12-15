@@ -194,7 +194,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 16px 24px;
+  padding: 10px 20px;
   margin-top: var(--spacing-3);
   background: transparent;
   border: 2px solid var(--color-blue-cobalt);
@@ -202,15 +202,19 @@
   transition: all var(--transition-fast);
   text-decoration: none;
   cursor: pointer;
+  min-height: 40px;
 }
 
 .vehicle-ranking__card-cta-label {
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--font-weight-bold);
   color: var(--color-blue-cobalt);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Hide the divider and count for this design */
