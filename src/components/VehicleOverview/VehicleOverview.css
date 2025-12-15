@@ -249,7 +249,7 @@
 }
 
 .vehicle-overview__highlights-header--low {
-  color: var(--color-warning);
+  color: var(--color-black);
 }
 
 .vehicle-overview__list {
