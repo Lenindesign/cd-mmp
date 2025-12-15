@@ -215,6 +215,39 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Show full name by default */
+.vehicle-ranking__card-cta-full {
+  display: inline;
+}
+
+/* Hide short name by default */
+.vehicle-ranking__card-cta-short {
+  display: none;
+}
+
+/* On smaller cards (when grid is 3 columns), show short name if full name is too long */
+@media (max-width: 1200px) {
+  .vehicle-ranking__card-cta-full {
+    display: none;
+  }
+  
+  .vehicle-ranking__card-cta-short {
+    display: inline;
+  }
+}
+
+/* On larger screens with 3-column grid, show full name */
+@media (min-width: 1201px) {
+  .vehicle-ranking__card-cta-full {
+    display: inline;
+  }
+  
+  .vehicle-ranking__card-cta-short {
+    display: none;
+  }
 }
 
 /* Hide the divider and count for this design */
