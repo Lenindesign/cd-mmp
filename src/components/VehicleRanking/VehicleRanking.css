@@ -66,6 +66,18 @@
   .vehicle-ranking__grid {
     gap: var(--spacing-4);
   }
+  
+  /* Small button on mobile */
+  .vehicle-ranking__card-cta {
+    padding: 6px 12px;
+    min-height: 32px;
+  }
+  
+  .vehicle-ranking__card-cta-label {
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    padding: 0 4px;
+  }
 }
 
 /* Card */
