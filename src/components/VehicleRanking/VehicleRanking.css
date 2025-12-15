@@ -147,11 +147,13 @@
 
 .vehicle-ranking__card-price {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 11px;
   color: var(--color-gray-600);
   margin: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.05em;
   text-align: center;
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
 }
 
 .vehicle-ranking__card-price-label {
@@ -159,8 +161,7 @@
   font-weight: var(--font-weight-semibold);
   font-size: 11px;
   letter-spacing: 0.05em;
-  display: block;
-  margin-bottom: 2px;
+  display: inline;
 }
 
 /* Hide CTA button - not in design */
