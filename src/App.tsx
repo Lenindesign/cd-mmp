@@ -14,6 +14,7 @@ const VehiclePageVariantC = lazy(() => import('./pages/VehiclePage/VehiclePageVa
 const VehiclePageVariantD = lazy(() => import('./pages/VehiclePage/VehiclePageVariantD'));
 const VehiclesListPage = lazy(() => import('./pages/VehiclesListPage/VehiclesListPage'));
 const DesignSystem = lazy(() => import('./pages/DesignSystem/DesignSystem'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 
 // Onboarding pages - lazy loaded as a group
 const OnboardingStep1 = lazy(() => import('./pages/Onboarding/OnboardingStep1'));
@@ -103,6 +104,9 @@ function App() {
             <Route path="/:year/:make/:model/v3d" element={<VehiclePageVariantD variant="v3d" />} />
             <Route path="/:year/:make/:model/v4d" element={<VehiclePageVariantD variant="v4d" />} />
             <Route path="/:year/:make/:model/v5d" element={<VehiclePageVariantD variant="v5d" />} />
+            
+            {/* 404 Not Found - Catch all unmatched routes */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </main>
