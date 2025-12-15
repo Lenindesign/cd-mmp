@@ -16,9 +16,6 @@ interface EditedRating {
 }
 
 const VehicleRatingEditor = () => {
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:42',message:'Component mounted',data:{timestamp:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'H1,H2'})}).catch(()=>{});
-  // #endregion
   const [activeCategory, setActiveCategory] = useState<Category>('sedans');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState<string>('all');
@@ -30,9 +27,6 @@ const VehicleRatingEditor = () => {
 
   // Combine all vehicles with their category (already processed with images)
   const allVehicles = useMemo(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:55',message:'Loading processed vehicles',data:{sedansCount:sedans.length,suvsCount:suvs.length,trucksCount:trucks.length,coupesCount:coupes.length,convertiblesCount:convertibles.length,wagonsCount:wagons.length,firstSedanHasImage:!!sedans[0]?.image,firstSedanImage:sedans[0]?.image?.substring(0,50)},timestamp:Date.now(),sessionId:'debug-session',runId:'image-fix',hypothesisId:'H6-SOLUTION'})}).catch(()=>{});
-    // #endregion
     return {
       sedans,
       suvs,
@@ -47,9 +41,6 @@ const VehicleRatingEditor = () => {
   const uniqueMakes = useMemo(() => {
     const categoryVehicles = allVehicles[activeCategory];
     const makes = new Set(categoryVehicles.map(v => v.make));
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:75',message:'Unique makes calculated',data:{activeCategory,makesCount:makes.size,makes:Array.from(makes)},timestamp:Date.now(),sessionId:'debug-session',runId:'remove-body-style',hypothesisId:'H12'})}).catch(()=>{});
-    // #endregion
     return Array.from(makes).sort();
   }, [allVehicles, activeCategory]);
 
@@ -62,9 +53,6 @@ const VehicleRatingEditor = () => {
 
   // Get vehicles for active category with all filters applied
   const vehicles = useMemo(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:85',message:'Filtering vehicles',data:{activeCategory,searchQuery,selectedMake,selectedLifestyle,selectedPriceRange},timestamp:Date.now(),sessionId:'debug-session',runId:'remove-body-style',hypothesisId:'H12'})}).catch(()=>{});
-    // #endregion
     let categoryVehicles = allVehicles[activeCategory];
 
     // Apply search filter
@@ -108,10 +96,6 @@ const VehicleRatingEditor = () => {
       });
     }
 
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:128',message:'Filtered vehicles result',data:{count:categoryVehicles.length},timestamp:Date.now(),sessionId:'debug-session',runId:'remove-body-style',hypothesisId:'H12'})}).catch(()=>{});
-    // #endregion
-
     return categoryVehicles;
   }, [allVehicles, activeCategory, searchQuery, selectedMake, selectedYear, selectedLifestyle, selectedPriceRange]);
 
@@ -148,17 +132,10 @@ const VehicleRatingEditor = () => {
 
   // Handle save all changes
   const handleSaveAll = async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:148',message:'Save button clicked - REAL SAVE',data:{editedRatingsCount:editedRatings.size,editedRatingsEntries:Array.from(editedRatings.values())},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H1,H4'})}).catch(()=>{});
-    // #endregion
     setSaveStatus('saving');
     
     try {
       const changes = Array.from(editedRatings.values());
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:156',message:'Calling real API endpoint',data:{apiUrl:'http://localhost:3001/api/ratings',changesCount:changes.length,changes:changes},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H4,H5'})}).catch(()=>{});
-      // #endregion
       
       // Call the real API to save changes to JSON files
       const response = await fetch('http://localhost:3001/api/ratings', {
@@ -173,11 +150,6 @@ const VehicleRatingEditor = () => {
       }
 
       const result = await response.json();
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:175',message:'Save completed successfully',data:{result:result,changesCleared:true,actuallyPersisted:true},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H1,H4,H5'})}).catch(()=>{});
-      // #endregion
-      
       console.log('Ratings saved successfully:', result);
       
       setSaveStatus('success');
@@ -188,9 +160,6 @@ const VehicleRatingEditor = () => {
         window.location.reload();
       }, 2000);
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:191',message:'Save failed',data:{error:String(error),errorMessage:error instanceof Error ? error.message : 'Unknown error'},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H3'})}).catch(()=>{});
-      // #endregion
       console.error('Error saving ratings:', error);
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
@@ -394,14 +363,7 @@ const VehicleRatingEditor = () => {
                 </tr>
               ) : (
                 vehicles.map((vehicle) => {
-                  // #region agent log
-                  fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:290',message:'Rendering vehicle row',data:{vehicleId:vehicle.id,hasImage:!!vehicle.image,make:vehicle.make,model:vehicle.model},timestamp:Date.now(),sessionId:'debug-session',runId:'initial',hypothesisId:'H2'})}).catch(()=>{});
-                  // #endregion
-                  // #region agent log
                   const imageUrl = vehicle.image || '';
-                  const hasValidImage = !!vehicle.image;
-                  fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:295',message:'Image URL check',data:{vehicleId:vehicle.id,imageUrl,hasValidImage,imageIsNull:vehicle.image===null,imageIsEmpty:vehicle.image===''},timestamp:Date.now(),sessionId:'debug-session',runId:'image-fix',hypothesisId:'H6,H8'})}).catch(()=>{});
-                  // #endregion
                   return (
                     <tr
                       key={vehicle.id}
