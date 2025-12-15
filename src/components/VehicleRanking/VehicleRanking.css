@@ -106,9 +106,32 @@
   display: block;
 }
 
-/* Rank Badge - Hidden */
+/* Rank Badge - Top-left corner */
 .vehicle-ranking__card-rank {
-  display: none;
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  border-radius: 50%;
+  border: 2px solid var(--color-black);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+/* Rank Badge - Current Vehicle (blue background) */
+.vehicle-ranking__card-rank--current {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border: 2px solid var(--color-white);
 }
 
 /* Value Badges - Hidden */
