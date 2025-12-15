@@ -224,6 +224,9 @@ const VehiclesListPage = () => {
         }
         return hasLifestyle;
       });
+    } else {
+      // By default (no lifestyle filter), hide vehicles over $100k
+      result = result.filter(v => v.priceMin <= 100000);
     }
     
     // Sort
