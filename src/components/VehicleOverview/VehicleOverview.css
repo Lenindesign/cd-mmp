@@ -248,7 +248,15 @@
   border-bottom: 1px solid var(--color-gray-200);
 }
 
+.vehicle-overview__highlights-header svg {
+  color: var(--color-success);
+}
+
 .vehicle-overview__highlights-header--low {
+  color: var(--color-black);
+}
+
+.vehicle-overview__highlights-header--low svg {
   color: var(--color-black);
 }
 
