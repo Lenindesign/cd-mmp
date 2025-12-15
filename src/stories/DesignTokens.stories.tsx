@@ -8,6 +8,9 @@ const meta: Meta = {
     options: {
       showPanel: false,
     },
+    chromatic: {
+      disableSnapshot: true, // Disable Chromatic snapshots for this story (too large)
+    },
   },
 };
 

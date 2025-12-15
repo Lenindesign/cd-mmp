@@ -210,6 +210,11 @@ const SpacingToken = ({ name, value, px }: { name: string; value: string; px: st
 
 export const Welcome: Story = {
   name: '👋 Design System',
+  parameters: {
+    chromatic: {
+      disableSnapshot: true, // Disable Chromatic snapshots (welcome page, not a component)
+    },
+  },
   render: () => (
     <div style={styles.page}>
       {/* Header */}

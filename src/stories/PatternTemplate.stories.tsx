@@ -10,6 +10,9 @@ const meta: Meta = {
   title: 'My Patterns/Pattern Name', // TODO: Change this
   parameters: {
     layout: 'fullscreen',
+    chromatic: {
+      disableSnapshot: true, // Disable Chromatic snapshots for template story
+    },
   },
   decorators: [
     (Story) => (

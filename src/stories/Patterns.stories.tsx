@@ -170,6 +170,11 @@ const mockTopTen = [
 
 export const Overview: Story = {
   name: '📚 Pattern Overview',
+  parameters: {
+    chromatic: {
+      disableSnapshot: true, // Disable Chromatic snapshots (documentation only)
+    },
+  },
   render: () => (
     <div style={styles.page}>
       <div style={styles.container}>
