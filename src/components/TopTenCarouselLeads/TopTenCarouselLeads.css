@@ -370,12 +370,12 @@
 
 .top-ten__card-cta--primary {
   background: transparent;
-  color: var(--color-black);
-  border: 2px solid var(--color-black);
+  color: var(--color-blue-cobalt);
+  border: 2px solid var(--color-blue-cobalt);
 }
 
 .top-ten__card-cta--primary:hover {
-  background: var(--color-black);
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
