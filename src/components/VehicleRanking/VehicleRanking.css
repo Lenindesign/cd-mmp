@@ -229,11 +229,17 @@
 /* Show full name by default */
 .vehicle-ranking__card-cta-full {
   display: inline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* Hide short name by default */
 .vehicle-ranking__card-cta-short {
   display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* On smaller cards, show short name to maintain proper padding */
