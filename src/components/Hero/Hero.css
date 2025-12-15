@@ -345,6 +345,7 @@
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: var(--font-weight-semibold);
+  opacity: 0.8;
 }
 
 /* Photo Credit */
