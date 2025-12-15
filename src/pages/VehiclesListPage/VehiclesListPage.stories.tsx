@@ -14,6 +14,12 @@ const meta: Meta<typeof VehiclesListPage> = {
     },
   },
   tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/']}>
@@ -25,12 +31,16 @@ const meta: Meta<typeof VehiclesListPage> = {
   ],
 };
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
 export const NewCars: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={['/?type=new']}>
+        <Routes>
+          <Route path="*" element={<Story />} />
+        </Routes>
+      </MemoryRouter>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
@@ -41,6 +51,15 @@ export const NewCars: Story = {
 };
 
 export const UsedCars: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={['/?type=used']}>
+        <Routes>
+          <Route path="*" element={<Story />} />
+        </Routes>
+      </MemoryRouter>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
@@ -51,6 +70,15 @@ export const UsedCars: Story = {
 };
 
 export const FilteredByMake: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={['/?make=Toyota']}>
+        <Routes>
+          <Route path="*" element={<Story />} />
+        </Routes>
+      </MemoryRouter>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
@@ -61,6 +89,15 @@ export const FilteredByMake: Story = {
 };
 
 export const FilteredByBodyStyle: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={['/?bodyStyle=SUV']}>
+        <Routes>
+          <Route path="*" element={<Story />} />
+        </Routes>
+      </MemoryRouter>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
