@@ -216,9 +216,14 @@ const VehiclesListPage = () => {
     
     // Lifestyle filter
     if (selectedLifestyle) {
-      result = result.filter(v => 
-        getVehicleLifestyles(v).includes(selectedLifestyle as Lifestyle)
-      );
+      result = result.filter(v => {
+        const hasLifestyle = getVehicleLifestyles(v).includes(selectedLifestyle as Lifestyle);
+        // For Luxury and Performance, only show vehicles over $100,000
+        if ((selectedLifestyle === 'Luxury' || selectedLifestyle === 'Performance') && hasLifestyle) {
+          return v.priceMin > 100000;
+        }
+        return hasLifestyle;
+      });
     }
     
     // Sort
