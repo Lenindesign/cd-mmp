@@ -3,13 +3,13 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import '../index.css';
 
 // Import components for patterns
-import { Hero } from '../components/Hero/Hero';
-import { QuickSpecs } from '../components/QuickSpecs/QuickSpecs';
-import { TrimSelector } from '../components/TrimSelector/TrimSelector';
-import { ForSaleNearYou } from '../components/ForSaleNearYou/ForSaleNearYou';
-import { BuyingPotential } from '../components/BuyingPotential/BuyingPotential';
-import { TopTenCarouselLeads } from '../components/TopTenCarouselLeads/TopTenCarouselLeads';
-import { VehicleRanking } from '../components/VehicleRanking/VehicleRanking';
+import Hero from '../components/Hero/Hero';
+import QuickSpecs from '../components/QuickSpecs/QuickSpecs';
+import TrimSelector from '../components/TrimSelector/TrimSelector';
+import ForSaleNearYou from '../components/ForSaleNearYou/ForSaleNearYou';
+import BuyingPotential from '../components/BuyingPotential/BuyingPotential';
+import TopTenCarouselLeads from '../components/TopTenCarouselLeads/TopTenCarouselLeads';
+import VehicleRanking from '../components/VehicleRanking/VehicleRanking';
 
 const meta: Meta = {
   title: 'Design System/Component Patterns',
