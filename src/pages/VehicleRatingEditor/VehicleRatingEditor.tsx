@@ -33,6 +33,7 @@ const VehicleRatingEditor = () => {
   const [activeCategory, setActiveCategory] = useState<Category>('sedans');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState<string>('all');
+  const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedLifestyle, setSelectedLifestyle] = useState<string>('all');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
   const [editedRatings, setEditedRatings] = useState<Map<string, EditedRating>>(new Map());
@@ -63,6 +64,13 @@ const VehicleRatingEditor = () => {
     return Array.from(makes).sort();
   }, [allVehicles, activeCategory]);
 
+  // Get unique years for filters
+  const uniqueYears = useMemo(() => {
+    const categoryVehicles = allVehicles[activeCategory];
+    const years = new Set(categoryVehicles.map(v => v.year));
+    return Array.from(years).sort((a, b) => parseInt(b) - parseInt(a)); // Sort descending (newest first)
+  }, [allVehicles, activeCategory]);
+
   // Get vehicles for active category with all filters applied
   const vehicles = useMemo(() => {
     // #region agent log
@@ -83,6 +91,11 @@ const VehicleRatingEditor = () => {
     // Apply make filter
     if (selectedMake !== 'all') {
       categoryVehicles = categoryVehicles.filter(v => v.make === selectedMake);
+    }
+
+    // Apply year filter
+    if (selectedYear !== 'all') {
+      categoryVehicles = categoryVehicles.filter(v => v.year === selectedYear);
     }
 
     // Apply lifestyle filter
@@ -111,7 +124,7 @@ const VehicleRatingEditor = () => {
     // #endregion
 
     return categoryVehicles;
-  }, [allVehicles, activeCategory, searchQuery, selectedMake, selectedLifestyle, selectedPriceRange]);
+  }, [allVehicles, activeCategory, searchQuery, selectedMake, selectedYear, selectedLifestyle, selectedPriceRange]);
 
   // Get current rating (edited or original)
   const getCurrentRating = (vehicle: Vehicle): number => {
@@ -146,21 +159,49 @@ const VehicleRatingEditor = () => {
 
   // Handle save all changes
   const handleSaveAll = async () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:148',message:'Save button clicked - REAL SAVE',data:{editedRatingsCount:editedRatings.size,editedRatingsEntries:Array.from(editedRatings.values())},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H1,H4'})}).catch(()=>{});
+    // #endregion
     setSaveStatus('saving');
     
     try {
-      // In a real app, this would make API calls to save the changes
-      // For now, we'll simulate a save and show instructions
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const changes = Array.from(editedRatings.values());
       
-      console.log('Changes to save:', Array.from(editedRatings.values()));
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:156',message:'Calling real API endpoint',data:{apiUrl:'http://localhost:3001/api/ratings',changesCount:changes.length,changes:changes},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H4,H5'})}).catch(()=>{});
+      // #endregion
+      
+      // Call the real API to save changes to JSON files
+      const response = await fetch('http://localhost:3001/api/ratings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ changes }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save ratings');
+      }
+
+      const result = await response.json();
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:175',message:'Save completed successfully',data:{result:result,changesCleared:true,actuallyPersisted:true},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H1,H4,H5'})}).catch(()=>{});
+      // #endregion
+      
+      console.log('Ratings saved successfully:', result);
       
       setSaveStatus('success');
       setTimeout(() => {
         setSaveStatus('idle');
         setEditedRatings(new Map()); // Clear edited ratings after successful save
-      }, 3000);
+        // Refresh the page to load updated data
+        window.location.reload();
+      }, 2000);
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:191',message:'Save failed',data:{error:String(error),errorMessage:error instanceof Error ? error.message : 'Unknown error'},timestamp:Date.now(),sessionId:'debug-session',runId:'save-fix-v2',hypothesisId:'H3'})}).catch(()=>{});
+      // #endregion
       console.error('Error saving ratings:', error);
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
@@ -267,6 +308,22 @@ const VehicleRatingEditor = () => {
                 <option value="all">All Makes</option>
                 {uniqueMakes.map(make => (
                   <option key={make} value={make}>{make}</option>
+                ))}
+              </select>
+              <ChevronDown size={16} className="editor__filter-icon" />
+            </div>
+
+            {/* Year Filter */}
+            <div className="editor__filter">
+              <select
+                className="editor__filter-select"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                aria-label="Filter by year"
+              >
+                <option value="all">All Years</option>
+                {uniqueYears.map(year => (
+                  <option key={year} value={year}>{year}</option>
                 ))}
               </select>
               <ChevronDown size={16} className="editor__filter-icon" />
