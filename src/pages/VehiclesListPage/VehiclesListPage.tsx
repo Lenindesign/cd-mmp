@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Filter, ChevronDown, Grid, List, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, MapPin, Clock, Tag, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
+import { Search, Filter, ChevronDown, Grid, List, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
 import { getAllVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
 import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
 import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
@@ -361,10 +361,6 @@ const VehiclesListPage = () => {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
-  };
-
-  const formatMileage = (value: number) => {
-    return new Intl.NumberFormat('en-US').format(value);
   };
 
   // Handle inventory type change

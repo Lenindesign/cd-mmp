@@ -25,6 +25,9 @@ const OnboardingWelcome = lazy(() => import('./pages/Onboarding/OnboardingWelcom
 const OnboardingResults = lazy(() => import('./pages/Onboarding/OnboardingResults'));
 const SignIn = lazy(() => import('./pages/Onboarding/SignIn'));
 
+// Admin pages - lazy loaded
+const VehicleRatingEditor = lazy(() => import('./pages/VehicleRatingEditor/VehicleRatingEditor'));
+
 // Loading fallback component
 const PageLoader = () => (
   <div className="page-loader">
@@ -73,6 +76,9 @@ function App() {
             
             {/* Design System Documentation */}
             <Route path="/design-system" element={<DesignSystem />} />
+            
+            {/* Admin Pages */}
+            <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
             
             {/* Individual Vehicle Pages - Dynamic routes based on slug */}
             <Route path="/:year/:make/:model" element={<VehiclePage />} />

@@ -60,7 +60,6 @@ const getBadgeLabel = (badge: string) => {
 };
 
 export const VehicleCard = ({
-  id,
   name,
   slug,
   image,
@@ -72,7 +71,6 @@ export const VehicleCard = ({
   badge,
   editorsChoice,
   tenBest,
-  year,
   mileage,
   dealerName,
   distance,
