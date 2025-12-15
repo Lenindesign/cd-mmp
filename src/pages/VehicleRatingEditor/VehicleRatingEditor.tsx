@@ -179,30 +179,34 @@ const VehicleRatingEditor = () => {
           </div>
         )}
 
-        {/* Search Bar */}
-        <div className="editor__search">
-          <Search size={20} className="editor__search-icon" />
-          <input
-            type="text"
-            className="editor__search-input"
-            placeholder="Search by make, model, or year..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        {/* Filters Bar */}
+        <div className="editor__filters-bar">
+          <div className="editor__filters-row">
+            {/* Search */}
+            <div className="editor__search">
+              <Search size={18} />
+              <input
+                type="text"
+                placeholder="Search vehicles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
 
-        {/* Category Tabs */}
-        <div className="editor__tabs">
-          {categories.map((category) => (
-            <button
-              key={category.key}
-              className={`editor__tab ${activeCategory === category.key ? 'editor__tab--active' : ''}`}
-              onClick={() => setActiveCategory(category.key)}
+            {/* Category Tabs as Select Dropdown */}
+            <select
+              className="editor__select"
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value as Category)}
+              aria-label="Filter by category"
             >
-              {category.label}
-              <span className="editor__tab-count">{category.count}</span>
-            </button>
-          ))}
+              {categories.map((category) => (
+                <option key={category.key} value={category.key}>
+                  {category.label} ({category.count})
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Vehicle Table */}
