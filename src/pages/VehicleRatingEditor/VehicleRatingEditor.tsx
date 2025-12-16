@@ -25,8 +25,11 @@ const API_ENDPOINTS = {
   saveRatings: isProduction ? '/.netlify/functions/save-ratings' : 'http://localhost:3001/api/ratings',
 };
 
+type Subcategory = 'all' | 'gas' | 'hybrid' | 'electric';
+
 const VehicleRatingEditor = () => {
   const [activeCategory, setActiveCategory] = useState<Category>('sedans');
+  const [activeSubcategory, setActiveSubcategory] = useState<Subcategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState<string>('all');
   const [selectedYear, setSelectedYear] = useState<string>('all');
@@ -35,6 +38,7 @@ const VehicleRatingEditor = () => {
   const [editedRatings, setEditedRatings] = useState<Map<string, EditedRating>>(new Map());
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [savedRatings, setSavedRatings] = useState<Record<string, number>>({});
+  const [openDropdown, setOpenDropdown] = useState<Category | null>(null);
 
   // Load saved ratings from Supabase on mount (production only)
   useEffect(() => {
@@ -86,6 +90,17 @@ const VehicleRatingEditor = () => {
   // Get vehicles for active category with all filters applied
   const vehicles = useMemo(() => {
     let categoryVehicles = allVehicles[activeCategory];
+
+    // Apply subcategory filter (fuel type)
+    if (activeSubcategory !== 'all') {
+      const fuelTypeMap: Record<Subcategory, string> = {
+        all: '',
+        gas: 'Gas',
+        hybrid: 'Hybrid',
+        electric: 'Electric',
+      };
+      categoryVehicles = categoryVehicles.filter(v => v.fuelType === fuelTypeMap[activeSubcategory]);
+    }
 
     // Apply search filter
     if (searchQuery) {
@@ -224,6 +239,17 @@ const VehicleRatingEditor = () => {
     setSaveStatus('idle');
   };
 
+  // Get subcategory counts for a category
+  const getSubcategoryCounts = (category: Category) => {
+    const categoryVehicles = allVehicles[category];
+    return {
+      all: categoryVehicles.length,
+      gas: categoryVehicles.filter(v => v.fuelType === 'Gas').length,
+      hybrid: categoryVehicles.filter(v => v.fuelType === 'Hybrid').length,
+      electric: categoryVehicles.filter(v => v.fuelType === 'Electric').length,
+    };
+  };
+
   const categories: { key: Category; label: string; count: number }[] = [
     { key: 'sedans', label: 'Sedans', count: allVehicles.sedans.length },
     { key: 'suvs', label: 'SUVs', count: allVehicles.suvs.length },
@@ -232,6 +258,33 @@ const VehicleRatingEditor = () => {
     { key: 'convertibles', label: 'Convertibles', count: allVehicles.convertibles.length },
     { key: 'wagons', label: 'Wagons', count: allVehicles.wagons.length },
   ];
+
+  // Handle category/subcategory selection
+  const handleCategorySelect = (category: Category, subcategory: Subcategory) => {
+    setActiveCategory(category);
+    setActiveSubcategory(subcategory);
+    setOpenDropdown(null);
+    // Reset other filters when changing category
+    setSelectedMake('all');
+    setSelectedYear('all');
+  };
+
+  // Toggle dropdown
+  const toggleDropdown = (category: Category) => {
+    setOpenDropdown(openDropdown === category ? null : category);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.editor__category-dropdown')) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   return (
     <div className="vehicle-rating-editor">
@@ -364,18 +417,84 @@ const VehicleRatingEditor = () => {
           </div>
         </div>
 
-        {/* Category Tabs */}
-        <div className="editor__tabs">
-          {categories.map((category) => (
-            <button
-              key={category.key}
-              className={`editor__tab ${activeCategory === category.key ? 'editor__tab--active' : ''}`}
-              onClick={() => setActiveCategory(category.key)}
-            >
-              {category.label}
-              <span className="editor__tab-count">{category.count}</span>
-            </button>
-          ))}
+        {/* Category Dropdowns */}
+        <div className="editor__category-nav">
+          {categories.map((category) => {
+            const subcounts = getSubcategoryCounts(category.key);
+            const isActive = activeCategory === category.key;
+            const isOpen = openDropdown === category.key;
+            
+            // Get current display label
+            const getDisplayLabel = () => {
+              if (!isActive) return category.label;
+              if (activeSubcategory === 'all') return `All ${category.label}`;
+              return `${activeSubcategory.charAt(0).toUpperCase() + activeSubcategory.slice(1)} ${category.label}`;
+            };
+            
+            return (
+              <div 
+                key={category.key} 
+                className={`editor__category-dropdown ${isActive ? 'editor__category-dropdown--active' : ''}`}
+              >
+                <button
+                  className="editor__category-trigger"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDropdown(category.key);
+                  }}
+                >
+                  <span className="editor__category-label">{getDisplayLabel()}</span>
+                  <span className="editor__category-count">{isActive && activeSubcategory !== 'all' 
+                    ? subcounts[activeSubcategory] 
+                    : category.count}
+                  </span>
+                  <ChevronDown 
+                    size={16} 
+                    className={`editor__category-chevron ${isOpen ? 'editor__category-chevron--open' : ''}`} 
+                  />
+                </button>
+                
+                {isOpen && (
+                  <div className="editor__category-menu">
+                    <button
+                      className={`editor__category-item ${isActive && activeSubcategory === 'all' ? 'editor__category-item--active' : ''}`}
+                      onClick={() => handleCategorySelect(category.key, 'all')}
+                    >
+                      <span>All {category.label}</span>
+                      <span className="editor__category-item-count">{subcounts.all}</span>
+                    </button>
+                    {subcounts.gas > 0 && (
+                      <button
+                        className={`editor__category-item ${isActive && activeSubcategory === 'gas' ? 'editor__category-item--active' : ''}`}
+                        onClick={() => handleCategorySelect(category.key, 'gas')}
+                      >
+                        <span>Gas {category.label}</span>
+                        <span className="editor__category-item-count">{subcounts.gas}</span>
+                      </button>
+                    )}
+                    {subcounts.hybrid > 0 && (
+                      <button
+                        className={`editor__category-item ${isActive && activeSubcategory === 'hybrid' ? 'editor__category-item--active' : ''}`}
+                        onClick={() => handleCategorySelect(category.key, 'hybrid')}
+                      >
+                        <span>Hybrid {category.label}</span>
+                        <span className="editor__category-item-count">{subcounts.hybrid}</span>
+                      </button>
+                    )}
+                    {subcounts.electric > 0 && (
+                      <button
+                        className={`editor__category-item ${isActive && activeSubcategory === 'electric' ? 'editor__category-item--active' : ''}`}
+                        onClick={() => handleCategorySelect(category.key, 'electric')}
+                      >
+                        <span>Electric {category.label}</span>
+                        <span className="editor__category-item-count">{subcounts.electric}</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Vehicle Table */}
