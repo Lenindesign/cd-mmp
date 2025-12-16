@@ -181,7 +181,7 @@
 
 .trim-card--selected {
   border-color: var(--color-blue-cobalt);
-  box-shadow: 0 0 0 2px var(--color-blue-cobalt);
+  box-shadow: 0 0 0 4px var(--color-blue-cobalt);
 }
 
 .trim-card--recommended {

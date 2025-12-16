@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getVehicleBySlug } from '../../services/vehicleService';
 import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
-import { HeroV1, HeroV2, HeroV3, HeroV5, HeroV10 } from '../../components/Hero/HeroVariants';
+import { HeroV1, HeroV2, HeroV3, HeroV4, HeroV5, HeroV10 } from '../../components/Hero/HeroVariants';
 import QuickSpecs from '../../components/QuickSpecs';
 import CostToOwn from '../../components/CostToOwn';
 import TargetPriceRange from '../../components/TargetPriceRange';
@@ -22,10 +22,10 @@ import AdBanner from '../../components/AdBanner';
 import './VehiclePage.css';
 
 interface VehiclePageVariantProps {
-  variant: 'v1' | 'v2' | 'v3' | 'v5' | 'v10';
+  variant: 'v1' | 'v2' | 'v3' | 'v4' | 'v5' | 'v10';
 }
 
-const VARIANTS = ['v1', 'v2', 'v3', 'v5', 'v10'] as const;
+const VARIANTS = ['v1', 'v2', 'v3', 'v4', 'v5', 'v10'] as const;
 
 // Display labels for each variant (position-based: V1/5, V2/5, etc.)
 const getVariantLabel = (index: number, total: number) => {
@@ -105,6 +105,7 @@ const VehiclePageVariant = ({ variant }: VehiclePageVariantProps) => {
     v1: HeroV1,
     v2: HeroV2,
     v3: HeroV3,
+    v4: HeroV4,
     v5: HeroV5,
     v10: HeroV10,
   }[variant];

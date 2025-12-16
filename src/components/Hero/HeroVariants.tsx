@@ -304,6 +304,51 @@ export const HeroV3 = ({ vehicle }: HeroProps) => {
 };
 
 // =============================================
+// VARIANT 4: Card-style CTA with inventory preview
+// =============================================
+export const HeroV4 = ({ vehicle }: HeroProps) => {
+  return (
+    <HeroContent vehicle={vehicle}>
+      <div className="hero__bottom-row hero-v4">
+        <div className="hero__msrp">
+          <span className="hero__msrp-label">MSRP</span>
+          <span className="hero__msrp-price">{vehicle.priceRange}</span>
+        </div>
+        
+        <div className="hero-v4__ctas">
+          <div className="hero-v4__card hero-v4__card--new">
+            <div className="hero-v4__card-header">
+              <span className="hero-v4__card-title">New Inventory</span>
+              <span className="hero-v4__card-count">42 available</span>
+            </div>
+            <button className="hero-v4__btn hero-v4__btn--new">
+              <span>SHOP NEW</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+          <div className="hero-v4__card hero-v4__card--used">
+            <div className="hero-v4__card-header">
+              <span className="hero-v4__card-title">Used & Certified</span>
+              <span className="hero-v4__card-count">128 available</span>
+            </div>
+            <button className="hero-v4__btn hero-v4__btn--used">
+              <span>SHOP USED</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+          <button className="hero-v4__trade-in">
+            <RefreshCw size={16} />
+            <span>TRADE-IN VALUE</span>
+          </button>
+        </div>
+
+        <Accolades />
+      </div>
+    </HeroContent>
+  );
+};
+
+// =============================================
 // VARIANT 5: Dark theme buttons
 // =============================================
 export const HeroV5 = ({ vehicle }: HeroProps) => {
@@ -325,7 +370,6 @@ export const HeroV5 = ({ vehicle }: HeroProps) => {
             <span className="hero-v5__btn-count">128 near you</span>
           </button>
           <button className="hero-v5__trade-in">
-            <RefreshCw size={16} />
             <span>TRADE-IN VALUE</span>
           </button>
         </div>

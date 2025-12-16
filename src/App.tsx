@@ -87,6 +87,7 @@ function App() {
             <Route path="/:year/:make/:model/v1" element={<VehiclePageVariant variant="v1" />} />
             <Route path="/:year/:make/:model/v2" element={<VehiclePageVariant variant="v2" />} />
             <Route path="/:year/:make/:model/v3" element={<VehiclePageVariant variant="v3" />} />
+            <Route path="/:year/:make/:model/v4" element={<VehiclePageVariant variant="v4" />} />
             <Route path="/:year/:make/:model/v5" element={<VehiclePageVariant variant="v5" />} />
             <Route path="/:year/:make/:model/v10" element={<VehiclePageVariant variant="v10" />} />
             

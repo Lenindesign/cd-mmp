@@ -317,6 +317,126 @@
 }
 
 /* =============================================
+   VARIANT 4: Card-style CTA with inventory preview
+   ============================================= */
+.hero-v4 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-6);
+  flex-wrap: wrap;
+}
+
+.hero-v4__ctas {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-3);
+}
+
+.hero-v4__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius-md);
+  min-width: 160px;
+}
+
+.hero-v4__card--new {
+  background: linear-gradient(135deg, var(--color-blue-cobalt) 0%, #2a7ab8 100%);
+  color: var(--color-white);
+}
+
+.hero-v4__card--used {
+  background: var(--color-white);
+  border: 2px solid var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+}
+
+.hero-v4__card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-v4__card-title {
+  font-family: var(--font-body);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.hero-v4__card--used .hero-v4__card-title {
+  color: var(--color-gray-600);
+}
+
+.hero-v4__card-count {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+}
+
+.hero-v4__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.hero-v4__btn--new {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hero-v4__btn--new:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.hero-v4__btn--used {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border: none;
+}
+
+.hero-v4__btn--used:hover {
+  background: var(--color-blue-cobalt-dark);
+}
+
+.hero-v4__trade-in {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: transparent;
+  color: var(--color-gray-700);
+  border: 1px dashed var(--color-gray-400);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  align-self: center;
+}
+
+.hero-v4__trade-in:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-600);
+  color: var(--color-gray-900);
+}
+
+/* =============================================
    VARIANT 5: Dark theme buttons
    ============================================= */
 .hero-v5__ctas {
@@ -504,6 +624,7 @@
 @media (max-width: 1024px) {
   .hero-v1,
   .hero-v3,
+  .hero-v4,
   .hero-v5,
   .hero-v10 {
     flex-direction: column;
@@ -522,6 +643,7 @@
   .hero-v1__ctas,
   .hero-v2__ctas,
   .hero-v3__ctas,
+  .hero-v4__ctas,
   .hero-v5__ctas,
   .hero-v10__ctas {
     flex-wrap: wrap;
@@ -532,6 +654,7 @@
   .hero-v1__ctas,
   .hero-v2__ctas,
   .hero-v3__ctas,
+  .hero-v4__ctas,
   .hero-v5__ctas,
   .hero-v10__ctas {
     width: 100%;
@@ -540,6 +663,7 @@
   .hero-v1__btn,
   .hero-v2__btn,
   .hero-v3__btn,
+  .hero-v4__card,
   .hero-v5__btn {
     flex: 1;
     min-width: 120px;
@@ -557,6 +681,11 @@
   
   .hero-v10__btn {
     flex: 1;
+    justify-content: center;
+  }
+  
+  .hero-v4__trade-in {
+    width: 100%;
     justify-content: center;
   }
 }

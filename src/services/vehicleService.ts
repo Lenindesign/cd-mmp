@@ -141,6 +141,19 @@ export const getUniqueBodyStyles = (): string[] => {
   return [...new Set(vehicleDatabase.map(v => v.bodyStyle))].sort();
 };
 
+// Get available years for a specific make and model
+export const getAvailableYears = (make: string, model: string): string[] => {
+  const years = vehicleDatabase
+    .filter(v => 
+      v.make.toLowerCase() === make.toLowerCase() &&
+      v.model.toLowerCase() === model.toLowerCase()
+    )
+    .map(v => v.year);
+  
+  // Return unique years sorted in descending order (newest first)
+  return [...new Set(years)].sort((a, b) => parseInt(b) - parseInt(a));
+};
+
 // Get price range stats
 export const getPriceRangeStats = (): { min: number; max: number; average: number } => {
   const prices = vehicleDatabase.map(v => v.priceMin);
@@ -258,30 +271,10 @@ export const getRankingVehiclesFormatted = (
   limit: number = 10,
   maxPrice?: number
 ): RankedVehicle[] => {
-  // Get more vehicles than limit to find current vehicle's rank
-  const allVehicles = getRankingVehicles(bodyStyle, 100, maxPrice);
-  const vehicles = allVehicles.slice(0, limit);
-  
-  let rankedVehicles = vehicles.map((vehicle, index) => 
+  const vehicles = getRankingVehicles(bodyStyle, limit, maxPrice);
+  const rankedVehicles = vehicles.map((vehicle, index) => 
     formatForRanking(vehicle, index + 1, currentVehicleId)
   );
-  
-  // Check if current vehicle is in the top 'limit' vehicles
-  const currentVehicleInTop = rankedVehicles.some(v => v.isCurrentVehicle);
-  
-  // If current vehicle is not in top vehicles, find its actual rank and replace the last one
-  if (!currentVehicleInTop && currentVehicleId) {
-    const currentVehicleIndex = allVehicles.findIndex(v => v.id === currentVehicleId);
-    
-    if (currentVehicleIndex !== -1) {
-      const currentVehicle = allVehicles[currentVehicleIndex];
-      const currentVehicleRanked = formatForRanking(currentVehicle, currentVehicleIndex + 1, currentVehicleId);
-      
-      // Replace the last vehicle with the current vehicle
-      rankedVehicles = rankedVehicles.slice(0, limit - 1);
-      rankedVehicles.push(currentVehicleRanked);
-    }
-  }
   
   // Find the best candidate for each badge (only one of each type)
   const editorsChoiceIdx = vehicles.findIndex(v => v.award === "Editor's Choice" || v.staffRating >= 9.5);
@@ -289,32 +282,21 @@ export const getRankingVehiclesFormatted = (
   const mostPopularIdx = vehicles.findIndex(v => v.reviewCount && v.reviewCount > 150);
   
   // Assign Editor's Choice badge
-  if (editorsChoiceIdx !== -1 && rankedVehicles[editorsChoiceIdx]) {
+  if (editorsChoiceIdx !== -1) {
     rankedVehicles[editorsChoiceIdx].badge = 'editors-choice';
   }
   
   // Assign Best Value to a different vehicle if available
-  if (bestValueIdx !== -1 && bestValueIdx !== editorsChoiceIdx && rankedVehicles[bestValueIdx]) {
+  if (bestValueIdx !== -1 && bestValueIdx !== editorsChoiceIdx) {
     rankedVehicles[bestValueIdx].badge = 'best-value';
   }
   
   // Assign Most Popular to a different vehicle if available
-  if (mostPopularIdx !== -1 && mostPopularIdx !== editorsChoiceIdx && mostPopularIdx !== bestValueIdx && rankedVehicles[mostPopularIdx]) {
+  if (mostPopularIdx !== -1 && mostPopularIdx !== editorsChoiceIdx && mostPopularIdx !== bestValueIdx) {
     rankedVehicles[mostPopularIdx].badge = 'most-popular';
   }
   
   return rankedVehicles;
-};
-
-// Get the current vehicle's rank in its category
-export const getCurrentVehicleRank = (
-  bodyStyle: string,
-  currentVehicleId: string,
-  maxPrice?: number
-): number => {
-  const allVehicles = getRankingVehicles(bodyStyle, 100, maxPrice);
-  const index = allVehicles.findIndex(v => v.id === currentVehicleId);
-  return index !== -1 ? index + 1 : 1;
 };
 
 // Get the Chevrolet Trax (main vehicle for our page)
@@ -324,60 +306,18 @@ export const getChevroletTrax = (): Vehicle | undefined => {
   );
 };
 
-// ============================================
-// Market Speed Component Functions
-// ============================================
-
+// Market Speed vehicle type
 export interface MarketSpeedVehicle {
-  rank: number;
-  make: string;
-  model: string;
+  id: string;
+  name: string;
+  price: number;
   marketDaySupply: number;
   totalForSale: number;
   totalSold: number;
-  avgSellingPrice: number;
-  slug: string;
-  isCurrentVehicle: boolean;
+  isCurrentVehicle?: boolean;
 }
 
-// Generate realistic market data based on vehicle characteristics
-const generateMarketData = (vehicle: Vehicle, rank: number): Omit<MarketSpeedVehicle, 'isCurrentVehicle'> => {
-  // Base values adjusted by staff rating and price
-  const popularityFactor = vehicle.staffRating / 10;
-  const priceFactor = Math.max(0.5, 1 - (vehicle.priceMin / 100000)); // Lower price = more sales
-  
-  // Market day supply: Lower is better (faster selling)
-  // Higher rated, lower priced vehicles sell faster
-  const baseSupply = 30;
-  const marketDaySupply = Math.round(baseSupply - (popularityFactor * 15) - (priceFactor * 5) + (rank * 2));
-  
-  // Total for sale: Based on popularity and brand presence
-  const baseForSale = 4000;
-  const forSaleVariance = Math.random() * 2000;
-  const totalForSale = Math.round((baseForSale + forSaleVariance) * popularityFactor);
-  
-  // Total sold: Related to market day supply and availability
-  const baseSold = 7000;
-  const soldVariance = Math.random() * 3000;
-  const totalSold = Math.round((baseSold + soldVariance) * popularityFactor * priceFactor);
-  
-  // Average selling price: Slightly below MSRP based on market conditions
-  const discountRate = vehicle.priceMin > 50000 ? 0.02 : 0.05; // Luxury vehicles have smaller discounts
-  const avgSellingPrice = Math.round(vehicle.priceMin * (1 - discountRate + (Math.random() * 0.03)));
-  
-  return {
-    rank,
-    make: vehicle.make,
-    model: vehicle.model,
-    marketDaySupply: Math.max(10, Math.min(60, marketDaySupply)),
-    totalForSale: Math.max(500, totalForSale),
-    totalSold: Math.max(1000, totalSold),
-    avgSellingPrice,
-    slug: vehicle.slug,
-  };
-};
-
-// Get vehicles for Market Speed component
+// Get vehicles for MarketSpeed component
 export const getMarketSpeedVehicles = (
   bodyStyle: string,
   currentMake: string,
@@ -386,53 +326,43 @@ export const getMarketSpeedVehicles = (
   limit: number = 5
 ): MarketSpeedVehicle[] => {
   // Get similar vehicles by body style and price range
-  const priceRange = currentMsrp * 0.3; // 30% price range
-  const minPrice = currentMsrp - priceRange;
-  const maxPrice = currentMsrp + priceRange;
-  
-  // Find the current vehicle first
-  const currentVehicle = vehicleDatabase.find(
-    v => v.make === currentMake && v.model === currentModel
-  );
-  
-  // Get competitors in the same segment
-  const competitors = vehicleDatabase
+  const priceRange = 10000;
+  const similarVehicles = vehicleDatabase
     .filter(v => 
       v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase() &&
-      v.priceMin >= minPrice &&
-      v.priceMin <= maxPrice &&
-      !(v.make === currentMake && v.model === currentModel)
+      Math.abs(v.priceMin - currentMsrp) <= priceRange
     )
     .sort((a, b) => b.staffRating - a.staffRating)
-    .slice(0, limit - 1);
-  
-  // Combine current vehicle with competitors
-  const allVehicles: Vehicle[] = currentVehicle 
-    ? [currentVehicle, ...competitors]
-    : competitors;
-  
-  // Sort by staff rating (higher = faster selling = rank 1)
-  const sortedVehicles = allVehicles.sort((a, b) => b.staffRating - a.staffRating);
-  
-  // Generate market data for each vehicle
-  return sortedVehicles.map((vehicle, index) => ({
-    ...generateMarketData(vehicle, index + 1),
-    isCurrentVehicle: vehicle.make === currentMake && vehicle.model === currentModel,
-  }));
+    .slice(0, limit);
+
+  // Generate simulated market data (in production this would come from real data)
+  return similarVehicles.map(v => {
+    const isCurrentVehicle = v.make === currentMake && v.model === currentModel;
+    // Simulate market data based on rating and price
+    const baseSupply = Math.floor(30 + (10 - v.staffRating) * 5);
+    const baseSold = Math.floor(100 + v.staffRating * 20);
+    
+    return {
+      id: v.id,
+      name: `${v.year} ${v.make} ${v.model}`,
+      price: v.priceMin,
+      marketDaySupply: baseSupply + Math.floor(Math.random() * 10),
+      totalForSale: Math.floor(baseSold * 0.8) + Math.floor(Math.random() * 50),
+      totalSold: baseSold + Math.floor(Math.random() * 30),
+      isCurrentVehicle,
+    };
+  });
 };
 
-// Get available years for a make/model
-export const getAvailableYears = (make: string, model: string): string[] => {
-  const years = vehicleDatabase
-    .filter(v => 
-      v.make.toLowerCase() === make.toLowerCase() && 
-      v.model.toLowerCase() === model.toLowerCase()
-    )
-    .map(v => String(v.year))
-    .filter((year, index, self) => self.indexOf(year) === index) // unique years
-    .sort((a, b) => parseInt(b) - parseInt(a)); // newest first
-  
-  return years.length > 0 ? years : [String(new Date().getFullYear())];
+// Get the current vehicle's rank within its category
+export const getCurrentVehicleRank = (
+  bodyStyle: string,
+  vehicleId: string,
+  maxPrice?: number
+): number => {
+  const rankedVehicles = getRankingVehicles(bodyStyle, 100, maxPrice);
+  const index = rankedVehicles.findIndex(v => v.id === vehicleId);
+  return index !== -1 ? index + 1 : 1;
 };
 
 // Default export
@@ -454,12 +384,13 @@ export default {
   getRankingVehicles,
   getUniqueMakes,
   getUniqueBodyStyles,
+  getAvailableYears,
   getPriceRangeStats,
   getBuyingPotentialVehicles,
   getComparisonVehicles,
   getRankingVehiclesFormatted,
   getChevroletTrax,
   getMarketSpeedVehicles,
-  getAvailableYears,
+  getCurrentVehicleRank,
 };
 

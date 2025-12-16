@@ -389,6 +389,22 @@
     flex-direction: column;
     gap: var(--spacing-6);
   }
+
+  .hero__msrp-price-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+
+  .hero__shop-buttons {
+    flex-wrap: wrap;
+    gap: var(--spacing-1);
+  }
+
+  .hero__shop-btn {
+    font-size: 11px;
+    padding: var(--spacing-1) var(--spacing-2);
+  }
 }
 
 /* MSRP Section */
@@ -421,8 +437,14 @@
   line-height: 40px;
 }
 
+.hero__shop-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
 .hero__shop-btn {
-  padding: var(--spacing-3) var(--spacing-6);
+  padding: var(--spacing-1) var(--spacing-3);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
   font-family: var(--font-body);
@@ -432,11 +454,22 @@
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .hero__shop-btn:hover {
   background: var(--color-black);
+}
+
+.hero__shop-btn--outline {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.hero__shop-btn--outline:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
 }
 
 /* Accolades */

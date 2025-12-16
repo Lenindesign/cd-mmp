@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Save, Search, AlertCircle, CheckCircle, ChevronDown } from 'lucide-react';
 import { sedans, suvs, trucks, coupes, convertibles, wagons } from '../../data/vehicles';
 import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
@@ -15,6 +16,15 @@ interface EditedRating {
   originalRating: number;
 }
 
+// Check if we're in production (not localhost)
+const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+
+// API endpoints based on environment
+const API_ENDPOINTS = {
+  getRatings: isProduction ? '/.netlify/functions/get-ratings' : 'http://localhost:3001/api/ratings/get',
+  saveRatings: isProduction ? '/.netlify/functions/save-ratings' : 'http://localhost:3001/api/ratings',
+};
+
 const VehicleRatingEditor = () => {
   const [activeCategory, setActiveCategory] = useState<Category>('sedans');
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,18 +34,40 @@ const VehicleRatingEditor = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
   const [editedRatings, setEditedRatings] = useState<Map<string, EditedRating>>(new Map());
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [savedRatings, setSavedRatings] = useState<Record<string, number>>({});
+
+  // Load saved ratings from Supabase on mount (production only)
+  useEffect(() => {
+    if (isProduction) {
+      (async () => {
+        try {
+          const response = await fetch(API_ENDPOINTS.getRatings);
+          if (response.ok) {
+            const data = await response.json();
+            console.log('[DEBUG] Loaded ratings from Supabase:', {
+              count: Object.keys(data.ratings || {}).length,
+              keys: Object.keys(data.ratings || {}).slice(0, 10),
+            });
+            setSavedRatings(data.ratings || {});
+          } else {
+            console.error('[DEBUG] Failed to load ratings:', response.status, response.statusText);
+          }
+        } catch (error) {
+          console.error('Error loading saved ratings:', error);
+        }
+      })();
+    }
+  }, []);
 
   // Combine all vehicles with their category (already processed with images)
-  const allVehicles = useMemo(() => {
-    return {
-      sedans,
-      suvs,
-      trucks,
-      coupes,
-      convertibles,
-      wagons,
-    };
-  }, []);
+  const allVehicles = useMemo(() => ({
+    sedans,
+    suvs,
+    trucks,
+    coupes,
+    convertibles,
+    wagons,
+  }), []);
 
   // Get unique makes for filters
   const uniqueMakes = useMemo(() => {
@@ -99,10 +131,27 @@ const VehicleRatingEditor = () => {
     return categoryVehicles;
   }, [allVehicles, activeCategory, searchQuery, selectedMake, selectedYear, selectedLifestyle, selectedPriceRange]);
 
-  // Get current rating (edited or original)
+  // Get current rating (edited > saved from Supabase > original from JSON)
   const getCurrentRating = (vehicle: Vehicle): number => {
-    const edited = editedRatings.get(`${activeCategory}-${vehicle.id}`);
-    return edited ? edited.newRating : vehicle.staffRating;
+    const key = `${activeCategory}-${vehicle.id}`;
+    const edited = editedRatings.get(key);
+    if (edited) return edited.newRating;
+    
+    // In production, check if there's a saved rating from Supabase
+    if (isProduction && savedRatings[key] !== undefined) {
+      return savedRatings[key];
+    }
+    
+    return vehicle.staffRating;
+  };
+  
+  // Get the base rating (from Supabase in production, or from JSON locally)
+  const getBaseRating = (vehicle: Vehicle): number => {
+    const key = `${activeCategory}-${vehicle.id}`;
+    if (isProduction && savedRatings[key] !== undefined) {
+      return savedRatings[key];
+    }
+    return vehicle.staffRating;
   };
 
   // Check if rating has been edited
@@ -114,9 +163,10 @@ const VehicleRatingEditor = () => {
   const handleRatingChange = (vehicle: Vehicle, newRating: number) => {
     const key = `${activeCategory}-${vehicle.id}`;
     const rating = Math.max(0, Math.min(10, newRating)); // Clamp between 0-10
+    const baseRating = getBaseRating(vehicle);
 
-    if (rating === vehicle.staffRating) {
-      // If changed back to original, remove from edited map
+    if (rating === baseRating) {
+      // If changed back to base rating, remove from edited map
       const newMap = new Map(editedRatings);
       newMap.delete(key);
       setEditedRatings(newMap);
@@ -125,7 +175,7 @@ const VehicleRatingEditor = () => {
         id: vehicle.id,
         category: activeCategory,
         newRating: rating,
-        originalRating: vehicle.staffRating,
+        originalRating: baseRating,
       }));
     }
   };
@@ -137,8 +187,10 @@ const VehicleRatingEditor = () => {
     try {
       const changes = Array.from(editedRatings.values());
       
-      // Call the real API to save changes to JSON files
-      const response = await fetch('http://localhost:3001/api/ratings', {
+      console.log(`[DEBUG] Saving ${changes.length} changes to ${isProduction ? 'Supabase' : 'local API'}...`);
+      
+      // Call the appropriate API endpoint based on environment
+      const response = await fetch(API_ENDPOINTS.saveRatings, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ changes }),
@@ -191,28 +243,15 @@ const VehicleRatingEditor = () => {
             <p className="editor__subtitle">
               Update staff ratings for all vehicles. Changes are highlighted and can be saved in bulk.
             </p>
+            {isProduction && (
+              <div className="editor__production-warning">
+                <AlertCircle size={18} />
+                <span>
+                  <strong>Production Mode:</strong> Changes are saved to Supabase database and will persist across deployments.
+                </span>
+              </div>
+            )}
           </div>
-
-          {/* Save Actions */}
-          {editedRatings.size > 0 && (
-            <div className="editor__actions">
-              <button
-                className="cta cta--ghost cta--default"
-                onClick={handleDiscardChanges}
-                disabled={saveStatus === 'saving'}
-              >
-                Discard Changes
-              </button>
-              <button
-                className="cta cta--primary cta--default"
-                onClick={handleSaveAll}
-                disabled={saveStatus === 'saving'}
-              >
-                <Save size={16} />
-                Save {editedRatings.size} Change{editedRatings.size !== 1 ? 's' : ''}
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Save Status */}
@@ -363,25 +402,31 @@ const VehicleRatingEditor = () => {
                 </tr>
               ) : (
                 vehicles.map((vehicle) => {
-                  const imageUrl = vehicle.image || '';
+                  const vehicleUrl = `/${vehicle.year}/${vehicle.make}/${vehicle.model}`;
                   return (
                     <tr
                       key={vehicle.id}
                       className={isEdited(vehicle) ? 'editor__row--edited' : ''}
                     >
                       <td className="editor__thumbnail-cell">
-                        <div className="editor__thumbnail">
-                          <OptimizedImage
-                            src={imageUrl}
-                            alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                            aspectRatio="4/3"
-                            fallbackSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f5f5f7' width='400' height='300'/%3E%3Cpath fill='%2386868b' d='M160 140h80l10-30h-100zM130 140v30h140v-30h-20v15h-100v-15z'/%3E%3Ccircle fill='%23a0a0a0' cx='155' cy='170' r='15'/%3E%3Ccircle fill='%23a0a0a0' cx='245' cy='170' r='15'/%3E%3Ctext x='200' y='230' text-anchor='middle' fill='%2386868b' font-family='system-ui' font-size='14' font-weight='500'%3ENo Image%3C/text%3E%3C/svg%3E"
-                          />
-                        </div>
+                        <Link to={vehicleUrl} className="editor__thumbnail-link">
+                          <div className="editor__thumbnail">
+                            <OptimizedImage
+                              src={vehicle.image || ''}
+                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                              aspectRatio="4/3"
+                              fallbackSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f5f5f7' width='400' height='300'/%3E%3Cpath fill='%2386868b' d='M160 140h80l10-30h-100zM130 140v30h140v-30h-20v15h-100v-15z'/%3E%3Ccircle fill='%23a0a0a0' cx='155' cy='170' r='15'/%3E%3Ccircle fill='%23a0a0a0' cx='245' cy='170' r='15'/%3E%3Ctext x='200' y='230' text-anchor='middle' fill='%2386868b' font-family='system-ui' font-size='14' font-weight='500'%3ENo Image%3C/text%3E%3C/svg%3E"
+                            />
+                          </div>
+                        </Link>
                       </td>
                       <td className="editor__year">{vehicle.year}</td>
-                      <td className="editor__make">{vehicle.make}</td>
-                      <td className="editor__model">{vehicle.model}</td>
+                      <td className="editor__make">
+                        <Link to={vehicleUrl} className="editor__vehicle-link">{vehicle.make}</Link>
+                      </td>
+                      <td className="editor__model">
+                        <Link to={vehicleUrl} className="editor__vehicle-link">{vehicle.model}</Link>
+                      </td>
                       <td className="editor__price">{vehicle.priceRange}</td>
                       <td>
                         <span className="editor__rating editor__rating--original">
@@ -431,6 +476,27 @@ const VehicleRatingEditor = () => {
           </p>
         </div>
       </div>
+
+      {/* Sticky Save Actions - Bottom Right */}
+      {editedRatings.size > 0 && (
+        <div className="editor__sticky-actions">
+          <button
+            className="cta cta--ghost cta--default"
+            onClick={handleDiscardChanges}
+            disabled={saveStatus === 'saving'}
+          >
+            Discard Changes
+          </button>
+          <button
+            className="cta cta--primary cta--default"
+            onClick={handleSaveAll}
+            disabled={saveStatus === 'saving'}
+          >
+            <Save size={16} />
+            Save {editedRatings.size} Change{editedRatings.size !== 1 ? 's' : ''}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
