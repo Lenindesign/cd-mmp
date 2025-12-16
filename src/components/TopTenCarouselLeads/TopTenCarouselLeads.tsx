@@ -28,6 +28,8 @@ interface FilteredRankedVehicle {
   slug: string;
   isCurrentVehicle?: boolean;
   badge?: 'best-value' | 'editors-choice';
+  editorsChoice?: boolean;
+  tenBest?: boolean;
 }
 
 
@@ -91,11 +93,9 @@ const TopTenCarouselLeads = ({
     return allVehicles.slice(0, 10).map((vehicle, index) => {
       const rating = getVehicleRating(vehicle);
       
-      // Determine badges
+      // Determine badges - Best Value only (accolades come from database)
       let badge: 'best-value' | 'editors-choice' | undefined;
-      if (index === 0 && rating >= 9) {
-        badge = 'editors-choice';
-      } else if (vehicle.priceMin < 25000 && rating >= 8) {
+      if (vehicle.priceMin < 25000 && rating >= 8 && !vehicle.editorsChoice) {
         badge = 'best-value';
       }
       
@@ -104,11 +104,13 @@ const TopTenCarouselLeads = ({
         rank: index + 1,
         name: `${vehicle.make} ${vehicle.model}`,
         price: `$${vehicle.priceMin.toLocaleString()}`,
-        image: vehicle.image, // Use the image directly from the database
+        image: vehicle.image,
         rating: rating,
         slug: vehicle.slug,
         isCurrentVehicle: vehicle.id === currentVehicleId,
         badge,
+        editorsChoice: vehicle.editorsChoice,
+        tenBest: vehicle.tenBest,
       };
     });
   }, [bodyStyle, make, lifestyle, maxPrice, currentVehicleId, getSupabaseRating]);
@@ -222,6 +224,8 @@ const TopTenCarouselLeads = ({
                 rating={vehicle.rating}
                 rank={vehicle.rank}
                 badge={vehicle.badge}
+                editorsChoice={vehicle.editorsChoice}
+                tenBest={vehicle.tenBest}
                 isCurrentVehicle={vehicle.isCurrentVehicle}
                 showShopButton={true}
                 onShopClick={(e) => handleShopUsed(e, vehicle)}
