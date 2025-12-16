@@ -80,16 +80,11 @@
     font-size: 28px;
   }
   
-  /* Small button on mobile */
-  .vehicle-ranking__card-cta {
-    padding: 6px 12px;
-    min-height: 32px;
-  }
-  
-  .vehicle-ranking__card-cta-label {
-    font-size: 12px;
-    letter-spacing: 0.3px;
-    padding: 0 4px;
+  /* Small button on mobile - use cta--sm sizing */
+  .vehicle-ranking__card-cta.cta {
+    height: 32px;
+    padding: 0 var(--spacing-3);
+    font-size: var(--font-size-xs);
   }
 }
 
@@ -308,32 +303,9 @@
   display: inline;
 }
 
-/* CTA Button */
+/* CTA Button - Uses design system .cta classes */
 .vehicle-ranking__card-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 10px 20px;
   margin-top: var(--spacing-3);
-  background: transparent;
-  border: 2px solid var(--color-blue-cobalt);
-  border-radius: 8px;
-  transition: all var(--transition-fast);
-  text-decoration: none;
-  cursor: pointer;
-  min-height: 40px;
-}
-
-.vehicle-ranking__card-cta-label {
-  font-family: var(--font-heading);
-  font-size: 14px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-blue-cobalt);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  padding: 0 8px;
 }
 
 /* Show full name by default */
@@ -374,34 +346,14 @@
   }
 }
 
-/* Hide the divider and count for this design */
-.vehicle-ranking__card-cta-divider,
-.vehicle-ranking__card-cta-count {
-  display: none;
-}
-
-/* Outlined button hover */
-.vehicle-ranking__card:hover .vehicle-ranking__card-cta {
+/* Hover state - override to use black */
+.vehicle-ranking__card:hover .vehicle-ranking__card-cta.cta--outline {
   background: var(--color-black);
   border-color: var(--color-black);
-}
-
-.vehicle-ranking__card:hover .vehicle-ranking__card-cta-label {
   color: var(--color-white);
 }
 
-/* Solid button for current vehicle */
-.vehicle-ranking__card--current .vehicle-ranking__card-cta {
-  background: var(--color-blue-cobalt);
-  border: 2px solid var(--color-blue-cobalt);
-}
-
-.vehicle-ranking__card--current .vehicle-ranking__card-cta-label {
-  color: var(--color-white);
-}
-
-.vehicle-ranking__card--current:hover .vehicle-ranking__card-cta {
+.vehicle-ranking__card:hover .vehicle-ranking__card-cta.cta--primary {
   background: var(--color-black);
-  border-color: var(--color-black);
 }
 

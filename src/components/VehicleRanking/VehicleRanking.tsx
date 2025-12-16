@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, MapPin } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
 import './VehicleRanking.css';
 
@@ -139,17 +139,9 @@ const VehicleRanking = ({
                 <p className="vehicle-ranking__card-price">
                   <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
                 </p>
-                <div className="vehicle-ranking__card-cta">
-                  <span className="vehicle-ranking__card-cta-label">
-                    <span className="vehicle-ranking__card-cta-full">SHOP {vehicle.name.toUpperCase()}</span>
-                    <span className="vehicle-ranking__card-cta-short">SHOP {vehicle.name.split(' ').slice(1).join(' ').toUpperCase()}</span>
-                  </span>
-                  <span className="vehicle-ranking__card-cta-divider"></span>
-                  <span className="vehicle-ranking__card-cta-count">
-                    <MapPin size={12} />
-                    {/* Generate consistent random number based on vehicle id */}
-                    {Math.floor(((parseInt(vehicle.id, 36) % 150) + 50))} near you
-                  </span>
+                <div className={`cta cta--md cta--full vehicle-ranking__card-cta ${vehicle.isCurrentVehicle ? 'cta--primary' : 'cta--outline'}`}>
+                  <span className="vehicle-ranking__card-cta-full">SHOP {vehicle.name.toUpperCase()}</span>
+                  <span className="vehicle-ranking__card-cta-short">SHOP {vehicle.name.split(' ').slice(1).join(' ').toUpperCase()}</span>
                 </div>
               </div>
             </Link>
