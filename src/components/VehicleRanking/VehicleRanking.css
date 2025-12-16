@@ -51,11 +51,18 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-6);
+  align-items: stretch;
 }
 
 @media (max-width: 900px) {
   .vehicle-ranking__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .vehicle-ranking__grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -98,6 +105,9 @@
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   background: var(--color-white);
   box-shadow: 2px 4px 13px 2px rgba(0, 0, 0, 0.12);
+  /* Ensure all cards in a row have equal width */
+  width: 100%;
+  min-width: 0;
 }
 
 .vehicle-ranking__card:hover {
