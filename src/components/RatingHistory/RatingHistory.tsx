@@ -44,18 +44,10 @@ const RatingHistory = ({ isOpen, onClose }: RatingHistoryProps) => {
         url += `&month=${selectedMonth + 1}`;
       }
       
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RatingHistory.tsx:fetchHistory',message:'fetching history',data:{url},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-      // #endregion
       const response = await fetch(url);
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RatingHistory.tsx:fetchHistory',message:'response received',data:{status:response.status,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-      // #endregion
       if (response.ok) {
         const data = await response.json();
-        // #region agent log
-        fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RatingHistory.tsx:fetchHistory',message:'data parsed',data:{historyCount:data.history?.length||0,groupedMonths:Object.keys(data.groupedByMonth||{})},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-        // #endregion
+        console.log('[DEBUG] Rating history loaded:', data.history?.length || 0, 'entries');
         setHistory(data.history || []);
         setGroupedHistory(data.groupedByMonth || {});
         
@@ -66,9 +58,6 @@ const RatingHistory = ({ isOpen, onClose }: RatingHistoryProps) => {
         }
       }
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RatingHistory.tsx:fetchHistory',message:'error fetching',data:{error:String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-      // #endregion
       console.error('Error fetching history:', error);
     } finally {
       setIsLoading(false);
