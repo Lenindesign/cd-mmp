@@ -6,12 +6,14 @@ interface ExitIntentModalProps {
   vehicleName?: string;
   isOpen?: boolean;
   onClose?: () => void;
+  animationStyle?: 'default' | 'elegant';
 }
 
 const ExitIntentModal = ({ 
   vehicleName = '2025 Kia Telluride EX',
   isOpen = false,
-  onClose
+  onClose,
+  animationStyle = 'default'
 }: ExitIntentModalProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
@@ -73,8 +75,8 @@ const ExitIntentModal = ({
   if (!isVisible) return null;
 
   return (
-    <div className={`exit-modal__overlay ${isClosing ? 'exit-modal__overlay--closing' : ''}`} onClick={handleClose}>
-      <div className={`exit-modal ${isClosing ? 'exit-modal--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+    <div className={`exit-modal__overlay ${isClosing ? 'exit-modal__overlay--closing' : ''} ${animationStyle === 'elegant' ? 'exit-modal__overlay--elegant' : ''}`} onClick={handleClose}>
+      <div className={`exit-modal ${isClosing ? 'exit-modal--closing' : ''} ${animationStyle === 'elegant' ? 'exit-modal--elegant' : ''}`} onClick={(e) => e.stopPropagation()}>
         <button className="exit-modal__close" onClick={handleClose} aria-label="Close modal">
           <X size={20} />
         </button>

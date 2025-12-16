@@ -24,7 +24,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Wrapper component for interactive stories
-const ModalWrapper = ({ vehicleName }: { vehicleName?: string }) => {
+const ModalWrapper = ({ vehicleName, animationStyle }: { vehicleName?: string; animationStyle?: 'default' | 'elegant' }) => {
   const [isOpen, setIsOpen] = useState(false);
   
   return (
@@ -50,6 +50,7 @@ const ModalWrapper = ({ vehicleName }: { vehicleName?: string }) => {
         isOpen={isOpen} 
         onClose={() => setIsOpen(false)}
         vehicleName={vehicleName}
+        animationStyle={animationStyle}
       />
     </div>
   );
@@ -90,6 +91,22 @@ export const AlwaysOpen: Story = {
   parameters: {
     layout: 'fullscreen',
     docs: {
+      story: {
+        inline: false,
+        iframeHeight: 700,
+      },
+    },
+  },
+};
+
+export const ElegantAnimation: Story = {
+  render: () => <ModalWrapper vehicleName="2025 Chevrolet Trax 1RS" animationStyle="elegant" />,
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: 'Elegant animation variant with refined, staggered content reveals and subtle motion design.',
+      },
       story: {
         inline: false,
         iframeHeight: 700,

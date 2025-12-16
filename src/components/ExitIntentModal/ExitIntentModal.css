@@ -229,6 +229,177 @@
   50% { transform: translateY(-10px); }
 }
 
+/* ========================================
+   ELEGANT ANIMATION STYLE
+   ======================================== */
+
+/* Elegant Overlay - Softer backdrop with gradient */
+.exit-modal__overlay--elegant {
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.85) 0%, rgba(0, 0, 0, 0.9) 100%);
+  animation: elegantOverlayIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes elegantOverlayIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* Elegant Modal - Refined entrance */
+.exit-modal--elegant {
+  animation: elegantModalIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes elegantModalIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(40px);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Elegant Visual Panel - Staggered content reveal */
+.exit-modal--elegant .exit-modal__visual-title {
+  animation: elegantFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.exit-modal--elegant .exit-modal__visual-subtitle {
+  animation: elegantFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.exit-modal--elegant .exit-modal__stats {
+  animation: elegantFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+@keyframes elegantFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Elegant Cards - Graceful cascade entrance */
+.exit-modal--elegant .exit-modal__card {
+  animation: elegantCardIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.exit-modal--elegant .exit-modal__card--1 {
+  animation-delay: 0.3s;
+}
+
+.exit-modal--elegant .exit-modal__card--2 {
+  animation-delay: 0.45s;
+}
+
+.exit-modal--elegant .exit-modal__card--3 {
+  animation-delay: 0.6s;
+}
+
+@keyframes elegantCardIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px) translateY(20px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+    animation: cardFloat 5s ease-in-out infinite;
+  }
+}
+
+/* Elegant Form Panel - Smooth content reveal */
+.exit-modal--elegant .exit-modal__title {
+  animation: elegantSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.exit-modal--elegant .exit-modal__subtitle {
+  animation: elegantSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.exit-modal--elegant .exit-modal__form {
+  animation: elegantSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.exit-modal--elegant .exit-modal__divider {
+  animation: elegantSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+.exit-modal--elegant .exit-modal__social {
+  animation: elegantSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
+
+.exit-modal--elegant .exit-modal__terms {
+  animation: elegantSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+.exit-modal--elegant .exit-modal__skip {
+  animation: elegantSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both;
+}
+
+@keyframes elegantSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Elegant Close Button - Subtle fade in */
+.exit-modal--elegant .exit-modal__close {
+  animation: elegantFadeIn 0.4s ease 0.5s both;
+}
+
+@keyframes elegantFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Elegant Input Focus - Refined interaction */
+.exit-modal--elegant .exit-modal__input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 97, 175, 0.08);
+  border-color: var(--color-blue-cobalt);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Elegant Submit Button - Polished hover */
+.exit-modal--elegant .exit-modal__submit {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exit-modal--elegant .exit-modal__submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 97, 175, 0.25);
+}
+
+/* Elegant Social Buttons - Refined hover */
+.exit-modal--elegant .exit-modal__social-btn {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exit-modal--elegant .exit-modal__social-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
 /* Stats */
 .exit-modal__stats {
   display: flex;
