@@ -66,7 +66,7 @@
 .hero-v1__btn-label {
   font-family: var(--font-heading);
   font-size: 14px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
 }
 
@@ -191,7 +191,7 @@
 .hero-v2__btn-label {
   font-family: var(--font-heading);
   font-size: 14px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
 }
 
 .hero-v2__btn-sublabel {
@@ -212,7 +212,7 @@
   border-radius: var(--border-radius-md);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
@@ -246,7 +246,7 @@
   border-radius: var(--border-radius-md);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -288,7 +288,7 @@
   border-radius: var(--border-radius-full);
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
 }
 
 .hero-v3__badge--used {
@@ -306,7 +306,7 @@
   border: none;
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-extrabold);
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
@@ -374,7 +374,7 @@
 .hero-v4__card-count {
   font-family: var(--font-heading);
   font-size: 16px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
 }
 
 .hero-v4__btn {
@@ -386,7 +386,7 @@
   border-radius: var(--border-radius-sm);
   font-family: var(--font-heading);
   font-size: 12px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -487,7 +487,7 @@
 .hero-v5__btn-label {
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
 }
 
@@ -508,7 +508,7 @@
   border-radius: var(--border-radius-md);
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-extrabold);
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
@@ -568,7 +568,7 @@
 .hero-v10__btn-label {
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
 }
 
@@ -588,7 +588,7 @@
   border-radius: var(--border-radius-full);
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
 }
 
 .hero-v10__btn--used .hero-v10__btn-count {

@@ -201,7 +201,7 @@
   color: var(--color-white);
   font-family: var(--font-heading);
   font-size: 10px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-radius: var(--border-radius-sm);
@@ -222,7 +222,7 @@
 .trim-card__name {
   font-family: var(--font-heading);
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   text-transform: uppercase;
   margin-bottom: var(--spacing-2);
@@ -245,7 +245,7 @@
 .trim-card__price-value {
   font-family: var(--font-heading);
   font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
 }
 
@@ -292,7 +292,7 @@
   padding: var(--spacing-3) var(--spacing-4);
   font-family: var(--font-heading);
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-radius: var(--border-radius-sm);

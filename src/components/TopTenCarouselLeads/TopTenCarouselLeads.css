@@ -61,7 +61,7 @@
   gap: var(--spacing-2);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
   text-decoration: none;
   text-transform: uppercase;
@@ -198,7 +198,7 @@
 .top-ten__view-all-title {
   font-family: var(--font-heading);
   font-size: 20px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-white);
   margin: 0 0 var(--spacing-2) 0;
 }
@@ -220,7 +220,7 @@
   color: var(--color-blue-cobalt);
   font-family: var(--font-heading);
   font-size: 13px;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-decoration: none;
