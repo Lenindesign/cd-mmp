@@ -9,7 +9,7 @@
   justify-content: center;
   gap: var(--spacing-2);
   font-family: var(--font-body);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border: none;
