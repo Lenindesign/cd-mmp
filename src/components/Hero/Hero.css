@@ -377,7 +377,7 @@
 /* Bottom Row */
 .hero__bottom-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding-top: var(--spacing-4);
   border-top: 1px solid var(--color-gray-200);
@@ -402,7 +402,7 @@
     gap: var(--spacing-2);
     align-items: center;
     justify-content: center;
-    padding-left: 0;
+    margin-left: 0;
   }
 
   .hero__shop-btn {
@@ -456,11 +456,10 @@
 
 .hero__shop-buttons {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   gap: var(--spacing-2);
-  flex: 1;
-  padding-left: 12px;
+  margin-left: 12px;
 }
 
 .hero__shop-btn {
