@@ -27,8 +27,6 @@ interface RatingChange {
 }
 
 export const handler: Handler = async (event) => {
-  console.log('[SAVE-RATINGS] Function invoked, method:', event.httpMethod);
-  
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -71,9 +69,7 @@ export const handler: Handler = async (event) => {
       };
     }
     
-    console.log('[SAVE-RATINGS] Parsing body:', event.body?.substring(0, 200));
     const { changes } = JSON.parse(event.body || '{}') as { changes: RatingChange[] };
-    console.log('[SAVE-RATINGS] Parsed changes:', changes?.length || 0);
 
     if (!changes || !Array.isArray(changes)) {
       return {
@@ -92,24 +88,20 @@ export const handler: Handler = async (event) => {
 
     for (const change of changes) {
       const { id, category, newRating, originalRating } = change;
-      console.log(`[SAVE] Processing change: id=${id}, category=${category}, newRating=${newRating}, originalRating=${originalRating}`);
 
       try {
         // First, try to select existing record
-        const { data: existing, error: selectError } = await client
+        const { data: existing } = await client
           .from('vehicle_ratings')
-          .select('id, staff_rating')
+          .select('id')
           .eq('id', id)
           .eq('category', category)
           .single();
-
-        console.log(`[SAVE] Select result for ${id}: existing=${JSON.stringify(existing)}, error=${selectError?.message || 'none'}`);
 
         let error;
         
         if (existing) {
           // Update existing record
-          console.log(`[SAVE] Updating existing record for ${id} from ${existing.staff_rating} to ${newRating}`);
           const result = await client
             .from('vehicle_ratings')
             .update({
@@ -119,10 +111,8 @@ export const handler: Handler = async (event) => {
             .eq('id', id)
             .eq('category', category);
           error = result.error;
-          console.log(`[SAVE] Update result for ${id}: error=${result.error?.message || 'none'}`);
         } else {
           // Insert new record
-          console.log(`[SAVE] Inserting new record for ${id} with rating ${newRating}`);
           const result = await client
             .from('vehicle_ratings')
             .insert({
@@ -132,7 +122,6 @@ export const handler: Handler = async (event) => {
               updated_at: new Date().toISOString(),
             });
           error = result.error;
-          console.log(`[SAVE] Insert result for ${id}: error=${result.error?.message || 'none'}`);
         }
 
         if (error) {
@@ -144,8 +133,7 @@ export const handler: Handler = async (event) => {
           });
         } else {
           // Log the change to history table
-          console.log(`[DEBUG H1] Attempting to insert history for ${id}, category: ${category}, old: ${originalRating}, new: ${newRating}`);
-          const historyResult = await client
+          await client
             .from('rating_history')
             .insert({
               vehicle_id: id,
@@ -154,12 +142,6 @@ export const handler: Handler = async (event) => {
               new_rating: newRating,
               changed_at: new Date().toISOString(),
             });
-          
-          if (historyResult.error) {
-            console.error(`[DEBUG H2] History insert FAILED for ${id}:`, historyResult.error.message, historyResult.error.details, historyResult.error.hint);
-          } else {
-            console.log(`[DEBUG H3] History insert SUCCESS for ${id}`);
-          }
           
           results.success.push({
             id,

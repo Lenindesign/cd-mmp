@@ -247,19 +247,15 @@ const VehicleRatingEditor = () => {
     const rating = Math.max(0, Math.min(10, newRating)); // Clamp between 0-10
     const baseRating = getBaseRating(vehicle);
 
-    console.log(`[DEBUG] handleRatingChange: ${vehicle.make} ${vehicle.model}, key=${key}, newRating=${rating}, baseRating=${baseRating}, savedRatings[key]=${savedRatings[key]}, vehicle.staffRating=${vehicle.staffRating}, areEqual=${rating === baseRating}, diff=${Math.abs(rating - baseRating)}`);
-
     // Use a small epsilon for floating point comparison
     const isEffectivelyEqual = Math.abs(rating - baseRating) < 0.001;
     
     if (isEffectivelyEqual) {
       // If changed back to base rating, remove from edited map
-      console.log(`[DEBUG] Rating equals base, removing from edited map`);
       const newMap = new Map(editedRatings);
       newMap.delete(key);
       setEditedRatings(newMap);
     } else {
-      console.log(`[DEBUG] Rating differs from base, adding to edited map`);
       setEditedRatings(new Map(editedRatings).set(key, {
         id: vehicle.id,
         category: vehicleCategory,

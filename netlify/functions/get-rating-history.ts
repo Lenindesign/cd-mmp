@@ -66,10 +66,7 @@ export const handler: Handler = async (event) => {
     // Limit to last 500 entries
     query = query.limit(500);
     
-    console.log(`[DEBUG H4] Fetching rating history with params: year=${year}, month=${month}, vehicle_id=${vehicle_id}`);
     const { data, error } = await query;
-
-    console.log(`[DEBUG H4] Query result: ${data?.length || 0} records, error: ${error?.message || 'none'}`);
 
     if (error) {
       console.error('Supabase error:', error);

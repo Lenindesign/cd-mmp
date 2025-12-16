@@ -47,7 +47,6 @@ const RatingHistory = ({ isOpen, onClose }: RatingHistoryProps) => {
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
-        console.log('[DEBUG] Rating history loaded:', data.history?.length || 0, 'entries');
         setHistory(data.history || []);
         setGroupedHistory(data.groupedByMonth || {});
         
