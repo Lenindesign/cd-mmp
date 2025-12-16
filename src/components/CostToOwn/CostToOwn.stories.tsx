@@ -11,74 +11,74 @@ const meta: Meta<typeof CostToOwn> = {
         component: `
 # 5-Year Cost to Own
 
-## 📋 Product Overview
+## Overview
 
-Shows the **true cost of ownership** beyond the sticker price. Helps users understand long-term financial commitment.
+Shows the true cost of ownership beyond the sticker price. Helps users understand long-term financial commitment.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How It Achieves It |
 |------|-------------------|
-| **Financial Clarity** | Shows total cost, not just MSRP |
-| **EV Comparison** | Highlights fuel savings for EVs |
-| **Trust Building** | Transparent, comprehensive data |
-| **Decision Support** | Helps users budget accurately |
+| Financial Clarity | Shows total cost, not just MSRP |
+| EV Comparison | Highlights fuel savings for EVs |
+| Trust Building | Transparent, comprehensive data |
+| Decision Support | Helps users budget accurately |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
-- **Section Engagement**: Time spent, interactions
-- **Trim Comparison Usage**: Users comparing trims
-- **EV vs Gas Comparison**: Cross-shopping behavior
-- **Correlation with Leads**: Does viewing predict conversion?
+- **Section Engagement** — Time spent, interactions
+- **Trim Comparison Usage** — Users comparing trims
+- **EV vs Gas Comparison** — Cross-shopping behavior
+- **Correlation with Leads** — Does viewing predict conversion?
 
 ---
 
-## 💰 Cost Categories
+## Cost Categories
 
 | Category | Description | Typical % of Total |
 |----------|-------------|-------------------|
-| **Depreciation** | Value loss over 5 years | 40-50% |
-| **Fuel/Energy** | Gas or electricity costs | 15-25% |
-| **Insurance** | Annual premium estimates | 10-15% |
-| **Maintenance** | Scheduled service | 5-10% |
-| **Repairs** | Expected fixes | 3-8% |
-| **Financing** | Interest if financed | 5-10% |
-| **Taxes & Fees** | Registration, sales tax | 3-5% |
+| Depreciation | Value loss over 5 years | 40-50% |
+| Fuel/Energy | Gas or electricity costs | 15-25% |
+| Insurance | Annual premium estimates | 10-15% |
+| Maintenance | Scheduled service | 5-10% |
+| Repairs | Expected fixes | 3-8% |
+| Financing | Interest if financed | 5-10% |
+| Taxes and Fees | Registration, sales tax | 3-5% |
 
 ---
 
-## ⚡ Fuel Type Impact
+## Fuel Type Impact
 
 | Fuel Type | Key Difference |
 |-----------|---------------|
-| **Gas** | Higher fuel costs, typical maintenance |
-| **Electric** | Lower fuel, less maintenance, higher depreciation |
-| **Hybrid** | Balanced fuel costs, moderate maintenance |
-| **Plug-in Hybrid** | Variable based on charging habits |
+| Gas | Higher fuel costs, typical maintenance |
+| Electric | Lower fuel, less maintenance, higher depreciation |
+| Hybrid | Balanced fuel costs, moderate maintenance |
+| Plug-in Hybrid | Variable based on charging habits |
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **Data Sources**:
-   - Depreciation from auction/resale data
-   - Fuel costs from EPA + gas prices
-   - Insurance from industry averages
-   - Maintenance from OEM schedules
+**Data Sources**
+- Depreciation from auction/resale data
+- Fuel costs from EPA + gas prices
+- Insurance from industry averages
+- Maintenance from OEM schedules
 
-2. **User Value**:
-   - "How much will this really cost?" is key question
-   - EV buyers especially value this
-   - Helps compare across fuel types
+**User Value**
+- "How much will this really cost?" is key question
+- EV buyers especially value this
+- Helps compare across fuel types
 
-3. **Personalization Opportunities**:
-   - Local fuel prices
-   - User's driving habits
-   - Financing terms customization
+**Personalization Opportunities**
+- Local fuel prices
+- User's driving habits
+- Financing terms customization
         `,
       },
     },

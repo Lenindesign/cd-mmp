@@ -12,59 +12,59 @@ const meta: Meta<typeof Hero> = {
         component: `
 # Hero Section
 
-## 📋 Product Overview
+## Overview
 
-The Hero is the **primary above-the-fold component** on every Vehicle Detail Page (VDP). It's the first thing users see and sets the tone for their research journey.
+The Hero is the primary above-the-fold component on every Vehicle Detail Page (VDP). It's the first thing users see and sets the tone for their research journey.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How Hero Achieves It |
 |------|---------------------|
-| **First Impression** | High-quality imagery and clear vehicle identity |
-| **Trust Building** | C/D ratings and accolades establish credibility |
-| **Lead Generation** | Shop New/Used CTAs drive dealer connections |
-| **Year Navigation** | Dropdown helps users find the right model year |
+| First Impression | High-quality imagery and clear vehicle identity |
+| Trust Building | C/D ratings and accolades establish credibility |
+| Lead Generation | Shop New/Used CTAs drive dealer connections |
+| Year Navigation | Dropdown helps users find the right model year |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
-- **CTA Click Rate**: Shop New vs Shop Used vs Trade-In
-- **Gallery Engagement**: Slides viewed per session
-- **Year Selector Usage**: How often users switch years
-- **Time on Component**: Engagement before scrolling
+- **CTA Click Rate** — Shop New vs Shop Used vs Trade-In
+- **Gallery Engagement** — Slides viewed per session
+- **Year Selector Usage** — How often users switch years
+- **Time on Component** — Engagement before scrolling
 
 ---
 
-## 🧩 Component Elements
+## Component Elements
 
 | Element | Purpose | Business Impact |
 |---------|---------|-----------------|
-| **Vehicle Title** | Year/Make/Model identification | SEO, user orientation |
-| **Rating Badge** | C/D expert score (1-10) | Trust, credibility |
-| **Image Gallery** | Visual showcase with thumbnails | Engagement, time on page |
-| **MSRP Range** | Price transparency | Purchase intent qualification |
-| **Shop CTAs** | Lead generation buttons | Dealer revenue |
-| **Accolades** | Editor's Choice / 10Best badges | Trust signals, differentiation |
-| **Favorites** | Save to account | User retention, personalization |
+| Vehicle Title | Year/Make/Model identification | SEO, user orientation |
+| Rating Badge | C/D expert score (1-10) | Trust, credibility |
+| Image Gallery | Visual showcase with thumbnails | Engagement, time on page |
+| MSRP Range | Price transparency | Purchase intent qualification |
+| Shop CTAs | Lead generation buttons | Dealer revenue |
+| Accolades | Editor's Choice / 10Best badges | Trust signals, differentiation |
+| Favorites | Save to account | User retention, personalization |
 
 ---
 
-## 🏆 Accolades System
+## Accolades System
 
 Accolades appear when vehicles earn editorial recognition:
 
-- **Editor's Choice**: Vehicles that excel in their segment
-- **10Best**: Annual top picks across categories
-- **EV of the Year**: Best electric vehicle (when applicable)
+- **Editor's Choice** — Vehicles that excel in their segment
+- **10Best** — Annual top picks across categories
+- **EV of the Year** — Best electric vehicle (when applicable)
 
-*These badges increase user trust and can improve conversion rates.*
+These badges increase user trust and can improve conversion rates.
 
 ---
 
-## 📱 Responsive Behavior
+## Responsive Behavior
 
 | Breakpoint | Layout Changes |
 |------------|----------------|
@@ -74,20 +74,20 @@ Accolades appear when vehicles earn editorial recognition:
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **A/B Testing Opportunities**:
-   - CTA button text variations
-   - Animated vs static buttons
-   - Accolade badge placement
+**A/B Testing Opportunities**
+- CTA button text variations
+- Animated vs static buttons
+- Accolade badge placement
 
-2. **Data Requirements**:
-   - Vehicle database must include rating, pricing, images
-   - Accolades require editorial flags in CMS
+**Data Requirements**
+- Vehicle database must include rating, pricing, images
+- Accolades require editorial flags in CMS
 
-3. **Dependencies**:
-   - Image CDN for gallery photos
-   - Vehicle service for year availability
+**Dependencies**
+- Image CDN for gallery photos
+- Vehicle service for year availability
         `,
       },
     },

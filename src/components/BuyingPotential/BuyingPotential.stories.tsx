@@ -12,44 +12,44 @@ const meta: Meta<typeof BuyingPotential> = {
         component: `
 # Buying Potential Score
 
-## 📋 Product Overview
+## Overview
 
-A **personalized match score** showing how well a vehicle fits the user's stated preferences. Requires user profile/onboarding data.
+A personalized match score showing how well a vehicle fits the user's stated preferences. Requires user profile/onboarding data.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How It Achieves It |
 |------|-------------------|
-| **Personalization** | Tailored recommendations |
-| **User Engagement** | Encourages profile completion |
-| **Decision Confidence** | "This is right for you" validation |
-| **Conversion Lift** | Higher intent from matched users |
+| Personalization | Tailored recommendations |
+| User Engagement | Encourages profile completion |
+| Decision Confidence | "This is right for you" validation |
+| Conversion Lift | Higher intent from matched users |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
-- **Score Correlation**: High scores → higher conversion?
-- **Profile Completion**: Users filling out preferences
-- **Engagement Lift**: Personalized vs non-personalized
-- **Return Visits**: Do matched users come back?
+- **Score Correlation** — High scores to higher conversion?
+- **Profile Completion** — Users filling out preferences
+- **Engagement Lift** — Personalized vs non-personalized
+- **Return Visits** — Do matched users come back?
 
 ---
 
-## 🧮 Score Calculation
+## Score Calculation
 
 | Factor | Weight | Description |
 |--------|--------|-------------|
-| **Budget Match** | 30% | Price vs stated budget |
-| **Feature Match** | 25% | Desired features present |
-| **Lifestyle Fit** | 25% | Family, commuter, adventure, etc. |
-| **Segment Rating** | 20% | C/D score in category |
+| Budget Match | 30% | Price vs stated budget |
+| Feature Match | 25% | Desired features present |
+| Lifestyle Fit | 25% | Family, commuter, adventure, etc. |
+| Segment Rating | 20% | C/D score in category |
 
 ---
 
-## 📈 Score Ranges
+## Score Ranges
 
 | Score | Label | Meaning |
 |-------|-------|---------|
@@ -60,27 +60,27 @@ A **personalized match score** showing how well a vehicle fits the user's stated
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **Data Requirements**:
-   - User must complete onboarding
-   - Budget, lifestyle, feature preferences
-   - Falls back to generic if no profile
+**Data Requirements**
+- User must complete onboarding
+- Budget, lifestyle, feature preferences
+- Falls back to generic if no profile
 
-2. **Personalization Strategy**:
-   - Encourages account creation
-   - Improves with more user data
-   - Can drive email personalization
+**Personalization Strategy**
+- Encourages account creation
+- Improves with more user data
+- Can drive email personalization
 
-3. **A/B Testing Ideas**:
-   - Score visibility impact
-   - Threshold for "Good Match" label
-   - CTA variations based on score
+**A/B Testing Ideas**
+- Score visibility impact
+- Threshold for "Good Match" label
+- CTA variations based on score
 
-4. **Privacy Considerations**:
-   - Transparent about data usage
-   - User control over preferences
-   - GDPR/CCPA compliance
+**Privacy Considerations**
+- Transparent about data usage
+- User control over preferences
+- GDPR/CCPA compliance
         `,
       },
     },

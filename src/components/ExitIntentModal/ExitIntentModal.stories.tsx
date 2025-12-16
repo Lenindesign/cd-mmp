@@ -13,92 +13,92 @@ const meta: Meta<typeof ExitIntentModal> = {
         component: `
 # Exit Intent Modal
 
-## 📋 Product Overview
+## Overview
 
-A **conversion recovery tool** that captures users who are about to leave the site. Displays when the cursor moves toward the browser's close/back buttons.
+A conversion recovery tool that captures users who are about to leave the site. Displays when the cursor moves toward the browser's close/back buttons.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How It Achieves It |
 |------|-------------------|
-| **Lead Capture** | Email collection before user leaves |
-| **Account Creation** | Frictionless signup via social login |
-| **Research Retention** | "Save your research" value proposition |
-| **Re-engagement** | Email list for future marketing |
+| Lead Capture | Email collection before user leaves |
+| Account Creation | Frictionless signup via social login |
+| Research Retention | "Save your research" value proposition |
+| Re-engagement | Email list for future marketing |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
 | Metric | Target | Description |
 |--------|--------|-------------|
-| **Display Rate** | 15-25% | % of sessions that see modal |
-| **Conversion Rate** | 3-8% | % of modal views → email capture |
-| **Social Signup Rate** | 1-3% | % using Apple/Google |
-| **Close Rate** | <70% | Users closing without action |
+| Display Rate | 15-25% | Percentage of sessions that see modal |
+| Conversion Rate | 3-8% | Percentage of modal views to email capture |
+| Social Signup Rate | 1-3% | Percentage using Apple/Google |
+| Close Rate | <70% | Users closing without action |
 
 ---
 
-## ⚙️ Trigger Behavior
+## Trigger Behavior
 
 | Condition | Behavior |
 |-----------|----------|
-| **Delay** | 3 seconds after page load |
-| **Trigger** | Cursor moves above viewport (exit intent) |
-| **Frequency** | Once per session (sessionStorage) |
-| **Mobile** | Not triggered (no cursor tracking) |
+| Delay | 3 seconds after page load |
+| Trigger | Cursor moves above viewport (exit intent) |
+| Frequency | Once per session (sessionStorage) |
+| Mobile | Not triggered (no cursor tracking) |
 
 ---
 
-## 🎨 Animation Styles
+## Animation Styles
 
 | Style | Use Case | Effect |
 |-------|----------|--------|
-| **default** | Standard experience | Simple fade + scale |
-| **elegant** | Premium feel | Staggered reveals, vehicle watermark |
+| default | Standard experience | Simple fade + scale |
+| elegant | Premium feel | Staggered reveals, vehicle watermark |
 
 ---
 
-## 📱 Modal Content
+## Modal Content
 
 | Section | Purpose |
 |---------|---------|
-| **Left Panel** | Value proposition, floating cards, stats |
-| **Right Panel** | Email form, social login, terms |
-| **Floating Cards** | Show saved vehicle, price alerts, articles |
-| **Stats** | Social proof (2.3M+ members, etc.) |
+| Left Panel | Value proposition, floating cards, stats |
+| Right Panel | Email form, social login, terms |
+| Floating Cards | Show saved vehicle, price alerts, articles |
+| Stats | Social proof (2.3M+ members, etc.) |
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **A/B Testing Opportunities**:
-   - Headline variations ("Don't lose your research" vs "Save your progress")
-   - Value prop messaging
-   - Animation style impact on conversion
-   - Social login button order
+**A/B Testing Opportunities**
+- Headline variations ("Don't lose your research" vs "Save your progress")
+- Value prop messaging
+- Animation style impact on conversion
+- Social login button order
 
-2. **Personalization**:
-   - Show the actual vehicle user was viewing
-   - Customize based on user journey stage
-   - Different messaging for new vs returning users
+**Personalization**
+- Show the actual vehicle user was viewing
+- Customize based on user journey stage
+- Different messaging for new vs returning users
 
-3. **Compliance**:
-   - GDPR/CCPA consent requirements
-   - Terms & Privacy links required
-   - Email validation before submission
+**Compliance**
+- GDPR/CCPA consent requirements
+- Terms and Privacy links required
+- Email validation before submission
 
-4. **Mobile Strategy**:
-   - Exit intent doesn't work on mobile
-   - Consider scroll-based or time-based triggers
-   - Or skip modal entirely on mobile
+**Mobile Strategy**
+- Exit intent doesn't work on mobile
+- Consider scroll-based or time-based triggers
+- Or skip modal entirely on mobile
 
-5. **Success Criteria**:
-   - Email list growth rate
-   - Account creation rate
-   - Return visit rate for captured emails
+**Success Criteria**
+- Email list growth rate
+- Account creation rate
+- Return visit rate for captured emails
         `,
       },
       story: {

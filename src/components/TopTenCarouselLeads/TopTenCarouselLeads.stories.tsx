@@ -13,54 +13,54 @@ const meta: Meta<typeof TopTenCarouselLeads> = {
         component: `
 # Top 10 Carousel with Lead Generation
 
-## 📋 Product Overview
+## Overview
 
-A high-impact carousel showcasing top-ranked vehicles with integrated lead generation. This is a **key conversion component** that drives dealer leads.
+A high-impact carousel showcasing top-ranked vehicles with integrated lead generation. This is a key conversion component that drives dealer leads.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How It Achieves It |
 |------|-------------------|
-| **Lead Generation** | Shop Used CTAs drive dealer connections |
-| **Discovery** | Exposes users to top-rated alternatives |
-| **Authority** | "Top 10" framing establishes expertise |
-| **Engagement** | Carousel interaction increases time on site |
+| Lead Generation | Shop Used CTAs drive dealer connections |
+| Discovery | Exposes users to top-rated alternatives |
+| Authority | "Top 10" framing establishes expertise |
+| Engagement | Carousel interaction increases time on site |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
-- **Lead Conversion Rate**: Shop Used clicks → dealer form submissions
-- **Carousel Engagement**: Slides scrolled, arrows clicked
-- **Card CTR**: Which rank positions get most clicks
-- **Filter Usage**: Which filters users apply most
+- **Lead Conversion Rate** — Shop Used clicks to dealer form submissions
+- **Carousel Engagement** — Slides scrolled, arrows clicked
+- **Card CTR** — Which rank positions get most clicks
+- **Filter Usage** — Which filters users apply most
 
 ---
 
-## 🎛️ Filtering Options
+## Filtering Options
 
 | Filter | Use Case |
 |--------|----------|
-| **bodyStyle** | "Top 10 SUVs", "Top 10 Sedans" |
-| **make** | "Top Toyota Vehicles" |
-| **lifestyle** | "Best Family Vehicles" |
-| **maxPrice** | "Top Vehicles Under $35,000" |
+| bodyStyle | "Top 10 SUVs", "Top 10 Sedans" |
+| make | "Top Toyota Vehicles" |
+| lifestyle | "Best Family Vehicles" |
+| maxPrice | "Top Vehicles Under $35,000" |
 
 ---
 
-## 🏆 Badge System
+## Badge System
 
 | Badge | Meaning | Visual |
 |-------|---------|--------|
-| **Rank #1** | Top-rated vehicle | Gold badge |
-| **Editor's Choice** | Editorial pick | EC icon |
-| **10Best** | Annual award winner | 10Best icon |
+| Rank #1 | Top-rated vehicle | Gold badge |
+| Editor's Choice | Editorial pick | EC icon |
+| 10Best | Annual award winner | 10Best icon |
 
 ---
 
-## 📱 Responsive Behavior
+## Responsive Behavior
 
 | Screen | Cards Visible | Navigation |
 |--------|---------------|------------|
@@ -70,26 +70,26 @@ A high-impact carousel showcasing top-ranked vehicles with integrated lead gener
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **Personalization Opportunities**:
-   - Filter by user's saved preferences
-   - Show vehicles in user's budget range
-   - Lifestyle-based recommendations
+**Personalization Opportunities**
+- Filter by user's saved preferences
+- Show vehicles in user's budget range
+- Lifestyle-based recommendations
 
-2. **A/B Testing Ideas**:
-   - CTA text variations ("Shop Used" vs "See Deals")
-   - Number of cards shown
-   - Auto-scroll vs manual
+**A/B Testing Ideas**
+- CTA text variations ("Shop Used" vs "See Deals")
+- Number of cards shown
+- Auto-scroll vs manual
 
-3. **Data Requirements**:
-   - Vehicle ratings for ranking
-   - Lifestyle tags in database
-   - Used inventory availability
+**Data Requirements**
+- Vehicle ratings for ranking
+- Lifestyle tags in database
+- Used inventory availability
 
-4. **Revenue Impact**:
-   - Direct dealer lead attribution
-   - Track "Shop Used" → form completion funnel
+**Revenue Impact**
+- Direct dealer lead attribution
+- Track "Shop Used" to form completion funnel
         `,
       },
     },

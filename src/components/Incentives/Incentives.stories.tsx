@@ -11,76 +11,76 @@ const meta: Meta<typeof Incentives> = {
         component: `
 # Incentives & Offers
 
-## 📋 Product Overview
+## Overview
 
-Displays current manufacturer incentives, rebates, and special financing. This is **high-value content** that directly impacts purchase decisions.
+Displays current manufacturer incentives, rebates, and special financing. This is high-value content that directly impacts purchase decisions.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How It Achieves It |
 |------|-------------------|
-| **Purchase Urgency** | Limited-time offers create urgency |
-| **Value Communication** | Shows total savings available |
-| **Lead Generation** | "Get This Deal" CTAs drive leads |
-| **Competitive Edge** | Users get info not on dealer sites |
+| Purchase Urgency | Limited-time offers create urgency |
+| Value Communication | Shows total savings available |
+| Lead Generation | "Get This Deal" CTAs drive leads |
+| Competitive Edge | Users get info not on dealer sites |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
-- **Incentive Views**: Which offers get most attention
-- **CTA Clicks**: "Get This Deal" engagement
-- **Time Sensitivity**: Impact of expiration dates
-- **Regional Variance**: Local offer performance
+- **Incentive Views** — Which offers get most attention
+- **CTA Clicks** — "Get This Deal" engagement
+- **Time Sensitivity** — Impact of expiration dates
+- **Regional Variance** — Local offer performance
 
 ---
 
-## 💰 Incentive Types
+## Incentive Types
 
 | Type | Description | Typical Value |
 |------|-------------|---------------|
-| **Cash Rebate** | Direct discount from MSRP | $500-$5,000 |
-| **APR Special** | Reduced financing rate | 0-2.9% |
-| **Lease Deal** | Monthly payment special | $199-$399/mo |
-| **Trade Bonus** | Extra trade-in value | $500-$2,000 |
-| **Loyalty** | Returning customer discount | $500-$1,500 |
-| **EV Tax Credit** | Federal/state incentives | $2,500-$7,500 |
+| Cash Rebate | Direct discount from MSRP | $500-$5,000 |
+| APR Special | Reduced financing rate | 0-2.9% |
+| Lease Deal | Monthly payment special | $199-$399/mo |
+| Trade Bonus | Extra trade-in value | $500-$2,000 |
+| Loyalty | Returning customer discount | $500-$1,500 |
+| EV Tax Credit | Federal/state incentives | $2,500-$7,500 |
 
 ---
 
-## ⏰ Time Sensitivity
+## Time Sensitivity
 
 | Element | Purpose |
 |---------|---------|
-| **Expiration Date** | Creates urgency |
-| **"Ends Soon" Badge** | Highlights expiring offers |
-| **Monthly Refresh** | Incentives change monthly |
+| Expiration Date | Creates urgency |
+| "Ends Soon" Badge | Highlights expiring offers |
+| Monthly Refresh | Incentives change monthly |
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **Data Freshness**:
-   - Incentives change monthly
-   - Regional variations exist
-   - Stacking rules are complex
+**Data Freshness**
+- Incentives change monthly
+- Regional variations exist
+- Stacking rules are complex
 
-2. **Revenue Opportunity**:
-   - High purchase intent users
-   - Direct dealer lead attribution
-   - Premium placement for OEMs
+**Revenue Opportunity**
+- High purchase intent users
+- Direct dealer lead attribution
+- Premium placement for OEMs
 
-3. **Compliance**:
-   - Accurate expiration dates
-   - Fine print disclosure
-   - Regional availability notes
+**Compliance**
+- Accurate expiration dates
+- Fine print disclosure
+- Regional availability notes
 
-4. **EV Focus**:
-   - Federal tax credit prominence
-   - State incentive aggregation
-   - Charging incentives
+**EV Focus**
+- Federal tax credit prominence
+- State incentive aggregation
+- Charging incentives
         `,
       },
     },

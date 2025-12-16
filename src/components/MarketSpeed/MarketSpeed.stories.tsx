@@ -12,76 +12,76 @@ const meta: Meta<typeof MarketSpeed> = {
         component: `
 # Market Speed Indicator
 
-## 📋 Product Overview
+## Overview
 
-Shows how quickly vehicles are selling in the market. Creates **urgency for hot vehicles** and **negotiation confidence for slow sellers**.
+Shows how quickly vehicles are selling in the market. Creates urgency for hot vehicles and negotiation confidence for slow sellers.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How It Achieves It |
 |------|-------------------|
-| **Urgency Creation** | "Selling fast" motivates action |
-| **Negotiation Intel** | "Slow" signals room to negotiate |
-| **Market Transparency** | Unique data not on dealer sites |
-| **Trust Building** | Honest market conditions |
+| Urgency Creation | "Selling fast" motivates action |
+| Negotiation Intel | "Slow" signals room to negotiate |
+| Market Transparency | Unique data not on dealer sites |
+| Trust Building | Honest market conditions |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
-- **Correlation with Leads**: Does "Hot" increase conversions?
-- **User Engagement**: Time spent, interactions
-- **Regional Accuracy**: Data quality by market
-- **Update Frequency**: Freshness of data
+- **Correlation with Leads** — Does "Hot" increase conversions?
+- **User Engagement** — Time spent, interactions
+- **Regional Accuracy** — Data quality by market
+- **Update Frequency** — Freshness of data
 
 ---
 
-## 🌡️ Speed Levels
+## Speed Levels
 
 | Level | Days on Lot | User Implication |
 |-------|-------------|------------------|
-| 🔥 **Hot** | <14 days | Act fast, less negotiation room |
-| ⚡ **Fast** | 14-30 days | Popular, some urgency |
-| 📊 **Average** | 30-45 days | Normal conditions |
-| 🐢 **Slow** | 45+ days | Negotiate harder |
+| Hot | <14 days | Act fast, less negotiation room |
+| Fast | 14-30 days | Popular, some urgency |
+| Average | 30-45 days | Normal conditions |
+| Slow | 45+ days | Negotiate harder |
 
 ---
 
-## 📈 Data Components
+## Data Components
 
 | Metric | Description |
 |--------|-------------|
-| **Days on Market** | Average time to sell |
-| **Inventory Level** | Supply in region |
-| **Price Trend** | Rising, stable, falling |
-| **Demand Index** | Buyer interest level |
+| Days on Market | Average time to sell |
+| Inventory Level | Supply in region |
+| Price Trend | Rising, stable, falling |
+| Demand Index | Buyer interest level |
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **Data Sources**:
-   - Dealer inventory feeds
-   - Auction data
-   - Transaction databases
-   - Regional aggregation
+**Data Sources**
+- Dealer inventory feeds
+- Auction data
+- Transaction databases
+- Regional aggregation
 
-2. **User Psychology**:
-   - "Hot" creates FOMO
-   - "Slow" empowers negotiation
-   - Both drive action
+**User Psychology**
+- "Hot" creates FOMO
+- "Slow" empowers negotiation
+- Both drive action
 
-3. **Accuracy Requirements**:
-   - Weekly data refresh minimum
-   - Regional granularity
-   - Seasonal adjustments
+**Accuracy Requirements**
+- Weekly data refresh minimum
+- Regional granularity
+- Seasonal adjustments
 
-4. **A/B Testing Ideas**:
-   - Visual indicator styles
-   - Urgency messaging variations
-   - Placement on page
+**A/B Testing Ideas**
+- Visual indicator styles
+- Urgency messaging variations
+- Placement on page
         `,
       },
     },

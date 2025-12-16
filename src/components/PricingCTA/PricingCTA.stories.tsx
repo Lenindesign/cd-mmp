@@ -11,46 +11,46 @@ const meta: Meta<typeof PricingCTAV1B> = {
         component: `
 # Pricing CTA Section
 
-## 📋 Product Overview
+## Overview
 
-The **primary lead generation component** on the VDP. Captures user information and connects them with local dealers.
+The primary lead generation component on the VDP. Captures user information and connects them with local dealers.
 
 ---
 
-## 🎯 Business Purpose
+## Business Purpose
 
 | Goal | How It Achieves It |
 |------|-------------------|
-| **Lead Generation** | Form captures contact info |
-| **Dealer Revenue** | Leads sent to local dealers |
-| **Local Relevance** | Location-based pricing/inventory |
-| **Conversion Focus** | Clear, prominent CTAs |
+| Lead Generation | Form captures contact info |
+| Dealer Revenue | Leads sent to local dealers |
+| Local Relevance | Location-based pricing/inventory |
+| Conversion Focus | Clear, prominent CTAs |
 
 ---
 
-## 📊 Key Metrics to Track
+## Key Metrics
 
 | Metric | Target | Description |
 |--------|--------|-------------|
-| **Form Start Rate** | 8-12% | Users who begin form |
-| **Form Completion** | 40-60% | Started → submitted |
-| **Lead Quality Score** | 7+ | Dealer feedback rating |
-| **Cost Per Lead** | <$25 | Acquisition efficiency |
+| Form Start Rate | 8-12% | Users who begin form |
+| Form Completion | 40-60% | Started to submitted |
+| Lead Quality Score | 7+ | Dealer feedback rating |
+| Cost Per Lead | <$25 | Acquisition efficiency |
 
 ---
 
-## 📝 Lead Capture Fields
+## Lead Capture Fields
 
 | Field | Required | Purpose |
 |-------|----------|---------|
-| **Email** | Yes | Primary contact |
-| **Phone** | Optional | Higher intent signal |
-| **ZIP Code** | Yes | Dealer matching |
-| **Timeline** | Optional | Purchase urgency |
+| Email | Yes | Primary contact |
+| Phone | Optional | Higher intent signal |
+| ZIP Code | Yes | Dealer matching |
+| Timeline | Optional | Purchase urgency |
 
 ---
 
-## 🏪 Dealer Connection
+## Dealer Connection
 
 | Step | Description |
 |------|-------------|
@@ -61,33 +61,33 @@ The **primary lead generation component** on the VDP. Captures user information 
 
 ---
 
-## 💡 PM Considerations
+## Product Considerations
 
-1. **Revenue Attribution**:
-   - Track lead → sale conversion
-   - Dealer feedback loop
-   - Cost per acquisition
+**Revenue Attribution**
+- Track lead to sale conversion
+- Dealer feedback loop
+- Cost per acquisition
 
-2. **Form Optimization**:
-   - Minimize fields (higher completion)
-   - Progressive disclosure
-   - Mobile-first design
+**Form Optimization**
+- Minimize fields (higher completion)
+- Progressive disclosure
+- Mobile-first design
 
-3. **A/B Testing Priorities**:
-   - CTA button text
-   - Form field order
-   - Value proposition messaging
-   - Social proof elements
+**A/B Testing Priorities**
+- CTA button text
+- Form field order
+- Value proposition messaging
+- Social proof elements
 
-4. **Compliance**:
-   - TCPA for phone leads
-   - CAN-SPAM for emails
-   - State-specific requirements
+**Compliance**
+- TCPA for phone leads
+- CAN-SPAM for emails
+- State-specific requirements
 
-5. **Location Strategy**:
-   - Auto-detect vs manual entry
-   - Fallback for unknown locations
-   - Regional inventory messaging
+**Location Strategy**
+- Auto-detect vs manual entry
+- Fallback for unknown locations
+- Regional inventory messaging
         `,
       },
     },
