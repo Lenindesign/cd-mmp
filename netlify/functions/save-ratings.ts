@@ -39,6 +39,22 @@ export const handler: Handler = async (event) => {
   }
 
   try {
+    // Log environment check
+    console.log('Supabase URL configured:', !!supabaseUrl);
+    console.log('Supabase Key configured:', !!supabaseKey);
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing Supabase configuration');
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ error: 'Server configuration error: Missing database credentials' }),
+      };
+    }
+    
     const { changes } = JSON.parse(event.body || '{}') as { changes: RatingChange[] };
 
     if (!changes || !Array.isArray(changes)) {
@@ -51,6 +67,8 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify({ error: 'Invalid request body. Expected { changes: [...] }' }),
       };
     }
+    
+    console.log(`Processing ${changes.length} rating changes...`);
 
     const results = { success: [] as any[], errors: [] as any[] };
 
@@ -58,22 +76,42 @@ export const handler: Handler = async (event) => {
       const { id, category, newRating, originalRating } = change;
 
       try {
-        // Upsert the rating (insert or update)
-        const { error } = await supabase
+        // First, try to select existing record
+        const { data: existing } = await supabase
           .from('vehicle_ratings')
-          .upsert(
-            {
+          .select('id')
+          .eq('vehicle_id', id)
+          .eq('category', category)
+          .single();
+
+        let error;
+        
+        if (existing) {
+          // Update existing record
+          const result = await supabase
+            .from('vehicle_ratings')
+            .update({
+              rating: newRating,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('vehicle_id', id)
+            .eq('category', category);
+          error = result.error;
+        } else {
+          // Insert new record
+          const result = await supabase
+            .from('vehicle_ratings')
+            .insert({
               vehicle_id: id,
               category: category,
               rating: newRating,
               updated_at: new Date().toISOString(),
-            },
-            {
-              onConflict: 'vehicle_id,category',
-            }
-          );
+            });
+          error = result.error;
+        }
 
         if (error) {
+          console.error(`Error saving rating for ${id}:`, error);
           results.errors.push({
             id,
             category,
@@ -88,6 +126,7 @@ export const handler: Handler = async (event) => {
           });
         }
       } catch (err) {
+        console.error(`Exception saving rating for ${id}:`, err);
         results.errors.push({
           id,
           category,
