@@ -279,6 +279,7 @@
 
 .editor__category-dropdown {
   position: relative;
+  z-index: 100;
 }
 
 .editor__category-trigger {
@@ -350,7 +351,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
   padding: 6px;
-  z-index: 1000;
+  z-index: 9999;
   animation: dropdownFadeIn 0.15s ease-out;
 }
 
