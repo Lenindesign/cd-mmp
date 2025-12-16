@@ -99,9 +99,7 @@
       "Premium Audio",
       "Glass Roof"
     ],
-    "slug": "2025/Tesla/Model-3",
-    "editorsChoice": true,
-    "evOfTheYear": true
+    "slug": "2025/Tesla/Model-3"
   },
   {
     "id": "5a",
@@ -1269,7 +1267,9 @@
       "Porsche Active Suspension",
       "Porsche Torque Vectoring"
     ],
-    "slug": "2025/Porsche/Taycan"
+    "slug": "2025/Porsche/Taycan",
+    "editorsChoice": true,
+    "evOfTheYear": true
   },
   {
     "id": "sed-elec7",
