@@ -8,11 +8,129 @@ const meta: Meta<typeof VehicleOverview> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Comprehensive vehicle overview with highlights and key information.',
+        component: `
+## Vehicle Overview
+
+Editorial content section providing expert analysis and key takeaways about a vehicle.
+
+### Sections
+- **Main Content**: Expert review summary
+- **Highs**: List of positive attributes
+- **Lows**: List of drawbacks
+- **What's New**: Changes for the model year
+- **Verdict**: Final expert recommendation
+- **Author Info**: Byline with publish/update dates
+
+### Usage
+
+\`\`\`tsx
+import VehicleOverview from '@/components/VehicleOverview';
+
+<VehicleOverview 
+  year={2025}
+  author="Car and Driver Staff"
+  authorTitle="Automotive Editor"
+  highs={['Excellent value', 'Modern features']}
+  lows={['Limited cargo space']}
+  verdict="A top choice in its segment"
+  publishedDate="January 15, 2025"
+/>
+\`\`\`
+        `,
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    year: {
+      description: 'Model year of the vehicle',
+      control: { type: 'number', min: 2020, max: 2030 },
+      table: {
+        type: { summary: 'number' },
+        category: 'Vehicle',
+      },
+    },
+    author: {
+      description: 'Name of the review author',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Author',
+      },
+    },
+    authorTitle: {
+      description: 'Job title of the author',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Author',
+      },
+    },
+    content: {
+      description: 'Main review content/summary',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Content',
+      },
+    },
+    highs: {
+      description: 'Array of positive attributes',
+      control: 'object',
+      table: {
+        type: { summary: 'string[]' },
+        category: 'Content',
+      },
+    },
+    lows: {
+      description: 'Array of negative attributes',
+      control: 'object',
+      table: {
+        type: { summary: 'string[]' },
+        category: 'Content',
+      },
+    },
+    whatsNew: {
+      description: 'Array of changes for the model year',
+      control: 'object',
+      table: {
+        type: { summary: 'string[]' },
+        category: 'Content',
+      },
+    },
+    verdict: {
+      description: 'Final expert recommendation',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Content',
+      },
+    },
+    publishedDate: {
+      description: 'Original publication date',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Metadata',
+      },
+    },
+    updatedDate: {
+      description: 'Last update date (if different from published)',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Metadata',
+      },
+    },
+    readingTime: {
+      description: 'Estimated reading time in minutes',
+      control: { type: 'number', min: 1, max: 30 },
+      table: {
+        type: { summary: 'number' },
+        category: 'Metadata',
+      },
+    },
+  },
 };
 
 export default meta;
@@ -25,6 +143,13 @@ export const Default: Story = {
     authorTitle: 'Automotive Editor',
     publishedDate: 'January 15, 2025',
     readingTime: 8,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Default overview with basic author information and metadata.',
+      },
+    },
   },
 };
 
@@ -50,6 +175,13 @@ export const CustomContent: Story = {
     updatedDate: 'March 15, 2025',
     readingTime: 10,
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Full overview with custom content, highs/lows lists, verdict, and update date.',
+      },
+    },
+  },
 };
 
 export const WithWhatsNew: Story = {
@@ -64,5 +196,12 @@ export const WithWhatsNew: Story = {
     ],
     publishedDate: 'February 1, 2025',
     readingTime: 6,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Overview highlighting what\'s new for the model year - useful for refreshed or updated vehicles.',
+      },
+    },
   },
 };

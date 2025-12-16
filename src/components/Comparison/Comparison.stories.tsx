@@ -9,11 +9,55 @@ const meta: Meta<typeof Comparison> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Compare vehicle with similar competitors.',
+        component: `
+## Vehicle Comparison
+
+Side-by-side comparison of the current vehicle with similar competitors.
+
+### Features
+- **Smart Matching**: Automatically finds similar vehicles by body style and price
+- **Key Specs**: Compare ratings, prices, and features at a glance
+- **Quick Links**: Navigate to competitor vehicle pages
+
+### Usage
+
+\`\`\`tsx
+import Comparison from '@/components/Comparison';
+
+<Comparison 
+  currentVehicle={{
+    make: 'Chevrolet',
+    model: 'Trax',
+  }}
+  title="Compare Similar Vehicles"
+/>
+\`\`\`
+        `,
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    currentVehicle: {
+      description: 'The vehicle being compared (used to find similar competitors)',
+      control: 'object',
+      table: {
+        type: { 
+          summary: 'Vehicle',
+          detail: '{ make: string; model: string }',
+        },
+        category: 'Vehicle',
+      },
+    },
+    title: {
+      description: 'Custom section heading',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Content',
+      },
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -33,6 +77,13 @@ export const Default: Story = {
       model: 'Trax',
     },
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Default comparison view showing competitors for a subcompact SUV.',
+      },
+    },
+  },
 };
 
 export const SUV: Story = {
@@ -42,6 +93,13 @@ export const SUV: Story = {
       model: 'Trailblazer',
     },
     title: 'Compare SUVs',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Compact SUV comparison with custom title.',
+      },
+    },
   },
 };
 
@@ -53,6 +111,13 @@ export const Truck: Story = {
     },
     title: 'Compare Trucks',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Truck comparison showing pickup competitors.',
+      },
+    },
+  },
 };
 
 export const CustomTitle: Story = {
@@ -62,5 +127,12 @@ export const CustomTitle: Story = {
       model: 'Trax',
     },
     title: 'Similar Vehicles to Consider',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Comparison with custom section heading for different contexts.',
+      },
+    },
   },
 };

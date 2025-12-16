@@ -8,11 +8,66 @@ const meta: Meta<typeof TargetPriceRange> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Shows the target price range with market analysis for a vehicle.',
+        component: `
+## Target Price Range
+
+Displays pricing information with market analysis, helping users understand fair pricing.
+
+### Features
+- **MSRP Display**: Base manufacturer suggested retail price
+- **Trim Selection**: Dropdown to view pricing for different trims
+- **Market Analysis**: Shows typical transaction prices vs MSRP
+- **Visual Range**: Price range indicator with market positioning
+
+### Usage
+
+\`\`\`tsx
+import TargetPriceRange from '@/components/TargetPriceRange';
+
+<TargetPriceRange 
+  vehicleName="2025 Chevrolet Trax"
+  msrp={21895}
+  trims={[
+    { name: 'LS FWD', msrp: 21895 },
+    { name: '1RS FWD', msrp: 23195 },
+    { name: 'LT FWD', msrp: 23395 },
+  ]}
+/>
+\`\`\`
+        `,
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    vehicleName: {
+      description: 'Full name of the vehicle (Year Make Model)',
+      control: 'text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Vehicle',
+      },
+    },
+    msrp: {
+      description: 'Base MSRP in dollars',
+      control: { type: 'number', min: 15000, max: 200000, step: 1000 },
+      table: {
+        type: { summary: 'number' },
+        category: 'Pricing',
+      },
+    },
+    trims: {
+      description: 'Array of available trims with their MSRPs',
+      control: 'object',
+      table: {
+        type: { 
+          summary: 'Trim[]',
+          detail: '{ name: string; msrp: number }[]',
+        },
+        category: 'Pricing',
+      },
+    },
+  },
 };
 
 export default meta;
@@ -30,6 +85,13 @@ export const Default: Story = {
       { name: 'ACTIV FWD', msrp: 24995 },
     ],
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Default price range display for a subcompact SUV with multiple trim levels.',
+      },
+    },
+  },
 };
 
 export const LuxuryVehicle: Story = {
@@ -43,6 +105,13 @@ export const LuxuryVehicle: Story = {
       { name: 'RS', msrp: 31895 },
     ],
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Price range for a compact SUV with wider trim spread.',
+      },
+    },
+  },
 };
 
 export const BudgetVehicle: Story = {
@@ -53,6 +122,13 @@ export const BudgetVehicle: Story = {
       { name: 'LS FWD', msrp: 21895 },
       { name: '1RS FWD', msrp: 23195 },
     ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simplified view with only two trim options for budget-focused shoppers.',
+      },
+    },
   },
 };
 
@@ -67,5 +143,12 @@ export const HighEndLuxury: Story = {
       { name: 'SS', msrp: 44100 },
       { name: 'ZL1', msrp: 71700 },
     ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Wide price range from base to high-performance trims, demonstrating large MSRP spread.',
+      },
+    },
   },
 };
