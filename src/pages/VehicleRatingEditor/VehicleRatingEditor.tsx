@@ -269,6 +269,10 @@ const VehicleRatingEditor = () => {
     try {
       const changes = Array.from(editedRatings.values());
       
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleSaveAll',message:'starting save',data:{changesCount:changes.length,endpoint:API_ENDPOINTS.saveRatings,changes},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
+      // #endregion
+      
       console.log(`[DEBUG] Saving ${changes.length} changes to ${isProduction ? 'Supabase' : 'local API'}...`);
       
       // Call the appropriate API endpoint based on environment
@@ -278,12 +282,22 @@ const VehicleRatingEditor = () => {
         body: JSON.stringify({ changes }),
       });
 
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleSaveAll',message:'response received',data:{status:response.status,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
+      // #endregion
+
       if (!response.ok) {
         const errorData = await response.json();
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleSaveAll',message:'save FAILED',data:{errorData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
+        // #endregion
         throw new Error(errorData.error || 'Failed to save ratings');
       }
 
       const result = await response.json();
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleSaveAll',message:'save SUCCESS',data:{result},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
+      // #endregion
       console.log('Ratings saved successfully:', result);
       
       setSaveStatus('success');
@@ -294,6 +308,9 @@ const VehicleRatingEditor = () => {
         window.location.reload();
       }, 2000);
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleSaveAll',message:'exception caught',data:{error:String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
+      // #endregion
       console.error('Error saving ratings:', error);
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
