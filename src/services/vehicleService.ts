@@ -247,6 +247,9 @@ export interface RankedVehicle {
   slug: string;
   isCurrentVehicle?: boolean;
   badge?: 'best-value' | 'editors-choice' | 'most-popular';
+  editorsChoice?: boolean;
+  tenBest?: boolean;
+  evOfTheYear?: boolean;
 }
 
 export const formatForRanking = (vehicle: Vehicle, rank: number, currentVehicleId?: string): RankedVehicle => {
@@ -261,6 +264,9 @@ export const formatForRanking = (vehicle: Vehicle, rank: number, currentVehicleI
     slug: vehicle.slug,
     isCurrentVehicle: vehicle.id === currentVehicleId,
     badge: undefined,
+    editorsChoice: vehicle.editorsChoice,
+    tenBest: vehicle.tenBest,
+    evOfTheYear: vehicle.evOfTheYear,
   };
 };
 
