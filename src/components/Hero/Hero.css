@@ -440,6 +440,7 @@
 .hero__shop-buttons {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-2);
 }
 
