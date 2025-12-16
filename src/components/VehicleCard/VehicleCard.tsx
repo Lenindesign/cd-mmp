@@ -106,20 +106,17 @@ export const VehicleCard = ({
           <span className="vehicle-card__body-style">{bodyStyle}</span>
         )}
 
-        {/* Special Badge (Top 10) */}
-        {badge && (
-          <span className={`vehicle-card__badge vehicle-card__badge--${badge}`}>
-            {badge === 'editors-choice' && (
-              <EditorsChoiceIcon className="vehicle-card__badge-icon" />
-            )}
+        {/* Best Value Badge (text style) */}
+        {badge === 'best-value' && (
+          <span className="vehicle-card__badge vehicle-card__badge--best-value">
             {getBadgeLabel(badge)}
           </span>
         )}
 
-        {/* Accolades Badges (Editor's Choice, 10Best) */}
-        {(editorsChoice || tenBest) && !badge && (
+        {/* Accolades Badges (Editor's Choice, 10Best) - Small icon style */}
+        {(editorsChoice || tenBest || badge === 'editors-choice') && (
           <div className="vehicle-card__accolades">
-            {editorsChoice && (
+            {(editorsChoice || badge === 'editors-choice') && (
               <div className="vehicle-card__accolade vehicle-card__accolade--ec">
                 <EditorsChoiceIcon />
               </div>

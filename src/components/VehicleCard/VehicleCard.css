@@ -114,19 +114,6 @@
   color: var(--color-white);
 }
 
-.vehicle-card__badge--editors-choice {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-}
-
-.vehicle-card__badge--most-popular {
-  background: var(--color-black);
-  color: var(--color-white);
-}
-
-.vehicle-card__badge-icon {
-  flex-shrink: 0;
-}
 
 /* Accolades Badges (Editor's Choice, 10Best) */
 .vehicle-card__accolades {
