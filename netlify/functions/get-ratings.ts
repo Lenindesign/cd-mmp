@@ -1,15 +1,29 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { Handler } from '@netlify/functions';
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY!;
+// Create client lazily to ensure env vars are available
+let supabase: SupabaseClient | null = null;
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const getSupabaseClient = () => {
+  if (!supabase) {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase configuration');
+    }
+    
+    supabase = createClient(supabaseUrl, supabaseKey);
+  }
+  return supabase;
+};
 
 export const handler: Handler = async () => {
   try {
+    const client = getSupabaseClient();
+    
     // Fetch all ratings from Supabase
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('vehicle_ratings')
       .select('*');
 

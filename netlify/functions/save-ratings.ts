@@ -1,10 +1,22 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { Handler } from '@netlify/functions';
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY!;
+// Create client lazily to ensure env vars are available
+let supabase: SupabaseClient | null = null;
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const getSupabaseClient = () => {
+  if (!supabase) {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase configuration');
+    }
+    
+    supabase = createClient(supabaseUrl, supabaseKey);
+  }
+  return supabase;
+};
 
 interface RatingChange {
   id: string;
@@ -39,12 +51,13 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    // Log environment check
-    console.log('Supabase URL configured:', !!supabaseUrl);
-    console.log('Supabase Key configured:', !!supabaseKey);
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase configuration');
+    // Get Supabase client (will throw if env vars missing)
+    let client: SupabaseClient;
+    try {
+      client = getSupabaseClient();
+      console.log('Supabase client initialized successfully');
+    } catch (configError) {
+      console.error('Supabase configuration error:', configError);
       return {
         statusCode: 500,
         headers: {
@@ -77,7 +90,7 @@ export const handler: Handler = async (event) => {
 
       try {
         // First, try to select existing record
-        const { data: existing } = await supabase
+        const { data: existing } = await client
           .from('vehicle_ratings')
           .select('id')
           .eq('vehicle_id', id)
@@ -88,7 +101,7 @@ export const handler: Handler = async (event) => {
         
         if (existing) {
           // Update existing record
-          const result = await supabase
+          const result = await client
             .from('vehicle_ratings')
             .update({
               rating: newRating,
@@ -99,7 +112,7 @@ export const handler: Handler = async (event) => {
           error = result.error;
         } else {
           // Insert new record
-          const result = await supabase
+          const result = await client
             .from('vehicle_ratings')
             .insert({
               vehicle_id: id,
