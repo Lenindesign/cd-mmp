@@ -635,13 +635,14 @@ const VehicleRatingEditor = () => {
                       <td className="editor__price">{vehicle.priceRange}</td>
                       <td>
                         <span className="editor__rating editor__rating--original">
-                          {vehicle.staffRating.toFixed(1)}
+                          {getBaseRating(vehicle).toFixed(1)}
                         </span>
                       </td>
                       <td>
                         <input
                           type="number"
                           className={`editor__rating-input ${isEdited(vehicle) ? 'editor__rating-input--edited' : ''}`}
+                          key={`${vehicle.id}-${getBaseRating(vehicle)}`}
                           defaultValue={getBaseRating(vehicle).toFixed(1)}
                           onChange={(e) => {
                             const value = parseFloat(e.target.value);
