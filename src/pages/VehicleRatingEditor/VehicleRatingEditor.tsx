@@ -224,21 +224,6 @@ const VehicleRatingEditor = () => {
     return bodyStyleMap[vehicle.bodyStyle] || 'sedans';
   };
 
-  // Get current rating (edited > saved from Supabase > original from JSON)
-  const getCurrentRating = (vehicle: Vehicle): number => {
-    const vehicleCategory = getVehicleCategory(vehicle);
-    const key = `${vehicleCategory}-${vehicle.id}`;
-    const edited = editedRatings.get(key);
-    if (edited) return edited.newRating;
-    
-    // In production, check if there's a saved rating from Supabase
-    if (isProduction && savedRatings[key] !== undefined) {
-      return savedRatings[key];
-    }
-    
-    return vehicle.staffRating;
-  };
-  
   // Get the base rating (from Supabase in production, or from JSON locally)
   const getBaseRating = (vehicle: Vehicle): number => {
     const vehicleCategory = getVehicleCategory(vehicle);
@@ -257,16 +242,25 @@ const VehicleRatingEditor = () => {
 
   // Handle rating change
   const handleRatingChange = (vehicle: Vehicle, newRating: number) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleRatingChange',message:'handleRatingChange called',data:{vehicleId:vehicle.id,vehicleMake:vehicle.make,vehicleModel:vehicle.model,newRating},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+    // #endregion
     const vehicleCategory = getVehicleCategory(vehicle);
     const key = `${vehicleCategory}-${vehicle.id}`;
     const rating = Math.max(0, Math.min(10, newRating)); // Clamp between 0-10
     const baseRating = getBaseRating(vehicle);
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleRatingChange',message:'computed values',data:{key,rating,baseRating,willRemove:rating===baseRating},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+    // #endregion
 
     if (rating === baseRating) {
       // If changed back to base rating, remove from edited map
       const newMap = new Map(editedRatings);
       newMap.delete(key);
       setEditedRatings(newMap);
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleRatingChange',message:'removed from edited (back to base)',data:{key},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+      // #endregion
     } else {
       setEditedRatings(new Map(editedRatings).set(key, {
         id: vehicle.id,
@@ -274,6 +268,9 @@ const VehicleRatingEditor = () => {
         newRating: rating,
         originalRating: baseRating,
       }));
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:handleRatingChange',message:'added to edited map',data:{key,rating,originalRating:baseRating},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+      // #endregion
     }
   };
 
@@ -650,21 +647,14 @@ const VehicleRatingEditor = () => {
                         <input
                           type="number"
                           className={`editor__rating-input ${isEdited(vehicle) ? 'editor__rating-input--edited' : ''}`}
-                          key={`${vehicle.id}-${getCurrentRating(vehicle)}`}
-                          defaultValue={getCurrentRating(vehicle).toFixed(1)}
-                          onBlur={(e) => {
+                          defaultValue={getBaseRating(vehicle).toFixed(1)}
+                          onChange={(e) => {
                             const value = parseFloat(e.target.value);
-                            if (!isNaN(value)) {
+                            // #region agent log
+                            fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:onChange',message:'onChange fired',data:{rawValue:e.target.value,parsedValue:value,isNaN:isNaN(value),inRange:value>=0&&value<=10},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+                            // #endregion
+                            if (!isNaN(value) && value >= 0 && value <= 10) {
                               handleRatingChange(vehicle, value);
-                            }
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              const value = parseFloat((e.target as HTMLInputElement).value);
-                              if (!isNaN(value)) {
-                                handleRatingChange(vehicle, value);
-                              }
-                              (e.target as HTMLInputElement).blur();
                             }
                           }}
                           min="0"
@@ -706,6 +696,9 @@ const VehicleRatingEditor = () => {
       </div>
 
       {/* Sticky Save Actions - Bottom Right */}
+      {/* #region agent log */}
+      {(() => { fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehicleRatingEditor.tsx:render',message:'render check editedRatings size',data:{size:editedRatings.size,showButton:editedRatings.size>0},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{}); return null; })()}
+      {/* #endregion */}
       {editedRatings.size > 0 && (
         <div className="editor__sticky-actions">
           <button
