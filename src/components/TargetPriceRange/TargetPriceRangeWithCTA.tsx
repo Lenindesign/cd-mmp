@@ -25,7 +25,7 @@ interface TargetPriceRangeWithCTAProps {
   vehicleName?: string;
   make?: string;
   model?: string;
-  variant: 'v1c' | 'v2c' | 'v3c' | 'v4c' | 'v5c';
+  variant: 'v1c' | 'v2c' | 'v3c' | 'v4c' | 'v5c' | 'v1d' | 'v2d' | 'v3d' | 'v4d' | 'v5d';
   location?: string;
 }
 
@@ -427,13 +427,18 @@ const TargetPriceRangeWithCTA = ({
   const discountLow = ((savingsLow / dealerPrice) * 100).toFixed(1);
   const discountHigh = ((savingsHigh / dealerPrice) * 100).toFixed(1);
 
-  // Select marketplace CTA variant
+  // Select marketplace CTA variant (D variants use same components as C variants)
   const MarketplaceCTA = {
     v1c: () => <MarketplaceCTAV1C model={model} location={location} />,
     v2c: () => <MarketplaceCTAV2C model={model} location={location} />,
     v3c: () => <MarketplaceCTAV3C model={model} msrp={msrp} location={location} />,
     v4c: () => <MarketplaceCTAV4C model={model} msrp={msrp} location={location} />,
     v5c: () => <MarketplaceCTAV5C model={model} msrp={msrp} location={location} />,
+    v1d: () => <MarketplaceCTAV1C model={model} location={location} />,
+    v2d: () => <MarketplaceCTAV2C model={model} location={location} />,
+    v3d: () => <MarketplaceCTAV3C model={model} msrp={msrp} location={location} />,
+    v4d: () => <MarketplaceCTAV4C model={model} msrp={msrp} location={location} />,
+    v5d: () => <MarketplaceCTAV5C model={model} msrp={msrp} location={location} />,
   }[variant];
 
   return (

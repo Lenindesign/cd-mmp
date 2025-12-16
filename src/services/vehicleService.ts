@@ -310,7 +310,12 @@ export const getChevroletTrax = (): Vehicle | undefined => {
 export interface MarketSpeedVehicle {
   id: string;
   name: string;
+  make: string;
+  model: string;
+  slug: string;
   price: number;
+  avgSellingPrice: number;
+  rank: number;
   marketDaySupply: number;
   totalForSale: number;
   totalSold: number;
@@ -336,16 +341,24 @@ export const getMarketSpeedVehicles = (
     .slice(0, limit);
 
   // Generate simulated market data (in production this would come from real data)
-  return similarVehicles.map(v => {
+  return similarVehicles.map((v, index) => {
     const isCurrentVehicle = v.make === currentMake && v.model === currentModel;
     // Simulate market data based on rating and price
     const baseSupply = Math.floor(30 + (10 - v.staffRating) * 5);
     const baseSold = Math.floor(100 + v.staffRating * 20);
+    // Simulate average selling price (typically 5-15% below MSRP)
+    const discount = 0.85 + Math.random() * 0.1;
+    const avgSellingPrice = Math.round(v.priceMin * discount);
     
     return {
       id: v.id,
       name: `${v.year} ${v.make} ${v.model}`,
+      make: v.make,
+      model: v.model,
+      slug: v.slug,
       price: v.priceMin,
+      avgSellingPrice,
+      rank: index + 1,
       marketDaySupply: baseSupply + Math.floor(Math.random() * 10),
       totalForSale: Math.floor(baseSold * 0.8) + Math.floor(Math.random() * 50),
       totalSold: baseSold + Math.floor(Math.random() * 30),
