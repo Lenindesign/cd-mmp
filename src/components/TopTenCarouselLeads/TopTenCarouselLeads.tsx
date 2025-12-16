@@ -2,6 +2,7 @@ import { useState, useRef, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight, Trophy } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
 import { getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
+import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { VehicleCard } from '../VehicleCard';
 import './TopTenCarouselLeads.css';
 
@@ -44,6 +45,14 @@ const TopTenCarouselLeads = ({
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  
+  // Fetch all ratings from Supabase in production
+  const { getRating: getSupabaseRating } = useSupabaseRatings();
+  
+  // Helper to get vehicle rating (uses Supabase in production)
+  const getVehicleRating = (vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
+    return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
+  };
 
   // Get filtered and ranked vehicles from database
   const vehicles = useMemo<FilteredRankedVehicle[]>(() => {
@@ -75,16 +84,18 @@ const TopTenCarouselLeads = ({
       allVehicles = allVehicles.filter(v => v.priceMin <= maxPrice);
     }
     
-    // Sort by rating (highest first)
-    allVehicles.sort((a, b) => b.staffRating - a.staffRating);
+    // Sort by rating (highest first) - use Supabase ratings
+    allVehicles.sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
     
     // Take top 10 and format
     return allVehicles.slice(0, 10).map((vehicle, index) => {
+      const rating = getVehicleRating(vehicle);
+      
       // Determine badges
       let badge: 'best-value' | 'editors-choice' | 'most-popular' | undefined;
-      if (index === 0 && vehicle.staffRating >= 9) {
+      if (index === 0 && rating >= 9) {
         badge = 'editors-choice';
-      } else if (vehicle.priceMin < 25000 && vehicle.staffRating >= 8) {
+      } else if (vehicle.priceMin < 25000 && rating >= 8) {
         badge = 'best-value';
       } else if (vehicle.reviewCount && vehicle.reviewCount > 150) {
         badge = 'most-popular';
@@ -96,13 +107,13 @@ const TopTenCarouselLeads = ({
         name: `${vehicle.make} ${vehicle.model}`,
         price: `$${vehicle.priceMin.toLocaleString()}`,
         image: vehicle.image, // Use the image directly from the database
-        rating: vehicle.staffRating,
+        rating: rating,
         slug: vehicle.slug,
         isCurrentVehicle: vehicle.id === currentVehicleId,
         badge,
       };
     });
-  }, [bodyStyle, make, lifestyle, maxPrice, currentVehicleId]);
+  }, [bodyStyle, make, lifestyle, maxPrice, currentVehicleId, getSupabaseRating]);
 
   // Generate dynamic category label
   const getCategoryLabelDynamic = (): string => {
