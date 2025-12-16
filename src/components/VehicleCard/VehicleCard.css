@@ -75,14 +75,6 @@
   color: var(--color-white);
 }
 
-.vehicle-card__rank-icon {
-  flex-shrink: 0;
-  width: 14px !important;
-  height: 16px !important;
-  max-width: 14px !important;
-  max-height: 16px !important;
-}
-
 /* Body Style Badge */
 .vehicle-card__body-style {
   position: absolute;

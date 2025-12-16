@@ -97,13 +97,6 @@ export const VehicleCard = ({
         {/* Rank Badge (for Top 10) */}
         {rank && (
           <span className={`vehicle-card__rank ${rank === 1 ? 'vehicle-card__rank--first' : ''} ${isCurrentVehicle ? 'vehicle-card__rank--current' : ''}`}>
-            {rank === 1 && (
-              <img 
-                src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" 
-                alt="10Best"
-                className="vehicle-card__rank-icon"
-              />
-            )}
             {rank}
           </span>
         )}
