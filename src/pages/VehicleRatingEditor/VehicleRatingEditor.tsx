@@ -650,8 +650,23 @@ const VehicleRatingEditor = () => {
                         <input
                           type="number"
                           className={`editor__rating-input ${isEdited(vehicle) ? 'editor__rating-input--edited' : ''}`}
-                          value={getCurrentRating(vehicle).toFixed(1)}
-                          onChange={(e) => handleRatingChange(vehicle, parseFloat(e.target.value) || 0)}
+                          key={`${vehicle.id}-${getCurrentRating(vehicle)}`}
+                          defaultValue={getCurrentRating(vehicle).toFixed(1)}
+                          onBlur={(e) => {
+                            const value = parseFloat(e.target.value);
+                            if (!isNaN(value)) {
+                              handleRatingChange(vehicle, value);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              const value = parseFloat((e.target as HTMLInputElement).value);
+                              if (!isNaN(value)) {
+                                handleRatingChange(vehicle, value);
+                              }
+                              (e.target as HTMLInputElement).blur();
+                            }
+                          }}
                           min="0"
                           max="10"
                           step="0.1"
