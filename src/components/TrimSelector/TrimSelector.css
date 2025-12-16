@@ -181,12 +181,13 @@
 
 .trim-card--selected {
   border-color: var(--color-blue-cobalt);
+  border-width: 4px;
   box-shadow: 0 0 0 4px var(--color-blue-cobalt);
 }
 
 .trim-card--recommended {
   border-color: var(--color-blue-cobalt);
-  border-width: 2px;
+  border-width: 4px;
   border-radius: var(--border-radius-lg);
 }
 

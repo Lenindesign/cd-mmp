@@ -498,12 +498,13 @@
 .hero-v5__trade-in {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-2);
   height: 42px;
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--spacing-3) 20px;
   background-color: var(--color-white);
-  color: var(--color-blue-cobalt);
-  border: none;
+  color: var(--cd-blue-cobalt);
+  border: 2px solid var(--cd-blue-cobalt);
   border-radius: var(--border-radius-md);
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
