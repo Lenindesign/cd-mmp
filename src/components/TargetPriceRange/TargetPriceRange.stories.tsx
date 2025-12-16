@@ -20,49 +20,52 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    vehicleName: '2024 Toyota Camry',
-    msrp: 28500,
+    vehicleName: '2025 Chevrolet Trax',
+    msrp: 21895,
     trims: [
-      { name: 'LE FWD', msrp: 28500 },
-      { name: 'SE FWD', msrp: 31200 },
-      { name: 'XLE FWD', msrp: 34500 },
-      { name: 'XSE FWD', msrp: 36800 },
+      { name: 'LS FWD', msrp: 21895 },
+      { name: '1RS FWD', msrp: 23195 },
+      { name: 'LT FWD', msrp: 23395 },
+      { name: 'RS FWD', msrp: 24995 },
+      { name: 'ACTIV FWD', msrp: 24995 },
     ],
   },
 };
 
 export const LuxuryVehicle: Story = {
   args: {
-    vehicleName: '2024 BMW 5 Series',
-    msrp: 56000,
+    vehicleName: '2025 Chevrolet Trailblazer',
+    msrp: 24995,
     trims: [
-      { name: '530i', msrp: 56000 },
-      { name: '530i xDrive', msrp: 58500 },
-      { name: 'M550i xDrive', msrp: 78000 },
+      { name: 'LS', msrp: 24995 },
+      { name: 'LT', msrp: 27295 },
+      { name: 'ACTIV', msrp: 29995 },
+      { name: 'RS', msrp: 31895 },
     ],
   },
 };
 
 export const BudgetVehicle: Story = {
   args: {
-    vehicleName: '2024 Kia Forte',
-    msrp: 20500,
+    vehicleName: '2025 Chevrolet Trax LS',
+    msrp: 21895,
     trims: [
-      { name: 'FE', msrp: 20500 },
-      { name: 'LXS', msrp: 22500 },
-      { name: 'GT', msrp: 26000 },
+      { name: 'LS FWD', msrp: 21895 },
+      { name: '1RS FWD', msrp: 23195 },
     ],
   },
 };
 
 export const HighEndLuxury: Story = {
   args: {
-    vehicleName: '2024 Porsche 911',
-    msrp: 115000,
+    vehicleName: '2025 Chevrolet Camaro',
+    msrp: 29100,
     trims: [
-      { name: 'Carrera', msrp: 115000 },
-      { name: 'Carrera S', msrp: 130000 },
-      { name: 'Turbo S', msrp: 215000 },
+      { name: '1LS', msrp: 29100 },
+      { name: '1LT', msrp: 30700 },
+      { name: '2LT', msrp: 32700 },
+      { name: 'SS', msrp: 44100 },
+      { name: 'ZL1', msrp: 71700 },
     ],
   },
 };

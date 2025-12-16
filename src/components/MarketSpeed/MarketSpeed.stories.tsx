@@ -28,29 +28,29 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    vehicleName: '2024 Toyota Camry',
-    make: 'Toyota',
-    model: 'Camry',
-    bodyStyle: 'Sedan',
-    msrp: 28500,
+    vehicleName: '2025 Chevrolet Trax',
+    make: 'Chevrolet',
+    model: 'Trax',
+    bodyStyle: 'SUV',
+    msrp: 21895,
   },
 };
 
 export const SUV: Story = {
   args: {
-    vehicleName: '2024 Honda CR-V',
-    make: 'Honda',
-    model: 'CR-V',
+    vehicleName: '2025 Chevrolet Trailblazer',
+    make: 'Chevrolet',
+    model: 'Trailblazer',
     bodyStyle: 'SUV',
-    msrp: 32500,
+    msrp: 24995,
   },
 };
 
 export const Truck: Story = {
   args: {
-    vehicleName: '2024 Ford F-150',
-    make: 'Ford',
-    model: 'F-150',
+    vehicleName: '2025 Chevrolet Silverado',
+    make: 'Chevrolet',
+    model: 'Silverado',
     bodyStyle: 'Truck',
     msrp: 36000,
   },

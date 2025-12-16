@@ -29,8 +29,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     currentVehicle: {
-      make: 'Toyota',
-      model: 'Camry',
+      make: 'Chevrolet',
+      model: 'Trax',
     },
   },
 };
@@ -38,8 +38,8 @@ export const Default: Story = {
 export const SUV: Story = {
   args: {
     currentVehicle: {
-      make: 'Honda',
-      model: 'CR-V',
+      make: 'Chevrolet',
+      model: 'Trailblazer',
     },
     title: 'Compare SUVs',
   },
@@ -48,8 +48,8 @@ export const SUV: Story = {
 export const Truck: Story = {
   args: {
     currentVehicle: {
-      make: 'Ford',
-      model: 'F-150',
+      make: 'Chevrolet',
+      model: 'Silverado',
     },
     title: 'Compare Trucks',
   },
@@ -58,8 +58,8 @@ export const Truck: Story = {
 export const CustomTitle: Story = {
   args: {
     currentVehicle: {
-      make: 'Toyota',
-      model: 'Camry',
+      make: 'Chevrolet',
+      model: 'Trax',
     },
     title: 'Similar Vehicles to Consider',
   },

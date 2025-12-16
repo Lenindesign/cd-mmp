@@ -15,15 +15,16 @@ interface HeroProps {
     rating: number;
     priceRange: string;
     image: string;
-    images?: string[];
+    galleryImages?: string[];
     photographer?: string;
     editorsChoice?: boolean;
     tenBest?: boolean;
     evOfTheYear?: boolean;
   };
+  animateButtons?: boolean;
 }
 
-const Hero = ({ vehicle }: HeroProps) => {
+const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
   const [isFavorited, setIsFavorited] = useState(true);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -57,15 +58,17 @@ const Hero = ({ vehicle }: HeroProps) => {
     }
   };
   
-  // Default gallery images
-  const galleryImages = vehicle.images || [
-    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg',
-    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
-    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
-  ];
+  // Fallback placeholder image (Lamborghini Revuelto)
+  const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
+
+  // Gallery images from vehicle data
+  const galleryImages = vehicle.galleryImages || [];
+
+  // Main image with fallback
+  const mainImage = vehicle.image || PLACEHOLDER_IMAGE;
 
   // All images for carousel (main image + gallery images)
-  const allImages = [vehicle.image, ...galleryImages];
+  const allImages = [mainImage, ...galleryImages].filter(Boolean);
   const totalSlides = allImages.length;
 
   // Carousel navigation
@@ -309,14 +312,14 @@ const Hero = ({ vehicle }: HeroProps) => {
               <div className="hero__msrp-price-row">
                 <span className="hero__msrp-price">{vehicle.priceRange}</span>
                 {/* Shop Buttons - Aligned with price numbers */}
-                <div className="hero__shop-buttons">
-                  <Button variant="primary" size="small" className="hero__shop-btn">
+                <div className={`hero__shop-buttons ${animateButtons ? 'hero__shop-buttons--animated' : ''}`}>
+                  <Button variant="primary" size="small" className={`hero__shop-btn ${animateButtons ? 'hero__shop-btn--animate-1' : ''}`}>
                     SHOP NEW
                   </Button>
-                  <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--outline">
+                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--outline ${animateButtons ? 'hero__shop-btn--animate-2' : ''}`}>
                     SHOP USED
                   </Button>
-                  <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--trade-in">
+                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--trade-in ${animateButtons ? 'hero__shop-btn--animate-3' : ''}`}>
                     GET YOUR TRADE-IN VALUE
                   </Button>
                 </div>

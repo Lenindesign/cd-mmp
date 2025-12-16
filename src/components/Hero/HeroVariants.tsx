@@ -14,7 +14,7 @@ interface HeroProps {
     rating: number;
     priceRange: string;
     image: string;
-    images?: string[];
+    galleryImages?: string[];
     photographer?: string;
   };
 }
@@ -46,11 +46,11 @@ const HeroContent = ({ vehicle, children }: { vehicle: HeroProps['vehicle']; chi
     }
   };
 
-  const galleryImages = vehicle.images || [
-    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg',
-    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
-    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
-  ];
+  // Fallback placeholder image (Lamborghini Revuelto)
+  const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
+
+  const galleryImages = vehicle.galleryImages || [];
+  const mainImage = vehicle.image || PLACEHOLDER_IMAGE;
 
   return (
     <section className="hero">
@@ -130,7 +130,7 @@ const HeroContent = ({ vehicle, children }: { vehicle: HeroProps['vehicle']; chi
           <div className="hero__gallery">
             <div className="hero__gallery-main">
               <img 
-                src={vehicle.image} 
+                src={mainImage} 
                 alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                 className="hero__gallery-main-img"
               />

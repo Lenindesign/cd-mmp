@@ -20,22 +20,21 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    make: 'Toyota',
-    model: 'Camry',
+    make: 'Chevrolet',
+    model: 'Trax',
   },
 };
 
 export const LuxuryBrand: Story = {
   args: {
-    make: 'BMW',
-    model: '3 Series',
+    make: 'Chevrolet',
+    model: 'Trailblazer',
   },
 };
 
 export const Electric: Story = {
   args: {
-    make: 'Tesla',
-    model: 'Model 3',
+    make: 'Chevrolet',
+    model: 'Bolt EV',
   },
 };
-

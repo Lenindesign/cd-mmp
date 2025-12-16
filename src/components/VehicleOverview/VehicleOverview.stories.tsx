@@ -20,49 +20,49 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    year: 2024,
+    year: 2025,
     author: 'Car and Driver Staff',
     authorTitle: 'Automotive Editor',
-    publishedDate: 'January 15, 2024',
+    publishedDate: 'January 15, 2025',
     readingTime: 8,
   },
 };
 
 export const CustomContent: Story = {
   args: {
-    year: 2024,
+    year: 2025,
     author: 'John Smith',
     authorTitle: 'Senior Automotive Editor',
-    content: 'The Toyota Camry continues to be one of the best-selling sedans in America, and for good reason. Its combination of reliability, comfort, and value make it an excellent choice for families and commuters alike.',
+    content: 'The Chevrolet Trax continues to be one of the best values in the subcompact SUV segment. Its combination of modern features, spacious interior, and affordable pricing make it an excellent choice for first-time buyers and urban commuters alike.',
     highs: [
-      'Excellent fuel economy',
-      'Spacious interior',
-      'Strong resale value',
-      'Smooth ride quality',
+      'Excellent value for money',
+      'Spacious interior for the class',
+      'Modern infotainment system',
+      'Good fuel economy',
     ],
     lows: [
-      'Conservative styling',
+      'Base engine lacks power',
       'Some cheap interior materials',
-      'Limited performance',
+      'Limited cargo space',
     ],
-    verdict: 'The 2024 Toyota Camry remains a top choice in the midsize sedan segment, offering exceptional value and reliability.',
-    publishedDate: 'March 10, 2024',
-    updatedDate: 'March 15, 2024',
+    verdict: 'The 2025 Chevrolet Trax remains a top choice in the subcompact SUV segment, offering exceptional value and modern features.',
+    publishedDate: 'March 10, 2025',
+    updatedDate: 'March 15, 2025',
     readingTime: 10,
   },
 };
 
 export const WithWhatsNew: Story = {
   args: {
-    year: 2024,
+    year: 2025,
     author: 'Editorial Team',
     whatsNew: [
-      'Redesigned front fascia with new grille design',
-      'Updated infotainment system with larger touchscreen',
-      'New hybrid powertrain option',
-      'Enhanced safety features as standard',
+      'Updated front fascia with new grille design',
+      'Enhanced Chevrolet Infotainment 3 system',
+      'New color options available',
+      'Improved safety features as standard',
     ],
-    publishedDate: 'February 1, 2024',
+    publishedDate: 'February 1, 2025',
     readingTime: 6,
   },
 };

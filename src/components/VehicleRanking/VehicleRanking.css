@@ -62,17 +62,48 @@
 
 @media (max-width: 600px) {
   .vehicle-ranking__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+  }
+  
+  .vehicle-ranking__card-name {
+    font-size: 14px;
+  }
+  
+  .vehicle-ranking__card-price {
+    font-size: 10px;
+  }
+  
+  .vehicle-ranking__card-info {
+    padding: var(--spacing-2);
+  }
+  
+  .vehicle-ranking__card-rank {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+  
+  .vehicle-ranking__card-rating-score {
+    font-size: 14px;
+  }
+  
+  .vehicle-ranking__card-rating-max {
+    font-size: 10px;
   }
 }
 
 @media (max-width: 768px) {
+  .vehicle-ranking {
+    padding: 0 16px;
+  }
+  
   .vehicle-ranking__card-wrapper {
-    padding: 1.5rem;
+    padding: 0;
   }
   
   .vehicle-ranking__grid {
-    gap: var(--spacing-4);
+    gap: var(--spacing-3);
   }
   
   /* Smaller title on mobile */
@@ -262,9 +293,11 @@
 
 .vehicle-ranking__card-header {
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  align-items: baseline;
   justify-content: center;
-  margin-bottom: 4px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
   text-align: center;
 }
 
@@ -273,15 +306,43 @@
   font-size: 20px;
   font-weight: 800;
   color: var(--color-black);
-  margin: 0 0 0px 0;
+  margin: 0;
   line-height: 1.3;
   text-align: center;
-  width: 100%;
 }
 
-/* C/D Rating - Hidden */
+/* C/D Rating */
 .vehicle-ranking__card-rating {
-  display: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.vehicle-ranking__card-rating-score {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-black);
+  line-height: 1;
+}
+
+.vehicle-ranking__card-rating-max {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-black);
+}
+
+/* Subtle Score Style - Blue number, gray /10 */
+.vehicle-ranking__card-rating--subtle .vehicle-ranking__card-rating-score {
+  color: var(--color-blue-cobalt);
+}
+
+.vehicle-ranking__card-rating--subtle .vehicle-ranking__card-rating-max {
+  color: var(--color-gray-400);
+  font-weight: 600;
 }
 
 .vehicle-ranking__card-price {

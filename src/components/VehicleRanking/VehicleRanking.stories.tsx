@@ -66,3 +66,21 @@ export const LuxurySUV: Story = {
     maxPrice: 100000,
   },
 };
+
+export const WithScore: Story = {
+  args: {
+    bodyStyle: 'SUV',
+    maxPrice: 35000,
+    showScore: true,
+    scoreStyle: 'bold',
+  },
+};
+
+export const WithSubtleScore: Story = {
+  args: {
+    bodyStyle: 'SUV',
+    maxPrice: 35000,
+    showScore: true,
+    scoreStyle: 'subtle',
+  },
+};

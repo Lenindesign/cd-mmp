@@ -20,64 +20,65 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    vehicleName: '2024 Toyota Camry',
-    msrp: 28500,
+    vehicleName: '2025 Chevrolet Trax',
+    msrp: 21895,
     fuelType: 'Gas',
   },
 };
 
 export const WithTrims: Story = {
   args: {
-    vehicleName: '2024 Toyota Camry',
-    msrp: 28500,
+    vehicleName: '2025 Chevrolet Trax',
+    msrp: 21895,
     fuelType: 'Gas',
     trims: [
-      { name: 'LE', msrp: 28500 },
-      { name: 'SE', msrp: 31200 },
-      { name: 'XLE', msrp: 34500 },
-      { name: 'XSE', msrp: 36800 },
+      { name: 'LS', msrp: 21895 },
+      { name: '1RS', msrp: 23195 },
+      { name: 'LT', msrp: 23395 },
+      { name: 'RS', msrp: 24995 },
+      { name: 'ACTIV', msrp: 24995 },
     ],
   },
 };
 
 export const Electric: Story = {
   args: {
-    vehicleName: '2024 Tesla Model 3',
-    msrp: 42000,
+    vehicleName: '2025 Chevrolet Bolt EV',
+    msrp: 27495,
     fuelType: 'Electric',
     trims: [
-      { name: 'Standard Range Plus', msrp: 42000 },
-      { name: 'Long Range', msrp: 52000 },
-      { name: 'Performance', msrp: 58000 },
+      { name: '1LT', msrp: 27495 },
+      { name: '2LT', msrp: 31495 },
     ],
   },
 };
 
 export const Hybrid: Story = {
   args: {
-    vehicleName: '2024 Toyota Prius',
-    msrp: 32000,
-    fuelType: 'Hybrid',
+    vehicleName: '2025 Chevrolet Trailblazer',
+    msrp: 24995,
+    fuelType: 'Gas',
   },
 };
 
 export const Luxury: Story = {
   args: {
-    vehicleName: '2024 BMW 5 Series',
-    msrp: 56000,
+    vehicleName: '2025 Chevrolet Camaro',
+    msrp: 29100,
     fuelType: 'Gas',
     trims: [
-      { name: '530i', msrp: 56000 },
-      { name: '530i xDrive', msrp: 58500 },
-      { name: 'M550i xDrive', msrp: 78000 },
+      { name: '1LS', msrp: 29100 },
+      { name: '1LT', msrp: 30700 },
+      { name: 'SS', msrp: 44100 },
+      { name: 'ZL1', msrp: 71700 },
     ],
   },
 };
 
 export const Exotic: Story = {
   args: {
-    vehicleName: '2024 Porsche 911 Turbo S',
-    msrp: 225000,
+    vehicleName: '2025 Chevrolet Corvette',
+    msrp: 65000,
     fuelType: 'Gas',
   },
 };

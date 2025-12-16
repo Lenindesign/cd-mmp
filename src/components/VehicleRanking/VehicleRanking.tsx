@@ -11,6 +11,8 @@ interface VehicleRankingProps {
   bodyStyle?: string;
   currentVehicleId?: string;
   maxPrice?: number;
+  showScore?: boolean;
+  scoreStyle?: 'bold' | 'subtle';
 }
 
 // Get category label based on body style and price range
@@ -42,6 +44,8 @@ const VehicleRanking = ({
   bodyStyle = 'SUV',
   currentVehicleId,
   maxPrice = SUBCOMPACT_MAX_PRICE,
+  showScore = false,
+  scoreStyle = 'bold',
 }: VehicleRankingProps) => {
   // Get vehicles from database if not provided
   const displayVehicles = useMemo<RankedVehicle[]>(() => {
@@ -130,11 +134,13 @@ const VehicleRanking = ({
               <div className="vehicle-ranking__card-info">
                 <div className="vehicle-ranking__card-header">
                   <h3 className="vehicle-ranking__card-name">{vehicle.name}</h3>
-                  {/* C/D Rating */}
-                  <div className="vehicle-ranking__card-rating">
-                    <span className="vehicle-ranking__card-rating-score">{vehicle.rating}</span>
-                    <span className="vehicle-ranking__card-rating-max">/10</span>
-                  </div>
+                  {/* C/D Rating - Only show when showScore is true */}
+                  {showScore && (
+                    <div className={`vehicle-ranking__card-rating ${scoreStyle === 'subtle' ? 'vehicle-ranking__card-rating--subtle' : ''}`}>
+                      <span className="vehicle-ranking__card-rating-score">{vehicle.rating}</span>
+                      <span className="vehicle-ranking__card-rating-max">/10</span>
+                    </div>
+                  )}
                 </div>
                 <p className="vehicle-ranking__card-price">
                   <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}

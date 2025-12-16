@@ -20,49 +20,49 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    vehicleName: '2024 Toyota Camry',
-    make: 'Toyota',
-    model: 'Camry',
-    msrp: 28500,
+    vehicleName: '2025 Chevrolet Trax',
+    make: 'Chevrolet',
+    model: 'Trax',
+    msrp: 21895,
   },
 };
 
 export const SUV: Story = {
   args: {
-    vehicleName: '2024 Honda CR-V',
-    make: 'Honda',
-    model: 'CR-V',
-    msrp: 32500,
+    vehicleName: '2025 Chevrolet Trailblazer',
+    make: 'Chevrolet',
+    model: 'Trailblazer',
+    msrp: 24995,
     location: 'Los Angeles, CA',
   },
 };
 
 export const Luxury: Story = {
   args: {
-    vehicleName: '2024 BMW 5 Series',
-    make: 'BMW',
-    model: '5 Series',
-    msrp: 56000,
+    vehicleName: '2025 Chevrolet Camaro',
+    make: 'Chevrolet',
+    model: 'Camaro',
+    msrp: 29100,
     location: 'New York, NY',
   },
 };
 
 export const Truck: Story = {
   args: {
-    vehicleName: '2024 Ford F-150',
-    make: 'Ford',
-    model: 'F-150',
-    msrp: 42000,
+    vehicleName: '2025 Chevrolet Silverado',
+    make: 'Chevrolet',
+    model: 'Silverado',
+    msrp: 36000,
     location: 'Dallas, TX',
   },
 };
 
 export const Budget: Story = {
   args: {
-    vehicleName: '2024 Kia Forte',
-    make: 'Kia',
-    model: 'Forte',
-    msrp: 20500,
+    vehicleName: '2025 Chevrolet Trax LS',
+    make: 'Chevrolet',
+    model: 'Trax',
+    msrp: 21895,
     location: 'Miami, FL',
   },
 };

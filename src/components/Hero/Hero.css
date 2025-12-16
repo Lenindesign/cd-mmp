@@ -480,6 +480,35 @@
   margin-left: 0;
 }
 
+/* Button Load Animation */
+@keyframes buttonFadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero__shop-buttons--animated .hero__shop-btn {
+  opacity: 0;
+  animation: buttonFadeSlideIn 0.5s ease-out forwards;
+}
+
+.hero__shop-btn--animate-1 {
+  animation-delay: 0.3s !important;
+}
+
+.hero__shop-btn--animate-2 {
+  animation-delay: 0.45s !important;
+}
+
+.hero__shop-btn--animate-3 {
+  animation-delay: 0.6s !important;
+}
+
 .hero__shop-btn {
   padding: var(--spacing-1) var(--spacing-3);
   background: var(--color-blue-cobalt);
