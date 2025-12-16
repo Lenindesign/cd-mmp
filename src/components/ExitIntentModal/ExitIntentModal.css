@@ -136,7 +136,7 @@
 
 .exit-modal__visual-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .exit-modal__visual-title {
@@ -253,6 +253,42 @@
 /* Elegant Modal - Refined entrance */
 .exit-modal--elegant {
   animation: elegantModalIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Elegant Visual Panel - Vehicle watermark background */
+.exit-modal--elegant .exit-modal__visual {
+  position: relative;
+  overflow: hidden;
+}
+
+.exit-modal--elegant .exit-modal__visual::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  transform: translate(-50%, -50%);
+  background-image: url('https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.06;
+  filter: grayscale(100%) contrast(1.2);
+  pointer-events: none;
+  animation: elegantWatermarkIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+  z-index: 0;
+}
+
+@keyframes elegantWatermarkIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  to {
+    opacity: 0.06;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 @keyframes elegantModalIn {
