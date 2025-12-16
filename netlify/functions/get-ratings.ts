@@ -22,11 +22,14 @@ const getSupabaseClient = () => {
 export const handler: Handler = async () => {
   try {
     const client = getSupabaseClient();
+    console.log('Fetching ratings from Supabase...');
     
     // Fetch all ratings from Supabase
     const { data, error } = await client
       .from('vehicle_ratings')
       .select('*');
+
+    console.log('Supabase response:', { dataCount: data?.length, error: error?.message });
 
     if (error) {
       console.error('Supabase error:', error);
@@ -36,26 +39,30 @@ export const handler: Handler = async () => {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         },
-        body: JSON.stringify({ error: error.message }),
+        body: JSON.stringify({ error: error.message, details: 'Failed to fetch from vehicle_ratings table' }),
       };
     }
 
     // Convert array to object keyed by "category-id"
     const ratings: Record<string, number> = {};
     if (data) {
+      console.log(`Processing ${data.length} rating records...`);
       for (const row of data) {
         const key = `${row.category}-${row.vehicle_id}`;
         ratings[key] = row.rating;
+        console.log(`Rating: ${key} = ${row.rating}`);
       }
     }
 
+    console.log(`Returning ${Object.keys(ratings).length} ratings`);
+    
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ ratings }),
+      body: JSON.stringify({ ratings, count: Object.keys(ratings).length }),
     };
   } catch (error) {
     console.error('Error fetching ratings:', error);
@@ -65,7 +72,7 @@ export const handler: Handler = async () => {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ error: 'Failed to fetch ratings' }),
+      body: JSON.stringify({ error: 'Failed to fetch ratings', details: error instanceof Error ? error.message : 'Unknown error' }),
     };
   }
 };
