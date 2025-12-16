@@ -317,7 +317,7 @@ const Hero = ({ vehicle }: HeroProps) => {
               <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--outline">
                 SHOP USED
               </Button>
-              <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--outline">
+              <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--trade-in">
                 GET YOUR TRADE-IN VALUE
               </Button>
             </div>
