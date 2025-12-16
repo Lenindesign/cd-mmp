@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Save, Search, AlertCircle, CheckCircle, ChevronDown } from 'lucide-react';
+import { Save, Search, AlertCircle, CheckCircle, ChevronDown, Calendar } from 'lucide-react';
 import { sedans, suvs, trucks, coupes, convertibles, wagons } from '../../data/vehicles';
 import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import { OptimizedImage } from '../../components/OptimizedImage';
+import { RatingHistory } from '../../components/RatingHistory';
 import type { Vehicle } from '../../types/vehicle';
 import './VehicleRatingEditor.css';
 
@@ -92,6 +93,7 @@ const VehicleRatingEditor = () => {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [savedRatings, setSavedRatings] = useState<Record<string, number>>({});
   const [openDropdown, setOpenDropdown] = useState<Category | null>(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Load saved ratings from Supabase on mount (production only)
   useEffect(() => {
@@ -389,6 +391,13 @@ const VehicleRatingEditor = () => {
               </div>
             )}
           </div>
+          <button 
+            className="editor__history-btn"
+            onClick={() => setIsHistoryOpen(true)}
+          >
+            <Calendar size={18} />
+            View History
+          </button>
         </div>
 
         {/* Save Status */}
@@ -701,6 +710,12 @@ const VehicleRatingEditor = () => {
           </button>
         </div>
       )}
+
+      {/* Rating History Modal */}
+      <RatingHistory 
+        isOpen={isHistoryOpen} 
+        onClose={() => setIsHistoryOpen(false)} 
+      />
     </div>
   );
 };

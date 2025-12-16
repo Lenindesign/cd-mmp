@@ -132,6 +132,22 @@ export const handler: Handler = async (event) => {
             error: error.message,
           });
         } else {
+          // Log the change to history table
+          try {
+            await client
+              .from('rating_history')
+              .insert({
+                vehicle_id: id,
+                category: category,
+                old_rating: originalRating,
+                new_rating: newRating,
+                changed_at: new Date().toISOString(),
+              });
+          } catch (historyError) {
+            // Don't fail the save if history logging fails
+            console.warn(`Failed to log history for ${id}:`, historyError);
+          }
+          
           results.success.push({
             id,
             category,
