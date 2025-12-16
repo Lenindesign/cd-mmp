@@ -52,6 +52,7 @@ interface RawVehicle {
   award?: string;
   editorsChoice?: boolean;
   tenBest?: boolean;
+  evOfTheYear?: boolean;
   tags?: string[];
 }
 
@@ -92,6 +93,7 @@ function processVehicle(raw: RawVehicle): Vehicle {
     award: raw.award,
     editorsChoice: raw.editorsChoice,
     tenBest: raw.tenBest,
+    evOfTheYear: raw.evOfTheYear,
     tags: raw.tags,
   };
 }

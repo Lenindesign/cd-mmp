@@ -172,6 +172,9 @@ export interface Vehicle {
   /** 10Best award winner (only 10 vehicles total) */
   tenBest?: boolean;
   
+  /** EV of the Year award winner */
+  evOfTheYear?: boolean;
+  
   /** Tags for filtering/categorization */
   tags?: string[];
 }

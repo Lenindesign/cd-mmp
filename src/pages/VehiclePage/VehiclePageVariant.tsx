@@ -88,6 +88,9 @@ const VehiclePageVariant = ({ variant }: VehiclePageVariantProps) => {
     image: vehicle.image,
     images: vehicle.galleryImages?.slice(0, 3) || [],
     photographer: 'CAR AND DRIVER',
+    editorsChoice: vehicle.editorsChoice,
+    tenBest: vehicle.tenBest,
+    evOfTheYear: vehicle.evOfTheYear,
   };
 
   // Get accurate trim data from service

@@ -99,7 +99,9 @@
       "Premium Audio",
       "Glass Roof"
     ],
-    "slug": "2025/Tesla/Model-3"
+    "slug": "2025/Tesla/Model-3",
+    "editorsChoice": true,
+    "evOfTheYear": true
   },
   {
     "id": "5a",

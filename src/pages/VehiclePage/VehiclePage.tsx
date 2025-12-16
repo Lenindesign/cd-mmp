@@ -71,14 +71,15 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     image: vehicle.image,
     images: vehicle.galleryImages?.slice(0, 3) || [],
     photographer: 'CAR AND DRIVER',
+    editorsChoice: vehicle.editorsChoice,
+    tenBest: vehicle.tenBest,
+    evOfTheYear: vehicle.evOfTheYear,
     mpg: vehicle.mpg,
     horsepower: vehicle.horsepower,
     seatingCapacity: vehicle.seatingCapacity,
     cargoSpace: vehicle.cargoSpace,
     fuelType: vehicle.fuelType,
     drivetrain: vehicle.drivetrain,
-    editorsChoice: vehicle.editorsChoice,
-    tenBest: vehicle.tenBest,
   };
 
   // Get accurate trim data from service

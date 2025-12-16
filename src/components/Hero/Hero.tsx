@@ -19,6 +19,7 @@ interface HeroProps {
     photographer?: string;
     editorsChoice?: boolean;
     tenBest?: boolean;
+    evOfTheYear?: boolean;
   };
 }
 
@@ -322,7 +323,7 @@ const Hero = ({ vehicle }: HeroProps) => {
             </div>
 
             {/* Accolades - Only show if vehicle has awards */}
-            {(vehicle.editorsChoice || vehicle.tenBest) && (
+            {(vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear) && (
               <div className="hero__accolades">
                 <div className="hero__accolades-header">
                   <span className="hero__accolades-title">
@@ -341,6 +342,19 @@ const Hero = ({ vehicle }: HeroProps) => {
                         </svg>
                       </div>
                       <span className="hero__accolade-label">Editors'<br/>Choice</span>
+                    </div>
+                  )}
+                  {vehicle.evOfTheYear && (
+                    <div className="hero__accolade">
+                      <div className="hero__accolade-icon hero__accolade-icon--ev">
+                        <img 
+                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ev-of-the-year.721e420.svg" 
+                          alt="EV of the Year"
+                          width="48"
+                          height="49"
+                        />
+                      </div>
+                      <span className="hero__accolade-label">EV of the<br/>Year</span>
                     </div>
                   )}
                   {vehicle.tenBest && (
