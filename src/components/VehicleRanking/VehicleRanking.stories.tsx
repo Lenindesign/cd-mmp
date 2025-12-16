@@ -12,6 +12,10 @@ const meta: Meta<typeof VehicleRanking> = {
         component: 'Shows where the vehicle ranks in its category.',
       },
     },
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/jvhWYHzYt25IBonCIzVEv0/Post-MVP-Marketplace?node-id=14-24575',
+    },
   },
   tags: ['autodocs'],
   decorators: [
@@ -30,12 +34,6 @@ export const Default: Story = {
   args: {
     bodyStyle: 'SUV',
     maxPrice: 35000,
-  },
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/jvhWYHzYt25IBonCIzVEv0/Post-MVP-Marketplace?node-id=14-24575',
-    },
   },
 };
 
