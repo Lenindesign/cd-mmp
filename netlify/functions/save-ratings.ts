@@ -92,20 +92,24 @@ export const handler: Handler = async (event) => {
 
     for (const change of changes) {
       const { id, category, newRating, originalRating } = change;
+      console.log(`[SAVE] Processing change: id=${id}, category=${category}, newRating=${newRating}, originalRating=${originalRating}`);
 
       try {
         // First, try to select existing record
-        const { data: existing } = await client
+        const { data: existing, error: selectError } = await client
           .from('vehicle_ratings')
-          .select('id')
+          .select('id, staff_rating')
           .eq('id', id)
           .eq('category', category)
           .single();
+
+        console.log(`[SAVE] Select result for ${id}: existing=${JSON.stringify(existing)}, error=${selectError?.message || 'none'}`);
 
         let error;
         
         if (existing) {
           // Update existing record
+          console.log(`[SAVE] Updating existing record for ${id} from ${existing.staff_rating} to ${newRating}`);
           const result = await client
             .from('vehicle_ratings')
             .update({
@@ -115,8 +119,10 @@ export const handler: Handler = async (event) => {
             .eq('id', id)
             .eq('category', category);
           error = result.error;
+          console.log(`[SAVE] Update result for ${id}: error=${result.error?.message || 'none'}`);
         } else {
           // Insert new record
+          console.log(`[SAVE] Inserting new record for ${id} with rating ${newRating}`);
           const result = await client
             .from('vehicle_ratings')
             .insert({
@@ -126,6 +132,7 @@ export const handler: Handler = async (event) => {
               updated_at: new Date().toISOString(),
             });
           error = result.error;
+          console.log(`[SAVE] Insert result for ${id}: error=${result.error?.message || 'none'}`);
         }
 
         if (error) {
