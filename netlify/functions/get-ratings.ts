@@ -48,9 +48,9 @@ export const handler: Handler = async () => {
     if (data) {
       console.log(`Processing ${data.length} rating records...`);
       for (const row of data) {
-        const key = `${row.category}-${row.vehicle_id}`;
-        ratings[key] = row.rating;
-        console.log(`Rating: ${key} = ${row.rating}`);
+        const key = `${row.category}-${row.id}`;
+        ratings[key] = row.staff_rating;
+        console.log(`Rating: ${key} = ${row.staff_rating}`);
       }
     }
 

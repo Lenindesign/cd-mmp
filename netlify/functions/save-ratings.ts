@@ -94,7 +94,7 @@ export const handler: Handler = async (event) => {
         const { data: existing } = await client
           .from('vehicle_ratings')
           .select('id')
-          .eq('vehicle_id', id)
+          .eq('id', id)
           .eq('category', category)
           .single();
 
@@ -105,10 +105,10 @@ export const handler: Handler = async (event) => {
           const result = await client
             .from('vehicle_ratings')
             .update({
-              rating: newRating,
+              staff_rating: newRating,
               updated_at: new Date().toISOString(),
             })
-            .eq('vehicle_id', id)
+            .eq('id', id)
             .eq('category', category);
           error = result.error;
         } else {
@@ -116,9 +116,9 @@ export const handler: Handler = async (event) => {
           const result = await client
             .from('vehicle_ratings')
             .insert({
-              vehicle_id: id,
+              id: id,
               category: category,
-              rating: newRating,
+              staff_rating: newRating,
               updated_at: new Date().toISOString(),
             });
           error = result.error;
