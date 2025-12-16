@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { getVehicleBySlug } from '../../services/vehicleService';
+import { useSupabaseRating } from '../../hooks/useSupabaseRating';
 import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
 import Hero from '../../components/Hero';
 import QuickSpecs from '../../components/QuickSpecs';
@@ -41,6 +42,27 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   
   const vehicle = useMemo(() => getVehicleBySlug(slug), [slug]);
 
+  // Convert bodyStyle to category name for Supabase lookup
+  const getCategory = (bodyStyle: string): string => {
+    const categoryMap: Record<string, string> = {
+      'Sedan': 'sedans',
+      'SUV': 'suvs',
+      'Truck': 'trucks',
+      'Coupe': 'coupes',
+      'Convertible': 'convertibles',
+      'Wagon': 'wagons',
+    };
+    return categoryMap[bodyStyle] || bodyStyle.toLowerCase() + 's';
+  };
+
+  // Fetch rating from Supabase in production
+  const category = vehicle ? getCategory(vehicle.bodyStyle) : '';
+  const { rating: supabaseRating } = useSupabaseRating(
+    vehicle?.id || '',
+    category,
+    vehicle?.staffRating || 0
+  );
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -60,13 +82,13 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     );
   }
 
-  // Build vehicle data for Hero component
+  // Build vehicle data for Hero component (use Supabase rating in production)
   const vehicleData = {
     make: vehicle.make,
     model: vehicle.model,
     year: parseInt(vehicle.year),
     tagline: `The ${vehicle.make} ${vehicle.model} offers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features and value'}. A compelling choice in the ${vehicle.bodyStyle.toLowerCase()} segment.`,
-    rating: vehicle.staffRating,
+    rating: supabaseRating,
     priceRange: vehicle.priceRange,
     image: vehicle.image,
     images: vehicle.galleryImages?.slice(0, 3) || [],
@@ -102,7 +124,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     year: vehicle.year,
     priceMin: vehicle.priceMin,
     priceMax: vehicle.priceMax,
-    rating: vehicle.staffRating,
+    rating: supabaseRating,
     reviewCount: vehicle.reviewCount,
   });
 
@@ -135,7 +157,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}
               highs={vehicle.features?.slice(0, 5) || undefined}
               year={parseInt(vehicle.year)}
-              verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${vehicle.staffRating}/10, it delivers good value for its class.`}
+              verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${supabaseRating}/10, it delivers good value for its class.`}
             />
           </div>
           <AdSidebar />
