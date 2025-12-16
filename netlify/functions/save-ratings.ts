@@ -82,12 +82,14 @@ export const handler: Handler = async (event) => {
       };
     }
     
-    console.log(`Processing ${changes.length} rating changes...`);
+    console.log(`[BULK-SAVE] Processing ${changes.length} rating changes...`);
+    console.log(`[BULK-SAVE] Changes received:`, JSON.stringify(changes));
 
     const results = { success: [] as any[], errors: [] as any[] };
 
     for (const change of changes) {
       const { id, category, newRating, originalRating } = change;
+      console.log(`[BULK-SAVE] Processing change for id=${id}, category=${category}, newRating=${newRating}`);
 
       try {
         // First, try to select existing record

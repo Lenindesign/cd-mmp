@@ -272,6 +272,9 @@ const VehicleRatingEditor = () => {
     try {
       const changes = Array.from(editedRatings.values());
       
+      console.log(`[BULK-SAVE] editedRatings size: ${editedRatings.size}`);
+      console.log(`[BULK-SAVE] changes array length: ${changes.length}`);
+      console.log(`[BULK-SAVE] changes:`, JSON.stringify(changes));
       console.log(`[DEBUG] Saving ${changes.length} changes to ${isProduction ? 'Supabase' : 'local API'}...`);
       
       // Call the appropriate API endpoint based on environment
