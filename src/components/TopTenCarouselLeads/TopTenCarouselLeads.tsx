@@ -27,7 +27,7 @@ interface FilteredRankedVehicle {
   rating: number;
   slug: string;
   isCurrentVehicle?: boolean;
-  badge?: 'best-value' | 'editors-choice' | 'most-popular';
+  badge?: 'best-value' | 'editors-choice';
 }
 
 
@@ -92,13 +92,11 @@ const TopTenCarouselLeads = ({
       const rating = getVehicleRating(vehicle);
       
       // Determine badges
-      let badge: 'best-value' | 'editors-choice' | 'most-popular' | undefined;
+      let badge: 'best-value' | 'editors-choice' | undefined;
       if (index === 0 && rating >= 9) {
         badge = 'editors-choice';
       } else if (vehicle.priceMin < 25000 && rating >= 8) {
         badge = 'best-value';
-      } else if (vehicle.reviewCount && vehicle.reviewCount > 150) {
-        badge = 'most-popular';
       }
       
       return {

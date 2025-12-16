@@ -30,7 +30,7 @@ export interface VehicleCardProps {
   rank?: number;
   
   // Badges
-  badge?: 'best-value' | 'editors-choice' | 'most-popular';
+  badge?: 'best-value' | 'editors-choice';
   editorsChoice?: boolean;
   tenBest?: boolean;
   
@@ -53,7 +53,6 @@ const getBadgeLabel = (badge: string) => {
   switch (badge) {
     case 'best-value': return 'Best Value';
     case 'editors-choice': return "Editor's Choice";
-    case 'most-popular': return 'Most Popular';
     default: return '';
   }
 };

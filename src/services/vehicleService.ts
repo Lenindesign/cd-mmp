@@ -246,7 +246,7 @@ export interface RankedVehicle {
   rating: number;
   slug: string;
   isCurrentVehicle?: boolean;
-  badge?: 'best-value' | 'editors-choice' | 'most-popular';
+  badge?: 'best-value' | 'editors-choice';
   editorsChoice?: boolean;
   tenBest?: boolean;
   evOfTheYear?: boolean;
@@ -285,7 +285,6 @@ export const getRankingVehiclesFormatted = (
   // Find the best candidate for each badge (only one of each type)
   const editorsChoiceIdx = vehicles.findIndex(v => v.award === "Editor's Choice" || v.staffRating >= 9.5);
   const bestValueIdx = vehicles.findIndex(v => v.priceMin < 25000 && v.staffRating >= 8);
-  const mostPopularIdx = vehicles.findIndex(v => v.reviewCount && v.reviewCount > 150);
   
   // Assign Editor's Choice badge
   if (editorsChoiceIdx !== -1) {
@@ -295,11 +294,6 @@ export const getRankingVehiclesFormatted = (
   // Assign Best Value to a different vehicle if available
   if (bestValueIdx !== -1 && bestValueIdx !== editorsChoiceIdx) {
     rankedVehicles[bestValueIdx].badge = 'best-value';
-  }
-  
-  // Assign Most Popular to a different vehicle if available
-  if (mostPopularIdx !== -1 && mostPopularIdx !== editorsChoiceIdx && mostPopularIdx !== bestValueIdx) {
-    rankedVehicles[mostPopularIdx].badge = 'most-popular';
   }
   
   return rankedVehicles;
