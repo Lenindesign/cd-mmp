@@ -29,11 +29,34 @@ const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [buttonsInView, setButtonsInView] = useState(false);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
   const navigate = useNavigate();
+
+  // Intersection Observer for button animations
+  useEffect(() => {
+    if (!animateButtons || !buttonsRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setButtonsInView(true);
+            observer.disconnect(); // Only animate once
+          }
+        });
+      },
+      { threshold: 0.5 } // Trigger when 50% visible
+    );
+
+    observer.observe(buttonsRef.current);
+
+    return () => observer.disconnect();
+  }, [animateButtons]);
 
   // Get available years for this make/model
   const availableYears = getAvailableYears(vehicle.make, vehicle.model);
@@ -312,14 +335,17 @@ const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
               <div className="hero__msrp-price-row">
                 <span className="hero__msrp-price">{vehicle.priceRange}</span>
                 {/* Shop Buttons - Aligned with price numbers */}
-                <div className={`hero__shop-buttons ${animateButtons ? 'hero__shop-buttons--animated' : ''}`}>
-                  <Button variant="primary" size="small" className={`hero__shop-btn ${animateButtons ? 'hero__shop-btn--animate-1' : ''}`}>
+                <div 
+                  ref={buttonsRef}
+                  className={`hero__shop-buttons ${animateButtons && buttonsInView ? 'hero__shop-buttons--animated' : ''}`}
+                >
+                  <Button variant="primary" size="small" className={`hero__shop-btn ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-1' : ''}`}>
                     SHOP NEW
                   </Button>
-                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--outline ${animateButtons ? 'hero__shop-btn--animate-2' : ''}`}>
+                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--outline ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-2' : ''}`}>
                     SHOP USED
                   </Button>
-                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--trade-in ${animateButtons ? 'hero__shop-btn--animate-3' : ''}`}>
+                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--trade-in ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-3' : ''}`}>
                     GET YOUR TRADE-IN VALUE
                   </Button>
                 </div>
