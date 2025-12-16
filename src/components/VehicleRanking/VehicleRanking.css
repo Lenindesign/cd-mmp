@@ -88,12 +88,13 @@
 
 /* Card */
 .vehicle-ranking__card {
+  position: relative;
   display: flex;
   flex-direction: column;
   text-decoration: none;
   border: none;
   border-radius: 0;
-  overflow: hidden;
+  overflow: visible;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   background: var(--color-white);
   box-shadow: 2px 4px 13px 2px rgba(0, 0, 0, 0.12);
@@ -151,7 +152,7 @@
   border: 2px solid var(--color-white);
 }
 
-/* Accolade Badges (Editors' Choice, 10Best, EV of the Year) */
+/* Accolade Badges (Editors' Choice, 10Best, EV of the Year) - Positioned at card level */
 .vehicle-ranking__card-accolades {
   position: absolute;
   top: var(--spacing-2);
@@ -159,7 +160,7 @@
   display: flex;
   flex-direction: row;
   gap: 6px;
-  z-index: 1;
+  z-index: 5;
 }
 
 .vehicle-ranking__card-accolade {
