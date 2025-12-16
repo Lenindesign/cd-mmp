@@ -163,6 +163,7 @@
 }
 
 .vehicle-ranking__card-accolade {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -172,12 +173,58 @@
   border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   padding: 4px;
+  cursor: pointer;
 }
 
 .vehicle-ranking__card-accolade svg,
 .vehicle-ranking__card-accolade img {
   width: 20px;
   height: auto;
+}
+
+/* Custom Tooltip */
+.vehicle-ranking__card-accolade::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background: var(--color-neutrals-1);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Tooltip Arrow */
+.vehicle-ranking__card-accolade::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-neutrals-1);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Show tooltip on hover */
+.vehicle-ranking__card-accolade:hover::after,
+.vehicle-ranking__card-accolade:hover::before {
+  opacity: 1;
+  visibility: visible;
 }
 
 @media (max-width: 768px) {
