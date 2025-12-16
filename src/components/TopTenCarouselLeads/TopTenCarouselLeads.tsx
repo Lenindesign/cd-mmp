@@ -227,7 +227,6 @@ const TopTenCarouselLeads = ({
                 isCurrentVehicle={vehicle.isCurrentVehicle}
                 showShopButton={true}
                 onShopClick={(e) => handleShopUsed(e, vehicle)}
-                nearbyCount={Math.floor(((parseInt(vehicle.id, 36) % 150) + 50))}
               />
             ))}
 

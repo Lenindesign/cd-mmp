@@ -44,7 +44,6 @@ export interface VehicleCardProps {
   // CTA
   showShopButton?: boolean;
   onShopClick?: (e: React.MouseEvent) => void;
-  nearbyCount?: number;
   
   // State
   isCurrentVehicle?: boolean;
@@ -77,7 +76,6 @@ export const VehicleCard = ({
   trim,
   showShopButton = false,
   onShopClick,
-  nearbyCount,
   isCurrentVehicle = false,
 }: VehicleCardProps) => {
   const isUsedCar = !!mileage;
@@ -192,16 +190,10 @@ export const VehicleCard = ({
         {/* Shop Button (for Top 10 cards) */}
         {showShopButton && (
           <button
-            className="vehicle-card__cta"
+            className="cta cta--primary cta--sm cta--full"
             onClick={handleShopClick}
           >
-            <span className="vehicle-card__cta-text">Shop Now</span>
-            {nearbyCount && (
-              <span className="vehicle-card__cta-count">
-                <MapPin size={12} />
-                {nearbyCount} near you
-              </span>
-            )}
+            SHOP NOW
           </button>
         )}
       </div>
