@@ -129,9 +129,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-white);
+  border-radius: 50%;
   cursor: pointer;
   transition: transform var(--transition-fast);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .vehicle-card__accolade:hover {
@@ -140,15 +144,15 @@
 
 .vehicle-card__accolade--ec svg {
   display: block;
-  width: 24px;
-  height: 22px;
+  width: 20px;
+  height: 18px;
   flex-shrink: 0;
 }
 
 .vehicle-card__accolade--10best img {
   display: block;
-  width: 22px;
-  height: 25px;
+  width: 18px;
+  height: 20px;
   flex-shrink: 0;
 }
 
