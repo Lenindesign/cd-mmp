@@ -27,6 +27,8 @@ interface RatingChange {
 }
 
 export const handler: Handler = async (event) => {
+  console.log('[SAVE-RATINGS] Function invoked, method:', event.httpMethod);
+  
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -69,7 +71,9 @@ export const handler: Handler = async (event) => {
       };
     }
     
+    console.log('[SAVE-RATINGS] Parsing body:', event.body?.substring(0, 200));
     const { changes } = JSON.parse(event.body || '{}') as { changes: RatingChange[] };
+    console.log('[SAVE-RATINGS] Parsed changes:', changes?.length || 0);
 
     if (!changes || !Array.isArray(changes)) {
       return {
