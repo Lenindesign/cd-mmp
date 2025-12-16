@@ -453,10 +453,15 @@
 
 .hero__shop-buttons {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
   gap: var(--spacing-2);
   flex: 1;
+}
+
+.hero__shop-buttons--no-accolades {
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .hero__shop-btn {

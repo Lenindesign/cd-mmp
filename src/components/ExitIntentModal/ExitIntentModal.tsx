@@ -21,22 +21,7 @@ const ExitIntentModal = ({
   // Handle external isOpen prop
   useEffect(() => {
     if (isOpen) {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ExitIntentModal.tsx:24',message:'Modal isOpen changed to true',data:{isOpen,isVisible,viewportWidth:window.innerWidth,viewportHeight:window.innerHeight},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       setIsVisible(true);
-      
-      // #region agent log - Check modal dimensions after render
-      setTimeout(() => {
-        const modalEl = document.querySelector('.exit-modal');
-        const overlayEl = document.querySelector('.exit-modal__overlay');
-        if (modalEl && overlayEl) {
-          const modalRect = modalEl.getBoundingClientRect();
-          const overlayRect = overlayEl.getBoundingClientRect();
-          fetch('http://127.0.0.1:7243/ingest/421dcf11-ec3c-40f4-96b0-d7195da06ee8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ExitIntentModal.tsx:32',message:'Modal rendered - dimensions POST-FIX',data:{modalWidth:modalRect.width,modalHeight:modalRect.height,modalTop:modalRect.top,modalBottom:modalRect.bottom,viewportWidth:window.innerWidth,viewportHeight:window.innerHeight,overlayHeight:overlayRect.height,isClippedWidth:modalRect.width>window.innerWidth,isClippedHeight:modalRect.height>window.innerHeight,maxHeightApplied:window.getComputedStyle(modalEl).maxHeight},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'D'})}).catch(()=>{});
-        }
-      }, 100);
-      // #endregion
     }
   }, [isOpen]);
 

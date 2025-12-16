@@ -309,8 +309,8 @@ const Hero = ({ vehicle }: HeroProps) => {
               <span className="hero__msrp-price">{vehicle.priceRange}</span>
             </div>
 
-            {/* Shop Buttons - Right aligned when no accolades */}
-            <div className="hero__shop-buttons">
+            {/* Shop Buttons - Centered with accolades, right-aligned without */}
+            <div className={`hero__shop-buttons${!(vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear) ? ' hero__shop-buttons--no-accolades' : ''}`}>
               <Button variant="primary" size="small" className="hero__shop-btn">
                 SHOP NEW
               </Button>
