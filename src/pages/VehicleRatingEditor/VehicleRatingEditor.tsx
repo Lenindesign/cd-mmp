@@ -7,7 +7,7 @@ import { OptimizedImage } from '../../components/OptimizedImage';
 import type { Vehicle } from '../../types/vehicle';
 import './VehicleRatingEditor.css';
 
-type Category = 'sedans' | 'suvs' | 'trucks' | 'coupes' | 'convertibles' | 'wagons';
+type Category = 'all' | 'sedans' | 'suvs' | 'trucks' | 'coupes' | 'convertibles' | 'wagons';
 
 interface EditedRating {
   id: string;
@@ -29,6 +29,13 @@ type Subcategory = 'all' | 'compact' | 'midsize' | 'luxury' | 'electric';
 
 // Subcategory definitions per body style
 const SUBCATEGORY_CONFIG: Record<Category, { key: Subcategory; label: string; filter: (v: Vehicle) => boolean }[]> = {
+  all: [
+    { key: 'all', label: 'All Vehicles', filter: () => true },
+    { key: 'compact', label: 'Budget Vehicles', filter: (v) => v.priceMin < 35000 && v.fuelType !== 'Electric' },
+    { key: 'midsize', label: 'Mid-Range Vehicles', filter: (v) => v.priceMin >= 35000 && v.priceMin < 60000 && v.fuelType !== 'Electric' },
+    { key: 'luxury', label: 'Luxury Vehicles', filter: (v) => v.priceMin >= 60000 && v.fuelType !== 'Electric' },
+    { key: 'electric', label: 'Electric Vehicles', filter: (v) => v.fuelType === 'Electric' },
+  ],
   sedans: [
     { key: 'all', label: 'All Sedans', filter: () => true },
     { key: 'compact', label: 'Compact Sedans', filter: (v) => v.priceMin < 30000 && v.fuelType !== 'Electric' },
@@ -71,7 +78,7 @@ const SUBCATEGORY_CONFIG: Record<Category, { key: Subcategory; label: string; fi
 };
 
 const VehicleRatingEditor = () => {
-  const [activeCategory, setActiveCategory] = useState<Category>('sedans');
+  const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [activeSubcategory, setActiveSubcategory] = useState<Subcategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMake, setSelectedMake] = useState<string>('all');
@@ -108,6 +115,7 @@ const VehicleRatingEditor = () => {
 
   // Combine all vehicles with their category (already processed with images)
   const allVehicles = useMemo(() => ({
+    all: [...sedans, ...suvs, ...trucks, ...coupes, ...convertibles, ...wagons],
     sedans,
     suvs,
     trucks,
@@ -187,9 +195,23 @@ const VehicleRatingEditor = () => {
     return categoryVehicles;
   }, [allVehicles, activeCategory, searchQuery, selectedMake, selectedYear, selectedLifestyle, selectedPriceRange]);
 
+  // Get the actual category from vehicle's bodyStyle (for saving to Supabase)
+  const getVehicleCategory = (vehicle: Vehicle): Category => {
+    const bodyStyleMap: Record<string, Category> = {
+      'Sedan': 'sedans',
+      'SUV': 'suvs',
+      'Truck': 'trucks',
+      'Coupe': 'coupes',
+      'Convertible': 'convertibles',
+      'Wagon': 'wagons',
+    };
+    return bodyStyleMap[vehicle.bodyStyle] || 'sedans';
+  };
+
   // Get current rating (edited > saved from Supabase > original from JSON)
   const getCurrentRating = (vehicle: Vehicle): number => {
-    const key = `${activeCategory}-${vehicle.id}`;
+    const vehicleCategory = getVehicleCategory(vehicle);
+    const key = `${vehicleCategory}-${vehicle.id}`;
     const edited = editedRatings.get(key);
     if (edited) return edited.newRating;
     
@@ -203,7 +225,8 @@ const VehicleRatingEditor = () => {
   
   // Get the base rating (from Supabase in production, or from JSON locally)
   const getBaseRating = (vehicle: Vehicle): number => {
-    const key = `${activeCategory}-${vehicle.id}`;
+    const vehicleCategory = getVehicleCategory(vehicle);
+    const key = `${vehicleCategory}-${vehicle.id}`;
     if (isProduction && savedRatings[key] !== undefined) {
       return savedRatings[key];
     }
@@ -212,12 +235,14 @@ const VehicleRatingEditor = () => {
 
   // Check if rating has been edited
   const isEdited = (vehicle: Vehicle): boolean => {
-    return editedRatings.has(`${activeCategory}-${vehicle.id}`);
+    const vehicleCategory = getVehicleCategory(vehicle);
+    return editedRatings.has(`${vehicleCategory}-${vehicle.id}`);
   };
 
   // Handle rating change
   const handleRatingChange = (vehicle: Vehicle, newRating: number) => {
-    const key = `${activeCategory}-${vehicle.id}`;
+    const vehicleCategory = getVehicleCategory(vehicle);
+    const key = `${vehicleCategory}-${vehicle.id}`;
     const rating = Math.max(0, Math.min(10, newRating)); // Clamp between 0-10
     const baseRating = getBaseRating(vehicle);
 
@@ -229,7 +254,7 @@ const VehicleRatingEditor = () => {
     } else {
       setEditedRatings(new Map(editedRatings).set(key, {
         id: vehicle.id,
-        category: activeCategory,
+        category: vehicleCategory,
         newRating: rating,
         originalRating: baseRating,
       }));
@@ -295,6 +320,7 @@ const VehicleRatingEditor = () => {
   
 
   const categories: { key: Category; label: string; count: number }[] = [
+    { key: 'all', label: 'All Vehicles', count: allVehicles.all.length },
     { key: 'sedans', label: 'Sedans', count: allVehicles.sedans.length },
     { key: 'suvs', label: 'SUVs', count: allVehicles.suvs.length },
     { key: 'trucks', label: 'Trucks', count: allVehicles.trucks.length },
