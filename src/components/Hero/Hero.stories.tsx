@@ -10,45 +10,84 @@ const meta: Meta<typeof Hero> = {
     docs: {
       description: {
         component: `
-## Hero Section
+# Hero Section
 
-The Hero component is the primary visual element on vehicle detail pages. It showcases:
+## 📋 Product Overview
 
-- **Vehicle Identity**: Year, Make, Model with year selector dropdown
-- **Image Gallery**: Swipeable carousel with thumbnail navigation
-- **Ratings**: C/D rating score with visual indicator
-- **Pricing**: MSRP range with shop CTAs
-- **Accolades**: Editor's Choice and 10Best badges when applicable
+The Hero is the **primary above-the-fold component** on every Vehicle Detail Page (VDP). It's the first thing users see and sets the tone for their research journey.
 
-### Usage
+---
 
-\`\`\`tsx
-import Hero from '@/components/Hero';
+## 🎯 Business Purpose
 
-<Hero 
-  vehicle={{
-    make: 'Chevrolet',
-    model: 'Trax',
-    year: 2025,
-    tagline: 'Best value in its class',
-    rating: 10,
-    priceRange: '$20,400 - $24,400',
-    image: 'https://example.com/image.jpg',
-    galleryImages: ['...'],
-    editorsChoice: true,
-    tenBest: true,
-  }}
-  animateButtons={false}
-/>
-\`\`\`
+| Goal | How Hero Achieves It |
+|------|---------------------|
+| **First Impression** | High-quality imagery and clear vehicle identity |
+| **Trust Building** | C/D ratings and accolades establish credibility |
+| **Lead Generation** | Shop New/Used CTAs drive dealer connections |
+| **Year Navigation** | Dropdown helps users find the right model year |
 
-### Design Tokens Used
+---
 
-- \`--color-primary-1\`: MotorTrend Red for accents
-- \`--color-neutrals-*\`: Background and text colors
-- \`--spacing-*\`: Consistent spacing throughout
-- \`--font-heading\`: Poppins for vehicle name
-- \`--font-body\`: Geist for body text
+## 📊 Key Metrics to Track
+
+- **CTA Click Rate**: Shop New vs Shop Used vs Trade-In
+- **Gallery Engagement**: Slides viewed per session
+- **Year Selector Usage**: How often users switch years
+- **Time on Component**: Engagement before scrolling
+
+---
+
+## 🧩 Component Elements
+
+| Element | Purpose | Business Impact |
+|---------|---------|-----------------|
+| **Vehicle Title** | Year/Make/Model identification | SEO, user orientation |
+| **Rating Badge** | C/D expert score (1-10) | Trust, credibility |
+| **Image Gallery** | Visual showcase with thumbnails | Engagement, time on page |
+| **MSRP Range** | Price transparency | Purchase intent qualification |
+| **Shop CTAs** | Lead generation buttons | Dealer revenue |
+| **Accolades** | Editor's Choice / 10Best badges | Trust signals, differentiation |
+| **Favorites** | Save to account | User retention, personalization |
+
+---
+
+## 🏆 Accolades System
+
+Accolades appear when vehicles earn editorial recognition:
+
+- **Editor's Choice**: Vehicles that excel in their segment
+- **10Best**: Annual top picks across categories
+- **EV of the Year**: Best electric vehicle (when applicable)
+
+*These badges increase user trust and can improve conversion rates.*
+
+---
+
+## 📱 Responsive Behavior
+
+| Breakpoint | Layout Changes |
+|------------|----------------|
+| Desktop (>938px) | Side-by-side layout, horizontal CTAs |
+| Tablet (768-938px) | Stacked layout begins |
+| Mobile (<768px) | Full-width stacked, centered CTAs |
+
+---
+
+## 💡 PM Considerations
+
+1. **A/B Testing Opportunities**:
+   - CTA button text variations
+   - Animated vs static buttons
+   - Accolade badge placement
+
+2. **Data Requirements**:
+   - Vehicle database must include rating, pricing, images
+   - Accolades require editorial flags in CMS
+
+3. **Dependencies**:
+   - Image CDN for gallery photos
+   - Vehicle service for year availability
         `,
       },
     },

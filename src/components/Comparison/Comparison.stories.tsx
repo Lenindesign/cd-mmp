@@ -10,28 +10,79 @@ const meta: Meta<typeof Comparison> = {
     docs: {
       description: {
         component: `
-## Vehicle Comparison
+# Vehicle Comparison
 
-Side-by-side comparison of the current vehicle with similar competitors.
+## 📋 Product Overview
 
-### Features
-- **Smart Matching**: Automatically finds similar vehicles by body style and price
-- **Key Specs**: Compare ratings, prices, and features at a glance
-- **Quick Links**: Navigate to competitor vehicle pages
+Side-by-side comparison showing how the current vehicle stacks up against competitors. A **key research tool** for users in the consideration phase.
 
-### Usage
+---
 
-\`\`\`tsx
-import Comparison from '@/components/Comparison';
+## 🎯 Business Purpose
 
-<Comparison 
-  currentVehicle={{
-    make: 'Chevrolet',
-    model: 'Trax',
-  }}
-  title="Compare Similar Vehicles"
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Research Depth** | Keeps users on site longer |
+| **Cross-Selling** | Exposes users to alternatives |
+| **Trust Building** | Objective comparison builds credibility |
+| **Decision Support** | Helps users make informed choices |
+
+---
+
+## 📊 Key Metrics to Track
+
+- **Competitor Click Rate**: Which alternatives get clicks
+- **Comparison Tool Usage**: Full comparison page visits
+- **Return Behavior**: Users coming back to compare
+- **Conversion Correlation**: Does comparing predict leads?
+
+---
+
+## 🔄 Matching Algorithm
+
+| Factor | Weight | Description |
+|--------|--------|-------------|
+| **Body Style** | High | Same category (SUV vs SUV) |
+| **Price Range** | High | Within ±20% of MSRP |
+| **Segment** | Medium | Subcompact, Compact, etc. |
+| **Rating** | Low | Similar C/D scores |
+
+---
+
+## 📱 Comparison Elements
+
+| Element | Purpose |
+|---------|---------|
+| **Vehicle Image** | Visual identification |
+| **Name & Year** | Quick reference |
+| **C/D Rating** | Expert score comparison |
+| **Price Range** | Budget alignment |
+| **Key Specs** | Quick differentiation |
+| **View Details CTA** | Drive to competitor VDP |
+
+---
+
+## 💡 PM Considerations
+
+1. **Competitor Selection**:
+   - Algorithm-driven vs curated
+   - OEM preferences (show/hide certain brands?)
+   - Regional availability
+
+2. **User Journey**:
+   - Users in "consideration" phase
+   - High intent but not decided
+   - Need objective information
+
+3. **Revenue Implications**:
+   - Cross-selling opportunity
+   - May lead users to other vehicles
+   - Builds overall site engagement
+
+4. **A/B Testing Ideas**:
+   - Number of competitors shown
+   - Spec comparison depth
+   - CTA text variations
         `,
       },
     },

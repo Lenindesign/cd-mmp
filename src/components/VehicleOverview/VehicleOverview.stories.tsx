@@ -9,33 +9,79 @@ const meta: Meta<typeof VehicleOverview> = {
     docs: {
       description: {
         component: `
-## Vehicle Overview
+# Vehicle Overview
 
-Editorial content section providing expert analysis and key takeaways about a vehicle.
+## 📋 Product Overview
 
-### Sections
-- **Main Content**: Expert review summary
-- **Highs**: List of positive attributes
-- **Lows**: List of drawbacks
-- **What's New**: Changes for the model year
-- **Verdict**: Final expert recommendation
-- **Author Info**: Byline with publish/update dates
+The **editorial heart** of the VDP. Expert analysis that differentiates us from dealer sites and builds trust.
 
-### Usage
+---
 
-\`\`\`tsx
-import VehicleOverview from '@/components/VehicleOverview';
+## 🎯 Business Purpose
 
-<VehicleOverview 
-  year={2025}
-  author="Car and Driver Staff"
-  authorTitle="Automotive Editor"
-  highs={['Excellent value', 'Modern features']}
-  lows={['Limited cargo space']}
-  verdict="A top choice in its segment"
-  publishedDate="January 15, 2025"
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Authority** | Expert editorial content |
+| **SEO Value** | Unique, quality content |
+| **Trust Building** | Honest pros/cons |
+| **Decision Support** | Clear verdict helps users decide |
+
+---
+
+## 📊 Key Metrics to Track
+
+- **Read Depth**: How much content users consume
+- **Time on Section**: Engagement duration
+- **Scroll Behavior**: Do users read highs/lows?
+- **SEO Performance**: Organic traffic to VDPs
+
+---
+
+## 📝 Content Sections
+
+| Section | Purpose | SEO Value |
+|---------|---------|-----------|
+| **Summary** | Quick overview | High - answers search intent |
+| **Highs** | What's good | Medium - feature keywords |
+| **Lows** | What's not | Medium - honest assessment |
+| **What's New** | Model year changes | High - "2025 changes" queries |
+| **Verdict** | Expert recommendation | High - decision keywords |
+
+---
+
+## ✍️ Author Attribution
+
+| Element | Purpose |
+|---------|---------|
+| **Author Name** | Credibility signal |
+| **Author Title** | Authority indicator |
+| **Published Date** | Freshness signal |
+| **Updated Date** | Content maintained |
+| **Reading Time** | User expectation setting |
+
+---
+
+## 💡 PM Considerations
+
+1. **Content Strategy**:
+   - Unique editorial voice
+   - Regular updates for accuracy
+   - Model year refresh cycle
+
+2. **SEO Priorities**:
+   - Target "2025 [Make Model] review"
+   - Structured data for rich snippets
+   - Fresh content signals
+
+3. **Editorial Process**:
+   - Expert review required
+   - Fact-checking for accuracy
+   - Regular content audits
+
+4. **User Research Insights**:
+   - Users want honest pros/cons
+   - Verdict is highly valued
+   - "What's New" drives traffic
         `,
       },
     },

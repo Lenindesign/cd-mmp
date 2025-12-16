@@ -9,29 +9,85 @@ const meta: Meta<typeof PricingCTAV1B> = {
     docs: {
       description: {
         component: `
-## Pricing CTA Section
+# Pricing CTA Section
 
-Full-width call-to-action section for lead generation and dealer connections.
+## 📋 Product Overview
 
-### Features
-- **Local Pricing**: Shows pricing for user's location
-- **Dealer Connect**: Links to local dealer inventory
-- **Lead Capture**: Email/phone collection forms
-- **Price Alerts**: Sign up for price drop notifications
+The **primary lead generation component** on the VDP. Captures user information and connects them with local dealers.
 
-### Usage
+---
 
-\`\`\`tsx
-import { PricingCTAV1B } from '@/components/PricingCTA';
+## 🎯 Business Purpose
 
-<PricingCTAV1B 
-  vehicleName="2025 Chevrolet Trax"
-  make="Chevrolet"
-  model="Trax"
-  msrp={21895}
-  location="Los Angeles, CA"
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Lead Generation** | Form captures contact info |
+| **Dealer Revenue** | Leads sent to local dealers |
+| **Local Relevance** | Location-based pricing/inventory |
+| **Conversion Focus** | Clear, prominent CTAs |
+
+---
+
+## 📊 Key Metrics to Track
+
+| Metric | Target | Description |
+|--------|--------|-------------|
+| **Form Start Rate** | 8-12% | Users who begin form |
+| **Form Completion** | 40-60% | Started → submitted |
+| **Lead Quality Score** | 7+ | Dealer feedback rating |
+| **Cost Per Lead** | <$25 | Acquisition efficiency |
+
+---
+
+## 📝 Lead Capture Fields
+
+| Field | Required | Purpose |
+|-------|----------|---------|
+| **Email** | Yes | Primary contact |
+| **Phone** | Optional | Higher intent signal |
+| **ZIP Code** | Yes | Dealer matching |
+| **Timeline** | Optional | Purchase urgency |
+
+---
+
+## 🏪 Dealer Connection
+
+| Step | Description |
+|------|-------------|
+| 1. User submits | Form data captured |
+| 2. ZIP matching | Find nearby dealers |
+| 3. Lead routing | Send to top 3 dealers |
+| 4. Dealer response | Within 24 hours |
+
+---
+
+## 💡 PM Considerations
+
+1. **Revenue Attribution**:
+   - Track lead → sale conversion
+   - Dealer feedback loop
+   - Cost per acquisition
+
+2. **Form Optimization**:
+   - Minimize fields (higher completion)
+   - Progressive disclosure
+   - Mobile-first design
+
+3. **A/B Testing Priorities**:
+   - CTA button text
+   - Form field order
+   - Value proposition messaging
+   - Social proof elements
+
+4. **Compliance**:
+   - TCPA for phone leads
+   - CAN-SPAM for emails
+   - State-specific requirements
+
+5. **Location Strategy**:
+   - Auto-detect vs manual entry
+   - Fallback for unknown locations
+   - Regional inventory messaging
         `,
       },
     },

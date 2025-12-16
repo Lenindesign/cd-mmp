@@ -10,27 +10,77 @@ const meta: Meta<typeof BuyingPotential> = {
     docs: {
       description: {
         component: `
-## Buying Potential Score
+# Buying Potential Score
 
-Personalized match score showing how well a vehicle fits the user's preferences and needs.
+## 📋 Product Overview
 
-### Score Factors
-- **Budget Match**: How well the price fits user's budget
-- **Feature Match**: Alignment with desired features
-- **Lifestyle Fit**: Compatibility with user's lifestyle
-- **Segment Rating**: Expert rating in its category
+A **personalized match score** showing how well a vehicle fits the user's stated preferences. Requires user profile/onboarding data.
 
-### Usage
+---
 
-\`\`\`tsx
-import BuyingPotential from '@/components/BuyingPotential';
+## 🎯 Business Purpose
 
-<BuyingPotential 
-  vehicleName="2025 Chevrolet Trax"
-  bodyStyle="SUV"
-  vehicleImage="https://example.com/trax.jpg"
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Personalization** | Tailored recommendations |
+| **User Engagement** | Encourages profile completion |
+| **Decision Confidence** | "This is right for you" validation |
+| **Conversion Lift** | Higher intent from matched users |
+
+---
+
+## 📊 Key Metrics to Track
+
+- **Score Correlation**: High scores → higher conversion?
+- **Profile Completion**: Users filling out preferences
+- **Engagement Lift**: Personalized vs non-personalized
+- **Return Visits**: Do matched users come back?
+
+---
+
+## 🧮 Score Calculation
+
+| Factor | Weight | Description |
+|--------|--------|-------------|
+| **Budget Match** | 30% | Price vs stated budget |
+| **Feature Match** | 25% | Desired features present |
+| **Lifestyle Fit** | 25% | Family, commuter, adventure, etc. |
+| **Segment Rating** | 20% | C/D score in category |
+
+---
+
+## 📈 Score Ranges
+
+| Score | Label | Meaning |
+|-------|-------|---------|
+| 90-100% | Excellent Match | Highly recommended |
+| 75-89% | Good Match | Worth considering |
+| 60-74% | Fair Match | Some compromises |
+| <60% | Low Match | May not fit needs |
+
+---
+
+## 💡 PM Considerations
+
+1. **Data Requirements**:
+   - User must complete onboarding
+   - Budget, lifestyle, feature preferences
+   - Falls back to generic if no profile
+
+2. **Personalization Strategy**:
+   - Encourages account creation
+   - Improves with more user data
+   - Can drive email personalization
+
+3. **A/B Testing Ideas**:
+   - Score visibility impact
+   - Threshold for "Good Match" label
+   - CTA variations based on score
+
+4. **Privacy Considerations**:
+   - Transparent about data usage
+   - User control over preferences
+   - GDPR/CCPA compliance
         `,
       },
     },

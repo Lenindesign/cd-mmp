@@ -11,38 +11,94 @@ const meta: Meta<typeof ExitIntentModal> = {
     docs: {
       description: {
         component: `
-## Exit Intent Modal
+# Exit Intent Modal
 
-A conversion-focused modal that appears when users show exit intent (moving cursor to leave the page).
+## 📋 Product Overview
 
-### Features
-- **Exit Detection**: Triggers when cursor moves above the viewport
-- **Session Tracking**: Only shows once per session via sessionStorage
-- **Email Capture**: Primary CTA for newsletter/account signup
-- **Social Login**: Apple and Google sign-in options
-- **Animation Styles**: Default and elegant variants
-- **Vehicle Context**: Shows the vehicle user was viewing
+A **conversion recovery tool** that captures users who are about to leave the site. Displays when the cursor moves toward the browser's close/back buttons.
 
-### Trigger Behavior
-- Activates after 3 seconds on page
-- Only triggers once per session
-- Can be manually controlled via \`isOpen\` prop
+---
 
-### Usage
+## 🎯 Business Purpose
 
-\`\`\`tsx
-import ExitIntentModal from '@/components/ExitIntentModal';
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Lead Capture** | Email collection before user leaves |
+| **Account Creation** | Frictionless signup via social login |
+| **Research Retention** | "Save your research" value proposition |
+| **Re-engagement** | Email list for future marketing |
 
-// Auto-trigger on exit intent
-<ExitIntentModal vehicleName="2025 Chevrolet Trax" />
+---
 
-// Manual control
-<ExitIntentModal 
-  isOpen={showModal} 
-  onClose={() => setShowModal(false)}
-  animationStyle="elegant"
-/>
-\`\`\`
+## 📊 Key Metrics to Track
+
+| Metric | Target | Description |
+|--------|--------|-------------|
+| **Display Rate** | 15-25% | % of sessions that see modal |
+| **Conversion Rate** | 3-8% | % of modal views → email capture |
+| **Social Signup Rate** | 1-3% | % using Apple/Google |
+| **Close Rate** | <70% | Users closing without action |
+
+---
+
+## ⚙️ Trigger Behavior
+
+| Condition | Behavior |
+|-----------|----------|
+| **Delay** | 3 seconds after page load |
+| **Trigger** | Cursor moves above viewport (exit intent) |
+| **Frequency** | Once per session (sessionStorage) |
+| **Mobile** | Not triggered (no cursor tracking) |
+
+---
+
+## 🎨 Animation Styles
+
+| Style | Use Case | Effect |
+|-------|----------|--------|
+| **default** | Standard experience | Simple fade + scale |
+| **elegant** | Premium feel | Staggered reveals, vehicle watermark |
+
+---
+
+## 📱 Modal Content
+
+| Section | Purpose |
+|---------|---------|
+| **Left Panel** | Value proposition, floating cards, stats |
+| **Right Panel** | Email form, social login, terms |
+| **Floating Cards** | Show saved vehicle, price alerts, articles |
+| **Stats** | Social proof (2.3M+ members, etc.) |
+
+---
+
+## 💡 PM Considerations
+
+1. **A/B Testing Opportunities**:
+   - Headline variations ("Don't lose your research" vs "Save your progress")
+   - Value prop messaging
+   - Animation style impact on conversion
+   - Social login button order
+
+2. **Personalization**:
+   - Show the actual vehicle user was viewing
+   - Customize based on user journey stage
+   - Different messaging for new vs returning users
+
+3. **Compliance**:
+   - GDPR/CCPA consent requirements
+   - Terms & Privacy links required
+   - Email validation before submission
+
+4. **Mobile Strategy**:
+   - Exit intent doesn't work on mobile
+   - Consider scroll-based or time-based triggers
+   - Or skip modal entirely on mobile
+
+5. **Success Criteria**:
+   - Email list growth rate
+   - Account creation rate
+   - Return visit rate for captured emails
         `,
       },
       story: {

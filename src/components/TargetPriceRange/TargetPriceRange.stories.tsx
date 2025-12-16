@@ -9,31 +9,70 @@ const meta: Meta<typeof TargetPriceRange> = {
     docs: {
       description: {
         component: `
-## Target Price Range
+# Target Price Range
 
-Displays pricing information with market analysis, helping users understand fair pricing.
+## 📋 Product Overview
 
-### Features
-- **MSRP Display**: Base manufacturer suggested retail price
-- **Trim Selection**: Dropdown to view pricing for different trims
-- **Market Analysis**: Shows typical transaction prices vs MSRP
-- **Visual Range**: Price range indicator with market positioning
+Helps users understand what they should pay for a vehicle by showing MSRP, market pricing, and negotiation targets.
 
-### Usage
+---
 
-\`\`\`tsx
-import TargetPriceRange from '@/components/TargetPriceRange';
+## 🎯 Business Purpose
 
-<TargetPriceRange 
-  vehicleName="2025 Chevrolet Trax"
-  msrp={21895}
-  trims={[
-    { name: 'LS FWD', msrp: 21895 },
-    { name: '1RS FWD', msrp: 23195 },
-    { name: 'LT FWD', msrp: 23395 },
-  ]}
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Price Transparency** | Shows MSRP and market reality |
+| **User Empowerment** | Helps users negotiate better deals |
+| **Trust Building** | Honest pricing builds credibility |
+| **Lead Qualification** | Users understand budget fit |
+
+---
+
+## 📊 Key Metrics to Track
+
+- **Trim Selector Usage**: Which trims users explore
+- **Time in Section**: Engagement with pricing data
+- **Scroll to CTA**: Correlation with lead form completion
+- **Price Alert Signups**: Users wanting price notifications
+
+---
+
+## 💰 Pricing Components
+
+| Element | Description |
+|---------|-------------|
+| **MSRP** | Manufacturer's suggested retail price |
+| **Target Price** | What users should aim to pay |
+| **Market Range** | Low to high transaction prices |
+| **Trim Selector** | Compare pricing across trims |
+
+---
+
+## 📱 Trim Selection
+
+Users can select different trims to see:
+- Base MSRP for that trim
+- Estimated target price
+- Market positioning
+
+---
+
+## 💡 PM Considerations
+
+1. **Data Accuracy**:
+   - MSRP from manufacturer feeds
+   - Market data from transaction databases
+   - Regular updates needed
+
+2. **User Value**:
+   - "What should I pay?" is top user question
+   - Target price helps negotiation
+   - Builds trust vs dealer-only info
+
+3. **Revenue Opportunity**:
+   - Price alerts → email capture
+   - "Get Quote" CTA integration
+   - Dealer lead attribution
         `,
       },
     },

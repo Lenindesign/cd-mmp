@@ -10,28 +10,79 @@ const meta: Meta<typeof VehicleRanking> = {
     docs: {
       description: {
         component: `
-## Vehicle Ranking Section
+# Vehicle Ranking Section
 
-Displays where a vehicle ranks within its category, showing competitors and their ratings.
+## 📋 Product Overview
 
-### Features
-- **Dynamic Filtering**: Filters by body style and price range
-- **Category Labels**: Auto-generates labels like "Best Subcompact SUVs"
-- **Score Display**: Optional rating scores with bold or subtle styling
-- **Responsive Grid**: 2 columns on mobile, 4 on desktop
+Shows where the current vehicle ranks among competitors in its segment. This component helps users understand how the vehicle compares to alternatives.
 
-### Usage
+---
 
-\`\`\`tsx
-import VehicleRanking from '@/components/VehicleRanking';
+## 🎯 Business Purpose
 
-<VehicleRanking 
-  bodyStyle="SUV"
-  maxPrice={35000}
-  showScore={true}
-  scoreStyle="bold"
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Competitive Context** | Shows where vehicle stands vs competitors |
+| **Cross-Selling** | Exposes users to alternative vehicles |
+| **Trust Building** | Transparent ranking builds credibility |
+| **Engagement** | Encourages exploration of other vehicles |
+
+---
+
+## 📊 Key Metrics to Track
+
+- **Click-through Rate**: Users clicking competitor cards
+- **Scroll Depth**: How many rankings users view
+- **Return Visits**: Users coming back to compare
+- **Time in Section**: Engagement with rankings
+
+---
+
+## 🧩 How Rankings Work
+
+| Filter | Effect |
+|--------|--------|
+| **Body Style** | SUV, Sedan, Truck, etc. |
+| **Max Price** | Creates segment labels (Subcompact < $35k, Compact < $50k, etc.) |
+| **Current Vehicle** | Highlights the vehicle user is viewing |
+
+---
+
+## 🏷️ Category Labels (Auto-Generated)
+
+- Under $35,000 → "Best **Subcompact** SUVs"
+- $35,000-$50,000 → "Best **Compact** SUVs"
+- $50,000-$80,000 → "Best **Midsize** SUVs"
+- Over $100,000 → "Best **Luxury** SUVs"
+
+---
+
+## 📱 Responsive Grid
+
+| Screen Size | Columns |
+|-------------|---------|
+| Mobile (<600px) | 2 columns |
+| Tablet | 3 columns |
+| Desktop | 4 columns |
+
+---
+
+## 💡 PM Considerations
+
+1. **Score Display Options**:
+   - \`showScore: false\` - Clean card without score
+   - \`showScore: true, scoreStyle: 'bold'\` - Prominent score
+   - \`showScore: true, scoreStyle: 'subtle'\` - Understated score
+
+2. **Data Dependencies**:
+   - Vehicle database with ratings
+   - Body style classification
+   - Price data for segmentation
+
+3. **A/B Testing Ideas**:
+   - Score visibility impact on CTR
+   - Number of competitors shown
+   - Card layout variations
         `,
       },
     },

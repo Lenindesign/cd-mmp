@@ -10,35 +10,78 @@ const meta: Meta<typeof MarketSpeed> = {
     docs: {
       description: {
         component: `
-## Market Speed Indicator
+# Market Speed Indicator
 
-Shows how quickly vehicles are selling in the current market, helping buyers understand demand.
+## 📋 Product Overview
 
-### Speed Levels
-- **Hot**: Selling very fast, high demand
-- **Fast**: Above average selling speed
-- **Average**: Normal market conditions
-- **Slow**: Below average, potential for negotiation
+Shows how quickly vehicles are selling in the market. Creates **urgency for hot vehicles** and **negotiation confidence for slow sellers**.
 
-### Data Points
-- Days on market average
-- Inventory levels
-- Price trends
-- Regional demand
+---
 
-### Usage
+## 🎯 Business Purpose
 
-\`\`\`tsx
-import MarketSpeed from '@/components/MarketSpeed';
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Urgency Creation** | "Selling fast" motivates action |
+| **Negotiation Intel** | "Slow" signals room to negotiate |
+| **Market Transparency** | Unique data not on dealer sites |
+| **Trust Building** | Honest market conditions |
 
-<MarketSpeed 
-  vehicleName="2025 Chevrolet Trax"
-  make="Chevrolet"
-  model="Trax"
-  bodyStyle="SUV"
-  msrp={21895}
-/>
-\`\`\`
+---
+
+## 📊 Key Metrics to Track
+
+- **Correlation with Leads**: Does "Hot" increase conversions?
+- **User Engagement**: Time spent, interactions
+- **Regional Accuracy**: Data quality by market
+- **Update Frequency**: Freshness of data
+
+---
+
+## 🌡️ Speed Levels
+
+| Level | Days on Lot | User Implication |
+|-------|-------------|------------------|
+| 🔥 **Hot** | <14 days | Act fast, less negotiation room |
+| ⚡ **Fast** | 14-30 days | Popular, some urgency |
+| 📊 **Average** | 30-45 days | Normal conditions |
+| 🐢 **Slow** | 45+ days | Negotiate harder |
+
+---
+
+## 📈 Data Components
+
+| Metric | Description |
+|--------|-------------|
+| **Days on Market** | Average time to sell |
+| **Inventory Level** | Supply in region |
+| **Price Trend** | Rising, stable, falling |
+| **Demand Index** | Buyer interest level |
+
+---
+
+## 💡 PM Considerations
+
+1. **Data Sources**:
+   - Dealer inventory feeds
+   - Auction data
+   - Transaction databases
+   - Regional aggregation
+
+2. **User Psychology**:
+   - "Hot" creates FOMO
+   - "Slow" empowers negotiation
+   - Both drive action
+
+3. **Accuracy Requirements**:
+   - Weekly data refresh minimum
+   - Regional granularity
+   - Seasonal adjustments
+
+4. **A/B Testing Ideas**:
+   - Visual indicator styles
+   - Urgency messaging variations
+   - Placement on page
         `,
       },
     },

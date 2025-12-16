@@ -11,30 +11,85 @@ const meta: Meta<typeof TopTenCarouselLeads> = {
     docs: {
       description: {
         component: `
-## Top 10 Carousel with Lead Generation
+# Top 10 Carousel with Lead Generation
 
-A horizontally scrollable carousel showcasing top-ranked vehicles with integrated lead generation CTAs.
+## 📋 Product Overview
 
-### Features
-- **Smart Filtering**: Filter by body style, make, lifestyle, or price
-- **Ranking Badges**: Shows rank position with special badges for top vehicles
-- **Accolades**: Displays Editor's Choice and 10Best icons
-- **Lead Gen CTAs**: Shop Used and View Rankings actions
-- **Smooth Scrolling**: Touch-friendly with arrow navigation
+A high-impact carousel showcasing top-ranked vehicles with integrated lead generation. This is a **key conversion component** that drives dealer leads.
 
-### Usage
+---
 
-\`\`\`tsx
-import TopTenCarouselLeads from '@/components/TopTenCarouselLeads';
+## 🎯 Business Purpose
 
-<TopTenCarouselLeads 
-  title="Top 10 SUVs"
-  subtitle="Our experts pick the best"
-  bodyStyle="SUV"
-  maxPrice={35000}
-  onShopUsed={(vehicle) => console.log(vehicle)}
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Lead Generation** | Shop Used CTAs drive dealer connections |
+| **Discovery** | Exposes users to top-rated alternatives |
+| **Authority** | "Top 10" framing establishes expertise |
+| **Engagement** | Carousel interaction increases time on site |
+
+---
+
+## 📊 Key Metrics to Track
+
+- **Lead Conversion Rate**: Shop Used clicks → dealer form submissions
+- **Carousel Engagement**: Slides scrolled, arrows clicked
+- **Card CTR**: Which rank positions get most clicks
+- **Filter Usage**: Which filters users apply most
+
+---
+
+## 🎛️ Filtering Options
+
+| Filter | Use Case |
+|--------|----------|
+| **bodyStyle** | "Top 10 SUVs", "Top 10 Sedans" |
+| **make** | "Top Toyota Vehicles" |
+| **lifestyle** | "Best Family Vehicles" |
+| **maxPrice** | "Top Vehicles Under $35,000" |
+
+---
+
+## 🏆 Badge System
+
+| Badge | Meaning | Visual |
+|-------|---------|--------|
+| **Rank #1** | Top-rated vehicle | Gold badge |
+| **Editor's Choice** | Editorial pick | EC icon |
+| **10Best** | Annual award winner | 10Best icon |
+
+---
+
+## 📱 Responsive Behavior
+
+| Screen | Cards Visible | Navigation |
+|--------|---------------|------------|
+| Desktop | 4-5 cards | Arrow buttons |
+| Tablet | 2-3 cards | Touch scroll + arrows |
+| Mobile | 1-2 cards | Touch scroll |
+
+---
+
+## 💡 PM Considerations
+
+1. **Personalization Opportunities**:
+   - Filter by user's saved preferences
+   - Show vehicles in user's budget range
+   - Lifestyle-based recommendations
+
+2. **A/B Testing Ideas**:
+   - CTA text variations ("Shop Used" vs "See Deals")
+   - Number of cards shown
+   - Auto-scroll vs manual
+
+3. **Data Requirements**:
+   - Vehicle ratings for ranking
+   - Lifestyle tags in database
+   - Used inventory availability
+
+4. **Revenue Impact**:
+   - Direct dealer lead attribution
+   - Track "Shop Used" → form completion funnel
         `,
       },
     },

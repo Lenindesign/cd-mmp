@@ -9,27 +9,78 @@ const meta: Meta<typeof Incentives> = {
     docs: {
       description: {
         component: `
-## Incentives & Offers
+# Incentives & Offers
 
-Displays current manufacturer incentives, rebates, and special financing offers.
+## 📋 Product Overview
 
-### Types of Incentives
-- **Cash Rebates**: Direct manufacturer discounts
-- **Financing Offers**: Low APR or 0% financing
-- **Lease Specials**: Attractive lease terms
-- **Trade-In Bonuses**: Extra value for trade-ins
-- **Federal Tax Credits**: EV tax incentives (when applicable)
+Displays current manufacturer incentives, rebates, and special financing. This is **high-value content** that directly impacts purchase decisions.
 
-### Usage
+---
 
-\`\`\`tsx
-import Incentives from '@/components/Incentives';
+## 🎯 Business Purpose
 
-<Incentives 
-  make="Chevrolet"
-  model="Trax"
-/>
-\`\`\`
+| Goal | How It Achieves It |
+|------|-------------------|
+| **Purchase Urgency** | Limited-time offers create urgency |
+| **Value Communication** | Shows total savings available |
+| **Lead Generation** | "Get This Deal" CTAs drive leads |
+| **Competitive Edge** | Users get info not on dealer sites |
+
+---
+
+## 📊 Key Metrics to Track
+
+- **Incentive Views**: Which offers get most attention
+- **CTA Clicks**: "Get This Deal" engagement
+- **Time Sensitivity**: Impact of expiration dates
+- **Regional Variance**: Local offer performance
+
+---
+
+## 💰 Incentive Types
+
+| Type | Description | Typical Value |
+|------|-------------|---------------|
+| **Cash Rebate** | Direct discount from MSRP | $500-$5,000 |
+| **APR Special** | Reduced financing rate | 0-2.9% |
+| **Lease Deal** | Monthly payment special | $199-$399/mo |
+| **Trade Bonus** | Extra trade-in value | $500-$2,000 |
+| **Loyalty** | Returning customer discount | $500-$1,500 |
+| **EV Tax Credit** | Federal/state incentives | $2,500-$7,500 |
+
+---
+
+## ⏰ Time Sensitivity
+
+| Element | Purpose |
+|---------|---------|
+| **Expiration Date** | Creates urgency |
+| **"Ends Soon" Badge** | Highlights expiring offers |
+| **Monthly Refresh** | Incentives change monthly |
+
+---
+
+## 💡 PM Considerations
+
+1. **Data Freshness**:
+   - Incentives change monthly
+   - Regional variations exist
+   - Stacking rules are complex
+
+2. **Revenue Opportunity**:
+   - High purchase intent users
+   - Direct dealer lead attribution
+   - Premium placement for OEMs
+
+3. **Compliance**:
+   - Accurate expiration dates
+   - Fine print disclosure
+   - Regional availability notes
+
+4. **EV Focus**:
+   - Federal tax credit prominence
+   - State incentive aggregation
+   - Charging incentives
         `,
       },
     },
