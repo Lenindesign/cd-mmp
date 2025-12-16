@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, ChevronDown, Grid, List, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
 import { getAllVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
+import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
 import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import TopTenCarouselLeads from '../../components/TopTenCarouselLeads';
@@ -157,14 +158,23 @@ const VehiclesListPage = () => {
   const allListings = useMemo(() => getAllListings(), []);
   const makes = inventoryType === 'new' ? getUniqueMakes() : getUniqueMakesFromListings();
   const bodyStyles = getUniqueBodyStyles();
+  
+  // Fetch all ratings from Supabase in production
+  const { getRating: getSupabaseRating } = useSupabaseRatings();
 
-  // Helper to get vehicle rating by make/model for ranking sort
+  // Helper to get vehicle rating (uses Supabase in production, JSON in dev)
+  const getVehicleRatingForVehicle = (vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
+    return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
+  };
+
+  // Helper to get vehicle rating by make/model for ranking sort (used for listings)
   const getVehicleRating = (make: string, model: string): number => {
     const vehicle = allVehicles.find(
       v => v.make.toLowerCase() === make.toLowerCase() && 
            v.model.toLowerCase() === model.toLowerCase()
     );
-    return vehicle?.staffRating || 0;
+    if (!vehicle) return 0;
+    return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
   };
 
   // Mileage ranges for used cars
@@ -232,7 +242,7 @@ const VehiclesListPage = () => {
     // Sort
     switch (sortBy) {
       case 'rating':
-        result.sort((a, b) => b.staffRating - a.staffRating);
+        result.sort((a, b) => getVehicleRatingForVehicle(b) - getVehicleRatingForVehicle(a));
         break;
       case '10best':
         // 10Best vehicles first (sorted by price low to high), then others by price
@@ -597,7 +607,7 @@ const VehiclesListPage = () => {
                 image={vehicle.image}
                 bodyStyle={vehicle.bodyStyle}
                 price={formatCurrency(vehicle.priceMin)}
-                rating={vehicle.staffRating}
+                rating={getVehicleRatingForVehicle(vehicle)}
                 editorsChoice={vehicle.editorsChoice}
                 tenBest={vehicle.tenBest}
               />

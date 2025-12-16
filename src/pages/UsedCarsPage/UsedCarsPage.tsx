@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, ChevronDown, Grid, List, MapPin, Tag, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
 import { getUniqueBodyStyles, getAllVehicles } from '../../services/vehicleService';
+import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
 import TopTenCarouselLeads from '../../components/TopTenCarouselLeads';
 import './UsedCarsPage.css';
@@ -151,14 +152,18 @@ const UsedCarsPage = () => {
   const makes = useMemo(() => getUniqueMakesFromListings(), []);
   const bodyStyles = getUniqueBodyStyles();
   const allVehicles = useMemo(() => getAllVehicles(), []);
+  
+  // Fetch all ratings from Supabase in production
+  const { getRating: getSupabaseRating } = useSupabaseRatings();
 
-  // Helper to get vehicle rating by make/model
+  // Helper to get vehicle rating by make/model (uses Supabase in production)
   const getVehicleRating = (make: string, model: string): number => {
     const vehicle = allVehicles.find(
       v => v.make.toLowerCase() === make.toLowerCase() && 
            v.model.toLowerCase() === model.toLowerCase()
     );
-    return vehicle?.staffRating || 0;
+    if (!vehicle) return 0;
+    return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
   };
 
   // Mileage ranges for filter

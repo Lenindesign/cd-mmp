@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
 import { searchVehicles, type Vehicle } from '../../services/vehicleService';
+import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { Button } from '../Button';
 import ExitIntentModal from '../ExitIntentModal';
 import './Header.css';
@@ -15,6 +16,14 @@ const Header = () => {
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const searchRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
+  
+  // Fetch all ratings from Supabase in production
+  const { getRating: getSupabaseRating } = useSupabaseRatings();
+  
+  // Helper to get vehicle rating (uses Supabase in production)
+  const getVehicleRating = (vehicle: Vehicle): number => {
+    return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
+  };
 
   const navItems = [
     { label: 'Browse All Vehicles', href: '/vehicles', isRoute: true },
@@ -145,7 +154,7 @@ const Header = () => {
                       </span>
                     </div>
                     <span className="header__suggestion-rating">
-                      <span className="header__suggestion-rating-score">{vehicle.staffRating}</span>/10
+                      <span className="header__suggestion-rating-score">{getVehicleRating(vehicle)}</span>/10
                     </span>
                     <div className="header__suggestion-ctas">
                       <button

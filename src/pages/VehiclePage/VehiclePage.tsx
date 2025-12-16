@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { getVehicleBySlug } from '../../services/vehicleService';
-import { useSupabaseRating } from '../../hooks/useSupabaseRating';
+import { useSupabaseRating, getCategory } from '../../hooks/useSupabaseRating';
 import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
 import Hero from '../../components/Hero';
 import QuickSpecs from '../../components/QuickSpecs';
@@ -41,19 +41,6 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   const slug = `${year}/${make}/${model}`;
   
   const vehicle = useMemo(() => getVehicleBySlug(slug), [slug]);
-
-  // Convert bodyStyle to category name for Supabase lookup
-  const getCategory = (bodyStyle: string): string => {
-    const categoryMap: Record<string, string> = {
-      'Sedan': 'sedans',
-      'SUV': 'suvs',
-      'Truck': 'trucks',
-      'Coupe': 'coupes',
-      'Convertible': 'convertibles',
-      'Wagon': 'wagons',
-    };
-    return categoryMap[bodyStyle] || bodyStyle.toLowerCase() + 's';
-  };
 
   // Fetch rating from Supabase in production
   const category = vehicle ? getCategory(vehicle.bodyStyle) : '';
