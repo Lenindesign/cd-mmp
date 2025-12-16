@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Calendar, ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { getAllVehicles } from '../../services/vehicleService';
 import './RatingHistory.css';
 
 interface HistoryEntry {
@@ -22,6 +23,8 @@ const MONTHS = [
 ];
 
 const RatingHistory = ({ isOpen, onClose }: RatingHistoryProps) => {
+  // Get all vehicles to look up make/model/year
+  const allVehicles = useMemo(() => getAllVehicles(), []);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [groupedHistory, setGroupedHistory] = useState<Record<string, HistoryEntry[]>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -97,6 +100,15 @@ const RatingHistory = ({ isOpen, onClose }: RatingHistoryProps) => {
 
   const formatCategory = (category: string) => {
     return category.charAt(0).toUpperCase() + category.slice(1);
+  };
+
+  // Look up vehicle info by ID
+  const getVehicleInfo = (vehicleId: string) => {
+    const vehicle = allVehicles.find(v => v.id === vehicleId);
+    if (vehicle) {
+      return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+    }
+    return vehicleId; // Fallback to ID if not found
   };
 
   if (!isOpen) return null;
@@ -176,8 +188,8 @@ const RatingHistory = ({ isOpen, onClose }: RatingHistoryProps) => {
                           return (
                             <div key={entry.id} className="rating-history__entry">
                               <div className="rating-history__entry-info">
-                                <span className="rating-history__vehicle-id">
-                                  {entry.vehicle_id}
+                                <span className="rating-history__vehicle-name">
+                                  {getVehicleInfo(entry.vehicle_id)}
                                 </span>
                                 <span className="rating-history__category">
                                   {formatCategory(entry.category)}
