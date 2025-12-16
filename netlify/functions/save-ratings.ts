@@ -133,7 +133,7 @@ export const handler: Handler = async (event) => {
           });
         } else {
           // Log the change to history table
-          await client
+          const historyResult = await client
             .from('rating_history')
             .insert({
               vehicle_id: id,
@@ -142,6 +142,12 @@ export const handler: Handler = async (event) => {
               new_rating: newRating,
               changed_at: new Date().toISOString(),
             });
+          
+          if (historyResult.error) {
+            console.error(`[HISTORY] Insert FAILED for ${id}:`, historyResult.error.message, historyResult.error.code, historyResult.error.details);
+          } else {
+            console.log(`[HISTORY] Insert SUCCESS for ${id}`);
+          }
           
           results.success.push({
             id,
