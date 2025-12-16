@@ -97,7 +97,7 @@
 }
 
 .editor__sticky-actions .cta--primary {
-  background: var(--color-primary-1);
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
   border: none;
   padding: var(--spacing-2) var(--spacing-4);
@@ -106,9 +106,9 @@
 }
 
 .editor__sticky-actions .cta--primary:hover {
-  background: var(--color-neutrals-1);
+  background: var(--color-black);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(233, 12, 23, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .editor__sticky-actions .cta--ghost {
