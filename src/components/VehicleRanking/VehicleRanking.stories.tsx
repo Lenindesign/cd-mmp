@@ -31,6 +31,12 @@ export const Default: Story = {
     bodyStyle: 'SUV',
     maxPrice: 35000,
   },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/jvhWYHzYt25IBonCIzVEv0/Post-MVP-Marketplace?node-id=14-24575',
+    },
+  },
 };
 
 export const SUV: Story = {
