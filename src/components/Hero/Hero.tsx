@@ -309,7 +309,7 @@ const Hero = ({ vehicle }: HeroProps) => {
               <span className="hero__msrp-price">{vehicle.priceRange}</span>
             </div>
 
-            {/* Shop Buttons - Centered */}
+            {/* Shop Buttons - Right aligned when no accolades */}
             <div className="hero__shop-buttons">
               <Button variant="primary" size="small" className="hero__shop-btn">
                 SHOP NEW
