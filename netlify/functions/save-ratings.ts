@@ -133,19 +133,21 @@ export const handler: Handler = async (event) => {
           });
         } else {
           // Log the change to history table
-          try {
-            await client
-              .from('rating_history')
-              .insert({
-                vehicle_id: id,
-                category: category,
-                old_rating: originalRating,
-                new_rating: newRating,
-                changed_at: new Date().toISOString(),
-              });
-          } catch (historyError) {
-            // Don't fail the save if history logging fails
-            console.warn(`Failed to log history for ${id}:`, historyError);
+          console.log(`[DEBUG H1] Attempting to insert history for ${id}, category: ${category}, old: ${originalRating}, new: ${newRating}`);
+          const historyResult = await client
+            .from('rating_history')
+            .insert({
+              vehicle_id: id,
+              category: category,
+              old_rating: originalRating,
+              new_rating: newRating,
+              changed_at: new Date().toISOString(),
+            });
+          
+          if (historyResult.error) {
+            console.error(`[DEBUG H2] History insert FAILED for ${id}:`, historyResult.error.message, historyResult.error.details, historyResult.error.hint);
+          } else {
+            console.log(`[DEBUG H3] History insert SUCCESS for ${id}`);
           }
           
           results.success.push({
