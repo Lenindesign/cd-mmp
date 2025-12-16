@@ -25,7 +25,50 @@ const API_ENDPOINTS = {
   saveRatings: isProduction ? '/.netlify/functions/save-ratings' : 'http://localhost:3001/api/ratings',
 };
 
-type Subcategory = 'all' | 'gas' | 'hybrid' | 'electric';
+type Subcategory = 'all' | 'compact' | 'midsize' | 'luxury' | 'electric';
+
+// Subcategory definitions per body style
+const SUBCATEGORY_CONFIG: Record<Category, { key: Subcategory; label: string; filter: (v: Vehicle) => boolean }[]> = {
+  sedans: [
+    { key: 'all', label: 'All Sedans', filter: () => true },
+    { key: 'compact', label: 'Compact Sedans', filter: (v) => v.priceMin < 30000 && v.fuelType !== 'Electric' },
+    { key: 'midsize', label: 'Midsize Sedans', filter: (v) => v.priceMin >= 30000 && v.priceMin < 45000 && v.fuelType !== 'Electric' },
+    { key: 'luxury', label: 'Luxury Sedans', filter: (v) => v.priceMin >= 45000 && v.fuelType !== 'Electric' },
+    { key: 'electric', label: 'Electric Sedans', filter: (v) => v.fuelType === 'Electric' },
+  ],
+  suvs: [
+    { key: 'all', label: 'All SUVs', filter: () => true },
+    { key: 'compact', label: 'Compact SUVs', filter: (v) => v.priceMin < 35000 && v.fuelType !== 'Electric' },
+    { key: 'midsize', label: 'Midsize SUVs', filter: (v) => v.priceMin >= 35000 && v.priceMin < 55000 && v.fuelType !== 'Electric' },
+    { key: 'luxury', label: 'Luxury SUVs', filter: (v) => v.priceMin >= 55000 && v.fuelType !== 'Electric' },
+    { key: 'electric', label: 'Electric SUVs', filter: (v) => v.fuelType === 'Electric' },
+  ],
+  trucks: [
+    { key: 'all', label: 'All Trucks', filter: () => true },
+    { key: 'compact', label: 'Compact Trucks', filter: (v) => v.priceMin < 35000 && v.fuelType !== 'Electric' },
+    { key: 'midsize', label: 'Midsize Trucks', filter: (v) => v.priceMin >= 35000 && v.priceMin < 55000 && v.fuelType !== 'Electric' },
+    { key: 'luxury', label: 'Heavy-Duty Trucks', filter: (v) => v.priceMin >= 55000 && v.fuelType !== 'Electric' },
+    { key: 'electric', label: 'Electric Trucks', filter: (v) => v.fuelType === 'Electric' },
+  ],
+  coupes: [
+    { key: 'all', label: 'All Coupes', filter: () => true },
+    { key: 'compact', label: 'Sports Coupes', filter: (v) => v.priceMin < 50000 && v.fuelType !== 'Electric' },
+    { key: 'luxury', label: 'Luxury Coupes', filter: (v) => v.priceMin >= 50000 && v.fuelType !== 'Electric' },
+    { key: 'electric', label: 'Electric Coupes', filter: (v) => v.fuelType === 'Electric' },
+  ],
+  convertibles: [
+    { key: 'all', label: 'All Convertibles', filter: () => true },
+    { key: 'compact', label: 'Sports Convertibles', filter: (v) => v.priceMin < 60000 && v.fuelType !== 'Electric' },
+    { key: 'luxury', label: 'Luxury Convertibles', filter: (v) => v.priceMin >= 60000 && v.fuelType !== 'Electric' },
+    { key: 'electric', label: 'Electric Convertibles', filter: (v) => v.fuelType === 'Electric' },
+  ],
+  wagons: [
+    { key: 'all', label: 'All Wagons', filter: () => true },
+    { key: 'compact', label: 'Compact Wagons', filter: (v) => v.priceMin < 40000 && v.fuelType !== 'Electric' },
+    { key: 'luxury', label: 'Luxury Wagons', filter: (v) => v.priceMin >= 40000 && v.fuelType !== 'Electric' },
+    { key: 'electric', label: 'Electric Wagons', filter: (v) => v.fuelType === 'Electric' },
+  ],
+};
 
 const VehicleRatingEditor = () => {
   const [activeCategory, setActiveCategory] = useState<Category>('sedans');
@@ -91,15 +134,13 @@ const VehicleRatingEditor = () => {
   const vehicles = useMemo(() => {
     let categoryVehicles = allVehicles[activeCategory];
 
-    // Apply subcategory filter (fuel type)
+    // Apply subcategory filter
     if (activeSubcategory !== 'all') {
-      const fuelTypeMap: Record<Subcategory, string> = {
-        all: '',
-        gas: 'Gas',
-        hybrid: 'Hybrid',
-        electric: 'Electric',
-      };
-      categoryVehicles = categoryVehicles.filter(v => v.fuelType === fuelTypeMap[activeSubcategory]);
+      const subcategories = SUBCATEGORY_CONFIG[activeCategory];
+      const activeSub = subcategories.find(s => s.key === activeSubcategory);
+      if (activeSub) {
+        categoryVehicles = categoryVehicles.filter(activeSub.filter);
+      }
     }
 
     // Apply search filter
@@ -242,13 +283,16 @@ const VehicleRatingEditor = () => {
   // Get subcategory counts for a category
   const getSubcategoryCounts = (category: Category) => {
     const categoryVehicles = allVehicles[category];
-    return {
-      all: categoryVehicles.length,
-      gas: categoryVehicles.filter(v => v.fuelType === 'Gas').length,
-      hybrid: categoryVehicles.filter(v => v.fuelType === 'Hybrid').length,
-      electric: categoryVehicles.filter(v => v.fuelType === 'Electric').length,
-    };
+    const subcategories = SUBCATEGORY_CONFIG[category];
+    const counts: Record<string, number> = {};
+    
+    for (const sub of subcategories) {
+      counts[sub.key] = categoryVehicles.filter(sub.filter).length;
+    }
+    
+    return counts;
   };
+  
 
   const categories: { key: Category; label: string; count: number }[] = [
     { key: 'sedans', label: 'Sedans', count: allVehicles.sedans.length },
@@ -421,14 +465,21 @@ const VehicleRatingEditor = () => {
         <div className="editor__category-nav">
           {categories.map((category) => {
             const subcounts = getSubcategoryCounts(category.key);
+            const subcategories = SUBCATEGORY_CONFIG[category.key];
             const isActive = activeCategory === category.key;
             const isOpen = openDropdown === category.key;
             
             // Get current display label
             const getDisplayLabel = () => {
               if (!isActive) return category.label;
-              if (activeSubcategory === 'all') return `All ${category.label}`;
-              return `${activeSubcategory.charAt(0).toUpperCase() + activeSubcategory.slice(1)} ${category.label}`;
+              const activeSub = subcategories.find(s => s.key === activeSubcategory);
+              return activeSub?.label || `All ${category.label}`;
+            };
+            
+            // Get current count
+            const getCurrentCount = () => {
+              if (!isActive || activeSubcategory === 'all') return category.count;
+              return subcounts[activeSubcategory] || 0;
             };
             
             return (
@@ -444,10 +495,7 @@ const VehicleRatingEditor = () => {
                   }}
                 >
                   <span className="editor__category-label">{getDisplayLabel()}</span>
-                  <span className="editor__category-count">{isActive && activeSubcategory !== 'all' 
-                    ? subcounts[activeSubcategory] 
-                    : category.count}
-                  </span>
+                  <span className="editor__category-count">{getCurrentCount()}</span>
                   <ChevronDown 
                     size={16} 
                     className={`editor__category-chevron ${isOpen ? 'editor__category-chevron--open' : ''}`} 
@@ -456,40 +504,22 @@ const VehicleRatingEditor = () => {
                 
                 {isOpen && (
                   <div className="editor__category-menu">
-                    <button
-                      className={`editor__category-item ${isActive && activeSubcategory === 'all' ? 'editor__category-item--active' : ''}`}
-                      onClick={() => handleCategorySelect(category.key, 'all')}
-                    >
-                      <span>All {category.label}</span>
-                      <span className="editor__category-item-count">{subcounts.all}</span>
-                    </button>
-                    {subcounts.gas > 0 && (
-                      <button
-                        className={`editor__category-item ${isActive && activeSubcategory === 'gas' ? 'editor__category-item--active' : ''}`}
-                        onClick={() => handleCategorySelect(category.key, 'gas')}
-                      >
-                        <span>Gas {category.label}</span>
-                        <span className="editor__category-item-count">{subcounts.gas}</span>
-                      </button>
-                    )}
-                    {subcounts.hybrid > 0 && (
-                      <button
-                        className={`editor__category-item ${isActive && activeSubcategory === 'hybrid' ? 'editor__category-item--active' : ''}`}
-                        onClick={() => handleCategorySelect(category.key, 'hybrid')}
-                      >
-                        <span>Hybrid {category.label}</span>
-                        <span className="editor__category-item-count">{subcounts.hybrid}</span>
-                      </button>
-                    )}
-                    {subcounts.electric > 0 && (
-                      <button
-                        className={`editor__category-item ${isActive && activeSubcategory === 'electric' ? 'editor__category-item--active' : ''}`}
-                        onClick={() => handleCategorySelect(category.key, 'electric')}
-                      >
-                        <span>Electric {category.label}</span>
-                        <span className="editor__category-item-count">{subcounts.electric}</span>
-                      </button>
-                    )}
+                    {subcategories.map((sub) => {
+                      const count = subcounts[sub.key] || 0;
+                      // Only show subcategories that have vehicles
+                      if (count === 0) return null;
+                      
+                      return (
+                        <button
+                          key={sub.key}
+                          className={`editor__category-item ${isActive && activeSubcategory === sub.key ? 'editor__category-item--active' : ''}`}
+                          onClick={() => handleCategorySelect(category.key, sub.key)}
+                        >
+                          <span>{sub.label}</span>
+                          <span className="editor__category-item-count">{count}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
