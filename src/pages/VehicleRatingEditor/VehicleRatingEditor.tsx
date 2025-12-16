@@ -77,6 +77,8 @@ const SUBCATEGORY_CONFIG: Record<Category, { key: Subcategory; label: string; fi
   ],
 };
 
+type SortOrder = 'default' | 'rating-high' | 'rating-low';
+
 const VehicleRatingEditor = () => {
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [activeSubcategory, setActiveSubcategory] = useState<Subcategory>('all');
@@ -85,6 +87,7 @@ const VehicleRatingEditor = () => {
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedLifestyle, setSelectedLifestyle] = useState<string>('all');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('default');
   const [editedRatings, setEditedRatings] = useState<Map<string, EditedRating>>(new Map());
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [savedRatings, setSavedRatings] = useState<Record<string, number>>({});
@@ -192,8 +195,19 @@ const VehicleRatingEditor = () => {
       });
     }
 
+    // Apply sorting
+    if (sortOrder !== 'default') {
+      categoryVehicles = [...categoryVehicles].sort((a, b) => {
+        if (sortOrder === 'rating-high') {
+          return b.staffRating - a.staffRating;
+        } else {
+          return a.staffRating - b.staffRating;
+        }
+      });
+    }
+
     return categoryVehicles;
-  }, [allVehicles, activeCategory, searchQuery, selectedMake, selectedYear, selectedLifestyle, selectedPriceRange]);
+  }, [allVehicles, activeCategory, activeSubcategory, searchQuery, selectedMake, selectedYear, selectedLifestyle, selectedPriceRange, sortOrder]);
 
   // Get the actual category from vehicle's bodyStyle (for saving to Supabase)
   const getVehicleCategory = (vehicle: Vehicle): Category => {
@@ -475,12 +489,27 @@ const VehicleRatingEditor = () => {
                 onChange={(e) => setSelectedPriceRange(e.target.value)}
                 aria-label="Filter by price range"
               >
-                <option value="all">Price: Low to High</option>
+                <option value="all">All Prices</option>
                 <option value="under25k">Under $25,000</option>
                 <option value="25k-50k">$25,000 - $50,000</option>
                 <option value="50k-75k">$50,000 - $75,000</option>
                 <option value="75k-100k">$75,000 - $100,000</option>
                 <option value="over100k">Over $100,000</option>
+              </select>
+              <ChevronDown size={16} className="editor__filter-icon" />
+            </div>
+
+            {/* Sort by Score */}
+            <div className="editor__filter">
+              <select
+                className="editor__filter-select"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as SortOrder)}
+                aria-label="Sort by score"
+              >
+                <option value="default">Sort: Default</option>
+                <option value="rating-high">Score: High to Low</option>
+                <option value="rating-low">Score: Low to High</option>
               </select>
               <ChevronDown size={16} className="editor__filter-icon" />
             </div>
