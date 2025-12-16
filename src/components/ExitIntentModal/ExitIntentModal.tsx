@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Car, Heart, TrendingDown, FileText } from 'lucide-react';
+import { X, Heart, TrendingDown, FileText } from 'lucide-react';
 import './ExitIntentModal.css';
 
 interface ExitIntentModalProps {
@@ -93,16 +93,15 @@ const ExitIntentModal = ({
             {/* Floating Cards */}
             <div className="exit-modal__cards">
               <div className="exit-modal__card exit-modal__card--1">
-                <Car size={16} />
+                <Heart size={16} fill="currentColor" className="exit-modal__card-icon exit-modal__card-icon--heart" />
                 <span>{vehicleName}</span>
-                <Heart size={14} className="exit-modal__card-heart" />
               </div>
               <div className="exit-modal__card exit-modal__card--2">
-                <TrendingDown size={16} />
+                <TrendingDown size={16} className="exit-modal__card-icon exit-modal__card-icon--price" />
                 <span>Price dropped $2,400!</span>
               </div>
               <div className="exit-modal__card exit-modal__card--3">
-                <FileText size={16} />
+                <FileText size={16} className="exit-modal__card-icon exit-modal__card-icon--article" />
                 <span>3 articles saved</span>
               </div>
             </div>

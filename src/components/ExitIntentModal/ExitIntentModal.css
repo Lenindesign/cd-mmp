@@ -177,26 +177,33 @@
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   background: var(--color-white);
-  padding: 12px 16px;
-  border-radius: var(--border-radius-xl);
+  padding: 10px 20px 10px 10px;
+  border-radius: 100px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-900);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   animation: cardFloat 5s ease-in-out infinite;
+  white-space: nowrap;
 }
 
-.exit-modal__card svg {
-  color: var(--color-blue-cobalt);
+.exit-modal__card-icon {
   flex-shrink: 0;
 }
 
-.exit-modal__card-heart {
-  color: var(--color-error) !important;
-  margin-left: auto;
+.exit-modal__card-icon--heart {
+  color: #C41E3A;
+}
+
+.exit-modal__card-icon--price {
+  color: #2E7D32;
+}
+
+.exit-modal__card-icon--article {
+  color: var(--color-blue-cobalt);
 }
 
 .exit-modal__card--1 {
@@ -208,13 +215,7 @@
 .exit-modal__card--2 {
   top: 55px;
   right: 20px;
-  background: var(--color-white);
-  color: var(--color-success-dark);
   animation-delay: 0.7s;
-}
-
-.exit-modal__card--2 svg {
-  color: var(--color-success);
 }
 
 .exit-modal__card--3 {
@@ -506,8 +507,8 @@
   }
   
   .exit-modal__card {
-    font-size: 12px;
-    padding: 10px 14px;
+    font-size: 13px;
+    padding: 8px 16px 8px 8px;
   }
   
   .exit-modal__card--2 {
@@ -585,9 +586,9 @@
   }
   
   .exit-modal__card {
-    font-size: 11px;
-    padding: 8px 12px;
-    border-radius: 10px;
+    font-size: 12px;
+    padding: 6px 14px 6px 6px;
+    border-radius: 100px;
   }
   
   .exit-modal__card--1 {
