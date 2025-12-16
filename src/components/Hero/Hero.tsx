@@ -306,20 +306,21 @@ const Hero = ({ vehicle }: HeroProps) => {
             {/* MSRP Section */}
             <div className="hero__msrp">
               <span className="hero__msrp-label">MSRP</span>
-              <span className="hero__msrp-price">{vehicle.priceRange}</span>
-            </div>
-
-            {/* Shop Buttons - Left aligned next to price */}
-            <div className="hero__shop-buttons">
-              <Button variant="primary" size="small" className="hero__shop-btn">
-                SHOP NEW
-              </Button>
-              <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--outline">
-                SHOP USED
-              </Button>
-              <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--trade-in">
-                GET YOUR TRADE-IN VALUE
-              </Button>
+              <div className="hero__msrp-price-row">
+                <span className="hero__msrp-price">{vehicle.priceRange}</span>
+                {/* Shop Buttons - Aligned with price numbers */}
+                <div className="hero__shop-buttons">
+                  <Button variant="primary" size="small" className="hero__shop-btn">
+                    SHOP NEW
+                  </Button>
+                  <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--outline">
+                    SHOP USED
+                  </Button>
+                  <Button variant="outline" size="small" className="hero__shop-btn hero__shop-btn--trade-in">
+                    GET YOUR TRADE-IN VALUE
+                  </Button>
+                </div>
+              </div>
             </div>
 
             {/* Accolades - Only show if vehicle has awards */}

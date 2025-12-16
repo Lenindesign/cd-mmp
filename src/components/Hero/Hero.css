@@ -384,7 +384,7 @@
   margin-top: var(--spacing-4);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 938px) {
   .hero__bottom-row {
     flex-direction: column;
     align-items: stretch;
@@ -394,6 +394,12 @@
   .hero__msrp {
     align-items: center;
     text-align: center;
+  }
+
+  .hero__msrp-price-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
   }
 
   .hero__shop-buttons {
@@ -417,6 +423,17 @@
   .hero__accolades {
     text-align: center;
     align-items: center;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .hero__accolades-header {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero__accolades-title {
+    text-align: center;
   }
 
   .hero__accolades-badges {
@@ -442,16 +459,17 @@
 .hero__msrp-price-row {
   display: flex;
   align-items: center;
-  gap: var(--spacing-4);
+  gap: 12px;
 }
 
 .hero__msrp-price {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: clamp(22px, 6vw, 36px);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   letter-spacing: -0.02em;
-  line-height: 40px;
+  white-space: nowrap;
+  line-height: 1.1;
 }
 
 .hero__shop-buttons {
@@ -459,7 +477,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: var(--spacing-2);
-  margin-left: 12px;
+  margin-left: 0;
 }
 
 .hero__shop-btn {
@@ -508,14 +526,15 @@
 /* Accolades */
 .hero__accolades {
   text-align: right;
+  margin-left: auto;
 }
 
 .hero__accolades-header {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--spacing-2);
+  flex-direction: column;
+  align-items: flex-end;
   justify-content: flex-end;
+  gap: var(--spacing-1);
   margin-bottom: var(--spacing-3);
 }
 
@@ -523,7 +542,7 @@
   font-size: 14px;
   color: var(--color-black);
   vertical-align: bottom;
-  text-align: center;
+  text-align: right;
 }
 
 .hero__accolades-title em {
@@ -544,8 +563,31 @@
 .hero__accolades-badges {
   display: flex;
   gap: var(--spacing-6);
-  justify-content: center;
+  justify-content: flex-end;
   align-items: flex-start;
+}
+
+/* Mobile: Center accolades */
+@media (max-width: 938px) {
+  .hero__accolades {
+    text-align: center;
+    align-items: center;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .hero__accolades-header {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero__accolades-title {
+    text-align: center;
+  }
+
+  .hero__accolades-badges {
+    justify-content: center;
+  }
 }
 
 .hero__accolade {
