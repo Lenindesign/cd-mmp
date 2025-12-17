@@ -337,7 +337,7 @@ const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
                 {/* Shop Buttons - Aligned with price numbers */}
                 <div 
                   ref={buttonsRef}
-                  className={`hero__shop-buttons ${animateButtons && buttonsInView ? 'hero__shop-buttons--animated' : ''}`}
+                  className={`hero__shop-buttons ${animateButtons ? (buttonsInView ? 'hero__shop-buttons--animated' : 'hero__shop-buttons--hidden') : ''}`}
                 >
                   <Button variant="primary" size="small" className={`hero__shop-btn ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-1' : ''}`}>
                     SHOP NEW

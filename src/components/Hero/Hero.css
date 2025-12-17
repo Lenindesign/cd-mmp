@@ -493,6 +493,11 @@
   }
 }
 
+/* Hide buttons until in view when animation is enabled */
+.hero__shop-buttons--hidden .hero__shop-btn {
+  opacity: 0;
+}
+
 .hero__shop-buttons--animated .hero__shop-btn {
   opacity: 0;
   animation: buttonFadeSlideIn 0.5s ease-out forwards;
