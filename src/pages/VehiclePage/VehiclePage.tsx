@@ -126,7 +126,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         structuredData={structuredData}
       />
       <main className="main">
-        <Hero vehicle={vehicleData} />
+        <Hero vehicle={vehicleData} animateButtons />
         
         {/* Content with Sidebar - Part 1 */}
         <div className="content-with-sidebar content-with-sidebar--no-bottom-padding">

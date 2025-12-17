@@ -118,7 +118,7 @@ const HomePage = () => {
   return (
     <>
       <main className="main">
-        <Hero vehicle={vehicleData} />
+        <Hero vehicle={vehicleData} animateButtons />
         
         {/* Content with Sidebar */}
         <div className="content-with-sidebar">
