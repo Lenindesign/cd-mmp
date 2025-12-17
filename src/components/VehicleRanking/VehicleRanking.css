@@ -332,8 +332,8 @@
   display: none;
 }
 
-/* On smaller screens or when cards are narrow, show model only */
-@media (max-width: 1200px) {
+/* On tablet/smaller screens, show model only */
+@media (max-width: 900px) {
   .vehicle-ranking__card-name-full {
     display: none;
   }
@@ -343,18 +343,10 @@
   }
 }
 
-/* On very small screens, always show short name */
+/* On very small screens, always show short name with smaller font */
 @media (max-width: 600px) {
   .vehicle-ranking__card-name {
     font-size: 14px;
-  }
-  
-  .vehicle-ranking__card-name-full {
-    display: none;
-  }
-  
-  .vehicle-ranking__card-name-short {
-    display: inline;
   }
 }
 
