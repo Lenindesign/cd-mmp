@@ -73,12 +73,6 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
       measureEl.textContent = shortName;
       const shortWidth = measureEl.offsetWidth;
 
-      // Measure with smaller font (for extreme cases)
-      const smallerFontSize = Math.max(10, baseFontSize - 4);
-      measureEl.style.fontSize = `${smallerFontSize}px`;
-      measureEl.textContent = fullName;
-      const fullWidthSmall = measureEl.offsetWidth;
-
       document.body.removeChild(measureEl);
 
       // Check if full name fits horizontally
