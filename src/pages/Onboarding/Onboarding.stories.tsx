@@ -17,8 +17,13 @@ const meta: Meta = {
   title: 'Pages/Onboarding',
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'The Car and Driver onboarding flow guides new users through account setup, preferences, and personalization.',
+      },
+    },
   },
-
+  tags: ['autodocs'],
 };
 
 export default meta;
