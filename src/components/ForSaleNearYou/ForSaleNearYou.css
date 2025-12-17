@@ -273,7 +273,7 @@
 .for-sale__card-trim {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   margin-bottom: var(--spacing-3);
 }
 
@@ -295,7 +295,7 @@
 .for-sale__card-price-original {
   font-family: var(--font-body);
   font-size: var(--font-size-base);
-  color: var(--color-gray-400);
+  color: var(--color-gray-600);
   text-decoration: line-through;
 }
 
@@ -317,7 +317,7 @@
 }
 
 .for-sale__card-spec svg {
-  color: var(--color-gray-400);
+  color: var(--color-gray-500);
 }
 
 /* Features */
@@ -362,7 +362,7 @@
 
 .for-sale__card-dealer-distance {
   font-size: 12px;
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .for-sale__card-dealer-rating {
@@ -474,7 +474,7 @@
 
 .for-sale__results-count {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
 }
 
 .for-sale__cta-btn {
