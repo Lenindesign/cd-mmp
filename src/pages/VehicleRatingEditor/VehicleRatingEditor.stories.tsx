@@ -21,7 +21,7 @@ const meta = {
       </MemoryRouter>
     ),
   ],
-  tags: ['autodocs'],
+
 } satisfies Meta<typeof VehicleRatingEditor>;
 
 export default meta;

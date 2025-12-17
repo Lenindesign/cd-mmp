@@ -13,7 +13,7 @@ const meta: Meta<typeof Warranty> = {
       },
     },
   },
-  tags: ['autodocs'],
+
 };
 
 export default meta;

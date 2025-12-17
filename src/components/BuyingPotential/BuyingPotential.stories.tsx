@@ -85,7 +85,7 @@ A personalized match score showing how well a vehicle fits the user's stated pre
       },
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     vehicleName: {
       description: 'Full vehicle name (Year Make Model)',

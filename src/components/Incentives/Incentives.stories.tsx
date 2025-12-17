@@ -85,7 +85,7 @@ Displays current manufacturer incentives, rebates, and special financing. This i
       },
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     make: {
       description: 'Vehicle manufacturer',

@@ -25,7 +25,7 @@ const meta: Meta<typeof VehiclePage> = {
       },
     },
   },
-  tags: ['autodocs'],
+
 };
 
 export default meta;

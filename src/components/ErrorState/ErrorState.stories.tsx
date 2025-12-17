@@ -12,7 +12,7 @@ const meta: Meta<typeof ErrorState> = {
       },
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     variant: {
       control: 'select',

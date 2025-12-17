@@ -13,7 +13,7 @@ const meta: Meta<typeof LoadingSpinner> = {
       },
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     size: {
       control: 'select',

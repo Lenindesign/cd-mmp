@@ -91,7 +91,7 @@ Shows where the current vehicle ranks among competitors in its segment. This com
       url: 'https://www.figma.com/design/jvhWYHzYt25IBonCIzVEv0/Post-MVP-Marketplace?node-id=14-24575',
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     bodyStyle: {
       description: 'Vehicle body style to filter rankings',

@@ -12,7 +12,7 @@ const meta: Meta<typeof OptimizedImage> = {
       },
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     aspectRatio: {
       control: 'select',

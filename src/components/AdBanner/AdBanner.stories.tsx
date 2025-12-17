@@ -10,9 +10,11 @@ const meta: Meta<typeof AdBanner> = {
       description: {
         component: 'Advertisement banner placeholder component.',
       },
+      canvas: {
+        sourceState: 'none',
+      },
     },
   },
-  tags: ['autodocs'],
 };
 
 export default meta;

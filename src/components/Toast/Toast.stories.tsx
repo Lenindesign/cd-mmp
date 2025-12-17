@@ -14,7 +14,7 @@ const meta: Meta<typeof Toast> = {
       },
     },
   },
-  tags: ['autodocs'],
+
   args: {
     onClose: fn(),
   },

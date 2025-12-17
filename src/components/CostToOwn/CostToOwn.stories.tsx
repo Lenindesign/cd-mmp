@@ -83,7 +83,7 @@ Shows the true cost of ownership beyond the sticker price. Helps users understan
       },
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     vehicleName: {
       description: 'Full vehicle name (Year Make Model)',

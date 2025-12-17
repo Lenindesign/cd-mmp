@@ -19,7 +19,7 @@ const textFieldMeta: Meta<typeof TextField> = {
       },
     },
   },
-  tags: ['autodocs'],
+
   argTypes: {
     type: {
       control: 'select',
