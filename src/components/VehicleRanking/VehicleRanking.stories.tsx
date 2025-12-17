@@ -67,6 +67,22 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 
 ---
 
+## Card Name Display Rules
+
+**Important:** Vehicle names must always display on a single line. If the full name (Make + Model) doesn't fit:
+
+| Condition | Display |
+|-----------|---------|
+| Full name fits | "Chevrolet Trax" |
+| Full name too long | "Trax" (model only) |
+
+**Implementation:**
+- Names use \`white-space: nowrap\` to prevent wrapping
+- On screens < 1200px, automatically shows model-only
+- On mobile (< 600px), always shows model-only with smaller font
+
+---
+
 ## Product Considerations
 
 **Score Display Options**

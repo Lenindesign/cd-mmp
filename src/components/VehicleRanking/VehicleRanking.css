@@ -294,11 +294,19 @@
 .vehicle-ranking__card-header {
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   margin-bottom: var(--spacing-2);
   text-align: center;
+}
+
+/* Vertical divider between name and score */
+.vehicle-ranking__card-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-gray-200);
+  flex-shrink: 0;
 }
 
 .vehicle-ranking__card-name {
@@ -309,6 +317,45 @@
   margin: 0;
   line-height: 1.3;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Full name (Make Model) - shown by default */
+.vehicle-ranking__card-name-full {
+  display: inline;
+}
+
+/* Short name (Model only) - hidden by default */
+.vehicle-ranking__card-name-short {
+  display: none;
+}
+
+/* On smaller screens or when cards are narrow, show model only */
+@media (max-width: 1200px) {
+  .vehicle-ranking__card-name-full {
+    display: none;
+  }
+  
+  .vehicle-ranking__card-name-short {
+    display: inline;
+  }
+}
+
+/* On very small screens, always show short name */
+@media (max-width: 600px) {
+  .vehicle-ranking__card-name {
+    font-size: 14px;
+  }
+  
+  .vehicle-ranking__card-name-full {
+    display: none;
+  }
+  
+  .vehicle-ranking__card-name-short {
+    display: inline;
+  }
 }
 
 /* C/D Rating */

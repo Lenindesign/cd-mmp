@@ -133,13 +133,21 @@ const VehicleRanking = ({
               
               <div className="vehicle-ranking__card-info">
                 <div className="vehicle-ranking__card-header">
-                  <h3 className="vehicle-ranking__card-name">{vehicle.name}</h3>
+                  <h3 className="vehicle-ranking__card-name">
+                    {/* Full name (Make Model) - hidden when space is limited */}
+                    <span className="vehicle-ranking__card-name-full">{vehicle.name}</span>
+                    {/* Short name (Model only) - shown when space is limited */}
+                    <span className="vehicle-ranking__card-name-short">{vehicle.name.split(' ').slice(1).join(' ')}</span>
+                  </h3>
                   {/* C/D Rating - Only show when showScore is true */}
                   {showScore && (
-                    <div className={`vehicle-ranking__card-rating ${scoreStyle === 'subtle' ? 'vehicle-ranking__card-rating--subtle' : ''}`}>
-                      <span className="vehicle-ranking__card-rating-score">{vehicle.rating}</span>
-                      <span className="vehicle-ranking__card-rating-max">/10</span>
-                    </div>
+                    <>
+                      <div className="vehicle-ranking__card-divider" />
+                      <div className={`vehicle-ranking__card-rating ${scoreStyle === 'subtle' ? 'vehicle-ranking__card-rating--subtle' : ''}`}>
+                        <span className="vehicle-ranking__card-rating-score">{vehicle.rating}</span>
+                        <span className="vehicle-ranking__card-rating-max">/10</span>
+                      </div>
+                    </>
                   )}
                 </div>
                 <p className="vehicle-ranking__card-price">
