@@ -122,7 +122,7 @@ const OnboardingWelcome: React.FC = () => {
         {/* Welcome Message */}
         <div className={`welcome-content ${showContent ? 'welcome-content--visible' : ''}`}>
           <h1 className="welcome-title">Welcome to the Club, {firstName}!</h1>
-          <p className="welcome-subtitle">Enjoy your MotorTrend member benefits.</p>
+          <p className="welcome-subtitle">Enjoy your Car And Driver member benefits.</p>
 
           {/* Membership Card */}
           <div className="membership-card-wrapper">
