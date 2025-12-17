@@ -86,15 +86,11 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
         anyNeedsShort = true;
         // Check if short name fits horizontally
         if (shortWidth > availableWidthHorizontal) {
-          // Check if full name fits when stacked
+          anyNeedsStack = true; // Stack to show full name
+          // Check if full name fits when stacked (with normal font)
           if (fullWidth > availableWidthStacked) {
-            anyNeedsStack = true;
-            // Even stacked doesn't fit - need smaller font
-            if (fullWidthSmall <= availableWidthStacked) {
-              anyNeedsSmallFont = true;
-            }
-          } else {
-            anyNeedsStack = true; // Stack to show full name
+            // Even stacked doesn't fit with normal font - need smaller font
+            anyNeedsSmallFont = true;
           }
         }
       }
