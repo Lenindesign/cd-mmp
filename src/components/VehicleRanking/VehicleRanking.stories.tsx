@@ -69,17 +69,18 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 
 ## Card Name Display Rules
 
-**Important:** Vehicle names must always display on a single line. If the full name (Make + Model) doesn't fit:
+**Important:** Vehicle names must always display on a single line without ellipsis.
 
 | Condition | Display |
 |-----------|---------|
-| Full name fits | "Chevrolet Trax" |
-| Full name too long | "Trax" (model only) |
+| Make + Model fits in one row | "Chevrolet Trax" |
+| Make + Model doesn't fit | "Trax" (model only) |
 
 **Implementation:**
-- Names use \`white-space: nowrap\` to prevent wrapping
-- On screens < 1200px, automatically shows model-only
-- On mobile (< 600px), always shows model-only with smaller font
+- JavaScript measures text width vs available container space
+- Automatically switches between full name and model-only
+- Recalculates on window resize
+- No ellipsis or text truncation - clean display only
 
 ---
 

@@ -1,8 +1,70 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
 import './VehicleRanking.css';
+
+// Hook to detect if text overflows its container
+const useTextFit = (fullText: string, shortText: string, deps: unknown[] = []) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [showShort, setShowShort] = useState(false);
+
+  const checkFit = useCallback(() => {
+    if (!containerRef.current) return;
+    
+    const container = containerRef.current;
+    const headerEl = container.closest('.vehicle-ranking__card-header');
+    if (!headerEl) return;
+
+    // Get available width (header width minus rating and divider)
+    const headerWidth = headerEl.clientWidth;
+    const ratingEl = headerEl.querySelector('.vehicle-ranking__card-rating') as HTMLElement;
+    const dividerEl = headerEl.querySelector('.vehicle-ranking__card-divider') as HTMLElement;
+    
+    const ratingWidth = ratingEl ? ratingEl.offsetWidth : 0;
+    const dividerWidth = dividerEl ? dividerEl.offsetWidth : 0;
+    const gap = 24; // spacing-3 * 2
+    
+    const availableWidth = headerWidth - ratingWidth - dividerWidth - gap;
+
+    // Measure full text width
+    const measureEl = document.createElement('span');
+    measureEl.style.cssText = `
+      position: absolute;
+      visibility: hidden;
+      white-space: nowrap;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+    `;
+    measureEl.textContent = fullText;
+    container.appendChild(measureEl);
+    const fullWidth = measureEl.offsetWidth;
+    container.removeChild(measureEl);
+
+    setShowShort(fullWidth > availableWidth);
+  }, [fullText]);
+
+  useEffect(() => {
+    checkFit();
+    window.addEventListener('resize', checkFit);
+    return () => window.removeEventListener('resize', checkFit);
+  }, [checkFit, ...deps]);
+
+  return { containerRef, displayText: showShort ? shortText : fullText };
+};
+
+// Component for vehicle name that auto-switches between full and short
+const VehicleName = ({ fullName, showScore }: { fullName: string; showScore: boolean }) => {
+  const shortName = fullName.split(' ').slice(1).join(' ');
+  const { containerRef, displayText } = useTextFit(fullName, shortName, [showScore]);
+  
+  return (
+    <h3 className="vehicle-ranking__card-name" ref={containerRef}>
+      {displayText}
+    </h3>
+  );
+};
 
 interface VehicleRankingProps {
   category?: string;
@@ -133,12 +195,7 @@ const VehicleRanking = ({
               
               <div className="vehicle-ranking__card-info">
                 <div className="vehicle-ranking__card-header">
-                  <h3 className="vehicle-ranking__card-name">
-                    {/* Full name (Make Model) - hidden when space is limited */}
-                    <span className="vehicle-ranking__card-name-full">{vehicle.name}</span>
-                    {/* Short name (Model only) - shown when space is limited */}
-                    <span className="vehicle-ranking__card-name-short">{vehicle.name.split(' ').slice(1).join(' ')}</span>
-                  </h3>
+                  <VehicleName fullName={vehicle.name} showScore={showScore} />
                   {/* C/D Rating - Only show when showScore is true */}
                   {showScore && (
                     <>
