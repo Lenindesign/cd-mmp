@@ -158,6 +158,15 @@ const OnboardingStep2: React.FC = () => {
             <ChevronRightIcon />
           </button>
         </nav>
+
+        {/* Car and Driver Logo */}
+        <div className="step2-logo">
+          <img 
+            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
+            alt="Car and Driver" 
+            className="step2-logo-img"
+          />
+        </div>
       </div>
     </div>
   );

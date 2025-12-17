@@ -163,6 +163,20 @@
   opacity: 0.8;
 }
 
+/* Logo */
+.step1-logo {
+  margin-top: var(--spacing-6);
+  display: flex;
+  justify-content: center;
+}
+
+.step1-logo-img {
+  height: 24px;
+  width: auto;
+  filter: brightness(0);
+  opacity: 0.5;
+}
+
 /* Responsive */
 @media (max-width: 540px) {
   .onboarding-step1 {
