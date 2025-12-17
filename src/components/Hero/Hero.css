@@ -405,7 +405,7 @@
   .hero__shop-buttons {
     flex-direction: column;
     width: 100%;
-    gap: var(--spacing-2);
+    gap: 16px;
     align-items: center;
     justify-content: center;
     margin-left: 0;
@@ -425,6 +425,7 @@
     align-items: center;
     margin-left: 0;
     width: 100%;
+    margin-top: 32px;
   }
 
   .hero__accolades-header {
@@ -459,7 +460,7 @@
 .hero__msrp-price-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 32px;
 }
 
 .hero__msrp-price {
@@ -476,7 +477,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: var(--spacing-2);
+  gap: 16px;
   margin-left: 0;
 }
 
@@ -556,6 +557,7 @@
 .hero__accolades {
   text-align: right;
   margin-left: auto;
+  margin-top: 32px;
 }
 
 .hero__accolades-header {
