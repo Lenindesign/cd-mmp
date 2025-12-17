@@ -15,17 +15,6 @@ const ChevronRightIcon = () => (
   </svg>
 );
 
-// Car and Driver Logo
-const CarAndDriverLogo = () => (
-  <svg viewBox="0 0 200 40" width="200" height="40" xmlns="http://www.w3.org/2000/svg">
-    <text x="0" y="30" fontFamily="Arial Black, sans-serif" fontSize="28" fontWeight="900">
-      <tspan fill="#1B5F8A">CAR</tspan>
-      <tspan fill="#000" fontSize="14" dy="0">AND</tspan>
-      <tspan fill="#E90C17" fontSize="28" dy="0">DRIVER</tspan>
-    </text>
-  </svg>
-);
-
 // C and D Badge Logo for the card - uses 100% to fill parent container
 const CandDBadge = () => (
   <div style={{
