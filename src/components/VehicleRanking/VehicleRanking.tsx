@@ -4,121 +4,127 @@ import { ChevronRight } from 'lucide-react';
 import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
 import './VehicleRanking.css';
 
-// Hook to detect if text overflows its container and if stacking is needed
-const useTextFit = (fullText: string, shortText: string, deps: unknown[] = []) => {
-  const containerRef = useRef<HTMLHeadingElement>(null);
-  const [showShort, setShowShort] = useState(false);
-  const [needsStack, setNeedsStack] = useState(false);
+// Hook to measure if names fit in available space
+const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [globalStack, setGlobalStack] = useState(false);
+  const [useShortNames, setUseShortNames] = useState(false);
 
-  const checkFit = useCallback(() => {
-    if (!containerRef.current) return;
-    
-    const container = containerRef.current;
-    const headerEl = container.closest('.vehicle-ranking__card-header') as HTMLElement;
-    if (!headerEl) return;
-
-    // Check if we're currently stacked (column layout)
-    const isStacked = headerEl.classList.contains('vehicle-ranking__card-header--stacked');
-    
-    // Get available width (header width minus rating and divider if not stacked)
-    const headerWidth = headerEl.clientWidth;
-    const ratingEl = headerEl.querySelector('.vehicle-ranking__card-rating') as HTMLElement;
-    const dividerEl = headerEl.querySelector('.vehicle-ranking__card-divider') as HTMLElement;
-    
-    // If stacked, full width is available for name
-    const ratingWidth = isStacked ? 0 : (ratingEl ? ratingEl.offsetWidth : 0);
-    const dividerWidth = isStacked ? 0 : (dividerEl ? dividerEl.offsetWidth : 0);
-    const gap = isStacked ? 0 : 24; // spacing-3 * 2
-    
-    const availableWidth = headerWidth - ratingWidth - dividerWidth - gap;
-
-    // Measure text widths
-    const measureEl = document.createElement('span');
-    measureEl.style.cssText = `
-      position: absolute;
-      visibility: hidden;
-      white-space: nowrap;
-      font-family: inherit;
-      font-size: inherit;
-      font-weight: inherit;
-    `;
-    
-    // Measure full text
-    measureEl.textContent = fullText;
-    container.appendChild(measureEl);
-    const fullWidth = measureEl.offsetWidth;
-    
-    // Measure short text
-    measureEl.textContent = shortText;
-    const shortWidth = measureEl.offsetWidth;
-    container.removeChild(measureEl);
-
-    // If full name fits, use it
-    if (fullWidth <= availableWidth) {
-      setShowShort(false);
-      setNeedsStack(false);
-    } 
-    // If short name fits in horizontal layout, use short name
-    else if (shortWidth <= availableWidth) {
-      setShowShort(true);
-      setNeedsStack(false);
+  const checkLayout = useCallback(() => {
+    if (!gridRef.current || !showScore) {
+      setGlobalStack(false);
+      setUseShortNames(false);
+      return;
     }
-    // If even short name doesn't fit horizontally, stack vertically
-    else {
-      setShowShort(true);
-      setNeedsStack(true);
-    }
-  }, [fullText, shortText]);
+
+    const cards = gridRef.current.querySelectorAll('.vehicle-ranking__card-header');
+    if (cards.length === 0) return;
+
+    let anyNeedsStack = false;
+    let anyNeedsShort = false;
+
+    cards.forEach((headerEl, index) => {
+      const vehicle = vehicles[index];
+      if (!vehicle) return;
+
+      const headerWidth = (headerEl as HTMLElement).clientWidth;
+      const ratingEl = headerEl.querySelector('.vehicle-ranking__card-rating') as HTMLElement;
+      const dividerEl = headerEl.querySelector('.vehicle-ranking__card-divider') as HTMLElement;
+
+      const ratingWidth = ratingEl ? ratingEl.offsetWidth : 0;
+      const dividerWidth = dividerEl ? dividerEl.offsetWidth : 0;
+      const gap = 24; // spacing-3 * 2
+
+      const availableWidthHorizontal = headerWidth - ratingWidth - dividerWidth - gap;
+      const availableWidthStacked = headerWidth;
+
+      // Create measurement element
+      const measureEl = document.createElement('span');
+      measureEl.style.cssText = `
+        position: absolute;
+        visibility: hidden;
+        white-space: nowrap;
+        font-family: var(--font-heading);
+        font-size: 20px;
+        font-weight: 800;
+      `;
+
+      // Check mobile font size
+      if (window.innerWidth <= 600) {
+        measureEl.style.fontSize = '14px';
+      }
+
+      document.body.appendChild(measureEl);
+
+      const fullName = vehicle.name;
+      const shortName = fullName.split(' ').slice(1).join(' ');
+
+      // Measure full name
+      measureEl.textContent = fullName;
+      const fullWidth = measureEl.offsetWidth;
+
+      // Measure short name
+      measureEl.textContent = shortName;
+      const shortWidth = measureEl.offsetWidth;
+
+      document.body.removeChild(measureEl);
+
+      // Check if full name fits horizontally
+      if (fullWidth > availableWidthHorizontal) {
+        anyNeedsShort = true;
+        // Check if short name fits horizontally
+        if (shortWidth > availableWidthHorizontal) {
+          // Check if full name fits when stacked
+          if (fullWidth > availableWidthStacked) {
+            anyNeedsStack = true;
+          } else {
+            anyNeedsStack = true; // Stack to show full name
+          }
+        }
+      }
+    });
+
+    setUseShortNames(anyNeedsShort && !anyNeedsStack);
+    setGlobalStack(anyNeedsStack);
+  }, [vehicles, showScore]);
 
   useEffect(() => {
-    checkFit();
-    window.addEventListener('resize', checkFit);
-    return () => window.removeEventListener('resize', checkFit);
-  }, [checkFit, ...deps]);
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(checkLayout, 50);
+    window.addEventListener('resize', checkLayout);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkLayout);
+    };
+  }, [checkLayout]);
 
-  return { containerRef, displayText: showShort ? shortText : fullText, needsStack };
+  return { gridRef, globalStack, useShortNames };
 };
 
-// Component for vehicle name that auto-switches between full and short
-const VehicleName = ({ fullName, showScore, onStackChange }: { fullName: string; showScore: boolean; onStackChange?: (needsStack: boolean) => void }) => {
-  const shortName = fullName.split(' ').slice(1).join(' ');
-  const { containerRef, displayText, needsStack } = useTextFit(fullName, shortName, [showScore]);
-  
-  useEffect(() => {
-    onStackChange?.(needsStack);
-  }, [needsStack, onStackChange]);
-  
-  return (
-    <h3 className="vehicle-ranking__card-name" ref={containerRef}>
-      {displayText}
-    </h3>
-  );
-};
-
-// Card info component that manages stacking state
+// Card info component
 const VehicleCardInfo = ({ 
   vehicle, 
   showScore, 
-  scoreStyle 
+  scoreStyle,
+  isStacked,
+  useShortName
 }: { 
   vehicle: RankedVehicle; 
   showScore: boolean; 
   scoreStyle: 'bold' | 'subtle';
+  isStacked: boolean;
+  useShortName: boolean;
 }) => {
-  const [needsStack, setNeedsStack] = useState(false);
-  
-  const handleStackChange = useCallback((stack: boolean) => {
-    setNeedsStack(stack);
-  }, []);
+  const displayName = useShortName ? vehicle.name.split(' ').slice(1).join(' ') : vehicle.name;
 
   return (
     <div className="vehicle-ranking__card-info">
-      <div className={`vehicle-ranking__card-header ${needsStack ? 'vehicle-ranking__card-header--stacked' : ''}`}>
-        <VehicleName fullName={vehicle.name} showScore={showScore} onStackChange={handleStackChange} />
+      <div className={`vehicle-ranking__card-header ${isStacked ? 'vehicle-ranking__card-header--stacked' : ''}`}>
+        <h3 className="vehicle-ranking__card-name">{displayName}</h3>
         {/* C/D Rating - Only show when showScore is true */}
         {showScore && (
           <>
-            {!needsStack && <div className="vehicle-ranking__card-divider" />}
+            {!isStacked && <div className="vehicle-ranking__card-divider" />}
             <div className={`vehicle-ranking__card-rating ${scoreStyle === 'subtle' ? 'vehicle-ranking__card-rating--subtle' : ''}`}>
               <span className="vehicle-ranking__card-rating-score">{vehicle.rating}</span>
               <span className="vehicle-ranking__card-rating-max">/10</span>
@@ -199,6 +205,9 @@ const VehicleRanking = ({
   // Dynamic category label based on body style and price
   const categoryLabel = category || getCategoryLabel(bodyStyle, maxPrice);
 
+  // Check layout for all cards - if any needs stacking, all stack for consistency
+  const { gridRef, globalStack, useShortNames } = useGridLayout(displayVehicles, showScore);
+
   return (
     <section className="vehicle-ranking">
       <div className="vehicle-ranking__card-wrapper">
@@ -211,7 +220,7 @@ const VehicleRanking = ({
           </a>
         </div>
 
-        <div className="vehicle-ranking__grid">
+        <div className="vehicle-ranking__grid" ref={gridRef}>
           {displayVehicles.map((vehicle) => (
             <Link 
               to={`/${vehicle.slug}`}
@@ -268,6 +277,8 @@ const VehicleRanking = ({
                 vehicle={vehicle} 
                 showScore={showScore} 
                 scoreStyle={scoreStyle}
+                isStacked={globalStack}
+                useShortName={useShortNames && !globalStack}
               />
             </Link>
           ))}
