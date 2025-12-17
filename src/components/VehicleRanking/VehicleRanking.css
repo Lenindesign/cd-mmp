@@ -322,6 +322,23 @@
   gap: var(--spacing-1);
 }
 
+/* Small font for extreme cases (e.g., "Land Rover Range Rover") */
+.vehicle-ranking__card-header--small-font .vehicle-ranking__card-name {
+  font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  .vehicle-ranking__card-header--small-font .vehicle-ranking__card-name {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 320px) {
+  .vehicle-ranking__card-header--small-font .vehicle-ranking__card-name {
+    font-size: 10px;
+  }
+}
+
 /* Vertical divider between name and score */
 .vehicle-ranking__card-divider {
   width: 1px;

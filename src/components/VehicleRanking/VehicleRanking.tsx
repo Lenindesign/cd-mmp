@@ -9,11 +9,13 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [globalStack, setGlobalStack] = useState(false);
   const [useShortNames, setUseShortNames] = useState(false);
+  const [useSmallFont, setUseSmallFont] = useState(false);
 
   const checkLayout = useCallback(() => {
     if (!gridRef.current || !showScore) {
       setGlobalStack(false);
       setUseShortNames(false);
+      setUseSmallFont(false);
       return;
     }
 
@@ -22,6 +24,7 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
 
     let anyNeedsStack = false;
     let anyNeedsShort = false;
+    let anyNeedsSmallFont = false;
 
     cards.forEach((headerEl, index) => {
       const vehicle = vehicles[index];
@@ -38,6 +41,14 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
       const availableWidthHorizontal = headerWidth - ratingWidth - dividerWidth - gap;
       const availableWidthStacked = headerWidth;
 
+      // Get current font size based on viewport
+      let baseFontSize = 20;
+      if (window.innerWidth <= 320) {
+        baseFontSize = 12;
+      } else if (window.innerWidth <= 600) {
+        baseFontSize = 14;
+      }
+
       // Create measurement element
       const measureEl = document.createElement('span');
       measureEl.style.cssText = `
@@ -45,14 +56,9 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
         visibility: hidden;
         white-space: nowrap;
         font-family: var(--font-heading);
-        font-size: 20px;
+        font-size: ${baseFontSize}px;
         font-weight: 800;
       `;
-
-      // Check mobile font size
-      if (window.innerWidth <= 600) {
-        measureEl.style.fontSize = '14px';
-      }
 
       document.body.appendChild(measureEl);
 
@@ -67,6 +73,12 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
       measureEl.textContent = shortName;
       const shortWidth = measureEl.offsetWidth;
 
+      // Measure with smaller font (for extreme cases)
+      const smallerFontSize = Math.max(10, baseFontSize - 4);
+      measureEl.style.fontSize = `${smallerFontSize}px`;
+      measureEl.textContent = fullName;
+      const fullWidthSmall = measureEl.offsetWidth;
+
       document.body.removeChild(measureEl);
 
       // Check if full name fits horizontally
@@ -77,6 +89,10 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
           // Check if full name fits when stacked
           if (fullWidth > availableWidthStacked) {
             anyNeedsStack = true;
+            // Even stacked doesn't fit - need smaller font
+            if (fullWidthSmall <= availableWidthStacked) {
+              anyNeedsSmallFont = true;
+            }
           } else {
             anyNeedsStack = true; // Stack to show full name
           }
@@ -86,6 +102,7 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
 
     setUseShortNames(anyNeedsShort && !anyNeedsStack);
     setGlobalStack(anyNeedsStack);
+    setUseSmallFont(anyNeedsSmallFont);
   }, [vehicles, showScore]);
 
   useEffect(() => {
@@ -98,7 +115,7 @@ const useGridLayout = (vehicles: RankedVehicle[], showScore: boolean) => {
     };
   }, [checkLayout]);
 
-  return { gridRef, globalStack, useShortNames };
+  return { gridRef, globalStack, useShortNames, useSmallFont };
 };
 
 // Card info component
@@ -107,19 +124,27 @@ const VehicleCardInfo = ({
   showScore, 
   scoreStyle,
   isStacked,
-  useShortName
+  useShortName,
+  useSmallFont
 }: { 
   vehicle: RankedVehicle; 
   showScore: boolean; 
   scoreStyle: 'bold' | 'subtle';
   isStacked: boolean;
   useShortName: boolean;
+  useSmallFont: boolean;
 }) => {
   const displayName = useShortName ? vehicle.name.split(' ').slice(1).join(' ') : vehicle.name;
 
+  const headerClasses = [
+    'vehicle-ranking__card-header',
+    isStacked ? 'vehicle-ranking__card-header--stacked' : '',
+    useSmallFont ? 'vehicle-ranking__card-header--small-font' : ''
+  ].filter(Boolean).join(' ');
+
   return (
     <div className="vehicle-ranking__card-info">
-      <div className={`vehicle-ranking__card-header ${isStacked ? 'vehicle-ranking__card-header--stacked' : ''}`}>
+      <div className={headerClasses}>
         <h3 className="vehicle-ranking__card-name">{displayName}</h3>
         {/* C/D Rating - Only show when showScore is true */}
         {showScore && (
@@ -206,7 +231,7 @@ const VehicleRanking = ({
   const categoryLabel = category || getCategoryLabel(bodyStyle, maxPrice);
 
   // Check layout for all cards - if any needs stacking, all stack for consistency
-  const { gridRef, globalStack, useShortNames } = useGridLayout(displayVehicles, showScore);
+  const { gridRef, globalStack, useShortNames, useSmallFont } = useGridLayout(displayVehicles, showScore);
 
   return (
     <section className="vehicle-ranking">
@@ -279,6 +304,7 @@ const VehicleRanking = ({
                 scoreStyle={scoreStyle}
                 isStacked={globalStack}
                 useShortName={useShortNames && !globalStack}
+                useSmallFont={useSmallFont}
               />
             </Link>
           ))}

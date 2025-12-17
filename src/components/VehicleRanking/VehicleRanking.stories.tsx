@@ -91,11 +91,13 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 - No ellipsis or text truncation - clean display only
 
 **Responsive Font Scaling:**
-| Screen Width | Font Size |
-|--------------|-----------|
-| > 600px | 20px |
-| ≤ 600px | 14px |
-| ≤ 320px | 12px |
+| Screen Width | Normal Font | Small Font (extreme cases) |
+|--------------|-------------|---------------------------|
+| > 600px | 20px | 16px |
+| ≤ 600px | 14px | 11px |
+| ≤ 320px | 12px | 10px |
+
+**Extreme Cases:** For very long names like "Land Rover Range Rover", the component detects overflow even in stacked mode and automatically applies a smaller font size to all cards for consistency.
 
 ---
 
