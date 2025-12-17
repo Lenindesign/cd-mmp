@@ -83,10 +83,9 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 - The vertical divider between name and score is hidden when stacked
 
 **Implementation:**
-- JavaScript measures text width vs available container space
-- A parent hook (\`useCardLayout\`) checks all cards and determines if any need stacking
-- If stacking is needed, all cards receive a \`forceStackLayout\` prop
-- Automatically switches between full name and model-only
+- The \`useGridLayout\` hook measures text width vs available container space for all cards
+- Returns three states: \`globalStack\`, \`useShortNames\`, and \`useSmallFont\`
+- Automatically switches between full name and model-only based on available width
 - Recalculates on window resize
 - No ellipsis or text truncation - clean display only
 
@@ -97,7 +96,7 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 | ≤ 600px | 14px | 11px |
 | ≤ 320px | 12px | 10px |
 
-**Extreme Cases:** For very long names like "Land Rover Range Rover", the component detects overflow even in stacked mode and automatically applies a smaller font size to all cards for consistency.
+**Extreme Cases:** For very long names like "Land Rover Range Rover", the component detects when the name doesn't fit even in stacked mode and applies a smaller font size via the \`vehicle-ranking__card-header--small-font\` CSS class.
 
 ---
 
