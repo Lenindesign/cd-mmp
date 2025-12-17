@@ -54,13 +54,13 @@ const userTypeOptions: Omit<UserTypeOption, 'isSelected'>[] = [
     id: 'buyer',
     title: 'Car Buyer',
     description: "I'm shopping for a new or used car.",
-    icon: <Car size={28} strokeWidth={1.5} />,
+    icon: <Car size={28} fill="currentColor" strokeWidth={0} />,
   },
   {
     id: 'enthusiast',
     title: 'Car Enthusiast',
     description: 'I nerd out on all things car-related.',
-    icon: <Heart size={28} strokeWidth={1.5} />,
+    icon: <Heart size={28} fill="currentColor" strokeWidth={0} />,
   },
   {
     id: 'both',
