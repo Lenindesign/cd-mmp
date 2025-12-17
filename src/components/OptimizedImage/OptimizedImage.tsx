@@ -24,8 +24,50 @@ export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageEl
   onImageError?: () => void;
 }
 
-// Default car placeholder SVG as data URI
-const DEFAULT_PLACEHOLDER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f5f5f5' width='400' height='300'/%3E%3Cpath fill='%23e0e0e0' d='M160 180h80l10-30h-100zM130 180v30h140v-30h-20v15h-100v-15z'/%3E%3Ccircle fill='%23ccc' cx='155' cy='210' r='15'/%3E%3Ccircle fill='%23ccc' cx='245' cy='210' r='15'/%3E%3C/svg%3E`;
+// Image placeholder icon SVG component
+const ImagePlaceholderIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg 
+    className={className}
+    width="64" 
+    height="64" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect 
+      x="3" 
+      y="5" 
+      width="18" 
+      height="14" 
+      rx="2" 
+      stroke="currentColor" 
+      strokeWidth="1.5"
+      fill="none"
+    />
+    <circle 
+      cx="8.5" 
+      cy="10.5" 
+      r="1.5" 
+      fill="currentColor"
+    />
+    <path 
+      d="M21 15L16 10L11 15" 
+      stroke="currentColor" 
+      strokeWidth="1.5" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      fill="none"
+    />
+    <path 
+      d="M14 18L10 14L3 21" 
+      stroke="currentColor" 
+      strokeWidth="1.5" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      fill="none"
+    />
+  </svg>
+);
 
 /**
  * OptimizedImage Component
@@ -55,7 +97,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   aspectRatio,
   showPlaceholder = true,
   placeholderColor = 'var(--color-gray-100)',
-  fallbackSrc = DEFAULT_PLACEHOLDER,
+  fallbackSrc,
   objectFit = 'cover',
   wrapperClassName = '',
   className = '',
@@ -110,21 +152,28 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     onImageError?.();
   };
 
-  // If src is empty or null, use fallback immediately
-  const imageSrc = (!src || hasError) ? fallbackSrc : src;
-  const shouldRenderImage = isInView || loading === 'eager';
+  // Check if we should show error state
+  const showErrorState = hasError || !src;
+  const shouldRenderImage = (isInView || loading === 'eager') && !showErrorState;
 
   return (
     <div
       ref={wrapperRef}
-      className={`optimized-image ${isLoaded ? 'optimized-image--loaded' : ''} ${wrapperClassName}`}
+      className={`optimized-image ${isLoaded ? 'optimized-image--loaded' : ''} ${showErrorState ? 'optimized-image--error' : ''} ${wrapperClassName}`}
       style={{
         aspectRatio: aspectRatio,
         backgroundColor: showPlaceholder ? placeholderColor : undefined,
       }}
     >
+      {/* Error fallback with icon */}
+      {showErrorState && (
+        <div className="optimized-image__error-fallback">
+          <ImagePlaceholderIcon className="optimized-image__error-icon" />
+        </div>
+      )}
+
       {/* Placeholder shimmer effect */}
-      {showPlaceholder && !isLoaded && (
+      {showPlaceholder && !isLoaded && !showErrorState && (
         <div className="optimized-image__placeholder" aria-hidden="true" />
       )}
       
@@ -132,7 +181,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       {shouldRenderImage && (
         <img
           ref={imgRef}
-          src={imageSrc}
+          src={fallbackSrc && hasError ? fallbackSrc : src}
           alt={alt}
           loading={loading}
           decoding="async"
@@ -202,4 +251,3 @@ export const AvatarImage: React.FC<AvatarImageProps> = ({
 };
 
 export default OptimizedImage;
-

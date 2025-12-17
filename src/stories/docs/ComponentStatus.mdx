@@ -1,0 +1,571 @@
+{/* Component Status - MDX Documentation */}
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Documentation/Component Status" />
+
+<style>
+  {`
+    .status-docs {
+      max-width: 960px;
+      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      color: #1d1d1f;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .status-header {
+      padding: 80px 0 64px;
+      border-bottom: 1px solid #d2d2d7;
+      margin-bottom: 64px;
+    }
+    
+    .status-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #86868b;
+      margin-bottom: 16px;
+    }
+    
+    .status-header h1 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 48px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin: 0 0 24px 0;
+      color: #1d1d1f;
+    }
+    
+    .status-header p {
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #424245;
+      margin: 0;
+    }
+    
+    .status-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #d2d2d7;
+      border: 1px solid #d2d2d7;
+      margin-bottom: 64px;
+    }
+    
+    @media (max-width: 600px) {
+      .status-summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .summary-card {
+      background: #fff;
+      padding: 32px;
+      text-align: center;
+    }
+    
+    .summary-number {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 40px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      color: #1d1d1f;
+    }
+    
+    .summary-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #86868b;
+    }
+    
+    .status-section {
+      margin-bottom: 64px;
+    }
+    
+    .status-section h2 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #1d1d1f;
+      margin: 0 0 32px 0;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .component-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    
+    .component-table th {
+      text-align: left;
+      padding: 16px 20px;
+      background: #f5f5f7;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #86868b;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .component-table td {
+      padding: 20px;
+      border-bottom: 1px solid #e8e8ed;
+      vertical-align: middle;
+    }
+    
+    .component-table tr:hover td {
+      background: #f5f5f7;
+    }
+    
+    .component-name {
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    
+    .component-name a {
+      color: inherit;
+      text-decoration: none;
+    }
+    
+    .component-name a:hover {
+      text-decoration: underline;
+    }
+    
+    .component-desc {
+      font-size: 13px;
+      color: #86868b;
+      margin-top: 4px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    
+    .status-badge.stable {
+      background: #f5f5f7;
+      color: #1d1d1f;
+    }
+    
+    .status-badge.beta {
+      background: #f5f5f7;
+      color: #86868b;
+    }
+    
+    .status-badge.alpha {
+      background: #f5f5f7;
+      color: #86868b;
+      font-style: italic;
+    }
+    
+    .feature-indicator {
+      font-size: 13px;
+      color: #1d1d1f;
+    }
+    
+    .feature-indicator.partial {
+      color: #86868b;
+    }
+    
+    .feature-indicator.no {
+      color: #d2d2d7;
+    }
+    
+    .legend {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      padding: 24px 0;
+      margin-bottom: 48px;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #86868b;
+    }
+    
+    .changelog {
+      background: #f5f5f7;
+      padding: 40px;
+      margin-top: 64px;
+    }
+    
+    .changelog h3 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 19px;
+      font-weight: 600;
+      margin: 0 0 32px 0;
+      color: #1d1d1f;
+    }
+    
+    .changelog-item {
+      display: flex;
+      gap: 24px;
+      padding: 16px 0;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .changelog-item:last-child {
+      border-bottom: none;
+    }
+    
+    .changelog-date {
+      font-size: 13px;
+      color: #86868b;
+      min-width: 80px;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .changelog-content {
+      font-size: 14px;
+      color: #1d1d1f;
+    }
+    
+    .changelog-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-right: 8px;
+      background: #1d1d1f;
+      color: #fff;
+    }
+    
+    .changelog-tag.update {
+      background: #86868b;
+    }
+    
+    .changelog-tag.fix {
+      background: transparent;
+      color: #86868b;
+      border: 1px solid #d2d2d7;
+    }
+  `}
+</style>
+
+<div className="status-docs">
+  <div className="status-header">
+    <div className="status-eyebrow">Design System</div>
+    <h1>Component Status</h1>
+    <p>
+      Track the development status and features of every component.
+    </p>
+  </div>
+
+  <div className="status-summary">
+    <div className="summary-card">
+      <div className="summary-number">32</div>
+      <div className="summary-label">Stable</div>
+    </div>
+    <div className="summary-card">
+      <div className="summary-number">4</div>
+      <div className="summary-label">Beta</div>
+    </div>
+    <div className="summary-card">
+      <div className="summary-number">2</div>
+      <div className="summary-label">Alpha</div>
+    </div>
+    <div className="summary-card">
+      <div className="summary-number">38</div>
+      <div className="summary-label">Total</div>
+    </div>
+  </div>
+
+  <div className="legend">
+    <div className="legend-item">
+      <span className="status-badge stable">Stable</span>
+      Production ready
+    </div>
+    <div className="legend-item">
+      <span className="status-badge beta">Beta</span>
+      API may change
+    </div>
+    <div className="legend-item">
+      <span className="status-badge alpha">Alpha</span>
+      Experimental
+    </div>
+    <div className="legend-item">
+      <span className="feature-indicator">Yes</span>
+      Supported
+    </div>
+    <div className="legend-item">
+      <span className="feature-indicator partial">Partial</span>
+      In progress
+    </div>
+    <div className="legend-item">
+      <span className="feature-indicator no">No</span>
+      Not yet
+    </div>
+  </div>
+
+  <div className="status-section">
+    <h2>Atoms</h2>
+    <table className="component-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Status</th>
+          <th>A11y</th>
+          <th>Tests</th>
+          <th>Docs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/atoms-button--docs">Button</a></div>
+            <div className="component-desc">Primary interactive element for actions</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/atoms-textfield--docs">TextField</a></div>
+            <div className="component-desc">Text input with label and validation</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/atoms-toast--docs">Toast</a></div>
+            <div className="component-desc">Notification messages</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/atoms-loadingspinner--docs">LoadingSpinner</a></div>
+            <div className="component-desc">Loading indicator</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/atoms-optimizedimage--docs">OptimizedImage</a></div>
+            <div className="component-desc">Lazy-loaded responsive images</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/atoms-errorstate--docs">ErrorState</a></div>
+            <div className="component-desc">Error display component</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div className="status-section">
+    <h2>Molecules</h2>
+    <table className="component-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Status</th>
+          <th>A11y</th>
+          <th>Tests</th>
+          <th>Docs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/molecules-quickspecs--docs">QuickSpecs</a></div>
+            <div className="component-desc">Vehicle specification display</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/molecules-incentives--docs">Incentives</a></div>
+            <div className="component-desc">Dealer incentives and offers</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/molecules-trimselector--docs">TrimSelector</a></div>
+            <div className="component-desc">Vehicle trim selection</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/molecules-marketspeed--docs">MarketSpeed</a></div>
+            <div className="component-desc">Market demand indicator</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/molecules-warranty--docs">Warranty</a></div>
+            <div className="component-desc">Warranty information display</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/molecules-targetpricerange--docs">TargetPriceRange</a></div>
+            <div className="component-desc">Price range visualization</div>
+          </td>
+          <td><span className="status-badge beta">Beta</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/molecules-buyingpotential--docs">BuyingPotential</a></div>
+            <div className="component-desc">Purchase readiness indicator</div>
+          </td>
+          <td><span className="status-badge beta">Beta</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator no">No</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div className="status-section">
+    <h2>Organisms</h2>
+    <table className="component-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Status</th>
+          <th>A11y</th>
+          <th>Tests</th>
+          <th>Docs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-header--docs">Header</a></div>
+            <div className="component-desc">Global navigation header</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-footer--docs">Footer</a></div>
+            <div className="component-desc">Global footer with links</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-hero--docs">Hero</a></div>
+            <div className="component-desc">Vehicle hero section</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-comparison--docs">Comparison</a></div>
+            <div className="component-desc">Vehicle comparison table</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-vehicleranking--docs">VehicleRanking</a></div>
+            <div className="component-desc">Top 10 vehicle rankings</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-forsalenearyou--docs">ForSaleNearYou</a></div>
+            <div className="component-desc">Local vehicle listings</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-exitintentmodal--docs">ExitIntentModal</a></div>
+            <div className="component-desc">Exit intent popup</div>
+          </td>
+          <td><span className="status-badge beta">Beta</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator no">No</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

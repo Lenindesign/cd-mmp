@@ -35,14 +35,19 @@ const meta: Meta<typeof OptimizedImage> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const SAMPLE_CAR_IMAGE = 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800';
-const SAMPLE_CAR_IMAGE_2 = 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800';
+// 2025 Chevrolet Trax images
+const TRAX_IMAGE_1 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg';
+const TRAX_IMAGE_2 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c171a38f50008ca1b6e/009-2025-chevrolet-trax-exterior-side-view.jpg';
+const TRAX_IMAGE_3 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg';
+const TRAX_IMAGE_4 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c1e811993000831eb00/012-2025-chevrolet-trax-exterior-front-view.jpg';
+const TRAX_IMAGE_5 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg';
+const TRAX_IMAGE_6 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg';
 
 // Default
 export const Default: Story = {
   args: {
-    src: SAMPLE_CAR_IMAGE,
-    alt: 'Sports car',
+    src: TRAX_IMAGE_1,
+    alt: '2025 Chevrolet Trax',
     aspectRatio: '16/9',
   },
   decorators: [(Story) => <div style={{ width: '400px' }}><Story /></div>],
@@ -51,8 +56,8 @@ export const Default: Story = {
 // Aspect Ratios
 export const AspectRatio16x9: Story = {
   args: {
-    src: SAMPLE_CAR_IMAGE,
-    alt: 'Car',
+    src: TRAX_IMAGE_1,
+    alt: '2025 Chevrolet Trax',
     aspectRatio: '16/9',
   },
   decorators: [(Story) => <div style={{ width: '400px' }}><Story /></div>],
@@ -60,8 +65,8 @@ export const AspectRatio16x9: Story = {
 
 export const AspectRatio4x3: Story = {
   args: {
-    src: SAMPLE_CAR_IMAGE,
-    alt: 'Car',
+    src: TRAX_IMAGE_2,
+    alt: '2025 Chevrolet Trax',
     aspectRatio: '4/3',
   },
   decorators: [(Story) => <div style={{ width: '400px' }}><Story /></div>],
@@ -69,8 +74,8 @@ export const AspectRatio4x3: Story = {
 
 export const AspectRatioSquare: Story = {
   args: {
-    src: SAMPLE_CAR_IMAGE,
-    alt: 'Car',
+    src: TRAX_IMAGE_3,
+    alt: '2025 Chevrolet Trax',
     aspectRatio: '1/1',
   },
   decorators: [(Story) => <div style={{ width: '300px' }}><Story /></div>],
@@ -89,8 +94,8 @@ export const WithPlaceholder: Story = {
 
 export const EagerLoading: Story = {
   args: {
-    src: SAMPLE_CAR_IMAGE,
-    alt: 'Eager loaded image',
+    src: TRAX_IMAGE_4,
+    alt: '2025 Chevrolet Trax',
     aspectRatio: '16/9',
     loading: 'eager',
   },
@@ -111,7 +116,7 @@ export const ErrorFallback: Story = {
 export const VehicleCard: Story = {
   render: () => (
     <div style={{ width: '300px' }}>
-      <VehicleImage src={SAMPLE_CAR_IMAGE} alt="2024 Toyota Camry" size="card" />
+      <VehicleImage src={TRAX_IMAGE_1} alt="2025 Chevrolet Trax" size="card" />
     </div>
   ),
 };
@@ -119,7 +124,7 @@ export const VehicleCard: Story = {
 export const VehicleHero: Story = {
   render: () => (
     <div style={{ width: '600px' }}>
-      <VehicleImage src={SAMPLE_CAR_IMAGE_2} alt="2024 Toyota Camry" size="hero" />
+      <VehicleImage src={TRAX_IMAGE_6} alt="2025 Chevrolet Trax" size="hero" />
     </div>
   ),
 };
@@ -127,7 +132,7 @@ export const VehicleHero: Story = {
 export const VehicleThumbnail: Story = {
   render: () => (
     <div style={{ width: '150px' }}>
-      <VehicleImage src={SAMPLE_CAR_IMAGE} alt="2024 Toyota Camry" size="thumbnail" />
+      <VehicleImage src={TRAX_IMAGE_3} alt="2025 Chevrolet Trax" size="thumbnail" />
     </div>
   ),
 };
@@ -154,19 +159,16 @@ export const AvatarSizes: Story = {
   ),
 };
 
-// Image Grid
+// Image Grid - 2025 Chevrolet Trax Gallery
 export const ImageGrid: Story = {
   render: () => (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', width: '600px' }}>
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <VehicleImage 
-          key={i}
-          src={`https://images.unsplash.com/photo-${1549399542 + i}-7e3f8b79c341?w=400`} 
-          alt={`Car ${i}`} 
-          size="card"
-        />
-      ))}
+      <VehicleImage src={TRAX_IMAGE_1} alt="2025 Chevrolet Trax - Front View" size="card" />
+      <VehicleImage src={TRAX_IMAGE_2} alt="2025 Chevrolet Trax - Side View" size="card" />
+      <VehicleImage src={TRAX_IMAGE_3} alt="2025 Chevrolet Trax - Front Angle" size="card" />
+      <VehicleImage src={TRAX_IMAGE_4} alt="2025 Chevrolet Trax - Front Quarter" size="card" />
+      <VehicleImage src={TRAX_IMAGE_5} alt="2025 Chevrolet Trax - Rear View" size="card" />
+      <VehicleImage src={TRAX_IMAGE_6} alt="2025 Chevrolet Trax - Hero Shot" size="card" />
     </div>
   ),
 };
-

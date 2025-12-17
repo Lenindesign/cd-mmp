@@ -1,187 +1,405 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-const SpacingBlock = ({ 
-  name, 
-  value, 
-  cssVar,
-  pixels
-}: { 
-  name: string; 
-  value: string; 
-  cssVar: string;
-  pixels: string;
-}) => (
-  <div style={{ 
-    display: 'flex', 
-    alignItems: 'center', 
-    gap: '16px',
-    marginBottom: '12px',
-    padding: '8px 0',
-    borderBottom: '1px solid var(--color-gray-100)'
-  }}>
-    <div 
-      style={{ 
-        width: pixels,
-        height: '32px',
-        backgroundColor: 'var(--color-blue-cobalt)',
-        borderRadius: '4px',
-        flexShrink: 0,
-        minWidth: '4px'
-      }} 
-    />
-    <div style={{ minWidth: '80px' }}>
-      <div style={{ fontWeight: 600, fontSize: '14px', fontFamily: 'var(--font-heading)' }}>{name}</div>
-      <div style={{ fontSize: '12px', color: 'var(--color-gray-500)' }}>{pixels}</div>
-    </div>
-    <code style={{ 
-      fontSize: '12px', 
-      background: 'var(--color-gray-100)', 
-      padding: '4px 8px',
-      borderRadius: '4px',
-      color: 'var(--color-gray-700)'
-    }}>
-      {cssVar}
-    </code>
-    <span style={{ fontSize: '12px', color: 'var(--color-gray-500)', fontFamily: 'monospace' }}>{value}</span>
-  </div>
-);
-
 const SpacingPage = () => (
-  <div style={{ padding: '24px', fontFamily: 'var(--font-body)' }}>
-    <h1 style={{ 
-      fontFamily: 'var(--font-heading)',
-      fontSize: '32px',
-      fontWeight: 700,
-      marginBottom: '16px',
-      color: 'var(--color-black)'
-    }}>
-      Spacing System
-    </h1>
-    
-    <p style={{ 
-      marginBottom: '32px',
-      color: 'var(--color-gray-600)'
-    }}>
-      Based on a 4px grid. Use these tokens for margins, paddings, and gaps.
-    </p>
-    
-    <div style={{ marginBottom: '32px' }}>
-      <h3 style={{ 
-        fontFamily: 'var(--font-heading)',
-        fontSize: '18px',
-        fontWeight: 600,
-        marginBottom: '16px',
-        borderBottom: '2px solid var(--color-blue-cobalt)',
-        paddingBottom: '8px'
-      }}>
-        Spacing Scale
-      </h3>
-      
-      <SpacingBlock name="spacing-0" value="0" cssVar="var(--spacing-0)" pixels="0px" />
-      <SpacingBlock name="spacing-1" value="0.25rem" cssVar="var(--spacing-1)" pixels="4px" />
-      <SpacingBlock name="spacing-2" value="0.5rem" cssVar="var(--spacing-2)" pixels="8px" />
-      <SpacingBlock name="spacing-3" value="0.75rem" cssVar="var(--spacing-3)" pixels="12px" />
-      <SpacingBlock name="spacing-4" value="1rem" cssVar="var(--spacing-4)" pixels="16px" />
-      <SpacingBlock name="spacing-5" value="1.25rem" cssVar="var(--spacing-5)" pixels="20px" />
-      <SpacingBlock name="spacing-6" value="1.5rem" cssVar="var(--spacing-6)" pixels="24px" />
-      <SpacingBlock name="spacing-8" value="2rem" cssVar="var(--spacing-8)" pixels="32px" />
-      <SpacingBlock name="spacing-10" value="2.5rem" cssVar="var(--spacing-10)" pixels="40px" />
-      <SpacingBlock name="spacing-12" value="3rem" cssVar="var(--spacing-12)" pixels="48px" />
-      <SpacingBlock name="spacing-16" value="4rem" cssVar="var(--spacing-16)" pixels="64px" />
-      <SpacingBlock name="spacing-20" value="5rem" cssVar="var(--spacing-20)" pixels="80px" />
-      <SpacingBlock name="spacing-24" value="6rem" cssVar="var(--spacing-24)" pixels="96px" />
-    </div>
-    
-    <div>
-      <h3 style={{ 
-        fontFamily: 'var(--font-heading)',
-        fontSize: '18px',
-        fontWeight: 600,
-        marginBottom: '16px',
-        borderBottom: '2px solid var(--color-blue-cobalt)',
-        paddingBottom: '8px'
-      }}>
-        Border Radius
-      </h3>
-      
-      <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-        {[
-          { name: 'Small', value: '4px', cssVar: '--border-radius-sm' },
-          { name: 'Medium', value: '8px', cssVar: '--border-radius-md' },
-          { name: 'Large', value: '12px', cssVar: '--border-radius-lg' },
-          { name: 'XL', value: '16px', cssVar: '--border-radius-xl' },
-          { name: 'Full', value: '9999px', cssVar: '--border-radius-full' },
-        ].map((radius) => (
-          <div key={radius.cssVar} style={{ textAlign: 'center' }}>
-            <div 
-              style={{ 
-                width: '80px',
-                height: '80px',
-                backgroundColor: 'var(--color-blue-cobalt)',
-                borderRadius: radius.value,
-                marginBottom: '8px'
-              }} 
-            />
-            <div style={{ fontWeight: 600, fontSize: '14px', fontFamily: 'var(--font-heading)' }}>{radius.name}</div>
-            <div style={{ fontSize: '12px', color: 'var(--color-gray-500)' }}>{radius.value}</div>
-            <code style={{ 
-              fontSize: '10px', 
-              background: 'var(--color-gray-100)', 
-              padding: '2px 4px',
-              borderRadius: '4px'
-            }}>
-              {radius.cssVar}
-            </code>
-          </div>
-        ))}
+  <>
+    <style>
+      {`
+        .docs-container {
+          max-width: 720px;
+          margin: 0 auto;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+          color: #1d1d1f;
+          -webkit-font-smoothing: antialiased;
+          padding: 0 24px;
+        }
+        
+        .docs-header {
+          padding: 80px 0 64px;
+          border-bottom: 1px solid #d2d2d7;
+          margin-bottom: 64px;
+        }
+        
+        .docs-eyebrow {
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #86868b;
+          margin-bottom: 16px;
+        }
+        
+        .docs-header h1 {
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+          font-size: 48px;
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+          margin: 0 0 24px 0;
+          color: #1d1d1f;
+        }
+        
+        .docs-header p {
+          font-size: 21px;
+          font-weight: 400;
+          line-height: 1.5;
+          color: #424245;
+          margin: 0;
+          max-width: 560px;
+        }
+        
+        .docs-section {
+          margin-bottom: 80px;
+        }
+        
+        .docs-section-title {
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+          font-size: 28px;
+          font-weight: 600;
+          letter-spacing: -0.015em;
+          color: #1d1d1f;
+          margin: 0 0 12px 0;
+        }
+        
+        .docs-section-subtitle {
+          font-size: 17px;
+          color: #86868b;
+          margin: 0 0 40px 0;
+          line-height: 1.5;
+        }
+        
+        .spacing-row {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          padding: 12px 0;
+          border-bottom: 1px solid #e8e8ed;
+        }
+        
+        .spacing-bar {
+          height: 8px;
+          background-color: #1d1d1f;
+          flex-shrink: 0;
+          min-width: 4px;
+        }
+        
+        .spacing-info {
+          min-width: 80px;
+        }
+        
+        .spacing-name {
+          font-weight: 600;
+          font-size: 14px;
+          color: #1d1d1f;
+        }
+        
+        .spacing-px {
+          font-size: 12px;
+          color: #86868b;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+        }
+        
+        .spacing-var {
+          font-size: 12px;
+          background: #f5f5f7;
+          padding: 6px 12px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          color: #1d1d1f;
+        }
+        
+        .spacing-rem {
+          font-size: 12px;
+          color: #86868b;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+        }
+        
+        .radius-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 1px;
+          background: #e8e8ed;
+        }
+        
+        .radius-item {
+          text-align: center;
+          background: #ffffff;
+          padding: 24px 16px;
+        }
+        
+        .radius-sample {
+          width: 64px;
+          height: 64px;
+          background-color: #1d1d1f;
+          margin: 0 auto 16px;
+        }
+        
+        .radius-name {
+          font-weight: 600;
+          font-size: 13px;
+          color: #1d1d1f;
+          margin-bottom: 4px;
+        }
+        
+        .radius-value {
+          font-size: 12px;
+          color: #86868b;
+          margin-bottom: 8px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+        }
+        
+        .radius-var {
+          font-size: 10px;
+          background: #f5f5f7;
+          padding: 4px 6px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          color: #424245;
+        }
+        
+        .shadow-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          gap: 1px;
+          background: #e8e8ed;
+        }
+        
+        .shadow-item {
+          text-align: center;
+          background: #f5f5f7;
+          padding: 24px 16px;
+        }
+        
+        .shadow-sample {
+          width: 100%;
+          height: 64px;
+          background-color: #ffffff;
+          margin-bottom: 16px;
+        }
+        
+        .shadow-name {
+          font-weight: 600;
+          font-size: 13px;
+          color: #1d1d1f;
+          margin-bottom: 8px;
+        }
+        
+        .shadow-var {
+          font-size: 10px;
+          background: #ffffff;
+          padding: 4px 6px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          color: #424245;
+        }
+      `}
+    </style>
+    <div className="docs-container">
+      <div className="docs-header">
+        <div className="docs-eyebrow">Design Tokens</div>
+        <h1>Spacing System</h1>
+        <p>
+          Based on a 4px grid. Use these tokens for margins, paddings, and gaps to maintain visual rhythm.
+        </p>
       </div>
-    </div>
+      
+      <div className="docs-section">
+        <h2 className="docs-section-title">Spacing Scale</h2>
+        <p className="docs-section-subtitle">
+          Consistent spacing from 0 to 96px.
+        </p>
+        
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '0px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-0</div>
+            <div className="spacing-px">0px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-0)</code>
+          <span className="spacing-rem">0</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '4px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-1</div>
+            <div className="spacing-px">4px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-1)</code>
+          <span className="spacing-rem">0.25rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '8px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-2</div>
+            <div className="spacing-px">8px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-2)</code>
+          <span className="spacing-rem">0.5rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '12px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-3</div>
+            <div className="spacing-px">12px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-3)</code>
+          <span className="spacing-rem">0.75rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '16px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-4</div>
+            <div className="spacing-px">16px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-4)</code>
+          <span className="spacing-rem">1rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '20px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-5</div>
+            <div className="spacing-px">20px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-5)</code>
+          <span className="spacing-rem">1.25rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '24px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-6</div>
+            <div className="spacing-px">24px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-6)</code>
+          <span className="spacing-rem">1.5rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '32px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-8</div>
+            <div className="spacing-px">32px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-8)</code>
+          <span className="spacing-rem">2rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '40px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-10</div>
+            <div className="spacing-px">40px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-10)</code>
+          <span className="spacing-rem">2.5rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '48px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-12</div>
+            <div className="spacing-px">48px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-12)</code>
+          <span className="spacing-rem">3rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '64px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-16</div>
+            <div className="spacing-px">64px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-16)</code>
+          <span className="spacing-rem">4rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '80px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-20</div>
+            <div className="spacing-px">80px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-20)</code>
+          <span className="spacing-rem">5rem</span>
+        </div>
+        <div className="spacing-row">
+          <div className="spacing-bar" style={{ width: '96px' }} />
+          <div className="spacing-info">
+            <div className="spacing-name">spacing-24</div>
+            <div className="spacing-px">96px</div>
+          </div>
+          <code className="spacing-var">var(--spacing-24)</code>
+          <span className="spacing-rem">6rem</span>
+        </div>
+      </div>
+      
+      <div className="docs-section">
+        <h2 className="docs-section-title">Border Radius</h2>
+        <p className="docs-section-subtitle">
+          Corner radius options for UI elements.
+        </p>
+        
+        <div className="radius-grid">
+          <div className="radius-item">
+            <div className="radius-sample" style={{ borderRadius: '4px' }} />
+            <div className="radius-name">Small</div>
+            <div className="radius-value">4px</div>
+            <code className="radius-var">--border-radius-sm</code>
+          </div>
+          <div className="radius-item">
+            <div className="radius-sample" style={{ borderRadius: '8px' }} />
+            <div className="radius-name">Medium</div>
+            <div className="radius-value">8px</div>
+            <code className="radius-var">--border-radius-md</code>
+          </div>
+          <div className="radius-item">
+            <div className="radius-sample" style={{ borderRadius: '12px' }} />
+            <div className="radius-name">Large</div>
+            <div className="radius-value">12px</div>
+            <code className="radius-var">--border-radius-lg</code>
+          </div>
+          <div className="radius-item">
+            <div className="radius-sample" style={{ borderRadius: '16px' }} />
+            <div className="radius-name">XL</div>
+            <div className="radius-value">16px</div>
+            <code className="radius-var">--border-radius-xl</code>
+          </div>
+          <div className="radius-item">
+            <div className="radius-sample" style={{ borderRadius: '9999px' }} />
+            <div className="radius-name">Full</div>
+            <div className="radius-value">9999px</div>
+            <code className="radius-var">--border-radius-full</code>
+          </div>
+        </div>
+      </div>
 
-    <div style={{ marginTop: '32px' }}>
-      <h3 style={{ 
-        fontFamily: 'var(--font-heading)',
-        fontSize: '18px',
-        fontWeight: 600,
-        marginBottom: '16px',
-        borderBottom: '2px solid var(--color-blue-cobalt)',
-        paddingBottom: '8px'
-      }}>
-        Shadows
-      </h3>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '24px' }}>
-        {[
-          { name: 'Small', cssVar: '--shadow-sm', value: '0 1px 2px 0 rgb(0 0 0 / 0.05)' },
-          { name: 'Default', cssVar: '--shadow', value: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)' },
-          { name: 'Medium', cssVar: '--shadow-md', value: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' },
-          { name: 'Large', cssVar: '--shadow-lg', value: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)' },
-          { name: 'XL', cssVar: '--shadow-xl', value: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' },
-        ].map((shadow) => (
-          <div key={shadow.cssVar} style={{ textAlign: 'center' }}>
-            <div 
-              style={{ 
-                width: '100%',
-                height: '80px',
-                backgroundColor: 'var(--color-white)',
-                borderRadius: '8px',
-                boxShadow: shadow.value,
-                marginBottom: '8px'
-              }} 
-            />
-            <div style={{ fontWeight: 600, fontSize: '14px', fontFamily: 'var(--font-heading)' }}>{shadow.name}</div>
-            <code style={{ 
-              fontSize: '10px', 
-              background: 'var(--color-gray-100)', 
-              padding: '2px 4px',
-              borderRadius: '4px'
-            }}>
-              {shadow.cssVar}
-            </code>
+      <div className="docs-section">
+        <h2 className="docs-section-title">Shadows</h2>
+        <p className="docs-section-subtitle">
+          Elevation levels for depth and hierarchy.
+        </p>
+        
+        <div className="shadow-grid">
+          <div className="shadow-item">
+            <div className="shadow-sample" style={{ boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)' }} />
+            <div className="shadow-name">Small</div>
+            <code className="shadow-var">--shadow-sm</code>
           </div>
-        ))}
+          <div className="shadow-item">
+            <div className="shadow-sample" style={{ boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)' }} />
+            <div className="shadow-name">Default</div>
+            <code className="shadow-var">--shadow</code>
+          </div>
+          <div className="shadow-item">
+            <div className="shadow-sample" style={{ boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+            <div className="shadow-name">Medium</div>
+            <code className="shadow-var">--shadow-md</code>
+          </div>
+          <div className="shadow-item">
+            <div className="shadow-sample" style={{ boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+            <div className="shadow-name">Large</div>
+            <code className="shadow-var">--shadow-lg</code>
+          </div>
+          <div className="shadow-item">
+            <div className="shadow-sample" style={{ boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }} />
+            <div className="shadow-name">XL</div>
+            <code className="shadow-var">--shadow-xl</code>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </>
 );
 
 const meta: Meta = {
@@ -200,4 +418,6 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-export const AllSpacing: Story = {};
+export const AllSpacing: Story = {
+  name: 'All Spacing',
+};

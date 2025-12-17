@@ -54,6 +54,37 @@
 }
 
 /* ============================================
+   ERROR STATE - Image Placeholder Fallback
+   ============================================ */
+
+.optimized-image--error {
+  background-color: #e8e8ed;
+}
+
+.optimized-image__error-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e8e8ed;
+}
+
+.optimized-image__error-icon {
+  color: #86868b;
+  width: 64px;
+  height: 64px;
+  opacity: 0.7;
+}
+
+/* Smaller icon for small containers */
+.optimized-image[style*="width: 150px"] .optimized-image__error-icon,
+.optimized-image[style*="width: 100px"] .optimized-image__error-icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* ============================================
    RESPONSIVE IMAGE VARIANTS
    ============================================ */
 
@@ -94,21 +125,6 @@
 }
 
 /* ============================================
-   ERROR STATE
-   ============================================ */
-
-.optimized-image--error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-gray-100);
-}
-
-.optimized-image__error-icon {
-  color: var(--color-gray-400);
-}
-
-/* ============================================
    REDUCED MOTION
    ============================================ */
 
@@ -126,4 +142,3 @@
     transform: none;
   }
 }
-

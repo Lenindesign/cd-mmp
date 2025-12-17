@@ -1,6 +1,6 @@
 /* ============================================
-   ONBOARDING STEP 1 STYLES
-   Car and Driver Design System
+   ONBOARDING STEP 1 - Car and Driver Design System
+   Based on Figma Design: CD-Onboarding
    ============================================ */
 
 .onboarding-step1 {
@@ -8,26 +8,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-gray-50);
-  padding: var(--spacing-6);
+  background-color: var(--color-gray-100);
+  padding: var(--spacing-12);
 }
 
-.step1-content {
+.step1-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   max-width: 480px;
+  padding: var(--spacing-12);
+  background-color: var(--color-gray-100);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
-/* Step Indicator - Speedometer */
+/* Step Indicator - Speedometer Graphic */
 .step-indicator {
   margin-bottom: var(--spacing-4);
 }
 
 .step-indicator-img {
   display: block;
-  width: 160px;
+  width: 162px;
   height: auto;
 }
 
@@ -45,17 +49,19 @@
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
-  color: var(--color-gray-700);
-  line-height: 1.4;
+  color: var(--color-dark);
+  line-height: var(--line-height-normal);
+  letter-spacing: 0;
 }
 
 .step1-title {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
-  line-height: 1.2;
+  line-height: var(--line-height-snug);
   margin: 0;
+  letter-spacing: 0;
 }
 
 /* Form Card */
@@ -65,8 +71,8 @@
   gap: var(--spacing-4);
   width: 100%;
   padding: var(--spacing-4);
-  background: var(--color-white);
-  border-radius: var(--border-radius-md);
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-sm);
   margin-bottom: var(--spacing-6);
 }
 
@@ -80,7 +86,7 @@
 .step1-label {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-dark);
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -95,18 +101,20 @@
   height: 48px;
   padding: 0 var(--spacing-4);
   font-family: var(--font-body);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-medium);
   color: var(--color-dark);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-400);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-sm);
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  box-sizing: border-box;
 }
 
 .step1-input::placeholder {
-  color: var(--color-gray-500);
+  color: var(--color-gray-400);
+  font-weight: var(--font-weight-regular);
 }
 
 .step1-input:focus {
@@ -115,7 +123,7 @@
 }
 
 .step1-input-with-icon .step1-input {
-  padding-right: 48px;
+  padding-right: var(--spacing-12);
 }
 
 .step1-location-icon {
@@ -124,6 +132,7 @@
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
+  color: var(--color-blue-cobalt);
 }
 
 /* Navigation */
@@ -135,47 +144,10 @@
   gap: var(--spacing-4);
 }
 
-.step1-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-2);
-  height: 40px;
-  padding: 0 var(--spacing-4);
-  font-family: var(--font-body);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.step1-btn-back {
-  background: transparent;
-  color: var(--color-gray-600);
-  border: 1px solid var(--color-gray-400);
-  min-width: 100px;
-}
-
-.step1-btn-back:hover {
-  background: var(--color-gray-100);
-  border-color: var(--color-gray-500);
-}
-
-.step1-btn-next {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border: none;
-  min-width: 100px;
-}
-
-.step1-btn-next:hover {
-  background: var(--color-blue-cobalt-dark);
-}
-
+/* Skip Link */
 .step1-skip {
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-600);
   text-decoration: underline;
@@ -184,7 +156,7 @@
   border: none;
   cursor: pointer;
   opacity: 0.5;
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--transition-normal);
 }
 
 .step1-skip:hover {
@@ -192,28 +164,60 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (max-width: 540px) {
   .onboarding-step1 {
-    padding: var(--spacing-4);
+    padding: var(--spacing-6) var(--spacing-4);
   }
-  
+
+  .step1-container {
+    padding: var(--spacing-8) var(--spacing-6);
+    max-width: 100%;
+  }
+
+  .step-indicator-img {
+    width: 140px;
+  }
+
   .step1-title {
     font-size: var(--font-size-xl);
   }
-  
+
   .step1-navigation {
     flex-wrap: wrap;
   }
-  
-  .step1-btn {
+
+  .step1-navigation .cta {
     flex: 1;
     min-width: 90px;
   }
-  
+
   .step1-skip {
     order: 3;
     width: 100%;
     margin-top: var(--spacing-2);
     text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .step1-container {
+    padding: var(--spacing-6) var(--spacing-4);
+  }
+
+  .step-indicator-img {
+    width: 120px;
+  }
+
+  .step1-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .step1-label {
+    font-size: var(--font-size-xs);
+  }
+
+  .step1-input {
+    height: 44px;
+    font-size: var(--font-size-base);
   }
 }

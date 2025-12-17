@@ -1,35 +1,72 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import OnboardingLayout from './OnboardingLayout';
+import { Car, Heart, Sparkles } from 'lucide-react';
 import './OnboardingStep2.css';
 
-type UserType = 'buyer' | 'seller' | 'both' | null;
+// Speedometer Step Indicator Component (consistent with Step 1)
+const StepIndicator: React.FC<{ step: number }> = ({ step }) => {
+  const stepImages: Record<number, string> = {
+    1: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e811a35f00029a6a69/step1.svg',
+    2: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e711a35f00029a6a67/step2.svg',
+    3: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a65/step3.svg',
+    4: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a63/step4.svg',
+  };
+
+  return (
+    <div className="step-indicator">
+      <img 
+        src={stepImages[step]} 
+        alt={`Step ${step} of 4`} 
+        className="step-indicator-img"
+      />
+    </div>
+  );
+};
+
+// Chevron Icons (same as Step 1)
+const ChevronLeftIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// User type based on Figma design
+type UserType = 'buyer' | 'enthusiast' | 'both' | null;
+
 
 interface UserTypeOption {
   id: UserType;
   title: string;
   description: string;
-  icon: string;
+  icon: React.ReactNode;
+  isSelected?: boolean;
 }
 
-const userTypeOptions: UserTypeOption[] = [
+// User type options matching Figma design
+const userTypeOptions: Omit<UserTypeOption, 'isSelected'>[] = [
   {
     id: 'buyer',
-    title: 'I\'m a Buyer',
-    description: 'Looking to purchase a new or used vehicle',
-    icon: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e1dbe93500027ce8e8/buyer.svg',
+    title: 'Car Buyer',
+    description: "I'm shopping for a new or used car.",
+    icon: <Car size={28} strokeWidth={1.5} />,
   },
   {
-    id: 'seller',
-    title: 'I\'m a Seller',
-    description: 'Looking to sell or trade my current vehicle',
-    icon: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e1dbe93500027ce8e8/buyer.svg', // Using buyer icon as placeholder
+    id: 'enthusiast',
+    title: 'Car Enthusiast',
+    description: 'I nerd out on all things car-related.',
+    icon: <Heart size={28} strokeWidth={1.5} />,
   },
   {
     id: 'both',
     title: 'Both',
-    description: 'I want to buy and sell vehicles',
-    icon: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48dddbe935000241fc05/both.svg',
+    description: "I'm a car lover on the lookout for my next ride.",
+    icon: <Sparkles size={28} strokeWidth={1.5} />,
   },
 ];
 
@@ -39,7 +76,6 @@ const OnboardingStep2: React.FC = () => {
 
   const handleContinue = () => {
     if (selectedType) {
-      // Store selection in localStorage or context
       localStorage.setItem('onboarding_user_type', selectedType);
       navigate('/onboarding/step-3');
     }
@@ -54,92 +90,77 @@ const OnboardingStep2: React.FC = () => {
   };
 
   return (
-    <OnboardingLayout 
-      currentStep={2} 
-      totalSteps={4} 
-      showProgress={true}
-      showBackButton={true}
-      onBack={handleBack}
-    >
-      <div className="onboarding-card onboarding-step2">
-        {/* Illustration */}
-        <div className="onboarding-card__illustration">
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e711a35f00029a6a67/step2.svg" 
-            alt="User type illustration"
-          />
-        </div>
+    <div className="onboarding-step2">
+      <div className="step2-container">
+        {/* Step Indicator - Speedometer Graphic */}
+        <StepIndicator step={2} />
 
-        {/* Content */}
-        <h1 className="onboarding-card__title">
-          What brings you here?
-        </h1>
-        <p className="onboarding-card__subtitle">
-          Tell us what you're looking to do so we can personalize your experience.
-        </p>
+        {/* Header Section */}
+        <header className="step2-header">
+          <h1 className="step2-title">What describes you best?</h1>
+          <p className="step2-subtitle">
+            Choose the option that best fits your automotive interests
+          </p>
+        </header>
 
-        {/* Selection Cards */}
-        <div className="onboarding-step2__options">
+        {/* Selection Cards - Horizontal Row */}
+        <div className="step2-cards" role="group" aria-label="User type selection">
           {userTypeOptions.map((option) => (
             <button
               key={option.id}
-              className={`onboarding-step2__option ${
-                selectedType === option.id ? 'onboarding-step2__option--selected' : ''
-              }`}
+              className={`step2-card ${selectedType === option.id ? 'step2-card--selected' : ''}`}
               onClick={() => setSelectedType(option.id)}
               aria-pressed={selectedType === option.id}
+              type="button"
             >
-              <div className="onboarding-step2__option-icon">
-                <img src={option.icon} alt="" />
+              {/* Icon Container with dark/blue background */}
+              <div className={`step2-card__image ${selectedType === option.id ? 'step2-card__image--selected' : ''}`}>
+                <div className="step2-card__icon">
+                  {option.icon}
+                </div>
               </div>
-              <div className="onboarding-step2__option-content">
-                <h3 className="onboarding-step2__option-title">{option.title}</h3>
-                <p className="onboarding-step2__option-description">{option.description}</p>
-              </div>
-              <div className="onboarding-step2__option-check">
-                {selectedType === option.id && (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="12" fill="currentColor" />
-                    <path d="M8 12L11 15L16 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
+              
+              {/* Text Content */}
+              <div className="step2-card__content">
+                <h3 className="step2-card__title">{option.title}</h3>
+                <p className="step2-card__description">{option.description}</p>
               </div>
             </button>
           ))}
         </div>
 
-        {/* Continue Button */}
-        <button 
-          className="onboarding-btn onboarding-btn--primary"
-          onClick={handleContinue}
-          disabled={!selectedType}
-        >
-          Continue
-        </button>
+        {/* Navigation - Using CTA classes from design system (same as Step 1) */}
+        <nav className="step2-navigation" aria-label="Onboarding navigation">
+          <button 
+            className="cta cta--md cta--secondary" 
+            onClick={handleBack}
+            type="button"
+          >
+            <ChevronLeftIcon />
+            Back
+          </button>
 
-        {/* Skip */}
-        <button className="onboarding-skip" onClick={handleSkip}>
-          Skip for now
-        </button>
+          <button 
+            className="step2-skip" 
+            onClick={handleSkip}
+            type="button"
+          >
+            Skip this step
+          </button>
+
+          <button 
+            className="cta cta--md cta--primary" 
+            onClick={handleContinue}
+            type="button"
+            disabled={!selectedType}
+          >
+            Next
+            <ChevronRightIcon />
+          </button>
+        </nav>
       </div>
-    </OnboardingLayout>
+    </div>
   );
 };
 
 export default OnboardingStep2;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

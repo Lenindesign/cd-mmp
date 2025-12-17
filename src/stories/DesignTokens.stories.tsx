@@ -9,7 +9,7 @@ const meta: Meta = {
       showPanel: false,
     },
     chromatic: {
-      disableSnapshot: true, // Disable Chromatic snapshots for this story (too large)
+      disableSnapshot: true,
     },
   },
 };
@@ -17,268 +17,292 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const styles = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-white)',
-    fontFamily: 'var(--font-body)',
-    padding: 'var(--spacing-8)',
-  },
-  container: {
-    maxWidth: '1280px',
-    margin: '0 auto',
-  },
-  header: {
-    marginBottom: 'var(--spacing-8)',
-  },
-  title: {
-    fontSize: 'var(--font-size-4xl)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontFamily: 'var(--font-heading)',
-    color: 'var(--color-black)',
-    marginBottom: 'var(--spacing-2)',
-  },
-  subtitle: {
-    fontSize: 'var(--font-size-lg)',
-    color: 'var(--color-gray-600)',
-    lineHeight: 'var(--line-height-relaxed)',
-  },
-  section: {
-    marginBottom: 'var(--spacing-12)',
-  },
-  sectionTitle: {
-    fontSize: 'var(--font-size-2xl)',
-    fontWeight: 'var(--font-weight-semibold)',
-    fontFamily: 'var(--font-heading)',
-    color: 'var(--color-black)',
-    marginBottom: 'var(--spacing-4)',
-    paddingBottom: 'var(--spacing-2)',
-    borderBottom: '2px solid var(--color-gray-200)',
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: 'var(--spacing-4)',
-  },
-  tokenCard: {
-    padding: 'var(--spacing-4)',
-    backgroundColor: 'var(--color-white)',
-    border: '1px solid var(--color-gray-200)',
-    borderRadius: 'var(--border-radius-lg)',
-  },
-  tokenName: {
-    fontSize: 'var(--font-size-sm)',
-    fontWeight: 'var(--font-weight-semibold)',
-    color: 'var(--color-black)',
-    marginBottom: 'var(--spacing-1)',
-    fontFamily: 'monospace',
-  },
-  tokenValue: {
-    fontSize: 'var(--font-size-xs)',
-    color: 'var(--color-gray-500)',
-    fontFamily: 'monospace',
-  },
-  colorSwatch: {
-    height: '80px',
-    borderRadius: 'var(--border-radius-md)',
-    marginBottom: 'var(--spacing-2)',
-    border: '1px solid var(--color-gray-200)',
-  },
-  spacingSwatch: {
-    backgroundColor: 'var(--color-blue-cobalt)',
-    marginBottom: 'var(--spacing-2)',
-    borderRadius: 'var(--border-radius-sm)',
-  },
-  typographyExample: {
-    marginBottom: 'var(--spacing-2)',
-    color: 'var(--color-black)',
-  },
-  codeBlock: {
-    backgroundColor: 'var(--color-gray-100)',
-    padding: 'var(--spacing-2)',
-    borderRadius: 'var(--border-radius-sm)',
-    fontFamily: 'monospace',
-    fontSize: 'var(--font-size-xs)',
-    color: 'var(--color-gray-700)',
-    marginTop: 'var(--spacing-2)',
-  },
-} as const;
-
 const colors = [
-  { name: '--color-blue-cobalt', value: '#186CEA', usage: 'Primary brand color, links, interactive elements' },
-  { name: '--color-white', value: '#FFFFFF', usage: 'Backgrounds, text on dark' },
-  { name: '--color-black', value: '#000000', usage: 'Primary text, headings' },
-  { name: '--color-gray-900', value: '#23262F', usage: 'Dark backgrounds, secondary text' },
-  { name: '--color-gray-800', value: '#353945', usage: 'Borders, dividers' },
-  { name: '--color-gray-700', value: '#777E90', usage: 'Tertiary text, placeholders' },
-  { name: '--color-gray-600', value: '#B1B5C3', usage: 'Disabled text, subtle elements' },
-  { name: '--color-gray-500', value: '#E6E8EC', usage: 'Borders, separators' },
-  { name: '--color-gray-400', value: '#F4F5F6', usage: 'Light backgrounds' },
-  { name: '--color-gray-300', value: '#FCFCFD', usage: 'Subtle backgrounds' },
-  { name: '--color-gray-200', value: '#F5F5F5', usage: 'Hover states' },
-  { name: '--color-gray-100', value: '#FAFAFA', usage: 'Backgrounds' },
-  { name: '--color-red-500', value: '#EF4444', usage: 'Errors, destructive actions' },
-  { name: '--color-green-500', value: '#22C55E', usage: 'Success states, positive actions' },
-  { name: '--color-yellow-500', value: '#F59E0B', usage: 'Warnings, caution states' },
+  { name: '--color-dark-grey', value: '#222222', usage: 'Primary text, headings' },
+  { name: '--color-dark-blue', value: '#1B5F8A', usage: 'Primary brand, links' },
+  { name: '--color-gold', value: '#DBCA8B', usage: 'Accents, highlights' },
+  { name: '--color-light-orange', value: '#F7E4CA', usage: 'Warm backgrounds' },
+  { name: '--color-light-grey', value: '#F5F5F5', usage: 'Backgrounds, cards' },
+  { name: '--color-red', value: '#D2232A', usage: 'Errors, alerts' },
+  { name: '--color-green', value: '#26870D', usage: 'Success states' },
+  { name: '--color-dark-gold', value: '#A59143', usage: 'Secondary accents' },
+  { name: '--color-light-blue', value: '#F1F7F7', usage: 'Subtle backgrounds' },
+  { name: '--color-white', value: '#FFFFFF', usage: 'Backgrounds, cards' },
 ];
 
 const spacing = [
-  { name: '--spacing-1', value: '8px', usage: 'Tight spacing, small gaps' },
-  { name: '--spacing-2', value: '16px', usage: 'Default spacing between elements' },
-  { name: '--spacing-3', value: '24px', usage: 'Medium spacing, card padding' },
-  { name: '--spacing-4', value: '32px', usage: 'Large spacing, section gaps' },
-  { name: '--spacing-5', value: '40px', usage: 'Extra large spacing' },
-  { name: '--spacing-6', value: '48px', usage: 'Section padding' },
-  { name: '--spacing-8', value: '64px', usage: 'Page margins' },
-  { name: '--spacing-10', value: '80px', usage: 'Large section spacing' },
-  { name: '--spacing-12', value: '96px', usage: 'Hero spacing' },
-  { name: '--spacing-16', value: '128px', usage: 'Extra large sections' },
-  { name: '--spacing-20', value: '160px', usage: 'Maximum spacing' },
+  { name: '--spacing-1', value: '4px', usage: 'Tight spacing' },
+  { name: '--spacing-2', value: '8px', usage: 'Small gaps' },
+  { name: '--spacing-3', value: '12px', usage: 'Default spacing' },
+  { name: '--spacing-4', value: '16px', usage: 'Card padding' },
+  { name: '--spacing-6', value: '24px', usage: 'Section gaps' },
+  { name: '--spacing-8', value: '32px', usage: 'Large spacing' },
+  { name: '--spacing-12', value: '48px', usage: 'Section padding' },
+  { name: '--spacing-16', value: '64px', usage: 'Page margins' },
+  { name: '--spacing-20', value: '80px', usage: 'Large sections' },
 ];
 
 const typography = [
-  { name: '--font-heading', value: 'Poppins, sans-serif', example: 'The quick brown fox', style: { fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 600 } },
-  { name: '--font-body', value: 'Geist, sans-serif', example: 'The quick brown fox jumps over the lazy dog', style: { fontFamily: 'var(--font-body)', fontSize: '16px' } },
+  { name: '--font-heading', value: 'Inter', example: 'Headlines', style: { fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 600 } },
+  { name: '--font-body', value: 'Inter', example: 'Body text', style: { fontFamily: 'var(--font-body)', fontSize: '16px' } },
 ];
 
 const fontSizes = [
-  { name: '--font-size-xs', value: '12px', example: 'Extra Small Text' },
-  { name: '--font-size-sm', value: '14px', example: 'Small Text' },
-  { name: '--font-size-base', value: '16px', example: 'Base Text' },
-  { name: '--font-size-lg', value: '18px', example: 'Large Text' },
-  { name: '--font-size-xl', value: '20px', example: 'Extra Large Text' },
-  { name: '--font-size-2xl', value: '24px', example: '2XL Text' },
-  { name: '--font-size-3xl', value: '30px', example: '3XL Text' },
-  { name: '--font-size-4xl', value: '36px', example: '4XL Text' },
+  { name: '--font-size-xs', value: '12px', example: 'Extra Small' },
+  { name: '--font-size-sm', value: '14px', example: 'Small' },
+  { name: '--font-size-base', value: '16px', example: 'Base' },
+  { name: '--font-size-lg', value: '18px', example: 'Large' },
+  { name: '--font-size-xl', value: '20px', example: 'XL' },
+  { name: '--font-size-2xl', value: '24px', example: '2XL' },
+  { name: '--font-size-3xl', value: '32px', example: '3XL' },
+  { name: '--font-size-4xl', value: '40px', example: '4XL' },
 ];
 
 const borderRadius = [
   { name: '--border-radius-sm', value: '4px' },
   { name: '--border-radius-md', value: '8px' },
   { name: '--border-radius-lg', value: '16px' },
-  { name: '--border-radius-full', value: '100px' },
-  { name: '--border-radius-circle', value: '400px' },
-];
-
-const shadows = [
-  { name: '--shadow-depth-5', value: '0px 4px 20px 0px rgba(20, 20, 22, 0.06)' },
+  { name: '--border-radius-full', value: '9999px' },
 ];
 
 export const AllTokens: Story = {
-  name: '📋 All Design Tokens',
+  name: 'All Design Tokens',
   render: () => (
-    <div style={styles.page}>
-      <div style={styles.container}>
-        <header style={styles.header}>
-          <h1 style={styles.title}>Design Tokens</h1>
-          <p style={styles.subtitle}>
-            Car and Driver's design system tokens. These CSS variables ensure consistency across all components.
+    <>
+      <style>
+        {`
+          .docs-container {
+            max-width: 720px;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 24px;
+          }
+          
+          .docs-header {
+            padding: 80px 0 64px;
+            border-bottom: 1px solid #d2d2d7;
+            margin-bottom: 64px;
+          }
+          
+          .docs-eyebrow {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #86868b;
+            margin-bottom: 16px;
+          }
+          
+          .docs-header h1 {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin: 0 0 24px 0;
+            color: #1d1d1f;
+          }
+          
+          .docs-header p {
+            font-size: 21px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #424245;
+            margin: 0;
+            max-width: 560px;
+          }
+          
+          .docs-section {
+            margin-bottom: 80px;
+          }
+          
+          .docs-section-title {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            color: #1d1d1f;
+            margin: 0 0 12px 0;
+          }
+          
+          .docs-section-subtitle {
+            font-size: 17px;
+            color: #86868b;
+            margin: 0 0 40px 0;
+            line-height: 1.5;
+          }
+          
+          .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1px;
+            background: #e8e8ed;
+            border: 1px solid #e8e8ed;
+          }
+          
+          .token-card {
+            padding: 24px;
+            background: #ffffff;
+          }
+          
+          .token-swatch {
+            height: 64px;
+            margin-bottom: 16px;
+            border: 1px solid #e8e8ed;
+          }
+          
+          .token-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+            font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          }
+          
+          .token-value {
+            font-size: 12px;
+            color: #86868b;
+            font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          }
+          
+          .token-usage {
+            font-size: 12px;
+            color: #424245;
+            margin-top: 8px;
+            line-height: 1.4;
+          }
+          
+          .token-code {
+            background: #f5f5f7;
+            padding: 8px 12px;
+            font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+            font-size: 11px;
+            color: #424245;
+            margin-top: 12px;
+          }
+          
+          .spacing-bar {
+            background: #1d1d1f;
+            height: 8px;
+            margin-bottom: 16px;
+          }
+          
+          .type-sample {
+            margin-bottom: 16px;
+            color: #1d1d1f;
+          }
+          
+          .radius-sample {
+            width: 64px;
+            height: 64px;
+            background: #1d1d1f;
+            margin-bottom: 16px;
+          }
+        `}
+      </style>
+      <div className="docs-container">
+        <div className="docs-header">
+          <div className="docs-eyebrow">Reference</div>
+          <h1>Design Tokens</h1>
+          <p>
+            CSS variables that ensure consistency across all components and interfaces.
           </p>
-        </header>
+        </div>
 
-        {/* Colors */}
-        <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>🎨 Colors</h2>
-          <div style={styles.grid}>
+        <div className="docs-section">
+          <h2 className="docs-section-title">Colors</h2>
+          <p className="docs-section-subtitle">
+            Primary and secondary color palette.
+          </p>
+          
+          <div className="token-grid">
             {colors.map((color) => (
-              <div key={color.name} style={styles.tokenCard}>
-                <div style={{ ...styles.colorSwatch, backgroundColor: color.value }} />
-                <div style={styles.tokenName}>{color.name}</div>
-                <div style={styles.tokenValue}>{color.value}</div>
-                <div style={{ ...styles.tokenValue, marginTop: 'var(--spacing-1)' }}>{color.usage}</div>
-                <div style={styles.codeBlock}>color: var({color.name});</div>
+              <div key={color.name} className="token-card">
+                <div 
+                  className="token-swatch" 
+                  style={{ 
+                    backgroundColor: color.value,
+                    border: color.value === '#FFFFFF' || color.value === '#F5F5F5' || color.value === '#F1F7F7' || color.value === '#F7E4CA' ? '1px solid #e8e8ed' : 'none',
+                  }} 
+                />
+                <div className="token-name">{color.name}</div>
+                <div className="token-value">{color.value}</div>
+                <div className="token-usage">{color.usage}</div>
+                <div className="token-code">color: var({color.name});</div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* Spacing */}
-        <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>📏 Spacing</h2>
-          <div style={styles.grid}>
+        <div className="docs-section">
+          <h2 className="docs-section-title">Spacing</h2>
+          <p className="docs-section-subtitle">
+            Consistent spacing scale based on 4px grid.
+          </p>
+          
+          <div className="token-grid">
             {spacing.map((space) => (
-              <div key={space.name} style={styles.tokenCard}>
-                <div style={{ ...styles.spacingSwatch, width: space.value, height: '24px' }} />
-                <div style={styles.tokenName}>{space.name}</div>
-                <div style={styles.tokenValue}>{space.value}</div>
-                <div style={{ ...styles.tokenValue, marginTop: 'var(--spacing-1)' }}>{space.usage}</div>
-                <div style={styles.codeBlock}>padding: var({space.name});</div>
+              <div key={space.name} className="token-card">
+                <div className="spacing-bar" style={{ width: space.value }} />
+                <div className="token-name">{space.name}</div>
+                <div className="token-value">{space.value}</div>
+                <div className="token-usage">{space.usage}</div>
+                <div className="token-code">padding: var({space.name});</div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* Typography */}
-        <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>✍️ Typography</h2>
-          <div style={styles.grid}>
+        <div className="docs-section">
+          <h2 className="docs-section-title">Typography</h2>
+          <p className="docs-section-subtitle">
+            Font families and text styles.
+          </p>
+          
+          <div className="token-grid">
             {typography.map((font) => (
-              <div key={font.name} style={styles.tokenCard}>
-                <div style={{ ...styles.typographyExample, ...font.style }}>{font.example}</div>
-                <div style={styles.tokenName}>{font.name}</div>
-                <div style={styles.tokenValue}>{font.value}</div>
-                <div style={styles.codeBlock}>font-family: var({font.name});</div>
+              <div key={font.name} className="token-card">
+                <div className="type-sample" style={font.style}>{font.example}</div>
+                <div className="token-name">{font.name}</div>
+                <div className="token-value">{font.value}</div>
+                <div className="token-code">font-family: var({font.name});</div>
               </div>
             ))}
           </div>
           
-          <h3 style={{ ...styles.sectionTitle, fontSize: 'var(--font-size-xl)', marginTop: 'var(--spacing-6)' }}>Font Sizes</h3>
-          <div style={styles.grid}>
+          <h3 style={{ fontSize: '19px', fontWeight: 600, color: '#1d1d1f', margin: '48px 0 24px' }}>Font Sizes</h3>
+          <div className="token-grid">
             {fontSizes.map((size) => (
-              <div key={size.name} style={styles.tokenCard}>
-                <div style={{ ...styles.typographyExample, fontSize: size.value }}>{size.example}</div>
-                <div style={styles.tokenName}>{size.name}</div>
-                <div style={styles.tokenValue}>{size.value}</div>
-                <div style={styles.codeBlock}>font-size: var({size.name});</div>
+              <div key={size.name} className="token-card">
+                <div className="type-sample" style={{ fontSize: size.value }}>{size.example}</div>
+                <div className="token-name">{size.name}</div>
+                <div className="token-value">{size.value}</div>
+                <div className="token-code">font-size: var({size.name});</div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* Border Radius */}
-        <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>🔲 Border Radius</h2>
-          <div style={styles.grid}>
+        <div className="docs-section">
+          <h2 className="docs-section-title">Border Radius</h2>
+          <p className="docs-section-subtitle">
+            Corner radius options for UI elements.
+          </p>
+          
+          <div className="token-grid">
             {borderRadius.map((radius) => (
-              <div key={radius.name} style={styles.tokenCard}>
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  backgroundColor: 'var(--color-blue-cobalt)',
-                  borderRadius: radius.value,
-                  marginBottom: 'var(--spacing-2)',
-                }} />
-                <div style={styles.tokenName}>{radius.name}</div>
-                <div style={styles.tokenValue}>{radius.value}</div>
-                <div style={styles.codeBlock}>border-radius: var({radius.name});</div>
+              <div key={radius.name} className="token-card">
+                <div className="radius-sample" style={{ borderRadius: radius.value }} />
+                <div className="token-name">{radius.name}</div>
+                <div className="token-value">{radius.value}</div>
+                <div className="token-code">border-radius: var({radius.name});</div>
               </div>
             ))}
           </div>
-        </section>
-
-        {/* Shadows */}
-        <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>💫 Shadows</h2>
-          <div style={styles.grid}>
-            {shadows.map((shadow) => (
-              <div key={shadow.name} style={styles.tokenCard}>
-                <div style={{
-                  width: '100%',
-                  height: '80px',
-                  backgroundColor: 'var(--color-white)',
-                  boxShadow: shadow.value,
-                  borderRadius: 'var(--border-radius-md)',
-                  marginBottom: 'var(--spacing-2)',
-                }} />
-                <div style={styles.tokenName}>{shadow.name}</div>
-                <div style={styles.tokenValue}>{shadow.value}</div>
-                <div style={styles.codeBlock}>box-shadow: var({shadow.name});</div>
-              </div>
-            ))}
-          </div>
-        </section>
+        </div>
       </div>
-    </div>
+    </>
   ),
 };
-

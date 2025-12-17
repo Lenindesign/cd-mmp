@@ -2,15 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import '../index.css';
 
-// Import components for patterns (commented out - stories temporarily disabled)
-// import Hero from '../components/Hero/Hero';
-// import QuickSpecs from '../components/QuickSpecs/QuickSpecs';
-// import TrimSelector from '../components/TrimSelector/TrimSelector';
-// import ForSaleNearYou from '../components/ForSaleNearYou/ForSaleNearYou';
-// import BuyingPotential from '../components/BuyingPotential/BuyingPotential';
-// import TopTenCarouselLeads from '../components/TopTenCarouselLeads/TopTenCarouselLeads';
-// import VehicleRanking from '../components/VehicleRanking/VehicleRanking';
-
 const meta: Meta = {
   title: 'Design System/Component Patterns',
   parameters: {
@@ -30,202 +21,191 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const styles = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-white)',
-    fontFamily: 'var(--font-body)',
-  },
-  container: {
-    maxWidth: '1280px',
-    margin: '0 auto',
-    padding: 'var(--spacing-8)',
-  },
-  header: {
-    marginBottom: 'var(--spacing-8)',
-  },
-  title: {
-    fontSize: 'var(--font-size-4xl)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontFamily: 'var(--font-heading)',
-    color: 'var(--color-black)',
-    marginBottom: 'var(--spacing-2)',
-  },
-  subtitle: {
-    fontSize: 'var(--font-size-lg)',
-    color: 'var(--color-gray-600)',
-    lineHeight: 'var(--line-height-relaxed)',
-    marginBottom: 'var(--spacing-6)',
-  },
-  patternSection: {
-    marginBottom: 'var(--spacing-12)',
-    padding: 'var(--spacing-6)',
-    backgroundColor: 'var(--color-gray-100)',
-    borderRadius: 'var(--border-radius-lg)',
-  },
-  patternTitle: {
-    fontSize: 'var(--font-size-2xl)',
-    fontWeight: 'var(--font-weight-semibold)',
-    fontFamily: 'var(--font-heading)',
-    color: 'var(--color-black)',
-    marginBottom: 'var(--spacing-2)',
-  },
-  patternDescription: {
-    fontSize: 'var(--font-size-base)',
-    color: 'var(--color-gray-600)',
-    marginBottom: 'var(--spacing-4)',
-    lineHeight: 'var(--line-height-relaxed)',
-  },
-  codeBlock: {
-    backgroundColor: 'var(--color-gray-900)',
-    color: 'var(--color-white)',
-    padding: 'var(--spacing-4)',
-    borderRadius: 'var(--border-radius-md)',
-    fontFamily: 'monospace',
-    fontSize: 'var(--font-size-sm)',
-    overflow: 'auto',
-    marginBottom: 'var(--spacing-4)',
-  },
-  preview: {
-    backgroundColor: 'var(--color-white)',
-    borderRadius: 'var(--border-radius-md)',
-    padding: 'var(--spacing-4)',
-  },
-} as const;
-
-// Mock data (commented out - stories temporarily disabled)
-/* const mockVehicle = {
-  id: '1',
-  year: 2025,
-  make: 'Toyota',
-  model: 'Camry',
-  trim: 'XLE',
-  price: 32500,
-  msrp: 35000,
-  rating: 4.5,
-  image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800',
-  images: [
-    'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800',
-    'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800',
-    'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800',
-  ],
-  specs: {
-    mpg: '28/39',
-    engine: '2.5L 4-Cylinder',
-    horsepower: '203 hp',
-    transmission: '8-Speed Automatic',
-  },
-  editorsChoice: true,
-  tenBest: false,
-};
-
-const mockTrims = [
-  { 
-    id: '1', 
-    name: 'LE', 
-    price: '$28,500', 
-    features: ['Standard Features', 'Cloth Seats', 'Basic Audio'],
-    recommended: false 
-  },
-  { 
-    id: '2', 
-    name: 'SE', 
-    price: '$30,500', 
-    features: ['Sport Styling', 'Upgraded Wheels', 'Enhanced Audio'],
-    recommended: false 
-  },
-  { 
-    id: '3', 
-    name: 'XLE', 
-    price: '$32,500', 
-    features: ['Leather Seats', 'Sunroof', 'Premium Audio', 'Navigation'],
-    recommended: true 
-  },
-  { 
-    id: '4', 
-    name: 'XSE', 
-    price: '$34,500', 
-    features: ['Sport Package', 'Paddle Shifters', 'Sport Seats'],
-    recommended: false 
-  },
-  { 
-    id: '5', 
-    name: 'TRD', 
-    price: '$36,500', 
-    features: ['TRD Styling', 'Performance Suspension', 'Sport Exhaust'],
-    recommended: false 
-  },
-];
-
-const mockListings = [
-  { id: '1', year: 2025, make: 'Toyota', model: 'Camry', trim: 'XLE', price: 32500, mileage: 0, distance: 5, dealer: 'Toyota Downtown', image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400' },
-  { id: '2', year: 2024, make: 'Toyota', model: 'Camry', trim: 'SE', price: 28900, mileage: 12000, distance: 8, dealer: 'City Toyota', image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400' },
-];
-
-const mockTopTen = [
-  { rank: 1, year: 2025, make: 'Honda', model: 'Accord', rating: 4.8, image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400', editorsChoice: true, mostPopular: true },
-  { rank: 2, year: 2025, make: 'Toyota', model: 'Camry', rating: 4.7, image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400', editorsChoice: true },
-  { rank: 3, year: 2025, make: 'Mazda', model: 'Mazda6', rating: 4.6, image: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=400' },
-]; */
-
 export const Overview: Story = {
-  name: '📚 Pattern Overview',
+  name: 'Pattern Overview',
   parameters: {
     chromatic: {
-      disableSnapshot: true, // Disable Chromatic snapshots (documentation only)
+      disableSnapshot: true,
     },
   },
   render: () => (
-    <div style={styles.page}>
-      <div style={styles.container}>
-        <header style={styles.header}>
-          <h1 style={styles.title}>Component Patterns</h1>
-          <p style={styles.subtitle}>
-            Real-world examples of how to compose Car and Driver components to build common UI patterns.
-            These patterns demonstrate best practices for layout, spacing, and component composition.
-          </p>
-        </header>
-
-        <div style={styles.patternSection}>
-          <h2 style={styles.patternTitle}>🚗 Vehicle Detail Pattern</h2>
-          <p style={styles.patternDescription}>
-            The standard pattern for displaying vehicle details. Combines Hero, QuickSpecs, and TrimSelector
-            to create a comprehensive vehicle overview page.
-          </p>
-          <div style={styles.codeBlock}>
-{`<Hero vehicle={vehicle} />
-<QuickSpecs specs={vehicle.specs} />
-<TrimSelector trims={trims} currentTrim={vehicle.trim} />`}
-          </div>
-          <p style={styles.patternDescription}>
-            <strong>Use when:</strong> Displaying a single vehicle with full details and trim options.
+    <>
+      <style>
+        {`
+          .docs-container {
+            max-width: 720px;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 24px;
+          }
+          
+          .docs-header {
+            padding: 80px 0 64px;
+            border-bottom: 1px solid #d2d2d7;
+            margin-bottom: 64px;
+          }
+          
+          .docs-eyebrow {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #86868b;
+            margin-bottom: 16px;
+          }
+          
+          .docs-header h1 {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin: 0 0 24px 0;
+            color: #1d1d1f;
+          }
+          
+          .docs-header p {
+            font-size: 21px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #424245;
+            margin: 0;
+            max-width: 560px;
+          }
+          
+          .docs-section {
+            margin-bottom: 80px;
+          }
+          
+          .docs-section-title {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            color: #1d1d1f;
+            margin: 0 0 12px 0;
+          }
+          
+          .docs-section-subtitle {
+            font-size: 17px;
+            color: #86868b;
+            margin: 0 0 40px 0;
+            line-height: 1.5;
+          }
+          
+          .pattern-card {
+            margin-bottom: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid #e8e8ed;
+          }
+          
+          .pattern-card:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+          }
+          
+          .pattern-title {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            font-size: 21px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0 0 12px 0;
+          }
+          
+          .pattern-desc {
+            font-size: 15px;
+            color: #424245;
+            margin: 0 0 24px 0;
+            line-height: 1.6;
+          }
+          
+          .docs-code-block {
+            background: #1d1d1f;
+            padding: 24px;
+            margin-bottom: 24px;
+            overflow: hidden;
+          }
+          
+          .docs-code-content {
+            font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #f5f5f7;
+            margin: 0;
+            overflow-x: auto;
+          }
+          
+          .pattern-use {
+            font-size: 13px;
+            color: #86868b;
+          }
+          
+          .pattern-use strong {
+            font-weight: 600;
+            color: #1d1d1f;
+          }
+        `}
+      </style>
+      <div className="docs-container">
+        <div className="docs-header">
+          <div className="docs-eyebrow">Guidelines</div>
+          <h1>Component Patterns</h1>
+          <p>
+            Real-world examples of how to compose components to build common UI patterns.
           </p>
         </div>
 
-        <div style={styles.patternSection}>
-          <h2 style={styles.patternTitle}>🏆 Rankings Pattern</h2>
-          <p style={styles.patternDescription}>
-            Display top-rated vehicles in a category. Uses TopTenCarouselLeads or VehicleRanking
-            to showcase editor's picks and most popular vehicles.
-          </p>
-          <div style={styles.codeBlock}>
+        <div className="docs-section">
+          <div className="pattern-card">
+            <h2 className="pattern-title">Vehicle Detail</h2>
+            <p className="pattern-desc">
+              The standard pattern for displaying vehicle details. Combines Hero, QuickSpecs, and TrimSelector
+              to create a comprehensive vehicle overview page.
+            </p>
+            <pre className="docs-code-block">
+              <code className="docs-code-content">
+{`<Hero vehicle={vehicle} />
+<QuickSpecs specs={vehicle.specs} />
+<TrimSelector trims={trims} currentTrim={vehicle.trim} />`}
+              </code>
+            </pre>
+            <p className="pattern-use">
+              <strong>Use when: </strong>
+              Displaying a single vehicle with full details and trim options.
+            </p>
+          </div>
+
+          <div className="pattern-card">
+            <h2 className="pattern-title">Rankings</h2>
+            <p className="pattern-desc">
+              Display top-rated vehicles in a category. Uses TopTenCarouselLeads or VehicleRanking
+              to showcase editor's picks and most popular vehicles.
+            </p>
+            <pre className="docs-code-block">
+              <code className="docs-code-content">
 {`<TopTenCarouselLeads 
   vehicles={topTenVehicles}
   category="Sedans"
 />`}
+              </code>
+            </pre>
+            <p className="pattern-use">
+              <strong>Use when: </strong>
+              Showing curated lists, rankings, or featured vehicles.
+            </p>
           </div>
-          <p style={styles.patternDescription}>
-            <strong>Use when:</strong> Showing curated lists, rankings, or featured vehicles.
-          </p>
-        </div>
 
-        <div style={styles.patternSection}>
-          <h2 style={styles.patternTitle}>🛒 Shopping Pattern</h2>
-          <p style={styles.patternDescription}>
-            Help users find vehicles for sale. Combines ForSaleNearYou with BuyingPotential
-            to show local inventory and purchasing options.
-          </p>
-          <div style={styles.codeBlock}>
+          <div className="pattern-card">
+            <h2 className="pattern-title">Shopping</h2>
+            <p className="pattern-desc">
+              Help users find vehicles for sale. Combines ForSaleNearYou with BuyingPotential
+              to show local inventory and purchasing options.
+            </p>
+            <pre className="docs-code-block">
+              <code className="docs-code-content">
 {`<ForSaleNearYou 
   listings={nearbyListings}
   zipCode="10001"
@@ -234,69 +214,15 @@ export const Overview: Story = {
   price={vehicle.price}
   msrp={vehicle.msrp}
 />`}
+              </code>
+            </pre>
+            <p className="pattern-use">
+              <strong>Use when: </strong>
+              Users are ready to purchase or want to see local inventory.
+            </p>
           </div>
-          <p style={styles.patternDescription}>
-            <strong>Use when:</strong> Users are ready to purchase or want to see local inventory.
-          </p>
         </div>
       </div>
-    </div>
+    </>
   ),
 };
-
-// Temporarily disabled due to type mismatches - needs mock data update
-// export const VehicleDetailPattern: Story = {
-//   name: '🚗 Vehicle Detail Pattern',
-//   render: () => (
-//     <div style={styles.page}>
-//       <Hero vehicle={mockVehicle} />
-//       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'var(--spacing-4)' }}>
-//         <QuickSpecs 
-//           specs={[
-//             { label: 'MPG', value: mockVehicle.specs.mpg, icon: 'gas' },
-//             { label: 'Engine', value: mockVehicle.specs.engine, icon: 'engine' },
-//             { label: 'Horsepower', value: mockVehicle.specs.horsepower, icon: 'gauge' },
-//             { label: 'Transmission', value: mockVehicle.specs.transmission, icon: 'gear' },
-//           ]}
-//         />
-//         <TrimSelector trims={mockTrims} />
-//       </div>
-//     </div>
-//   ),
-// };
-
-// Temporarily disabled due to type mismatches - needs mock data update
-// export const RankingsPattern: Story = {
-//   name: '🏆 Rankings Pattern',
-//   render: () => (
-//     <div style={styles.page}>
-//       <TopTenCarouselLeads vehicles={mockTopTen} />
-//       <div style={{ height: 'var(--spacing-8)' }} />
-//       <VehicleRanking vehicles={mockTopTen} category="Sedans" />
-//     </div>
-//   ),
-// };
-
-// Temporarily disabled due to type mismatches - needs mock data update
-// export const ShoppingPattern: Story = {
-//   name: '🛒 Shopping Pattern',
-//   render: () => (
-//     <div style={styles.page}>
-//       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'var(--spacing-4)' }}>
-//         <ForSaleNearYou 
-//           listings={mockListings}
-//           zipCode="10001"
-//         />
-//         <div style={{ height: 'var(--spacing-8)' }} />
-//         <BuyingPotential 
-//           vehicleId={mockVehicle.id}
-//           year={mockVehicle.year}
-//           make={mockVehicle.make}
-//           model={mockVehicle.model}
-//           trim={mockVehicle.trim}
-//         />
-//       </div>
-//     </div>
-//   ),
-// };
-

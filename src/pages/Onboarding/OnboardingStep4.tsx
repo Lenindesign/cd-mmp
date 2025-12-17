@@ -1,77 +1,103 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import OnboardingLayout from './OnboardingLayout';
 import './OnboardingStep4.css';
 
-interface VehicleType {
+// Speedometer Step Indicator Component (consistent with Steps 1-3)
+const StepIndicator: React.FC<{ step: number }> = ({ step }) => {
+  const stepImages: Record<number, string> = {
+    1: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e811a35f00029a6a69/step1.svg',
+    2: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e711a35f00029a6a67/step2.svg',
+    3: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a65/step3.svg',
+    4: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a63/step4.svg',
+  };
+
+  return (
+    <div className="step-indicator">
+      <img 
+        src={stepImages[step]} 
+        alt={`Step ${step} of 4`} 
+        className="step-indicator-img"
+      />
+    </div>
+  );
+};
+
+// Chevron Icons (same as Steps 1-3)
+const ChevronLeftIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Checkmark Icon
+const CheckIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 10L8 14L16 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Car and Driver Logo Component
+const CarAndDriverLogo = () => (
+  <div style={{
+    width: '80px',
+    height: '80px',
+    borderRadius: '50%',
+    backgroundColor: '#000',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '12px',
+  }}>
+    <img 
+      src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/logos/logo.68b8e69.svg?primary=%23fff" 
+      alt="Car and Driver" 
+      style={{ 
+        width: '100%', 
+        height: 'auto',
+        objectFit: 'contain',
+      }}
+    />
+  </div>
+);
+
+interface Newsletter {
   id: string;
-  label: string;
-  icon: string;
+  title: string;
+  description: string;
+  logo: React.ReactNode;
 }
 
-const vehicleTypes: VehicleType[] = [
-  { 
-    id: 'sedan', 
-    label: 'Sedan',
-    icon: '🚗'
-  },
-  { 
-    id: 'suv', 
-    label: 'SUV',
-    icon: '🚙'
-  },
-  { 
-    id: 'truck', 
-    label: 'Truck',
-    icon: '🛻'
-  },
-  { 
-    id: 'coupe', 
-    label: 'Coupe',
-    icon: '🏎️'
-  },
-  { 
-    id: 'hatchback', 
-    label: 'Hatchback',
-    icon: '🚘'
-  },
-  { 
-    id: 'convertible', 
-    label: 'Convertible',
-    icon: '🏁'
-  },
-  { 
-    id: 'wagon', 
-    label: 'Wagon',
-    icon: '🚃'
-  },
-  { 
-    id: 'van', 
-    label: 'Van/Minivan',
-    icon: '🚐'
-  },
-  { 
-    id: 'electric', 
-    label: 'Electric',
-    icon: '⚡'
+const newsletters: Newsletter[] = [
+  {
+    id: 'car-and-driver',
+    title: 'Subscribe to Car and Driver Newsletter',
+    description: 'Trust Car and Driver for the best car reviews, news, car rankings, and much more',
+    logo: <CarAndDriverLogo />,
   },
 ];
 
 const OnboardingStep4: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedNewsletters, setSelectedNewsletters] = useState<string[]>(['car-and-driver']);
 
-  const toggleType = (typeId: string) => {
-    setSelectedTypes((prev) =>
-      prev.includes(typeId)
-        ? prev.filter((id) => id !== typeId)
-        : [...prev, typeId]
+  const toggleNewsletter = (newsletterId: string) => {
+    setSelectedNewsletters(prev => 
+      prev.includes(newsletterId) 
+        ? prev.filter(id => id !== newsletterId)
+        : [...prev, newsletterId]
     );
   };
 
-  const handleContinue = () => {
-    // Store selections
-    localStorage.setItem('onboarding_vehicle_types', JSON.stringify(selectedTypes));
+  const handleFinish = () => {
+    // Store newsletter preferences
+    localStorage.setItem('onboarding_newsletters', JSON.stringify(selectedNewsletters));
+    localStorage.setItem('onboarding_completed', 'true');
     navigate('/onboarding/welcome');
   };
 
@@ -80,96 +106,85 @@ const OnboardingStep4: React.FC = () => {
   };
 
   const handleSkip = () => {
+    localStorage.setItem('onboarding_completed', 'true');
     navigate('/onboarding/welcome');
   };
 
   return (
-    <OnboardingLayout 
-      currentStep={4} 
-      totalSteps={4} 
-      showProgress={true}
-      showBackButton={true}
-      onBack={handleBack}
-    >
-      <div className="onboarding-card onboarding-step4">
-        {/* Illustration */}
-        <div className="onboarding-card__illustration">
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a63/step4.svg" 
-            alt="Vehicle types illustration"
-          />
-        </div>
+    <div className="onboarding-step4">
+      <div className="step4-container">
+        {/* Step Indicator - Speedometer Graphic */}
+        <StepIndicator step={4} />
 
-        {/* Content */}
-        <h1 className="onboarding-card__title">
-          What type of vehicle interests you?
-        </h1>
-        <p className="onboarding-card__subtitle">
-          Select all the vehicle types you'd like to explore.
-        </p>
+        {/* Header Section */}
+        <header className="step4-header">
+          <h1 className="step4-title">Let's Keep In Touch</h1>
+          <p className="step4-subtitle">
+            Select one of our newsletters that provide<br />
+            car information suited to your needs
+          </p>
+        </header>
 
-        {/* Vehicle Type Grid */}
-        <div className="onboarding-step4__grid">
-          {vehicleTypes.map((type) => (
+        {/* Newsletter Options */}
+        <div className="step4-newsletters">
+          {newsletters.map((newsletter) => (
             <button
-              key={type.id}
-              className={`onboarding-step4__card ${
-                selectedTypes.includes(type.id) ? 'onboarding-step4__card--selected' : ''
-              }`}
-              onClick={() => toggleType(type.id)}
-              aria-pressed={selectedTypes.includes(type.id)}
+              key={newsletter.id}
+              className={`step4-newsletter-card ${selectedNewsletters.includes(newsletter.id) ? 'step4-newsletter-card--selected' : ''}`}
+              onClick={() => toggleNewsletter(newsletter.id)}
+              aria-pressed={selectedNewsletters.includes(newsletter.id)}
+              type="button"
             >
-              <span className="onboarding-step4__card-icon">{type.icon}</span>
-              <span className="onboarding-step4__card-label">{type.label}</span>
-              {selectedTypes.includes(type.id) && (
-                <span className="onboarding-step4__card-check">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              )}
+              {/* Logo */}
+              <div className="step4-newsletter-logo">
+                {newsletter.logo}
+              </div>
+
+              {/* Content */}
+              <div className="step4-newsletter-content">
+                {/* Checkbox */}
+                <div className={`step4-checkbox ${selectedNewsletters.includes(newsletter.id) ? 'step4-checkbox--checked' : ''}`}>
+                  {selectedNewsletters.includes(newsletter.id) && <CheckIcon />}
+                </div>
+
+                <h3 className="step4-newsletter-title">{newsletter.title}</h3>
+                <p className="step4-newsletter-description">{newsletter.description}</p>
+              </div>
             </button>
           ))}
         </div>
 
-        {/* Selection count */}
-        {selectedTypes.length > 0 && (
-          <p className="onboarding-step4__count">
-            {selectedTypes.length} vehicle type{selectedTypes.length !== 1 ? 's' : ''} selected
-          </p>
-        )}
+        {/* Navigation - Using CTA classes from design system (same as Steps 1-3) */}
+        <nav className="step4-navigation" aria-label="Onboarding navigation">
+          <button 
+            className="cta cta--md cta--secondary" 
+            onClick={handleBack}
+            type="button"
+          >
+            <ChevronLeftIcon />
+            Back
+          </button>
 
-        {/* Continue Button */}
-        <button 
-          className="onboarding-btn onboarding-btn--primary"
-          onClick={handleContinue}
-        >
-          {selectedTypes.length > 0 ? 'Continue' : 'Continue without selecting'}
-        </button>
+          <button 
+            className="step4-skip" 
+            onClick={handleSkip}
+            type="button"
+          >
+            Skip this step
+          </button>
 
-        {/* Skip */}
-        <button className="onboarding-skip" onClick={handleSkip}>
-          Skip for now
-        </button>
+          <button 
+            className="cta cta--md cta--primary" 
+            onClick={handleFinish}
+            type="button"
+          >
+            Next
+            <ChevronRightIcon />
+          </button>
+        </nav>
       </div>
-    </OnboardingLayout>
+    </div>
   );
 };
 
 export default OnboardingStep4;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

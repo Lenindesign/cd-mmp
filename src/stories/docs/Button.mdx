@@ -1,0 +1,594 @@
+{/* Button Component - MDX Documentation */}
+import { Meta, Story, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import { Button } from '../../components/Button/Button';
+import { Mail, ArrowRight, Heart, Download, Plus, Check, X } from 'lucide-react';
+
+<Meta title="Documentation/Button" />
+
+<style>
+  {`
+    .btn-docs {
+      max-width: 720px;
+      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      color: #1d1d1f;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .btn-docs-header {
+      padding: 80px 0 64px;
+      border-bottom: 1px solid #d2d2d7;
+      margin-bottom: 64px;
+    }
+    
+    .btn-docs-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #86868b;
+      margin-bottom: 16px;
+    }
+    
+    .btn-docs-header h1 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 48px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin: 0 0 24px 0;
+      color: #1d1d1f;
+    }
+    
+    .btn-docs-header p {
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #424245;
+      margin: 0;
+    }
+    
+    .btn-docs-section {
+      margin-bottom: 80px;
+    }
+    
+    .btn-docs-section h2 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #1d1d1f;
+      margin: 0 0 12px 0;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .btn-docs-section > p {
+      color: #86868b;
+      margin: 0 0 32px 0;
+      line-height: 1.5;
+    }
+    
+    .btn-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 40px;
+      background: #f5f5f7;
+      align-items: center;
+    }
+    
+    .variant-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: #d2d2d7;
+      border: 1px solid #d2d2d7;
+      margin: 32px 0;
+    }
+    
+    @media (max-width: 700px) {
+      .variant-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .variant-card {
+      background: #fff;
+      padding: 32px 16px;
+      text-align: center;
+    }
+    
+    .variant-card h4 {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin: 20px 0 4px 0;
+      color: #1d1d1f;
+    }
+    
+    .variant-card p {
+      font-size: 12px;
+      color: #86868b;
+      margin: 0;
+    }
+    
+    .dos-donts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #d2d2d7;
+      border: 1px solid #d2d2d7;
+      margin: 32px 0;
+    }
+    
+    @media (max-width: 600px) {
+      .dos-donts {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .dos-donts-card {
+      background: #fff;
+    }
+    
+    .dos-donts-header {
+      padding: 12px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #d2d2d7;
+      color: #1d1d1f;
+    }
+    
+    .dos-donts-content {
+      padding: 32px 24px;
+    }
+    
+    .dos-donts-example {
+      display: flex;
+      justify-content: center;
+      padding: 32px;
+      background: #f5f5f7;
+      margin-bottom: 20px;
+    }
+    
+    .dos-donts-text {
+      font-size: 14px;
+      color: #86868b;
+      margin: 0;
+      line-height: 1.5;
+    }
+    
+    .props-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 32px 0;
+      border: 1px solid #d2d2d7;
+    }
+    
+    .props-table th {
+      text-align: left;
+      padding: 16px 20px;
+      background: #f5f5f7;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #86868b;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .props-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e8e8ed;
+      vertical-align: top;
+    }
+    
+    .props-table code {
+      background: #f5f5f7;
+      padding: 2px 8px;
+      font-size: 13px;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      color: #1d1d1f;
+    }
+    
+    .props-table .type {
+      color: #86868b;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 12px;
+    }
+    
+    .props-table .default {
+      color: #86868b;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 12px;
+    }
+    
+    .code-example {
+      background: #1d1d1f;
+      padding: 32px;
+      margin: 32px 0;
+      overflow-x: auto;
+    }
+    
+    .code-example pre {
+      margin: 0;
+      font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #f5f5f7;
+    }
+    
+    .accessibility-list {
+      list-style: none;
+      padding: 0;
+      margin: 32px 0;
+      border: 1px solid #d2d2d7;
+    }
+    
+    .accessibility-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e8e8ed;
+    }
+    
+    .accessibility-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .a11y-indicator {
+      font-size: 14px;
+      color: #1d1d1f;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .a11y-text {
+      font-size: 14px;
+      color: #424245;
+      line-height: 1.5;
+    }
+    
+    .a11y-text strong {
+      color: #1d1d1f;
+    }
+    
+    .a11y-text code {
+      background: #f5f5f7;
+      padding: 2px 6px;
+      font-size: 12px;
+      font-family: 'SF Mono', 'Menlo', monospace;
+    }
+  `}
+</style>
+
+<div className="btn-docs">
+  <div className="btn-docs-header">
+    <div className="btn-docs-eyebrow">Component</div>
+    <h1>Button</h1>
+    <p>
+      Buttons trigger actions and events. Use the appropriate variant for the context to guide users through their journey.
+    </p>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>Variants</h2>
+    <p>
+      Choose the appropriate variant based on the action's importance and context.
+    </p>
+    
+    <div className="variant-grid">
+      <div className="variant-card">
+        <Button variant="primary">Primary</Button>
+        <h4>Primary</h4>
+        <p>Main actions</p>
+      </div>
+      
+      <div className="variant-card">
+        <Button variant="secondary">Secondary</Button>
+        <h4>Secondary</h4>
+        <p>Alternative actions</p>
+      </div>
+      
+      <div className="variant-card">
+        <Button variant="outline">Outline</Button>
+        <h4>Outline</h4>
+        <p>Tertiary actions</p>
+      </div>
+      
+      <div className="variant-card">
+        <Button variant="ghost">Ghost</Button>
+        <h4>Ghost</h4>
+        <p>Subtle actions</p>
+      </div>
+      
+      <div className="variant-card">
+        <Button variant="danger">Danger</Button>
+        <h4>Danger</h4>
+        <p>Destructive actions</p>
+      </div>
+    </div>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>Sizes</h2>
+    <p>
+      Three sizes to fit different contexts and touch targets.
+    </p>
+    
+    <div className="btn-showcase">
+      <Button size="small">Small</Button>
+      <Button size="medium">Medium</Button>
+      <Button size="large">Large</Button>
+    </div>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>With Icons</h2>
+    <p>
+      Icons enhance clarity and scannability. Place them before or after text.
+    </p>
+    
+    <div className="btn-showcase">
+      <Button iconLeft={<Mail size={16} />}>Send Email</Button>
+      <Button iconRight={<ArrowRight size={16} />}>Continue</Button>
+      <Button iconLeft={<Download size={16} />} iconRight={<ArrowRight size={16} />}>Download</Button>
+      <Button variant="outline"><Heart size={18} /></Button>
+    </div>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>States</h2>
+    <p>
+      Buttons communicate their state through visual feedback.
+    </p>
+    
+    <div className="btn-showcase">
+      <Button>Default</Button>
+      <Button loading>Loading</Button>
+      <Button disabled>Disabled</Button>
+    </div>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>Usage Guidelines</h2>
+    
+    <div className="dos-donts">
+      <div className="dos-donts-card">
+        <div className="dos-donts-header">Recommended</div>
+        <div className="dos-donts-content">
+          <div className="dos-donts-example">
+            <Button variant="primary">Save Changes</Button>
+          </div>
+          <p className="dos-donts-text">
+            Use clear, action-oriented labels. Start with a verb that describes what will happen.
+          </p>
+        </div>
+      </div>
+      
+      <div className="dos-donts-card">
+        <div className="dos-donts-header">Avoid</div>
+        <div className="dos-donts-content">
+          <div className="dos-donts-example">
+            <Button variant="primary">Click Here</Button>
+          </div>
+          <p className="dos-donts-text">
+            Avoid vague labels like "Click Here" or "Submit". Be specific about the action.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div className="dos-donts">
+      <div className="dos-donts-card">
+        <div className="dos-donts-header">Recommended</div>
+        <div className="dos-donts-content">
+          <div className="dos-donts-example">
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <Button variant="outline">Cancel</Button>
+              <Button variant="primary">Confirm Purchase</Button>
+            </div>
+          </div>
+          <p className="dos-donts-text">
+            Use visual hierarchy. Primary for main action, outline or ghost for secondary.
+          </p>
+        </div>
+      </div>
+      
+      <div className="dos-donts-card">
+        <div className="dos-donts-header">Avoid</div>
+        <div className="dos-donts-content">
+          <div className="dos-donts-example">
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <Button variant="primary">Cancel</Button>
+              <Button variant="primary">Confirm</Button>
+            </div>
+          </div>
+          <p className="dos-donts-text">
+            Multiple primary buttons create confusion about the main action.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div className="dos-donts">
+      <div className="dos-donts-card">
+        <div className="dos-donts-header">Recommended</div>
+        <div className="dos-donts-content">
+          <div className="dos-donts-example">
+            <Button variant="danger">Delete Account</Button>
+          </div>
+          <p className="dos-donts-text">
+            Use danger variant for destructive actions to warn users of consequences.
+          </p>
+        </div>
+      </div>
+      
+      <div className="dos-donts-card">
+        <div className="dos-donts-header">Avoid</div>
+        <div className="dos-donts-content">
+          <div className="dos-donts-example">
+            <Button variant="primary">Delete Account</Button>
+          </div>
+          <p className="dos-donts-text">
+            Using primary for destructive actions doesn't communicate the risk.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>Code Example</h2>
+    
+    <div className="code-example">
+      <pre>{`import { Button } from './components/Button';
+import { ArrowRight } from 'lucide-react';
+
+// Primary CTA
+<Button variant="primary" size="large">
+  Get Started
+</Button>
+
+// With icon
+<Button 
+  variant="secondary" 
+  iconRight={<ArrowRight size={16} />}
+>
+  Learn More
+</Button>
+
+// Loading state
+<Button 
+  variant="primary" 
+  loading 
+  onClick={handleSubmit}
+>
+  Saving...
+</Button>
+
+// As a link
+<Button 
+  as="a" 
+  href="/pricing" 
+  variant="outline"
+>
+  View Pricing
+</Button>`}</pre>
+    </div>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>Props</h2>
+    
+    <table className="props-table">
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>variant</code></td>
+          <td className="type">'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'</td>
+          <td className="default">'primary'</td>
+          <td>Visual style variant</td>
+        </tr>
+        <tr>
+          <td><code>size</code></td>
+          <td className="type">'small' | 'medium' | 'large'</td>
+          <td className="default">'medium'</td>
+          <td>Button size</td>
+        </tr>
+        <tr>
+          <td><code>loading</code></td>
+          <td className="type">boolean</td>
+          <td className="default">false</td>
+          <td>Shows spinner and disables button</td>
+        </tr>
+        <tr>
+          <td><code>disabled</code></td>
+          <td className="type">boolean</td>
+          <td className="default">false</td>
+          <td>Disables the button</td>
+        </tr>
+        <tr>
+          <td><code>fullWidth</code></td>
+          <td className="type">boolean</td>
+          <td className="default">false</td>
+          <td>Makes button 100% width</td>
+        </tr>
+        <tr>
+          <td><code>iconLeft</code></td>
+          <td className="type">ReactNode</td>
+          <td className="default">-</td>
+          <td>Icon before text</td>
+        </tr>
+        <tr>
+          <td><code>iconRight</code></td>
+          <td className="type">ReactNode</td>
+          <td className="default">-</td>
+          <td>Icon after text</td>
+        </tr>
+        <tr>
+          <td><code>as</code></td>
+          <td className="type">'button' | 'a'</td>
+          <td className="default">'button'</td>
+          <td>Render as link element</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div className="btn-docs-section">
+    <h2>Accessibility</h2>
+    
+    <ul className="accessibility-list">
+      <li>
+        <span className="a11y-indicator">-</span>
+        <span className="a11y-text">
+          <strong>Keyboard navigation:</strong> Buttons are focusable and can be activated with Enter or Space keys.
+        </span>
+      </li>
+      <li>
+        <span className="a11y-indicator">-</span>
+        <span className="a11y-text">
+          <strong>Focus indicators:</strong> Visible focus ring for keyboard users with 2px outline offset.
+        </span>
+      </li>
+      <li>
+        <span className="a11y-indicator">-</span>
+        <span className="a11y-text">
+          <strong>Loading state:</strong> Uses <code>aria-busy="true"</code> to communicate loading to screen readers.
+        </span>
+      </li>
+      <li>
+        <span className="a11y-indicator">-</span>
+        <span className="a11y-text">
+          <strong>Disabled state:</strong> Properly disabled with <code>disabled</code> attribute, not just visual styling.
+        </span>
+      </li>
+      <li>
+        <span className="a11y-indicator">-</span>
+        <span className="a11y-text">
+          <strong>Color contrast:</strong> All variants meet WCAG AA contrast requirements (4.5:1 minimum).
+        </span>
+      </li>
+      <li>
+        <span className="a11y-indicator">-</span>
+        <span className="a11y-text">
+          <strong>Touch targets:</strong> Minimum 44px height for touch accessibility on mobile devices.
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

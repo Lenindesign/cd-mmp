@@ -3,18 +3,36 @@ import '../src/index.css'
 
 const preview: Preview = {
   parameters: {
-    // Disable "Open in Editor" feature to prevent CLI errors
+    // Story organization and sorting
     options: {
       storySort: {
-        order: ['Atoms', 'Molecules', 'Organisms', 'Pages'],
+        order: [
+          'Introduction', 
+          'Documentation', 
+          ['Getting Started', 'Design Principles', 'Button', 'TextField'],
+          'Tokens',
+          ['Colors', 'Typography', 'Spacing'],
+          'Design System',
+          'Atoms', 
+          'Molecules', 
+          'Organisms', 
+          'Pages'
+        ],
       },
     },
+
+    // Enhanced docs styling
+    docs: {
+      toc: false, // Disable the "On this page" sidebar to save space
+    },
+
     controls: {
       matchers: {
        color: /(background|color)$/i,
        date: /Date$/i,
       },
     },
+
     backgrounds: {
       default: 'light',
       values: [
@@ -23,6 +41,7 @@ const preview: Preview = {
         { name: 'gray', value: '#f5f5f5' },
       ],
     },
+
     viewport: {
       viewports: {
         mobile: {
@@ -69,6 +88,13 @@ const preview: Preview = {
         },
       },
     },
+
+    a11y: {
+      // 'todo' - show a11y violations in the test UI only
+      // 'error' - fail CI on a11y violations
+      // 'off' - skip a11y checks entirely
+      test: 'todo'
+    }
   },
 };
 

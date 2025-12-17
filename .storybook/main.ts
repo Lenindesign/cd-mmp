@@ -10,7 +10,8 @@ const config: StorybookConfig = {
     "@storybook/addon-a11y",
     "@storybook/addon-docs",
     "@storybook/addon-onboarding",
-    "@storybook/addon-designs"
+    "@storybook/addon-designs",
+    "@storybook/addon-vitest"
   ],
   "framework": "@storybook/react-vite",
   "staticDirs": ["../public"],

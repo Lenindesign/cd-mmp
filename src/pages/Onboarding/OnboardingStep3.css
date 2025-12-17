@@ -1,85 +1,292 @@
 /* ============================================
-   ONBOARDING STEP 3 - LIFESTYLE INTERESTS
-   Car and Driver Design System
+   ONBOARDING STEP 3 - Car and Driver Design System
+   Based on Figma Design: CD-Onboarding
+   Consistent with OnboardingStep1 & Step2
    ============================================ */
 
 .onboarding-step3 {
-  max-width: 640px;
-}
-
-.onboarding-step3__interests {
+  min-height: 100vh;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-3);
-  justify-content: center;
-  margin-bottom: var(--spacing-6);
-}
-
-.onboarding-step3__tag {
-  display: inline-flex;
   align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-3) var(--spacing-4);
-  background: var(--cd-white, #FFFFFF);
-  border: 1px solid var(--cd-grey-border, #CDCDCD);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  font-family: 'Inter', var(--font-body);
+  justify-content: center;
+  background-color: var(--color-gray-100);
+  padding: var(--spacing-12);
 }
 
-.onboarding-step3__tag:hover {
-  border-color: var(--cd-blue-cobalt, #1B5F8A);
-  background: var(--cd-light-blue, #F1F7F7);
-  transform: translateY(-1px);
+.step3-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 560px;
+  padding: var(--spacing-12);
+  background-color: var(--color-gray-100);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
-.onboarding-step3__tag--selected {
-  background: var(--cd-blue-cobalt, #1B5F8A);
-  border-color: var(--cd-blue-cobalt, #1B5F8A);
-  color: var(--cd-white, #FFFFFF);
-}
-
-.onboarding-step3__tag--selected:hover {
-  background: var(--cd-dark-grey, #222222);
-  border-color: var(--cd-dark-grey, #222222);
-}
-
-.onboarding-step3__tag-emoji {
-  font-size: var(--font-size-lg);
-  line-height: 1;
-}
-
-.onboarding-step3__tag-label {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-}
-
-.onboarding-step3__count {
-  font-family: 'Inter', var(--font-body);
-  font-size: var(--font-size-sm);
-  color: var(--cd-blue-cobalt, #1B5F8A);
-  font-weight: 500;
+/* Step Indicator - Speedometer Graphic (consistent with Step 1 & 2) */
+.step-indicator {
   margin-bottom: var(--spacing-4);
 }
 
-/* Responsive */
+.step-indicator-img {
+  display: block;
+  width: 162px;
+  height: auto;
+}
+
+/* Header Section */
+.step3-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+  gap: var(--spacing-2);
+}
+
+.step3-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-blue-cobalt);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.step3-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-dark);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Search Card */
+.step3-card {
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-6);
+  width: 100%;
+  margin-bottom: var(--spacing-8);
+  position: relative;
+}
+
+.step3-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-3);
+}
+
+/* Search Input Wrapper */
+.step3-search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.step3-search-wrapper svg {
+  position: absolute;
+  left: var(--spacing-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gray-400);
+  pointer-events: none;
+}
+
+.step3-search-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 var(--spacing-4) 0 var(--spacing-12);
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-dark);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  outline: none;
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  box-sizing: border-box;
+}
+
+.step3-search-input::placeholder {
+  color: var(--color-gray-400);
+  font-weight: var(--font-weight-regular);
+}
+
+.step3-search-input:focus {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.1);
+}
+
+/* Search Suggestions Dropdown */
+.step3-suggestions {
+  position: absolute;
+  top: calc(100% + var(--spacing-2));
+  left: 0;
+  right: 0;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.step3-suggestion-item {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-dark);
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.step3-suggestion-item:hover {
+  background-color: var(--color-gray-100);
+}
+
+.step3-suggestion-item:not(:last-child) {
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+/* Selected Vehicles */
+.step3-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+}
+
+.step3-selected-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.step3-selected-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--color-white);
+  transition: background-color var(--transition-fast);
+}
+
+.step3-selected-remove:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Navigation (consistent with Step 1 & 2) */
+.step3-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-4);
+}
+
+/* Skip Link (same as Step 1 & 2) */
+.step3-skip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity var(--transition-normal);
+}
+
+.step3-skip:hover {
+  opacity: 0.8;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .onboarding-step3__interests {
-    gap: var(--spacing-2);
+  .onboarding-step3 {
+    padding: var(--spacing-4);
   }
 
-  .onboarding-step3__tag {
-    padding: var(--spacing-2) var(--spacing-3);
+  .step3-container {
+    padding: var(--spacing-6);
+    max-width: 100%;
+  }
+
+  .step3-card {
+    padding: var(--spacing-4);
+  }
+
+  .step3-search-input {
+    height: 48px;
     font-size: var(--font-size-sm);
   }
 
-  .onboarding-step3__tag-emoji {
-    font-size: var(--font-size-md);
+  .step3-navigation {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-3);
   }
 
-  .onboarding-step3__tag-label {
-    font-size: var(--font-size-sm);
+  .step3-navigation .cta {
+    flex: 1;
+    min-width: 120px;
+    max-width: 160px;
+  }
+
+  .step3-skip {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    padding: var(--spacing-2);
+  }
+
+  .step3-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .step-indicator-img {
+    width: 120px;
   }
 }
 
+@media (max-width: 480px) {
+  .step3-search-wrapper svg {
+    left: var(--spacing-3);
+  }
+
+  .step3-search-input {
+    padding-left: var(--spacing-10);
+  }
+}

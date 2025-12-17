@@ -31,6 +31,13 @@ const meta: Meta<typeof Button> = {
   args: {
     onClick: fn(),
   },
+  decorators: [
+    (Story, context) => (
+      <div style={{ width: context.args.fullWidth ? '400px' : 'auto' }}>
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export default meta;

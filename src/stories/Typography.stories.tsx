@@ -1,345 +1,456 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-const TypographyRow = ({ 
-  name, 
-  specs,
-  fontFamily,
-  fontSize,
-  fontWeight,
-}: { 
-  name: string; 
-  specs: string;
-  fontFamily: string;
-  fontSize: string;
-  fontWeight: number;
-}) => (
-  <div style={{ 
-    marginBottom: '24px',
-    paddingBottom: '24px',
-    borderBottom: '1px solid var(--color-gray-200)'
-  }}>
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: '8px',
-      gap: '24px'
-    }}>
-      <div>
-        <div style={{ 
-          fontSize: '14px', 
-          fontWeight: 600,
-          color: 'var(--color-gray-800)',
-          marginBottom: '4px'
-        }}>
-          {name}
-        </div>
-        <div style={{ fontSize: '12px', color: 'var(--color-gray-500)' }}>{specs}</div>
-      </div>
-    </div>
-    <div style={{ 
-      fontFamily, 
-      fontSize, 
-      fontWeight,
-      color: 'var(--color-black)'
-    }}>
-      The quick brown fox jumps over the lazy dog.
-    </div>
-  </div>
-);
-
 const TypographyPage = () => (
-  <div style={{ padding: '24px', fontFamily: 'var(--font-body)', maxWidth: '800px' }}>
-    <h1 style={{ 
-      fontFamily: 'var(--font-heading)',
-      fontSize: '32px',
-      fontWeight: 700,
-      marginBottom: '32px',
-      color: 'var(--color-black)'
-    }}>
-      Typography System
-    </h1>
-    
-    <div style={{ 
-      marginBottom: '32px',
-      padding: '16px',
-      background: 'var(--color-gray-100)',
-      borderRadius: '8px'
-    }}>
-      <h3 style={{ marginBottom: '12px', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>Font Families</h3>
-      <div style={{ display: 'grid', gap: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <code style={{ 
-            background: 'var(--color-white)', 
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '12px'
-          }}>
-            --font-display
-          </code>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '14px' }}>Inter (Display)</span>
+  <>
+    <style>
+      {`
+        .docs-container {
+          max-width: 720px;
+          margin: 0 auto;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+          color: #1d1d1f;
+          -webkit-font-smoothing: antialiased;
+          padding: 0 24px;
+        }
+        
+        .docs-header {
+          padding: 80px 0 64px;
+          border-bottom: 1px solid #d2d2d7;
+          margin-bottom: 64px;
+        }
+        
+        .docs-eyebrow {
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #86868b;
+          margin-bottom: 16px;
+        }
+        
+        .docs-header h1 {
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+          font-size: 48px;
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+          margin: 0 0 24px 0;
+          color: #1d1d1f;
+        }
+        
+        .docs-header p {
+          font-size: 21px;
+          font-weight: 400;
+          line-height: 1.5;
+          color: #424245;
+          margin: 0;
+          max-width: 560px;
+        }
+        
+        .docs-section {
+          margin-bottom: 80px;
+        }
+        
+        .docs-section-title {
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+          font-size: 28px;
+          font-weight: 600;
+          letter-spacing: -0.015em;
+          color: #1d1d1f;
+          margin: 0 0 12px 0;
+        }
+        
+        .docs-section-subtitle {
+          font-size: 17px;
+          color: #86868b;
+          margin: 0 0 40px 0;
+          line-height: 1.5;
+        }
+        
+        .type-row {
+          padding: 24px 0;
+          border-bottom: 1px solid #e8e8ed;
+        }
+        
+        .type-meta {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 12px;
+          gap: 24px;
+        }
+        
+        .type-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: #1d1d1f;
+          margin-bottom: 4px;
+        }
+        
+        .type-specs {
+          font-size: 12px;
+          color: #86868b;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+        }
+        
+        .type-sample {
+          color: #1d1d1f;
+          line-height: 1.2;
+        }
+        
+        .font-box {
+          background: #f5f5f7;
+          padding: 24px;
+          margin-bottom: 48px;
+        }
+        
+        .font-box h3 {
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #86868b;
+          margin: 0 0 20px 0;
+        }
+        
+        .font-item {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 12px;
+        }
+        
+        .font-item:last-child {
+          margin-bottom: 0;
+        }
+        
+        .font-item code {
+          background: #ffffff;
+          padding: 6px 12px;
+          font-size: 12px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          color: #1d1d1f;
+          min-width: 140px;
+        }
+        
+        .font-item span {
+          font-size: 14px;
+          color: #424245;
+        }
+        
+        .weight-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 1px;
+          background: #e8e8ed;
+        }
+        
+        .weight-item {
+          padding: 24px 16px;
+          background: #ffffff;
+          text-align: center;
+        }
+        
+        .weight-sample {
+          font-family: var(--font-heading);
+          font-size: 32px;
+          margin-bottom: 12px;
+          color: #1d1d1f;
+        }
+        
+        .weight-name {
+          font-weight: 600;
+          font-size: 13px;
+          color: #1d1d1f;
+          margin-bottom: 4px;
+        }
+        
+        .weight-value {
+          font-size: 12px;
+          color: #86868b;
+          margin-bottom: 8px;
+        }
+        
+        .weight-var {
+          font-size: 10px;
+          background: #f5f5f7;
+          padding: 4px 6px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          color: #424245;
+        }
+        
+        .size-row {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          padding: 12px 0;
+          border-bottom: 1px solid #e8e8ed;
+        }
+        
+        .size-row code {
+          font-size: 12px;
+          background: #f5f5f7;
+          padding: 6px 12px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+          color: #1d1d1f;
+          min-width: 140px;
+        }
+        
+        .size-row .size-px {
+          font-size: 12px;
+          color: #86868b;
+          min-width: 48px;
+          font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+        }
+        
+        .size-row .size-sample {
+          font-family: var(--font-body);
+          color: #1d1d1f;
+        }
+      `}
+    </style>
+    <div className="docs-container">
+      <div className="docs-header">
+        <div className="docs-eyebrow">Design Tokens</div>
+        <h1>Typography System</h1>
+        <p>
+          A clear typographic hierarchy guides users through content with purpose and clarity.
+        </p>
+      </div>
+      
+      <div className="docs-section">
+        <div className="font-box">
+          <h3>Font Families</h3>
+          <div className="font-item">
+            <code>--font-display</code>
+            <span>Inter - Display</span>
+          </div>
+          <div className="font-item">
+            <code>--font-heading</code>
+            <span>Inter - Headings</span>
+          </div>
+          <div className="font-item">
+            <code>--font-body</code>
+            <span>Inter - Body</span>
+          </div>
+          <div className="font-item">
+            <code>--font-article</code>
+            <span>Libre Baskerville - Articles</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <code style={{ 
-            background: 'var(--color-white)', 
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '12px'
-          }}>
-            --font-heading
-          </code>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px' }}>Inter (Headings)</span>
+      </div>
+
+      <div className="docs-section">
+        <h2 className="docs-section-title">Display and Headings</h2>
+        <p className="docs-section-subtitle">
+          Large text styles for headlines and section titles.
+        </p>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Display XL</div>
+              <div className="type-specs">48px / Inter / 800</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-display)', fontSize: '48px', fontWeight: 800 }}>
+            The quick brown fox
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <code style={{ 
-            background: 'var(--color-white)', 
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '12px'
-          }}>
-            --font-body
-          </code>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: '14px' }}>Inter (Body)</span>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Display Large</div>
+              <div className="type-specs">36px / Inter / 700</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-display)', fontSize: '36px', fontWeight: 700 }}>
+            The quick brown fox
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <code style={{ 
-            background: 'var(--color-white)', 
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '12px'
-          }}>
-            --font-article
-          </code>
-          <span style={{ fontFamily: 'var(--font-article)', fontSize: '14px' }}>Libre Baskerville (Articles)</span>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Heading 1</div>
+              <div className="type-specs">32px / Inter / 700</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 700 }}>
+            The quick brown fox
+          </div>
+        </div>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Heading 2</div>
+              <div className="type-specs">24px / Inter / 700</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700 }}>
+            The quick brown fox
+          </div>
+        </div>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Heading 3</div>
+              <div className="type-specs">20px / Inter / 600</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 600 }}>
+            The quick brown fox
+          </div>
+        </div>
+      </div>
+
+      <div className="docs-section">
+        <h2 className="docs-section-title">Body Text</h2>
+        <p className="docs-section-subtitle">
+          Text styles for paragraphs and general content.
+        </p>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Body Large</div>
+              <div className="type-specs">18px / Inter / 400</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-body)', fontSize: '18px', fontWeight: 400 }}>
+            The quick brown fox jumps over the lazy dog.
+          </div>
+        </div>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Body Default</div>
+              <div className="type-specs">16px / Inter / 400</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-body)', fontSize: '16px', fontWeight: 400 }}>
+            The quick brown fox jumps over the lazy dog.
+          </div>
+        </div>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Body Small</div>
+              <div className="type-specs">14px / Inter / 400</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 400 }}>
+            The quick brown fox jumps over the lazy dog.
+          </div>
+        </div>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Caption</div>
+              <div className="type-specs">12px / Inter / 400</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 400 }}>
+            The quick brown fox jumps over the lazy dog.
+          </div>
+        </div>
+      </div>
+
+      <div className="docs-section">
+        <h2 className="docs-section-title">Font Weights</h2>
+        <p className="docs-section-subtitle">
+          Available weight variations.
+        </p>
+        
+        <div className="weight-grid">
+          <div className="weight-item">
+            <div className="weight-sample" style={{ fontWeight: 400 }}>Aa</div>
+            <div className="weight-name">Regular</div>
+            <div className="weight-value">400</div>
+            <code className="weight-var">--font-weight-regular</code>
+          </div>
+          <div className="weight-item">
+            <div className="weight-sample" style={{ fontWeight: 500 }}>Aa</div>
+            <div className="weight-name">Medium</div>
+            <div className="weight-value">500</div>
+            <code className="weight-var">--font-weight-medium</code>
+          </div>
+          <div className="weight-item">
+            <div className="weight-sample" style={{ fontWeight: 600 }}>Aa</div>
+            <div className="weight-name">SemiBold</div>
+            <div className="weight-value">600</div>
+            <code className="weight-var">--font-weight-semibold</code>
+          </div>
+          <div className="weight-item">
+            <div className="weight-sample" style={{ fontWeight: 700 }}>Aa</div>
+            <div className="weight-name">Bold</div>
+            <div className="weight-value">700</div>
+            <code className="weight-var">--font-weight-bold</code>
+          </div>
+          <div className="weight-item">
+            <div className="weight-sample" style={{ fontWeight: 800 }}>Aa</div>
+            <div className="weight-name">ExtraBold</div>
+            <div className="weight-value">800</div>
+            <code className="weight-var">--font-weight-extrabold</code>
+          </div>
+        </div>
+      </div>
+
+      <div className="docs-section">
+        <h2 className="docs-section-title">Font Sizes</h2>
+        <p className="docs-section-subtitle">
+          Complete size scale from 12px to 40px.
+        </p>
+        
+        <div className="size-row">
+          <code>--font-size-xs</code>
+          <span className="size-px">12px</span>
+          <span className="size-sample" style={{ fontSize: '12px' }}>Sample</span>
+        </div>
+        <div className="size-row">
+          <code>--font-size-sm</code>
+          <span className="size-px">14px</span>
+          <span className="size-sample" style={{ fontSize: '14px' }}>Sample</span>
+        </div>
+        <div className="size-row">
+          <code>--font-size-base</code>
+          <span className="size-px">16px</span>
+          <span className="size-sample" style={{ fontSize: '16px' }}>Sample</span>
+        </div>
+        <div className="size-row">
+          <code>--font-size-lg</code>
+          <span className="size-px">18px</span>
+          <span className="size-sample" style={{ fontSize: '18px' }}>Sample</span>
+        </div>
+        <div className="size-row">
+          <code>--font-size-xl</code>
+          <span className="size-px">20px</span>
+          <span className="size-sample" style={{ fontSize: '20px' }}>Sample</span>
+        </div>
+        <div className="size-row">
+          <code>--font-size-2xl</code>
+          <span className="size-px">24px</span>
+          <span className="size-sample" style={{ fontSize: '24px' }}>Sample</span>
+        </div>
+        <div className="size-row">
+          <code>--font-size-3xl</code>
+          <span className="size-px">32px</span>
+          <span className="size-sample" style={{ fontSize: '32px' }}>Sample</span>
+        </div>
+        <div className="size-row">
+          <code>--font-size-4xl</code>
+          <span className="size-px">40px</span>
+          <span className="size-sample" style={{ fontSize: '40px' }}>Sample</span>
         </div>
       </div>
     </div>
-
-    <h2 style={{ 
-      fontFamily: 'var(--font-heading)',
-      fontSize: '20px',
-      fontWeight: 600,
-      marginBottom: '16px',
-      paddingBottom: '8px',
-      borderBottom: '2px solid var(--color-blue-cobalt)'
-    }}>
-      Display & Headings
-    </h2>
-
-    <TypographyRow 
-      name="Display XL" 
-      specs="48px / Inter / Bold (800)"
-      fontFamily="var(--font-display)"
-      fontSize="48px"
-      fontWeight={800}
-    />
-    
-    <TypographyRow 
-      name="Display Large" 
-      specs="36px / Inter / Bold (700)"
-      fontFamily="var(--font-display)"
-      fontSize="36px"
-      fontWeight={700}
-    />
-    
-    <TypographyRow 
-      name="Heading 1" 
-      specs="32px / Inter / Bold (700)"
-      fontFamily="var(--font-heading)"
-      fontSize="32px"
-      fontWeight={700}
-    />
-    
-    <TypographyRow 
-      name="Heading 2" 
-      specs="24px / Inter / Bold (700)"
-      fontFamily="var(--font-heading)"
-      fontSize="24px"
-      fontWeight={700}
-    />
-    
-    <TypographyRow 
-      name="Heading 3" 
-      specs="20px / Inter / SemiBold (600)"
-      fontFamily="var(--font-heading)"
-      fontSize="20px"
-      fontWeight={600}
-    />
-    
-    <TypographyRow 
-      name="Heading 4" 
-      specs="18px / Inter / SemiBold (600)"
-      fontFamily="var(--font-heading)"
-      fontSize="18px"
-      fontWeight={600}
-    />
-
-    <h2 style={{ 
-      fontFamily: 'var(--font-heading)',
-      fontSize: '20px',
-      fontWeight: 600,
-      marginBottom: '16px',
-      marginTop: '32px',
-      paddingBottom: '8px',
-      borderBottom: '2px solid var(--color-blue-cobalt)'
-    }}>
-      Body Text
-    </h2>
-    
-    <TypographyRow 
-      name="Body Large" 
-      specs="18px / Inter / Regular (400)"
-      fontFamily="var(--font-body)"
-      fontSize="18px"
-      fontWeight={400}
-    />
-    
-    <TypographyRow 
-      name="Body Default" 
-      specs="16px / Inter / Regular (400)"
-      fontFamily="var(--font-body)"
-      fontSize="16px"
-      fontWeight={400}
-    />
-    
-    <TypographyRow 
-      name="Body Small" 
-      specs="14px / Inter / Regular (400)"
-      fontFamily="var(--font-body)"
-      fontSize="14px"
-      fontWeight={400}
-    />
-    
-    <TypographyRow 
-      name="Caption" 
-      specs="12px / Inter / Regular (400)"
-      fontFamily="var(--font-body)"
-      fontSize="12px"
-      fontWeight={400}
-    />
-
-    <h2 style={{ 
-      fontFamily: 'var(--font-heading)',
-      fontSize: '20px',
-      fontWeight: 600,
-      marginBottom: '16px',
-      marginTop: '32px',
-      paddingBottom: '8px',
-      borderBottom: '2px solid var(--color-blue-cobalt)'
-    }}>
-      UI Text
-    </h2>
-    
-    <TypographyRow 
-      name="Button" 
-      specs="14px / Inter / SemiBold (600) / Uppercase"
-      fontFamily="var(--font-body)"
-      fontSize="14px"
-      fontWeight={600}
-    />
-    
-    <TypographyRow 
-      name="Label" 
-      specs="12px / Inter / Medium (500)"
-      fontFamily="var(--font-body)"
-      fontSize="12px"
-      fontWeight={500}
-    />
-
-    <h2 style={{ 
-      fontFamily: 'var(--font-heading)',
-      fontSize: '20px',
-      fontWeight: 600,
-      marginBottom: '16px',
-      marginTop: '32px',
-      paddingBottom: '8px',
-      borderBottom: '2px solid var(--color-blue-cobalt)'
-    }}>
-      Font Weights
-    </h2>
-
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '16px' }}>
-      {[
-        { name: 'Regular', weight: 400, var: '--font-weight-regular' },
-        { name: 'Medium', weight: 500, var: '--font-weight-medium' },
-        { name: 'SemiBold', weight: 600, var: '--font-weight-semibold' },
-        { name: 'Bold', weight: 700, var: '--font-weight-bold' },
-        { name: 'ExtraBold', weight: 800, var: '--font-weight-extrabold' },
-      ].map((w) => (
-        <div key={w.weight} style={{ 
-          padding: '16px',
-          background: 'var(--color-gray-50)',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
-          <div style={{ 
-            fontFamily: 'var(--font-heading)', 
-            fontSize: '24px', 
-            fontWeight: w.weight,
-            marginBottom: '8px'
-          }}>
-            Aa
-          </div>
-          <div style={{ fontWeight: 600, fontSize: '14px' }}>{w.name}</div>
-          <div style={{ fontSize: '12px', color: 'var(--color-gray-500)' }}>{w.weight}</div>
-          <code style={{ 
-            fontSize: '10px', 
-            background: 'var(--color-white)', 
-            padding: '2px 4px',
-            borderRadius: '4px'
-          }}>
-            {w.var}
-          </code>
-        </div>
-      ))}
-    </div>
-
-    <h2 style={{ 
-      fontFamily: 'var(--font-heading)',
-      fontSize: '20px',
-      fontWeight: 600,
-      marginBottom: '16px',
-      marginTop: '32px',
-      paddingBottom: '8px',
-      borderBottom: '2px solid var(--color-blue-cobalt)'
-    }}>
-      Font Sizes
-    </h2>
-
-    <div style={{ display: 'grid', gap: '12px' }}>
-      {[
-        { name: 'xs', size: '12px', var: '--font-size-xs' },
-        { name: 'sm', size: '14px', var: '--font-size-sm' },
-        { name: 'base', size: '16px', var: '--font-size-base' },
-        { name: 'md', size: '16px', var: '--font-size-md' },
-        { name: 'lg', size: '18px', var: '--font-size-lg' },
-        { name: 'xl', size: '20px', var: '--font-size-xl' },
-        { name: '2xl', size: '24px', var: '--font-size-2xl' },
-        { name: '3xl', size: '32px', var: '--font-size-3xl' },
-        { name: '4xl', size: '40px', var: '--font-size-4xl' },
-      ].map((s) => (
-        <div key={s.var} style={{ 
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          padding: '8px 0',
-          borderBottom: '1px solid var(--color-gray-100)'
-        }}>
-          <code style={{ 
-            fontSize: '12px', 
-            background: 'var(--color-gray-100)', 
-            padding: '4px 8px',
-            borderRadius: '4px',
-            minWidth: '140px'
-          }}>
-            {s.var}
-          </code>
-          <span style={{ fontSize: '12px', color: 'var(--color-gray-500)', minWidth: '50px' }}>{s.size}</span>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: s.size }}>Sample Text</span>
-        </div>
-      ))}
-    </div>
-  </div>
+  </>
 );
 
 const meta: Meta = {
@@ -358,4 +469,6 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-export const AllStyles: Story = {};
+export const AllStyles: Story = {
+  name: 'All Styles',
+};

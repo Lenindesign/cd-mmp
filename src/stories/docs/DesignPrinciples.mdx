@@ -1,0 +1,548 @@
+{/* Design Principles - MDX Documentation */}
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Documentation/Design Principles" />
+
+<style>
+  {`
+    .principles-docs {
+      max-width: 720px;
+      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      color: #1d1d1f;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .principles-header {
+      padding: 80px 0 64px;
+      border-bottom: 1px solid #d2d2d7;
+      margin-bottom: 64px;
+    }
+    
+    .principles-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #86868b;
+      margin-bottom: 16px;
+    }
+    
+    .principles-header h1 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 48px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin: 0 0 24px 0;
+      color: #1d1d1f;
+    }
+    
+    .principles-header p {
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #424245;
+      margin: 0;
+    }
+    
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: #d2d2d7;
+      border: 1px solid #d2d2d7;
+      margin-bottom: 80px;
+    }
+    
+    @media (max-width: 600px) {
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .value-card {
+      text-align: center;
+      padding: 40px 24px;
+      background: #fff;
+    }
+    
+    .value-card h3 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: #1d1d1f;
+    }
+    
+    .value-card p {
+      font-size: 14px;
+      color: #86868b;
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    .principle-section {
+      margin-bottom: 80px;
+    }
+    
+    .principle-card {
+      padding: 48px 0;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .principle-card:first-child {
+      border-top: 1px solid #d2d2d7;
+    }
+    
+    .principle-number {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #86868b;
+      margin-bottom: 16px;
+    }
+    
+    .principle-content h2 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: #1d1d1f;
+      margin: 0 0 12px 0;
+    }
+    
+    .principle-tagline {
+      font-size: 17px;
+      color: #86868b;
+      margin: 0 0 24px 0;
+    }
+    
+    .principle-description {
+      font-size: 17px;
+      color: #424245;
+      line-height: 1.65;
+      margin: 0 0 32px 0;
+    }
+    
+    .principle-examples {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    
+    @media (max-width: 600px) {
+      .principle-examples {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .principle-example {
+      padding-left: 16px;
+      border-left: 2px solid #d2d2d7;
+    }
+    
+    .principle-example h4 {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #86868b;
+      margin: 0 0 8px 0;
+    }
+    
+    .principle-example p {
+      font-size: 14px;
+      color: #424245;
+      margin: 0;
+      line-height: 1.5;
+    }
+    
+    .quote-block {
+      padding: 48px 0;
+      margin: 64px 0;
+      border-top: 1px solid #d2d2d7;
+      border-bottom: 1px solid #d2d2d7;
+    }
+    
+    .quote-block blockquote {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: #1d1d1f;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+    
+    .quote-block cite {
+      font-size: 14px;
+      color: #86868b;
+      font-style: normal;
+    }
+    
+    .color-section h2 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0 0 12px 0;
+      color: #1d1d1f;
+    }
+    
+    .color-section > p {
+      color: #86868b;
+      margin: 0 0 32px 0;
+      line-height: 1.5;
+    }
+    
+    .color-meaning {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #d2d2d7;
+      border: 1px solid #d2d2d7;
+      margin: 32px 0;
+    }
+    
+    @media (max-width: 600px) {
+      .color-meaning {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .color-meaning-item {
+      text-align: center;
+      padding: 32px 16px;
+    }
+    
+    .color-meaning-item.dark {
+      background: #1d1d1f;
+      color: #ffffff;
+    }
+    
+    .color-meaning-item.dark h4,
+    .color-meaning-item.dark p {
+      color: #ffffff;
+    }
+    
+    .color-meaning-item.medium {
+      background: #86868b;
+      color: #ffffff;
+    }
+    
+    .color-meaning-item.medium h4,
+    .color-meaning-item.medium p {
+      color: #ffffff;
+    }
+    
+    .color-meaning-item.light {
+      background: #f5f5f7;
+      color: #1d1d1f;
+    }
+    
+    .color-meaning-item.white {
+      background: #fff;
+      color: #1d1d1f;
+    }
+    
+    .color-meaning-item h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 4px 0;
+    }
+    
+    .color-meaning-item p {
+      font-size: 12px;
+      margin: 0;
+      opacity: 0.8;
+    }
+    
+    .checklist {
+      background: #f5f5f7;
+      padding: 48px;
+      margin: 64px 0;
+    }
+    
+    .checklist h3 {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 19px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      color: #1d1d1f;
+    }
+    
+    .checklist > p {
+      color: #86868b;
+      margin: 0 0 32px 0;
+    }
+    
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    @media (max-width: 600px) {
+      .checklist-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      background: #fff;
+    }
+    
+    .checklist-icon {
+      font-size: 14px;
+      color: #1d1d1f;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    
+    .checklist-text {
+      font-size: 14px;
+      color: #424245;
+      line-height: 1.4;
+    }
+  `}
+</style>
+
+<div className="principles-docs">
+  <div className="principles-header">
+    <div className="principles-eyebrow">Design System</div>
+    <h1>Design Principles</h1>
+    <p>
+      The fundamental beliefs that guide every design decision. These principles ensure experiences that are clear, consistent, and purposeful.
+    </p>
+  </div>
+
+  <div className="values-grid">
+    <div className="value-card">
+      <h3>Purpose-Driven</h3>
+      <p>Every element serves a clear function</p>
+    </div>
+    <div className="value-card">
+      <h3>Efficient</h3>
+      <p>Minimize steps to achieve goals</p>
+    </div>
+    <div className="value-card">
+      <h3>Trustworthy</h3>
+      <p>Build confidence through transparency</p>
+    </div>
+  </div>
+
+  <div className="principle-section">
+    <div className="principle-card">
+      <div className="principle-number">Principle 01</div>
+      <div className="principle-content">
+        <h2>Clarity First</h2>
+        <p className="principle-tagline">Content takes priority over decoration</p>
+        <p className="principle-description">
+          Users come for information - vehicle specs, prices, reviews. Design should amplify this content, not compete with it. Use whitespace generously, establish clear visual hierarchy, and eliminate anything that doesn't serve the user's goal.
+        </p>
+        <div className="principle-examples">
+          <div className="principle-example">
+            <h4>Typography</h4>
+            <p>Clear heading hierarchy from H1 to body text guides the eye naturally</p>
+          </div>
+          <div className="principle-example">
+            <h4>Whitespace</h4>
+            <p>Generous spacing lets content breathe and reduces cognitive load</p>
+          </div>
+          <div className="principle-example">
+            <h4>Focus</h4>
+            <p>One primary action per screen prevents decision paralysis</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="principle-card">
+      <div className="principle-number">Principle 02</div>
+      <div className="principle-content">
+        <h2>Consistent Patterns</h2>
+        <p className="principle-tagline">Predictable interactions build confidence</p>
+        <p className="principle-description">
+          Users shouldn't have to relearn how to use the product on every page. Buttons should look and behave the same everywhere. Navigation should be predictable. When patterns are consistent, users can focus on their goals instead of figuring out the interface.
+        </p>
+        <div className="principle-examples">
+          <div className="principle-example">
+            <h4>Components</h4>
+            <p>Reusable components ensure visual and behavioral consistency</p>
+          </div>
+          <div className="principle-example">
+            <h4>Tokens</h4>
+            <p>Design tokens standardize colors, spacing, and typography</p>
+          </div>
+          <div className="principle-example">
+            <h4>Patterns</h4>
+            <p>Common patterns like forms and modals behave predictably</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="principle-card">
+      <div className="principle-number">Principle 03</div>
+      <div className="principle-content">
+        <h2>Accessible by Default</h2>
+        <p className="principle-tagline">Great design works for everyone</p>
+        <p className="principle-description">
+          Accessibility isn't an afterthought - it's built into every component from the start. We meet WCAG AA standards as a baseline. This means proper color contrast, keyboard navigation, screen reader support, and clear focus indicators. When we design for accessibility, we design better for all.
+        </p>
+        <div className="principle-examples">
+          <div className="principle-example">
+            <h4>Contrast</h4>
+            <p>4.5:1 minimum contrast ratio for all text</p>
+          </div>
+          <div className="principle-example">
+            <h4>Keyboard</h4>
+            <p>Full keyboard navigation with visible focus states</p>
+          </div>
+          <div className="principle-example">
+            <h4>Screen Readers</h4>
+            <p>Semantic HTML and ARIA labels for assistive tech</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="principle-card">
+      <div className="principle-number">Principle 04</div>
+      <div className="principle-content">
+        <h2>Performance Matters</h2>
+        <p className="principle-tagline">Speed is a feature</p>
+        <p className="principle-description">
+          Every millisecond counts. Slow interfaces frustrate users and hurt conversions. We optimize images, lazy-load below-the-fold content, minimize JavaScript bundles, and design for perceived performance. A fast experience feels more polished and trustworthy.
+        </p>
+        <div className="principle-examples">
+          <div className="principle-example">
+            <h4>Images</h4>
+            <p>Optimized formats, responsive sizes, lazy loading</p>
+          </div>
+          <div className="principle-example">
+            <h4>Code</h4>
+            <p>Tree-shaking, code splitting, minimal dependencies</p>
+          </div>
+          <div className="principle-example">
+            <h4>Perception</h4>
+            <p>Skeleton screens and progressive loading</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="principle-card">
+      <div className="principle-number">Principle 05</div>
+      <div className="principle-content">
+        <h2>Honest and Transparent</h2>
+        <p className="principle-tagline">Build trust through clarity</p>
+        <p className="principle-description">
+          Car buying is a significant decision. Design should never mislead or manipulate. Prices should be clear, comparisons should be fair, and sponsored content should be labeled. When users trust the interface, they trust the content.
+        </p>
+        <div className="principle-examples">
+          <div className="principle-example">
+            <h4>Pricing</h4>
+            <p>Clear, upfront pricing with no hidden fees</p>
+          </div>
+          <div className="principle-example">
+            <h4>Labels</h4>
+            <p>Sponsored and promotional content clearly marked</p>
+          </div>
+          <div className="principle-example">
+            <h4>Feedback</h4>
+            <p>Honest error messages that help users recover</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div className="quote-block">
+    <blockquote>
+      "Good design is as little design as possible. Less, but better - because it concentrates on the essential aspects, and the products are not burdened with non-essentials."
+    </blockquote>
+    <cite>Dieter Rams</cite>
+  </div>
+
+  <div className="color-section">
+    <h2>Color Psychology</h2>
+    <p>
+      Colors communicate meaning and emotion. Each serves a specific purpose.
+    </p>
+    
+    <div className="color-meaning">
+      <div className="color-meaning-item dark">
+        <h4>Black</h4>
+        <p>Authority, sophistication</p>
+      </div>
+      <div className="color-meaning-item medium">
+        <h4>Gray</h4>
+        <p>Balance, professionalism</p>
+      </div>
+      <div className="color-meaning-item light">
+        <h4>Light</h4>
+        <p>Clarity, openness</p>
+      </div>
+      <div className="color-meaning-item white">
+        <h4>White</h4>
+        <p>Space, focus</p>
+      </div>
+    </div>
+  </div>
+
+  <div className="checklist">
+    <h3>Design Review Checklist</h3>
+    <p>
+      Use this checklist when reviewing designs or building new features.
+    </p>
+    <div className="checklist-grid">
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Is the primary action clear and prominent?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Does it use design system components?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Is the color contrast WCAG AA compliant?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Can it be navigated with keyboard only?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Are interactive elements at least 44px touch targets?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Is loading state handled gracefully?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Are error states helpful and actionable?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Does it work on mobile (375px) and desktop (1440px)?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Are images optimized and lazy-loaded?</span>
+      </div>
+      <div className="checklist-item">
+        <span className="checklist-icon">-</span>
+        <span className="checklist-text">Is sponsored content clearly labeled?</span>
+      </div>
+    </div>
+  </div>
+</div>
