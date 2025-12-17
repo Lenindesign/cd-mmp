@@ -113,10 +113,6 @@
 }
 
 @media (max-width: 768px) {
-  .vehicle-ranking {
-    padding: 0 16px;
-  }
-  
   .vehicle-ranking__card-wrapper {
     padding: 0;
   }
