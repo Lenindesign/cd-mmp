@@ -152,10 +152,11 @@ const MarketSpeed = ({
                       className="market-speed__info-btn"
                       onMouseEnter={() => setActiveTooltip('marketDaySupply')}
                       onMouseLeave={() => setActiveTooltip(null)}
+                      aria-label="More info about Market Day Supply"
                     >
-                      <Info size={16} />
+                      <Info size={16} aria-hidden="true" />
                       {activeTooltip === 'marketDaySupply' && (
-                        <div className="market-speed__tooltip">
+                        <div className="market-speed__tooltip" role="tooltip">
                           {tooltipContent.marketDaySupply}
                         </div>
                       )}
@@ -169,10 +170,11 @@ const MarketSpeed = ({
                       className="market-speed__info-btn"
                       onMouseEnter={() => setActiveTooltip('totalForSale')}
                       onMouseLeave={() => setActiveTooltip(null)}
+                      aria-label="More info about Total For Sale"
                     >
-                      <Info size={16} />
+                      <Info size={16} aria-hidden="true" />
                       {activeTooltip === 'totalForSale' && (
-                        <div className="market-speed__tooltip">
+                        <div className="market-speed__tooltip" role="tooltip">
                           {tooltipContent.totalForSale}
                         </div>
                       )}
@@ -186,10 +188,11 @@ const MarketSpeed = ({
                       className="market-speed__info-btn"
                       onMouseEnter={() => setActiveTooltip('totalSold')}
                       onMouseLeave={() => setActiveTooltip(null)}
+                      aria-label="More info about Total Sold"
                     >
-                      <Info size={16} />
+                      <Info size={16} aria-hidden="true" />
                       {activeTooltip === 'totalSold' && (
-                        <div className="market-speed__tooltip">
+                        <div className="market-speed__tooltip" role="tooltip">
                           {tooltipContent.totalSold}
                         </div>
                       )}
