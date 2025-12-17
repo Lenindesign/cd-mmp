@@ -96,7 +96,7 @@ const VehiclePageVariantB = ({ variant }: VehiclePageVariantBProps) => {
     rating: supabaseRating,
     priceRange: vehicle.priceRange,
     image: vehicle.image,
-    images: vehicle.galleryImages?.slice(0, 3) || [],
+    galleryImages: vehicle.galleryImages || [],
     photographer: 'CAR AND DRIVER',
     editorsChoice: vehicle.editorsChoice,
     tenBest: vehicle.tenBest,

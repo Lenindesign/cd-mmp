@@ -35,7 +35,7 @@ const HomePage = () => {
     rating: 10, // Editorial rating override
     priceRange: '$21,895–$25,895',
     image: traxFromDB?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg',
-    images: traxFromDB?.galleryImages?.slice(0, 3) || [
+    galleryImages: traxFromDB?.galleryImages || [
       'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg',
       'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
       'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
