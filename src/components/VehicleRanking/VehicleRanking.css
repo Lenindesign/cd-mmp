@@ -84,15 +84,14 @@
     font-size: 16px;
   }
   
-  /* Stack name and rating vertically on mobile */
+  /* Reduce gap on mobile */
   .vehicle-ranking__card-header {
-    flex-direction: column;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
   }
   
-  /* Hide divider on mobile */
+  /* Smaller divider on mobile */
   .vehicle-ranking__card-divider {
-    display: none;
+    height: 16px;
   }
   
   .vehicle-ranking__card-rating-score {
@@ -319,6 +318,12 @@
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-2);
   text-align: center;
+}
+
+/* Stacked layout when name is too long */
+.vehicle-ranking__card-header--stacked {
+  flex-direction: column;
+  gap: var(--spacing-1);
 }
 
 /* Vertical divider between name and score */

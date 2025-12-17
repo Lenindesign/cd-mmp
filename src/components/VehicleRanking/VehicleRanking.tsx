@@ -4,30 +4,35 @@ import { ChevronRight } from 'lucide-react';
 import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
 import './VehicleRanking.css';
 
-// Hook to detect if text overflows its container
+// Hook to detect if text overflows its container and if stacking is needed
 const useTextFit = (fullText: string, shortText: string, deps: unknown[] = []) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLHeadingElement>(null);
   const [showShort, setShowShort] = useState(false);
+  const [needsStack, setNeedsStack] = useState(false);
 
   const checkFit = useCallback(() => {
     if (!containerRef.current) return;
     
     const container = containerRef.current;
-    const headerEl = container.closest('.vehicle-ranking__card-header');
+    const headerEl = container.closest('.vehicle-ranking__card-header') as HTMLElement;
     if (!headerEl) return;
 
-    // Get available width (header width minus rating and divider)
+    // Check if we're currently stacked (column layout)
+    const isStacked = headerEl.classList.contains('vehicle-ranking__card-header--stacked');
+    
+    // Get available width (header width minus rating and divider if not stacked)
     const headerWidth = headerEl.clientWidth;
     const ratingEl = headerEl.querySelector('.vehicle-ranking__card-rating') as HTMLElement;
     const dividerEl = headerEl.querySelector('.vehicle-ranking__card-divider') as HTMLElement;
     
-    const ratingWidth = ratingEl ? ratingEl.offsetWidth : 0;
-    const dividerWidth = dividerEl ? dividerEl.offsetWidth : 0;
-    const gap = 24; // spacing-3 * 2
+    // If stacked, full width is available for name
+    const ratingWidth = isStacked ? 0 : (ratingEl ? ratingEl.offsetWidth : 0);
+    const dividerWidth = isStacked ? 0 : (dividerEl ? dividerEl.offsetWidth : 0);
+    const gap = isStacked ? 0 : 24; // spacing-3 * 2
     
     const availableWidth = headerWidth - ratingWidth - dividerWidth - gap;
 
-    // Measure full text width
+    // Measure text widths
     const measureEl = document.createElement('span');
     measureEl.style.cssText = `
       position: absolute;
@@ -37,13 +42,33 @@ const useTextFit = (fullText: string, shortText: string, deps: unknown[] = []) =
       font-size: inherit;
       font-weight: inherit;
     `;
+    
+    // Measure full text
     measureEl.textContent = fullText;
     container.appendChild(measureEl);
     const fullWidth = measureEl.offsetWidth;
+    
+    // Measure short text
+    measureEl.textContent = shortText;
+    const shortWidth = measureEl.offsetWidth;
     container.removeChild(measureEl);
 
-    setShowShort(fullWidth > availableWidth);
-  }, [fullText]);
+    // If full name fits, use it
+    if (fullWidth <= availableWidth) {
+      setShowShort(false);
+      setNeedsStack(false);
+    } 
+    // If short name fits in horizontal layout, use short name
+    else if (shortWidth <= availableWidth) {
+      setShowShort(true);
+      setNeedsStack(false);
+    }
+    // If even short name doesn't fit horizontally, stack vertically
+    else {
+      setShowShort(true);
+      setNeedsStack(true);
+    }
+  }, [fullText, shortText]);
 
   useEffect(() => {
     checkFit();
@@ -51,18 +76,64 @@ const useTextFit = (fullText: string, shortText: string, deps: unknown[] = []) =
     return () => window.removeEventListener('resize', checkFit);
   }, [checkFit, ...deps]);
 
-  return { containerRef, displayText: showShort ? shortText : fullText };
+  return { containerRef, displayText: showShort ? shortText : fullText, needsStack };
 };
 
 // Component for vehicle name that auto-switches between full and short
-const VehicleName = ({ fullName, showScore }: { fullName: string; showScore: boolean }) => {
+const VehicleName = ({ fullName, showScore, onStackChange }: { fullName: string; showScore: boolean; onStackChange?: (needsStack: boolean) => void }) => {
   const shortName = fullName.split(' ').slice(1).join(' ');
-  const { containerRef, displayText } = useTextFit(fullName, shortName, [showScore]);
+  const { containerRef, displayText, needsStack } = useTextFit(fullName, shortName, [showScore]);
+  
+  useEffect(() => {
+    onStackChange?.(needsStack);
+  }, [needsStack, onStackChange]);
   
   return (
     <h3 className="vehicle-ranking__card-name" ref={containerRef}>
       {displayText}
     </h3>
+  );
+};
+
+// Card info component that manages stacking state
+const VehicleCardInfo = ({ 
+  vehicle, 
+  showScore, 
+  scoreStyle 
+}: { 
+  vehicle: RankedVehicle; 
+  showScore: boolean; 
+  scoreStyle: 'bold' | 'subtle';
+}) => {
+  const [needsStack, setNeedsStack] = useState(false);
+  
+  const handleStackChange = useCallback((stack: boolean) => {
+    setNeedsStack(stack);
+  }, []);
+
+  return (
+    <div className="vehicle-ranking__card-info">
+      <div className={`vehicle-ranking__card-header ${needsStack ? 'vehicle-ranking__card-header--stacked' : ''}`}>
+        <VehicleName fullName={vehicle.name} showScore={showScore} onStackChange={handleStackChange} />
+        {/* C/D Rating - Only show when showScore is true */}
+        {showScore && (
+          <>
+            {!needsStack && <div className="vehicle-ranking__card-divider" />}
+            <div className={`vehicle-ranking__card-rating ${scoreStyle === 'subtle' ? 'vehicle-ranking__card-rating--subtle' : ''}`}>
+              <span className="vehicle-ranking__card-rating-score">{vehicle.rating}</span>
+              <span className="vehicle-ranking__card-rating-max">/10</span>
+            </div>
+          </>
+        )}
+      </div>
+      <p className="vehicle-ranking__card-price">
+        <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
+      </p>
+      <div className={`cta cta--md cta--full vehicle-ranking__card-cta ${vehicle.isCurrentVehicle ? 'cta--primary' : 'cta--outline'}`}>
+        <span className="vehicle-ranking__card-cta-full">SHOP {vehicle.name.toUpperCase()}</span>
+        <span className="vehicle-ranking__card-cta-short">SHOP {vehicle.name.split(' ').slice(1).join(' ').toUpperCase()}</span>
+      </div>
+    </div>
   );
 };
 
@@ -193,28 +264,11 @@ const VehicleRanking = ({
                 </div>
               )}
               
-              <div className="vehicle-ranking__card-info">
-                <div className="vehicle-ranking__card-header">
-                  <VehicleName fullName={vehicle.name} showScore={showScore} />
-                  {/* C/D Rating - Only show when showScore is true */}
-                  {showScore && (
-                    <>
-                      <div className="vehicle-ranking__card-divider" />
-                      <div className={`vehicle-ranking__card-rating ${scoreStyle === 'subtle' ? 'vehicle-ranking__card-rating--subtle' : ''}`}>
-                        <span className="vehicle-ranking__card-rating-score">{vehicle.rating}</span>
-                        <span className="vehicle-ranking__card-rating-max">/10</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-                <p className="vehicle-ranking__card-price">
-                  <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
-                </p>
-                <div className={`cta cta--md cta--full vehicle-ranking__card-cta ${vehicle.isCurrentVehicle ? 'cta--primary' : 'cta--outline'}`}>
-                  <span className="vehicle-ranking__card-cta-full">SHOP {vehicle.name.toUpperCase()}</span>
-                  <span className="vehicle-ranking__card-cta-short">SHOP {vehicle.name.split(' ').slice(1).join(' ').toUpperCase()}</span>
-                </div>
-              </div>
+              <VehicleCardInfo 
+                vehicle={vehicle} 
+                showScore={showScore} 
+                scoreStyle={scoreStyle}
+              />
             </Link>
           ))}
         </div>
