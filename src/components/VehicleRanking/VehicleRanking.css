@@ -404,14 +404,13 @@
   color: var(--color-black);
 }
 
-/* Subtle Score Style - Blue number, gray /10 */
+/* Subtle Score Style - kept black for consistency */
 .vehicle-ranking__card-rating--subtle .vehicle-ranking__card-rating-score {
-  color: var(--color-blue-cobalt);
+  color: var(--color-black);
 }
 
 .vehicle-ranking__card-rating--subtle .vehicle-ranking__card-rating-max {
-  color: var(--color-gray-400);
-  font-weight: 600;
+  color: var(--color-black);
 }
 
 .vehicle-ranking__card-price {
