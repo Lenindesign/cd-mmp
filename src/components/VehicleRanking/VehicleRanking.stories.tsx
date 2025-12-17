@@ -76,11 +76,26 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 | Make + Model fits in one row | "Chevrolet Trax" |
 | Make + Model doesn't fit | "Trax" (model only) |
 
+**Consistent Stacking Logic:**
+- If **any** card in the grid needs to stack (name + score vertically) due to a long model name, **all** cards adopt the stacked layout for visual consistency
+- The component first attempts to fit Make + Model on one line
+- On mobile (≤600px), font size scales down to 14px, and at 320px it further reduces to 12px
+- The vertical divider between name and score is hidden when stacked
+
 **Implementation:**
 - JavaScript measures text width vs available container space
+- A parent hook (\`useCardLayout\`) checks all cards and determines if any need stacking
+- If stacking is needed, all cards receive a \`forceStackLayout\` prop
 - Automatically switches between full name and model-only
 - Recalculates on window resize
 - No ellipsis or text truncation - clean display only
+
+**Responsive Font Scaling:**
+| Screen Width | Font Size |
+|--------------|-----------|
+| > 600px | 20px |
+| ≤ 600px | 14px |
+| ≤ 320px | 12px |
 
 ---
 

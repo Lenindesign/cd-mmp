@@ -345,10 +345,25 @@
   white-space: nowrap;
 }
 
-/* On very small screens, smaller font */
+/* On smaller screens, smaller font */
 @media (max-width: 600px) {
   .vehicle-ranking__card-name {
     font-size: 14px;
+  }
+}
+
+/* On very small screens (320px phones), even smaller font */
+@media (max-width: 320px) {
+  .vehicle-ranking__card-name {
+    font-size: 12px;
+  }
+  
+  .vehicle-ranking__card-rating-score {
+    font-size: 12px;
+  }
+  
+  .vehicle-ranking__card-rating-max {
+    font-size: 9px;
   }
 }
 
