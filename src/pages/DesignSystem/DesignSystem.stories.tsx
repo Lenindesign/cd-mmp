@@ -13,7 +13,7 @@ const meta: Meta<typeof DesignSystem> = {
       },
     },
   },
-
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <MemoryRouter>

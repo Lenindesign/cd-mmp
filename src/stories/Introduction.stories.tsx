@@ -8,7 +8,13 @@ const meta: Meta = {
     options: {
       showPanel: false,
     },
+    docs: {
+      description: {
+        component: 'Welcome to the Car and Driver Design System documentation.',
+      },
+    },
   },
+  tags: ['autodocs'],
 };
 
 export default meta;

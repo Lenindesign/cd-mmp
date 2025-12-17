@@ -12,7 +12,7 @@ const meta: Meta<typeof AdSidebar> = {
       },
     },
   },
-
+  tags: ['autodocs'],
 };
 
 export default meta;

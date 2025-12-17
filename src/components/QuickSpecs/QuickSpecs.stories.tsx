@@ -12,7 +12,7 @@ const meta: Meta<typeof QuickSpecs> = {
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     specs: {
       description: 'Specification values for the vehicle',

@@ -94,7 +94,7 @@ A high-impact carousel showcasing top-ranked vehicles with integrated lead gener
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     title: {
       description: 'Main heading for the carousel section',

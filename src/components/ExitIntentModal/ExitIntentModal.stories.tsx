@@ -107,7 +107,7 @@ A conversion recovery tool that captures users who are about to leave the site. 
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     vehicleName: {
       description: 'Name of the vehicle user was viewing (shown in floating card)',

@@ -86,7 +86,7 @@ Shows how quickly vehicles are selling in the market. Creates urgency for hot ve
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     vehicleName: {
       description: 'Full vehicle name (Year Make Model)',

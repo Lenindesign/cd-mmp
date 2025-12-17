@@ -92,7 +92,7 @@ These badges increase user trust and can improve conversion rates.
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     vehicle: {
       description: 'Vehicle data object containing all display information',

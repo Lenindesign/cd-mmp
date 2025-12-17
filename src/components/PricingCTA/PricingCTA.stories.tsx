@@ -92,7 +92,7 @@ The primary lead generation component on the VDP. Captures user information and 
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     vehicleName: {
       description: 'Full vehicle name (Year Make Model)',

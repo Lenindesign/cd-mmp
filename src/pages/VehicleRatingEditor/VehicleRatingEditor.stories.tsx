@@ -13,7 +13,13 @@ const meta = {
     chromatic: {
       viewports: [1440],
     },
+    docs: {
+      description: {
+        component: 'Admin tool for editing vehicle ratings and scores.',
+      },
+    },
   },
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/admin/vehicle-ratings']}>
@@ -21,7 +27,6 @@ const meta = {
       </MemoryRouter>
     ),
   ],
-
 } satisfies Meta<typeof VehicleRatingEditor>;
 
 export default meta;

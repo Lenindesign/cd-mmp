@@ -77,7 +77,7 @@ Users can select different trims to see:
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     vehicleName: {
       description: 'Full name of the vehicle (Year Make Model)',

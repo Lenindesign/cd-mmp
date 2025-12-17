@@ -12,7 +12,7 @@ const meta: Meta<typeof TrimSelector> = {
       },
     },
   },
-
+  tags: ['autodocs'],
 };
 
 export default meta;

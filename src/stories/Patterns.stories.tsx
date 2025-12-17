@@ -6,7 +6,13 @@ const meta: Meta = {
   title: 'Design System/Component Patterns',
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'Real-world examples of how to compose components to build common UI patterns.',
+      },
+    },
   },
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/']}>

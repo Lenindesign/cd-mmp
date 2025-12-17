@@ -13,7 +13,7 @@ const meta: Meta<typeof Footer> = {
       },
     },
   },
-
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <MemoryRouter>

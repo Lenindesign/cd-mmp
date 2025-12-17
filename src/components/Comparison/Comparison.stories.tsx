@@ -87,7 +87,7 @@ Side-by-side comparison showing how the current vehicle stacks up against compet
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     currentVehicle: {
       description: 'The vehicle being compared (used to find similar competitors)',

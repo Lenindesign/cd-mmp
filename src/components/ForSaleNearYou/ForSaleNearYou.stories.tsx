@@ -13,7 +13,7 @@ const meta: Meta<typeof ForSaleNearYou> = {
       },
     },
   },
-
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <MemoryRouter>

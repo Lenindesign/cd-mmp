@@ -86,7 +86,7 @@ The editorial heart of the VDP. Expert analysis that differentiates us from deal
       },
     },
   },
-
+  tags: ['autodocs'],
   argTypes: {
     year: {
       description: 'Model year of the vehicle',

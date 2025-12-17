@@ -11,7 +11,13 @@ const meta: Meta = {
     chromatic: {
       disableSnapshot: true,
     },
+    docs: {
+      description: {
+        component: 'Design tokens for colors, typography, spacing, and effects.',
+      },
+    },
   },
+  tags: ['autodocs'],
 };
 
 export default meta;
