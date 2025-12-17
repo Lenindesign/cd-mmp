@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, Heart, Sparkles } from 'lucide-react';
+import { Car, Heart, Blend } from 'lucide-react';
 import './OnboardingStep2.css';
 
 // Speedometer Step Indicator Component (consistent with Step 1)
@@ -66,7 +66,7 @@ const userTypeOptions: Omit<UserTypeOption, 'isSelected'>[] = [
     id: 'both',
     title: 'Both',
     description: "I'm a car lover on the lookout for my next ride.",
-    icon: <Sparkles size={28} strokeWidth={1.5} />,
+    icon: <Blend size={28} strokeWidth={1.5} />,
   },
 ];
 
