@@ -436,12 +436,22 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+/* Logo */
+.exit-modal__logo {
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 16px;
+}
+
+.exit-modal__logo svg {
+  width: 160px;
+  height: auto;
+}
+
 /* Stats */
 .exit-modal__stats {
   display: flex;
   gap: 24px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .exit-modal__stat {
