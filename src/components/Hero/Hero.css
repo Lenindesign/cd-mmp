@@ -389,30 +389,38 @@
     flex-direction: column;
     align-items: stretch;
     gap: var(--spacing-4);
+    width: 100%;
   }
 
   .hero__msrp {
-    align-items: center;
+    align-items: stretch;
     text-align: center;
+    width: 100%;
   }
 
   .hero__msrp-price-row {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 24px;
+    width: 100%;
+  }
+
+  .hero__msrp-price {
+    text-align: center;
   }
 
   .hero__shop-buttons {
     flex-direction: column;
     width: 100%;
     gap: 16px;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     margin-left: 0;
   }
 
   .hero__shop-btn {
     width: 100%;
+    max-width: none;
     height: 48px;
     font-size: 14px;
     font-weight: var(--font-weight-extrabold);
@@ -528,7 +536,6 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   height: 40px;
-  max-width: 320px;
 }
 
 .hero__shop-btn:hover {
