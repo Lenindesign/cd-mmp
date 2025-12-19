@@ -297,7 +297,7 @@
 /* Card Details - Absolute positioning */
 .membership-card__details {
   position: absolute;
-  bottom: 10%;
+  bottom: 14%;
   left: 10%;
   right: 10%;
   display: grid;
