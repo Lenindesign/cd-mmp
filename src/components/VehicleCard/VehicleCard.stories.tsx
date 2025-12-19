@@ -334,51 +334,44 @@ export const CurrentVehicle: Story = {
 
 export const GridLayout: Story = {
   decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(3, 280px)', 
-          gap: '24px',
-          padding: '24px',
-        }}>
-          <Story />
-        </div>
-      </MemoryRouter>
+    () => (
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(3, 280px)', 
+        gap: '24px',
+        padding: '24px',
+      }}>
+        <VehicleCard
+          id="1"
+          name="2025 Honda Accord"
+          slug="honda/accord/2025"
+          image={sampleImage}
+          price="$28,990"
+          rating={9.5}
+          rank={1}
+          editorsChoice
+        />
+        <VehicleCard
+          id="2"
+          name="2025 Toyota Camry"
+          slug="toyota/camry/2025"
+          image={sampleImage}
+          price="$27,070"
+          rating={9.0}
+          rank={2}
+        />
+        <VehicleCard
+          id="3"
+          name="2025 BMW 3 Series"
+          slug="bmw/3-series/2025"
+          image={sampleImage}
+          price="$44,900"
+          rating={8.5}
+          rank={3}
+          tenBest
+        />
+      </div>
     ),
   ],
-  render: () => (
-    <>
-      <VehicleCard
-        id="1"
-        name="2025 Honda Accord"
-        slug="honda/accord/2025"
-        image={sampleImage}
-        price="$28,990"
-        rating={9.5}
-        rank={1}
-        editorsChoice
-      />
-      <VehicleCard
-        id="2"
-        name="2025 Toyota Camry"
-        slug="toyota/camry/2025"
-        image={sampleImage}
-        price="$27,070"
-        rating={9.0}
-        rank={2}
-      />
-      <VehicleCard
-        id="3"
-        name="2025 BMW 3 Series"
-        slug="bmw/3-series/2025"
-        image={sampleImage}
-        price="$44,900"
-        rating={8.5}
-        rank={3}
-        tenBest
-      />
-    </>
-  ),
 };
 
