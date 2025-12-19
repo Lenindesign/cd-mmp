@@ -7,18 +7,6 @@ const meta: Meta<typeof VehiclePage> = {
   component: VehiclePage,
   parameters: {
     layout: 'fullscreen',
-    viewport: {
-      viewports: {
-        desktop: {
-          name: 'Desktop (1440px)',
-          styles: {
-            width: '1440px',
-            height: '100%',
-          },
-        },
-      },
-      defaultViewport: 'desktop',
-    },
     docs: {
       description: {
         component: 'Vehicle detail page with hero, specs, pricing, comparisons, and marketplace integration.',
