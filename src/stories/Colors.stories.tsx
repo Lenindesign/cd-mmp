@@ -83,7 +83,7 @@ const ColorsPage = () => (
         .color-circle {
           width: 120px;
           height: 120px;
-          border-radius: 50%;
+          border-radius: 8px;
           display: flex;
           flex-direction: column;
           align-items: center;
