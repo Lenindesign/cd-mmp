@@ -165,21 +165,9 @@
   opacity: 0.05;
   pointer-events: none;
   filter: brightness(0) invert(1);
-  animation: watermarkPulse 4s ease-in-out 1.5s infinite;
 }
 
-@keyframes watermarkPulse {
-  0%, 100% {
-    opacity: 0.05;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 0.08;
-    transform: translate(-50%, -50%) scale(1.02);
-  }
-}
-
-/* Card shimmer effect */
+/* Card shimmer effect - single sweep */
 .membership-card::after {
   content: '';
   position: absolute;
@@ -193,14 +181,14 @@
     rgba(255, 255, 255, 0.1),
     transparent
   );
-  animation: cardShimmer 3s ease-in-out 1.2s infinite;
+  animation: cardShimmer 1.5s ease-in-out 1.2s forwards;
 }
 
 @keyframes cardShimmer {
   0% {
     left: -100%;
   }
-  50%, 100% {
+  100% {
     left: 150%;
   }
 }
@@ -225,8 +213,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  animation: badgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both,
-             badgeFloat 3s ease-in-out 1.5s infinite;
+  animation: badgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both;
 }
 
 @keyframes badgePop {
@@ -240,14 +227,6 @@
   }
 }
 
-@keyframes badgeFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-}
 
 .membership-card__badge svg {
   width: 100%;
