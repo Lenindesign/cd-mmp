@@ -524,17 +524,17 @@ export const MobileResponsive: Story = {
       <div className="mobile-hero-cta">
         <h3>2025 Chevrolet Trax</h3>
         <p>MSRP $20,400 - $24,400</p>
-        <Button variant="primary" size="default" fullWidth>SHOP NEW TRAX</Button>
-        <Button variant="outline" size="default" fullWidth>SHOP USED TRAX</Button>
-        <Button variant="outline" size="default" fullWidth>GET YOUR TRADE-IN VALUE</Button>
+        <Button variant="primary" size="medium" fullWidth>SHOP NEW TRAX</Button>
+        <Button variant="outline" size="medium" fullWidth>SHOP USED TRAX</Button>
+        <Button variant="outline" size="medium" fullWidth>GET YOUR TRADE-IN VALUE</Button>
       </div>
 
       <div className="mobile-hero-cta">
         <h3>2025 Jeep Grand Cherokee</h3>
         <p>MSRP $42,000 - $68,000</p>
-        <Button variant="primary" size="default" fullWidth>SHOP NEW GRAND CHEROKEE</Button>
-        <Button variant="outline" size="default" fullWidth>SHOP USED GRAND CHEROKEE</Button>
-        <Button variant="outline" size="default" fullWidth>GET YOUR TRADE-IN VALUE</Button>
+        <Button variant="primary" size="medium" fullWidth>SHOP NEW GRAND CHEROKEE</Button>
+        <Button variant="outline" size="medium" fullWidth>SHOP USED GRAND CHEROKEE</Button>
+        <Button variant="outline" size="medium" fullWidth>GET YOUR TRADE-IN VALUE</Button>
       </div>
     </div>
   ),
