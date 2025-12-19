@@ -9,7 +9,39 @@ const meta: Meta<typeof Footer> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Site footer with links, social media, and legal information.',
+        component: `
+# Footer
+
+Global site footer with navigation links, social media, and legal information.
+
+---
+
+## Sections
+
+| Section | Content |
+|---------|---------|
+| **Brand** | Logo and tagline |
+| **Navigation** | Quick links to main sections |
+| **Resources** | Help, contact, and support links |
+| **Social** | Social media icons and links |
+| **Legal** | Copyright, privacy policy, terms |
+
+---
+
+## Responsive Behavior
+
+| Breakpoint | Layout |
+|------------|--------|
+| Desktop (>768px) | Multi-column grid layout |
+| Tablet (768px) | 2-column layout |
+| Mobile (<768px) | Single column, stacked |
+
+---
+
+## SEO
+
+Footer links help with internal linking and site navigation for search engines.
+        `,
       },
     },
   },
@@ -26,9 +58,24 @@ const meta: Meta<typeof Footer> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Default footer with all sections visible.',
+      },
+    },
+  },
+};
 
 export const WithContent: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Footer shown with page content above to demonstrate typical page layout.',
+      },
+    },
+  },
   render: () => (
     <div>
       <div style={{ padding: '40px', background: '#f5f5f5', minHeight: '300px' }}>
@@ -38,4 +85,17 @@ export const WithContent: Story = {
       <Footer />
     </div>
   ),
+};
+
+export const Mobile: Story = {
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile',
+    },
+    docs: {
+      description: {
+        story: 'Footer at mobile viewport showing stacked layout.',
+      },
+    },
+  },
 };

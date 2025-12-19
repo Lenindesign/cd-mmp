@@ -273,19 +273,19 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
   <div className="status-summary">
     <div className="summary-card">
-      <div className="summary-number">32</div>
+      <div className="summary-number">28</div>
       <div className="summary-label">Stable</div>
     </div>
     <div className="summary-card">
-      <div className="summary-number">4</div>
+      <div className="summary-number">5</div>
       <div className="summary-label">Beta</div>
     </div>
     <div className="summary-card">
-      <div className="summary-number">2</div>
+      <div className="summary-number">3</div>
       <div className="summary-label">Alpha</div>
     </div>
     <div className="summary-card">
-      <div className="summary-number">38</div>
+      <div className="summary-number">36</div>
       <div className="summary-label">Total</div>
     </div>
   </div>
@@ -564,8 +564,110 @@ import { Meta } from '@storybook/addon-docs/blocks';
           <td><span className="feature-indicator no">No</span></td>
           <td><span className="feature-indicator">Yes</span></td>
         </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-toptencarouselleads--docs">TopTenCarouselLeads</a></div>
+            <div className="component-desc">Top 10 vehicle carousel</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/organisms-vehicleoverview--docs">VehicleOverview</a></div>
+            <div className="component-desc">Vehicle overview section</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
       </tbody>
     </table>
+  </div>
+
+  <div className="status-section">
+    <h2>Pages</h2>
+    <table className="component-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Status</th>
+          <th>A11y</th>
+          <th>Tests</th>
+          <th>Docs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/pages-vehiclepage--docs">VehiclePage</a></div>
+            <div className="component-desc">Full vehicle detail page</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/pages-vehicleslistpage--docs">VehiclesListPage</a></div>
+            <div className="component-desc">Vehicle listings page</div>
+          </td>
+          <td><span className="status-badge stable">Stable</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/pages-vehicleratingeditor--docs">VehicleRatingEditor</a></div>
+            <div className="component-desc">Admin rating editor</div>
+          </td>
+          <td><span className="status-badge beta">Beta</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator no">No</span></td>
+          <td><span className="feature-indicator">Yes</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div className="component-name"><a href="?path=/docs/pages-onboarding--docs">Onboarding</a></div>
+            <div className="component-desc">User onboarding flow</div>
+          </td>
+          <td><span className="status-badge alpha">Alpha</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+          <td><span className="feature-indicator no">No</span></td>
+          <td><span className="feature-indicator partial">Partial</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div className="changelog">
+    <h3>Recent Updates</h3>
+    <div className="changelog-item">
+      <div className="changelog-date">Dec 2024</div>
+      <div className="changelog-content">
+        <span className="changelog-tag">New</span>
+        Added Accessibility Guidelines and Responsive Patterns documentation
+      </div>
+    </div>
+    <div className="changelog-item">
+      <div className="changelog-date">Dec 2024</div>
+      <div className="changelog-content">
+        <span className="changelog-tag update">Update</span>
+        Enhanced component documentation with usage guidelines and best practices
+      </div>
+    </div>
+    <div className="changelog-item">
+      <div className="changelog-date">Dec 2024</div>
+      <div className="changelog-content">
+        <span className="changelog-tag fix">Fix</span>
+        Reorganized sidebar navigation for better discoverability
+      </div>
+    </div>
   </div>
 
 </div>

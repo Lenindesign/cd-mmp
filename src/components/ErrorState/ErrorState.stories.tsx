@@ -8,7 +8,41 @@ const meta: Meta<typeof ErrorState> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Error and empty state displays following the Car and Driver design system.',
+        component: `
+# ErrorState
+
+Displays error messages, empty states, and offline notifications to users.
+
+---
+
+## Variants
+
+| Variant | Use Case |
+|---------|----------|
+| **error** | API failures, unexpected errors |
+| **empty** | No results, empty lists |
+| **not-found** | 404 pages, missing content |
+| **offline** | Network connectivity issues |
+
+---
+
+## Best Practices
+
+- Always provide a clear action (retry, go back, search again)
+- Use friendly, non-technical language
+- Include relevant context about what went wrong
+- Consider providing alternative actions
+
+---
+
+## Content Guidelines
+
+| Element | Guidance |
+|---------|----------|
+| **Title** | Short, descriptive (2-5 words) |
+| **Message** | Explain what happened and what to do next |
+| **Action** | Clear verb ("Try Again", "Go Back", "Search") |
+        `,
       },
     },
   },
@@ -17,9 +51,53 @@ const meta: Meta<typeof ErrorState> = {
     variant: {
       control: 'select',
       options: ['error', 'empty', 'not-found', 'offline'],
+      description: 'Type of error state to display',
+      table: {
+        type: { summary: 'error | empty | not-found | offline' },
+        defaultValue: { summary: 'error' },
+        category: 'Appearance',
+      },
+    },
+    title: {
+      control: 'text',
+      description: 'Custom title text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Content',
+      },
+    },
+    message: {
+      control: 'text',
+      description: 'Custom message text',
+      table: {
+        type: { summary: 'string' },
+        category: 'Content',
+      },
     },
     showRetry: {
       control: 'boolean',
+      description: 'Show retry button',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+        category: 'Actions',
+      },
+    },
+    retryLabel: {
+      control: 'text',
+      description: 'Custom retry button label',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'Try Again' },
+        category: 'Actions',
+      },
+    },
+    onRetry: {
+      description: 'Callback when retry button is clicked',
+      table: {
+        type: { summary: '() => void' },
+        category: 'Actions',
+      },
     },
   },
 };

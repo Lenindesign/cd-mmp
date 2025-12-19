@@ -8,7 +8,43 @@ const meta: Meta<typeof QuickSpecs> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Quick specifications grid for vehicle details with customizable spec values.',
+        component: `
+# QuickSpecs
+
+At-a-glance vehicle specifications displayed in a scannable grid format.
+
+---
+
+## Purpose
+
+Helps users quickly evaluate key vehicle attributes without scrolling to detailed specs.
+
+---
+
+## Specifications Shown
+
+| Spec | Description |
+|------|-------------|
+| **MPG** | Fuel economy (city/highway or MPGe for EVs) |
+| **Seating** | Passenger capacity |
+| **Powertrain** | Engine/motor type (Gas, Electric, Hybrid) |
+| **Drivetrain** | Drive configuration (FWD, RWD, AWD, 4WD) |
+| **Warranty** | Basic warranty coverage |
+
+---
+
+## Responsive Behavior
+
+- Desktop: 5-column grid
+- Tablet: 3-column grid  
+- Mobile: 2-column grid
+
+---
+
+## Data Requirements
+
+All spec values should be formatted strings. Missing values display a dash.
+        `,
       },
     },
   },
@@ -22,6 +58,7 @@ const meta: Meta<typeof QuickSpecs> = {
           summary: 'object',
           detail: '{ mpg: string; seating: string; powertrain: string; drivetrain: string; warranty: string; }'
         },
+        category: 'Data',
       },
     },
   },

@@ -9,7 +9,40 @@ const meta: Meta<typeof LoadingSpinner> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Loading indicators following the Car and Driver design system.',
+        component: `
+# LoadingSpinner
+
+Loading indicators for asynchronous operations and content placeholders.
+
+---
+
+## Components
+
+| Component | Use Case |
+|-----------|----------|
+| **LoadingSpinner** | Inline or centered spinning indicator |
+| **LoadingSkeleton** | Content placeholder with shimmer effect |
+| **LoadingCard** | Pre-built vehicle card skeleton |
+
+---
+
+## Usage Guidelines
+
+- Use spinners for short operations (< 3 seconds)
+- Use skeletons for content loading (lists, cards, pages)
+- Always provide accessible loading announcements
+- Consider progress indicators for long operations
+
+---
+
+## Sizes
+
+| Size | Use Case |
+|------|----------|
+| **Small** | Buttons, inline actions |
+| **Default** | General purpose |
+| **Large** | Full-page loading, modals |
+        `,
       },
     },
   },
@@ -18,13 +51,31 @@ const meta: Meta<typeof LoadingSpinner> = {
     size: {
       control: 'select',
       options: ['small', 'default', 'large'],
+      description: 'Size of the spinner',
+      table: {
+        type: { summary: 'small | default | large' },
+        defaultValue: { summary: 'default' },
+        category: 'Appearance',
+      },
     },
     variant: {
       control: 'select',
       options: ['primary', 'white', 'dark'],
+      description: 'Color variant for different backgrounds',
+      table: {
+        type: { summary: 'primary | white | dark' },
+        defaultValue: { summary: 'primary' },
+        category: 'Appearance',
+      },
     },
     centered: {
       control: 'boolean',
+      description: 'Center spinner in parent container',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+        category: 'Layout',
+      },
     },
   },
 };

@@ -4,17 +4,94 @@ import { Toast, ToastProvider, useToast } from './Toast';
 import { Button } from '../Button';
 
 const meta: Meta<typeof Toast> = {
-  title: 'Molecules/Toast',
+  title: 'Atoms/Toast',
   component: Toast,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Toast notification component for success, error, warning, and info messages.',
+        component: `
+# Toast
+
+Notification component for displaying feedback messages to users.
+
+---
+
+## Usage
+
+Use toasts to provide non-blocking feedback about an action or event. They appear temporarily and dismiss automatically or on user action.
+
+| Type | Use Case |
+|------|----------|
+| **Success** | Confirm completed actions (save, submit, delete) |
+| **Error** | Alert users to failures that need attention |
+| **Warning** | Warn about potential issues or expiring sessions |
+| **Info** | Provide helpful information or updates |
+
+---
+
+## Best Practices
+
+- Keep messages concise (under 100 characters)
+- Use action buttons sparingly (one per toast)
+- Don't stack more than 3 toasts at once
+- Auto-dismiss success/info toasts after 5 seconds
+- Require manual dismiss for error/warning toasts
+
+---
+
+## Accessibility
+
+- Toasts use \`role="alert"\` for screen readers
+- Focus is not stolen from current element
+- Dismiss button has proper aria-label
+        `,
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    type: {
+      control: 'select',
+      options: ['success', 'error', 'warning', 'info'],
+      description: 'Visual style and semantic meaning of the toast',
+      table: {
+        type: { summary: 'success | error | warning | info' },
+        defaultValue: { summary: 'info' },
+        category: 'Appearance',
+      },
+    },
+    title: {
+      control: 'text',
+      description: 'Optional bold heading for the toast',
+      table: {
+        type: { summary: 'string' },
+        category: 'Content',
+      },
+    },
+    message: {
+      control: 'text',
+      description: 'Main message content',
+      table: {
+        type: { summary: 'string' },
+        category: 'Content',
+      },
+    },
+    action: {
+      description: 'Optional action button configuration',
+      table: {
+        type: { summary: '{ label: string; onClick: () => void }' },
+        category: 'Actions',
+      },
+    },
+    onClose: {
+      description: 'Callback when toast is dismissed',
+      table: {
+        type: { summary: '() => void' },
+        category: 'Actions',
+      },
+    },
+  },
   args: {
     onClose: fn(),
   },
