@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import VehiclePage from './VehiclePage';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import '../../App.css';
 
 const meta: Meta<typeof VehiclePage> = {
   title: 'Pages/VehiclePage',
@@ -19,14 +22,20 @@ const meta: Meta<typeof VehiclePage> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Helper to create stories with different vehicles
+// Helper to create stories with different vehicles - wrapped in full app layout
 const createVehicleStory = (year: string, make: string, model: string): Story => ({
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={[`/${year}/${make}/${model}`]}>
-        <Routes>
-          <Route path="/:year/:make/:model" element={<Story />} />
-        </Routes>
+        <div className="app">
+          <Header />
+          <main id="main-content">
+            <Routes>
+              <Route path="/:year/:make/:model" element={<Story />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       </MemoryRouter>
     ),
   ],
