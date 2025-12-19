@@ -218,6 +218,47 @@
   transform: scale(1.03);
 }
 
+/* Accolades Badges - Upper Right Corner of Image */
+.comparison__card-accolades {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  display: flex;
+  gap: var(--spacing-1);
+  z-index: 2;
+}
+
+.comparison__card-accolade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-white);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.comparison__card-accolade:hover {
+  transform: scale(1.1);
+}
+
+.comparison__card-accolade--ec svg {
+  display: block;
+  width: 20px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.comparison__card-accolade--10best img {
+  display: block;
+  width: 18px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 /* Price Row */
 .comparison__card-price-row {
   display: flex;
@@ -270,24 +311,6 @@
 .comparison__card-shop-btn:hover {
   background: var(--color-gray-100);
   border-color: var(--color-gray-600);
-}
-
-/* Badge (Editor's Choice) */
-.comparison__card-badge {
-  position: absolute;
-  top: var(--spacing-3);
-  left: var(--spacing-3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-.comparison__card-badge-icon {
-  display: block;
-  width: 44px;
-  height: 40px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* MPG Section */
