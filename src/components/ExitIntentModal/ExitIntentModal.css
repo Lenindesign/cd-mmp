@@ -38,7 +38,7 @@
   width: 100%;
   max-width: 780px;
   max-height: 90vh;
-  background: var(--color-white);
+  background: var(--color-blue-cobalt-dark);
   border-radius: 20px;
   box-shadow: 
     0 0 0 1px rgba(0, 0, 0, 0.04),
@@ -132,6 +132,25 @@
   height: 300px;
   background: radial-gradient(circle, rgba(100, 180, 255, 0.15) 0%, transparent 70%);
   pointer-events: none;
+  z-index: 1;
+}
+
+.exit-modal__visual::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  transform: translate(-50%, -50%);
+  background-image: var(--vehicle-image, url('https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccd79afa860008125aac/2024-kia-telluride-12.jpg'));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.08;
+  filter: grayscale(100%) contrast(1.2);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .exit-modal__visual-content {
@@ -146,7 +165,7 @@
   color: var(--color-white);
   line-height: 1.15;
   letter-spacing: -0.02em;
-  margin: 0 0 16px 0;
+  margin: 0 0 8px 0;
 }
 
 .exit-modal__visual-title span {
@@ -162,7 +181,7 @@
   font-size: 15px;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
-  margin: 0 0 32px 0;
+  margin: 0 0 24px 0;
   max-width: 280px;
 }
 
@@ -177,7 +196,7 @@
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
   background: var(--color-white);
   padding: 10px 20px 10px 10px;
   border-radius: 100px;
@@ -441,6 +460,7 @@
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 16px;
+  text-align: center;
 }
 
 .exit-modal__logo svg {
@@ -484,6 +504,13 @@
   background: var(--color-white);
   overflow-y: auto;
   max-height: 90vh;
+  border-radius: 0 20px 20px 0;
+}
+
+@media (max-width: 800px) {
+  .exit-modal__form-panel {
+    border-radius: 0 0 20px 20px;
+  }
 }
 
 .exit-modal__form-content {

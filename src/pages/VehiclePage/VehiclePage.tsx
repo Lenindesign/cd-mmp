@@ -251,6 +251,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
       {/* Exit Intent Modal */}
       <ExitIntentModal 
         vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        vehicleImage={vehicle.image}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />

@@ -302,6 +302,7 @@ const VehiclePageVariantC = ({ variant }: VehiclePageVariantCProps) => {
       {/* Exit Intent Modal */}
       <ExitIntentModal 
         vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        vehicleImage={vehicle.image}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />

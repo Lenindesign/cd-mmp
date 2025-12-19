@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
-import { searchVehicles, type Vehicle } from '../../services/vehicleService';
+import { searchVehicles, getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { Button } from '../Button';
 import ExitIntentModal from '../ExitIntentModal';
 import './Header.css';
 
 const Header = () => {
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Vehicle[]>([]);
@@ -19,6 +20,18 @@ const Header = () => {
   
   // Fetch all ratings from Supabase in production
   const { getRating: getSupabaseRating } = useSupabaseRatings();
+  
+  // Extract current vehicle from URL if on a vehicle page
+  const currentVehicle = useMemo(() => {
+    // Match URL pattern: /:year/:make/:model or /:year/:make/:model/variant
+    const match = location.pathname.match(/^\/(\d{4})\/([^/]+)\/([^/]+)/);
+    if (match) {
+      const [, year, make, model] = match;
+      const slug = `${year}/${make}/${model}`;
+      return getVehicleBySlug(slug);
+    }
+    return null;
+  }, [location.pathname]);
   
   // Helper to get vehicle rating (uses Supabase in production)
   const getVehicleRating = (vehicle: Vehicle): number => {
@@ -234,6 +247,8 @@ const Header = () => {
       <ExitIntentModal 
         isOpen={isSubscribeModalOpen}
         onClose={() => setIsSubscribeModalOpen(false)}
+        vehicleName={currentVehicle ? `${currentVehicle.year} ${currentVehicle.make} ${currentVehicle.model}` : undefined}
+        vehicleImage={currentVehicle?.image}
       />
     </header>
   );
