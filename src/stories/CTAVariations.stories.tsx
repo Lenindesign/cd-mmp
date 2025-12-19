@@ -91,15 +91,6 @@ SEO has advised that adding the Model name to our Shopping CTAs will help our pa
 export default meta;
 type Story = StoryObj;
 
-// Sample vehicle data
-const vehicles = {
-  trax: { model: 'Trax', make: 'Chevrolet' },
-  accord: { model: 'Accord', make: 'Honda' },
-  grandCherokee: { model: 'Grand Cherokee', make: 'Jeep' },
-  model3: { model: 'Model 3', make: 'Tesla' },
-  cx5: { model: 'CX-5', make: 'Mazda' },
-};
-
 // ============================================
 // HERO CTA VARIATIONS
 // ============================================
