@@ -143,7 +143,7 @@
   transform: scale(1.1);
 }
 
-.vehicle-card__accolade--ec svg {
+.vehicle-card__accolade--ec img {
   display: block;
   width: 20px;
   height: 18px;
