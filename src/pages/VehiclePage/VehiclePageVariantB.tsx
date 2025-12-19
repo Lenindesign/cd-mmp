@@ -269,6 +269,7 @@ const VehiclePageVariantB = ({ variant }: VehiclePageVariantBProps) => {
               bodyStyle={vehicle.bodyStyle}
               currentVehicleId={vehicle.id}
               maxPrice={vehicle.priceMax + 15000}
+              showScore={true}
             />
             <MarketSpeed 
               vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} 
