@@ -19,7 +19,7 @@ const theme = create({
   appBorderRadius: 0,
   
   // Typography
-  fontBase: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif',
+  fontBase: '"Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
   fontCode: 'SF Mono, SFMono-Regular, ui-monospace, Menlo, monospace',
   
   // Text colors
