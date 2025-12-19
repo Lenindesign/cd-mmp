@@ -15,7 +15,7 @@ const ExitIntentModal = ({
   vehicleImage,
   isOpen = false,
   onClose,
-  animationStyle = 'default'
+  animationStyle = 'elegant'
 }: ExitIntentModalProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
