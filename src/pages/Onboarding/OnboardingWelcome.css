@@ -197,7 +197,7 @@
 .membership-card__header {
   position: absolute;
   top: 12%;
-  left: 10%;
+  left: 8%;
   display: flex;
   align-items: center;
   gap: 4%;
@@ -277,8 +277,8 @@
 .membership-card__details {
   position: absolute;
   bottom: 14%;
-  left: 10%;
-  right: 10%;
+  left: 8%;
+  right: 8%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
