@@ -18,7 +18,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline', 'ghost', 'danger'],
+      options: ['primary', 'secondary', 'outline', 'ghost', 'danger', 'success'],
     },
     size: {
       control: 'select',
@@ -79,6 +79,20 @@ export const Danger: Story = {
   args: {
     children: 'Delete Item',
     variant: 'danger',
+  },
+};
+
+export const Success: Story = {
+  args: {
+    children: 'Get Your Trade-In Value',
+    variant: 'success',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Green success variant used for Trade-In CTA buttons.',
+      },
+    },
   },
 };
 
@@ -180,6 +194,7 @@ export const AllVariants: Story = {
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="danger">Danger</Button>
+      <Button variant="success">Success (Trade-In)</Button>
     </div>
   ),
 };

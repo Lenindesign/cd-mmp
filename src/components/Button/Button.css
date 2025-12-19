@@ -130,6 +130,23 @@
   transform: translateY(0);
 }
 
+/* Success - Green (Trade-In CTA) */
+.btn--success {
+  background: #2e7d32;
+  color: var(--color-white);
+}
+
+.btn--success:hover:not(:disabled) {
+  background: #1b5e20;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--success:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
 /* ============================================
    STATES
    ============================================ */

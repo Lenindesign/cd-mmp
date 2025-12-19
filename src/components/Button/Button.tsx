@@ -3,7 +3,7 @@ import './Button.css';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Button style variant */
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
   /** Button size */
   size?: 'small' | 'medium' | 'large';
   /** Full width button */

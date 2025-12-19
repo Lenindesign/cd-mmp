@@ -180,7 +180,7 @@ export const HeroCTAComparison: Story = {
         <div className="cta-buttons">
           <Button variant="primary" size="small">SHOP NEW</Button>
           <Button variant="outline" size="small">SHOP USED</Button>
-          <Button variant="outline" size="small">GET YOUR TRADE-IN VALUE</Button>
+          <Button variant="success" size="small">GET YOUR TRADE-IN VALUE</Button>
         </div>
       </div>
 
@@ -192,7 +192,7 @@ export const HeroCTAComparison: Story = {
         <div className="cta-buttons">
           <Button variant="primary" size="small">SHOP NEW TRAX</Button>
           <Button variant="outline" size="small">SHOP USED TRAX</Button>
-          <Button variant="outline" size="small">GET YOUR TRADE-IN VALUE</Button>
+          <Button variant="success" size="small">GET YOUR TRADE-IN VALUE</Button>
         </div>
       </div>
 
@@ -204,7 +204,7 @@ export const HeroCTAComparison: Story = {
         <div className="cta-buttons">
           <Button variant="primary" size="small">SHOP THE TRAX</Button>
           <Button variant="outline" size="small">SHOP USED TRAX</Button>
-          <Button variant="outline" size="small">GET YOUR TRADE-IN VALUE</Button>
+          <Button variant="success" size="small">GET YOUR TRADE-IN VALUE</Button>
         </div>
       </div>
     </div>
@@ -526,7 +526,7 @@ export const MobileResponsive: Story = {
         <p>MSRP $20,400 - $24,400</p>
         <Button variant="primary" size="medium" fullWidth>SHOP NEW TRAX</Button>
         <Button variant="outline" size="medium" fullWidth>SHOP USED TRAX</Button>
-        <Button variant="outline" size="medium" fullWidth>GET YOUR TRADE-IN VALUE</Button>
+        <Button variant="success" size="medium" fullWidth>GET YOUR TRADE-IN VALUE</Button>
       </div>
 
       <div className="mobile-hero-cta">
@@ -534,7 +534,7 @@ export const MobileResponsive: Story = {
         <p>MSRP $42,000 - $68,000</p>
         <Button variant="primary" size="medium" fullWidth>SHOP NEW GRAND CHEROKEE</Button>
         <Button variant="outline" size="medium" fullWidth>SHOP USED GRAND CHEROKEE</Button>
-        <Button variant="outline" size="medium" fullWidth>GET YOUR TRADE-IN VALUE</Button>
+        <Button variant="success" size="medium" fullWidth>GET YOUR TRADE-IN VALUE</Button>
       </div>
     </div>
   ),
