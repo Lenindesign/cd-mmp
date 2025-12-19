@@ -207,7 +207,7 @@
   flex-shrink: 0;
   width: 19%; /* ~100px at 520px = 19.2% */
   aspect-ratio: 1;
-  background: var(--color-white);
+  background: transparent;
   border-radius: 50%;
   display: flex;
   align-items: center;

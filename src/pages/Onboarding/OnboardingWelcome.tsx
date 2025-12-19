@@ -85,6 +85,7 @@ const CandDBadge = () => (
     alignItems: 'center',
     justifyContent: 'center',
     padding: '16%',
+    boxShadow: '0 0 0 1px #000', // Prevents white pixel artifacts on circle edge
   }}>
     <img 
       src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/logos/logo.68b8e69.svg?primary=%23fff" 
