@@ -8,8 +8,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  font-family: var(--font-body);
-  font-weight: var(--font-weight-extrabold);
+  font-family: 'Inter', var(--font-body);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border: none;
