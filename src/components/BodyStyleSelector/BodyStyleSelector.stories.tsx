@@ -33,7 +33,7 @@ A carousel component for selecting vehicle body styles. Features smooth scrollin
       description: 'Allow multiple selections',
       table: {
         category: 'Behavior',
-        defaultValue: { summary: false },
+        defaultValue: { summary: 'false' },
       },
     },
   },
