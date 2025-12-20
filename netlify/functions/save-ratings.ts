@@ -24,6 +24,8 @@ interface RatingChange {
   category: string;
   newRating: number;
   originalRating: number;
+  make: string;
+  model: string;
 }
 
 export const handler: Handler = async (event) => {
@@ -85,7 +87,7 @@ export const handler: Handler = async (event) => {
     const results = { success: [] as any[], errors: [] as any[] };
 
     for (const change of changes) {
-      const { id, category, newRating, originalRating } = change;
+      const { id, category, newRating, originalRating, make, model } = change;
 
       try {
         // First, try to select existing record
@@ -110,12 +112,14 @@ export const handler: Handler = async (event) => {
             .eq('category', category);
           error = result.error;
         } else {
-          // Insert new record
+          // Insert new record - include make and model for new entries
           const result = await client
             .from('vehicle_ratings')
             .insert({
               id: id,
               category: category,
+              make: make,
+              model: model,
               staff_rating: newRating,
               updated_at: new Date().toISOString(),
             });

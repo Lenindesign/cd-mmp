@@ -15,6 +15,8 @@ interface EditedRating {
   category: Category;
   newRating: number;
   originalRating: number;
+  make: string;
+  model: string;
 }
 
 // Check if we're in production (not localhost)
@@ -265,6 +267,8 @@ const VehicleRatingEditor = () => {
         category: vehicleCategory,
         newRating: rating,
         originalRating: baseRating,
+        make: vehicle.make,
+        model: vehicle.model,
       }));
     }
   };
