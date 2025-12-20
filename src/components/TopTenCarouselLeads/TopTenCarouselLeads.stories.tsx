@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from 'storybook/test';
-import { MemoryRouter } from 'react-router-dom';
 import TopTenCarouselLeads from './TopTenCarouselLeads';
 
 const meta: Meta<typeof TopTenCarouselLeads> = {
@@ -176,11 +175,9 @@ A high-impact carousel showcasing top-ranked vehicles with integrated lead gener
   },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <div style={{ padding: '20px', background: '#f5f5f5' }}>
-          <Story />
-        </div>
-      </MemoryRouter>
+      <div style={{ padding: '20px', background: '#f5f5f5' }}>
+        <Story />
+      </div>
     ),
   ],
 };

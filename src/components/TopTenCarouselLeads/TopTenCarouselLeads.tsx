@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight, Trophy } from 'lucide-react';
-import { getAllVehicles } from '../../services/vehicleService';
+import { getAllVehicles, getAvailableYears, getYearDetails } from '../../services/vehicleService';
 import { getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { VehicleCard } from '../VehicleCard';
@@ -18,6 +18,12 @@ interface TopTenCarouselLeadsProps {
   onViewRankings?: () => void;
 }
 
+interface YearDetail {
+  year: number;
+  price: string;
+  rating: number;
+}
+
 interface FilteredRankedVehicle {
   id: string;
   rank: number;
@@ -30,8 +36,32 @@ interface FilteredRankedVehicle {
   badge?: 'best-value' | 'editors-choice';
   editorsChoice?: boolean;
   tenBest?: boolean;
+  epaMpg?: number;
+  cdSays?: string;
+  bodyStyle?: string;
+  availableYears?: number[];
+  yearDetails?: YearDetail[];
+  modelName?: string;
 }
 
+
+// Helper to calculate combined MPG from city/highway string (e.g., "25/31" -> 28)
+const getCombinedMpg = (mpg?: string): number | undefined => {
+  if (!mpg) return undefined;
+  const parts = mpg.split('/');
+  if (parts.length !== 2) return undefined;
+  const city = parseInt(parts[0], 10);
+  const highway = parseInt(parts[1], 10);
+  if (isNaN(city) || isNaN(highway)) return undefined;
+  // EPA combined formula: 0.55 * city + 0.45 * highway (rounded)
+  return Math.round(0.55 * city + 0.45 * highway);
+};
+
+// Helper to generate C/D Says description
+const generateCdSays = (year: string, make: string, model: string, bodyStyle: string): string => {
+  const bodyStyleLower = bodyStyle.toLowerCase();
+  return `Read our ${year} ${make} ${model} review for information on ratings, pricing, specs, and features, and see how this ${bodyStyleLower} performed in our testing.`;
+};
 
 const TopTenCarouselLeads = ({
   title,
@@ -99,6 +129,15 @@ const TopTenCarouselLeads = ({
         badge = 'best-value';
       }
       
+      // Get available years for this vehicle (convert string years to numbers)
+      const yearsForVehicle = getAvailableYears(vehicle.make, vehicle.model)
+        .map(y => parseInt(y, 10))
+        .filter(y => !isNaN(y))
+        .sort((a, b) => b - a); // Sort descending (newest first)
+      
+      // Get year details (price and rating for each year)
+      const yearDetailsForVehicle = getYearDetails(vehicle.make, vehicle.model);
+
       return {
         id: vehicle.id,
         rank: index + 1,
@@ -111,6 +150,12 @@ const TopTenCarouselLeads = ({
         badge,
         editorsChoice: vehicle.editorsChoice,
         tenBest: vehicle.tenBest,
+        epaMpg: getCombinedMpg(vehicle.mpg),
+        cdSays: generateCdSays(vehicle.year, vehicle.make, vehicle.model, vehicle.bodyStyle),
+        bodyStyle: vehicle.bodyStyle,
+        availableYears: yearsForVehicle.length > 0 ? yearsForVehicle : undefined,
+        yearDetails: yearDetailsForVehicle.length > 0 ? yearDetailsForVehicle : undefined,
+        modelName: vehicle.model,
       };
     });
   }, [bodyStyle, make, lifestyle, maxPrice, currentVehicleId, getSupabaseRating]);
@@ -229,6 +274,11 @@ const TopTenCarouselLeads = ({
                 isCurrentVehicle={vehicle.isCurrentVehicle}
                 showShopButton={true}
                 onShopClick={(e) => handleShopUsed(e, vehicle)}
+                epaMpg={vehicle.epaMpg}
+                cdSays={vehicle.cdSays}
+                availableYears={vehicle.availableYears}
+                yearDetails={vehicle.yearDetails}
+                modelName={vehicle.modelName}
               />
             ))}
 

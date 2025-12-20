@@ -10,6 +10,7 @@ const meta: Meta<typeof VehiclePage> = {
   component: VehiclePage,
   parameters: {
     layout: 'fullscreen',
+    router: { skip: true }, // This page provides its own MemoryRouter with initialEntries
     docs: {
       description: {
         component: 'Vehicle detail page with hero, specs, pricing, comparisons, and marketplace integration.',

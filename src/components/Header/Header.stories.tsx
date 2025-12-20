@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import Header from './Header';
 
 const meta: Meta<typeof Header> = {
@@ -47,13 +46,6 @@ Global navigation header that appears on every page of the application.
     },
   },
   tags: ['autodocs'],
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

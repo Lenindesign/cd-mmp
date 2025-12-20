@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import Comparison from './Comparison';
 
 const meta: Meta<typeof Comparison> = {
@@ -109,13 +108,6 @@ Side-by-side comparison showing how the current vehicle stacks up against compet
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

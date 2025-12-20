@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import VehicleRanking from './VehicleRanking';
 
 const meta: Meta<typeof VehicleRanking> = {
@@ -190,13 +189,6 @@ Shows where the current vehicle ranks among competitors in its segment. This com
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

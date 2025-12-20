@@ -17,6 +17,7 @@ const meta: Meta = {
   title: 'Pages/Onboarding',
   parameters: {
     layout: 'fullscreen',
+    router: { skip: true }, // This page provides its own MemoryRouter with initialEntries
     docs: {
       description: {
         component: 'The Car and Driver onboarding flow guides new users through account setup, preferences, and personalization.',

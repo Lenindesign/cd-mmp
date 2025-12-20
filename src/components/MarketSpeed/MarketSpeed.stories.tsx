@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import MarketSpeed from './MarketSpeed';
 
 const meta: Meta<typeof MarketSpeed> = {
@@ -130,13 +129,6 @@ Shows how quickly vehicles are selling in the market. Creates urgency for hot ve
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

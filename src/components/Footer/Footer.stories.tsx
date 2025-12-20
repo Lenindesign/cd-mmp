@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import Footer from './Footer';
 
 const meta: Meta<typeof Footer> = {
@@ -46,13 +45,6 @@ Footer links help with internal linking and site navigation for search engines.
     },
   },
   tags: ['autodocs'],
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

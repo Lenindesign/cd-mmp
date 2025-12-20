@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import '../index.css';
 
 const meta: Meta = {
@@ -13,15 +12,6 @@ const meta: Meta = {
     },
   },
   tags: ['autodocs'],
-  decorators: [
-    (Story) => (
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path="*" element={<Story />} />
-        </Routes>
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

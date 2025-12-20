@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import ForSaleNearYou from './ForSaleNearYou';
 
 const meta: Meta<typeof ForSaleNearYou> = {
@@ -14,13 +13,6 @@ const meta: Meta<typeof ForSaleNearYou> = {
     },
   },
   tags: ['autodocs'],
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

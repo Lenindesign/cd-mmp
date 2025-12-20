@@ -473,7 +473,7 @@
 
 .hero__msrp-price {
   font-family: var(--font-heading);
-  font-size: clamp(22px, 6vw, 36px);
+  font-size: clamp(20px, 5vw, 32px);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   letter-spacing: -0.02em;
@@ -605,7 +605,7 @@
 
 .hero__accolades-badges {
   display: flex;
-  gap: var(--spacing-6);
+  gap: var(--spacing-4);
   justify-content: flex-end;
   align-items: flex-start;
 }

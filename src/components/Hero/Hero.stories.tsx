@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import Hero from './Hero';
 
 const meta: Meta<typeof Hero> = {
@@ -128,13 +127,6 @@ These badges increase user trust and can improve conversion rates.
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;
@@ -209,6 +201,42 @@ export const WithBothAwards: Story = {
   },
 };
 
+export const WithAllAwards: Story = {
+  args: {
+    vehicle: {
+      ...chevroletTrax,
+      editorsChoice: true,
+      tenBest: true,
+      evOfTheYear: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Hero displaying all three accolades: Editor\'s Choice, EV of the Year, and 10Best.',
+      },
+    },
+  },
+};
+
+export const WithEVOfTheYear: Story = {
+  args: {
+    vehicle: {
+      ...chevroletTrax,
+      editorsChoice: false,
+      tenBest: false,
+      evOfTheYear: true,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Hero displaying only the EV of the Year badge.',
+      },
+    },
+  },
+};
+
 export const NoAwards: Story = {
   args: {
     vehicle: {
@@ -262,7 +290,142 @@ export const WithAnimatedButtons: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Hero with animated shop buttons that fade and slide in on page load. Use for enhanced user engagement.',
+        story: `
+## Animated Shop Buttons
+
+Hero with animated shop buttons that fade and slide in when scrolled into view. This creates a more engaging user experience and draws attention to the CTAs.
+
+---
+
+### How It Works
+
+The animation uses the **Intersection Observer API** to detect when buttons enter the viewport, then triggers a staggered CSS animation.
+
+---
+
+### Implementation Steps
+
+#### 1. Add State and Refs
+
+\`\`\`tsx
+const [buttonsInView, setButtonsInView] = useState(false);
+const buttonsRef = useRef<HTMLDivElement>(null);
+\`\`\`
+
+#### 2. Set Up Intersection Observer
+
+\`\`\`tsx
+useEffect(() => {
+  if (!animateButtons || !buttonsRef.current) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setButtonsInView(true);
+        }
+      });
+    },
+    { threshold: 0.5 } // Trigger when 50% visible
+  );
+
+  observer.observe(buttonsRef.current);
+  return () => observer.disconnect();
+}, [animateButtons]);
+\`\`\`
+
+#### 3. Apply Conditional Classes
+
+\`\`\`tsx
+<div 
+  ref={buttonsRef}
+  className={\`hero__shop-buttons \${
+    animateButtons 
+      ? (buttonsInView ? 'hero__shop-buttons--animated' : 'hero__shop-buttons--hidden') 
+      : ''
+  }\`}
+>
+  <Button className={\`hero__shop-btn \${animateButtons && buttonsInView ? 'hero__shop-btn--animate-1' : ''}\`}>
+    SHOP NEW
+  </Button>
+  <Button className={\`hero__shop-btn \${animateButtons && buttonsInView ? 'hero__shop-btn--animate-2' : ''}\`}>
+    SHOP USED
+  </Button>
+  <Button className={\`hero__shop-btn \${animateButtons && buttonsInView ? 'hero__shop-btn--animate-3' : ''}\`}>
+    GET YOUR TRADE-IN VALUE
+  </Button>
+</div>
+\`\`\`
+
+#### 4. CSS Animation Keyframes
+
+\`\`\`css
+/* Button Load Animation */
+@keyframes buttonFadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide buttons until in view when animation is enabled */
+.hero__shop-buttons--hidden .hero__shop-btn {
+  opacity: 0;
+}
+
+.hero__shop-buttons--animated .hero__shop-btn {
+  opacity: 0;
+  animation: buttonFadeSlideIn 0.5s ease-out forwards;
+}
+
+/* Staggered animation delays */
+.hero__shop-btn--animate-1 {
+  animation-delay: 0.3s !important;
+}
+
+.hero__shop-btn--animate-2 {
+  animation-delay: 0.45s !important;
+}
+
+.hero__shop-btn--animate-3 {
+  animation-delay: 0.6s !important;
+}
+\`\`\`
+
+---
+
+### Animation Properties
+
+| Property | Value | Purpose |
+|----------|-------|---------|
+| Duration | 0.5s | Quick but noticeable |
+| Easing | ease-out | Natural deceleration |
+| Transform | translateY(10px) → 0 | Subtle slide up effect |
+| Opacity | 0 → 1 | Fade in |
+| Stagger | 150ms between buttons | Sequential reveal |
+
+---
+
+### When to Use
+
+- ✅ Landing pages where CTAs need emphasis
+- ✅ A/B testing engagement improvements
+- ✅ First-time visitor experiences
+- ❌ Returning users who expect immediate interaction
+- ❌ Performance-critical mobile experiences
+
+---
+
+### Accessibility Considerations
+
+- Animation respects \`prefers-reduced-motion\` media query
+- Buttons remain functional even if animation fails
+- Focus states work independently of animation state
+        `,
       },
     },
   },

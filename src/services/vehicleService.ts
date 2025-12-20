@@ -154,6 +154,29 @@ export const getAvailableYears = (make: string, model: string): string[] => {
   return [...new Set(years)].sort((a, b) => parseInt(b) - parseInt(a));
 };
 
+// Year detail interface for expanded years view
+export interface YearDetail {
+  year: number;
+  price: string;
+  rating: number;
+}
+
+// Get year details (price and rating) for a specific make and model
+export const getYearDetails = (make: string, model: string): YearDetail[] => {
+  const vehicles = vehicleDatabase
+    .filter(v => 
+      v.make.toLowerCase() === make.toLowerCase() &&
+      v.model.toLowerCase() === model.toLowerCase()
+    )
+    .sort((a, b) => parseInt(b.year) - parseInt(a.year)); // Sort by year descending
+  
+  return vehicles.map(v => ({
+    year: parseInt(v.year),
+    price: `$${v.priceMin.toLocaleString()}`,
+    rating: v.staffRating,
+  }));
+};
+
 // Get price range stats
 export const getPriceRangeStats = (): { min: number; max: number; average: number } => {
   const prices = vehicleDatabase.map(v => v.priceMin);

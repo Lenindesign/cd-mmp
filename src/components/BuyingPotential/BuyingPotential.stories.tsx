@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import BuyingPotential from './BuyingPotential';
 
 const meta: Meta<typeof BuyingPotential> = {
@@ -113,13 +112,6 @@ A personalized match score showing how well a vehicle fits the user's stated pre
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;

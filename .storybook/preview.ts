@@ -1,7 +1,18 @@
 import type { Preview } from '@storybook/react-vite'
+import { MemoryRouter } from 'react-router-dom'
+import React from 'react'
 import '../src/index.css'
 
 const preview: Preview = {
+  decorators: [
+    (Story, context) => {
+      // Skip global router if story provides its own (for pages with custom routes)
+      if (context.parameters.router?.skip) {
+        return React.createElement(Story);
+      }
+      return React.createElement(MemoryRouter, null, React.createElement(Story));
+    },
+  ],
   parameters: {
     // Story organization and sorting
     options: {

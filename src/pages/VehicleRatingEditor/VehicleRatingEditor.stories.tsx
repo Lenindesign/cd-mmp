@@ -7,6 +7,7 @@ const meta = {
   component: VehicleRatingEditor,
   parameters: {
     layout: 'fullscreen',
+    router: { skip: true }, // This page provides its own MemoryRouter
     viewport: {
       defaultViewport: 'desktop1440',
     },

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { VehicleCard } from '../components/VehicleCard';
 import '../index.css';
@@ -79,13 +78,6 @@ SEO has advised that adding the Model name to our Shopping CTAs will help our pa
     },
   },
   tags: ['autodocs'],
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export default meta;
