@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import type { CTAVariant } from './VehicleCard';
 import { fn } from 'storybook/test';
 import { VehicleCard } from './VehicleCard';
 
@@ -25,11 +26,24 @@ import { VehicleCard } from './VehicleCard';
  * - **outline** - Blue outlined button (secondary action)
  * - **secondary** - Gray button (tertiary action)
  * - **success** - Green button (positive action like trade-in)
+ * - **success-outline** - Green outlined button
  * - **danger** - Red button (destructive action)
  */
-const meta: Meta<typeof VehicleCard> = {
+
+// Custom args interface for the CTA playground
+interface CTAPlaygroundArgs {
+  name: string;
+  price: string;
+  rating: number;
+  cta1Text: string;
+  cta1Variant: CTAVariant;
+  showCta2: boolean;
+  cta2Text: string;
+  cta2Variant: CTAVariant;
+}
+
+const meta: Meta<CTAPlaygroundArgs> = {
   title: 'Molecules/VehicleCard/CTA Playground',
-  component: VehicleCard,
   parameters: {
     layout: 'centered',
     docs: {
@@ -84,7 +98,6 @@ const meta: Meta<typeof VehicleCard> = {
         category: '🎯 CTA Configuration',
         defaultValue: { summary: 'GET TRADE-IN VALUE' },
       },
-      if: { arg: 'showCta2' },
     },
     cta2Variant: {
       name: 'CTA 2 Variant',
@@ -95,36 +108,8 @@ const meta: Meta<typeof VehicleCard> = {
         category: '🎯 CTA Configuration',
         defaultValue: { summary: 'success-outline' },
       },
-      if: { arg: 'showCta2' },
     },
-    // Hide other controls to keep focus on CTAs
-    id: { table: { disable: true } },
-    slug: { table: { disable: true } },
-    image: { table: { disable: true } },
-    bodyStyle: { table: { disable: true } },
-    priceLabel: { table: { disable: true } },
-    rank: { table: { disable: true } },
-    badge: { table: { disable: true } },
-    editorsChoice: { table: { disable: true } },
-    tenBest: { table: { disable: true } },
-    evOfTheYear: { table: { disable: true } },
-    year: { table: { disable: true } },
-    mileage: { table: { disable: true } },
-    dealerName: { table: { disable: true } },
-    distance: { table: { disable: true } },
-    trim: { table: { disable: true } },
-    showShopButton: { table: { disable: true } },
-    shopButtonText: { table: { disable: true } },
-    shopButtonVariant: { table: { disable: true } },
-    onShopClick: { table: { disable: true } },
-    ctas: { table: { disable: true } },
-    isCurrentVehicle: { table: { disable: true } },
-    epaMpg: { table: { disable: true } },
-    cdSays: { table: { disable: true } },
-    availableYears: { table: { disable: true } },
-    yearDetails: { table: { disable: true } },
-    modelName: { table: { disable: true } },
-    // Show these for context
+    // Vehicle info controls
     name: {
       name: 'Vehicle Name',
       control: 'text',
@@ -150,19 +135,6 @@ const meta: Meta<typeof VehicleCard> = {
 };
 
 export default meta;
-
-// Custom story type with our CTA args
-interface CTAPlaygroundArgs {
-  name: string;
-  price: string;
-  rating: number;
-  cta1Text: string;
-  cta1Variant: 'primary' | 'outline' | 'secondary' | 'success' | 'success-outline' | 'danger';
-  showCta2: boolean;
-  cta2Text: string;
-  cta2Variant: 'primary' | 'outline' | 'secondary' | 'success' | 'success-outline' | 'danger';
-}
-
 type Story = StoryObj<CTAPlaygroundArgs>;
 
 export const Playground: Story = {
@@ -255,7 +227,7 @@ export const SingleCTA: Story = {
   render: (args) => {
     const ctas = [
       { text: args.cta1Text, variant: args.cta1Variant, onClick: fn() },
-      ...(args.showCta2 ? [{ text: args.cta2Text, variant: args.cta2Variant, onClick: fn() }] : []),
+      ...(args.showCta2 && args.cta2Text ? [{ text: args.cta2Text, variant: args.cta2Variant, onClick: fn() }] : []),
     ];
 
     return (
@@ -275,4 +247,3 @@ export const SingleCTA: Story = {
     );
   },
 };
-
