@@ -48,6 +48,76 @@
 .header__logo-svg {
   width: 158px;
   height: 30px;
+  overflow: visible;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.header__logo:hover .header__logo-svg {
+  transform: scale(1.05);
+}
+
+/* All paths start hidden */
+.header__logo-svg path {
+  opacity: 0;
+}
+
+/* Individual letter animation - scale in with smooth landing */
+.header__logo-letter {
+  transform: scale(0.3);
+  transform-origin: center center;
+  animation: headerLetterScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Red and blue bars */
+.header__logo-bar {
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: headerBarReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Animation delays by child position in SVG:
+   1: C, 2: A, 3: R, 4: Red bar, 5: Blue bar, 6: AND, 7: D, 8: R, 9: I, 10: V, 11: E, 12: R */
+.header__logo-svg path:nth-child(1) { animation-delay: 0.05s; }  /* C */
+.header__logo-svg path:nth-child(2) { animation-delay: 0.1s; }   /* A */
+.header__logo-svg path:nth-child(3) { animation-delay: 0.15s; }  /* R */
+.header__logo-svg path:nth-child(4) { animation-delay: 0.2s; }   /* Red bar */
+.header__logo-svg path:nth-child(5) { animation-delay: 0.25s; }  /* Blue bar */
+.header__logo-svg path:nth-child(6) { animation-delay: 0.3s; }   /* AND */
+.header__logo-svg path:nth-child(7) { animation-delay: 0.35s; }  /* D */
+.header__logo-svg path:nth-child(8) { animation-delay: 0.4s; }   /* R */
+.header__logo-svg path:nth-child(9) { animation-delay: 0.45s; }  /* I */
+.header__logo-svg path:nth-child(10) { animation-delay: 0.5s; }  /* V */
+.header__logo-svg path:nth-child(11) { animation-delay: 0.55s; } /* E */
+.header__logo-svg path:nth-child(12) { animation-delay: 0.6s; }  /* R */
+
+@keyframes headerLetterScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes headerBarReveal {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scaleX(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
 
 /* Search Bar */

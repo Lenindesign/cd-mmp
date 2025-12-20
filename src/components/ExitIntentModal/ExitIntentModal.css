@@ -470,12 +470,80 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 16px;
   text-align: center;
+  position: relative;
 }
 
 .exit-modal__logo svg {
   width: 160px;
   height: auto;
+  overflow: visible;
 }
+
+/* All paths start hidden */
+.exit-modal__logo svg path {
+  opacity: 0;
+}
+
+/* Individual letter animation - scale in with smooth landing */
+.exit-modal__logo-letter {
+  transform: scale(0.3);
+  transform-origin: center center;
+  animation: exitModalLetterScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Bars animation */
+.exit-modal__logo-bar {
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: exitModalBarReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Animation delays - starts after other modal content (1.8s base delay)
+   Using nth-of-type to count only path elements (ignores title/desc)
+   1: C, 2: A, 3: R, 4: Top bar, 5: Bottom bar, 6: AND, 7: D, 8: R, 9: I, 10: V, 11: E, 12: R */
+.exit-modal__logo svg path:nth-of-type(1) { animation-delay: 1.8s; }   /* C */
+.exit-modal__logo svg path:nth-of-type(2) { animation-delay: 1.85s; }  /* A */
+.exit-modal__logo svg path:nth-of-type(3) { animation-delay: 1.9s; }   /* R */
+.exit-modal__logo svg path:nth-of-type(4) { animation-delay: 1.95s; }  /* Top bar */
+.exit-modal__logo svg path:nth-of-type(5) { animation-delay: 2.0s; }   /* Bottom bar */
+.exit-modal__logo svg path:nth-of-type(6) { animation-delay: 2.05s; }  /* AND */
+.exit-modal__logo svg path:nth-of-type(7) { animation-delay: 2.1s; }   /* D */
+.exit-modal__logo svg path:nth-of-type(8) { animation-delay: 2.15s; }  /* R */
+.exit-modal__logo svg path:nth-of-type(9) { animation-delay: 2.2s; }   /* I */
+.exit-modal__logo svg path:nth-of-type(10) { animation-delay: 2.25s; } /* V */
+.exit-modal__logo svg path:nth-of-type(11) { animation-delay: 2.3s; }  /* E */
+.exit-modal__logo svg path:nth-of-type(12) { animation-delay: 2.35s; } /* R */
+
+@keyframes exitModalLetterScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes exitModalBarReveal {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scaleX(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
 
 /* Stats */
 .exit-modal__stats {

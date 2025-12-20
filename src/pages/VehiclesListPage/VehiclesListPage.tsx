@@ -590,6 +590,7 @@ const VehiclesListPage = () => {
         bodyStyle={selectedBodyStyle || undefined}
         make={selectedMake || undefined}
         lifestyle={inventoryType === 'new' ? (selectedLifestyle || undefined) : undefined}
+        inventoryType={inventoryType as 'new' | 'used'}
         onViewRankings={() => updateFilter('sort', inventoryType === 'new' ? 'rating' : 'ranking')}
       />
       
@@ -610,6 +611,13 @@ const VehiclesListPage = () => {
                 rating={getVehicleRatingForVehicle(vehicle)}
                 editorsChoice={vehicle.editorsChoice}
                 tenBest={vehicle.tenBest}
+                showShopButton={true}
+                shopButtonText={
+                  vehicle.model.length > 10
+                    ? (vehicle.year === '2024' ? 'SHOP USED' : 'SHOP NEW')
+                    : (vehicle.year === '2024' ? `SHOP USED ${vehicle.model.toUpperCase()}` : `SHOP NEW ${vehicle.model.toUpperCase()}`)
+                }
+                shopButtonVariant="outline"
               />
             ))}
 

@@ -14,6 +14,7 @@ interface TopTenCarouselLeadsProps {
   lifestyle?: string;
   maxPrice?: number;
   currentVehicleId?: string;
+  inventoryType?: 'new' | 'used';
   onShopUsed?: (vehicle: FilteredRankedVehicle) => void;
   onViewRankings?: () => void;
 }
@@ -42,6 +43,7 @@ interface FilteredRankedVehicle {
   availableYears?: number[];
   yearDetails?: YearDetail[];
   modelName?: string;
+  vehicleYear?: string;
 }
 
 
@@ -71,6 +73,7 @@ const TopTenCarouselLeads = ({
   lifestyle,
   maxPrice,
   currentVehicleId,
+  inventoryType = 'new',
   onShopUsed,
   onViewRankings,
 }: TopTenCarouselLeadsProps) => {
@@ -89,6 +92,14 @@ const TopTenCarouselLeads = ({
   // Get filtered and ranked vehicles from database
   const vehicles = useMemo<FilteredRankedVehicle[]>(() => {
     let allVehicles = getAllVehicles();
+    
+    // Filter by inventory type (year)
+    // Used: 2024 only, New: 2025 or newer
+    if (inventoryType === 'used') {
+      allVehicles = allVehicles.filter(v => v.year === '2024');
+    } else {
+      allVehicles = allVehicles.filter(v => parseInt(v.year) >= 2025);
+    }
     
     // Filter by body style
     if (bodyStyle) {
@@ -156,9 +167,10 @@ const TopTenCarouselLeads = ({
         availableYears: yearsForVehicle.length > 0 ? yearsForVehicle : undefined,
         yearDetails: yearDetailsForVehicle.length > 0 ? yearDetailsForVehicle : undefined,
         modelName: vehicle.model,
+        vehicleYear: vehicle.year,
       };
     });
-  }, [bodyStyle, make, lifestyle, maxPrice, currentVehicleId, getSupabaseRating]);
+  }, [bodyStyle, make, lifestyle, maxPrice, currentVehicleId, inventoryType, getSupabaseRating]);
 
   // Generate dynamic category label
   const getCategoryLabelDynamic = (): string => {
@@ -258,29 +270,40 @@ const TopTenCarouselLeads = ({
             ref={carouselRef}
             onScroll={checkScrollPosition}
           >
-            {vehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                id={vehicle.id}
-                name={vehicle.name}
-                slug={vehicle.slug}
-                image={vehicle.image}
-                price={vehicle.price}
-                rating={vehicle.rating}
-                rank={vehicle.rank}
-                badge={vehicle.badge}
-                editorsChoice={vehicle.editorsChoice}
-                tenBest={vehicle.tenBest}
-                isCurrentVehicle={vehicle.isCurrentVehicle}
-                showShopButton={true}
-                onShopClick={(e) => handleShopUsed(e, vehicle)}
-                epaMpg={vehicle.epaMpg}
-                cdSays={vehicle.cdSays}
-                availableYears={vehicle.availableYears}
-                yearDetails={vehicle.yearDetails}
-                modelName={vehicle.modelName}
-              />
-            ))}
+            {vehicles.map((vehicle) => {
+              const isUsed = vehicle.vehicleYear === '2024';
+              const modelName = vehicle.modelName?.toUpperCase() || '';
+              // If model name is longer than 10 characters, just show "SHOP NEW" or "SHOP USED"
+              const ctaText = modelName.length > 10
+                ? (isUsed ? 'SHOP USED' : 'SHOP NEW')
+                : (isUsed ? `SHOP USED ${modelName}` : `SHOP NEW ${modelName}`);
+              
+              return (
+                <VehicleCard
+                  key={vehicle.id}
+                  id={vehicle.id}
+                  name={vehicle.name}
+                  slug={vehicle.slug}
+                  image={vehicle.image}
+                  price={vehicle.price}
+                  rating={vehicle.rating}
+                  rank={vehicle.rank}
+                  badge={vehicle.badge}
+                  editorsChoice={vehicle.editorsChoice}
+                  tenBest={vehicle.tenBest}
+                  isCurrentVehicle={vehicle.isCurrentVehicle}
+                  showShopButton={true}
+                  shopButtonText={ctaText}
+                  shopButtonVariant="outline"
+                  onShopClick={(e) => handleShopUsed(e, vehicle)}
+                  epaMpg={vehicle.epaMpg}
+                  cdSays={vehicle.cdSays}
+                  availableYears={vehicle.availableYears}
+                  yearDetails={vehicle.yearDetails}
+                  modelName={vehicle.modelName}
+                />
+              );
+            })}
 
             {/* View All Card */}
             <div className="top-ten__card top-ten__card--view-all">

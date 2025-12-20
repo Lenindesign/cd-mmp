@@ -296,7 +296,9 @@ export const VehicleCard = ({
       {/* Card Content - Header Section (Above Image) */}
       <div className="vehicle-card__content vehicle-card__content--top">
         <div className="vehicle-card__header">
-          <h3 className="vehicle-card__name">{name}</h3>
+          <div className="vehicle-card__name-wrapper">
+            <h3 className="vehicle-card__name" title={name}>{name}</h3>
+          </div>
           {rating && (
             <div className="vehicle-card__rating">
               <div className="vehicle-card__rating-row">
