@@ -343,7 +343,7 @@ const TopTenCarouselLeads = ({
             {isDropdownOpen && (
               <div className="top-ten__dropdown-menu" role="listbox">
                 {BODY_STYLE_OPTIONS.map((option) => (
-                  <button
+          <button 
                     key={option.id}
                     className={`top-ten__dropdown-item ${selectedBodyStyle === option.id ? 'top-ten__dropdown-item--selected' : ''}`}
                     onClick={() => handleBodyStyleSelect(option.id)}
@@ -358,7 +358,7 @@ const TopTenCarouselLeads = ({
                       />
                     )}
                     <span>{option.name}</span>
-                  </button>
+          </button>
                 ))}
               </div>
             )}
@@ -368,23 +368,23 @@ const TopTenCarouselLeads = ({
         {/* Carousel Wrapper - only show if we have vehicles */}
         {hasVehicles ? (
           <>
-            <div className="top-ten__carousel-wrapper">
-              {/* Left Navigation */}
-              <button
-                className={`top-ten__nav top-ten__nav--left ${!canScrollLeft ? 'top-ten__nav--disabled' : ''}`}
-                onClick={() => scroll('left')}
-                disabled={!canScrollLeft}
-                aria-label="Previous vehicles"
-              >
-                <ChevronLeft size={24} />
-              </button>
+        <div className="top-ten__carousel-wrapper">
+          {/* Left Navigation */}
+          <button
+            className={`top-ten__nav top-ten__nav--left ${!canScrollLeft ? 'top-ten__nav--disabled' : ''}`}
+            onClick={() => scroll('left')}
+            disabled={!canScrollLeft}
+            aria-label="Previous vehicles"
+          >
+            <ChevronLeft size={24} />
+          </button>
 
-              {/* Carousel */}
-              <div
-                className="top-ten__carousel"
-                ref={carouselRef}
-                onScroll={checkScrollPosition}
-              >
+          {/* Carousel */}
+          <div
+            className="top-ten__carousel"
+            ref={carouselRef}
+            onScroll={checkScrollPosition}
+          >
                 {vehicles.map((vehicle) => {
                   const isUsed = vehicle.vehicleYear === '2024';
                   const modelName = vehicle.modelName?.toUpperCase() || '';
@@ -394,82 +394,82 @@ const TopTenCarouselLeads = ({
                     : (isUsed ? `SHOP USED ${modelName}` : `SHOP NEW ${modelName}`);
                   
                   return (
-                    <VehicleCard
-                      key={vehicle.id}
-                      id={vehicle.id}
-                      name={vehicle.name}
-                      slug={vehicle.slug}
-                      image={vehicle.image}
-                      price={vehicle.price}
-                      rating={vehicle.rating}
-                      rank={vehicle.rank}
-                      badge={vehicle.badge}
-                      editorsChoice={vehicle.editorsChoice}
-                      tenBest={vehicle.tenBest}
-                      isCurrentVehicle={vehicle.isCurrentVehicle}
-                      showShopButton={true}
+              <VehicleCard
+                key={vehicle.id}
+                id={vehicle.id}
+                name={vehicle.name}
+                slug={vehicle.slug}
+                image={vehicle.image}
+                price={vehicle.price}
+                rating={vehicle.rating}
+                rank={vehicle.rank}
+                badge={vehicle.badge}
+                editorsChoice={vehicle.editorsChoice}
+                tenBest={vehicle.tenBest}
+                isCurrentVehicle={vehicle.isCurrentVehicle}
+                showShopButton={true}
                       shopButtonText={ctaText}
                       shopButtonVariant="outline"
-                      onShopClick={(e) => handleShopUsed(e, vehicle)}
-                      epaMpg={vehicle.epaMpg}
-                      cdSays={vehicle.cdSays}
-                      availableYears={vehicle.availableYears}
+                onShopClick={(e) => handleShopUsed(e, vehicle)}
+                epaMpg={vehicle.epaMpg}
+                cdSays={vehicle.cdSays}
+                availableYears={vehicle.availableYears}
                       yearDetails={vehicle.yearDetails}
                       modelName={vehicle.modelName}
-                    />
+              />
                   );
                 })}
 
-                {/* View All Card */}
+            {/* View All Card */}
                 <Link 
                   to={getRankingsUrl()} 
                   className="top-ten__card top-ten__card--view-all"
                 >
-                  <div className="top-ten__view-all-content">
+              <div className="top-ten__view-all-content">
                     <img 
                       src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
                       alt="10Best"
                       className="top-ten__view-all-icon"
                     />
-                    <h3 className="top-ten__view-all-title">See All Top {categoryLabel}</h3>
-                    <p className="top-ten__view-all-text">
-                      Explore our complete rankings with detailed reviews, specs, and pricing.
-                    </p>
+                <h3 className="top-ten__view-all-title">See All Top {categoryLabel}</h3>
+                <p className="top-ten__view-all-text">
+                  Explore our complete rankings with detailed reviews, specs, and pricing.
+                </p>
                     <span className="top-ten__view-all-btn">
-                      View Full Rankings
-                      <ArrowRight size={18} />
+                  View Full Rankings
+                  <ArrowRight size={18} />
                     </span>
-                  </div>
+              </div>
                 </Link>
-              </div>
+          </div>
 
-              {/* Right Navigation */}
-              <button
-                className={`top-ten__nav top-ten__nav--right ${!canScrollRight ? 'top-ten__nav--disabled' : ''}`}
-                onClick={() => scroll('right')}
-                disabled={!canScrollRight}
-                aria-label="Next vehicles"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
+          {/* Right Navigation */}
+          <button
+            className={`top-ten__nav top-ten__nav--right ${!canScrollRight ? 'top-ten__nav--disabled' : ''}`}
+            onClick={() => scroll('right')}
+            disabled={!canScrollRight}
+            aria-label="Next vehicles"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
 
-            {/* Progress Dots */}
-            <div className="top-ten__progress">
-              <div className="top-ten__progress-track">
-                <div
-                  className="top-ten__progress-fill"
-                  style={{
-                    width: carouselRef.current
-                      ? `${Math.max(20, (carouselRef.current.scrollLeft / (carouselRef.current.scrollWidth - carouselRef.current.clientWidth)) * 100)}%`
-                      : '20%'
-                  }}
-                />
-              </div>
-              <span className="top-ten__progress-text">
-                Showing {Math.min(10, vehicles.length)} of 10
-              </span>
-            </div>
+        {/* Progress Dots */}
+        <div className="top-ten__progress">
+          <div className="top-ten__progress-track">
+            <div
+              className="top-ten__progress-fill"
+              style={{
+                width: carouselRef.current
+                  ? `${Math.max(20, (carouselRef.current.scrollLeft / (carouselRef.current.scrollWidth - carouselRef.current.clientWidth)) * 100)}%`
+                  : '20%'
+              }}
+            />
+          </div>
+          <span className="top-ten__progress-text">
+            Showing {Math.min(10, vehicles.length)} of 10
+          </span>
+        </div>
           </>
         ) : (
           /* Empty state when no vehicles match */

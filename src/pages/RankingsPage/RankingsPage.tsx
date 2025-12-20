@@ -369,11 +369,11 @@ const RankingsPage = () => {
       </div>
 
       {/* Subcategory Anchor Navigation - only show on main body style page */}
-      {!subcategory && subcategoryVehicles && subcategoryVehicles.length > 1 && (
+      {!subcategory && config && (
         <div className="rankings-page__subnav rankings-page__subnav--sticky">
           <div className="container">
             <div className="rankings-page__subnav-pills">
-              {subcategoryVehicles.map((sub) => (
+              {subcategoryVehicles && subcategoryVehicles.length > 0 && subcategoryVehicles.map((sub) => (
                 <a 
                   key={sub.id} 
                   href={`#${sub.id}`}
@@ -382,6 +382,27 @@ const RankingsPage = () => {
                   {sub.name.replace('Best ', '')}
                 </a>
               ))}
+              {subcategoryVehicles && subcategoryVehicles.length > 0 && (
+                <div className="rankings-page__subnav-divider"></div>
+              )}
+              {Object.entries(BODY_STYLE_CONFIG)
+                .filter(([key]) => key !== bodyStyle?.toLowerCase())
+                .map(([key, value]) => (
+                  <Link 
+                    key={key} 
+                    to={`/rankings/${key}`}
+                    className="rankings-page__subnav-pill rankings-page__subnav-pill--body-style"
+                  >
+                    {BODY_STYLE_ICONS[key] && (
+                      <img 
+                        src={BODY_STYLE_ICONS[key]} 
+                        alt="" 
+                        className="rankings-page__subnav-pill-icon"
+                      />
+                    )}
+                    {value.title}
+                  </Link>
+                ))}
             </div>
           </div>
         </div>
@@ -680,6 +701,13 @@ const RankingsPage = () => {
               .slice(0, 4)
               .map(([key, value]) => (
                 <Link key={key} to={`/rankings/${key}`} className="rankings-page__related-card">
+                  {BODY_STYLE_ICONS[key] && (
+                    <img 
+                      src={BODY_STYLE_ICONS[key]} 
+                      alt="" 
+                      className="rankings-page__related-icon"
+                    />
+                  )}
                   <h3>{value.title}</h3>
                   <ChevronRight size={20} />
                 </Link>
