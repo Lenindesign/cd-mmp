@@ -1,10 +1,27 @@
-import { useState, useRef, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, ArrowRight, Trophy } from 'lucide-react';
+import { useState, useRef, useMemo, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, ArrowRight, Trophy, ChevronDown } from 'lucide-react';
 import { getAllVehicles, getAvailableYears, getYearDetails } from '../../services/vehicleService';
 import { getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { VehicleCard } from '../VehicleCard';
 import './TopTenCarouselLeads.css';
+
+// Body style options with icons
+const BODY_STYLE_OPTIONS = [
+  { id: 'all', name: 'All Body Styles', icon: '' },
+  { id: 'suvs', name: 'SUVs', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*' },
+  { id: 'sedans', name: 'Sedans', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*' },
+  { id: 'trucks', name: 'Pickup Trucks', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*' },
+  { id: 'crossovers', name: 'Crossovers', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/crossovers-1585158793.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*' },
+  { id: 'hybrids', name: 'Hybrids', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybridcar-647e4833d60f9.jpg?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*' },
+  { id: 'evs', name: 'EVs', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybrids-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*' },
+  { id: 'luxury', name: 'Luxury', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/luxury-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*' },
+  { id: 'sports', name: 'Sports Cars', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sportscar-1585158794.png?crop=1.00xw:0.502xh;0,0.255xh&resize=180:*' },
+  { id: 'wagons', name: 'Wagons', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/wagons-1585158795.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*' },
+  { id: 'convertibles', name: 'Convertibles', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/convertibles-1585158793.png?crop=1.00xw:0.502xh;0,0.258xh&resize=180:*' },
+  { id: 'vans', name: 'Vans', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/vans-1585158795.png?crop=1.00xw:0.502xh;0,0.252xh&resize=180:*' },
+  { id: 'coupes', name: 'Coupes', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*' },
+];
 
 interface TopTenCarouselLeadsProps {
   title?: string;
@@ -17,6 +34,7 @@ interface TopTenCarouselLeadsProps {
   inventoryType?: 'new' | 'used';
   onShopUsed?: (vehicle: FilteredRankedVehicle) => void;
   onViewRankings?: () => void;
+  onBodyStyleChange?: (bodyStyleId: string) => void;
 }
 
 interface YearDetail {
@@ -76,10 +94,39 @@ const TopTenCarouselLeads = ({
   inventoryType = 'new',
   onShopUsed,
   onViewRankings,
+  onBodyStyleChange,
 }: TopTenCarouselLeadsProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedBodyStyle, setSelectedBodyStyle] = useState('all');
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleBodyStyleSelect = (bodyStyleId: string) => {
+    setSelectedBodyStyle(bodyStyleId);
+    setIsDropdownOpen(false);
+    if (onBodyStyleChange) {
+      onBodyStyleChange(bodyStyleId === 'all' ? '' : bodyStyleId);
+    }
+  };
+
+  const getSelectedBodyStyleName = () => {
+    const selected = BODY_STYLE_OPTIONS.find(opt => opt.id === selectedBodyStyle);
+    return selected?.name || 'All Body Styles';
+  };
   
   // Fetch all ratings from Supabase in production
   const { getRating: getSupabaseRating } = useSupabaseRatings();
@@ -243,13 +290,50 @@ const TopTenCarouselLeads = ({
             </div>
             <p className="top-ten__subtitle">{displaySubtitle}</p>
           </div>
-          <button 
-            className="top-ten__view-all"
-            onClick={onViewRankings}
-          >
-            View All Rankings
-            <ArrowRight size={18} />
-          </button>
+          <div className="top-ten__dropdown" ref={dropdownRef}>
+            <button 
+              className="top-ten__dropdown-trigger"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="listbox"
+            >
+              {selectedBodyStyle !== 'all' && (
+                <img 
+                  src={BODY_STYLE_OPTIONS.find(opt => opt.id === selectedBodyStyle)?.icon} 
+                  alt="" 
+                  className="top-ten__dropdown-icon"
+                />
+              )}
+              <span>{getSelectedBodyStyleName()}</span>
+              <ChevronDown 
+                size={18} 
+                className={`top-ten__dropdown-chevron ${isDropdownOpen ? 'top-ten__dropdown-chevron--open' : ''}`}
+              />
+            </button>
+            
+            {isDropdownOpen && (
+              <div className="top-ten__dropdown-menu" role="listbox">
+                {BODY_STYLE_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    className={`top-ten__dropdown-item ${selectedBodyStyle === option.id ? 'top-ten__dropdown-item--selected' : ''}`}
+                    onClick={() => handleBodyStyleSelect(option.id)}
+                    role="option"
+                    aria-selected={selectedBodyStyle === option.id}
+                  >
+                    {option.icon && (
+                      <img 
+                        src={option.icon} 
+                        alt="" 
+                        className="top-ten__dropdown-item-icon"
+                      />
+                    )}
+                    <span>{option.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Carousel Wrapper */}
