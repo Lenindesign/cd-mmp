@@ -17,6 +17,7 @@ interface EditedRating {
   originalRating: number;
   make: string;
   model: string;
+  year: string;
 }
 
 // Check if we're in production (not localhost)
@@ -269,6 +270,7 @@ const VehicleRatingEditor = () => {
         originalRating: baseRating,
         make: vehicle.make,
         model: vehicle.model,
+        year: vehicle.year,
       }));
     }
   };
