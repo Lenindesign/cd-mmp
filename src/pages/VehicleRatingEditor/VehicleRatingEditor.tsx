@@ -103,23 +103,15 @@ const VehicleRatingEditor = () => {
     if (isProduction) {
       (async () => {
         try {
-          console.log('[DEBUG] Fetching ratings from:', API_ENDPOINTS.getRatings);
           const response = await fetch(API_ENDPOINTS.getRatings);
           if (response.ok) {
             const data = await response.json();
-            console.log('[DEBUG] Loaded ratings from Supabase:', {
-              count: Object.keys(data.ratings || {}).length,
-              allKeys: Object.keys(data.ratings || {}),
-              ratings: data.ratings,
-            });
             setSavedRatings(data.ratings || {});
           } else {
-            console.error('[DEBUG] Failed to load ratings:', response.status, response.statusText);
-            const errorBody = await response.text();
-            console.error('[DEBUG] Error body:', errorBody);
+            console.error('Failed to load ratings:', response.status, response.statusText);
           }
         } catch (error) {
-          console.error('[DEBUG] Exception loading saved ratings:', error);
+          console.error('Error loading saved ratings:', error);
         }
       })();
     }
@@ -281,8 +273,6 @@ const VehicleRatingEditor = () => {
     
     try {
       const changes = Array.from(editedRatings.values());
-      console.log('[DEBUG] Saving ratings to:', API_ENDPOINTS.saveRatings);
-      console.log('[DEBUG] Changes to save:', JSON.stringify(changes, null, 2));
       
       // Call the appropriate API endpoint based on environment
       const response = await fetch(API_ENDPOINTS.saveRatings, {
@@ -291,26 +281,21 @@ const VehicleRatingEditor = () => {
         body: JSON.stringify({ changes }),
       });
 
-      console.log('[DEBUG] Save response status:', response.status);
-
       const result = await response.json();
-      console.log('[DEBUG] Save response body:', JSON.stringify(result, null, 2));
       
       // Check if there were any errors in the response
       if (result.errors && result.errors.length > 0) {
-        console.error('[DEBUG] ❌ SAVE ERRORS:', JSON.stringify(result.errors, null, 2));
-        alert('Save failed! Check console for details. Errors: ' + JSON.stringify(result.errors));
+        console.error('Save errors:', result.errors);
         setSaveStatus('error');
-        setTimeout(() => setSaveStatus('idle'), 5000);
-        return; // Don't reload on error
+        setTimeout(() => setSaveStatus('idle'), 3000);
+        return;
       }
 
       if (!response.ok) {
-        console.error('[DEBUG] Save API error:', result);
         throw new Error(result.error || 'Failed to save ratings');
       }
 
-      console.log('[DEBUG] ✅ Ratings saved successfully:', result);
+      console.log('Ratings saved successfully:', result);
       
       setSaveStatus('success');
       setTimeout(() => {
@@ -320,10 +305,9 @@ const VehicleRatingEditor = () => {
         window.location.reload();
       }, 2000);
     } catch (error) {
-      console.error('[DEBUG] Error saving ratings:', error);
-      alert('Save exception! Check console for details: ' + String(error));
+      console.error('Error saving ratings:', error);
       setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 5000);
+      setTimeout(() => setSaveStatus('idle'), 3000);
     }
   };
 
