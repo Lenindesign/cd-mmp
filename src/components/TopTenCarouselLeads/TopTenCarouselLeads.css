@@ -177,6 +177,26 @@
   color: var(--color-white);
 }
 
+/* Empty State */
+.top-ten__empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  border: 2px dashed var(--color-gray-300);
+  margin-bottom: var(--spacing-4);
+}
+
+.top-ten__empty-message {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-500);
+  text-align: center;
+  padding: var(--spacing-6);
+}
+
 /* Carousel Wrapper */
 .top-ten__carousel-wrapper {
   position: relative;

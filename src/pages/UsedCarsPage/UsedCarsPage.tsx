@@ -431,7 +431,6 @@ const UsedCarsPage = () => {
         subtitle="Explore the most popular used vehicles ranked by our experts. Find your perfect match and start shopping today."
         bodyStyle={selectedBodyStyle || 'SUV'}
         maxPrice={50000}
-        onViewRankings={() => updateFilter('sort', 'ranking')}
       />
       
       {/* Listings Grid/List */}

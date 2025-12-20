@@ -161,17 +161,9 @@ A high-impact carousel showcasing top-ranked vehicles with integrated lead gener
         category: 'Events',
       },
     },
-    onViewRankings: {
-      description: 'Callback when user clicks View Rankings',
-      table: {
-        type: { summary: '() => void' },
-        category: 'Events',
-      },
-    },
   },
   args: {
     onShopUsed: fn(),
-    onViewRankings: fn(),
   },
   decorators: [
     (Story) => (

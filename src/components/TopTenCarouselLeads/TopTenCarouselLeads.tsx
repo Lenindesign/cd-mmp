@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowRight, Trophy, ChevronDown } from 'lucide-react';
 import { getAllVehicles, getAvailableYears, getYearDetails } from '../../services/vehicleService';
 import { getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
@@ -6,21 +7,16 @@ import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { VehicleCard } from '../VehicleCard';
 import './TopTenCarouselLeads.css';
 
-// Body style options with icons
+// Body style options with icons - only include body styles that exist in the database
 const BODY_STYLE_OPTIONS = [
-  { id: 'all', name: 'All Body Styles', icon: '' },
-  { id: 'suvs', name: 'SUVs', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*' },
-  { id: 'sedans', name: 'Sedans', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*' },
-  { id: 'trucks', name: 'Pickup Trucks', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*' },
-  { id: 'crossovers', name: 'Crossovers', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/crossovers-1585158793.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*' },
-  { id: 'hybrids', name: 'Hybrids', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybridcar-647e4833d60f9.jpg?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*' },
-  { id: 'evs', name: 'EVs', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybrids-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*' },
-  { id: 'luxury', name: 'Luxury', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/luxury-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*' },
-  { id: 'sports', name: 'Sports Cars', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sportscar-1585158794.png?crop=1.00xw:0.502xh;0,0.255xh&resize=180:*' },
-  { id: 'wagons', name: 'Wagons', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/wagons-1585158795.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*' },
-  { id: 'convertibles', name: 'Convertibles', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/convertibles-1585158793.png?crop=1.00xw:0.502xh;0,0.258xh&resize=180:*' },
-  { id: 'vans', name: 'Vans', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/vans-1585158795.png?crop=1.00xw:0.502xh;0,0.252xh&resize=180:*' },
-  { id: 'coupes', name: 'Coupes', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*' },
+  { id: 'all', name: 'All Body Styles', icon: '', dbValue: '' },
+  { id: 'suvs', name: 'SUVs', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', dbValue: 'SUV' },
+  { id: 'sedans', name: 'Sedans', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', dbValue: 'Sedan' },
+  { id: 'trucks', name: 'Trucks', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*', dbValue: 'Truck' },
+  { id: 'coupes', name: 'Coupes', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sportscar-1585158794.png?crop=1.00xw:0.502xh;0,0.255xh&resize=180:*', dbValue: 'Coupe' },
+  { id: 'convertibles', name: 'Convertibles', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/convertibles-1585158793.png?crop=1.00xw:0.502xh;0,0.258xh&resize=180:*', dbValue: 'Convertible' },
+  { id: 'wagons', name: 'Wagons', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/wagons-1585158795.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*', dbValue: 'Wagon' },
+  { id: 'hatchbacks', name: 'Hatchbacks', icon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/crossovers-1585158793.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*', dbValue: 'Hatchback' },
 ];
 
 interface TopTenCarouselLeadsProps {
@@ -33,7 +29,6 @@ interface TopTenCarouselLeadsProps {
   currentVehicleId?: string;
   inventoryType?: 'new' | 'used';
   onShopUsed?: (vehicle: FilteredRankedVehicle) => void;
-  onViewRankings?: () => void;
   onBodyStyleChange?: (bodyStyleId: string) => void;
 }
 
@@ -93,7 +88,6 @@ const TopTenCarouselLeads = ({
   currentVehicleId,
   inventoryType = 'new',
   onShopUsed,
-  onViewRankings,
   onBodyStyleChange,
 }: TopTenCarouselLeadsProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -136,6 +130,13 @@ const TopTenCarouselLeads = ({
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
   };
 
+  // Determine the active body style filter (internal state takes precedence over prop)
+  // Get the dbValue from the selected option for exact matching
+  const selectedOption = BODY_STYLE_OPTIONS.find(opt => opt.id === selectedBodyStyle);
+  const activeBodyStyleFilter = selectedBodyStyle !== 'all' && selectedOption?.dbValue 
+    ? selectedOption.dbValue 
+    : bodyStyle;
+
   // Get filtered and ranked vehicles from database
   const vehicles = useMemo<FilteredRankedVehicle[]>(() => {
     let allVehicles = getAllVehicles();
@@ -148,10 +149,10 @@ const TopTenCarouselLeads = ({
       allVehicles = allVehicles.filter(v => parseInt(v.year) >= 2025);
     }
     
-    // Filter by body style
-    if (bodyStyle) {
+    // Filter by body style (use activeBodyStyleFilter which combines dropdown + prop)
+    if (activeBodyStyleFilter) {
       allVehicles = allVehicles.filter(v => 
-        v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase()
+        v.bodyStyle.toLowerCase() === activeBodyStyleFilter.toLowerCase()
       );
     }
     
@@ -217,14 +218,19 @@ const TopTenCarouselLeads = ({
         vehicleYear: vehicle.year,
       };
     });
-  }, [bodyStyle, make, lifestyle, maxPrice, currentVehicleId, inventoryType, getSupabaseRating]);
+  }, [activeBodyStyleFilter, make, lifestyle, maxPrice, currentVehicleId, inventoryType, getSupabaseRating]);
 
   // Generate dynamic category label
   const getCategoryLabelDynamic = (): string => {
     const parts: string[] = [];
     if (make) parts.push(make);
     if (lifestyle) parts.push(lifestyle);
-    if (bodyStyle) {
+    
+    // Use the selected body style name from dropdown if selected
+    if (selectedBodyStyle !== 'all') {
+      const selectedOption = BODY_STYLE_OPTIONS.find(opt => opt.id === selectedBodyStyle);
+      parts.push(selectedOption?.name || 'Vehicles');
+    } else if (bodyStyle) {
       parts.push(bodyStyle + 's');
     } else {
       parts.push('Vehicles');
@@ -237,6 +243,26 @@ const TopTenCarouselLeads = ({
   const displaySubtitle = subtitle || (vehicles.length > 0 
     ? `See the best ${categoryLabel.toLowerCase()} ranked by our experts. Find your perfect match and start shopping today.`
     : `No vehicles match your current filters. Try adjusting your selection.`);
+
+  // Generate rankings page URL based on selected body style
+  const getRankingsUrl = (): string => {
+    if (selectedBodyStyle !== 'all') {
+      // Map dropdown IDs to rankings page slugs
+      const rankingsSlugMap: Record<string, string> = {
+        'suvs': 'suv',
+        'sedans': 'sedan',
+        'trucks': 'truck',
+        'coupes': 'coupe',
+        'convertibles': 'convertible',
+        'wagons': 'wagon',
+        'hatchbacks': 'hatchback',
+      };
+      const slug = rankingsSlugMap[selectedBodyStyle] || selectedBodyStyle;
+      return `/rankings/${slug}`;
+    }
+    // Default to all rankings
+    return '/rankings';
+  };
 
   const checkScrollPosition = () => {
     if (carouselRef.current) {
@@ -269,10 +295,8 @@ const TopTenCarouselLeads = ({
     }
   };
 
-  // Don't render if no vehicles match filters
-  if (vehicles.length === 0) {
-    return null;
-  }
+  // Check if we have vehicles to show
+  const hasVehicles = vehicles.length > 0;
 
   return (
     <section className="top-ten">
@@ -288,7 +312,12 @@ const TopTenCarouselLeads = ({
               />
               <h2 className="top-ten__title">{displayTitle}</h2>
             </div>
-            <p className="top-ten__subtitle">{displaySubtitle}</p>
+            <p className="top-ten__subtitle">
+              {hasVehicles 
+                ? displaySubtitle 
+                : `No ${getSelectedBodyStyleName().toLowerCase()} available for ${inventoryType === 'new' ? '2025+' : '2024'}. Try selecting a different body style.`
+              }
+            </p>
           </div>
           <div className="top-ten__dropdown" ref={dropdownRef}>
             <button 
@@ -336,105 +365,116 @@ const TopTenCarouselLeads = ({
           </div>
         </div>
 
-        {/* Carousel Wrapper */}
-        <div className="top-ten__carousel-wrapper">
-          {/* Left Navigation */}
-          <button
-            className={`top-ten__nav top-ten__nav--left ${!canScrollLeft ? 'top-ten__nav--disabled' : ''}`}
-            onClick={() => scroll('left')}
-            disabled={!canScrollLeft}
-            aria-label="Previous vehicles"
-          >
-            <ChevronLeft size={24} />
-          </button>
+        {/* Carousel Wrapper - only show if we have vehicles */}
+        {hasVehicles ? (
+          <>
+            <div className="top-ten__carousel-wrapper">
+              {/* Left Navigation */}
+              <button
+                className={`top-ten__nav top-ten__nav--left ${!canScrollLeft ? 'top-ten__nav--disabled' : ''}`}
+                onClick={() => scroll('left')}
+                disabled={!canScrollLeft}
+                aria-label="Previous vehicles"
+              >
+                <ChevronLeft size={24} />
+              </button>
 
-          {/* Carousel */}
-          <div
-            className="top-ten__carousel"
-            ref={carouselRef}
-            onScroll={checkScrollPosition}
-          >
-            {vehicles.map((vehicle) => {
-              const isUsed = vehicle.vehicleYear === '2024';
-              const modelName = vehicle.modelName?.toUpperCase() || '';
-              // If model name is longer than 10 characters, just show "SHOP NEW" or "SHOP USED"
-              const ctaText = modelName.length > 10
-                ? (isUsed ? 'SHOP USED' : 'SHOP NEW')
-                : (isUsed ? `SHOP USED ${modelName}` : `SHOP NEW ${modelName}`);
-              
-              return (
-                <VehicleCard
-                  key={vehicle.id}
-                  id={vehicle.id}
-                  name={vehicle.name}
-                  slug={vehicle.slug}
-                  image={vehicle.image}
-                  price={vehicle.price}
-                  rating={vehicle.rating}
-                  rank={vehicle.rank}
-                  badge={vehicle.badge}
-                  editorsChoice={vehicle.editorsChoice}
-                  tenBest={vehicle.tenBest}
-                  isCurrentVehicle={vehicle.isCurrentVehicle}
-                  showShopButton={true}
-                  shopButtonText={ctaText}
-                  shopButtonVariant="outline"
-                  onShopClick={(e) => handleShopUsed(e, vehicle)}
-                  epaMpg={vehicle.epaMpg}
-                  cdSays={vehicle.cdSays}
-                  availableYears={vehicle.availableYears}
-                  yearDetails={vehicle.yearDetails}
-                  modelName={vehicle.modelName}
-                />
-              );
-            })}
+              {/* Carousel */}
+              <div
+                className="top-ten__carousel"
+                ref={carouselRef}
+                onScroll={checkScrollPosition}
+              >
+                {vehicles.map((vehicle) => {
+                  const isUsed = vehicle.vehicleYear === '2024';
+                  const modelName = vehicle.modelName?.toUpperCase() || '';
+                  // If model name is longer than 10 characters, just show "SHOP NEW" or "SHOP USED"
+                  const ctaText = modelName.length > 10
+                    ? (isUsed ? 'SHOP USED' : 'SHOP NEW')
+                    : (isUsed ? `SHOP USED ${modelName}` : `SHOP NEW ${modelName}`);
+                  
+                  return (
+                    <VehicleCard
+                      key={vehicle.id}
+                      id={vehicle.id}
+                      name={vehicle.name}
+                      slug={vehicle.slug}
+                      image={vehicle.image}
+                      price={vehicle.price}
+                      rating={vehicle.rating}
+                      rank={vehicle.rank}
+                      badge={vehicle.badge}
+                      editorsChoice={vehicle.editorsChoice}
+                      tenBest={vehicle.tenBest}
+                      isCurrentVehicle={vehicle.isCurrentVehicle}
+                      showShopButton={true}
+                      shopButtonText={ctaText}
+                      shopButtonVariant="outline"
+                      onShopClick={(e) => handleShopUsed(e, vehicle)}
+                      epaMpg={vehicle.epaMpg}
+                      cdSays={vehicle.cdSays}
+                      availableYears={vehicle.availableYears}
+                      yearDetails={vehicle.yearDetails}
+                      modelName={vehicle.modelName}
+                    />
+                  );
+                })}
 
-            {/* View All Card */}
-            <div className="top-ten__card top-ten__card--view-all">
-              <div className="top-ten__view-all-content">
-                <Trophy size={48} className="top-ten__view-all-icon" />
-                <h3 className="top-ten__view-all-title">See All Top {categoryLabel}</h3>
-                <p className="top-ten__view-all-text">
-                  Explore our complete rankings with detailed reviews, specs, and pricing.
-                </p>
-                <button 
-                  className="top-ten__view-all-btn"
-                  onClick={onViewRankings}
+                {/* View All Card */}
+                <Link 
+                  to={getRankingsUrl()} 
+                  className="top-ten__card top-ten__card--view-all"
                 >
-                  View Full Rankings
-                  <ArrowRight size={18} />
-                </button>
+                  <div className="top-ten__view-all-content">
+                    <Trophy size={48} className="top-ten__view-all-icon" />
+                    <h3 className="top-ten__view-all-title">See All Top {categoryLabel}</h3>
+                    <p className="top-ten__view-all-text">
+                      Explore our complete rankings with detailed reviews, specs, and pricing.
+                    </p>
+                    <span className="top-ten__view-all-btn">
+                      View Full Rankings
+                      <ArrowRight size={18} />
+                    </span>
+                  </div>
+                </Link>
               </div>
+
+              {/* Right Navigation */}
+              <button
+                className={`top-ten__nav top-ten__nav--right ${!canScrollRight ? 'top-ten__nav--disabled' : ''}`}
+                onClick={() => scroll('right')}
+                disabled={!canScrollRight}
+                aria-label="Next vehicles"
+              >
+                <ChevronRight size={24} />
+              </button>
             </div>
-          </div>
 
-          {/* Right Navigation */}
-          <button
-            className={`top-ten__nav top-ten__nav--right ${!canScrollRight ? 'top-ten__nav--disabled' : ''}`}
-            onClick={() => scroll('right')}
-            disabled={!canScrollRight}
-            aria-label="Next vehicles"
-          >
-            <ChevronRight size={24} />
-          </button>
-        </div>
-
-        {/* Progress Dots */}
-        <div className="top-ten__progress">
-          <div className="top-ten__progress-track">
-            <div
-              className="top-ten__progress-fill"
-              style={{
-                width: carouselRef.current
-                  ? `${Math.max(20, (carouselRef.current.scrollLeft / (carouselRef.current.scrollWidth - carouselRef.current.clientWidth)) * 100)}%`
-                  : '20%'
-              }}
-            />
+            {/* Progress Dots */}
+            <div className="top-ten__progress">
+              <div className="top-ten__progress-track">
+                <div
+                  className="top-ten__progress-fill"
+                  style={{
+                    width: carouselRef.current
+                      ? `${Math.max(20, (carouselRef.current.scrollLeft / (carouselRef.current.scrollWidth - carouselRef.current.clientWidth)) * 100)}%`
+                      : '20%'
+                  }}
+                />
+              </div>
+              <span className="top-ten__progress-text">
+                Showing {Math.min(10, vehicles.length)} of 10
+              </span>
+            </div>
+          </>
+        ) : (
+          /* Empty state when no vehicles match */
+          <div className="top-ten__empty-state">
+            <p className="top-ten__empty-message">
+              Select a different body style to see available vehicles.
+            </p>
           </div>
-          <span className="top-ten__progress-text">
-            Showing {Math.min(10, vehicles.length)} of 10
-          </span>
-        </div>
+        )}
       </div>
     </section>
   );

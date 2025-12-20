@@ -591,7 +591,6 @@ const VehiclesListPage = () => {
         make={selectedMake || undefined}
         lifestyle={inventoryType === 'new' ? (selectedLifestyle || undefined) : undefined}
         inventoryType={inventoryType as 'new' | 'used'}
-        onViewRankings={() => updateFilter('sort', inventoryType === 'new' ? 'rating' : 'ranking')}
       />
       
       {/* Vehicle Grid/List */}
