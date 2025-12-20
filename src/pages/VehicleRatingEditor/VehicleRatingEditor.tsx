@@ -276,7 +276,7 @@ const VehicleRatingEditor = () => {
     try {
       const changes = Array.from(editedRatings.values());
       console.log('[DEBUG] Saving ratings to:', API_ENDPOINTS.saveRatings);
-      console.log('[DEBUG] Changes to save:', changes);
+      console.log('[DEBUG] Changes to save:', JSON.stringify(changes, null, 2));
       
       // Call the appropriate API endpoint based on environment
       const response = await fetch(API_ENDPOINTS.saveRatings, {
@@ -287,14 +287,24 @@ const VehicleRatingEditor = () => {
 
       console.log('[DEBUG] Save response status:', response.status);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('[DEBUG] Save API error:', errorData);
-        throw new Error(errorData.error || 'Failed to save ratings');
+      const result = await response.json();
+      console.log('[DEBUG] Save response body:', JSON.stringify(result, null, 2));
+      
+      // Check if there were any errors in the response
+      if (result.errors && result.errors.length > 0) {
+        console.error('[DEBUG] ❌ SAVE ERRORS:', JSON.stringify(result.errors, null, 2));
+        alert('Save failed! Check console for details. Errors: ' + JSON.stringify(result.errors));
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 5000);
+        return; // Don't reload on error
       }
 
-      const result = await response.json();
-      console.log('[DEBUG] Ratings saved successfully:', result);
+      if (!response.ok) {
+        console.error('[DEBUG] Save API error:', result);
+        throw new Error(result.error || 'Failed to save ratings');
+      }
+
+      console.log('[DEBUG] ✅ Ratings saved successfully:', result);
       
       setSaveStatus('success');
       setTimeout(() => {
@@ -305,8 +315,9 @@ const VehicleRatingEditor = () => {
       }, 2000);
     } catch (error) {
       console.error('[DEBUG] Error saving ratings:', error);
+      alert('Save exception! Check console for details: ' + String(error));
       setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 3000);
+      setTimeout(() => setSaveStatus('idle'), 5000);
     }
   };
 
