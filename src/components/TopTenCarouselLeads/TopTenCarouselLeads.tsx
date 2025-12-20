@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ArrowRight, Trophy, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, ChevronDown } from 'lucide-react';
 import { getAllVehicles, getAvailableYears, getYearDetails } from '../../services/vehicleService';
 import { getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -426,7 +426,11 @@ const TopTenCarouselLeads = ({
                   className="top-ten__card top-ten__card--view-all"
                 >
                   <div className="top-ten__view-all-content">
-                    <Trophy size={48} className="top-ten__view-all-icon" />
+                    <img 
+                      src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
+                      alt="10Best"
+                      className="top-ten__view-all-icon"
+                    />
                     <h3 className="top-ten__view-all-title">See All Top {categoryLabel}</h3>
                     <p className="top-ten__view-all-text">
                       Explore our complete rankings with detailed reviews, specs, and pricing.

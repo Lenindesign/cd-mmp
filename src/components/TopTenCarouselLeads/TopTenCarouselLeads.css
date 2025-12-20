@@ -307,7 +307,8 @@
 }
 
 .top-ten__view-all-icon {
-  color: var(--color-white);
+  width: 80px;
+  height: 92px;
   margin-bottom: var(--spacing-4);
 }
 

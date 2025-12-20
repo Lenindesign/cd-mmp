@@ -335,7 +335,7 @@
 }
 
 .exit-modal--elegant .exit-modal__stats {
-  animation: elegantFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  animation: elegantFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 2.8s both;
 }
 
 @keyframes elegantFadeUp {

@@ -1,12 +1,23 @@
 import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronRight, Trophy } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { VehicleCard } from '../../components/VehicleCard';
 import { SEO } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import './RankingsPage.css';
+
+// Body style icons
+const BODY_STYLE_ICONS: Record<string, string> = {
+  suv: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
+  sedan: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
+  truck: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*',
+  coupe: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sportscar-1585158794.png?crop=1.00xw:0.502xh;0,0.255xh&resize=180:*',
+  convertible: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/convertibles-1585158793.png?crop=1.00xw:0.502xh;0,0.258xh&resize=180:*',
+  wagon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/wagons-1585158795.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*',
+  hatchback: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/crossovers-1585158793.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*',
+};
 
 // Body style configuration with subcategories
 const BODY_STYLE_CONFIG: Record<string, {
@@ -180,6 +191,39 @@ const RankingsPage = () => {
     return Object.values(categoryData).reduce((sum, cat) => sum + cat.count, 0);
   }, [categoryData]);
 
+  // Get top 3 vehicles for each subcategory (for main body style page)
+  // Must be before early return to maintain hook order
+  const subcategoryVehicles = useMemo(() => {
+    if (!config || subcategory) return null; // Don't compute if no config or on a subcategory page
+    
+    return config.subcategories.map((sub) => {
+      const filtered = allVehicles
+        .filter(sub.filter)
+        .slice(0, 3)
+        .map((vehicle, index) => ({
+          id: vehicle.id,
+          rank: index + 1,
+          name: `${vehicle.make} ${vehicle.model}`,
+          year: vehicle.year,
+          price: `$${vehicle.priceMin.toLocaleString()}`,
+          image: vehicle.image,
+          rating: getVehicleRating(vehicle),
+          slug: vehicle.slug,
+          editorsChoice: vehicle.editorsChoice,
+          tenBest: vehicle.tenBest,
+          epaMpg: getCombinedMpg(vehicle.mpg),
+          cdSays: generateCdSays(vehicle.year, vehicle.make, vehicle.model),
+          modelName: vehicle.model,
+        }));
+      
+      return {
+        ...sub,
+        vehicles: filtered,
+        totalCount: allVehicles.filter(sub.filter).length,
+      };
+    }).filter(sub => sub.vehicles.length > 0);
+  }, [allVehicles, config, subcategory, getSupabaseRating]);
+
   // If no config found, show 404-like state
   if (!config) {
     return (
@@ -248,6 +292,13 @@ const RankingsPage = () => {
                         />
                         <span>10BEST</span>
                       </div>
+                      {BODY_STYLE_ICONS[key] && (
+                        <img 
+                          src={BODY_STYLE_ICONS[key]} 
+                          alt="" 
+                          className="rankings-page__category-title-icon"
+                        />
+                      )}
                       <h3 className="rankings-page__category-title">{value.title}</h3>
                       {topVehicle && (
                         <p className="rankings-page__category-top">
@@ -272,38 +323,6 @@ const RankingsPage = () => {
   }
 
   const pageTitle = subcategoryConfig ? subcategoryConfig.name : config.title;
-
-  // Get top 3 vehicles for each subcategory (for main body style page)
-  const subcategoryVehicles = useMemo(() => {
-    if (subcategory) return null; // Don't compute if we're on a subcategory page
-    
-    return config.subcategories.map((sub) => {
-      const filtered = allVehicles
-        .filter(sub.filter)
-        .slice(0, 3)
-        .map((vehicle, index) => ({
-          id: vehicle.id,
-          rank: index + 1,
-          name: `${vehicle.make} ${vehicle.model}`,
-          year: vehicle.year,
-          price: `$${vehicle.priceMin.toLocaleString()}`,
-          image: vehicle.image,
-          rating: getVehicleRating(vehicle),
-          slug: vehicle.slug,
-          editorsChoice: vehicle.editorsChoice,
-          tenBest: vehicle.tenBest,
-          epaMpg: getCombinedMpg(vehicle.mpg),
-          cdSays: generateCdSays(vehicle.year, vehicle.make, vehicle.model),
-          modelName: vehicle.model,
-        }));
-      
-      return {
-        ...sub,
-        vehicles: filtered,
-        totalCount: allVehicles.filter(sub.filter).length,
-      };
-    }).filter(sub => sub.vehicles.length > 0);
-  }, [allVehicles, config.subcategories, subcategory, getSupabaseRating]);
 
   return (
     <div className="rankings-page">
@@ -593,7 +612,11 @@ const RankingsPage = () => {
                   {/* Full Rankings List */}
                   <section className="rankings-page__full-list">
                     <h2 className="rankings-page__section-title">
-                      <Trophy size={24} />
+                      <img 
+                        src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
+                        alt="10Best"
+                        className="rankings-page__section-icon"
+                      />
                       All {subcategoryConfig?.name || pageTitle}
                     </h2>
                     <div className="rankings-page__grid">
@@ -625,7 +648,11 @@ const RankingsPage = () => {
               {/* Empty State */}
               {((subcategory && formattedVehicles.length === 0) || (!subcategory && (!subcategoryVehicles || subcategoryVehicles.length === 0))) && (
                 <div className="rankings-page__empty">
-                  <Trophy size={48} />
+                  <img 
+                    src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
+                    alt="10Best"
+                    className="rankings-page__empty-icon"
+                  />
                   <h3>No vehicles found</h3>
                   <p>We don't have any vehicles in this category yet.</p>
                   <Link to={`/rankings/${bodyStyle}`} className="rankings-page__back-link">
