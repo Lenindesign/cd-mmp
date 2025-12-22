@@ -139,9 +139,17 @@
   color: var(--color-blue-cobalt);
 }
 
+.resin-header--transparent .resin-header__link:hover {
+  color: var(--color-gray-300);
+}
+
 .resin-header__link--active {
   color: var(--color-dark);
   font-weight: var(--font-weight-bold);
+}
+
+.resin-header--transparent .resin-header__link--active {
+  color: var(--color-white);
 }
 
 .resin-header__link--active::after {
