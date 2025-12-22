@@ -1,12 +1,14 @@
 import { useParams, Link } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { getVehicleBySlug } from '../../services/vehicleService';
+import { addRecentlyViewed } from '../../services/recentlyViewedService';
 import { useSupabaseRating, getCategory } from '../../hooks/useSupabaseRating';
 import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
 import Hero from '../../components/Hero';
 import QuickSpecs from '../../components/QuickSpecs';
 import CostToOwn from '../../components/CostToOwn';
+import PriceHistory from '../../components/PriceHistory';
 import TargetPriceRange from '../../components/TargetPriceRange';
 import Incentives from '../../components/Incentives';
 import BuyingPotential from '../../components/BuyingPotential';
@@ -53,6 +55,21 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  // Track recently viewed vehicles
+  useEffect(() => {
+    if (vehicle) {
+      addRecentlyViewed({
+        id: vehicle.id,
+        year: vehicle.year,
+        make: vehicle.make,
+        model: vehicle.model,
+        slug: vehicle.slug,
+        image: vehicle.image,
+        priceMin: vehicle.priceMin,
+      });
+    }
+  }, [vehicle]);
 
   if (!vehicle) {
     return (
@@ -165,6 +182,40 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               msrp={vehicle.priceMin}
               fuelType={vehicle.fuelType}
             />
+            <PriceHistory
+              vehicleYear={parseInt(vehicle.year)}
+              make={vehicle.make}
+              model={vehicle.model}
+              trim={trimData[0]?.name || 'Base'}
+              asNewValue={vehicle.priceMin}
+              previousYearValue={Math.round(vehicle.priceMin * 0.85)}
+              currentValue={Math.round(vehicle.priceMin * 0.78)}
+              forecastYear1Value={Math.round(vehicle.priceMin * 0.70)}
+              forecastYear2Value={Math.round(vehicle.priceMin * 0.62)}
+              expertTip={`Average purchasing price of a ${vehicle.year} ${vehicle.make} ${vehicle.model} in your area is $${Math.round(vehicle.priceMin * 0.75).toLocaleString()}. Consider this vehicle for excellent value retention in its segment.`}
+              shopUrl={`/vehicles/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase()}`}
+              tradeInUrl="#trade-in"
+              competitors={[
+                {
+                  name: `${vehicle.year} Honda Accord`,
+                  asNewValue: 29500,
+                  currentValue: 23600,
+                  depreciationPercent: 20.0
+                },
+                {
+                  name: `${vehicle.year} Toyota Camry`,
+                  asNewValue: 28400,
+                  currentValue: 23440,
+                  depreciationPercent: 17.5
+                },
+                {
+                  name: `${vehicle.year} Mazda 6`,
+                  asNewValue: 26800,
+                  currentValue: 20770,
+                  depreciationPercent: 22.5
+                },
+              ]}
+            />
             <TargetPriceRange 
               msrp={vehicle.priceMin}
               vehicleName={`${vehicle.make} ${vehicle.model}`}
@@ -252,7 +303,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
       {/* Exit Intent Modal */}
       <ExitIntentModal 
         vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        vehicleImage={vehicle.image}
+        vehicleImage={vehicle.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg'}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />

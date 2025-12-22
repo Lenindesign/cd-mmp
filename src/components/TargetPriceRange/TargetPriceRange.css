@@ -6,10 +6,9 @@
 .target-price__card {
   width: 100%;
   background: var(--color-white);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
-  padding: 2.5rem 3rem;
-  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-10) var(--spacing-12);
+  box-shadow: var(--shadow-md);
 }
 
 /* Header */
@@ -98,25 +97,13 @@
 
 .target-price__title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: var(--spacing-2);
-  padding-bottom: var(--spacing-3);
-  position: relative;
 }
 
-.target-price__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
-}
 
 .target-price__description {
   font-family: var(--font-body);
@@ -164,8 +151,8 @@
 }
 
 .target-price__marker-icon {
-  width: 28px;
-  height: 28px;
+  width: var(--spacing-7);
+  height: var(--spacing-7);
   background: linear-gradient(135deg, var(--color-gray-600) 0%, var(--color-gray-700) 100%);
   border-radius: var(--border-radius-full);
   display: flex;
@@ -180,8 +167,8 @@
 }
 
 .target-price__marker-pin {
-  width: 2px;
-  height: 16px;
+  width: var(--spacing-0-5);
+  height: var(--spacing-4);
   background: var(--color-gray-400);
 }
 
@@ -192,8 +179,8 @@
 .target-price__marker-pin::after {
   content: '';
   display: block;
-  width: 8px;
-  height: 8px;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
   background: var(--color-gray-400);
   border-radius: var(--border-radius-full);
   margin-left: -3px;
@@ -318,7 +305,7 @@
 /* Range Bar */
 .target-price__bar {
   position: relative;
-  height: 12px;
+  height: var(--spacing-3);
   width: 100%;
 }
 
@@ -327,7 +314,7 @@
   top: 50%;
   left: 0;
   right: 0;
-  height: 8px;
+  height: var(--spacing-2);
   background: var(--color-gray-200);
   border-radius: var(--border-radius-full);
   transform: translateY(-50%);
@@ -338,7 +325,7 @@
   top: 50%;
   left: 10%;
   width: 55%;
-  height: 8px;
+  height: var(--spacing-2);
   background: linear-gradient(90deg, var(--color-success) 0%, var(--color-success) 50%, var(--color-success-border) 100%);
   border-radius: var(--border-radius-full);
   transform: translateY(-50%);
@@ -353,8 +340,8 @@
 }
 
 .target-price__dealer-dot {
-  width: 16px;
-  height: 16px;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
   background: var(--color-error);
   border: 3px solid var(--color-white);
   border-radius: var(--border-radius-full);
@@ -380,8 +367,8 @@
   top: -6px;
   left: 50%;
   transform: translateX(-50%);
-  width: 12px;
-  height: 12px;
+  width: var(--spacing-3);
+  height: var(--spacing-3);
   background: var(--color-white);
   border-left: 1px solid var(--color-gray-200);
   border-top: 1px solid var(--color-gray-200);
@@ -429,8 +416,8 @@
 }
 
 .target-price__info-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -456,7 +443,7 @@
 
 .target-price__info-value {
   font-family: var(--font-heading);
-  font-size: 32px;
+  font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
 }

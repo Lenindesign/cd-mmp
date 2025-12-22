@@ -6,10 +6,9 @@
 .incentives__card {
   width: 100%;
   background: var(--color-white);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
-  padding: 2.5rem 3rem;
-  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-10) var(--spacing-12);
+  box-shadow: var(--shadow-md);
 }
 
 /* Header */
@@ -19,25 +18,13 @@
 
 .incentives__title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin: 0;
-  padding-bottom: var(--spacing-3);
-  position: relative;
+  margin: 0 0 var(--spacing-2) 0;
 }
 
-.incentives__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
-}
 
 /* Description */
 .incentives__description {
@@ -299,8 +286,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
   background: none;
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-sm);
@@ -367,7 +354,7 @@
 .incentives__urgency-text svg {
   flex-shrink: 0;
   color: var(--color-blue-cobalt);
-  margin-top: 2px;
+  margin-top: var(--spacing-0-5);
 }
 
 .incentives__urgency-text p {

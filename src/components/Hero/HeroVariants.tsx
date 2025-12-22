@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Heart, ArrowRight, RefreshCw, MapPin } from 'lucide-react';
+import { ChevronDown, Bookmark, ArrowRight, RefreshCw, MapPin } from 'lucide-react';
 import { getAvailableYears } from '../../services/vehicleService';
 import './Hero.css';
 import './HeroVariants.css';
@@ -99,8 +99,8 @@ const HeroContent = ({ vehicle, children }: { vehicle: HeroProps['vehicle']; chi
               className={`hero__favorites-btn ${isFavorited ? 'hero__favorites-btn--active' : ''}`}
               onClick={() => setIsFavorited(!isFavorited)}
             >
-              <Heart size={16} fill={isFavorited ? 'currentColor' : 'none'} />
-              <span>{isFavorited ? 'ADDED TO FAVORITES' : 'ADD TO FAVORITES'}</span>
+              <Bookmark size={16} fill={isFavorited ? 'currentColor' : 'none'} />
+              <span>{isFavorited ? 'SAVED' : 'SAVE'}</span>
             </button>
           </div>
         </div>

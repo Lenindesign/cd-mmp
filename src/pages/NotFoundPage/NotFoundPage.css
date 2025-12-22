@@ -22,7 +22,7 @@
 
 .not-found__number {
   font-family: var(--font-heading);
-  font-size: 120px;
+  font-size: var(--font-size-7xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-neutrals-3);
   line-height: 1;
@@ -56,7 +56,7 @@
 
 .not-found__title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
   margin-bottom: var(--spacing-3);
@@ -107,7 +107,7 @@
 }
 
 .not-found__btn--primary:hover {
-  background: #c70a14;
+  background: var(--color-red-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(233, 12, 23, 0.3);
 }
@@ -192,7 +192,7 @@
   }
 
   .not-found__number {
-    font-size: 80px;
+    font-size: var(--font-size-80);
   }
 
   .not-found__content {
@@ -200,7 +200,7 @@
   }
 
   .not-found__title {
-    font-size: 28px;
+    font-size: var(--font-size-28);
   }
 
   .not-found__message {

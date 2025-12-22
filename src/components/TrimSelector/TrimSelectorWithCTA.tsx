@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo } from 'react';
 import { 
   Check, Info, ChevronRight, ChevronLeft, MapPin, Shield,
-  DollarSign, ArrowRight, CheckCircle, Gauge, Award, RefreshCw
+  DollarSign, ArrowRight, CheckCircle, Gauge, Award
 } from 'lucide-react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import './TrimSelector.css';
@@ -199,7 +199,6 @@ const MarketplaceCTAV1D = ({ make: _make, model, msrp, location }: { make: strin
       <div className="trim-marketplace__actions trim-marketplace__actions--full">
         <button className="trim-marketplace__btn trim-marketplace__btn--primary trim-marketplace__btn--large">
           SHOP ALL {data.totalListings} LISTINGS
-          <ArrowRight size={18} />
         </button>
         <button className="trim-marketplace__btn trim-marketplace__btn--secondary">
           ESTIMATE TRADE-IN VALUE
@@ -292,10 +291,8 @@ const MarketplaceCTAV2D = ({ make, model, msrp, location }: { make: string; mode
       <div className="trim-marketplace__actions trim-marketplace__actions--full">
         <button className="trim-marketplace__btn trim-marketplace__btn--primary trim-marketplace__btn--large">
           VIEW ALL {data.totalListings} LISTINGS
-          <ArrowRight size={18} />
         </button>
         <button className="trim-marketplace__btn trim-marketplace__btn--secondary">
-          <RefreshCw size={16} />
           ESTIMATE TRADE-IN VALUE
         </button>
       </div>
@@ -365,7 +362,6 @@ const MarketplaceCTAV3D = ({ make, model, msrp, location }: { make: string; mode
         <div className="trim-marketplace__compact-cta">
           <button className="trim-marketplace__btn trim-marketplace__btn--primary trim-marketplace__btn--large trim-marketplace__btn--full">
             SHOP ALL LISTINGS
-            <ArrowRight size={18} />
           </button>
           <button className="trim-marketplace__btn trim-marketplace__btn--ghost trim-marketplace__btn--full">
             Trade-In Value
@@ -462,10 +458,8 @@ const MarketplaceCTAV4D = ({ make, model, msrp, location }: { make: string; mode
         <div className="trim-marketplace__dark-actions">
           <button className="trim-marketplace__btn trim-marketplace__btn--white trim-marketplace__btn--large">
             SHOP ALL {data.totalListings} LISTINGS
-            <ArrowRight size={18} />
           </button>
           <button className="trim-marketplace__btn trim-marketplace__btn--outline-white">
-            <RefreshCw size={16} />
             ESTIMATE TRADE-IN VALUE
           </button>
         </div>
@@ -575,10 +569,8 @@ const MarketplaceCTAV5D = ({ make, model, msrp, location, trimName }: { make: st
       <div className="trim-marketplace__actions trim-marketplace__actions--full">
         <button className="trim-marketplace__btn trim-marketplace__btn--primary trim-marketplace__btn--large">
           SHOP ALL {data.totalListings} LISTINGS
-          <ArrowRight size={18} />
         </button>
         <button className="trim-marketplace__btn trim-marketplace__btn--secondary">
-          <RefreshCw size={16} />
           ESTIMATE TRADE-IN VALUE
         </button>
       </div>

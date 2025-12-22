@@ -20,9 +20,9 @@ export const getVehicleById = (id: string): Vehicle | undefined => {
   return vehicleDatabase.find(v => v.id === id);
 };
 
-// Get vehicle by slug (e.g., "2025/Chevrolet/Trax")
+// Get vehicle by slug (e.g., "2025/Chevrolet/Trax") - case insensitive
 export const getVehicleBySlug = (slug: string): Vehicle | undefined => {
-  return vehicleDatabase.find(v => v.slug === slug);
+  return vehicleDatabase.find(v => v.slug.toLowerCase() === slug.toLowerCase());
 };
 
 // Get vehicles by make
@@ -353,41 +353,94 @@ export const getMarketSpeedVehicles = (
   currentMsrp: number,
   limit: number = 5
 ): MarketSpeedVehicle[] => {
+  // Find the current vehicle first
+  const currentVehicle = vehicleDatabase.find(
+    v => v.make.toLowerCase() === currentMake.toLowerCase() && 
+         v.model.toLowerCase() === currentModel.toLowerCase()
+  );
+
   // Get similar vehicles by body style and price range
-  const priceRange = 10000;
+  const priceRange = 15000;
   const similarVehicles = vehicleDatabase
     .filter(v => 
       v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase() &&
-      Math.abs(v.priceMin - currentMsrp) <= priceRange
+      Math.abs(v.priceMin - currentMsrp) <= priceRange &&
+      !(v.make.toLowerCase() === currentMake.toLowerCase() && v.model.toLowerCase() === currentModel.toLowerCase())
     )
-    .sort((a, b) => b.staffRating - a.staffRating)
-    .slice(0, limit);
+    .slice(0, limit - 1);
 
-  // Generate simulated market data (in production this would come from real data)
-  return similarVehicles.map((v, index) => {
-    const isCurrentVehicle = v.make === currentMake && v.model === currentModel;
-    // Simulate market data based on rating and price
-    const baseSupply = Math.floor(30 + (10 - v.staffRating) * 5);
-    const baseSold = Math.floor(100 + v.staffRating * 20);
-    // Simulate average selling price (typically 5-15% below MSRP)
-    const discount = 0.85 + Math.random() * 0.1;
-    const avgSellingPrice = Math.round(v.priceMin * discount);
+  // Combine current vehicle with similar vehicles
+  const allVehicles = currentVehicle 
+    ? [currentVehicle, ...similarVehicles]
+    : similarVehicles.slice(0, limit);
+
+  // Generate simulated market data for each vehicle first
+  // Use a seeded approach based on vehicle properties for consistent results
+  const vehiclesWithData = allVehicles.map((v) => {
+    const isCurrentVehicle = v.make.toLowerCase() === currentMake.toLowerCase() && 
+                             v.model.toLowerCase() === currentModel.toLowerCase();
+    
+    // Create a simple hash from vehicle properties for consistent random-like values
+    const idStr = String(v.id || '0');
+    const makeStr = String(v.make || 'Unknown');
+    const modelStr = String(v.model || 'Unknown');
+    const seed1 = (idStr.charCodeAt(0) || 48) + (makeStr.charCodeAt(0) || 65);
+    const seed2 = (idStr.charCodeAt(Math.min(1, idStr.length - 1)) || 48) + (modelStr.charCodeAt(0) || 65);
+    const seed3 = (makeStr.charCodeAt(Math.min(1, makeStr.length - 1)) || 65) + (modelStr.charCodeAt(Math.min(1, modelStr.length - 1)) || 65);
+    
+    // Ensure we have valid numbers
+    const staffRating = v.staffRating || 7;
+    const priceMin = v.priceMin || 30000;
+    
+    // Generate consistent market data based on vehicle properties
+    // Higher rated vehicles sell faster (lower market day supply)
+    const ratingFactor = staffRating / 10;
+    const priceFactor = priceMin / 50000; // Normalize price
+    
+    // Market day supply: lower is better (faster selling)
+    // Base range 20-60 days, better ratings = faster sales
+    const baseSupply = Math.floor(60 - (ratingFactor * 30) + (priceFactor * 10));
+    const marketDaySupply = Math.max(15, Math.min(65, baseSupply + (seed1 % 10)));
+    
+    // Total sold correlates with rating and price accessibility
+    const baseSold = Math.floor(80 + (ratingFactor * 100) - (priceFactor * 20));
+    const totalSold = Math.max(50, baseSold + (seed2 % 30));
+    
+    // Total for sale
+    const totalForSale = Math.floor(totalSold * 0.7) + (seed3 % 40);
+    
+    // Average selling price (typically 5-15% below MSRP)
+    const discountPercent = 0.85 + ((seed1 % 10) / 100);
+    const avgSellingPrice = Math.round(priceMin * discountPercent);
     
     return {
-      id: v.id,
-      name: `${v.year} ${v.make} ${v.model}`,
-      make: v.make,
-      model: v.model,
-      slug: v.slug,
-      price: v.priceMin,
-      avgSellingPrice,
-      rank: index + 1,
-      marketDaySupply: baseSupply + Math.floor(Math.random() * 10),
-      totalForSale: Math.floor(baseSold * 0.8) + Math.floor(Math.random() * 50),
-      totalSold: baseSold + Math.floor(Math.random() * 30),
+      vehicle: v,
       isCurrentVehicle,
+      marketDaySupply,
+      totalForSale,
+      totalSold,
+      avgSellingPrice,
     };
   });
+
+  // Sort by market day supply (fastest selling first = lowest days)
+  vehiclesWithData.sort((a, b) => a.marketDaySupply - b.marketDaySupply);
+
+  // Assign ranks and return final data
+  return vehiclesWithData.map((data, index) => ({
+    id: data.vehicle.id,
+    name: `${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}`,
+    make: data.vehicle.make,
+    model: data.vehicle.model,
+    slug: data.vehicle.slug,
+    price: data.vehicle.priceMin,
+    avgSellingPrice: data.avgSellingPrice,
+    rank: index + 1,
+    marketDaySupply: data.marketDaySupply,
+    totalForSale: data.totalForSale,
+    totalSold: data.totalSold,
+    isCurrentVehicle: data.isCurrentVehicle,
+  }));
 };
 
 // Get the current vehicle's rank within its category

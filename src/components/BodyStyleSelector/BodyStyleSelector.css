@@ -57,7 +57,7 @@
 }
 
 .body-style-selector__icon-wrapper {
-  width: 80px;
+  width: var(--spacing-20);
   height: 50px;
   display: flex;
   align-items: center;
@@ -85,7 +85,7 @@
 
 .body-style-selector__label {
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
+  font-size: var(--font-size-13);
   font-weight: 500;
   color: var(--color-text);
   text-align: center;
@@ -96,8 +96,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 50%;
@@ -190,7 +190,7 @@
 
 .body-style-selector--cards .body-style-selector__item--selected {
   box-shadow: 0 4px 16px rgba(0, 102, 204, 0.25);
-  background: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
+  background: var(--gradient-blue-light);
 }
 
 .body-style-selector--cards .body-style-selector__icon-wrapper {
@@ -199,7 +199,7 @@
 }
 
 .body-style-selector--cards .body-style-selector__label {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 600;
 }
 
@@ -220,7 +220,7 @@
 .body-style-selector--pills .body-style-selector__item {
   flex-direction: row;
   padding: var(--spacing-2) var(--spacing-4);
-  border-radius: 100px;
+  border-radius: 9999px;
   min-width: auto;
   gap: var(--spacing-2);
   background: var(--color-surface);
@@ -244,7 +244,7 @@
 }
 
 .body-style-selector--pills .body-style-selector__icon-wrapper {
-  width: 40px;
+  width: var(--spacing-10);
   height: 25px;
   overflow: hidden;
 }
@@ -263,7 +263,7 @@
 }
 
 .body-style-selector--pills .body-style-selector__label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -275,25 +275,25 @@
    ======================================== */
 
 .body-style-selector--dark {
-  background: #1a1a2e;
+  background: var(--color-dark-surface);
   padding: var(--spacing-6);
   border-radius: var(--radius-xl);
 }
 
 .body-style-selector--dark .body-style-selector__item {
-  background: #16213e;
-  border: 2px solid #0f3460;
+  background: var(--color-dark-surface-alt);
+  border: 2px solid var(--color-dark-border);
   min-width: 115px;
 }
 
 .body-style-selector--dark .body-style-selector__item:hover {
-  background: #1f3a5f;
-  border-color: #4a90d9;
+  background: var(--color-dark-surface-hover);
+  border-color: var(--color-dark-border-active);
 }
 
 .body-style-selector--dark .body-style-selector__item--selected {
-  background: linear-gradient(135deg, #0f3460 0%, #1a4b8c 100%);
-  border-color: #4a90d9;
+  background: linear-gradient(135deg, var(--color-dark-border) 0%, var(--color-blue-cobalt) 100%);
+  border-color: var(--color-dark-border-active);
   box-shadow: 0 0 20px rgba(74, 144, 217, 0.3);
 }
 
@@ -310,25 +310,25 @@
 }
 
 .body-style-selector--dark .body-style-selector__label {
-  color: #e0e0e0;
+  color: var(--color-gray-200);
   font-weight: 500;
 }
 
 .body-style-selector--dark .body-style-selector__item--selected .body-style-selector__label {
-  color: #ffffff;
+  color: var(--color-white);
   font-weight: 600;
 }
 
 .body-style-selector--dark .body-style-selector__nav {
-  background: #16213e;
-  border-color: #0f3460;
-  color: #a0a0a0;
+  background: var(--color-dark-surface-alt);
+  border-color: var(--color-dark-border);
+  color: var(--color-gray-400);
 }
 
 .body-style-selector--dark .body-style-selector__nav:hover {
-  background: #1f3a5f;
-  border-color: #4a90d9;
-  color: #ffffff;
+  background: var(--color-dark-surface-hover);
+  border-color: var(--color-dark-border-active);
+  color: var(--color-white);
 }
 
 /* ========================================
@@ -347,11 +347,11 @@
 
   .body-style-selector__icon-wrapper {
     width: 60px;
-    height: 40px;
+    height: var(--spacing-10);
   }
 
   .body-style-selector__label {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
   }
 
   .body-style-selector--cards .body-style-selector__item {
@@ -365,11 +365,11 @@
 
   .body-style-selector--pills .body-style-selector__icon-wrapper {
     width: 30px;
-    height: 20px;
+    height: var(--spacing-5);
   }
 
   .body-style-selector--pills .body-style-selector__label {
-    font-size: 10px;
+    font-size: var(--font-size-2xs);
   }
 }
 

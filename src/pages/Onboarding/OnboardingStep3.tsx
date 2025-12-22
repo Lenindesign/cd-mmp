@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep3.css';
 
 // Speedometer Step Indicator Component (consistent with Step 1 & 2)
@@ -64,12 +65,27 @@ interface SelectedVehicle {
 
 const OnboardingStep3: React.FC = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated, updateUser } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVehicles, setSelectedVehicles] = useState<SelectedVehicle[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState(vehicleSuggestions);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/sign-in');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Pre-fill with existing saved vehicles
+  useEffect(() => {
+    if (user?.savedVehicles && user.savedVehicles.length > 0) {
+      setSelectedVehicles(user.savedVehicles.map(v => ({ id: v.id, name: v.name })));
+    }
+  }, [user]);
 
   // Filter suggestions based on search query
   useEffect(() => {
@@ -116,9 +132,19 @@ const OnboardingStep3: React.FC = () => {
     setSelectedVehicles(selectedVehicles.filter(v => v.id !== vehicleId));
   };
 
-  const handleContinue = () => {
-    // Store selected vehicles
-    localStorage.setItem('onboarding_vehicles', JSON.stringify(selectedVehicles));
+  const handleContinue = async () => {
+    // Store selected vehicles in user profile
+    try {
+      await updateUser({
+        savedVehicles: selectedVehicles.map(v => ({
+          id: v.id,
+          name: v.name,
+          ownership: 'want' as const,
+        })),
+      });
+    } catch (err) {
+      console.error('Failed to save vehicles:', err);
+    }
     navigate('/onboarding/step-4');
   };
 

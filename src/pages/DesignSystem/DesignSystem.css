@@ -146,8 +146,8 @@
 }
 
 .design-system__color-swatch--small {
-  width: 48px;
-  min-height: 48px;
+  width: var(--spacing-12);
+  min-height: var(--spacing-12);
   border-radius: var(--border-radius-md);
 }
 
@@ -170,7 +170,7 @@
   font-size: var(--font-size-xs);
   color: var(--color-blue-cobalt);
   background: var(--color-gray-100);
-  padding: 2px 6px;
+  padding: var(--spacing-0-5) var(--spacing-1-5);
   border-radius: var(--border-radius-sm);
   width: fit-content;
 }
@@ -234,7 +234,7 @@
   font-size: var(--font-size-xs);
   color: var(--color-blue-cobalt);
   background: var(--color-gray-100);
-  padding: 2px 6px;
+  padding: var(--spacing-0-5) var(--spacing-1-5);
   border-radius: var(--border-radius-sm);
 }
 
@@ -259,7 +259,7 @@
 
 .design-system__weight-preview {
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: var(--font-size-4xl);
   color: var(--color-black);
   line-height: 1;
 }
@@ -397,8 +397,8 @@
 }
 
 .design-system__radius-preview {
-  width: 64px;
-  height: 64px;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
   background: var(--color-blue-cobalt);
 }
 
@@ -467,7 +467,7 @@
 
 .design-system__component-desc code {
   background: var(--color-gray-100);
-  padding: 2px 6px;
+  padding: var(--spacing-0-5) var(--spacing-1-5);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-xs);
 }
@@ -626,7 +626,7 @@
   background: var(--color-blue-cobalt);
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -681,10 +681,10 @@
   top: var(--spacing-2);
   left: var(--spacing-2);
   padding: var(--spacing-1) var(--spacing-2);
-  background: #059669;
+  background: var(--color-success);
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: 9px;
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   border-radius: var(--border-radius-sm);
@@ -728,7 +728,7 @@
   display: inline-block;
   padding: var(--spacing-1) var(--spacing-3);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -741,7 +741,7 @@
 }
 
 .design-system__badge--success {
-  background: #059669;
+  background: var(--color-success);
   color: var(--color-white);
 }
 
@@ -833,11 +833,11 @@
 }
 
 .design-system__guideline-card--do h4 {
-  color: #059669;
+  color: var(--color-success);
 }
 
 .design-system__guideline-card--do h4 svg {
-  color: #059669;
+  color: var(--color-success);
 }
 
 .design-system__guideline-card--dont h4 {
@@ -850,7 +850,7 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: bold;
 }
 

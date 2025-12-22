@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { AuthProvider } from './contexts/AuthContext';
 import './App.css';
 
 // Lazy load pages for code splitting
@@ -24,12 +25,19 @@ const OnboardingStep4 = lazy(() => import('./pages/Onboarding/OnboardingStep4'))
 const OnboardingWelcome = lazy(() => import('./pages/Onboarding/OnboardingWelcome'));
 const OnboardingResults = lazy(() => import('./pages/Onboarding/OnboardingResults'));
 const SignIn = lazy(() => import('./pages/Onboarding/SignIn'));
+const SignUp = lazy(() => import('./pages/Onboarding/SignUp'));
 
 // Admin pages - lazy loaded
 const VehicleRatingEditor = lazy(() => import('./pages/VehicleRatingEditor/VehicleRatingEditor'));
 
 // Rankings pages - lazy loaded
 const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
+
+// Audit pages - lazy loaded
+const CardAudit = lazy(() => import('./pages/CardAudit/CardAudit'));
+
+// Account pages - lazy loaded
+const MyAccount = lazy(() => import('./pages/Account/MyAccount'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -40,25 +48,27 @@ const PageLoader = () => (
 
 function App() {
   const location = useLocation();
-  const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in';
+  const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
 
   return (
-    <div className="app">
-      {/* Skip Link for Accessibility */}
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      
-      <ScrollToTop />
-      
-      {/* Only show Header/Footer for non-onboarding pages */}
-      {!isOnboardingPage && <Header />}
-      
-      <main id="main-content">
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            {/* Sign In */}
+    <AuthProvider>
+      <div className="app">
+        {/* Skip Link for Accessibility */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        
+        <ScrollToTop />
+        
+        {/* Only show Header/Footer for non-onboarding pages */}
+        {!isOnboardingPage && <Header />}
+        
+        <main id="main-content">
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+            {/* Authentication */}
             <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
             
             {/* Onboarding Flow */}
             <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
@@ -87,6 +97,12 @@ function App() {
             <Route path="/rankings" element={<RankingsPage />} />
             <Route path="/rankings/:bodyStyle" element={<RankingsPage />} />
             <Route path="/rankings/:bodyStyle/:subcategory" element={<RankingsPage />} />
+            
+            {/* Audit Pages */}
+            <Route path="/audit/cards" element={<CardAudit />} />
+            
+            {/* Account Pages */}
+            <Route path="/account" element={<MyAccount />} />
             
             {/* Individual Vehicle Pages - Dynamic routes based on slug */}
             <Route path="/:year/:make/:model" element={<VehiclePage />} />
@@ -122,12 +138,13 @@ function App() {
             
             {/* 404 Not Found - Catch all unmatched routes */}
             <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
-      </main>
-      
-      {!isOnboardingPage && <Footer />}
-    </div>
+            </Routes>
+          </Suspense>
+        </main>
+        
+        {!isOnboardingPage && <Footer />}
+      </div>
+    </AuthProvider>
   );
 }
 

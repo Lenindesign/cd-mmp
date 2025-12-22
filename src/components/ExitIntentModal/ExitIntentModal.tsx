@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Heart, TrendingDown, FileText } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import './ExitIntentModal.css';
 
 interface ExitIntentModalProps {
@@ -8,19 +10,26 @@ interface ExitIntentModalProps {
   isOpen?: boolean;
   onClose?: () => void;
   animationStyle?: 'default' | 'elegant';
+  enableExitIntent?: boolean; // Whether to detect exit intent internally
 }
 
 const ExitIntentModal = ({ 
-  vehicleName = '2025 Kia Telluride EX',
+  vehicleName,
   vehicleImage,
   isOpen = false,
   onClose,
-  animationStyle = 'elegant'
+  animationStyle = 'elegant',
+  enableExitIntent = false // Disabled by default - only Header should enable this
 }: ExitIntentModalProps) => {
+  const navigate = useNavigate();
+  const { socialSignIn } = useAuth();
+  // Use provided vehicle name or a generic fallback
+  const displayVehicleName = vehicleName || 'Your favorite vehicle';
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [hasShown, setHasShown] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   // Handle external isOpen prop
   useEffect(() => {
@@ -30,6 +39,9 @@ const ExitIntentModal = ({
   }, [isOpen]);
 
   useEffect(() => {
+    // Only enable exit intent detection if explicitly enabled
+    if (!enableExitIntent) return;
+
     // Check if modal has been shown before in this session
     const modalShown = sessionStorage.getItem('exitModalShown');
     if (modalShown) {
@@ -55,7 +67,7 @@ const ExitIntentModal = ({
       clearTimeout(timer);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [hasShown]);
+  }, [hasShown, enableExitIntent]);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -70,8 +82,26 @@ const ExitIntentModal = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email submitted:', email);
+    // Store email for sign-up pre-fill
+    if (email) {
+      sessionStorage.setItem('signupEmail', email);
+    }
     handleClose();
+    // Navigate to sign-up page
+    navigate('/sign-up');
+  };
+
+  const handleSocialLogin = async (provider: 'apple' | 'google') => {
+    setIsSigningIn(true);
+    try {
+      await socialSignIn(provider);
+      handleClose();
+      // Navigate to onboarding - the auth context will handle redirect if already completed
+      navigate('/onboarding/step-1');
+    } catch (error) {
+      console.error('Social sign-in failed:', error);
+      setIsSigningIn(false);
+    }
   };
 
   if (!isVisible) return null;
@@ -101,7 +131,7 @@ const ExitIntentModal = ({
             <div className="exit-modal__cards">
               <div className="exit-modal__card exit-modal__card--1">
                 <Heart size={16} fill="currentColor" className="exit-modal__card-icon exit-modal__card-icon--heart" />
-                <span>{vehicleName}</span>
+                <span>{displayVehicleName}</span>
               </div>
               <div className="exit-modal__card exit-modal__card--2">
                 <TrendingDown size={16} className="exit-modal__card-icon exit-modal__card-icon--price" />
@@ -171,14 +201,16 @@ const ExitIntentModal = ({
               Save your research and get price alerts.
             </p>
 
-            <form className="exit-modal__form" onSubmit={handleSubmit}>
+            <form className="exit-modal__form" onSubmit={handleSubmit} autoComplete="on">
               <input
-                type="text"
+                type="email"
+                name="email"
                 inputMode="email"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="exit-modal__input"
+                autoComplete="email"
                 autoFocus
               />
               <button type="submit" className="exit-modal__submit">
@@ -191,20 +223,28 @@ const ExitIntentModal = ({
             </div>
 
             <div className="exit-modal__social">
-              <button className="exit-modal__social-btn">
+              <button 
+                className="exit-modal__social-btn" 
+                onClick={() => handleSocialLogin('apple')}
+                disabled={isSigningIn}
+              >
                 <svg viewBox="0 0 24 24" width="18" height="18">
                   <path fill="#000" d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                 </svg>
-                Continue with Apple
+                {isSigningIn ? 'Signing in...' : 'Continue with Apple'}
               </button>
-              <button className="exit-modal__social-btn exit-modal__social-btn--google">
+              <button 
+                className="exit-modal__social-btn exit-modal__social-btn--google" 
+                onClick={() => handleSocialLogin('google')}
+                disabled={isSigningIn}
+              >
                 <svg viewBox="0 0 24 24" width="18" height="18">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                Continue with Google
+                {isSigningIn ? 'Signing in...' : 'Continue with Google'}
               </button>
             </div>
 

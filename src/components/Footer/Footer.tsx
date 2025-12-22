@@ -93,6 +93,7 @@ const Footer = () => {
               <a href="#" className="footer__legal-link">Cookie Policy</a>
               <a href="#" className="footer__legal-link">Accessibility</a>
               <Link to="/design-system" className="footer__legal-link">Design System</Link>
+              <Link to="/audit/cards" className="footer__legal-link">Card Audit</Link>
               <Link to="/admin/vehicle-ratings" className="footer__legal-link">Editor Portal</Link>
             </div>
           </div>

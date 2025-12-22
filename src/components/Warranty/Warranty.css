@@ -1,5 +1,6 @@
 /* Car and Driver Authentic Warranty */
 .warranty {
+  display: none; /* Temporarily hidden */
   padding: var(--spacing-12) 0;
   background: var(--color-gray-100);
 }
@@ -11,33 +12,13 @@
 
 .warranty__title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding-bottom: var(--spacing-3);
-  position: relative;
+  margin: 0 0 var(--spacing-2) 0;
 }
 
-.warranty__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
-}
-
-.warranty__title::after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 4px;
-  background: var(--color-blue-cobalt);
-  margin-top: var(--spacing-2);
-}
 
 /* Grid */
 .warranty__grid {
@@ -77,8 +58,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
   margin-bottom: var(--spacing-4);
   background: var(--color-black);
   color: var(--color-white);

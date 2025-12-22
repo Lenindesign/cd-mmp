@@ -125,7 +125,7 @@
 /* Toast Icon */
 .toast__icon {
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: var(--spacing-0-5);
 }
 
 /* Toast Content */
@@ -162,7 +162,7 @@
   color: var(--color-blue-cobalt);
   cursor: pointer;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--spacing-0-5);
 }
 
 .toast__action:hover {
@@ -175,8 +175,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
   padding: 0;
   background: none;
   border: none;

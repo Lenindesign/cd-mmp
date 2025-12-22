@@ -17,18 +17,18 @@
 
 /* Sizes */
 .loading-spinner--small .loading-spinner__icon {
-  width: 16px;
-  height: 16px;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
 }
 
 .loading-spinner--default .loading-spinner__icon {
-  width: 24px;
-  height: 24px;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
 }
 
 .loading-spinner--large .loading-spinner__icon {
-  width: 40px;
-  height: 40px;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
 }
 
 /* Colors */

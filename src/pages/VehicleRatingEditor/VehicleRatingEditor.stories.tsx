@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
+import { AuthProvider } from '../../contexts/AuthContext';
 import VehicleRatingEditor from './VehicleRatingEditor';
 
 const meta = {
@@ -23,9 +24,11 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
+      <AuthProvider>
       <MemoryRouter initialEntries={['/admin/vehicle-ratings']}>
         <Story />
       </MemoryRouter>
+      </AuthProvider>
     ),
   ],
 } satisfies Meta<typeof VehicleRatingEditor>;

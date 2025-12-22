@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from '../../contexts/AuthContext';
 import VehiclePage from './VehiclePage';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -27,6 +28,7 @@ type Story = StoryObj<typeof meta>;
 const createVehicleStory = (year: string, make: string, model: string): Story => ({
   decorators: [
     (Story) => (
+      <AuthProvider>
       <MemoryRouter initialEntries={[`/${year}/${make}/${model}`]}>
         <div className="app">
           <Header />
@@ -38,6 +40,7 @@ const createVehicleStory = (year: string, make: string, model: string): Story =>
           <Footer />
         </div>
       </MemoryRouter>
+      </AuthProvider>
     ),
   ],
 });

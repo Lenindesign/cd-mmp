@@ -30,7 +30,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: var(--spacing-0-5);
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--border-radius-md);
   cursor: pointer;
@@ -65,7 +65,7 @@
 
 .hero-v1__btn-label {
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
 }
@@ -73,9 +73,9 @@
 .hero-v1__btn-count {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   opacity: 0.8;
 }
 
@@ -135,7 +135,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   min-width: 180px;
-  height: 64px;
+  height: var(--spacing-16);
 }
 
 .hero-v2__btn--new {
@@ -176,7 +176,7 @@
 
 .hero-v2__btn-count-large {
   font-family: var(--font-heading);
-  font-size: 28px;
+  font-size: var(--font-size-28);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
 }
@@ -185,18 +185,18 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: var(--spacing-0-5);
 }
 
 .hero-v2__btn-label {
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-extrabold);
 }
 
 .hero-v2__btn-sublabel {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   opacity: 0.7;
 }
 
@@ -216,7 +216,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
-  height: 64px;
+  height: var(--spacing-16);
 }
 
 .hero-v2__trade-in:hover {
@@ -267,8 +267,8 @@
 .hero-v3__btn--used {
   background: var(--color-white);
   color: var(--color-blue-cobalt);
-  border-color: var(--cd-blue-cobalt);
-  border-width: 2px;
+  border-color: var(--color-blue-cobalt);
+  border-width: var(--spacing-0-5);
   border-style: solid;
 }
 
@@ -281,13 +281,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  height: 24px;
+  min-width: var(--spacing-6);
+  height: var(--spacing-6);
   padding: 0 8px;
   background: transparent;
   border-radius: var(--border-radius-full);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-extrabold);
 }
 
@@ -343,7 +343,7 @@
 }
 
 .hero-v4__card--new {
-  background: linear-gradient(135deg, var(--color-blue-cobalt) 0%, #2a7ab8 100%);
+  background: var(--gradient-blue);
   color: var(--color-white);
 }
 
@@ -356,12 +356,12 @@
 .hero-v4__card-header {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-0-5);
 }
 
 .hero-v4__card-title {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.8;
@@ -373,7 +373,7 @@
 
 .hero-v4__card-count {
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-extrabold);
 }
 
@@ -385,7 +385,7 @@
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--border-radius-sm);
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -450,7 +450,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: var(--spacing-0-5);
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--border-radius-md);
   cursor: pointer;
@@ -503,8 +503,8 @@
   height: 42px;
   padding: var(--spacing-3) 20px;
   background-color: var(--color-white);
-  color: var(--cd-blue-cobalt);
-  border: 2px solid var(--cd-blue-cobalt);
+  color: var(--color-blue-cobalt);
+  border: 2px solid var(--color-blue-cobalt);
   border-radius: var(--border-radius-md);
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
@@ -580,14 +580,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 28px;
-  height: 28px;
+  min-width: var(--spacing-7);
+  height: var(--spacing-7);
   padding: 0 8px;
   background: transparent;
   color: var(--color-white);
   border-radius: var(--border-radius-full);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-extrabold);
 }
 

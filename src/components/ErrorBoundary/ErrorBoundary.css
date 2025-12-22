@@ -46,7 +46,7 @@
 
 .error-boundary__title {
   font-family: var(--font-heading);
-  font-size: 32px;
+  font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
   margin-bottom: var(--spacing-3);
@@ -103,7 +103,7 @@
 
 .error-boundary__stack-trace {
   font-family: 'Courier New', monospace;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-neutrals-4);
   background: var(--color-white);
   border: 1px solid var(--color-neutrals-6);
@@ -148,7 +148,7 @@
 }
 
 .error-boundary__btn--primary:hover {
-  background: #c70a14;
+  background: var(--color-red-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(233, 12, 23, 0.3);
 }
@@ -182,7 +182,7 @@
 }
 
 .error-boundary__link:hover {
-  color: #c70a14;
+  color: var(--color-red-dark);
 }
 
 /* Responsive */
@@ -196,7 +196,7 @@
   }
 
   .error-boundary__title {
-    font-size: 24px;
+    font-size: var(--font-size-2xl);
   }
 
   .error-boundary__message {
@@ -213,8 +213,8 @@
   }
 
   .error-boundary__icon svg {
-    width: 48px;
-    height: 48px;
+    width: var(--spacing-12);
+    height: var(--spacing-12);
   }
 }
 

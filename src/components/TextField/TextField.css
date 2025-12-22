@@ -22,7 +22,7 @@
 
 .text-field__required {
   color: var(--color-error);
-  margin-left: 2px;
+  margin-left: var(--spacing-0-5);
 }
 
 /* Input Wrapper */
@@ -61,7 +61,7 @@
 
 /* Sizes */
 .text-field--small .text-field__input {
-  height: 36px;
+  height: var(--spacing-9);
   padding: 0 var(--spacing-3);
   font-size: var(--font-size-sm);
 }
@@ -92,7 +92,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
+  width: var(--spacing-10);
   height: 100%;
   color: var(--color-gray-500);
   pointer-events: none;
@@ -107,8 +107,8 @@
 }
 
 .text-field__icon svg {
-  width: 20px;
-  height: 20px;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
 }
 
 /* Error State */
@@ -169,8 +169,8 @@
 }
 
 .text-field__select-arrow svg {
-  width: 20px;
-  height: 20px;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
 }
 
 /* Disabled State */
@@ -185,11 +185,11 @@
 /* Responsive */
 @media (max-width: 768px) {
   .text-field--default .text-field__input {
-    height: 48px;
+    height: var(--spacing-12);
   }
   
   .text-field__select {
-    height: 48px;
+    height: var(--spacing-12);
   }
 }
 

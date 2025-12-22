@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from '../../contexts/AuthContext';
 import { 
   SignIn, 
   OnboardingStep1, 
@@ -35,11 +36,13 @@ export default meta;
 
 export const SignInPage: StoryObj = {
   render: () => (
+    <AuthProvider>
     <MemoryRouter initialEntries={['/sign-in']}>
       <Routes>
         <Route path="*" element={<SignIn />} />
       </Routes>
     </MemoryRouter>
+    </AuthProvider>
   ),
   parameters: {
     docs: {
@@ -56,11 +59,13 @@ export const SignInPage: StoryObj = {
 
 export const Step1_PersonalInfo: StoryObj = {
   render: () => (
+    <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/step-1']}>
       <Routes>
         <Route path="*" element={<OnboardingStep1 />} />
       </Routes>
     </MemoryRouter>
+    </AuthProvider>
   ),
   parameters: {
     docs: {
@@ -77,11 +82,13 @@ export const Step1_PersonalInfo: StoryObj = {
 
 export const Step2_UserType: StoryObj = {
   render: () => (
+    <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/step-2']}>
       <Routes>
         <Route path="*" element={<OnboardingStep2 />} />
       </Routes>
     </MemoryRouter>
+    </AuthProvider>
   ),
   parameters: {
     docs: {
@@ -98,11 +105,13 @@ export const Step2_UserType: StoryObj = {
 
 export const Step3_Interests: StoryObj = {
   render: () => (
+    <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/step-3']}>
       <Routes>
         <Route path="*" element={<OnboardingStep3 />} />
       </Routes>
     </MemoryRouter>
+    </AuthProvider>
   ),
   parameters: {
     docs: {
@@ -119,11 +128,13 @@ export const Step3_Interests: StoryObj = {
 
 export const Step4_VehicleTypes: StoryObj = {
   render: () => (
+    <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/step-4']}>
       <Routes>
         <Route path="*" element={<OnboardingStep4 />} />
       </Routes>
     </MemoryRouter>
+    </AuthProvider>
   ),
   parameters: {
     docs: {
@@ -140,11 +151,13 @@ export const Step4_VehicleTypes: StoryObj = {
 
 export const Welcome_Completion: StoryObj = {
   render: () => (
+    <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/welcome']}>
       <Routes>
         <Route path="*" element={<OnboardingWelcome />} />
       </Routes>
     </MemoryRouter>
+    </AuthProvider>
   ),
   parameters: {
     docs: {

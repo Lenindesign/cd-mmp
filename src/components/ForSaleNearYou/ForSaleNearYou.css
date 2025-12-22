@@ -15,25 +15,13 @@
 
 .for-sale__title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: var(--spacing-2);
-  padding-bottom: var(--spacing-3);
-  position: relative;
 }
 
-.for-sale__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
-}
 
 .for-sale__subtitle {
   font-size: var(--font-size-base);
@@ -62,7 +50,7 @@
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--spacing-0-5);
   margin-left: var(--spacing-2);
   transition: color var(--transition-fast);
 }
@@ -86,8 +74,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: 50%;
@@ -141,16 +129,16 @@
   display: flex;
   flex-direction: column;
   background: var(--color-white);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
-  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   scroll-snap-align: start;
   transition: all var(--transition-normal);
 }
 
 .for-sale__card:hover {
-  box-shadow: 4px 4px 16px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
 }
 
 @media (max-width: 1024px) {
@@ -160,11 +148,11 @@
   }
   
   .for-sale__nav--left {
-    left: 8px;
+    left: var(--spacing-2);
   }
   
   .for-sale__nav--right {
-    right: 8px;
+    right: var(--spacing-2);
   }
 }
 
@@ -202,8 +190,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
   background: var(--color-white);
   border: none;
   border-radius: 50%;
@@ -231,11 +219,11 @@
   background: var(--color-blue-cobalt);
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 2px;
+  border-radius: var(--spacing-0-5);
 }
 
 .for-sale__card-badge--reduced {
@@ -253,7 +241,7 @@
 /* Title */
 .for-sale__card-title {
   font-family: var(--font-heading);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--color-black);
   line-height: var(--line-height-tight);
@@ -287,7 +275,7 @@
 
 .for-sale__card-price-value {
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   color: var(--color-black);
 }
@@ -329,11 +317,11 @@
 }
 
 .for-sale__card-feature {
-  padding: 2px var(--spacing-2);
+  padding: var(--spacing-0-5) var(--spacing-2);
   background: var(--color-gray-100);
-  border-radius: 2px;
+  border-radius: var(--spacing-0-5);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   color: var(--color-gray-600);
 }
 
@@ -350,7 +338,7 @@
 .for-sale__card-dealer-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-0-5);
 }
 
 .for-sale__card-dealer-name {
@@ -361,7 +349,7 @@
 }
 
 .for-sale__card-dealer-distance {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-600);
 }
 
@@ -379,7 +367,7 @@
 
 /* Mobile Contact Buttons */
 .for-sale__card-contact {
-  display: flex;
+  display: none; /* Temporarily hidden */
   gap: var(--spacing-2);
   margin-top: var(--spacing-3);
   padding-top: var(--spacing-3);

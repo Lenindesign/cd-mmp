@@ -3,24 +3,12 @@
    Car and Driver Design System
    ============================================ */
 
-/* C/D Design System Colors */
-:root {
-  --cd-dark-grey: #222222;
-  --cd-blue-cobalt: #1B5F8A;
-  --cd-gold: #DBCA8B;
-  --cd-light-orange: #F7E4CA;
-  --cd-light-grey: #F5F5F5;
-  --cd-red: #D2232A;
-  --cd-green: #26870D;
-  --cd-dark-gold: #A59143;
-  --cd-light-blue: #F1F7F7;
-  --cd-white: #FFFFFF;
-  --cd-grey-border: #CDCDCD;
-}
+/* C/D Design System Colors - now defined in index.css as aliases */
+/* Legacy aliases maintained for backward compatibility */
 
 .onboarding-layout {
   min-height: 100vh;
-  background: var(--cd-light-blue);
+  background: var(--color-teal-light);
   position: relative;
   overflow: hidden;
 }
@@ -45,7 +33,7 @@
 .onboarding-layout__bg-circle--1 {
   width: 600px;
   height: 600px;
-  background: var(--cd-blue-cobalt);
+  background: var(--color-blue-cobalt);
   top: -200px;
   right: -150px;
 }
@@ -53,7 +41,7 @@
 .onboarding-layout__bg-circle--2 {
   width: 400px;
   height: 400px;
-  background: var(--cd-red);
+  background: var(--color-red);
   bottom: -100px;
   left: -100px;
 }
@@ -61,7 +49,7 @@
 .onboarding-layout__bg-circle--3 {
   width: 300px;
   height: 300px;
-  background: var(--cd-blue-cobalt);
+  background: var(--color-blue-cobalt);
   bottom: 20%;
   right: 10%;
 }
@@ -85,22 +73,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
   border-radius: var(--border-radius-full);
-  background: var(--cd-white);
-  color: var(--cd-dark-grey);
+  background: var(--color-white);
+  color: var(--color-dark);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
 }
 
 .onboarding-header__back:hover {
-  background: var(--cd-light-grey);
+  background: var(--color-gray-100);
   transform: translateX(-2px);
 }
 
 .onboarding-header__logo {
-  height: 32px;
+  height: var(--spacing-8);
   width: auto;
 }
 
@@ -114,7 +102,7 @@
   font-family: 'Inter', var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 800;
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -133,8 +121,8 @@
 
 /* Shared Onboarding Card */
 .onboarding-card {
-  background: var(--cd-white);
-  border-radius: 4px;
+  background: var(--color-white);
+  border-radius: var(--spacing-1);
   box-shadow: 3px 4px 16px 4px rgba(0, 0, 0, 0.11);
   padding: var(--spacing-12);
   max-width: 580px;
@@ -156,7 +144,7 @@
   font-family: 'Inter', var(--font-display);
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   margin-bottom: var(--spacing-4);
   line-height: 1.1;
 }
@@ -164,7 +152,7 @@
 .onboarding-card__subtitle {
   font-family: 'Lora', var(--font-article);
   font-size: var(--font-size-md);
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   margin-bottom: var(--spacing-8);
   line-height: 1.4;
   opacity: 0.8;
@@ -176,10 +164,10 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-3);
-  padding: 12px 24px;
-  border-radius: 4px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--spacing-1);
   font-family: 'Inter', var(--font-body);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -191,36 +179,36 @@
 }
 
 .onboarding-btn--primary {
-  background: var(--cd-blue-cobalt);
-  color: var(--cd-white);
-  border: 1px solid var(--cd-white);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
 }
 
 .onboarding-btn--primary:hover {
-  background: var(--cd-dark-grey);
+  background: var(--color-dark);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
 .onboarding-btn--secondary {
   background: var(--color-gray-200);
-  color: var(--cd-blue-cobalt);
+  color: var(--color-blue-cobalt);
 }
 
 .onboarding-btn--secondary:hover {
-  background: var(--cd-dark-grey);
-  color: var(--cd-white);
+  background: var(--color-dark);
+  color: var(--color-white);
 }
 
 .onboarding-btn--outline {
-  background: var(--cd-white);
-  color: var(--cd-blue-cobalt);
-  border: 1px solid var(--cd-blue-cobalt);
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
 }
 
 .onboarding-btn--outline:hover {
-  background: var(--cd-blue-cobalt);
-  color: var(--cd-white);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
 }
 
 .onboarding-btn:disabled {
@@ -238,9 +226,9 @@
 }
 
 .onboarding-selection-card {
-  background: var(--cd-white);
-  border: 1px solid var(--cd-grey-border);
-  border-radius: 4px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--spacing-1);
   padding: var(--spacing-6);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -248,19 +236,19 @@
 }
 
 .onboarding-selection-card:hover {
-  border-color: var(--cd-blue-cobalt);
-  background: var(--cd-light-blue);
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-teal-light);
 }
 
 .onboarding-selection-card--selected {
-  border-color: var(--cd-blue-cobalt);
-  background: var(--cd-light-blue);
-  box-shadow: 0 0 0 2px var(--cd-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-teal-light);
+  box-shadow: 0 0 0 2px var(--color-blue-cobalt);
 }
 
 .onboarding-selection-card__icon {
-  width: 64px;
-  height: 64px;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
   margin: 0 auto var(--spacing-4);
 }
 
@@ -274,14 +262,14 @@
   font-family: 'Inter', var(--font-body);
   font-size: var(--font-size-md);
   font-weight: 800;
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   margin-bottom: var(--spacing-2);
 }
 
 .onboarding-selection-card__description {
   font-family: 'Lora', var(--font-article);
   font-size: var(--font-size-sm);
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   opacity: 0.7;
 }
 
@@ -299,32 +287,32 @@
   align-items: center;
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-5);
-  border-radius: 4px;
-  background: var(--cd-white);
-  border: 1px solid var(--cd-grey-border);
+  border-radius: var(--spacing-1);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
   font-family: 'Inter', var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .onboarding-tag:hover {
-  border-color: var(--cd-blue-cobalt);
-  color: var(--cd-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
 }
 
 .onboarding-tag--selected {
-  background: var(--cd-blue-cobalt);
-  border-color: var(--cd-blue-cobalt);
-  color: var(--cd-white);
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
 }
 
 .onboarding-tag--selected:hover {
-  background: var(--cd-dark-grey);
-  border-color: var(--cd-dark-grey);
-  color: var(--cd-white);
+  background: var(--color-dark);
+  border-color: var(--color-dark);
+  color: var(--color-white);
 }
 
 /* Social Login Buttons - C/D Design System */
@@ -340,29 +328,29 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-3);
-  padding: 12px;
-  border-radius: 4px;
-  background: var(--cd-white);
-  border: 1px solid var(--cd-grey-border);
+  padding: var(--spacing-3);
+  border-radius: var(--spacing-1);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
   font-family: 'Inter', var(--font-body);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   cursor: pointer;
   transition: all var(--transition-fast);
   min-height: 44px;
 }
 
 .onboarding-social-btn:hover {
-  background: var(--cd-light-grey);
-  border-color: var(--cd-dark-grey);
+  background: var(--color-gray-100);
+  border-color: var(--color-dark);
 }
 
 .onboarding-social-btn__icon {
-  width: 20px;
-  height: 20px;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
 }
 
 .onboarding-social-btn__icon img {
@@ -382,13 +370,13 @@
 .onboarding-divider__line {
   flex: 1;
   height: 1px;
-  background: var(--cd-grey-border);
+  background: var(--color-gray-300);
 }
 
 .onboarding-divider__text {
   font-family: 'Barlow Condensed', var(--font-body);
   font-size: var(--font-size-sm);
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   opacity: 0.5;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -405,36 +393,36 @@
   font-family: 'Inter', var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   margin-bottom: var(--spacing-2);
 }
 
 .onboarding-form-input {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--cd-grey-border);
-  border-radius: 4px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--spacing-1);
   font-family: 'Inter', var(--font-body);
   font-size: var(--font-size-md);
-  color: var(--cd-dark-grey);
-  background: var(--cd-white);
+  color: var(--color-dark);
+  background: var(--color-white);
   transition: all var(--transition-fast);
 }
 
 .onboarding-form-input:focus {
   outline: none;
-  border-color: var(--cd-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
   box-shadow: 0 0 0 4px rgba(27, 95, 138, 0.15);
 }
 
 .onboarding-form-input::placeholder {
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   opacity: 0.4;
 }
 
 /* Link text - C/D Design System */
 .onboarding-link {
-  color: var(--cd-blue-cobalt);
+  color: var(--color-blue-cobalt);
   font-family: 'Lora', var(--font-article);
   font-weight: 700;
   text-decoration: underline;
@@ -442,14 +430,14 @@
 }
 
 .onboarding-link:hover {
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
 }
 
 /* Terms text */
 .onboarding-terms {
   font-family: 'Lora', var(--font-article);
   font-size: var(--font-size-sm);
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   opacity: 0.6;
   margin-top: var(--spacing-6);
 }
@@ -457,9 +445,9 @@
 /* Skip button - C/D Design System */
 .onboarding-skip {
   font-family: 'Inter', var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--cd-dark-grey);
+  color: var(--color-dark);
   opacity: 0.6;
   background: none;
   border: none;
@@ -473,7 +461,7 @@
 
 .onboarding-skip:hover {
   opacity: 1;
-  color: var(--cd-blue-cobalt);
+  color: var(--color-blue-cobalt);
 }
 
 /* Responsive */
@@ -483,7 +471,7 @@
   }
 
   .onboarding-header__logo {
-    height: 24px;
+    height: var(--spacing-6);
   }
 
   .onboarding-main {

@@ -1,0 +1,365 @@
+/* ==========================================================================
+   Text Block Component
+   Car and Driver Design System
+   ========================================================================== */
+
+.text-block {
+  font-family: var(--font-body);
+  color: var(--color-dark);
+  line-height: var(--line-height-loose);
+}
+
+/* Max Width Variants */
+.text-block--narrow {
+  max-width: 540px;
+}
+
+.text-block--medium {
+  max-width: 720px;
+}
+
+.text-block--wide {
+  max-width: 960px;
+}
+
+.text-block--full {
+  max-width: none;
+}
+
+/* Size Variants */
+.text-block--small {
+  font-size: var(--font-size-sm);
+}
+
+.text-block--medium {
+  font-size: var(--font-size-base);
+}
+
+.text-block--large {
+  font-size: var(--font-size-lg);
+}
+
+/* Relaxed Spacing */
+.text-block--relaxed p,
+.text-block--relaxed .text-block__paragraph {
+  margin-bottom: 1.75em;
+}
+
+/* ==========================================================================
+   Headings
+   ========================================================================== */
+
+.text-block__heading {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  line-height: var(--line-height-snug);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.text-block__heading--h1 {
+  font-size: var(--font-size-40);
+  margin-top: 0;
+}
+
+.text-block__heading--h2 {
+  font-size: var(--font-size-3xl);
+}
+
+.text-block__heading--h3 {
+  font-size: var(--font-size-2xl);
+}
+
+.text-block__heading--h4 {
+  font-size: var(--font-size-xl);
+}
+
+.text-block__heading--h5 {
+  font-size: var(--font-size-lg);
+}
+
+.text-block__heading--h6 {
+  font-size: var(--font-size-md);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Native heading styles */
+.text-block h1,
+.text-block h2,
+.text-block h3,
+.text-block h4,
+.text-block h5,
+.text-block h6 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  line-height: var(--line-height-snug);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.text-block h1 { font-size: var(--font-size-40); margin-top: 0; }
+.text-block h2 { font-size: var(--font-size-3xl); }
+.text-block h3 { font-size: var(--font-size-2xl); }
+.text-block h4 { font-size: var(--font-size-xl); }
+.text-block h5 { font-size: var(--font-size-lg); }
+.text-block h6 { font-size: var(--font-size-md); text-transform: uppercase; letter-spacing: 0.02em; }
+
+/* ==========================================================================
+   Paragraphs
+   ========================================================================== */
+
+.text-block__paragraph,
+.text-block p {
+  margin-top: 0;
+  margin-bottom: 1.25em;
+}
+
+.text-block__paragraph--lead,
+.text-block p:first-of-type.lead {
+  font-size: 1.25em;
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Drop Cap */
+.text-block--drop-cap > p:first-of-type::first-letter,
+.text-block--drop-cap > .text-block__paragraph:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 4em;
+  font-weight: var(--font-weight-bold);
+  line-height: 0.8;
+  padding-right: 0.1em;
+  margin-top: 0.05em;
+  color: var(--color-blue-cobalt);
+}
+
+/* ==========================================================================
+   Inline Styles
+   ========================================================================== */
+
+.text-block strong,
+.text-block b {
+  font-weight: var(--font-weight-bold);
+}
+
+.text-block em,
+.text-block i {
+  font-style: italic;
+}
+
+.text-block u {
+  text-decoration: underline;
+  text-decoration-color: var(--color-red);
+  text-underline-offset: 2px;
+}
+
+.text-block a {
+  color: var(--color-red);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.text-block a:hover {
+  color: var(--color-dark);
+}
+
+.text-block code {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  font-size: 0.9em;
+  padding: 0.15em 0.4em;
+  background-color: var(--color-gray-100);
+  border-radius: 3px;
+}
+
+.text-block mark {
+  background-color: #fef08a;
+  padding: 0.1em 0.2em;
+}
+
+/* ==========================================================================
+   Blockquote
+   ========================================================================== */
+
+.text-block__quote,
+.text-block blockquote {
+  margin: 1.5em 0;
+  padding: var(--spacing-6);
+  border-left: 4px solid var(--color-blue-cobalt);
+  background-color: var(--color-gray-50);
+}
+
+.text-block__quote p,
+.text-block blockquote p {
+  font-size: var(--font-size-lg);
+  font-style: italic;
+  color: var(--color-gray-700);
+  margin: 0;
+}
+
+.text-block__quote-cite,
+.text-block blockquote cite {
+  display: block;
+  margin-top: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  font-style: normal;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-500);
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+.text-block__list,
+.text-block ul,
+.text-block ol {
+  margin: 1.25em 0;
+  padding-left: 1.5em;
+}
+
+.text-block__list-item,
+.text-block li {
+  margin-bottom: 0.5em;
+  padding-left: 0.5em;
+}
+
+.text-block ul,
+.text-block__list:not(.text-block__list--ordered) {
+  list-style-type: disc;
+}
+
+.text-block ol,
+.text-block__list--ordered {
+  list-style-type: decimal;
+}
+
+.text-block ul ul,
+.text-block ol ol,
+.text-block ul ol,
+.text-block ol ul {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Highlight Box
+   Car and Driver Design System Colors
+   ========================================================================== */
+
+.text-block__highlight {
+  margin: 1.5em 0;
+  padding: var(--spacing-4) var(--spacing-6);
+  border-radius: var(--border-radius-lg);
+}
+
+.text-block__highlight--info {
+  background-color: var(--color-info-light);
+  color: var(--color-blue-cobalt-dark);
+}
+
+.text-block__highlight--warning {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-dark);
+}
+
+.text-block__highlight--success {
+  background-color: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.text-block__highlight--tip {
+  background-color: var(--color-gray-100);
+  color: var(--color-dark);
+}
+
+.text-block__highlight p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Divider
+   ========================================================================== */
+
+.text-block__divider {
+  border: none;
+  margin: 2em 0;
+}
+
+.text-block__divider--line {
+  height: 1px;
+  background-color: var(--color-gray-200);
+}
+
+.text-block__divider--dots {
+  height: auto;
+  text-align: center;
+}
+
+.text-block__divider--dots::before {
+  content: '• • •';
+  color: var(--color-gray-400);
+  font-size: var(--font-size-xl);
+  letter-spacing: 0.5em;
+}
+
+.text-block__divider--space {
+  height: 2em;
+  background: transparent;
+}
+
+/* ==========================================================================
+   Images
+   ========================================================================== */
+
+.text-block img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--border-radius-lg);
+  margin: 1.5em 0;
+}
+
+.text-block figure {
+  margin: 1.5em 0;
+}
+
+.text-block figcaption {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  text-align: center;
+  margin-top: 0.5em;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .text-block--large {
+    font-size: var(--font-size-base);
+  }
+
+  .text-block h1,
+  .text-block__heading--h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .text-block h2,
+  .text-block__heading--h2 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .text-block h3,
+  .text-block__heading--h3 {
+    font-size: var(--font-size-xl);
+  }
+
+  .text-block--drop-cap > p:first-of-type::first-letter,
+  .text-block--drop-cap > .text-block__paragraph:first-of-type::first-letter {
+    font-size: 3em;
+  }
+}

@@ -49,7 +49,7 @@
 
 .step4-title {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
   margin: 0;
@@ -102,8 +102,8 @@
 /* Newsletter Logo */
 .step4-newsletter-logo {
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
+  width: var(--spacing-20);
+  height: var(--spacing-20);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,8 +131,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 24px;
-  height: 24px;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -183,7 +183,7 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-600);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--spacing-0-5);
   background: none;
   border: none;
   cursor: pointer;
@@ -203,7 +203,7 @@
 }
 
 .step4-logo-img {
-  height: 24px;
+  height: var(--spacing-6);
   width: auto;
   filter: brightness(0);
   opacity: 0.5;
@@ -245,8 +245,8 @@
   }
 
   .step4-newsletter-logo {
-    width: 64px;
-    height: 64px;
+    width: var(--spacing-16);
+    height: var(--spacing-16);
   }
 
   .step4-navigation {

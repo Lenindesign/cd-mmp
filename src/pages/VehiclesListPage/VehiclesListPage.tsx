@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Filter, ChevronDown, Grid, List, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
+import { Search, Filter, ChevronDown, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
 import { getAllVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
@@ -8,6 +8,8 @@ import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services
 import TopTenCarouselLeads from '../../components/TopTenCarouselLeads';
 import { VehicleCard } from '../../components/VehicleCard';
 import { SEO } from '../../components/SEO';
+import AdBanner from '../../components/AdBanner';
+import AdSidebar from '../../components/AdSidebar';
 import './VehiclesListPage.css';
 
 // Vehicle History Tooltip Component
@@ -140,11 +142,11 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
 const VehiclesListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [hoveredListing, setHoveredListing] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 24; // Show 24 items per page (6 rows x 4 columns)
+  const resultsRef = useRef<HTMLDivElement>(null);
   
   // Get filter values from URL params
   const inventoryType = searchParams.get('type') || 'new'; // 'new' or 'used'
@@ -346,6 +348,22 @@ const VehiclesListPage = () => {
   
   // Reset to page 1 when filters change
   const resetPage = () => setCurrentPage(1);
+
+  // Scroll to results section with offset for sticky header
+  const scrollToResults = () => {
+    setTimeout(() => {
+      if (resultsRef.current) {
+        const headerOffset = 80; // Account for sticky filters bar
+        const elementPosition = resultsRef.current.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
+  };
   
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -356,6 +374,7 @@ const VehiclesListPage = () => {
     }
     setSearchParams(newParams);
     resetPage();
+    scrollToResults();
   };
   
   const clearFilters = () => {
@@ -386,6 +405,7 @@ const VehiclesListPage = () => {
     setSearchParams(newParams);
     setSearchQuery('');
     resetPage();
+    scrollToResults();
   };
 
   // Dynamic SEO title based on filters
@@ -408,32 +428,6 @@ const VehiclesListPage = () => {
         description={seoDescription}
         keywords={['cars for sale', 'new cars', 'used cars', selectedMake || '', selectedBodyStyle || ''].filter(Boolean)}
       />
-      {/* Header */}
-      <div className="vehicles-list-page__header">
-        <div className="container">
-          <h1 className="vehicles-list-page__title">Browse All Vehicles</h1>
-          <div className="vehicles-list-page__subtitle-row">
-            <p className="vehicles-list-page__subtitle">
-              Explore {inventoryType === 'new' ? allVehicles.length.toLocaleString() : allListings.length.toLocaleString()} {inventoryType === 'new' ? 'new vehicles' : 'listings'} in our database
-            </p>
-            <div className="vehicles-list-page__type-toggle">
-              <button
-                className={`vehicles-list-page__type-btn ${inventoryType === 'new' ? 'active' : ''}`}
-                onClick={() => handleInventoryTypeChange('new')}
-              >
-                All New
-              </button>
-              <button
-                className={`vehicles-list-page__type-btn ${inventoryType === 'used' ? 'active' : ''}`}
-                onClick={() => handleInventoryTypeChange('used')}
-              >
-                All Used
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       {/* Filters Bar */}
       <div className="vehicles-list-page__filters-bar">
         <div className="container">
@@ -543,21 +537,19 @@ const VehiclesListPage = () => {
               )}
             </select>
             
-            {/* View Mode */}
-            <div className="vehicles-list-page__view-modes">
-              <button 
-                className={`vehicles-list-page__view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                onClick={() => setViewMode('grid')}
-                aria-label="Grid view"
+            {/* Inventory Type Toggle */}
+            <div className="vehicles-list-page__type-toggle">
+              <button
+                className={`vehicles-list-page__type-btn ${inventoryType === 'new' ? 'active' : ''}`}
+                onClick={() => handleInventoryTypeChange('new')}
               >
-                <Grid size={18} />
+                All New
               </button>
-              <button 
-                className={`vehicles-list-page__view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                onClick={() => setViewMode('list')}
-                aria-label="List view"
+              <button
+                className={`vehicles-list-page__type-btn ${inventoryType === 'used' ? 'active' : ''}`}
+                onClick={() => handleInventoryTypeChange('used')}
               >
-                <List size={18} />
+                All Used
               </button>
             </div>
           </div>
@@ -565,15 +557,17 @@ const VehiclesListPage = () => {
           {/* Active Filters */}
           {(selectedMake || selectedBodyStyle || selectedLifestyle || maxMileage || searchQuery) && (
             <div className="vehicles-list-page__active-filters">
-              <span className="vehicles-list-page__results-count">
-                {totalCount.toLocaleString()} {inventoryType === 'new' ? 'vehicles' : 'listings'} found
-              </span>
-              {selectedLifestyle && inventoryType === 'new' && (
-                <span className="vehicles-list-page__active-lifestyle">
-                  {getLifestyleIcon(selectedLifestyle)}
-                  {selectedLifestyle}
+              <div className="vehicles-list-page__active-filters-left">
+                {selectedLifestyle && inventoryType === 'new' && (
+                  <span className="vehicles-list-page__active-lifestyle">
+                    {getLifestyleIcon(selectedLifestyle)}
+                    {selectedLifestyle}
+                  </span>
+                )}
+                <span className="vehicles-list-page__results-count">
+                  {totalCount.toLocaleString()} {inventoryType === 'new' ? 'vehicles' : 'listings'} found
                 </span>
-              )}
+              </div>
               <button 
                 className="vehicles-list-page__clear-filters"
                 onClick={clearFilters}
@@ -593,10 +587,18 @@ const VehiclesListPage = () => {
         inventoryType={inventoryType as 'new' | 'used'}
       />
       
+      {/* Horizontal Ad */}
+      <AdBanner 
+        imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" 
+        altText="Nissan Advertisement"
+      />
+      
       {/* Vehicle Grid/List */}
-      <div className="vehicles-list-page__content">
+      <div className="vehicles-list-page__content" ref={resultsRef} id="results">
         <div className="container">
-          <div className={`vehicles-list-page__grid ${viewMode === 'list' ? 'vehicles-list-page__grid--list' : ''}`}>
+          <div className="vehicles-list-page__layout">
+            <div className="vehicles-list-page__main">
+              <div className="vehicles-list-page__grid">
             {/* New Vehicles */}
             {inventoryType === 'new' && paginatedVehicles.map((vehicle) => (
               <VehicleCard
@@ -617,6 +619,7 @@ const VehiclesListPage = () => {
                     : (vehicle.year === '2024' ? `SHOP USED ${vehicle.model.toUpperCase()}` : `SHOP NEW ${vehicle.model.toUpperCase()}`)
                 }
                 shopButtonVariant="outline"
+                showSaveButton={true}
               />
             ))}
 
@@ -646,6 +649,7 @@ const VehiclesListPage = () => {
                     mileage={listing.mileage}
                     dealerName={listing.dealerName}
                     distance={listing.distance}
+                    showSaveButton={true}
                   />
                 {/* Vehicle History Tooltip */}
                 {hoveredListing === listing.id && listing.history && (
@@ -721,6 +725,11 @@ const VehiclesListPage = () => {
               </button>
             </div>
           )}
+            </div>
+            
+            {/* Sidebar with Ad */}
+            <AdSidebar />
+          </div>
         </div>
       </div>
     </div>

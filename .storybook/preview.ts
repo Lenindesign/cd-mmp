@@ -1,6 +1,7 @@
 import type { Preview } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
 import React from 'react'
+import { AuthProvider } from '../src/contexts/AuthContext'
 import '../src/index.css'
 
 const preview: Preview = {
@@ -10,7 +11,11 @@ const preview: Preview = {
       if (context.parameters.router?.skip) {
         return React.createElement(Story);
       }
-      return React.createElement(MemoryRouter, null, React.createElement(Story));
+      return React.createElement(
+        AuthProvider, 
+        null, 
+        React.createElement(MemoryRouter, null, React.createElement(Story))
+      );
     },
   ],
   parameters: {

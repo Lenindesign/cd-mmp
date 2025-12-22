@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { getComparisonVehicles } from '../../services/vehicleService';
+import { VehicleCard } from '../VehicleCard/VehicleCard';
 import './Comparison.css';
 
 interface CompetitorVehicle {
@@ -52,7 +52,7 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
-      const cardWidth = carouselRef.current.querySelector('.comparison__card')?.clientWidth || 400;
+      const cardWidth = carouselRef.current.querySelector('.vehicle-card, .comparison__card')?.clientWidth || 400;
       const gap = 20; // spacing between cards
       const scrollAmount = cardWidth + gap;
       
@@ -94,89 +94,22 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
             onScroll={checkScrollPosition}
           >
             {displayCompetitors.map((vehicle) => (
-              <div key={vehicle.id} className="comparison__card">
-                {/* Card Header */}
-                <div className="comparison__card-top">
-                  <h3 className="comparison__card-title">
-                    <Link to={`/${vehicle.slug}`}>
-                      {vehicle.year} {vehicle.make} {vehicle.model}
-                    </Link>
-                  </h3>
-                  <div className="comparison__card-rating">
-                    <div className="comparison__card-rating-row">
-                      <span className="comparison__card-rating-score">{vehicle.rating.toFixed(1)}</span>
-                      <span className="comparison__card-rating-max">/10</span>
-                    </div>
-                    <span className="comparison__card-rating-label">C/D RATING</span>
-                  </div>
-                </div>
-
-                {/* Image */}
-                <div className="comparison__card-image">
-                  <img 
-                    src={vehicle.image} 
-                    alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                  />
-                  {/* Accolades Badges - Upper Right Corner */}
-                  {(vehicle.hasEditorChoice || vehicle.hasTenBest) && (
-                    <div className="comparison__card-accolades">
-                      {vehicle.hasEditorChoice && (
-                        <div className="comparison__card-accolade comparison__card-accolade--ec">
-                          <img 
-                            src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" 
-                            alt="Editor's Choice"
-                          />
-                        </div>
-                      )}
-                      {vehicle.hasTenBest && (
-                        <div className="comparison__card-accolade comparison__card-accolade--10best">
-                          <img 
-                            src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" 
-                            alt="10Best"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Price Section */}
-                <div className="comparison__card-price-row">
-                  <div className="comparison__card-price-info">
-                    <span className="comparison__card-price-label">Starting at</span>
-                    <div className="comparison__card-price-action">
-                      <span className="comparison__card-price-value">{vehicle.price}</span>
-                      <Link to={`/${vehicle.slug}`} className="comparison__card-shop-btn">Shop Now</Link>
-                    </div>
-                  </div>
-                </div>
-
-                {/* MPG Section */}
-                <div className="comparison__card-mpg">
-                  <span className="comparison__card-mpg-label">EPA MPG</span>
-                  <div className="comparison__card-mpg-value">
-                    <span className="comparison__card-mpg-number">{vehicle.mpg}</span>
-                    <span className="comparison__card-mpg-unit">combined</span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="comparison__card-divider"></div>
-
-                {/* Review Section */}
-                <div className="comparison__card-review">
-                  <p className="comparison__card-review-text">
-                    <strong>C/D SAYS:</strong> {vehicle.review}
-                    <Link to={`/${vehicle.slug}`} className="comparison__card-review-link">Learn More</Link>
-                  </p>
-                </div>
-
-                {/* Expand Section */}
-                <button className="comparison__card-expand">
-                  <span>EXPAND ALL MODEL YEARS</span>
-                  <ChevronDown size={16} />
-                </button>
-              </div>
+              <VehicleCard
+                key={vehicle.id}
+                id={vehicle.id}
+                name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                slug={vehicle.slug}
+                image={vehicle.image}
+                price={vehicle.price}
+                rating={vehicle.rating}
+                editorsChoice={vehicle.hasEditorChoice}
+                tenBest={vehicle.hasTenBest}
+                epaMpg={vehicle.mpg ? parseInt(vehicle.mpg.split('–')[0]) : undefined}
+                cdSays={vehicle.review}
+                showShopButton={true}
+                shopButtonText="Shop Now"
+                availableYears={[vehicle.year, vehicle.year - 1, vehicle.year - 2]}
+              />
             ))}
           </div>
 

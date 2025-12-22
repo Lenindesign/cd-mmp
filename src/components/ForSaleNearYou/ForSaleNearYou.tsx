@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, MapPin, Gauge, Calendar, Heart, Phone, Navigation } from 'lucide-react';
+import { ChevronRight, ChevronLeft, MapPin, Gauge, Calendar, Bookmark, Phone, Navigation } from 'lucide-react';
 import { getListingsNearYou } from '../../services/listingsService';
 import type { Listing } from '../../services/listingsService';
 import { OptimizedImage } from '../OptimizedImage';
@@ -128,7 +128,7 @@ const ForSaleNearYou = ({
                     onClick={() => toggleFavorite(listing.id)}
                     aria-label={favorites.has(listing.id) ? 'Remove from favorites' : 'Add to favorites'}
                   >
-                    <Heart size={20} fill={favorites.has(listing.id) ? 'currentColor' : 'none'} />
+                    <Bookmark size={20} fill={favorites.has(listing.id) ? 'currentColor' : 'none'} />
                   </button>
                   {listing.isNew && (
                     <span className="for-sale__card-badge">NEW LISTING</span>

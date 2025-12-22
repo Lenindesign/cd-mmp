@@ -14,8 +14,8 @@
 
 /* Icon */
 .error-state__icon {
-  width: 64px;
-  height: 64px;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
   margin-bottom: var(--spacing-4);
   color: var(--color-gray-400);
 }
@@ -75,8 +75,8 @@
   }
 
   .error-state__icon {
-    width: 48px;
-    height: 48px;
+    width: var(--spacing-12);
+    height: var(--spacing-12);
   }
 
   .error-state__title {
@@ -106,8 +106,8 @@
 
 .error-message__icon {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
 }
 
 .error-message__text {

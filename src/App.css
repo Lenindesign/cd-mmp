@@ -61,16 +61,16 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Selection color - Car and Driver red */
+/* Selection color - Blue for better UX mental model */
 ::selection {
-  background: var(--color-red);
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
 /* Focus visible for accessibility */
 :focus-visible {
   outline: 2px solid var(--color-red);
-  outline-offset: 2px;
+  outline-offset: var(--spacing-0-5);
 }
 
 /* Reduce motion for users who prefer it */

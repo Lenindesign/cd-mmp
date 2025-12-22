@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car, Heart, Blend } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep2.css';
 
 // Speedometer Step Indicator Component (consistent with Step 1)
@@ -72,11 +73,30 @@ const userTypeOptions: Omit<UserTypeOption, 'isSelected'>[] = [
 
 const OnboardingStep2: React.FC = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated, updateUser } = useAuth();
   const [selectedType, setSelectedType] = useState<UserType>(null);
 
-  const handleContinue = () => {
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/sign-in');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Pre-fill with existing user data
+  useEffect(() => {
+    if (user?.userType) {
+      setSelectedType(user.userType);
+    }
+  }, [user]);
+
+  const handleContinue = async () => {
     if (selectedType) {
-      localStorage.setItem('onboarding_user_type', selectedType);
+      try {
+        await updateUser({ userType: selectedType });
+      } catch (err) {
+        console.error('Failed to save user type:', err);
+      }
       navigate('/onboarding/step-3');
     }
   };

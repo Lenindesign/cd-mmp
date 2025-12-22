@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep4.css';
 
 // Speedometer Step Indicator Component (consistent with Steps 1-3)
@@ -84,7 +85,22 @@ const newsletters: Newsletter[] = [
 
 const OnboardingStep4: React.FC = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated, completeOnboarding } = useAuth();
   const [selectedNewsletters, setSelectedNewsletters] = useState<string[]>(['car-and-driver']);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/sign-in');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Pre-fill with existing newsletter subscriptions
+  useEffect(() => {
+    if (user?.newsletterSubscriptions && user.newsletterSubscriptions.length > 0) {
+      setSelectedNewsletters(user.newsletterSubscriptions);
+    }
+  }, [user]);
 
   const toggleNewsletter = (newsletterId: string) => {
     setSelectedNewsletters(prev => 
@@ -94,10 +110,15 @@ const OnboardingStep4: React.FC = () => {
     );
   };
 
-  const handleFinish = () => {
-    // Store newsletter preferences
-    localStorage.setItem('onboarding_newsletters', JSON.stringify(selectedNewsletters));
-    localStorage.setItem('onboarding_completed', 'true');
+  const handleFinish = async () => {
+    // Complete onboarding with newsletter preferences
+    try {
+      await completeOnboarding({
+        newsletters: selectedNewsletters,
+      });
+    } catch (err) {
+      console.error('Failed to complete onboarding:', err);
+    }
     navigate('/onboarding/welcome');
   };
 
@@ -105,8 +126,12 @@ const OnboardingStep4: React.FC = () => {
     navigate('/onboarding/step-3');
   };
 
-  const handleSkip = () => {
-    localStorage.setItem('onboarding_completed', 'true');
+  const handleSkip = async () => {
+    try {
+      await completeOnboarding({});
+    } catch (err) {
+      console.error('Failed to complete onboarding:', err);
+    }
     navigate('/onboarding/welcome');
   };
 
@@ -178,7 +203,7 @@ const OnboardingStep4: React.FC = () => {
             onClick={handleFinish}
             type="button"
           >
-            Next
+            Complete
             <ChevronRightIcon />
           </button>
         </nav>

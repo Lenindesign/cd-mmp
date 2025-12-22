@@ -7,10 +7,9 @@
 
 .vehicle-overview__card {
   background: var(--color-white);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
-  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
-  padding: 2.5rem 3rem 0 3rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-10) var(--spacing-12) 0 var(--spacing-12);
 }
 
 /* Byline */
@@ -57,12 +56,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: var(--spacing-0-5);
 }
 
 .vehicle-overview__date {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-500);
 }
 
@@ -75,7 +74,7 @@
   align-items: center;
   gap: var(--spacing-1);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-500);
 }
 
@@ -94,8 +93,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
   background: var(--color-gray-100);
   border: 1px solid var(--color-gray-200);
   border-radius: 50%;
@@ -167,7 +166,7 @@
 .vehicle-overview__author-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-0-5);
 }
 
 .vehicle-overview__author-name {
@@ -189,26 +188,14 @@
 
 .vehicle-overview__title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin: 0 0 1.5rem 0;
-  padding-bottom: var(--spacing-3);
+  margin: 0 0 var(--spacing-2) 0;
   line-height: 1.2;
-  position: relative;
 }
 
-.vehicle-overview__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 60px;
-  height: 4px;
-  background: var(--color-blue-cobalt);
-}
 
 .vehicle-overview__content {
   font-family: var(--font-body);
@@ -301,24 +288,12 @@
 
 .vehicle-overview__whats-new-header {
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--color-black);
   margin: 0 0 var(--spacing-4) 0;
-  padding-bottom: var(--spacing-2);
-  position: relative;
-}
-
-.vehicle-overview__whats-new-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
 }
 
 .vehicle-overview__whats-new-list {
@@ -356,22 +331,10 @@
 
 .vehicle-overview__section-title {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
   margin: 0 0 var(--spacing-3) 0;
-  padding-bottom: var(--spacing-2);
-  position: relative;
-}
-
-.vehicle-overview__section-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--color-blue-cobalt);
 }
 
 .vehicle-overview__section-content {
@@ -391,24 +354,12 @@
 
 .vehicle-overview__verdict-title {
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 var(--spacing-3) 0;
-  padding-bottom: var(--spacing-2);
-  position: relative;
-}
-
-.vehicle-overview__verdict-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
 }
 
 .vehicle-overview__verdict-text {
@@ -417,7 +368,7 @@
   color: var(--color-gray-700);
   line-height: 1.8;
   margin: 0;
-  padding-bottom: 48px;
+  padding-bottom: var(--spacing-12);
 }
 
 .vehicle-overview__verdict:last-child {
@@ -455,12 +406,12 @@
   }
 
   .vehicle-overview__avatar {
-    width: 48px;
-    height: 48px;
+    width: var(--spacing-12);
+    height: var(--spacing-12);
   }
 
   .vehicle-overview__title {
-    font-size: 28px;
+    font-size: var(--font-size-28);
   }
 
   .vehicle-overview__content {

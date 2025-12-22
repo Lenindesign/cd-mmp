@@ -1,0 +1,137 @@
+/* ==========================================================================
+   Ad Divider Component
+   Car and Driver Design System
+   ========================================================================== */
+
+.ad-divider {
+  width: 100%;
+  margin: var(--spacing-8) 0;
+}
+
+/* Text Container */
+.ad-divider__text-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.ad-divider__text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0 var(--spacing-4);
+  white-space: nowrap;
+}
+
+/* Lines */
+.ad-divider__line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-gray-300);
+}
+
+.ad-divider__line--left {
+  margin-right: 0;
+}
+
+.ad-divider__line--right {
+  margin-left: 0;
+}
+
+/* Ad Placeholder */
+.ad-divider__ad-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  background-color: var(--color-gray-100);
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+}
+
+.ad-divider__ad-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3);
+  color: var(--color-gray-400);
+}
+
+.ad-divider__ad-content svg {
+  opacity: 0.5;
+}
+
+.ad-divider__ad-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Variant: Minimal
+   ========================================================================== */
+
+.ad-divider--minimal {
+  margin: var(--spacing-6) 0;
+}
+
+.ad-divider--minimal .ad-divider__ad-placeholder {
+  min-height: 90px;
+}
+
+.ad-divider--minimal .ad-divider__text {
+  color: var(--color-gray-400);
+}
+
+/* ==========================================================================
+   Variant: Prominent
+   ========================================================================== */
+
+.ad-divider--prominent {
+  margin: var(--spacing-12) 0;
+  padding: var(--spacing-6);
+  background-color: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.ad-divider--prominent .ad-divider__text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+}
+
+.ad-divider--prominent .ad-divider__line {
+  background-color: var(--color-gray-400);
+}
+
+.ad-divider--prominent .ad-divider__ad-placeholder {
+  background-color: var(--color-white);
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .ad-divider {
+    margin: var(--spacing-6) 0;
+  }
+
+  .ad-divider__ad-placeholder {
+    min-height: 200px;
+  }
+
+  .ad-divider--prominent {
+    margin: var(--spacing-8) 0;
+    padding: var(--spacing-4);
+  }
+}

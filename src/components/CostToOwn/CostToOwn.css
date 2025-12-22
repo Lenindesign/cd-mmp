@@ -9,9 +9,8 @@
   position: relative;
   width: 100%;
   background: var(--color-white);
-  border-radius: 0.25rem;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
   overflow: visible;
 }
 
@@ -19,7 +18,7 @@
 
 /* Main Content */
 .cost-to-own__main {
-  padding: 2.5rem 3rem;
+  padding: var(--spacing-10) var(--spacing-12);
 }
 
 /* Header */
@@ -40,14 +39,11 @@
   display: flex;
   flex-direction: column;
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin: 0;
-  padding-bottom: var(--spacing-3);
-  position: relative;
+  margin: 0 0 var(--spacing-2) 0;
 }
 
 .cost-to-own__title-vehicle {
@@ -58,20 +54,11 @@
   display: block;
 }
 
-.cost-to-own__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--color-blue-cobalt);
-}
 
 .cost-to-own__trademark {
   font-size: var(--font-size-xs);
   color: var(--color-gray-600);
-  margin-top: 2px;
+  margin-top: var(--spacing-0-5);
 }
 
 .cost-to-own__info {
@@ -326,13 +313,13 @@
 
 .cost-to-own__marker-line {
   width: 1px;
-  height: 16px;
+  height: var(--spacing-4);
   background: var(--color-black);
 }
 
 .cost-to-own__marker-dot {
-  width: 10px;
-  height: 10px;
+  width: var(--spacing-2-5);
+  height: var(--spacing-2-5);
   background: var(--color-black);
   border-radius: var(--border-radius-full);
 }
@@ -411,7 +398,7 @@
 /* Bar */
 .cost-to-own__bar {
   display: flex;
-  height: 28px;
+  height: var(--spacing-7);
   border-radius: var(--border-radius-md);
   overflow: hidden;
 }
@@ -438,7 +425,7 @@
 
 .cost-to-own__powered {
   font-family: var(--font-body);
-  font-size: 8px;
+  font-size: var(--font-size-2xs);
   color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -458,7 +445,7 @@
 
 .cost-to-own__logo-tagline {
   font-family: var(--font-body);
-  font-size: 6px;
+  font-size: var(--font-size-2xs);
   color: var(--color-gray-500);
   letter-spacing: 0.5px;
 }
@@ -498,7 +485,7 @@
   }
 
   .cost-to-own__marker-name {
-    font-size: 9px;
+    font-size: var(--font-size-2xs);
   }
 
   .cost-to-own__marker-value {

@@ -1,26 +1,36 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Menu, X } from 'lucide-react';
+import { Search, Menu, X, User, LogOut, Bookmark } from 'lucide-react';
 import { searchVehicles, getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
+import { useAuth } from '../../contexts/AuthContext';
+import { getAvatarImageUrl, getUserInitials } from '../../utils/avatarUtils';
 import { Button } from '../Button';
 import ExitIntentModal from '../ExitIntentModal';
+import { SavedVehiclesSidebar } from '../SavedVehiclesSidebar';
 import './Header.css';
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Vehicle[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showSavedSidebar, setShowSavedSidebar] = useState(false);
   const searchRef = useRef<HTMLFormElement>(null);
-  const navigate = useNavigate();
+  const userMenuRef = useRef<HTMLDivElement>(null);
   
   // Fetch all ratings from Supabase in production
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   
+  // Fallback placeholder image for vehicles without images
+  const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
+
   // Extract current vehicle from URL if on a vehicle page
   const currentVehicle = useMemo(() => {
     // Match URL pattern: /:year/:make/:model or /:year/:make/:model/variant
@@ -32,6 +42,9 @@ const Header = () => {
     }
     return null;
   }, [location.pathname]);
+  
+  // Get vehicle image with fallback
+  const currentVehicleImage = currentVehicle?.image || (currentVehicle ? PLACEHOLDER_IMAGE : undefined);
   
   // Helper to get vehicle rating (uses Supabase in production)
   const getVehicleRating = (vehicle: Vehicle): number => {
@@ -61,16 +74,25 @@ const Header = () => {
     setActiveSuggestion(-1);
   }, [searchQuery]);
 
-  // Close suggestions when clicking outside
+  // Close suggestions and user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    setShowUserMenu(false);
+    navigate('/');
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,19 +247,97 @@ const Header = () => {
 
           {/* Actions */}
           <div className="header__actions">
-            <Button 
-              variant="primary"
-              size="small"
-              onClick={() => setIsSubscribeModalOpen(true)}
-              className="header__subscribe-btn"
-            >
-              Subscribe
-            </Button>
-            <button className="header__user-btn" aria-label="User account">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path d="M21.649 19.875c-1.428-2.468-3.629-4.239-6.196-5.078a6.75 6.75 0 1 0-6.906 0c-2.568.839-4.768 2.609-6.196 5.078a.75.75 0 1 0 1.299.75C5.416 17.573 8.538 15.75 12 15.75c3.462 0 6.584 1.823 8.35 4.875a.75.75 0 1 0 1.299-.75ZM6.749 9a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" fill="currentColor"/>
-              </svg>
-            </button>
+            {/* Show My Garage button for authenticated users, Subscribe for others */}
+            {isAuthenticated ? (
+              <button
+                className="header__saved-btn"
+                onClick={() => setShowSavedSidebar(true)}
+                aria-label="My Garage"
+              >
+                <Bookmark size={18} fill="currentColor" />
+                <span className="header__saved-btn-text">My Garage</span>
+              </button>
+            ) : (
+              <Button 
+                variant="primary"
+                size="small"
+                onClick={() => setIsSubscribeModalOpen(true)}
+                className="header__subscribe-btn"
+              >
+                Subscribe
+              </Button>
+            )}
+            
+            {/* User Account */}
+            <div className="header__user-container" ref={userMenuRef}>
+              {isAuthenticated && user ? (
+                <>
+                  <button 
+                    className="header__user-btn header__user-btn--authenticated"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    aria-label="User menu"
+                    aria-expanded={showUserMenu}
+                  >
+                    <div className="header__user-avatar">
+                      {getAvatarImageUrl(user.avatar) ? (
+                        <img 
+                          src={getAvatarImageUrl(user.avatar)!} 
+                          alt={user.name || 'User avatar'} 
+                          className="header__user-avatar-img"
+                        />
+                      ) : (
+                        <span>{getUserInitials(user.name)}</span>
+                      )}
+                    </div>
+                  </button>
+                  
+                  {showUserMenu && (
+                    <div className="header__user-menu">
+                      <div className="header__user-menu-header">
+                        <div className="header__user-menu-avatar">
+                          {getAvatarImageUrl(user.avatar) ? (
+                            <img 
+                              src={getAvatarImageUrl(user.avatar)!} 
+                              alt={user.name || 'User avatar'} 
+                              className="header__user-menu-avatar-img"
+                            />
+                          ) : (
+                            <span>{getUserInitials(user.name)}</span>
+                          )}
+                        </div>
+                        <div className="header__user-menu-info">
+                          <span className="header__user-menu-name">{user.name || 'Member'}</span>
+                          <span className="header__user-menu-email">{user.email}</span>
+                        </div>
+                      </div>
+                      <div className="header__user-menu-divider" />
+                      <Link 
+                        to="/account" 
+                        className="header__user-menu-item"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <User size={18} />
+                        <span>My Account</span>
+                      </Link>
+                      <div className="header__user-menu-divider" />
+                      <button 
+                        className="header__user-menu-item header__user-menu-item--danger"
+                        onClick={handleSignOut}
+                      >
+                        <LogOut size={18} />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link to="/sign-in" className="header__user-btn" aria-label="Sign in">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path d="M21.649 19.875c-1.428-2.468-3.629-4.239-6.196-5.078a6.75 6.75 0 1 0-6.906 0c-2.568.839-4.768 2.609-6.196 5.078a.75.75 0 1 0 1.299.75C5.416 17.573 8.538 15.75 12 15.75c3.462 0 6.584 1.823 8.35 4.875a.75.75 0 1 0 1.299-.75ZM6.749 9a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" fill="currentColor"/>
+                  </svg>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 
@@ -264,12 +364,19 @@ const Header = () => {
         </nav>
       </div>
 
-      {/* Subscribe Modal */}
+      {/* Subscribe Modal - This is the ONLY modal with exit intent enabled */}
       <ExitIntentModal 
         isOpen={isSubscribeModalOpen}
         onClose={() => setIsSubscribeModalOpen(false)}
         vehicleName={currentVehicle ? `${currentVehicle.year} ${currentVehicle.make} ${currentVehicle.model}` : undefined}
-        vehicleImage={currentVehicle?.image}
+        vehicleImage={currentVehicleImage}
+        enableExitIntent={true}
+      />
+
+      {/* Saved Vehicles Sidebar */}
+      <SavedVehiclesSidebar
+        isOpen={showSavedSidebar}
+        onClose={() => setShowSavedSidebar(false)}
       />
     </header>
   );

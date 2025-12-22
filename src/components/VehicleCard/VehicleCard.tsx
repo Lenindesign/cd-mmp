@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
+import { MapPin, ChevronUp, ChevronDown, ChevronRight, Bookmark } from 'lucide-react';
 import { OptimizedImage } from '../OptimizedImage';
+import { useAuth } from '../../contexts/AuthContext';
 import './VehicleCard.css';
 
 // Official Car and Driver Badge URLs
@@ -72,6 +73,9 @@ export interface VehicleCardProps {
   availableYears?: number[];
   yearDetails?: YearDetail[];
   modelName?: string;
+
+  // Save/Bookmark functionality
+  showSaveButton?: boolean;
 }
 
 const getBadgeLabel = (badge: string) => {
@@ -123,7 +127,9 @@ export const VehicleCard = ({
   availableYears,
   yearDetails,
   modelName,
+  showSaveButton = false,
 }: VehicleCardProps) => {
+  const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const isUsedCar = !!mileage;
   // Enhanced card layout is no longer automatically triggered
   // All cards now use the standard layout with optional features
@@ -134,6 +140,28 @@ export const VehicleCard = ({
   
   // Extract model name from the full name (e.g., "Mazda CX-30" -> "CX-30")
   const displayModelName = modelName || name.split(' ').slice(1).join(' ') || name;
+  
+  // Check if vehicle is saved
+  const isSaved = user?.savedVehicles?.some(v => v.name === name) || false;
+  
+  const handleSaveClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) return;
+    
+    if (isSaved) {
+      const savedVehicle = user?.savedVehicles?.find(v => v.name === name);
+      if (savedVehicle) {
+        removeSavedVehicle(savedVehicle.id);
+      }
+    } else {
+      addSavedVehicle({
+        id: slug,
+        name,
+        ownership: 'want',
+      });
+    }
+  };
   
   const handleShopClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -313,11 +341,22 @@ export const VehicleCard = ({
 
       {/* Card Image */}
       <div className="vehicle-card__image">
-        {/* Rank Badge (for Top 10) */}
+        {/* Rank Badge with Save Button (for Top 10) */}
         {rank && (
-          <span className={`vehicle-card__rank ${rank === 1 ? 'vehicle-card__rank--first' : ''} ${isCurrentVehicle ? 'vehicle-card__rank--current' : ''}`}>
-            {rank}
-          </span>
+          <div className="vehicle-card__rank-container">
+            <span className={`vehicle-card__rank ${rank === 1 ? 'vehicle-card__rank--first' : ''} ${isCurrentVehicle ? 'vehicle-card__rank--current' : ''}`}>
+              {rank}
+            </span>
+            {showSaveButton && isAuthenticated && (
+              <button
+                className={`vehicle-card__rank-save ${isSaved ? 'vehicle-card__rank-save--saved' : ''}`}
+                onClick={handleSaveClick}
+                aria-label={isSaved ? 'Remove from saved' : 'Save vehicle'}
+              >
+                <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
+              </button>
+            )}
+          </div>
         )}
 
         {/* Body Style Badge */}
@@ -360,6 +399,17 @@ export const VehicleCard = ({
               </div>
             )}
           </div>
+        )}
+
+        {/* Save Button (only show when no rank - ranked cards have save in rank container) */}
+        {showSaveButton && isAuthenticated && !rank && (
+          <button
+            className={`vehicle-card__save-btn ${isSaved ? 'vehicle-card__save-btn--saved' : ''}`}
+            onClick={handleSaveClick}
+            aria-label={isSaved ? 'Remove from saved' : 'Save vehicle'}
+          >
+            <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
+          </button>
         )}
 
         <OptimizedImage 

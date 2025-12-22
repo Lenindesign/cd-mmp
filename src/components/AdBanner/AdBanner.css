@@ -38,7 +38,7 @@
 
 .ad-banner__label {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-400);
   letter-spacing: 1px;

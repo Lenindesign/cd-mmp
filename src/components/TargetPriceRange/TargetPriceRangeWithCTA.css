@@ -77,7 +77,7 @@
    V1C: EXPERT TIP INLINE
    ============================================= */
 .tpr-marketplace--v1c .tpr-marketplace__expert-tip {
-  background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+  background: linear-gradient(135deg, #FEF3C7 0%, var(--color-gold) 100%);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-5);
   position: relative;
@@ -92,7 +92,7 @@
   padding: var(--spacing-1) var(--spacing-3);
   border-radius: var(--border-radius-sm);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -169,8 +169,8 @@
 }
 
 .tpr-marketplace--v2c .tpr-marketplace__prop-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,7 +243,7 @@
 
 .tpr-marketplace--v3c .tpr-marketplace__inventory-number {
   font-family: var(--font-heading);
-  font-size: 48px;
+  font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
   line-height: 1;
@@ -343,7 +343,7 @@
   display: flex;
   background: rgba(255, 255, 255, 0.1);
   border-radius: var(--border-radius-sm);
-  padding: 2px;
+  padding: var(--spacing-0-5);
 }
 
 .tpr-marketplace--v4c .tpr-marketplace__toggle-btn {
@@ -394,7 +394,7 @@
 
 .tpr-marketplace--v4c .tpr-marketplace__payment-value {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-white);
 }
@@ -466,7 +466,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: var(--spacing-1);
   height: 100%;
   background: var(--color-blue-cobalt);
 }
@@ -478,7 +478,7 @@
   padding: var(--spacing-1) var(--spacing-3);
   border-radius: var(--border-radius-sm);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 1px;

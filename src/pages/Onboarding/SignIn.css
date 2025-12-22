@@ -43,6 +43,25 @@
   margin: 0 0 var(--spacing-6) 0;
 }
 
+/* Error Message */
+.signin-error {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  background: var(--color-error-light);
+  border: 1px solid var(--color-error);
+  border-radius: var(--border-radius-md);
+  color: var(--color-error);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+}
+
+.signin-error svg {
+  flex-shrink: 0;
+}
+
 /* Form */
 .signin-form {
   display: flex;
@@ -66,7 +85,7 @@
 
 .signin-input {
   width: 100%;
-  height: 48px;
+  height: var(--spacing-12);
   padding: 0 var(--spacing-4);
   font-family: var(--font-body);
   font-size: var(--font-size-base);
@@ -93,7 +112,7 @@
 }
 
 .signin-password-wrapper .signin-input {
-  padding-right: 48px;
+  padding-right: var(--spacing-12);
 }
 
 .signin-password-toggle {
@@ -104,8 +123,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
   background: none;
   border: none;
   cursor: pointer;
@@ -123,7 +142,7 @@
   font-size: var(--font-size-sm);
   color: var(--color-blue-cobalt);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--spacing-0-5);
   align-self: flex-start;
   transition: color var(--transition-fast);
 }
@@ -135,7 +154,7 @@
 /* Submit Button */
 .signin-submit-btn {
   width: 100%;
-  height: 48px;
+  height: var(--spacing-12);
   margin-top: var(--spacing-2);
   font-family: var(--font-body);
   font-size: var(--font-size-base);
@@ -157,6 +176,30 @@
   cursor: not-allowed;
 }
 
+/* Loading Spinner */
+.signin-spinner {
+  display: inline-block;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  margin-right: var(--spacing-2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--color-white);
+  border-radius: 50%;
+  animation: signin-spin 0.8s linear infinite;
+}
+
+@keyframes signin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled states for social buttons */
+.signin-social-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Sign Up Link */
 .signin-signup-text {
   margin-top: var(--spacing-4);
@@ -170,7 +213,7 @@
   color: var(--color-dark);
   font-weight: var(--font-weight-medium);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--spacing-0-5);
 }
 
 .signin-signup-link:hover {
@@ -212,7 +255,7 @@
   justify-content: center;
   gap: var(--spacing-3);
   width: 100%;
-  height: 48px;
+  height: var(--spacing-12);
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
@@ -222,8 +265,8 @@
 }
 
 .signin-social-icon {
-  width: 20px;
-  height: 20px;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
 }
 
 /* Google Button */
@@ -246,7 +289,7 @@
 }
 
 .signin-social-btn--facebook:hover {
-  background: var(--color-facebook-dark);
+  background: #166FE5;
 }
 
 /* Apple Button */

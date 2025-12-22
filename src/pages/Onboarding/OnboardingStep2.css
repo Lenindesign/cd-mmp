@@ -48,7 +48,7 @@
 
 .step2-title {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
   margin: 0;
@@ -118,10 +118,10 @@
 }
 
 .step2-card__icon {
-  width: 64px;
-  height: 64px;
-  min-width: 64px;
-  min-height: 64px;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  min-width: var(--spacing-16);
+  min-height: var(--spacing-16);
   border-radius: 50%;
   background-color: var(--color-blue-cobalt);
   display: flex;
@@ -180,7 +180,7 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-600);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--spacing-0-5);
   background: none;
   border: none;
   cursor: pointer;
@@ -200,7 +200,7 @@
 }
 
 .step2-logo-img {
-  height: 24px;
+  height: var(--spacing-6);
   width: auto;
   filter: brightness(0);
   opacity: 0.5;
@@ -294,7 +294,7 @@
   }
 
   .step2-card__icon {
-    width: 48px;
-    height: 48px;
+    width: var(--spacing-12);
+    height: var(--spacing-12);
   }
 }

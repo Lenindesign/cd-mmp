@@ -22,7 +22,7 @@
 
 .pricing-cta__title {
   font-family: var(--font-heading);
-  font-size: 32px;
+  font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin-bottom: var(--spacing-2);
@@ -33,7 +33,7 @@
   align-items: center;
   gap: var(--spacing-2);
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   color: var(--color-gray-600);
 }
 
@@ -42,7 +42,7 @@
   align-items: center;
   gap: var(--spacing-2);
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
   text-decoration: none;
@@ -55,7 +55,7 @@
 
 .pricing-cta__section-title {
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -72,7 +72,7 @@
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--border-radius-md);
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -125,7 +125,7 @@
 
 .pricing-cta__btn--large {
   padding: var(--spacing-4) var(--spacing-6);
-  font-size: 16px;
+  font-size: var(--font-size-md);
 }
 
 .pricing-cta__btn--full {
@@ -169,7 +169,7 @@
 
 .pricing-cta__price-bar {
   position: relative;
-  height: 8px;
+  height: var(--spacing-2);
   background: var(--color-gray-200);
   border-radius: var(--border-radius-full);
   overflow: visible;
@@ -192,8 +192,8 @@
 
 .pricing-cta__price-marker::before {
   content: '';
-  width: 16px;
-  height: 16px;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
   background: var(--color-blue-cobalt);
   border: 3px solid var(--color-white);
   border-radius: 50%;
@@ -203,7 +203,7 @@
 .pricing-cta__price-marker-label {
   margin-top: var(--spacing-1);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
 }
@@ -217,13 +217,13 @@
 .pricing-cta__price-low,
 .pricing-cta__price-high {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-gray-600);
 }
 
 .pricing-cta__price-avg {
   font-family: var(--font-heading);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
 }
@@ -263,14 +263,14 @@
 
 .pricing-cta__badge-count {
   font-family: var(--font-heading);
-  font-size: 28px;
+  font-size: var(--font-size-28);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
 }
 
 .pricing-cta__badge-label {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-600);
 }
 
@@ -302,7 +302,7 @@
   color: var(--color-white);
   border-radius: var(--border-radius-sm);
   font-family: var(--font-heading);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.05em;
   margin-bottom: var(--spacing-3);
@@ -310,7 +310,7 @@
 
 .pricing-cta__expert-text {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   line-height: 1.6;
   color: var(--color-gray-700);
 }
@@ -331,8 +331,8 @@
 }
 
 .pricing-cta__prop-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -345,19 +345,19 @@
 .pricing-cta__prop-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-0-5);
 }
 
 .pricing-cta__prop-title {
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
 }
 
 .pricing-cta__prop-desc {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-gray-600);
 }
 
@@ -370,7 +370,7 @@
 .pricing-cta__next-label {
   display: block;
   font-family: var(--font-heading);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.1em;
   color: var(--color-gray-500);
@@ -388,7 +388,7 @@
 .pricing-cta__btn-count {
   font-weight: var(--font-weight-regular);
   opacity: 0.8;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 
 /* =============================================
@@ -439,7 +439,7 @@
   background: var(--color-success);
   color: var(--color-white);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   border-radius: var(--border-radius-sm);
@@ -451,7 +451,7 @@
 
 .pricing-cta__card-title {
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin-bottom: var(--spacing-1);
@@ -459,14 +459,14 @@
 
 .pricing-cta__card-mileage {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-500);
   margin-bottom: var(--spacing-2);
 }
 
 .pricing-cta__card-price {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin-bottom: var(--spacing-1);
@@ -474,7 +474,7 @@
 
 .pricing-cta__card-dealer {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-600);
 }
 
@@ -484,7 +484,7 @@
   background: var(--color-gray-100);
   border: none;
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
   cursor: pointer;
@@ -514,14 +514,14 @@
 
 .pricing-cta__card-more-count {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
 }
 
 .pricing-cta__card-more-label {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-gray-600);
   margin-bottom: var(--spacing-2);
 }
@@ -553,7 +553,7 @@
   display: inline-flex;
   background: rgba(255, 255, 255, 0.1);
   border-radius: var(--border-radius-full);
-  padding: 4px;
+  padding: var(--spacing-1);
   margin-bottom: var(--spacing-6);
 }
 
@@ -565,7 +565,7 @@
   background: transparent;
   border: none;
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-extrabold);
   color: rgba(255, 255, 255, 0.7);
   border-radius: var(--border-radius-full);
@@ -595,7 +595,7 @@
 .pricing-cta__payment-label {
   display: block;
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -606,7 +606,7 @@
 .pricing-cta__payment-value {
   display: block;
   font-family: var(--font-heading);
-  font-size: 42px;
+  font-size: var(--font-size-40);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   line-height: 1;
@@ -615,7 +615,7 @@
 
 .pricing-cta__payment-estimate {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   color: var(--color-blue-cobalt);
 }
 
@@ -635,21 +635,21 @@
 .pricing-cta__range-label {
   display: block;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: var(--spacing-1);
 }
 
 .pricing-cta__range-value {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-white);
 }
 
 .pricing-cta__payment-note {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: rgba(255, 255, 255, 0.6);
   margin-bottom: var(--spacing-6);
 }
@@ -697,8 +697,8 @@
 }
 
 .pricing-cta__market-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -710,7 +710,7 @@
 
 .pricing-cta__market-title {
   font-family: var(--font-heading);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin-bottom: var(--spacing-3);
@@ -728,19 +728,19 @@
 .pricing-cta__stat-value {
   display: block;
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-gray-600);
 }
 
 .pricing-cta__stat--highlight .pricing-cta__stat-value {
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   color: var(--color-blue-cobalt);
 }
 
 .pricing-cta__stat-label {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-500);
 }
 
@@ -764,14 +764,14 @@
 
 .pricing-cta__quality-count {
   font-family: var(--font-heading);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-blue-cobalt);
 }
 
 .pricing-cta__quality-label {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-gray-600);
 }
 
@@ -805,15 +805,15 @@
 
 .pricing-cta__trade-in-text h4 {
   font-family: var(--font-heading);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  margin-bottom: 2px;
+  margin-bottom: var(--spacing-0-5);
 }
 
 .pricing-cta__trade-in-text p {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-gray-600);
 }
 
@@ -836,7 +836,7 @@
 
 @media (max-width: 768px) {
   .pricing-cta__title {
-    font-size: 24px;
+    font-size: var(--font-size-2xl);
   }
   
   .pricing-cta__inventory-badges {

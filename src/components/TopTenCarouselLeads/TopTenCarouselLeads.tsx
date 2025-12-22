@@ -1,6 +1,6 @@
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ArrowRight, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAllVehicles, getAvailableYears, getYearDetails } from '../../services/vehicleService';
 import { getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -91,27 +91,12 @@ const TopTenCarouselLeads = ({
   onBodyStyleChange,
 }: TopTenCarouselLeadsProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedBodyStyle, setSelectedBodyStyle] = useState('all');
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleBodyStyleSelect = (bodyStyleId: string) => {
     setSelectedBodyStyle(bodyStyleId);
-    setIsDropdownOpen(false);
     if (onBodyStyleChange) {
       onBodyStyleChange(bodyStyleId === 'all' ? '' : bodyStyleId);
     }
@@ -319,50 +304,18 @@ const TopTenCarouselLeads = ({
               }
             </p>
           </div>
-          <div className="top-ten__dropdown" ref={dropdownRef}>
-            <button 
-              className="top-ten__dropdown-trigger"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              aria-expanded={isDropdownOpen}
-              aria-haspopup="listbox"
-            >
-              {selectedBodyStyle !== 'all' && (
-                <img 
-                  src={BODY_STYLE_OPTIONS.find(opt => opt.id === selectedBodyStyle)?.icon} 
-                  alt="" 
-                  className="top-ten__dropdown-icon"
-                />
-              )}
-              <span>{getSelectedBodyStyleName()}</span>
-              <ChevronDown 
-                size={18} 
-                className={`top-ten__dropdown-chevron ${isDropdownOpen ? 'top-ten__dropdown-chevron--open' : ''}`}
-              />
-            </button>
-            
-            {isDropdownOpen && (
-              <div className="top-ten__dropdown-menu" role="listbox">
-                {BODY_STYLE_OPTIONS.map((option) => (
-          <button 
-                    key={option.id}
-                    className={`top-ten__dropdown-item ${selectedBodyStyle === option.id ? 'top-ten__dropdown-item--selected' : ''}`}
-                    onClick={() => handleBodyStyleSelect(option.id)}
-                    role="option"
-                    aria-selected={selectedBodyStyle === option.id}
-                  >
-                    {option.icon && (
-                      <img 
-                        src={option.icon} 
-                        alt="" 
-                        className="top-ten__dropdown-item-icon"
-                      />
-                    )}
-                    <span>{option.name}</span>
-          </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <select 
+            className="top-ten__select"
+            value={selectedBodyStyle}
+            onChange={(e) => handleBodyStyleSelect(e.target.value)}
+            aria-label="Filter by body style"
+          >
+            {BODY_STYLE_OPTIONS.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Carousel Wrapper - only show if we have vehicles */}
@@ -408,6 +361,7 @@ const TopTenCarouselLeads = ({
                 tenBest={vehicle.tenBest}
                 isCurrentVehicle={vehicle.isCurrentVehicle}
                 showShopButton={true}
+                showSaveButton={true}
                       shopButtonText={ctaText}
                       shopButtonVariant="outline"
                 onShopClick={(e) => handleShopUsed(e, vehicle)}
@@ -436,8 +390,7 @@ const TopTenCarouselLeads = ({
                   Explore our complete rankings with detailed reviews, specs, and pricing.
                 </p>
                     <span className="top-ten__view-all-btn">
-                  View Full Rankings
-                  <ArrowRight size={18} />
+                  Full Rankings
                     </span>
               </div>
                 </Link>

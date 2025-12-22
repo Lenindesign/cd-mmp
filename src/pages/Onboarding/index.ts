@@ -6,4 +6,5 @@ export { default as OnboardingStep4 } from './OnboardingStep4';
 export { default as OnboardingWelcome } from './OnboardingWelcome';
 export { default as OnboardingResults } from './OnboardingResults';
 export { default as SignIn } from './SignIn';
+export { default as SignUp } from './SignUp';
 

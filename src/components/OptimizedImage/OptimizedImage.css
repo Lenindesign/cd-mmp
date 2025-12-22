@@ -58,7 +58,7 @@
    ============================================ */
 
 .optimized-image--error {
-  background-color: #e8e8ed;
+  background-color: var(--color-apple-bg-tertiary);
 }
 
 .optimized-image__error-fallback {
@@ -67,21 +67,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #e8e8ed;
+  background-color: var(--color-apple-bg-tertiary);
 }
 
 .optimized-image__error-icon {
-  color: #86868b;
-  width: 64px;
-  height: 64px;
+  color: var(--color-apple-text-tertiary);
+  width: var(--spacing-16);
+  height: var(--spacing-16);
   opacity: 0.7;
 }
 
 /* Smaller icon for small containers */
 .optimized-image[style*="width: 150px"] .optimized-image__error-icon,
 .optimized-image[style*="width: 100px"] .optimized-image__error-icon {
-  width: 32px;
-  height: 32px;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
 }
 
 /* ============================================

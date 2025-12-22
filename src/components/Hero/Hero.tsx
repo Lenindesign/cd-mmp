@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Heart, ArrowRight, ChevronLeft, ChevronRight, Image } from 'lucide-react';
+import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image } from 'lucide-react';
 import { getAvailableYears } from '../../services/vehicleService';
+import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../Button';
 import { OptimizedImage } from '../OptimizedImage';
 import './Hero.css';
@@ -25,7 +26,7 @@ interface HeroProps {
 }
 
 const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
-  const [isFavorited, setIsFavorited] = useState(true);
+  const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -36,6 +37,32 @@ const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
   const navigate = useNavigate();
+
+  // Check if this vehicle is saved
+  const vehicleName = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  const isFavorited = user?.savedVehicles?.some(v => v.name === vehicleName) || false;
+
+  // Handle save/unsave click
+  const handleSaveClick = () => {
+    if (!isAuthenticated) {
+      // Optionally redirect to sign in or show a message
+      navigate('/sign-in');
+      return;
+    }
+    
+    if (isFavorited) {
+      const savedVehicle = user?.savedVehicles?.find(v => v.name === vehicleName);
+      if (savedVehicle) {
+        removeSavedVehicle(savedVehicle.id);
+      }
+    } else {
+      addSavedVehicle({
+        id: `${vehicle.year}-${vehicle.make}-${vehicle.model}`.toLowerCase().replace(/\s+/g, '-'),
+        name: vehicleName,
+        ownership: 'want',
+      });
+    }
+  };
 
   // Intersection Observer for button animations
   useEffect(() => {
@@ -195,10 +222,10 @@ const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
             {/* Favorites Button */}
             <button 
               className={`hero__favorites-btn ${isFavorited ? 'hero__favorites-btn--active' : ''}`}
-              onClick={() => setIsFavorited(!isFavorited)}
+              onClick={handleSaveClick}
             >
-              <Heart size={16} fill={isFavorited ? 'currentColor' : 'none'} />
-              <span>{isFavorited ? 'ADDED TO FAVORITES' : 'ADD TO FAVORITES'}</span>
+              <Bookmark size={16} fill={isFavorited ? 'currentColor' : 'none'} />
+              <span>{isFavorited ? 'SAVED' : 'SAVE'}</span>
             </button>
           </div>
         </div>

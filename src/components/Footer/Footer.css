@@ -75,8 +75,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
   background: var(--color-gray-800);
   color: var(--color-gray-500);
   transition: all var(--transition-fast);

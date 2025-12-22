@@ -6,96 +6,105 @@
 /* Import Fonts - Car and Driver Design System Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
+/* Import Utility Classes */
+@import './styles/utilities.css';
+
 :root {
   /* ============================================
-     COLOR SYSTEM - Car and Driver Figma Colors
+     COLOR SYSTEM - Car and Driver Design System
+     Optimized: ~50 tokens (down from 80+)
      ============================================ */
   
-  /* Primary Accent - Blue Cobalt */
+  /* ---- PRIMARY BRAND ---- */
   --color-blue-cobalt: #1B5F8A;
-  --cd-blue-cobalt: #1B5F8A;  /* Alias for Car and Driver design system compatibility */
   --color-blue-cobalt-dark: #154d70;
-  --color-blue-cobalt-darker: #0D47A1;
   --color-blue-cobalt-light: #60A5FA;
   
-  /* Red (Secondary accent) */
+  /* ---- SECONDARY ACCENT ---- */
   --color-red: #D22730;
   --color-red-dark: #b31f27;
   
-  /* Neutrals */
+  /* ---- NEUTRALS (Core grayscale) ---- */
   --color-black: #000000;
   --color-dark: #222222;
   --color-gray-900: #1a1a1a;
   --color-gray-800: #333333;
   --color-gray-700: #4a4a4a;
   --color-gray-600: #666666;
-  --color-gray-500: #6b6b6b;  /* WCAG AA compliant: 5.0:1 on white */
-  --color-gray-400: #767676;  /* WCAG AA compliant: 4.5:1 on white */
+  --color-gray-500: #6b6b6b;  /* WCAG AA: 5.0:1 on white */
+  --color-gray-400: #767676;  /* WCAG AA: 4.5:1 on white */
   --color-gray-300: #cdcdcd;
   --color-gray-200: #e5e5e5;
   --color-gray-100: #f5f5f5;
   --color-gray-50: #fafafa;
   --color-white: #ffffff;
   
-  /* Special Backgrounds */
-  --color-teal-light: #F1F7F7;
-  --color-gray-xlight: #f5f5f5;
-  
-  /* Semantic - Status Colors */
+  /* ---- SEMANTIC: SUCCESS ---- */
   --color-success: #26870D;
   --color-success-dark: #1e6a0a;
   --color-success-light: rgba(38, 135, 13, 0.08);
   --color-success-border: #a3d98f;
+  --color-success-50: #f0fdf4;
   
+  /* ---- SEMANTIC: WARNING ---- */
   --color-warning: #f59e0b;
   --color-warning-dark: #c2410c;
   --color-warning-light: rgba(245, 158, 11, 0.08);
-  --color-warning-border: #fed7aa;
   
+  /* ---- SEMANTIC: ERROR ---- */
   --color-error: #ef4444;
   --color-error-dark: #dc2626;
   --color-error-light: rgba(239, 68, 68, 0.1);
-  --color-error-border: #fecaca;
+  --color-error-50: #fef2f2;
   
+  /* ---- SEMANTIC: INFO ---- */
   --color-info: #0288d1;
   --color-info-light: rgba(2, 136, 209, 0.08);
+  --color-info-border: rgba(27, 95, 138, 0.2);
   
+  /* ---- SPECIAL COLORS ---- */
   --color-gold: #ffc107;
-  --color-gold-light: #FEF3C7;
-  
-  /* Social Media Colors */
+  --color-teal-light: #F1F7F7;
   --color-facebook: #1877F2;
-  --color-facebook-dark: #166FE5;
   
-  /* Badge Colors */
-  --color-badge-new: var(--color-blue-cobalt);
+  /* ---- DARK THEME ---- */
+  --color-dark-bg: #0a1628;
+  --color-dark-surface: #1a1a2e;
+  --color-dark-border: #0f3460;
+  --color-dark-border-active: #4a90d9;
+  --color-dark-surface-hover: #1f3a5f;
+  --color-neutrals-1: #141416;
+  
+  /* ---- APPLE-STYLE (for specific components) ---- */
+  --color-apple-text-primary: #1d1d1f;
+  --color-apple-text-secondary: #6e6e73;
+  --color-apple-text-tertiary: #86868b;
+  --color-apple-bg-secondary: #f5f5f7;
+  --color-apple-bg-tertiary: #e8e8ed;
+  --color-apple-green: #34c759;
+  --color-apple-red: #ff3b30;
+  --color-apple-orange: #f5a623;
+  
+  /* ---- BADGE COLORS ---- */
   --color-badge-certified: var(--color-success);
   --color-badge-certified-bg: var(--color-success);
-  --color-badge-reduced: var(--color-error-dark);
-  --color-badge-reduced-bg: var(--color-error-dark);
-  
-  /* Status Colors (for tooltips and indicators) */
-  --color-status-success: var(--color-success);
-  --color-status-warning: var(--color-warning);
-  --color-status-success-light: var(--color-success-light);
-  --color-status-warning-light: var(--color-warning-light);
-  
-  /* Incentive Badge Colors */
   --color-badge-lease-bg: #FEF3E7;
   --color-badge-lease-text: #C27A0E;
   --color-badge-lease-border: #F5D5A8;
-  
   --color-badge-finance-bg: rgba(27, 95, 138, 0.08);
   --color-badge-finance-text: var(--color-blue-cobalt);
   --color-badge-finance-border: rgba(27, 95, 138, 0.25);
-  
   --color-badge-special-bg: var(--color-success-light);
   --color-badge-special-text: var(--color-success-dark);
   --color-badge-special-border: var(--color-success-border);
   
-  /* Gradient Backgrounds */
-  --gradient-info: linear-gradient(135deg, rgba(27, 95, 138, 0.08) 0%, rgba(27, 95, 138, 0.04) 100%);
-  --color-info-border: rgba(27, 95, 138, 0.2);
+  /* ---- GRADIENTS ---- */
+  --gradient-dark: linear-gradient(90deg, var(--color-dark-bg) 0%, var(--color-blue-cobalt-dark) 100%);
+  --gradient-dark-alt: linear-gradient(45deg, var(--color-dark-bg) 0%, var(--color-blue-cobalt-dark) 100%);
+  --gradient-blue: linear-gradient(135deg, var(--color-blue-cobalt) 0%, #2a7ab8 100%);
+  --gradient-success: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  --gradient-light: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --gradient-blue-light: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
   
   /* ============================================
      TYPOGRAPHY - Car and Driver Style
@@ -114,18 +123,38 @@
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
   
-  /* Font Sizes */
+  /* Font Sizes - Complete Scale */
+  --font-size-2xs: 0.5rem;      /* 8px - tiny labels */
   --font-size-xs: 0.6875rem;    /* 11px */
   --font-size-sm: 0.75rem;      /* 12px */
+  --font-size-13: 0.8125rem;    /* 13px */
   --font-size-base: 0.875rem;   /* 14px */
+  --font-size-15: 0.9375rem;    /* 15px */
   --font-size-md: 1rem;         /* 16px */
+  --font-size-17: 1.0625rem;    /* 17px - Apple system size */
   --font-size-lg: 1.125rem;     /* 18px */
   --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-22: 1.375rem;     /* 22px */
   --font-size-2xl: 1.5rem;      /* 24px */
-  --font-size-3xl: 2.25rem;     /* 36px */
+  --font-size-28: 1.75rem;      /* 28px */
+  --font-size-3xl: 2rem;        /* 32px */
+  --font-size-36: 2.25rem;      /* 36px - section titles */
+  --font-size-40: 2.5rem;       /* 40px */
   --font-size-4xl: 3rem;        /* 48px */
   --font-size-5xl: 4rem;        /* 64px */
+  --font-size-80: 5rem;         /* 80px - hero display */
   --font-size-6xl: 5.625rem;    /* 90px - Figma title size */
+  --font-size-7xl: 7.5rem;      /* 120px - massive display */
+  
+  /* Font Size Aliases (for semantic naming) */
+  --font-size-caption: var(--font-size-xs);
+  --font-size-body: var(--font-size-base);
+  --font-size-body-lg: var(--font-size-md);
+  --font-size-heading-sm: var(--font-size-lg);
+  --font-size-heading: var(--font-size-2xl);
+  --font-size-heading-lg: var(--font-size-3xl);
+  --font-size-display: var(--font-size-4xl);
+  --font-size-display-lg: var(--font-size-5xl);
   
   /* Line Heights */
   --line-height-none: 1;
@@ -140,18 +169,29 @@
      ============================================ */
   
   --spacing-0: 0;
+  --spacing-px: 1px;       /* 1px - borders, fine adjustments */
+  --spacing-0-5: 0.125rem; /* 2px */
   --spacing-1: 0.25rem;    /* 4px */
+  --spacing-1-5: 0.375rem; /* 6px */
   --spacing-2: 0.5rem;     /* 8px */
+  --spacing-2-5: 0.625rem; /* 10px */
   --spacing-3: 0.75rem;    /* 12px */
+  --spacing-3-5: 0.875rem; /* 14px */
   --spacing-4: 1rem;       /* 16px */
   --spacing-5: 1.25rem;    /* 20px */
   --spacing-6: 1.5rem;     /* 24px */
+  --spacing-7: 1.75rem;    /* 28px */
   --spacing-8: 2rem;       /* 32px */
+  --spacing-9: 2.25rem;    /* 36px */
   --spacing-10: 2.5rem;    /* 40px */
+  --spacing-11: 2.75rem;   /* 44px */
   --spacing-12: 3rem;      /* 48px */
+  --spacing-14: 3.5rem;    /* 56px */
   --spacing-16: 4rem;      /* 64px */
   --spacing-20: 5rem;      /* 80px */
   --spacing-24: 6rem;      /* 96px */
+  --spacing-28: 7rem;      /* 112px */
+  --spacing-32: 8rem;      /* 128px */
   
   /* ============================================
      LAYOUT
@@ -160,7 +200,7 @@
   --max-width-container: 1280px;
   --max-width-content: 1280px;
   --max-width-narrow: 960px;
-  --content-padding: 32px;
+  --content-padding: var(--spacing-8);
   --header-height: 46px;
   --subnav-height: 50px;
   
@@ -168,10 +208,10 @@
      EFFECTS
      ============================================ */
   
-  --border-radius-sm: 4px;
+  --border-radius-sm: var(--spacing-1);
   --border-radius-md: 0.25rem;
   --border-radius-lg: 0.5rem;
-  --border-radius-xl: 12px;
+  --border-radius-xl: var(--spacing-3);
   --border-radius-full: 9999px;
   
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -195,7 +235,7 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: var(--font-size-md);
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -277,7 +317,7 @@ h1, h2, h3, h4, h5, h6 {
 .skip-link:focus {
   top: var(--spacing-4);
   outline: 2px solid var(--color-white);
-  outline-offset: 2px;
+  outline-offset: var(--spacing-0-5);
 }
 
 /* Focus Styles - Consistent visible focus for all interactive elements */
@@ -287,7 +327,16 @@ h1, h2, h3, h4, h5, h6 {
 
 :focus-visible {
   outline: 2px solid var(--color-blue-cobalt);
-  outline-offset: 2px;
+  outline-offset: var(--spacing-0-5);
+}
+
+/* Remove browser validation styling (red outlines) */
+input:invalid,
+input:-moz-ui-invalid,
+textarea:invalid,
+textarea:-moz-ui-invalid {
+  box-shadow: none;
+  outline: none;
 }
 
 /* Dark background focus */
@@ -377,24 +426,24 @@ h1, h2, h3, h4, h5, h6 {
 
 .cta:focus-visible {
   outline: 2px solid var(--color-blue-cobalt);
-  outline-offset: 2px;
+  outline-offset: var(--spacing-0-5);
 }
 
 /* CTA Sizes */
 .cta--sm {
-  height: 32px;
+  height: var(--spacing-8);
   padding: 0 var(--spacing-3);
   font-size: var(--font-size-xs);
 }
 
 .cta--md {
-  height: 40px;
+  height: var(--spacing-10);
   padding: 0 var(--spacing-4);
   font-size: var(--font-size-sm);
 }
 
 .cta--lg {
-  height: 48px;
+  height: var(--spacing-12);
   padding: 0 var(--spacing-6);
   font-size: var(--font-size-base);
 }
@@ -484,8 +533,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
 }
 
 ::-webkit-scrollbar-track {

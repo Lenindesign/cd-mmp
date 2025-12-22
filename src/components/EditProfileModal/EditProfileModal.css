@@ -1,0 +1,366 @@
+/* Edit Profile Modal */
+.edit-profile-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: var(--spacing-4);
+}
+
+.edit-profile-modal {
+  background: var(--color-white);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.edit-profile-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.edit-profile-modal__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0;
+}
+
+.edit-profile-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-md);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.edit-profile-modal__close:hover {
+  background: var(--color-gray-100);
+  color: var(--color-dark);
+}
+
+/* Tabs */
+.edit-profile-modal__tabs {
+  display: flex;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.edit-profile-modal__tab {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-5);
+  background: transparent;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.edit-profile-modal__tab:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+.edit-profile-modal__tab--active {
+  background: var(--color-dark);
+  border-color: var(--color-dark);
+  color: var(--color-white);
+}
+
+.edit-profile-modal__tab--active:hover {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-800);
+}
+
+/* Content */
+.edit-profile-modal__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-6);
+}
+
+.edit-profile-modal__section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-4) 0;
+}
+
+/* Avatar Grid */
+.edit-profile-modal__grid {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.edit-profile-modal__grid--avatars {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.edit-profile-modal__grid--banners {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Avatar Option */
+.edit-profile-modal__avatar-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.edit-profile-modal__avatar-option:hover {
+  border-color: var(--color-gray-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.edit-profile-modal__avatar-option--selected {
+  border-color: var(--color-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.edit-profile-modal__avatar-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-profile-modal__avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-profile-modal__avatar-preview--initials {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.edit-profile-modal__avatar-logo {
+  width: 100%;
+  height: 100%;
+  background: var(--color-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.edit-profile-modal__avatar-logo-text {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+}
+
+.edit-profile-modal__avatar-name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  text-align: center;
+}
+
+/* Check Mark */
+.edit-profile-modal__check {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  background: var(--color-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+}
+
+/* Banner Option */
+.edit-profile-modal__banner-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background: var(--color-white);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.edit-profile-modal__banner-option:hover {
+  border-color: var(--color-gray-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.edit-profile-modal__banner-option--selected {
+  border-color: var(--color-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.edit-profile-modal__banner-preview {
+  width: 100%;
+  height: 100px;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  background: var(--color-gray-100);
+}
+
+.edit-profile-modal__banner-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-profile-modal__banner-name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+}
+
+/* Footer */
+.edit-profile-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+}
+
+.edit-profile-modal__btn {
+  padding: var(--spacing-3) var(--spacing-6);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.edit-profile-modal__btn--cancel {
+  background: var(--color-gray-700);
+  border: none;
+  color: var(--color-white);
+}
+
+.edit-profile-modal__btn--cancel:hover {
+  background: var(--color-gray-800);
+}
+
+.edit-profile-modal__btn--save {
+  background: var(--color-dark);
+  border: none;
+  color: var(--color-white);
+}
+
+.edit-profile-modal__btn--save:hover {
+  background: var(--color-gray-900);
+}
+
+.edit-profile-modal__btn--save:disabled {
+  background: var(--color-gray-400);
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .edit-profile-modal {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .edit-profile-modal__grid--avatars {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .edit-profile-modal__grid--banners {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-profile-modal__avatar-preview {
+    width: 60px;
+    height: 60px;
+  }
+
+  .edit-profile-modal__footer {
+    flex-direction: column;
+  }
+
+  .edit-profile-modal__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-profile-modal__grid--avatars {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .edit-profile-modal__tabs {
+    flex-direction: column;
+  }
+
+  .edit-profile-modal__tab {
+    justify-content: center;
+  }
+}
+

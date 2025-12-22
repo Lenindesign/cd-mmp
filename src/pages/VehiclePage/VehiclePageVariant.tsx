@@ -1,12 +1,14 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getVehicleBySlug } from '../../services/vehicleService';
+import { addRecentlyViewed } from '../../services/recentlyViewedService';
 import { useSupabaseRating, getCategory } from '../../hooks/useSupabaseRating';
 import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
 import { HeroV1, HeroV2, HeroV3, HeroV4, HeroV5, HeroV10 } from '../../components/Hero/HeroVariants';
 import QuickSpecs from '../../components/QuickSpecs';
 import CostToOwn from '../../components/CostToOwn';
+import PriceHistory from '../../components/PriceHistory';
 import TargetPriceRange from '../../components/TargetPriceRange';
 import Incentives from '../../components/Incentives';
 import BuyingPotential from '../../components/BuyingPotential';
@@ -70,6 +72,21 @@ const VehiclePageVariant = ({ variant }: VehiclePageVariantProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  // Track recently viewed vehicles
+  useEffect(() => {
+    if (vehicle) {
+      addRecentlyViewed({
+        id: vehicle.id,
+        year: vehicle.year,
+        make: vehicle.make,
+        model: vehicle.model,
+        slug: vehicle.slug,
+        image: vehicle.image,
+        priceMin: vehicle.priceMin,
+      });
+    }
+  }, [vehicle]);
 
   if (!vehicle) {
     return (
@@ -224,6 +241,20 @@ const VehiclePageVariant = ({ variant }: VehiclePageVariantProps) => {
               msrp={vehicle.priceMin}
               fuelType={vehicle.fuelType}
             />
+            <PriceHistory
+              vehicleYear={parseInt(vehicle.year)}
+              make={vehicle.make}
+              model={vehicle.model}
+              trim={trimData[0]?.name || 'Base'}
+              asNewValue={vehicle.priceMin}
+              previousYearValue={Math.round(vehicle.priceMin * 0.85)}
+              currentValue={Math.round(vehicle.priceMin * 0.78)}
+              forecastYear1Value={Math.round(vehicle.priceMin * 0.70)}
+              forecastYear2Value={Math.round(vehicle.priceMin * 0.62)}
+              expertTip={`Average purchasing price of a ${vehicle.year} ${vehicle.make} ${vehicle.model} in your area is $${Math.round(vehicle.priceMin * 0.75).toLocaleString()}. Consider this vehicle for excellent value retention in its segment.`}
+              shopUrl={`/vehicles/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase()}`}
+              tradeInUrl="#trade-in"
+            />
             <TargetPriceRange 
               msrp={vehicle.priceMin}
               vehicleName={`${vehicle.make} ${vehicle.model}`}
@@ -306,7 +337,7 @@ const VehiclePageVariant = ({ variant }: VehiclePageVariantProps) => {
       {/* Exit Intent Modal */}
       <ExitIntentModal 
         vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        vehicleImage={vehicle.image}
+        vehicleImage={vehicle.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg'}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />

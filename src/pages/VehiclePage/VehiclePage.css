@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -218,18 +218,6 @@
   color: var(--color-black);
   text-transform: uppercase;
   margin-bottom: var(--spacing-6);
-  position: relative;
-  padding-bottom: var(--spacing-2);
-}
-
-.vehicle-page__section-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 60px;
-  height: 4px;
-  background: var(--color-blue-cobalt);
 }
 
 /* Quick Specs */
@@ -300,12 +288,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
   border-radius: 50%;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   flex-shrink: 0;
 }
 

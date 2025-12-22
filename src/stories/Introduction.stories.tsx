@@ -221,7 +221,7 @@ export const Welcome: Story = {
       </style>
       <div className="docs-container">
         <div className="docs-header">
-          <div className="docs-eyebrow">Design System v1.0</div>
+          <div className="docs-eyebrow">Design System v2.0</div>
           
           {/* Car and Driver Logo */}
           <svg viewBox="0 0 1364 263" style={{ width: '400px', height: 'auto', marginBottom: '32px' }} xmlns="http://www.w3.org/2000/svg">

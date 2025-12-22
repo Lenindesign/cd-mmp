@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Bookmark } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
+import { useAuth } from '../../contexts/AuthContext';
 import { VehicleCard } from '../../components/VehicleCard';
 import { SEO } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
@@ -108,9 +109,36 @@ const generateCdSays = (year: string, make: string, model: string): string => {
 const RankingsPage = () => {
   const { bodyStyle, subcategory } = useParams<{ bodyStyle: string; subcategory?: string }>();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
+  const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
 
   // Get config for current body style
   const config = bodyStyle ? BODY_STYLE_CONFIG[bodyStyle.toLowerCase()] : null;
+
+  // Check if a vehicle is saved
+  const isVehicleSaved = (vehicleName: string) => {
+    return user?.savedVehicles?.some(v => v.name === vehicleName) || false;
+  };
+
+  // Handle save click for hero cards
+  const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string }) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) return;
+    
+    const isSaved = isVehicleSaved(vehicle.name);
+    if (isSaved) {
+      const savedVehicle = user?.savedVehicles?.find(v => v.name === vehicle.name);
+      if (savedVehicle) {
+        removeSavedVehicle(savedVehicle.id);
+      }
+    } else {
+      addSavedVehicle({
+        id: vehicle.slug,
+        name: vehicle.name,
+        ownership: 'want',
+      });
+    }
+  };
 
   // Get vehicle rating helper
   const getVehicleRating = (vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
@@ -331,22 +359,6 @@ const RankingsPage = () => {
         description={config.description}
       />
 
-      {/* Breadcrumb */}
-      <div className="rankings-page__breadcrumb">
-        <div className="container">
-          <nav aria-label="Breadcrumb">
-            <ol className="rankings-page__breadcrumb-list">
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/rankings">Rankings</Link></li>
-              {subcategory && (
-                <li><Link to={`/rankings/${bodyStyle}`}>{config.title}</Link></li>
-              )}
-              <li aria-current="page">{pageTitle}</li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <div className="rankings-page__hero">
         <div className="container">
@@ -404,6 +416,20 @@ const RankingsPage = () => {
                   </Link>
                 ))}
             </div>
+            {/* Scroll indicator button */}
+            <button 
+              className="rankings-page__subnav-scroll-btn"
+              onClick={(e) => {
+                const container = e.currentTarget.parentElement;
+                const pills = container?.querySelector('.rankings-page__subnav-pills');
+                if (pills) {
+                  pills.scrollBy({ left: 200, behavior: 'smooth' });
+                }
+              }}
+              aria-label="Scroll right"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
         </div>
       )}
@@ -449,7 +475,18 @@ const RankingsPage = () => {
                           </div>
                         </div>
                         <div className="rankings-page__hero-card-image-container">
-                          <div className="rankings-page__hero-card-rank">1</div>
+                          <div className="rankings-page__hero-card-rank-container">
+                            <div className="rankings-page__hero-card-rank rankings-page__hero-card-rank--first">1</div>
+                            {isAuthenticated && (
+                              <button
+                                className={`rankings-page__hero-card-save ${isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
+                                onClick={(e) => handleSaveClick(e, { name: `${sub.vehicles[0].year} ${sub.vehicles[0].name}`, slug: sub.vehicles[0].slug })}
+                                aria-label={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
+                              >
+                                <Bookmark size={18} fill={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'currentColor' : 'none'} />
+                              </button>
+                            )}
+                          </div>
                           <img 
                             src={sub.vehicles[0].image} 
                             alt={sub.vehicles[0].name}
@@ -531,6 +568,7 @@ const RankingsPage = () => {
                           editorsChoice={vehicle.editorsChoice}
                           tenBest={vehicle.tenBest}
                           showShopButton={true}
+                          showSaveButton={true}
                           shopButtonText={`${parseInt(vehicle.year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
                           shopButtonVariant="outline"
                           epaMpg={vehicle.epaMpg}
@@ -564,7 +602,18 @@ const RankingsPage = () => {
                           </div>
                         </div>
                         <div className="rankings-page__hero-card-image-container">
-                          <div className="rankings-page__hero-card-rank">1</div>
+                          <div className="rankings-page__hero-card-rank-container">
+                            <div className="rankings-page__hero-card-rank rankings-page__hero-card-rank--first">1</div>
+                            {isAuthenticated && (
+                              <button
+                                className={`rankings-page__hero-card-save ${isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
+                                onClick={(e) => handleSaveClick(e, { name: `${formattedVehicles[0].year} ${formattedVehicles[0].name}`, slug: formattedVehicles[0].slug })}
+                                aria-label={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
+                              >
+                                <Bookmark size={18} fill={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'currentColor' : 'none'} />
+                              </button>
+                            )}
+                          </div>
                           <img 
                             src={formattedVehicles[0].image} 
                             alt={formattedVehicles[0].name}
@@ -654,6 +703,7 @@ const RankingsPage = () => {
                           editorsChoice={vehicle.editorsChoice}
                           tenBest={vehicle.tenBest}
                           showShopButton={true}
+                          showSaveButton={true}
                           shopButtonText={`${parseInt(vehicle.year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
                           shopButtonVariant="outline"
                           epaMpg={vehicle.epaMpg}

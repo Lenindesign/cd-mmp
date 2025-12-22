@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from '../../contexts/AuthContext';
 import VehiclesListPage from './VehiclesListPage';
 
 const meta: Meta<typeof VehiclesListPage> = {
@@ -7,7 +8,7 @@ const meta: Meta<typeof VehiclesListPage> = {
   component: VehiclesListPage,
   parameters: {
     layout: 'fullscreen',
-    router: { skip: true }, // This page provides its own MemoryRouter with initialEntries
+    router: { skip: true },
     docs: {
       description: {
         component: 'Main browse page for new and used vehicles with filters, search, and lifestyle recommendations.',
@@ -23,11 +24,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   decorators: [
     (Story) => (
+      <AuthProvider>
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="*" element={<Story />} />
         </Routes>
       </MemoryRouter>
+      </AuthProvider>
     ),
   ],
 };
@@ -35,11 +38,13 @@ export const Default: Story = {
 export const NewCars: Story = {
   decorators: [
     (Story) => (
+      <AuthProvider>
       <MemoryRouter initialEntries={['/?type=new']}>
         <Routes>
           <Route path="*" element={<Story />} />
         </Routes>
       </MemoryRouter>
+      </AuthProvider>
     ),
   ],
   parameters: {
@@ -54,11 +59,13 @@ export const NewCars: Story = {
 export const UsedCars: Story = {
   decorators: [
     (Story) => (
+      <AuthProvider>
       <MemoryRouter initialEntries={['/?type=used']}>
         <Routes>
           <Route path="*" element={<Story />} />
         </Routes>
       </MemoryRouter>
+      </AuthProvider>
     ),
   ],
   parameters: {
@@ -73,11 +80,13 @@ export const UsedCars: Story = {
 export const FilteredByMake: Story = {
   decorators: [
     (Story) => (
+      <AuthProvider>
       <MemoryRouter initialEntries={['/?make=Toyota']}>
         <Routes>
           <Route path="*" element={<Story />} />
         </Routes>
       </MemoryRouter>
+      </AuthProvider>
     ),
   ],
   parameters: {
@@ -92,11 +101,13 @@ export const FilteredByMake: Story = {
 export const FilteredByBodyStyle: Story = {
   decorators: [
     (Story) => (
+      <AuthProvider>
       <MemoryRouter initialEntries={['/?bodyStyle=SUV']}>
         <Routes>
           <Route path="*" element={<Story />} />
         </Routes>
       </MemoryRouter>
+      </AuthProvider>
     ),
   ],
   parameters: {

@@ -5,10 +5,9 @@
 
 .market-speed__card {
   background: var(--color-white);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
-  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
-  padding: 2.5rem 3rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-10) var(--spacing-12);
 }
 
 /* Header */
@@ -18,26 +17,14 @@
 
 .market-speed__title {
   font-family: var(--font-heading);
-  font-size: 36px;
+  font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin: 0 0 var(--spacing-3) 0;
-  padding-bottom: var(--spacing-3);
+  margin: 0 0 var(--spacing-2) 0;
   line-height: 1.2;
-  position: relative;
 }
 
-.market-speed__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 60px;
-  height: 4px;
-  background: var(--color-blue-cobalt);
-}
 
 .market-speed__description {
   font-family: var(--font-body);
@@ -162,7 +149,7 @@
 }
 
 .market-speed__table th:first-child {
-  width: 40px;
+  width: var(--spacing-10);
 }
 
 .market-speed__th-content {
@@ -185,8 +172,8 @@
   color: var(--color-white);
   border: none;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
   cursor: pointer;
   transition: background-color var(--transition-fast);
 }
@@ -196,8 +183,8 @@
 }
 
 .market-speed__info-btn svg {
-  width: 12px;
-  height: 12px;
+  width: var(--spacing-3);
+  height: var(--spacing-3);
 }
 
 .market-speed__tooltip {
@@ -311,7 +298,7 @@
   }
 
   .market-speed__title {
-    font-size: 28px;
+    font-size: var(--font-size-28);
   }
 
   .market-speed__table th,
