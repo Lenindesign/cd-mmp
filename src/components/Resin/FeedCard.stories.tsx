@@ -71,12 +71,11 @@ export const Default: Story = {
   },
 };
 
-export const WithSponsor: Story = {
+export const WithLabel: Story = {
   args: {
     imageUrl: bmw3Series?.image,
     imageAlt: `${bmw3Series?.year} ${bmw3Series?.make} ${bmw3Series?.model}`,
     headline: `${bmw3Series?.year} ${bmw3Series?.make} ${bmw3Series?.model}: The Sports Sedan Standard`,
-    sponsor: 'Car and Driver',
     label: 'First Drive',
     author: 'K.C. Colwell',
     date: 'Dec 20, 2024',
@@ -180,7 +179,6 @@ export const MixedFeedWithLabels: Story = {
             index === 3 ? 'The Perfect Grand Tourer' :
             'Performance Meets Daily Drivability'
           }`}
-          sponsor={index % 2 === 0 ? 'Car and Driver' : undefined}
           label={['Track Test', 'Comparison', 'Performance', 'Review', 'First Drive'][index]}
           author={['Dan Edmunds', 'K.C. Colwell', 'Eric Stafford', 'Austin Irwin', 'Roberto Baldwin'][index]}
           date={`Dec ${22 - index}, 2024`}
