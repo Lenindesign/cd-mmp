@@ -103,7 +103,6 @@ export const MediumSize: Story = {
     thumbnailAlt: `${fordMustang?.year} ${fordMustang?.make} ${fordMustang?.model}`,
     title: `${fordMustang?.year} ${fordMustang?.make} ${fordMustang?.model} Dark Horse: 500 HP of American Muscle`,
     duration: '10:45',
-    sponsor: 'Car and Driver',
     variant: 'medium',
   },
 };
@@ -118,14 +117,13 @@ export const SmallSize: Story = {
   },
 };
 
-export const WithSponsor: Story = {
+export const LargeWithLabel: Story = {
   args: {
     thumbnailUrl: lamborghini?.image || '',
     thumbnailAlt: `${lamborghini?.year} ${lamborghini?.make} ${lamborghini?.model}`,
     title: `${lamborghini?.year} ${lamborghini?.make} ${lamborghini?.model}: Supercar Dreams`,
     duration: '15:00',
-    sponsor: 'Car and Driver + Lamborghini',
-    label: 'Sponsored',
+    label: 'Featured',
     variant: 'large',
   },
 };
