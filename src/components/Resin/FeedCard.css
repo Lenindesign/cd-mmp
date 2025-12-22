@@ -59,6 +59,14 @@
   min-width: 0;
 }
 
+/* Top Meta - Sponsor + Label row */
+.feed-card__top-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
 /* Sponsor */
 .feed-card__sponsor {
   font-family: var(--font-body);
@@ -71,7 +79,6 @@
 /* Label - matches design system tag style */
 .feed-card__label {
   display: inline-block;
-  align-self: flex-start;
   padding: var(--spacing-0-5) var(--spacing-2);
   font-family: var(--font-body);
   font-size: 10px;

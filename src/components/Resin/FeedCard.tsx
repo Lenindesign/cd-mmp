@@ -64,12 +64,15 @@ export const FeedCard: React.FC<FeedCardProps> = ({
         )}
         
         <div className="feed-card__content">
-          {sponsor && (
-            <span className="feed-card__sponsor">{sponsor}</span>
-          )}
-          
-          {label && (
-            <span className="feed-card__label">{label}</span>
+          {(sponsor || label) && (
+            <div className="feed-card__top-meta">
+              {sponsor && (
+                <span className="feed-card__sponsor">{sponsor}</span>
+              )}
+              {label && (
+                <span className="feed-card__label">{label}</span>
+              )}
+            </div>
           )}
           
           <h3 className="feed-card__headline">{headline}</h3>
