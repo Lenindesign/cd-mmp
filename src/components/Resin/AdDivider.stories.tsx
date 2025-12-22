@@ -1,6 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { AdDivider } from './AdDivider';
 
+// Sample ad image URLs (leaderboard 728x90 format)
+const sampleAdImages = {
+  leaderboard: 'https://via.placeholder.com/728x90/1a1a1a/ffffff?text=728x90+Leaderboard+Ad',
+  mediumRectangle: 'https://via.placeholder.com/300x250/1a1a1a/ffffff?text=300x250+Ad',
+  halfPage: 'https://via.placeholder.com/300x600/1a1a1a/ffffff?text=300x600+Half+Page',
+  billboard: 'https://via.placeholder.com/970x250/1a1a1a/ffffff?text=970x250+Billboard',
+};
+
 const meta: Meta<typeof AdDivider> = {
   title: 'Resin Components/AdDivider',
   component: AdDivider,
@@ -16,28 +24,28 @@ Inspired by Hearst's "Advertisement - Continue Reading Below" pattern.
 
 ### Features
 - Customizable label text
-- Optional ad placeholder with configurable height
+- Supports actual ad images with links
+- Fallback placeholder when no image provided
+- Standard ad sizes supported (728x90, 300x250, 300x600, 970x250)
 - Three variants: default, minimal, prominent
-- Lines on either side of text (default variant)
 - Responsive design
 
 ### Usage
 \`\`\`tsx
+// With ad image
 <AdDivider
   text="Advertisement - Continue Reading Below"
-  showAdPlaceholder={true}
-  adHeight={250}
-  variant="default"
+  adImageUrl="https://example.com/ad-728x90.jpg"
+  adLinkUrl="https://advertiser.com"
+  adWidth={728}
+  adHeight={90}
 />
-\`\`\`
 
-### In Context
-Place this component between content sections where ads would typically appear:
-
-\`\`\`tsx
-<ArticleSection />
-<AdDivider />
-<ArticleSection />
+// Placeholder only
+<AdDivider
+  text="Advertisement - Continue Reading Below"
+  showAd={true}
+/>
 \`\`\`
         `,
       },
@@ -50,13 +58,25 @@ Place this component between content sections where ads would typically appear:
       options: ['default', 'minimal', 'prominent'],
       description: 'Visual style variant',
     },
-    showAdPlaceholder: {
+    showAd: {
       control: 'boolean',
-      description: 'Show the ad placeholder area',
+      description: 'Show the ad area',
+    },
+    adImageUrl: {
+      control: 'text',
+      description: 'URL of the ad image',
+    },
+    adLinkUrl: {
+      control: 'text',
+      description: 'URL to link the ad to',
+    },
+    adWidth: {
+      control: { type: 'number' },
+      description: 'Width of the ad in pixels',
     },
     adHeight: {
-      control: { type: 'range', min: 100, max: 600, step: 50 },
-      description: 'Height of the ad placeholder in pixels',
+      control: { type: 'number' },
+      description: 'Height of the ad in pixels',
     },
   },
 };
@@ -67,8 +87,45 @@ type Story = StoryObj<typeof AdDivider>;
 export const Default: Story = {
   args: {
     text: 'Advertisement - Continue Reading Below',
-    showAdPlaceholder: true,
+    showAd: true,
+    adImageUrl: sampleAdImages.leaderboard,
+    adLinkUrl: '#',
+    adWidth: 728,
+    adHeight: 90,
+    variant: 'default',
+  },
+};
+
+export const WithMediumRectangle: Story = {
+  args: {
+    text: 'Advertisement - Continue Reading Below',
+    showAd: true,
+    adImageUrl: sampleAdImages.mediumRectangle,
+    adLinkUrl: '#',
+    adWidth: 300,
     adHeight: 250,
+    variant: 'default',
+  },
+};
+
+export const WithBillboard: Story = {
+  args: {
+    text: 'Advertisement',
+    showAd: true,
+    adImageUrl: sampleAdImages.billboard,
+    adLinkUrl: '#',
+    adWidth: 970,
+    adHeight: 250,
+    variant: 'default',
+  },
+};
+
+export const Placeholder: Story = {
+  args: {
+    text: 'Advertisement - Continue Reading Below',
+    showAd: true,
+    adWidth: 728,
+    adHeight: 90,
     variant: 'default',
   },
 };
@@ -76,7 +133,7 @@ export const Default: Story = {
 export const Minimal: Story = {
   args: {
     text: 'Advertisement - Continue Reading Below',
-    showAdPlaceholder: false,
+    showAd: false,
     variant: 'minimal',
   },
 };
@@ -84,34 +141,18 @@ export const Minimal: Story = {
 export const Prominent: Story = {
   args: {
     text: 'Advertisement - Continue Reading Below',
-    showAdPlaceholder: true,
-    adHeight: 300,
+    showAd: true,
+    adImageUrl: sampleAdImages.leaderboard,
+    adWidth: 728,
+    adHeight: 90,
     variant: 'prominent',
-  },
-};
-
-export const LargeAd: Story = {
-  args: {
-    text: 'Advertisement',
-    showAdPlaceholder: true,
-    adHeight: 600,
-    variant: 'default',
-  },
-};
-
-export const SmallAd: Story = {
-  args: {
-    text: 'Sponsored Content',
-    showAdPlaceholder: true,
-    adHeight: 100,
-    variant: 'default',
   },
 };
 
 export const TextOnly: Story = {
   args: {
     text: 'Advertisement - Continue Reading Below',
-    showAdPlaceholder: false,
+    showAd: false,
     variant: 'default',
   },
 };
@@ -139,11 +180,13 @@ export const InArticleContext: Story = {
         </p>
       </div>
 
-      {/* Ad Divider */}
+      {/* Ad Divider with image */}
       <AdDivider 
         text="Advertisement - Continue Reading Below"
-        showAdPlaceholder={true}
-        adHeight={250}
+        showAd={true}
+        adImageUrl={sampleAdImages.leaderboard}
+        adWidth={728}
+        adHeight={90}
         variant="default"
       />
 
@@ -165,10 +208,12 @@ export const InArticleContext: Story = {
         </p>
       </div>
 
-      {/* Another Ad Divider */}
+      {/* Another Ad Divider with medium rectangle */}
       <AdDivider 
         text="Advertisement - Continue Reading Below"
-        showAdPlaceholder={true}
+        showAd={true}
+        adImageUrl={sampleAdImages.mediumRectangle}
+        adWidth={300}
         adHeight={250}
         variant="default"
       />
@@ -195,23 +240,47 @@ export const AllVariants: Story = {
     <div style={{ maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ marginBottom: '48px' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '16px', color: '#6b7280' }}>
-          Default Variant
+          Default Variant with Ad
         </h3>
-        <AdDivider variant="default" showAdPlaceholder={true} adHeight={150} />
+        <AdDivider 
+          variant="default" 
+          showAd={true} 
+          adImageUrl={sampleAdImages.leaderboard}
+          adWidth={728}
+          adHeight={90}
+        />
       </div>
 
       <div style={{ marginBottom: '48px' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '16px', color: '#6b7280' }}>
-          Minimal Variant
+          Minimal Variant (Text Only)
         </h3>
-        <AdDivider variant="minimal" />
+        <AdDivider variant="minimal" showAd={false} />
+      </div>
+
+      <div style={{ marginBottom: '48px' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '16px', color: '#6b7280' }}>
+          Prominent Variant with Ad
+        </h3>
+        <AdDivider 
+          variant="prominent" 
+          showAd={true} 
+          adImageUrl={sampleAdImages.leaderboard}
+          adWidth={728}
+          adHeight={90}
+        />
       </div>
 
       <div>
         <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '16px', color: '#6b7280' }}>
-          Prominent Variant
+          Placeholder (No Image)
         </h3>
-        <AdDivider variant="prominent" showAdPlaceholder={true} adHeight={150} />
+        <AdDivider 
+          variant="default" 
+          showAd={true}
+          adWidth={728}
+          adHeight={90}
+        />
       </div>
     </div>
   ),
