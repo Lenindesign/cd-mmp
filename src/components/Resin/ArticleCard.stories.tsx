@@ -6,9 +6,6 @@ import { vehicleDatabase, sedans, suvs, trucks, coupes } from '../../data/vehicl
 const hondaCivic = vehicleDatabase.find(v => v.make === 'Honda' && v.model === 'Civic');
 const toyotaHighlander = vehicleDatabase.find(v => v.make === 'Toyota' && v.model === 'Highlander');
 const fordF150 = vehicleDatabase.find(v => v.make === 'Ford' && v.model === 'F-150');
-const chevyCorvette = vehicleDatabase.find(v => v.make === 'Chevrolet' && v.model === 'Corvette');
-const mazdaMX5 = vehicleDatabase.find(v => v.make === 'Mazda' && v.model === 'MX-5 Miata');
-const audiA4 = vehicleDatabase.find(v => v.make === 'Audi' && v.model === 'A4');
 
 const meta: Meta<typeof ArticleCard> = {
   title: 'Resin Components/ArticleCard',

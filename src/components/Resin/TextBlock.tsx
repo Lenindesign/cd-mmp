@@ -18,7 +18,7 @@ export interface TextBlockProps {
   className?: string;
 }
 
-export const TextBlock: React.FC<TextBlockProps> = ({
+const TextBlockComponent: React.FC<TextBlockProps> = ({
   children,
   htmlContent,
   size = 'medium',
@@ -52,13 +52,22 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   );
 };
 
+export const TextBlock = TextBlockComponent as typeof TextBlockComponent & {
+  Heading: typeof Heading;
+  Paragraph: typeof Paragraph;
+  Quote: typeof Quote;
+  List: typeof List;
+  Highlight: typeof Highlight;
+  Divider: typeof Divider;
+};
+
 // Sub-components for structured content
 export const Heading: React.FC<{
   level?: 1 | 2 | 3 | 4 | 5 | 6;
   children: React.ReactNode;
   className?: string;
 }> = ({ level = 2, children, className = '' }) => {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  const Tag = `h${level}` as keyof React.JSX.IntrinsicElements;
   return <Tag className={`text-block__heading text-block__heading--h${level} ${className}`}>{children}</Tag>;
 };
 
@@ -88,7 +97,7 @@ export const List: React.FC<{
   ordered?: boolean;
   className?: string;
 }> = ({ items, ordered = false, className = '' }) => {
-  const Tag = ordered ? 'ol' : 'ul';
+  const Tag = (ordered ? 'ol' : 'ul') as keyof React.JSX.IntrinsicElements;
   return (
     <Tag className={`text-block__list ${ordered ? 'text-block__list--ordered' : ''} ${className}`}>
       {items.map((item, index) => (

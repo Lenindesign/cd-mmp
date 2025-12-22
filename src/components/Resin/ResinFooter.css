@@ -40,6 +40,10 @@
   align-items: center;
 }
 
+.resin-footer__logo img {
+  filter: brightness(0) invert(1);
+}
+
 .resin-footer__logo-link {
   display: flex;
   align-items: center;

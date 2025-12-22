@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ResinHeader } from './ResinHeader';
+import { vehicleDatabase } from '../../data/vehicles';
+
+// Get a vehicle with a great hero image
+const porsche911 = vehicleDatabase.find(v => v.make === 'Porsche' && v.model === '911');
 
 const meta: Meta<typeof ResinHeader> = {
   title: 'Resin Components/ResinHeader',
@@ -138,20 +142,24 @@ export const TransparentVariant: Story = {
     (Story) => (
       <div 
         style={{ 
-          backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          minHeight: '300px',
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${porsche911?.image || ''})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          minHeight: '400px',
           position: 'relative',
         }}
       >
         <Story />
         <div style={{ 
-          padding: '80px 24px', 
+          padding: '120px 24px', 
           textAlign: 'center', 
           color: 'white' 
         }}>
-          <h1 style={{ fontSize: '3rem', marginBottom: '16px' }}>Hero Section</h1>
-          <p style={{ fontSize: '1.25rem', opacity: 0.9 }}>
-            Transparent header overlays content beautifully
+          <h1 style={{ fontSize: '3rem', marginBottom: '16px', fontWeight: 800, textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
+            2025 Porsche 911 Carrera GTS
+          </h1>
+          <p style={{ fontSize: '1.25rem', opacity: 0.9, textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
+            The benchmark sports car gets even better
           </p>
         </div>
       </div>

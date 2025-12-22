@@ -75,19 +75,18 @@
   margin-bottom: var(--spacing-2);
 }
 
-/* Label */
+/* Label - matches design system tag style */
 .big-story-card__label {
   display: inline-block;
   font-family: var(--font-body);
-  font-size: var(--font-size-xs);
+  font-size: 10px;
   font-weight: var(--font-weight-bold);
-  color: var(--color-red);
+  color: var(--color-dark);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.5px;
   margin-bottom: var(--spacing-2);
-  padding: var(--spacing-1) var(--spacing-2);
-  background: var(--color-gray-100);
-  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-0-5) var(--spacing-2);
+  background: var(--color-gold);
   width: fit-content;
 }
 

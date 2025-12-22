@@ -68,18 +68,18 @@
   text-transform: capitalize;
 }
 
-/* Label */
+/* Label - matches design system tag style */
 .feed-card__label {
   display: inline-block;
   align-self: flex-start;
-  padding: var(--spacing-1) var(--spacing-2);
+  padding: var(--spacing-0-5) var(--spacing-2);
   font-family: var(--font-body);
-  font-size: var(--font-size-xs);
+  font-size: 10px;
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--color-white);
-  background: var(--color-dark);
+  color: var(--color-dark);
+  background: var(--color-gold);
 }
 
 /* Headline */

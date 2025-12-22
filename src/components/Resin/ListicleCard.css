@@ -116,7 +116,7 @@
 }
 
 .listicle-card__link:hover .listicle-card__headline {
-  color: var(--color-red);
+  color: var(--color-blue-cobalt);
 }
 
 .listicle-card__link:hover .listicle-card__image {

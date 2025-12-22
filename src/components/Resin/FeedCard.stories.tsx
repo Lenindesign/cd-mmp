@@ -7,7 +7,6 @@ const hondaAccord = vehicleDatabase.find(v => v.make === 'Honda' && v.model === 
 const bmw3Series = vehicleDatabase.find(v => v.make === 'BMW' && v.model === '3 Series');
 const mercedesCClass = vehicleDatabase.find(v => v.make === 'Mercedes-Benz' && v.model === 'C-Class');
 const audiA4 = vehicleDatabase.find(v => v.make === 'Audi' && v.model === 'A4');
-const lexusES = vehicleDatabase.find(v => v.make === 'Lexus' && v.model === 'ES');
 
 const meta: Meta<typeof FeedCard> = {
   title: 'Resin Components/FeedCard',

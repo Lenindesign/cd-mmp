@@ -128,7 +128,7 @@ const multiVehicleGallery = sedans.slice(0, 6).map((v, index) => ({
   credit: 'Car and Driver',
 }));
 
-const suvGallery = suvs.map((v, index) => ({
+const suvGallery = suvs.map((v) => ({
   id: v.id,
   src: v.image,
   alt: `${v.year} ${v.make} ${v.model}`,

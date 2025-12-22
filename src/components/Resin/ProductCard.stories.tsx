@@ -77,6 +77,13 @@ export const Default: Story = {
     description: `${teslaModelY?.horsepower || 0} HP | ${teslaModelY?.drivetrain} | ${teslaModelY?.mpg || 'N/A'}`,
     ctaText: 'View Details',
   },
+  decorators: [
+    (Story) => (
+      <div style={{ backgroundColor: '#F5F5F5', padding: '24px', minHeight: '100vh' }}>
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export const BestSeller: Story = {
@@ -125,12 +132,7 @@ export const OnSale: Story = {
 // 4-across grid with SUVs
 export const FourAcrossGrid: Story = {
   render: () => (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(4, 1fr)', 
-      gap: '24px',
-      maxWidth: '1200px'
-    }}>
+    <div className="product-card-grid product-card-grid--four-across" style={{ maxWidth: '1200px' }}>
       {suvs.slice(0, 4).map((vehicle, index) => (
         <ProductCard
           key={vehicle.id}
@@ -152,12 +154,7 @@ export const FourAcrossGrid: Story = {
 // Mixed badges with trucks
 export const MixedBadges: Story = {
   render: () => (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(4, 1fr)', 
-      gap: '24px',
-      maxWidth: '1200px'
-    }}>
+    <div className="product-card-grid product-card-grid--four-across" style={{ maxWidth: '1200px' }}>
       {trucks.slice(0, 4).map((vehicle, index) => {
         const badges: Array<'best-seller' | 'editors-choice' | 'sale' | 'new' | null> = ['best-seller', 'editors-choice', 'sale', 'new'];
         return (
@@ -183,12 +180,7 @@ export const MixedBadges: Story = {
 // Sedans showcase
 export const SedanShowcase: Story = {
   render: () => (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(4, 1fr)', 
-      gap: '24px',
-      maxWidth: '1200px'
-    }}>
+    <div className="product-card-grid product-card-grid--four-across" style={{ maxWidth: '1200px' }}>
       {sedans.slice(0, 8).map((vehicle) => (
         <ProductCard
           key={vehicle.id}
@@ -210,12 +202,7 @@ export const SedanShowcase: Story = {
 // Minimal style
 export const MinimalStyle: Story = {
   render: () => (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(4, 1fr)', 
-      gap: '24px',
-      maxWidth: '1200px'
-    }}>
+    <div className="product-card-grid product-card-grid--four-across" style={{ maxWidth: '1200px' }}>
       {suvs.slice(4, 8).map((vehicle) => (
         <ProductCard
           key={vehicle.id}

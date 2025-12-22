@@ -10,6 +10,8 @@ export interface NavItem {
 export interface ResinHeaderProps {
   /** Logo image URL */
   logoUrl?: string;
+  /** Logo image URL for dark variant (white logo) */
+  logoUrlDark?: string;
   /** Logo alt text */
   logoAlt?: string;
   /** Navigation items */
@@ -40,6 +42,7 @@ export interface ResinHeaderProps {
 
 export const ResinHeader: React.FC<ResinHeaderProps> = ({
   logoUrl = '/cd-logo.svg',
+  logoUrlDark,
   logoAlt = 'Car and Driver',
   navItems = [],
   showSubscribe = true,
@@ -54,6 +57,8 @@ export const ResinHeader: React.FC<ResinHeaderProps> = ({
   sticky = false,
   variant = 'default',
 }) => {
+  // Use dark logo for dark variant if provided
+  const currentLogoUrl = variant === 'dark' && logoUrlDark ? logoUrlDark : logoUrl;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -88,7 +93,7 @@ export const ResinHeader: React.FC<ResinHeaderProps> = ({
 
         {/* Logo */}
         <a href="/" className="resin-header__logo">
-          <img src={logoUrl} alt={logoAlt} />
+          <img src={currentLogoUrl} alt={logoAlt} />
         </a>
 
         {/* Navigation Links */}
