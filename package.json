@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.87.3",
+    "@vis.gl/react-google-maps": "^1.7.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "lucide-react": "^0.556.0",
