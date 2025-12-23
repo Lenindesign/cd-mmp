@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import CostToOwn from './CostToOwn';
+import CostToOwnEnhanced from './CostToOwnEnhanced';
 
 const meta: Meta<typeof CostToOwn> = {
   title: 'Organisms/CostToOwn',
@@ -229,6 +230,212 @@ export const Exotic: Story = {
     docs: {
       description: {
         story: 'High-end sports car demonstrating premium ownership costs.',
+      },
+    },
+  },
+};
+
+// ============================================
+// ENHANCED VERSION - With Improvements
+// ============================================
+
+const enhancedMeta: Meta<typeof CostToOwnEnhanced> = {
+  title: 'Organisms/CostToOwn',
+  component: CostToOwnEnhanced,
+  parameters: {
+    layout: 'padded',
+  },
+};
+
+type EnhancedStory = StoryObj<typeof CostToOwnEnhanced>;
+
+/**
+ * ## Enhanced Cost to Own
+ * 
+ * This enhanced version includes several improvements for car buyers:
+ * 
+ * ### New Features
+ * 
+ * | Feature | Benefit |
+ * |---------|---------|
+ * | **Monthly Breakdown** | Shows ~$505/mo instead of abstract 5-year total |
+ * | **Competitor Comparison** | Visual bar chart ranking vs 3 competitors |
+ * | **Segment Comparison** | "8% below Subcompact SUV avg" context |
+ * | **Cost vs Average** | Each category shows ✓ -5% or ⚠ +12% |
+ * | **Depreciation Forecast** | Visual showing value today → after 5 years |
+ * | **Customize Estimates** | Sliders for annual miles & gas price |
+ * | **Savings Tips** | Actionable advice (0% APR, CPO, insurance) |
+ * | **CTAs** | "Get Pre-Approved" and "Compare Insurance" |
+ * 
+ * ### Business Value
+ * 
+ * - **Higher engagement** — Interactive customization keeps users on page
+ * - **Trust building** — Transparent competitor comparison
+ * - **Lead generation** — Clear CTAs for financing and insurance
+ * - **SEO value** — Comprehensive content for "cost to own" searches
+ */
+export const Enhanced: EnhancedStory = {
+  render: () => (
+    <CostToOwnEnhanced
+      vehicleName="2025 Chevrolet Trax"
+      msrp={21895}
+      fuelType="Gas"
+      trims={[
+        { name: 'LS FWD', msrp: 21895 },
+        { name: '1RS FWD', msrp: 23195 },
+        { name: 'LT FWD', msrp: 23395 },
+        { name: 'RS FWD', msrp: 24995 },
+        { name: 'ACTIV FWD', msrp: 24995 },
+      ]}
+      competitors={[
+        { name: 'Honda HR-V', totalCost: 32450, msrp: 24895 },
+        { name: 'Toyota Corolla Cross', totalCost: 31200, msrp: 23610 },
+        { name: 'Hyundai Kona', totalCost: 29800, msrp: 24250 },
+      ]}
+      segmentName="Subcompact SUV"
+      segmentAverage={31500}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## Key Improvements Over Original
+
+### 1. Monthly Cost Display
+Instead of showing only the 5-year total ($30,318), we now prominently display:
+- **$505/month** average monthly cost
+- Helps users connect to their actual budget
+
+### 2. Competitor Comparison Chart
+Visual bar chart showing:
+- Ranked list of competitors by total cost
+- Current vehicle highlighted
+- "🏆 Lowest cost to own" badge if applicable
+
+### 3. Detailed Cost Table with Context
+Each cost category now shows:
+- Monthly amount
+- 5-year total
+- **vs Average** indicator (↓5% better, ↑12% worse)
+
+### 4. Depreciation Visualization
+Clear visual showing:
+- Today's value: $21,895
+- After 5 years: $13,794
+- Loss amount: -$8,101
+- Retention percentage
+
+### 5. Interactive Customization
+Users can adjust:
+- Annual miles driven (5,000 - 25,000)
+- Gas price assumption ($2.50 - $5.50)
+- Estimates update in real-time
+
+### 6. Actionable Savings Tips
+- 💡 Get 0% APR financing → Save $3,284
+- 💡 Buy certified pre-owned → Save ~$3,240
+- 💡 Compare insurance quotes → Save 15-25%
+
+### 7. Clear CTAs
+- **Get Pre-Approved** — Primary action
+- **Compare Insurance Quotes** — Secondary action
+        `,
+      },
+    },
+  },
+};
+
+/**
+ * Enhanced version with the vehicle winning the comparison
+ */
+export const EnhancedWinner: EnhancedStory = {
+  render: () => (
+    <CostToOwnEnhanced
+      vehicleName="2025 Hyundai Kona"
+      msrp={24250}
+      fuelType="Gas"
+      trims={[
+        { name: 'SE', msrp: 24250 },
+        { name: 'SEL', msrp: 26350 },
+        { name: 'Limited', msrp: 30700 },
+      ]}
+      competitors={[
+        { name: 'Honda HR-V', totalCost: 32450, msrp: 24895 },
+        { name: 'Toyota Corolla Cross', totalCost: 31200, msrp: 23610 },
+        { name: 'Chevrolet Trax', totalCost: 30318, msrp: 21895 },
+      ]}
+      segmentName="Subcompact SUV"
+      segmentAverage={31500}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Shows the "🏆 Lowest cost to own" badge when the vehicle ranks #1 in comparison.',
+      },
+    },
+  },
+};
+
+/**
+ * Enhanced version for an electric vehicle
+ */
+export const EnhancedElectric: EnhancedStory = {
+  render: () => (
+    <CostToOwnEnhanced
+      vehicleName="2025 Chevrolet Bolt EV"
+      msrp={27495}
+      fuelType="Electric"
+      trims={[
+        { name: '1LT', msrp: 27495 },
+        { name: '2LT', msrp: 31495 },
+      ]}
+      competitors={[
+        { name: 'Nissan Leaf', totalCost: 34500, msrp: 28140 },
+        { name: 'Hyundai Kona Electric', totalCost: 36200, msrp: 33550 },
+        { name: 'Kia Niro EV', totalCost: 35800, msrp: 39990 },
+      ]}
+      segmentName="Affordable EV"
+      segmentAverage={35500}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Electric vehicle with lower fuel costs and different cost structure.',
+      },
+    },
+  },
+};
+
+/**
+ * Enhanced version for a luxury vehicle
+ */
+export const EnhancedLuxury: EnhancedStory = {
+  render: () => (
+    <CostToOwnEnhanced
+      vehicleName="2025 BMW 3 Series"
+      msrp={46300}
+      fuelType="Gas"
+      trims={[
+        { name: '330i', msrp: 46300 },
+        { name: '330i xDrive', msrp: 48300 },
+        { name: 'M340i', msrp: 58200 },
+      ]}
+      competitors={[
+        { name: 'Mercedes C-Class', totalCost: 58500, msrp: 47550 },
+        { name: 'Audi A4', totalCost: 55200, msrp: 45290 },
+        { name: 'Lexus IS', totalCost: 52800, msrp: 40985 },
+      ]}
+      segmentName="Compact Luxury Sedan"
+      segmentAverage={55000}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Luxury vehicle showing higher insurance and maintenance costs with competitor context.',
       },
     },
   },
