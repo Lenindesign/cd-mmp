@@ -46,14 +46,17 @@ const AdSidebar = ({
           </div>
         ) : (
           <a href={link} className="ad-sidebar__link" target="_blank" rel="noopener noreferrer">
+            {imageLoading && (
+              <div className="ad-sidebar__loading">
+                <div className="ad-sidebar__loading-spinner" />
+              </div>
+            )}
             <img 
               src={imageUrl} 
               alt={altText} 
-              className="ad-sidebar__image"
-              loading="lazy"
+              className={`ad-sidebar__image ${imageLoading ? 'ad-sidebar__image--loading' : ''}`}
               onError={handleImageError}
               onLoad={handleImageLoad}
-              style={{ display: imageLoading ? 'none' : 'block' }}
             />
           </a>
         )}

@@ -174,7 +174,7 @@ export const MessageOnly: Story = {
 // ============================================
 
 const ToastDemo = () => {
-  const { addToast, toasts, removeToast } = useToast();
+  const { addToast } = useToast();
   
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
@@ -204,12 +204,7 @@ const ToastDemo = () => {
           Show Info
         </Button>
       </div>
-      
-      <div style={{ position: 'fixed', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '8px', zIndex: 1000 }}>
-        {toasts.map((toast) => (
-          <Toast key={toast.id} {...toast} onClose={() => removeToast(toast.id)} />
-        ))}
-      </div>
+      {/* ToastContainer is automatically rendered by ToastProvider */}
     </div>
   );
 };

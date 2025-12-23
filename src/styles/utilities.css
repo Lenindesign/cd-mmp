@@ -138,6 +138,7 @@
 .u-font-heading { font-family: var(--font-heading); }
 .u-font-body { font-family: var(--font-body); }
 .u-font-serif { font-family: var(--font-serif); }
+.u-font-article { font-family: var(--font-article); }
 
 /* Font sizes */
 .u-text-xs { font-size: var(--font-size-xs); }

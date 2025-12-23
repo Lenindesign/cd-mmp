@@ -177,7 +177,7 @@
 }
 
 .text-block mark {
-  background-color: #fef08a;
+  background-color: var(--color-highlight);
   padding: 0.1em 0.2em;
 }
 

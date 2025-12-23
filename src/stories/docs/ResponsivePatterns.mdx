@@ -105,14 +105,27 @@ import { Meta } from '@storybook/addon-docs/blocks';
     }
     
     .responsive-code {
-      background: #1d1d1f;
-      padding: 24px;
+      background: #1e1e1e !important;
+      padding: 24px !important;
       margin: 16px 0;
       font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
       font-size: 13px;
       line-height: 1.6;
-      color: #f5f5f7;
+      color: #d4d4d4 !important;
       overflow-x: auto;
+      border-radius: 8px;
+    }
+    
+    .responsive-code code {
+      color: #d4d4d4 !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    
+    .responsive-code * {
+      color: #d4d4d4 !important;
+      background: transparent !important;
     }
     
     .responsive-breakpoint-visual {

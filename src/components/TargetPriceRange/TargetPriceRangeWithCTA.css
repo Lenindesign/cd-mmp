@@ -77,7 +77,7 @@
    V1C: EXPERT TIP INLINE
    ============================================= */
 .tpr-marketplace--v1c .tpr-marketplace__expert-tip {
-  background: linear-gradient(135deg, #FEF3C7 0%, var(--color-gold) 100%);
+  background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-5);
   position: relative;

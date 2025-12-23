@@ -19,25 +19,38 @@
   --color-blue-cobalt: #1B5F8A;
   --color-blue-cobalt-dark: #154d70;
   --color-blue-cobalt-light: #60A5FA;
+  --color-blue-dark: #154d70;  /* Alias for --color-blue-cobalt-dark */
   
   /* ---- SECONDARY ACCENT ---- */
-  --color-red: #D22730;
-  --color-red-dark: #b31f27;
+  --color-red: #D2232A;  /* Official C/D Red */
+  --color-red-dark: #b31f24;
   
-  /* ---- NEUTRALS (Core grayscale) ---- */
+  /* ---- NEUTRALS (Car and Driver Official Gray Scale - Simplified) ---- */
   --color-black: #000000;
-  --color-dark: #222222;
-  --color-gray-900: #1a1a1a;
-  --color-gray-800: #333333;
-  --color-gray-700: #4a4a4a;
-  --color-gray-600: #666666;
-  --color-gray-500: #6b6b6b;  /* WCAG AA: 5.0:1 on white */
-  --color-gray-400: #767676;  /* WCAG AA: 4.5:1 on white */
-  --color-gray-300: #cdcdcd;
-  --color-gray-200: #e5e5e5;
-  --color-gray-100: #f5f5f5;
-  --color-gray-50: #fafafa;
+  --color-dark: #222222;           /* Darkest - headers, footers, primary text */
+  --color-gray-700: #4a4a4a;       /* Dark text */
+  --color-gray-600: #666666;       /* Secondary text */
+  --color-gray-500: #6b6b6b;       /* Muted text - WCAG AA: 5.0:1 on white */
+  --color-gray-300: #cdcdcd;       /* Borders */
+  --color-gray-200: #e5e5e5;       /* Light borders, dividers */
+  --color-gray-100: #f5f5f5;       /* Light backgrounds */
+  --color-gray-50: #fafafa;        /* Lightest backgrounds */
   --color-white: #ffffff;
+  
+  /* Legacy aliases (for backwards compatibility) */
+  --color-gray-900: var(--color-dark);
+  --color-gray-800: var(--color-gray-700);
+  --color-gray-400: var(--color-gray-500);
+  
+  /* Neutrals aliases (map to gray scale) */
+  --color-neutrals-1: var(--color-dark);
+  --color-neutrals-2: var(--color-gray-700);
+  --color-neutrals-3: var(--color-gray-700);
+  --color-neutrals-4: var(--color-gray-600);
+  --color-neutrals-5: var(--color-gray-500);
+  --color-neutrals-6: var(--color-gray-200);
+  --color-neutrals-7: var(--color-gray-100);
+  --color-neutrals-8: var(--color-gray-50);
   
   /* ---- SEMANTIC: SUCCESS ---- */
   --color-success: #26870D;
@@ -64,8 +77,16 @@
   
   /* ---- SPECIAL COLORS ---- */
   --color-gold: #DBCA8B;
+  --color-gold-light: #FEF3C7;    /* Light gold for gradients */
+  --color-gold-dark: #A59143;     /* Dark gold for text on gold bg */
   --color-teal-light: #F1F7F7;
+  --color-cream: #F7E4CA;         /* Warm cream background */
+  --color-highlight: #fef08a;     /* Yellow text highlight */
   --color-facebook: #1877F2;
+  
+  /* ---- GREEN (for success buttons/CTAs) ---- */
+  --color-green: var(--color-success);
+  --color-green-dark: var(--color-success-dark);
   
   /* ---- DARK THEME ---- */
   --color-dark-bg: #0a1628;
@@ -73,17 +94,7 @@
   --color-dark-border: #0f3460;
   --color-dark-border-active: #4a90d9;
   --color-dark-surface-hover: #1f3a5f;
-  --color-neutrals-1: #141416;
   
-  /* ---- APPLE-STYLE (for specific components) ---- */
-  --color-apple-text-primary: #1d1d1f;
-  --color-apple-text-secondary: #6e6e73;
-  --color-apple-text-tertiary: #86868b;
-  --color-apple-bg-secondary: #f5f5f7;
-  --color-apple-bg-tertiary: #e8e8ed;
-  --color-apple-green: #34c759;
-  --color-apple-red: #ff3b30;
-  --color-apple-orange: #f5a623;
   
   /* ---- BADGE COLORS ---- */
   --color-badge-certified: var(--color-success);
@@ -111,11 +122,15 @@
      Using Inter 800 (Extrabold) for headlines
      ============================================ */
   
-  /* Font Families */
-  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-article: 'Libre Baskerville', 'Georgia', serif;
+  /* Base Font Stacks */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  
+  /* Semantic Font Aliases */
+  --font-display: var(--font-sans);
+  --font-heading: var(--font-sans);
+  --font-body: var(--font-sans);
+  --font-article: var(--font-serif);
   
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -208,11 +223,12 @@
      EFFECTS
      ============================================ */
   
-  --border-radius-sm: var(--spacing-1);
-  --border-radius-md: 0.25rem;
-  --border-radius-lg: 0.5rem;
-  --border-radius-xl: var(--spacing-3);
-  --border-radius-full: 9999px;
+  --border-radius-sm: 4px;      /* Small: inputs, small buttons */
+  --border-radius-md: 6px;      /* Medium: cards, dropdowns */
+  --border-radius-lg: 8px;      /* Large: modals, large cards */
+  --border-radius-xl: 12px;     /* Extra large: hero cards */
+  --border-radius-2xl: 16px;    /* 2X large: feature cards */
+  --border-radius-full: 9999px; /* Circular: avatars, badges */
   
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.08);
@@ -496,6 +512,56 @@ textarea:-moz-ui-invalid {
 
 .cta--white:hover {
   background: var(--color-gray-100);
+}
+
+/* Success variants (for trade-in, confirmation CTAs) */
+.cta--success {
+  background: var(--color-success);
+  color: var(--color-white);
+  border: 1px solid var(--color-success);
+}
+
+.cta--success:hover {
+  background: var(--color-success-dark);
+  border-color: var(--color-success-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta--success-outline {
+  background: transparent;
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.cta--success-outline:hover {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+/* Danger variants (for destructive actions) */
+.cta--danger {
+  background: var(--color-error);
+  color: var(--color-white);
+  border: 1px solid var(--color-error);
+}
+
+.cta--danger:hover {
+  background: var(--color-error-dark);
+  border-color: var(--color-error-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta--danger-outline {
+  background: transparent;
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+.cta--danger-outline:hover {
+  background: var(--color-error);
+  color: var(--color-white);
 }
 
 /* CTA Modifiers */

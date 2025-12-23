@@ -289,7 +289,7 @@
 }
 
 .signin-social-btn--facebook:hover {
-  background: #166FE5;
+  background: var(--color-facebook);
 }
 
 /* Apple Button */

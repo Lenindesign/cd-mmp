@@ -1,0 +1,32 @@
+# Cursor Rules - MotorTrend Marketplace Project
+
+## 🚨 DEPLOYMENT RULES (CRITICAL)
+
+**NEVER run any deployment commands without EXPLICITLY asking the user first and waiting for confirmation.**
+
+This includes but is not limited to:
+- `npm run deploy-storybook`
+- `npx gh-pages`
+- `git push`
+- `npm run deploy`
+- `netlify deploy`
+- Any CI/CD pipeline triggers
+
+**Required behavior:**
+1. When a task is complete and deployment might be needed, ASK: "Would you like me to deploy these changes?"
+2. WAIT for the user to explicitly say "yes" or give approval
+3. Only THEN run the deployment command
+
+**Why:** The user wants full control over when changes go live.
+
+---
+
+## Design System Rules
+
+See the full design system documentation in the user's profile rules for:
+- Color system (CSS variables)
+- Typography (Poppins, Geist, Lora fonts)
+- Spacing (8px base system)
+- CTA/Button patterns
+- Component patterns
+

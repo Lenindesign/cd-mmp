@@ -391,7 +391,7 @@
 }
 
 .signup-social-btn--facebook:hover:not(:disabled) {
-  background: #166FE5;
+  background: var(--color-facebook);
 }
 
 /* Apple Button */
