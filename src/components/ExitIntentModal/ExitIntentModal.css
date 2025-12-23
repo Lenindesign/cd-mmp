@@ -500,19 +500,21 @@
 
 /* Animation delays - starts after other modal content (1.8s base delay)
    Using nth-of-type to count only path elements (ignores title/desc)
-   1: C, 2: A, 3: R, 4: Top bar, 5: Bottom bar, 6: AND, 7: D, 8: R, 9: I, 10: V, 11: E, 12: R */
-.exit-modal__logo svg path:nth-of-type(1) { animation-delay: 1.8s; }   /* C */
-.exit-modal__logo svg path:nth-of-type(2) { animation-delay: 1.85s; }  /* A */
-.exit-modal__logo svg path:nth-of-type(3) { animation-delay: 1.9s; }   /* R */
-.exit-modal__logo svg path:nth-of-type(4) { animation-delay: 1.95s; }  /* Top bar */
-.exit-modal__logo svg path:nth-of-type(5) { animation-delay: 2.0s; }   /* Bottom bar */
-.exit-modal__logo svg path:nth-of-type(6) { animation-delay: 2.05s; }  /* AND */
-.exit-modal__logo svg path:nth-of-type(7) { animation-delay: 2.1s; }   /* D */
-.exit-modal__logo svg path:nth-of-type(8) { animation-delay: 2.15s; }  /* R */
-.exit-modal__logo svg path:nth-of-type(9) { animation-delay: 2.2s; }   /* I */
-.exit-modal__logo svg path:nth-of-type(10) { animation-delay: 2.25s; } /* V */
-.exit-modal__logo svg path:nth-of-type(11) { animation-delay: 2.3s; }  /* E */
-.exit-modal__logo svg path:nth-of-type(12) { animation-delay: 2.35s; } /* R */
+   1: C, 2: A, 3: R, 4: Top bar, 5: Bottom bar, 6: A(AND), 7: N(AND), 8: D(AND), 9: D, 10: R, 11: I, 12: V, 13: E, 14: R */
+.exit-modal__logo svg path:nth-of-type(1) { animation-delay: 1.8s; }    /* C */
+.exit-modal__logo svg path:nth-of-type(2) { animation-delay: 1.85s; }   /* A */
+.exit-modal__logo svg path:nth-of-type(3) { animation-delay: 1.9s; }    /* R */
+.exit-modal__logo svg path:nth-of-type(4) { animation-delay: 1.95s; }   /* Top bar */
+.exit-modal__logo svg path:nth-of-type(5) { animation-delay: 2.0s; }    /* Bottom bar */
+.exit-modal__logo svg path:nth-of-type(6) { animation-delay: 2.05s; }   /* A (AND) */
+.exit-modal__logo svg path:nth-of-type(7) { animation-delay: 2.07s; }   /* N (AND) */
+.exit-modal__logo svg path:nth-of-type(8) { animation-delay: 2.09s; }   /* D (AND) */
+.exit-modal__logo svg path:nth-of-type(9) { animation-delay: 2.15s; }   /* D */
+.exit-modal__logo svg path:nth-of-type(10) { animation-delay: 2.2s; }   /* R */
+.exit-modal__logo svg path:nth-of-type(11) { animation-delay: 2.25s; }  /* I */
+.exit-modal__logo svg path:nth-of-type(12) { animation-delay: 2.3s; }   /* V */
+.exit-modal__logo svg path:nth-of-type(13) { animation-delay: 2.35s; }  /* E */
+.exit-modal__logo svg path:nth-of-type(14) { animation-delay: 2.4s; }   /* R */
 
 @keyframes exitModalLetterScaleIn {
   0% {

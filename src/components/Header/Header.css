@@ -75,19 +75,21 @@
 }
 
 /* Animation delays by child position in SVG:
-   1: C, 2: A, 3: R, 4: Red bar, 5: Blue bar, 6: AND, 7: D, 8: R, 9: I, 10: V, 11: E, 12: R */
-.header__logo-svg path:nth-child(1) { animation-delay: 0.05s; }  /* C */
-.header__logo-svg path:nth-child(2) { animation-delay: 0.1s; }   /* A */
-.header__logo-svg path:nth-child(3) { animation-delay: 0.15s; }  /* R */
-.header__logo-svg path:nth-child(4) { animation-delay: 0.2s; }   /* Red bar */
-.header__logo-svg path:nth-child(5) { animation-delay: 0.25s; }  /* Blue bar */
-.header__logo-svg path:nth-child(6) { animation-delay: 0.3s; }   /* AND */
-.header__logo-svg path:nth-child(7) { animation-delay: 0.35s; }  /* D */
-.header__logo-svg path:nth-child(8) { animation-delay: 0.4s; }   /* R */
-.header__logo-svg path:nth-child(9) { animation-delay: 0.45s; }  /* I */
-.header__logo-svg path:nth-child(10) { animation-delay: 0.5s; }  /* V */
-.header__logo-svg path:nth-child(11) { animation-delay: 0.55s; } /* E */
-.header__logo-svg path:nth-child(12) { animation-delay: 0.6s; }  /* R */
+   1: C, 2: A, 3: R, 4: Red bar, 5: Blue bar, 6: A(AND), 7: N(AND), 8: D(AND), 9: D, 10: R, 11: I, 12: V, 13: E, 14: R */
+.header__logo-svg path:nth-child(1) { animation-delay: 0.05s; }   /* C */
+.header__logo-svg path:nth-child(2) { animation-delay: 0.1s; }    /* A */
+.header__logo-svg path:nth-child(3) { animation-delay: 0.15s; }   /* R */
+.header__logo-svg path:nth-child(4) { animation-delay: 0.2s; }    /* Red bar */
+.header__logo-svg path:nth-child(5) { animation-delay: 0.25s; }   /* Blue bar */
+.header__logo-svg path:nth-child(6) { animation-delay: 0.3s; }    /* A (AND) */
+.header__logo-svg path:nth-child(7) { animation-delay: 0.32s; }   /* N (AND) */
+.header__logo-svg path:nth-child(8) { animation-delay: 0.34s; }   /* D (AND) */
+.header__logo-svg path:nth-child(9) { animation-delay: 0.4s; }    /* D */
+.header__logo-svg path:nth-child(10) { animation-delay: 0.45s; }  /* R */
+.header__logo-svg path:nth-child(11) { animation-delay: 0.5s; }   /* I */
+.header__logo-svg path:nth-child(12) { animation-delay: 0.55s; }  /* V */
+.header__logo-svg path:nth-child(13) { animation-delay: 0.6s; }   /* E */
+.header__logo-svg path:nth-child(14) { animation-delay: 0.65s; }  /* R */
 
 @keyframes headerLetterScaleIn {
   0% {

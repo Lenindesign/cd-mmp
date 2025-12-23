@@ -103,18 +103,20 @@
 }
 
 /* Animation delays by child position in SVG */
-.welcome-logo--animated path:nth-child(1) { animation-delay: 0.1s; }   /* C */
-.welcome-logo--animated path:nth-child(2) { animation-delay: 0.15s; }  /* A */
-.welcome-logo--animated path:nth-child(3) { animation-delay: 0.2s; }   /* R */
-.welcome-logo--animated path:nth-child(4) { animation-delay: 0.25s; }  /* Red bar */
-.welcome-logo--animated path:nth-child(5) { animation-delay: 0.3s; }   /* Blue bar */
-.welcome-logo--animated path:nth-child(6) { animation-delay: 0.35s; }  /* AND */
-.welcome-logo--animated path:nth-child(7) { animation-delay: 0.4s; }   /* D */
-.welcome-logo--animated path:nth-child(8) { animation-delay: 0.45s; }  /* R */
-.welcome-logo--animated path:nth-child(9) { animation-delay: 0.5s; }   /* I */
-.welcome-logo--animated path:nth-child(10) { animation-delay: 0.55s; } /* V */
-.welcome-logo--animated path:nth-child(11) { animation-delay: 0.6s; }  /* E */
-.welcome-logo--animated path:nth-child(12) { animation-delay: 0.65s; } /* R */
+.welcome-logo--animated path:nth-child(1) { animation-delay: 0.05s; }   /* C */
+.welcome-logo--animated path:nth-child(2) { animation-delay: 0.1s; }    /* A */
+.welcome-logo--animated path:nth-child(3) { animation-delay: 0.15s; }   /* R */
+.welcome-logo--animated path:nth-child(4) { animation-delay: 0.2s; }    /* Red bar */
+.welcome-logo--animated path:nth-child(5) { animation-delay: 0.25s; }   /* Blue bar */
+.welcome-logo--animated path:nth-child(6) { animation-delay: 0.3s; }    /* A (AND) */
+.welcome-logo--animated path:nth-child(7) { animation-delay: 0.32s; }   /* N (AND) */
+.welcome-logo--animated path:nth-child(8) { animation-delay: 0.34s; }   /* D (AND) */
+.welcome-logo--animated path:nth-child(9) { animation-delay: 0.4s; }    /* D */
+.welcome-logo--animated path:nth-child(10) { animation-delay: 0.45s; }  /* R */
+.welcome-logo--animated path:nth-child(11) { animation-delay: 0.5s; }   /* I */
+.welcome-logo--animated path:nth-child(12) { animation-delay: 0.55s; }  /* V */
+.welcome-logo--animated path:nth-child(13) { animation-delay: 0.6s; }   /* E */
+.welcome-logo--animated path:nth-child(14) { animation-delay: 0.65s; }  /* R */
 
 @keyframes welcomeLetterScaleIn {
   0% {
