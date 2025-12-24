@@ -1,7 +1,7 @@
 /* For Sale Near You - Car and Driver Style */
 .for-sale {
   padding: 3rem 0;
-  background: var(--color-gray-50);
+  background: var(--color-white);
 }
 
 .for-sale > .container {
