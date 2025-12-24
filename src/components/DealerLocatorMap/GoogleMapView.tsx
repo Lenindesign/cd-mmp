@@ -1,87 +1,45 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { APIProvider, Map, useMap } from '@vis.gl/react-google-maps';
 import type { DealerWithScore } from '../../services/dealerService';
 import DealerMarker from './DealerMarker';
 import './DealerLocatorMap.css';
 
-// C/D Design System map styling
-// Matches our color tokens for a branded look
-const mapStyles: google.maps.MapTypeStyle[] = [
-  // Water - Blue Cobalt Light
-  {
-    featureType: 'water',
-    elementType: 'geometry.fill',
-    stylers: [{ color: '#60A5FA' }],
-  },
-  // Land - Gray 100
-  {
-    featureType: 'landscape',
-    elementType: 'geometry.fill',
-    stylers: [{ color: '#F5F5F5' }],
-  },
-  // Roads - White
-  {
-    featureType: 'road',
-    elementType: 'geometry.fill',
-    stylers: [{ color: '#FFFFFF' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#E5E5E5' }],
-  },
-  // Highway - Slightly darker
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry.fill',
-    stylers: [{ color: '#F0F0F0' }],
-  },
-  // Labels - Dark
-  {
-    featureType: 'all',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#222222' }],
-  },
-  {
-    featureType: 'all',
-    elementType: 'labels.text.stroke',
-    stylers: [{ color: '#FFFFFF' }, { weight: 2 }],
-  },
-  // Hide POIs for cleaner look
-  {
-    featureType: 'poi',
-    elementType: 'all',
-    stylers: [{ visibility: 'off' }],
-  },
-  // Show parks subtly
-  {
-    featureType: 'poi.park',
-    elementType: 'geometry.fill',
-    stylers: [{ visibility: 'on' }, { color: '#E8F5E9' }],
-  },
-  // Transit - hide
-  {
-    featureType: 'transit',
-    elementType: 'all',
-    stylers: [{ visibility: 'off' }],
-  },
-];
+// Note: When using mapId, styles must be configured in Google Cloud Console
+// Go to: https://console.cloud.google.com/google/maps-apis/studio/styles
+// Create a new style and apply our C/D Design System colors:
+// - Water: #60A5FA (Blue Cobalt Light)
+// - Land/Landscape: #F5F5F5 (Gray 100)
+// - Roads: #FFFFFF with #E5E5E5 stroke
+// - Labels: #222222 (Dark)
+// - Hide POIs and Transit for cleaner look
 
 interface GoogleMapViewProps {
   dealers: DealerWithScore[];
   center: { lat: number; lng: number };
   selectedDealerId?: string | null;
+  hoveredDealerId?: string | null;
   onDealerSelect?: (dealer: DealerWithScore) => void;
+  onDealerHover?: (dealer: DealerWithScore | null) => void;
   apiKey?: string;
 }
 
-// Inner component that uses the map context
+// Inner component that uses the map context and handles center changes
 const MapContent = ({
   dealers,
+  center,
   selectedDealerId,
+  hoveredDealerId,
   onDealerSelect,
-}: Omit<GoogleMapViewProps, 'center' | 'apiKey'>) => {
+  onDealerHover,
+}: Omit<GoogleMapViewProps, 'apiKey'>) => {
   const map = useMap();
+
+  // Update map center when center prop changes
+  useEffect(() => {
+    if (map) {
+      map.panTo(center);
+    }
+  }, [map, center.lat, center.lng]);
 
   const handleMarkerClick = useCallback((dealer: DealerWithScore) => {
     onDealerSelect?.(dealer);
@@ -92,14 +50,21 @@ const MapContent = ({
     }
   }, [map, onDealerSelect]);
 
+  const handleMarkerHover = useCallback((dealer: DealerWithScore | null) => {
+    onDealerHover?.(dealer);
+  }, [onDealerHover]);
+
   return (
     <>
-      {dealers.map((dealer) => (
+      {dealers.map((dealer, idx) => (
         <DealerMarker
           key={dealer.id}
           dealer={dealer}
+          index={idx + 1}
           isSelected={selectedDealerId === dealer.id}
+          isHovered={hoveredDealerId === dealer.id}
           onClick={() => handleMarkerClick(dealer)}
+          onHover={handleMarkerHover}
         />
       ))}
     </>
@@ -110,10 +75,12 @@ const GoogleMapView = ({
   dealers,
   center,
   selectedDealerId,
+  hoveredDealerId,
   onDealerSelect,
+  onDealerHover,
   apiKey,
 }: GoogleMapViewProps) => {
-  const [mapError, setMapError] = useState<string | null>(null);
+  const [mapError] = useState<string | null>(null);
 
   // If no API key, show placeholder
   if (!apiKey) {
@@ -152,7 +119,6 @@ const GoogleMapView = ({
           defaultCenter={center}
           defaultZoom={11}
           mapId="dealer-locator-map"
-          styles={mapStyles}
           gestureHandling="greedy"
           disableDefaultUI={false}
           zoomControl={true}
@@ -163,8 +129,11 @@ const GoogleMapView = ({
         >
           <MapContent
             dealers={dealers}
+            center={center}
             selectedDealerId={selectedDealerId}
+            hoveredDealerId={hoveredDealerId}
             onDealerSelect={onDealerSelect}
+            onDealerHover={onDealerHover}
           />
         </Map>
       </APIProvider>

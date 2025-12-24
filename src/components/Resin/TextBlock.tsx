@@ -67,8 +67,8 @@ export const Heading: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ level = 2, children, className = '' }) => {
-  const Tag = `h${level}` as keyof React.JSX.IntrinsicElements;
-  return <Tag className={`text-block__heading text-block__heading--h${level} ${className}`}>{children}</Tag>;
+  const Tag = `h${level}` as keyof Pick<React.JSX.IntrinsicElements, 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'>;
+  return React.createElement(Tag, { className: `text-block__heading text-block__heading--h${level} ${className}` }, children);
 };
 
 export const Paragraph: React.FC<{
@@ -97,14 +97,11 @@ export const List: React.FC<{
   ordered?: boolean;
   className?: string;
 }> = ({ items, ordered = false, className = '' }) => {
-  const Tag = (ordered ? 'ol' : 'ul') as keyof React.JSX.IntrinsicElements;
-  return (
-    <Tag className={`text-block__list ${ordered ? 'text-block__list--ordered' : ''} ${className}`}>
-      {items.map((item, index) => (
-        <li key={index} className="text-block__list-item">{item}</li>
-      ))}
-    </Tag>
-  );
+  const Tag = ordered ? 'ol' : 'ul';
+  const listItems = items.map((item, index) => (
+    <li key={index} className="text-block__list-item">{item}</li>
+  ));
+  return React.createElement(Tag, { className: `text-block__list ${ordered ? 'text-block__list--ordered' : ''} ${className}` }, listItems);
 };
 
 export const Highlight: React.FC<{

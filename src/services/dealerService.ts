@@ -4,8 +4,12 @@
  */
 
 export interface VehicleInventoryItem {
+  year: number;
+  make: string;
+  model: string;
   trim: string;
   price: number;
+  mileage?: number; // For used vehicles
   vin?: string;
   exteriorColor?: string;
   interiorColor?: string;
@@ -58,8 +62,183 @@ export interface DealerWithScore extends Dealer {
 
 export type SortOption = 'bestDeal' | 'distance' | 'price' | 'rating';
 
-// Mock dealer data for Miami, FL area
+// Mock dealer data for multiple regions
+// Dealers are grouped by region for easier management
 const mockDealers: Dealer[] = [
+  // ============================================
+  // CALIFORNIA - Orange County / LA Area
+  // ============================================
+  {
+    id: 'dealer-ca-1',
+    name: 'Simpson Chevrolet of Irvine',
+    address: '18 Auto Center Dr',
+    city: 'Irvine',
+    state: 'CA',
+    zipCode: '92618',
+    phone: '(949) 753-1500',
+    website: 'https://www.simpsonchevrolet.com',
+    lat: 33.6694,
+    lng: -117.8231,
+    rating: 4.7,
+    reviewCount: 1523,
+    inventory: [
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 22150, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 24200, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'RS FWD', price: 26100, isNew: true, exteriorColor: 'Cayenne Orange', interiorColor: 'Jet Black' },
+      { year: 2024, make: 'Chevrolet', model: 'Trax', trim: 'ACTIV FWD', price: 25800, isNew: true, exteriorColor: 'Cacti Green', interiorColor: 'Medium Ash Gray' },
+    ],
+    hours: {
+      monday: '9:00 AM - 9:00 PM',
+      tuesday: '9:00 AM - 9:00 PM',
+      wednesday: '9:00 AM - 9:00 PM',
+      thursday: '9:00 AM - 9:00 PM',
+      friday: '9:00 AM - 9:00 PM',
+      saturday: '9:00 AM - 8:00 PM',
+      sunday: '10:00 AM - 7:00 PM',
+    },
+    certifications: ['Certified Pre-Owned', 'GM Dealer of Excellence'],
+  },
+  {
+    id: 'dealer-ca-2',
+    name: 'Lake Forest Chevrolet',
+    address: '23595 Rockfield Blvd',
+    city: 'Lake Forest',
+    state: 'CA',
+    zipCode: '92630',
+    phone: '(949) 830-3100',
+    website: 'https://www.lakeforestchevrolet.com',
+    lat: 33.6469,
+    lng: -117.6891,
+    rating: 4.5,
+    reviewCount: 987,
+    inventory: [
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21895, isNew: true, exteriorColor: 'Sterling Gray', interiorColor: 'Jet Black' },
+      { year: 2024, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 23800, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+    ],
+    hours: {
+      monday: '9:00 AM - 8:00 PM',
+      tuesday: '9:00 AM - 8:00 PM',
+      wednesday: '9:00 AM - 8:00 PM',
+      thursday: '9:00 AM - 8:00 PM',
+      friday: '9:00 AM - 8:00 PM',
+      saturday: '9:00 AM - 7:00 PM',
+      sunday: '10:00 AM - 6:00 PM',
+    },
+    certifications: ['Certified Pre-Owned'],
+  },
+  {
+    id: 'dealer-ca-3',
+    name: 'Mission Viejo Chevrolet',
+    address: '28502 Marguerite Pkwy',
+    city: 'Mission Viejo',
+    state: 'CA',
+    zipCode: '92692',
+    phone: '(949) 364-0600',
+    lat: 33.5963,
+    lng: -117.6590,
+    rating: 4.3,
+    reviewCount: 654,
+    inventory: [
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21650, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'RS FWD', price: 25495, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
+      { year: 2024, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 23450, isNew: true, exteriorColor: 'Nitro Yellow', interiorColor: 'Jet Black' },
+    ],
+    hours: {
+      monday: '9:00 AM - 9:00 PM',
+      tuesday: '9:00 AM - 9:00 PM',
+      wednesday: '9:00 AM - 9:00 PM',
+      thursday: '9:00 AM - 9:00 PM',
+      friday: '9:00 AM - 9:00 PM',
+      saturday: '9:00 AM - 8:00 PM',
+      sunday: '10:00 AM - 6:00 PM',
+    },
+  },
+  {
+    id: 'dealer-ca-4',
+    name: 'Tustin Chevrolet',
+    address: '3 Auto Center Dr',
+    city: 'Tustin',
+    state: 'CA',
+    zipCode: '92782',
+    phone: '(714) 669-3100',
+    lat: 33.7175,
+    lng: -117.8231,
+    rating: 4.6,
+    reviewCount: 1102,
+    inventory: [
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'ACTIV FWD', price: 25200, isNew: true, exteriorColor: 'Cacti Green', interiorColor: 'Medium Ash Gray' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 23100, isNew: true, exteriorColor: 'Sterling Gray', interiorColor: 'Jet Black' },
+    ],
+    hours: {
+      monday: '9:00 AM - 9:00 PM',
+      tuesday: '9:00 AM - 9:00 PM',
+      wednesday: '9:00 AM - 9:00 PM',
+      thursday: '9:00 AM - 9:00 PM',
+      friday: '9:00 AM - 9:00 PM',
+      saturday: '9:00 AM - 8:00 PM',
+      sunday: '10:00 AM - 7:00 PM',
+    },
+    certifications: ['GM Dealer of Excellence'],
+  },
+  {
+    id: 'dealer-ca-5',
+    name: 'Cerritos Chevrolet',
+    address: '18605 Studebaker Rd',
+    city: 'Cerritos',
+    state: 'CA',
+    zipCode: '90703',
+    phone: '(562) 924-1234',
+    lat: 33.8650,
+    lng: -118.0526,
+    rating: 4.4,
+    reviewCount: 876,
+    inventory: [
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21450, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 23650, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'RS FWD', price: 25890, isNew: true, exteriorColor: 'Cayenne Orange', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'ACTIV AWD', price: 27200, isNew: true, exteriorColor: 'Cacti Green', interiorColor: 'Medium Ash Gray' },
+      { year: 2023, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 18995, mileage: 12450, isNew: false, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+    ],
+    hours: {
+      monday: '9:00 AM - 9:00 PM',
+      tuesday: '9:00 AM - 9:00 PM',
+      wednesday: '9:00 AM - 9:00 PM',
+      thursday: '9:00 AM - 9:00 PM',
+      friday: '9:00 AM - 9:00 PM',
+      saturday: '9:00 AM - 8:00 PM',
+      sunday: '10:00 AM - 7:00 PM',
+    },
+    certifications: ['Certified Pre-Owned', 'Mark of Excellence'],
+  },
+  {
+    id: 'dealer-ca-6',
+    name: 'Puente Hills Chevrolet',
+    address: '17621 E Gale Ave',
+    city: 'City of Industry',
+    state: 'CA',
+    zipCode: '91748',
+    phone: '(626) 810-2000',
+    lat: 33.9961,
+    lng: -117.9173,
+    rating: 4.2,
+    reviewCount: 543,
+    inventory: [
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21200, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2022, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 15900, mileage: 28750, isNew: false, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
+    ],
+    hours: {
+      monday: '9:00 AM - 9:00 PM',
+      tuesday: '9:00 AM - 9:00 PM',
+      wednesday: '9:00 AM - 9:00 PM',
+      thursday: '9:00 AM - 9:00 PM',
+      friday: '9:00 AM - 9:00 PM',
+      saturday: '9:00 AM - 8:00 PM',
+      sunday: '10:00 AM - 7:00 PM',
+    },
+  },
+  // ============================================
+  // FLORIDA - Miami Area
+  // ============================================
   {
     id: 'dealer-1',
     name: 'AutoNation Chevrolet Pembroke Pines',
@@ -74,9 +253,9 @@ const mockDealers: Dealer[] = [
     rating: 4.8,
     reviewCount: 1247,
     inventory: [
-      { trim: 'LS FWD', price: 21450, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
-      { trim: 'LT FWD', price: 23200, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
-      { trim: 'RS FWD', price: 24890, isNew: true, exteriorColor: 'Cayenne Orange', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21450, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 23200, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'RS FWD', price: 24890, isNew: true, exteriorColor: 'Cayenne Orange', interiorColor: 'Jet Black' },
     ],
     hours: {
       monday: '9:00 AM - 9:00 PM',
@@ -103,7 +282,7 @@ const mockDealers: Dealer[] = [
     rating: 4.5,
     reviewCount: 892,
     inventory: [
-      { trim: '1RS FWD', price: 22100, isNew: true, exteriorColor: 'Sterling Gray', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: '1RS FWD', price: 22100, isNew: true, exteriorColor: 'Sterling Gray', interiorColor: 'Jet Black' },
     ],
     hours: {
       monday: '9:00 AM - 9:00 PM',
@@ -130,8 +309,8 @@ const mockDealers: Dealer[] = [
     rating: 4.2,
     reviewCount: 567,
     inventory: [
-      { trim: 'LS FWD', price: 21895, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
-      { trim: 'LT FWD', price: 23595, isNew: true, exteriorColor: 'Nitro Yellow', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21895, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 23595, isNew: true, exteriorColor: 'Nitro Yellow', interiorColor: 'Jet Black' },
     ],
     hours: {
       monday: '8:30 AM - 8:00 PM',
@@ -156,10 +335,10 @@ const mockDealers: Dealer[] = [
     rating: 4.6,
     reviewCount: 1089,
     inventory: [
-      { trim: 'ACTIV FWD', price: 24995, isNew: true, exteriorColor: 'Cacti Green', interiorColor: 'Medium Ash Gray' },
-      { trim: 'RS FWD', price: 25200, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
-      { trim: 'LS FWD', price: 21650, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
-      { trim: 'LT FWD', price: 23100, isNew: true, exteriorColor: 'Sterling Gray', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'ACTIV FWD', price: 24995, isNew: true, exteriorColor: 'Cacti Green', interiorColor: 'Medium Ash Gray' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'RS FWD', price: 25200, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21650, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 23100, isNew: true, exteriorColor: 'Sterling Gray', interiorColor: 'Jet Black' },
     ],
     hours: {
       monday: '9:00 AM - 9:00 PM',
@@ -185,7 +364,7 @@ const mockDealers: Dealer[] = [
     rating: 4.0,
     reviewCount: 345,
     inventory: [
-      { trim: 'LS FWD', price: 21200, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LS FWD', price: 21200, isNew: true, exteriorColor: 'Summit White', interiorColor: 'Jet Black' },
     ],
     hours: {
       monday: '9:00 AM - 8:00 PM',
@@ -210,8 +389,8 @@ const mockDealers: Dealer[] = [
     rating: 4.7,
     reviewCount: 756,
     inventory: [
-      { trim: 'LT FWD', price: 22800, isNew: true, exteriorColor: 'Cayenne Orange', interiorColor: 'Jet Black' },
-      { trim: 'RS FWD', price: 24500, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'LT FWD', price: 22800, isNew: true, exteriorColor: 'Cayenne Orange', interiorColor: 'Jet Black' },
+      { year: 2025, make: 'Chevrolet', model: 'Trax', trim: 'RS FWD', price: 24500, isNew: true, exteriorColor: 'Mosaic Black', interiorColor: 'Jet Black' },
     ],
     hours: {
       monday: '9:00 AM - 9:00 PM',
@@ -251,7 +430,7 @@ function toRad(deg: number): number {
 function calculateDealScore(
   dealer: Dealer,
   allDealers: Dealer[],
-  msrp: number
+  _msrp: number
 ): DealScore {
   // Get all prices and distances for normalization
   const allPrices = allDealers.flatMap(d => d.inventory.map(i => i.price));
@@ -296,22 +475,26 @@ function calculateDealScore(
 
 /**
  * Get dealers with inventory for a specific vehicle
+ * Only returns dealers within the specified max distance (default 100 miles)
  */
 export function getDealersForVehicle(
-  make: string,
-  model: string,
+  _make: string,
+  _model: string,
   userLat: number = 25.7617, // Default to Miami
   userLng: number = -80.1918,
-  msrp: number = 21895
+  msrp: number = 21895,
+  maxDistanceMiles: number = 100 // Maximum search radius in miles
 ): DealerWithScore[] {
   // Filter dealers that have inventory (in real app, filter by make/model)
   const dealersWithInventory = mockDealers.filter(d => d.inventory.length > 0);
   
-  // Calculate distances
-  const dealersWithDistance = dealersWithInventory.map(dealer => ({
-    ...dealer,
-    distance: calculateDistance(userLat, userLng, dealer.lat, dealer.lng),
-  }));
+  // Calculate distances and filter by max distance
+  const dealersWithDistance = dealersWithInventory
+    .map(dealer => ({
+      ...dealer,
+      distance: calculateDistance(userLat, userLng, dealer.lat, dealer.lng),
+    }))
+    .filter(dealer => dealer.distance <= maxDistanceMiles);
   
   // Calculate deal scores
   const dealersWithScores: DealerWithScore[] = dealersWithDistance.map(dealer => {

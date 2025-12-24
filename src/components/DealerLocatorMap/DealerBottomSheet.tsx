@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { X, Phone, Navigation, Star, Clock, Award, ExternalLink } from 'lucide-react';
-import type { DealerWithScore } from '../../services/dealerService';
+import type { DealerWithScore, VehicleInventoryItem } from '../../services/dealerService';
 import { formatPrice } from '../../services/dealerService';
 import './DealerLocatorMap.css';
 
@@ -9,6 +9,7 @@ interface DealerBottomSheetProps {
   vehicleModel: string;
   isOpen: boolean;
   onClose: () => void;
+  onMakeOffer?: (dealer: DealerWithScore, vehicle: VehicleInventoryItem) => void;
 }
 
 const DealerBottomSheet = ({
@@ -16,6 +17,7 @@ const DealerBottomSheet = ({
   vehicleModel,
   isOpen,
   onClose,
+  onMakeOffer,
 }: DealerBottomSheetProps) => {
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -134,19 +136,28 @@ const DealerBottomSheet = ({
             <ul className="bottom-sheet__inventory-list">
               {dealer.inventory.map((item, index) => (
                 <li key={index} className="bottom-sheet__inventory-item">
-                  <div className="bottom-sheet__inventory-details">
-                    <span className="bottom-sheet__inventory-trim">
-                      {dealer.inventory[0].isNew ? 'New' : 'Used'} {vehicleModel} {item.trim}
-                    </span>
-                    {item.exteriorColor && (
-                      <span className="bottom-sheet__inventory-color">
-                        {item.exteriorColor}
+                  <div className="bottom-sheet__inventory-row">
+                    <div className="bottom-sheet__inventory-details">
+                      <span className="bottom-sheet__inventory-trim">
+                        {item.isNew ? 'New' : 'Used'} {item.year} {item.make} {item.model} {item.trim}
                       </span>
-                    )}
+                      <span className="bottom-sheet__inventory-meta">
+                        {item.exteriorColor}
+                        {!item.isNew && item.mileage && (
+                          <> · {item.mileage.toLocaleString()} mi</>
+                        )}
+                      </span>
+                    </div>
+                    <span className="bottom-sheet__inventory-price">
+                      {formatPrice(item.price)}
+                    </span>
                   </div>
-                  <span className="bottom-sheet__inventory-price">
-                    {formatPrice(item.price)}
-                  </span>
+                  <button
+                    className="bottom-sheet__inventory-offer"
+                    onClick={() => onMakeOffer?.(dealer, item)}
+                  >
+                    Make an Offer
+                  </button>
                 </li>
               ))}
             </ul>

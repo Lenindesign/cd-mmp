@@ -23,6 +23,7 @@ import ForSaleNearYou from '../../components/ForSaleNearYou';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
+import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import './VehiclePage.css';
 
 interface VehiclePageProps {
@@ -298,6 +299,25 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
           maxPrice={vehicle.priceMax + 10000}
           location="Miami, FL"
         />
+        
+        {/* Dealer Locator Map */}
+        <section id="find-dealers" className="vehicle-page__dealer-locator">
+          <DealerLocatorMap
+            vehicle={{
+              year: parseInt(vehicle.year),
+              make: vehicle.make,
+              model: vehicle.model,
+              image: vehicle.image,
+              msrp: vehicle.priceMin,
+              bodyStyle: vehicle.bodyStyle,
+              mpg: vehicle.mpg ? parseInt(vehicle.mpg) : undefined,
+              rating: supabaseRating,
+            }}
+            cardVariant="compact"
+            initialLocation={{ lat: 34.0522, lng: -118.2437 }}
+            initialZipCode="Los Angeles, CA"
+          />
+        </section>
       </main>
       
       {/* Exit Intent Modal */}

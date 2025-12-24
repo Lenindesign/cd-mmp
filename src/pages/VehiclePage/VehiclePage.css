@@ -405,6 +405,18 @@
   color: var(--color-gray-600);
 }
 
+/* Dealer Locator Section */
+.vehicle-page__dealer-locator {
+  background: var(--color-white);
+  padding: var(--spacing-8) 0;
+  margin-top: var(--spacing-8);
+}
+
+.vehicle-page__dealer-locator .dealer-locator {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .vehicle-page__hero-content {

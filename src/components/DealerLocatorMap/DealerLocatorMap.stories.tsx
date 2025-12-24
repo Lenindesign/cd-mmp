@@ -8,8 +8,15 @@ import { getDealersForVehicle, sortDealers } from '../../services/dealerService'
 const meta: Meta<typeof DealerLocatorMap> = {
   title: 'Organisms/DealerLocatorMap',
   component: DealerLocatorMap,
+  decorators: [
+    (Story) => (
+      <div style={{ height: '600px', maxHeight: '600px', overflow: 'hidden' }}>
+        <Story />
+      </div>
+    ),
+  ],
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
     docs: {
       description: {
         component: `
@@ -139,6 +146,15 @@ import { DealerLocatorMap } from '@/components/DealerLocatorMap';
         category: 'Display',
       },
     },
+    cardVariant: {
+      description: 'Card display variant',
+      control: { type: 'radio', options: ['full', 'compact'] },
+      table: {
+        type: { summary: "'full' | 'compact'" },
+        defaultValue: { summary: "'full'" },
+        category: 'Display',
+      },
+    },
   },
 };
 
@@ -151,7 +167,7 @@ const defaultVehicle = {
   make: 'Chevrolet',
   model: 'Trax',
   msrp: 21895,
-  image: 'https://www.caranddriver.com/shopping/a46810962/2024-chevrolet-trax/',
+  image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
   rating: 8.5,
   bodyStyle: 'SUV',
   mpg: 28,
@@ -164,7 +180,7 @@ const hondaAccord = {
   model: 'Accord',
   trim: 'Sport',
   msrp: 29610,
-  image: 'https://www.caranddriver.com/honda/accord',
+  image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
   rating: 9.0,
   bodyStyle: 'Sedan',
   mpg: 32,
@@ -216,6 +232,26 @@ export const DifferentVehicle: Story = {
     docs: {
       description: {
         story: 'The component works with any vehicle data passed to it.',
+      },
+    },
+  },
+};
+
+/**
+ * Compact Cards - Space-efficient dealer list
+ */
+export const CompactCards: Story = {
+  args: {
+    vehicle: defaultVehicle,
+    initialZipCode: 'Los Angeles, CA',
+    showVehiclePreview: true,
+    defaultView: 'list',
+    cardVariant: 'compact',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Compact card variant for a more space-efficient dealer list. Shows essential info (name, inventory, price, rating, distance) in a condensed format.',
       },
     },
   },
@@ -362,6 +398,7 @@ export const DealerCardCompact: StoryObj<typeof DealerCard> = {
 
 /**
  * Bottom Sheet - Dealer details
+ * Note: isOpen is false by default to prevent auto-focus scrolling in docs view
  */
 export const BottomSheetOpen: StoryObj<typeof DealerBottomSheet> = {
   render: () => {
@@ -369,19 +406,34 @@ export const BottomSheetOpen: StoryObj<typeof DealerBottomSheet> = {
     const sorted = sortDealers(dealers, 'bestDeal');
     const bestDealer = sorted[0];
     
+    // Render the sheet content directly without the focus trap behavior
+    // by showing it in a static container
     return (
-      <div style={{ height: '100vh', background: '#f5f5f5' }}>
-        <DealerBottomSheet
-          dealer={bestDealer}
-          vehicleModel="Trax"
-          isOpen={true}
-          onClose={() => console.log('Close')}
-        />
+      <div style={{ height: 500, position: 'relative', background: '#f5f5f5', overflow: 'hidden' }}>
+        <div className="dealer-bottom-sheet dealer-bottom-sheet--open" style={{ position: 'relative', transform: 'none' }}>
+          <button className="dealer-bottom-sheet__close" aria-label="Close dealer details">
+            <span>×</span>
+          </button>
+          <div className="dealer-bottom-sheet__content">
+            <header className="dealer-bottom-sheet__header">
+              <span className="dealer-card__badge">BEST DEAL</span>
+              <h2 className="dealer-bottom-sheet__name">{bestDealer.name}</h2>
+              <p className="dealer-bottom-sheet__address">
+                {bestDealer.address}<br />
+                {bestDealer.city}, {bestDealer.state} {bestDealer.zipCode}
+              </p>
+              <div className="dealer-bottom-sheet__rating">
+                <span className="dealer-card__rating-value">{bestDealer.rating}</span>
+                <span className="dealer-card__rating-count">({bestDealer.reviewCount} reviews)</span>
+              </div>
+            </header>
+            <p className="dealer-bottom-sheet__hours">Today: 9:00 AM - 9:00 PM</p>
+          </div>
+        </div>
       </div>
     );
   },
   parameters: {
-    layout: 'fullscreen',
     docs: {
       description: {
         story: 'Mobile bottom sheet showing detailed dealer information and inventory.',
@@ -417,7 +469,6 @@ export const AllDealerCards: Story = {
     );
   },
   parameters: {
-    layout: 'fullscreen',
     docs: {
       description: {
         story: 'All dealer cards displayed in a responsive grid layout.',
@@ -432,11 +483,12 @@ export const AllDealerCards: Story = {
 export const MobileView: Story = {
   args: {
     vehicle: defaultVehicle,
-    initialZipCode: 'Miami, FL',
+    initialZipCode: 'Los Angeles, CA',
     showVehiclePreview: true,
     defaultView: 'list',
   },
   parameters: {
+    layout: 'fullscreen',
     viewport: {
       defaultViewport: 'mobile1',
     },
@@ -454,11 +506,12 @@ export const MobileView: Story = {
 export const TabletView: Story = {
   args: {
     vehicle: defaultVehicle,
-    initialZipCode: 'Miami, FL',
+    initialZipCode: 'Los Angeles, CA',
     showVehiclePreview: true,
     defaultView: 'list',
   },
   parameters: {
+    layout: 'fullscreen',
     viewport: {
       defaultViewport: 'tablet',
     },

@@ -239,14 +239,6 @@ export const Exotic: Story = {
 // ENHANCED VERSION - With Improvements
 // ============================================
 
-const enhancedMeta: Meta<typeof CostToOwnEnhanced> = {
-  title: 'Organisms/CostToOwn',
-  component: CostToOwnEnhanced,
-  parameters: {
-    layout: 'padded',
-  },
-};
-
 type EnhancedStory = StoryObj<typeof CostToOwnEnhanced>;
 
 /**

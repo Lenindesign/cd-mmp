@@ -7,14 +7,20 @@ import './DealerLocatorMap.css';
 
 interface DealerMarkerProps {
   dealer: DealerWithScore;
+  index?: number; // 1-based index for numbered markers
   isSelected?: boolean;
+  isHovered?: boolean;
   onClick?: () => void;
+  onHover?: (dealer: DealerWithScore | null) => void;
 }
 
 const DealerMarker = ({
   dealer,
+  index,
   isSelected = false,
+  isHovered = false,
   onClick,
+  onHover,
 }: DealerMarkerProps) => {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [showInfoWindow, setShowInfoWindow] = useState(false);
@@ -28,19 +34,29 @@ const DealerMarker = ({
     setShowInfoWindow(false);
   }, []);
 
+  const handleMouseEnter = useCallback(() => {
+    onHover?.(dealer);
+    setShowInfoWindow(true);
+  }, [dealer, onHover]);
+
+  const handleMouseLeave = useCallback(() => {
+    onHover?.(null);
+    setShowInfoWindow(false);
+  }, [onHover]);
+
   // Determine marker style based on state
   const getMarkerStyle = () => {
     if (dealer.dealScore.isBestDeal) {
       return {
         background: 'var(--color-gold, #DBCA8B)',
         borderColor: 'var(--color-gold-dark, #A59143)',
-        scale: isSelected ? 1.3 : 1.1,
+        scale: isSelected || isHovered ? 1.3 : 1.1,
       };
     }
-    if (isSelected) {
+    if (isSelected || isHovered) {
       return {
-        background: 'var(--color-red, #D2232A)',
-        borderColor: '#6C1216',
+        background: 'var(--color-blue-cobalt, #1B5F8A)',
+        borderColor: 'var(--color-blue-cobalt-dark, #154d70)',
         scale: 1.3,
       };
     }
@@ -63,10 +79,12 @@ const DealerMarker = ({
       >
         {/* Custom Marker Pin */}
         <div 
-          className={`dealer-marker ${dealer.dealScore.isBestDeal ? 'dealer-marker--best' : ''} ${isSelected ? 'dealer-marker--selected' : ''}`}
+          className={`dealer-marker ${dealer.dealScore.isBestDeal ? 'dealer-marker--best' : ''} ${isSelected || isHovered ? 'dealer-marker--selected' : ''}`}
           style={{
             transform: `scale(${style.scale})`,
           }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <div 
             className="dealer-marker__pin"
@@ -75,17 +93,13 @@ const DealerMarker = ({
               borderColor: style.borderColor,
             }}
           >
-            {dealer.dealScore.isBestDeal ? (
+            {/* Show number if provided, otherwise show icon */}
+            {index !== undefined ? (
+              <span className="dealer-marker__number">{index}</span>
+            ) : dealer.dealScore.isBestDeal ? (
               <Award size={16} className="dealer-marker__icon" />
             ) : (
               <MapPin size={16} className="dealer-marker__icon" />
-            )}
-            
-            {/* Inventory Badge */}
-            {dealer.inventoryCount > 0 && (
-              <span className="dealer-marker__badge">
-                {dealer.inventoryCount}
-              </span>
             )}
           </div>
           
@@ -93,14 +107,14 @@ const DealerMarker = ({
           <div 
             className="dealer-marker__tail"
             style={{
-              borderTopColor: style.background,
+              borderTopColor: style.borderColor,
             }}
           />
         </div>
       </AdvancedMarker>
 
-      {/* Info Window */}
-      {showInfoWindow && marker && (
+      {/* Info Window - show on hover (pin or sidebar) OR when dealer sidebar is active */}
+      {(showInfoWindow || isSelected || isHovered) && marker && (
         <InfoWindow
           anchor={marker}
           onCloseClick={handleInfoWindowClose}

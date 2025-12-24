@@ -1,4 +1,4 @@
-import { MapPin, Star, Phone, Navigation, Award, ChevronRight } from 'lucide-react';
+import { MapPin, Star, Phone, Navigation, Award, ChevronRight, DollarSign } from 'lucide-react';
 import type { DealerWithScore } from '../../services/dealerService';
 import { formatPrice, formatDistance, getPriceRange } from '../../services/dealerService';
 import './DealerLocatorMap.css';
@@ -6,21 +6,29 @@ import './DealerLocatorMap.css';
 interface DealerCardProps {
   dealer: DealerWithScore;
   vehicleModel: string;
+  index?: number; // 1-based index for numbered markers
   isSelected?: boolean;
+  isHovered?: boolean;
   variant?: 'full' | 'compact';
   onSelect?: (dealer: DealerWithScore) => void;
+  onHover?: (dealer: DealerWithScore | null) => void;
   onCallClick?: (dealer: DealerWithScore) => void;
   onDirectionsClick?: (dealer: DealerWithScore) => void;
+  onMakeOfferClick?: (dealer: DealerWithScore) => void;
 }
 
 const DealerCard = ({
   dealer,
   vehicleModel,
+  index,
   isSelected = false,
+  isHovered = false,
   variant = 'full',
   onSelect,
+  onHover,
   onCallClick,
   onDirectionsClick,
+  onMakeOfferClick,
 }: DealerCardProps) => {
   const handleCardClick = () => {
     onSelect?.(dealer);
@@ -36,6 +44,11 @@ const DealerCard = ({
     onDirectionsClick?.(dealer);
   };
 
+  const handleMakeOfferClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onMakeOfferClick?.(dealer);
+  };
+
   const renderStars = (rating: number) => {
     return (
       <span className="dealer-card__stars">
@@ -48,38 +61,52 @@ const DealerCard = ({
   if (variant === 'compact') {
     return (
       <button
-        className={`dealer-card dealer-card--compact ${isSelected ? 'dealer-card--selected' : ''}`}
+        className={`dealer-card dealer-card--compact ${isSelected ? 'dealer-card--selected' : ''} ${isHovered ? 'dealer-card--hovered' : ''}`}
         onClick={handleCardClick}
+        onMouseEnter={() => onHover?.(dealer)}
+        onMouseLeave={() => onHover?.(null)}
         aria-pressed={isSelected}
       >
-        {dealer.dealScore.isBestDeal && (
-          <span className="dealer-card__badge dealer-card__badge--best">
-            <Award size={12} />
-            Best Deal
+        {/* Number Badge */}
+        {index !== undefined && (
+          <span className={`dealer-card__number ${dealer.dealScore.isBestDeal ? 'dealer-card__number--best' : ''}`}>
+            {index}
           </span>
         )}
         
-        <div className="dealer-card__header">
-          <h3 className="dealer-card__name">{dealer.name}</h3>
-          <ChevronRight size={16} className="dealer-card__chevron" />
+        <div className="dealer-card__info">
+          {dealer.dealScore.isBestDeal && (
+            <span className="dealer-card__badge dealer-card__badge--best">
+              <Award size={12} />
+              Best Deal
+            </span>
+          )}
+          
+          <div className="dealer-card__header">
+            <h3 className="dealer-card__name">{dealer.name}</h3>
+          </div>
+          
+          <div className="dealer-card__meta">
+            <span className="dealer-card__inventory">
+              {dealer.inventoryCount} in stock · {formatPrice(dealer.lowestPrice)}
+            </span>
+            <span className="dealer-card__rating-distance">
+              {renderStars(dealer.rating)} · {formatDistance(dealer.distance || 0)}
+            </span>
+          </div>
         </div>
         
-        <div className="dealer-card__meta">
-          <span className="dealer-card__inventory">
-            {dealer.inventoryCount} in stock · {formatPrice(dealer.lowestPrice)}
-          </span>
-          <span className="dealer-card__rating-distance">
-            {renderStars(dealer.rating)} · {formatDistance(dealer.distance || 0)}
-          </span>
-        </div>
+        <ChevronRight size={16} className="dealer-card__chevron" />
       </button>
     );
   }
 
   return (
     <article
-      className={`dealer-card ${isSelected ? 'dealer-card--selected' : ''} ${dealer.dealScore.isBestDeal ? 'dealer-card--best-deal' : ''}`}
+      className={`dealer-card ${isSelected ? 'dealer-card--selected' : ''} ${isHovered ? 'dealer-card--hovered' : ''} ${dealer.dealScore.isBestDeal ? 'dealer-card--best-deal' : ''}`}
       onClick={handleCardClick}
+      onMouseEnter={() => onHover?.(dealer)}
+      onMouseLeave={() => onHover?.(null)}
       role="button"
       tabIndex={0}
       aria-pressed={isSelected}
@@ -90,6 +117,13 @@ const DealerCard = ({
         }
       }}
     >
+      {/* Number Badge */}
+      {index !== undefined && (
+        <span className={`dealer-card__number ${dealer.dealScore.isBestDeal ? 'dealer-card__number--best' : ''}`}>
+          {index}
+        </span>
+      )}
+      
       {dealer.dealScore.isBestDeal && (
         <div className="dealer-card__badge-row">
           <span className="dealer-card__badge dealer-card__badge--best">
@@ -154,6 +188,17 @@ const DealerCard = ({
             <Navigation size={16} />
             <span>Directions</span>
           </a>
+          
+          {onMakeOfferClick && (
+            <button
+              className="dealer-card__action dealer-card__action--offer"
+              onClick={handleMakeOfferClick}
+              aria-label={`Make an offer at ${dealer.name}`}
+            >
+              <DollarSign size={16} />
+              <span>Make Offer</span>
+            </button>
+          )}
         </div>
       </div>
     </article>
