@@ -434,7 +434,7 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                               className="saved-sidebar__vehicle-dealers"
                               onClick={() => {
                                 setDealerMapVehicle({
-                                  year: details.year,
+                                  year: parseInt(details.year, 10),
                                   make: details.make,
                                   model: details.model,
                                   msrp: details.priceMin,

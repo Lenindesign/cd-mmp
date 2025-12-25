@@ -19,8 +19,30 @@ export interface PlaceDetails {
 interface UseGooglePlacesAutocompleteOptions {
   apiKey: string;
   debounceMs?: number;
-  types?: string[];
-  componentRestrictions?: { country: string | string[] };
+}
+
+// Type definitions for Google Maps
+interface GoogleMapsGeocoderResult {
+  place_id: string;
+  formatted_address: string;
+  geometry: {
+    location: {
+      lat: () => number;
+      lng: () => number;
+    };
+  };
+  address_components: Array<{
+    long_name: string;
+    short_name: string;
+    types: string[];
+  }>;
+}
+
+interface GoogleMapsGeocoder {
+  geocode: (
+    request: { address?: string; location?: { lat: number; lng: number }; placeId?: string; componentRestrictions?: { country: string } },
+    callback: (results: GoogleMapsGeocoderResult[] | null, status: string) => void
+  ) => void;
 }
 
 // Load Google Maps Places library using the new API
@@ -88,15 +110,13 @@ const loadGooglePlacesLibrary = async (apiKey: string): Promise<void> => {
 export const useGooglePlacesAutocomplete = ({
   apiKey,
   debounceMs = 300,
-  types = ['(cities)'],
-  componentRestrictions = { country: 'us' },
 }: UseGooglePlacesAutocompleteOptions) => {
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
   
-  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+  const geocoderRef = useRef<GoogleMapsGeocoder | null>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize Google Maps services
@@ -108,7 +128,8 @@ export const useGooglePlacesAutocomplete = ({
 
     loadGooglePlacesLibrary(apiKey)
       .then(() => {
-        geocoderRef.current = new google.maps.Geocoder();
+        // @ts-ignore - google.maps.Geocoder exists
+        geocoderRef.current = new window.google.maps.Geocoder();
         setIsReady(true);
         setError(null);
         console.log('Google Places Autocomplete ready (New API)');
@@ -146,7 +167,7 @@ export const useGooglePlacesAutocomplete = ({
       try {
         // Use the new AutocompleteSuggestion API
         // @ts-ignore - AutocompleteSuggestion is part of the new Places API
-        const { AutocompleteSuggestion } = await google.maps.importLibrary('places');
+        const { AutocompleteSuggestion } = await window.google.maps.importLibrary('places');
         
         // Build the request for the new API
         const request = {
@@ -162,6 +183,7 @@ export const useGooglePlacesAutocomplete = ({
         
         if (suggestions && suggestions.length > 0) {
           setPredictions(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             suggestions.map((suggestion: any) => {
               const placePrediction = suggestion.placePrediction;
               return {
@@ -175,22 +197,23 @@ export const useGooglePlacesAutocomplete = ({
         } else {
           setPredictions([]);
         }
-      } catch (err: any) {
+      } catch (err) {
         console.warn('Places autocomplete error:', err);
         setIsLoading(false);
         
         // Fallback to Geocoding API for basic search
         try {
-          const geocoder = new google.maps.Geocoder();
+          // @ts-ignore - google.maps.Geocoder exists
+          const geocoder = new window.google.maps.Geocoder();
           geocoder.geocode(
             { 
               address: input,
               componentRestrictions: { country: 'US' }
             },
-            (results, status) => {
-              if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+            (results: GoogleMapsGeocoderResult[] | null, status: string) => {
+              if (status === 'OK' && results && results.length > 0) {
                 setPredictions(
-                  results.slice(0, 5).map((result) => ({
+                  results.slice(0, 5).map((result: GoogleMapsGeocoderResult) => ({
                     placeId: result.place_id,
                     description: result.formatted_address,
                     mainText: result.formatted_address.split(',')[0],
@@ -218,7 +241,7 @@ export const useGooglePlacesAutocomplete = ({
 
     try {
       // @ts-ignore - Place is part of the new Places API
-      const { Place } = await google.maps.importLibrary('places');
+      const { Place } = await window.google.maps.importLibrary('places');
       
       // @ts-ignore
       const place = new Place({ id: placeId });
@@ -233,7 +256,8 @@ export const useGooglePlacesAutocomplete = ({
       let state = '';
       let zipCode = '';
       
-      for (const component of addressComponents) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const component of addressComponents as any[]) {
         if (component.types.includes('locality')) {
           city = component.longText || component.shortText;
         } else if (component.types.includes('administrative_area_level_1')) {
@@ -256,38 +280,42 @@ export const useGooglePlacesAutocomplete = ({
       
       // Fallback to Geocoder
       return new Promise((resolve, reject) => {
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ placeId }, (results, status) => {
-          if (status === google.maps.GeocoderStatus.OK && results && results[0]) {
-            const result = results[0];
-            const addressComponents = result.address_components || [];
-            
-            let city = '';
-            let state = '';
-            let zipCode = '';
-            
-            for (const component of addressComponents) {
-              if (component.types.includes('locality')) {
-                city = component.long_name;
-              } else if (component.types.includes('administrative_area_level_1')) {
-                state = component.short_name;
-              } else if (component.types.includes('postal_code')) {
-                zipCode = component.long_name;
+        // @ts-ignore - google.maps.Geocoder exists
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode(
+          { placeId }, 
+          (results: GoogleMapsGeocoderResult[] | null, status: string) => {
+            if (status === 'OK' && results && results[0]) {
+              const result = results[0];
+              const addressComponents = result.address_components || [];
+              
+              let city = '';
+              let state = '';
+              let zipCode = '';
+              
+              for (const component of addressComponents) {
+                if (component.types.includes('locality')) {
+                  city = component.long_name;
+                } else if (component.types.includes('administrative_area_level_1')) {
+                  state = component.short_name;
+                } else if (component.types.includes('postal_code')) {
+                  zipCode = component.long_name;
+                }
               }
-            }
 
-            resolve({
-              lat: result.geometry.location.lat(),
-              lng: result.geometry.location.lng(),
-              formattedAddress: result.formatted_address || '',
-              city,
-              state,
-              zipCode,
-            });
-          } else {
-            reject(new Error('Failed to get place details'));
+              resolve({
+                lat: result.geometry.location.lat(),
+                lng: result.geometry.location.lng(),
+                formattedAddress: result.formatted_address || '',
+                city,
+                state,
+                zipCode,
+              });
+            } else {
+              reject(new Error('Failed to get place details'));
+            }
           }
-        });
+        );
       });
     }
   }, [isReady]);
@@ -302,8 +330,8 @@ export const useGooglePlacesAutocomplete = ({
 
       geocoderRef.current.geocode(
         { location: { lat, lng } },
-        (results, status) => {
-          if (status === google.maps.GeocoderStatus.OK && results && results[0]) {
+        (results: GoogleMapsGeocoderResult[] | null, status: string) => {
+          if (status === 'OK' && results && results[0]) {
             const result = results[0];
             const addressComponents = result.address_components || [];
             
@@ -373,7 +401,16 @@ export const useGooglePlacesAutocomplete = ({
 // Type declarations for Google Maps
 declare global {
   interface Window {
-    google: typeof google;
+    google: {
+      maps: {
+        Geocoder: new () => GoogleMapsGeocoder;
+        importLibrary: (library: string) => Promise<unknown>;
+        places?: {
+          Place?: unknown;
+          AutocompleteSuggestion?: unknown;
+        };
+      };
+    };
   }
 }
 
