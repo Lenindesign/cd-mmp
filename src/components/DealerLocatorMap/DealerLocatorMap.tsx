@@ -75,8 +75,6 @@ const DealerLocatorMap = ({
   } = useGooglePlacesAutocomplete({
     apiKey: GOOGLE_MAPS_API_KEY,
     debounceMs: 300,
-    types: ['(regions)'], // Cities, states, postal codes
-    componentRestrictions: { country: 'us' },
   });
 
   // Get dealers data based on search location (NOT map view center)
