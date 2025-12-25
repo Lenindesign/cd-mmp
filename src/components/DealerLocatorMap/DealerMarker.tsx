@@ -12,6 +12,8 @@ interface DealerMarkerProps {
   isHovered?: boolean;
   onClick?: () => void;
   onHover?: (dealer: DealerWithScore | null) => void;
+  vehicleImage?: string;
+  vehicleName?: string;
 }
 
 const DealerMarker = ({
@@ -21,6 +23,8 @@ const DealerMarker = ({
   isHovered = false,
   onClick,
   onHover,
+  vehicleImage,
+  vehicleName,
 }: DealerMarkerProps) => {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [showInfoWindow, setShowInfoWindow] = useState(false);
@@ -121,47 +125,56 @@ const DealerMarker = ({
           className="dealer-info-window"
         >
           <div className="dealer-info-window__content">
-            {dealer.dealScore.isBestDeal && (
-              <span className="dealer-info-window__badge">
-                <Award size={12} />
-                Best Deal
-              </span>
+            {/* Vehicle Image */}
+            {vehicleImage && (
+              <div className="dealer-info-window__image">
+                <img src={vehicleImage} alt={vehicleName || 'Vehicle'} />
+              </div>
             )}
             
-            <h3 className="dealer-info-window__name">{dealer.name}</h3>
-            
-            <div className="dealer-info-window__meta">
-              <span className="dealer-info-window__inventory">
-                {dealer.inventoryCount} in stock
-              </span>
-              <span className="dealer-info-window__price">
-                from {formatPrice(dealer.lowestPrice)}
-              </span>
-            </div>
-            
-            <div className="dealer-info-window__rating">
-              <Star size={12} fill="#DBCA8B" stroke="#DBCA8B" />
-              <span>{dealer.rating.toFixed(1)}</span>
-              <span className="dealer-info-window__distance">
-                · {formatDistance(dealer.distance || 0)}
-              </span>
-            </div>
-            
-            <div className="dealer-info-window__actions">
-              <a
-                href={`tel:${dealer.phone.replace(/[^0-9]/g, '')}`}
-                className="dealer-info-window__action"
-              >
-                Call
-              </a>
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${dealer.address}, ${dealer.city}, ${dealer.state}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="dealer-info-window__action"
-              >
-                Directions
-              </a>
+            <div className="dealer-info-window__body">
+              {dealer.dealScore.isBestDeal && (
+                <span className="dealer-info-window__badge">
+                  <Award size={10} />
+                  Best Deal
+                </span>
+              )}
+              
+              <h3 className="dealer-info-window__name">{dealer.name}</h3>
+              
+              <div className="dealer-info-window__meta">
+                <div className="dealer-info-window__rating">
+                  <Star size={14} fill="var(--color-gold)" stroke="var(--color-gold)" />
+                  <span className="dealer-info-window__rating-value">{dealer.rating.toFixed(1)}</span>
+                  <span className="dealer-info-window__rating-count">({dealer.reviewCount} reviews)</span>
+                </div>
+                <span className="dealer-info-window__distance">
+                  {formatDistance(dealer.distance || 0)}
+                </span>
+              </div>
+              
+              <div className="dealer-info-window__price-row">
+                <span className="dealer-info-window__price">
+                  from {formatPrice(dealer.lowestPrice)}
+                </span>
+              </div>
+              
+              <div className="dealer-info-window__actions">
+                <a
+                  href={`tel:${dealer.phone.replace(/[^0-9]/g, '')}`}
+                  className="dealer-info-window__action dealer-info-window__action--primary"
+                >
+                  Call
+                </a>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${dealer.address}, ${dealer.city}, ${dealer.state}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dealer-info-window__action dealer-info-window__action--secondary"
+                >
+                  Directions
+                </a>
+              </div>
             </div>
           </div>
         </InfoWindow>

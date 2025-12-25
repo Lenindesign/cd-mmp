@@ -7,6 +7,8 @@ export interface VehicleInfo {
   model: string;
   trim?: string;
   msrp: number;
+  priceMin?: number;
+  priceMax?: number;
   image: string;
   rating?: number;
   bodyStyle?: string;
@@ -38,9 +40,22 @@ const VehicleContextHeader = ({
     return (
       <div className={`vehicle-context vehicle-context--compact ${className}`}>
         <div className="vehicle-context__mini">
-          <span className="vehicle-context__mini-icon">🚗</span>
           <span className="vehicle-context__mini-name">{vehicle.year} {vehicle.model}</span>
-          <span className="vehicle-context__mini-price">{formatPrice(vehicle.msrp)}</span>
+          <div className="vehicle-context__mini-specs">
+            <span className="vehicle-context__mini-spec">{formatPrice(vehicle.msrp)}</span>
+            {vehicle.bodyStyle && (
+              <span className="vehicle-context__mini-spec">{vehicle.bodyStyle}</span>
+            )}
+            {vehicle.mpg && (
+              <span className="vehicle-context__mini-spec">{vehicle.mpg} MPG</span>
+            )}
+            {vehicle.rating && (
+              <span className="vehicle-context__mini-spec">
+                <Star size={12} fill="var(--color-gold)" stroke="var(--color-gold)" />
+                {vehicle.rating}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -53,15 +68,6 @@ const VehicleContextHeader = ({
       </h1>
       
       <div className="vehicle-context__content">
-        <div className="vehicle-context__image-wrapper">
-          <img
-            src={vehicle.image}
-            alt={vehicleTitle}
-            className="vehicle-context__image"
-            loading="eager"
-          />
-        </div>
-        
         <div className="vehicle-context__details">
           <div className="vehicle-context__specs">
             <span className="vehicle-context__spec">

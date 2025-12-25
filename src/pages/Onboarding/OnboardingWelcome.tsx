@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import cdIconSvg from '/cd-icon.svg';
 import './OnboardingWelcome.css';
 
 // Confetti Component
@@ -93,7 +94,7 @@ const CandDBadge = () => (
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
     }}>
       <img 
-        src="/cd-icon.svg" 
+        src={cdIconSvg} 
         alt="Car and Driver" 
         style={{ 
           width: '100%', 

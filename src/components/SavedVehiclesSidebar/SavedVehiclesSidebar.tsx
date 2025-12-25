@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Bookmark, Car, Clock, ChevronRight, Search, Plus, Trash2 } from 'lucide-react';
+import { X, Bookmark, Car, Clock, ChevronRight, Search, Plus, Trash2, MapPin } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { vehicleDatabase } from '../../data/vehicles';
 import { clearRecentlyViewed } from '../../services/recentlyViewedService';
 import { OptimizedImage } from '../OptimizedImage';
+import { DealerMapModal } from '../DealerLocatorMap';
+import type { VehicleInfo } from '../DealerLocatorMap';
 import './SavedVehiclesSidebar.css';
 
 interface SavedVehiclesSidebarProps {
@@ -36,6 +38,10 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
   const [searchResultsWant, setSearchResultsWant] = useState<typeof vehicleDatabase>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchInputWantRef = useRef<HTMLInputElement>(null);
+  
+  // Dealer map modal state
+  const [isDealerMapOpen, setIsDealerMapOpen] = useState(false);
+  const [dealerMapVehicle, setDealerMapVehicle] = useState<VehicleInfo | null>(null);
 
   // Load recently viewed from localStorage
   useEffect(() => {
@@ -382,47 +388,69 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                     {carsIWant.map((vehicle) => {
                       const details = getVehicleDetails(vehicle.name);
                       return (
-                        <Link
-                          key={vehicle.id}
-                          to={details ? `/${details.slug}` : '/vehicles'}
-                          className="saved-sidebar__vehicle"
-                          onClick={onClose}
-                        >
-                          <div className="saved-sidebar__vehicle-image">
-                            {details?.image ? (
-                              <OptimizedImage
-                                src={details.image}
-                                alt={vehicle.name}
-                                width={80}
-                                height={60}
-                              />
-                            ) : (
-                              <div className="saved-sidebar__vehicle-placeholder">
-                                <Car size={24} />
-                              </div>
-                            )}
-                          </div>
-                          <div className="saved-sidebar__vehicle-info">
-                            <span className="saved-sidebar__vehicle-name">{vehicle.name}</span>
-                            {details && (
-                              <span className="saved-sidebar__vehicle-price">
-                                Starting at ${details.priceMin.toLocaleString()}
-                              </span>
-                            )}
-                          </div>
-                          <button
-                            className="saved-sidebar__vehicle-unsave"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeSavedVehicle(vehicle.id);
-                            }}
-                            aria-label="Remove from saved"
-                            title="Remove from saved"
+                        <div key={vehicle.id} className="saved-sidebar__vehicle-wrapper">
+                          <Link
+                            to={details ? `/${details.slug}` : '/vehicles'}
+                            className="saved-sidebar__vehicle"
+                            onClick={onClose}
                           >
-                            <Bookmark size={18} fill="currentColor" />
-                          </button>
-                        </Link>
+                            <div className="saved-sidebar__vehicle-image">
+                              {details?.image ? (
+                                <OptimizedImage
+                                  src={details.image}
+                                  alt={vehicle.name}
+                                  width={80}
+                                  height={60}
+                                />
+                              ) : (
+                                <div className="saved-sidebar__vehicle-placeholder">
+                                  <Car size={24} />
+                                </div>
+                              )}
+                            </div>
+                            <div className="saved-sidebar__vehicle-info">
+                              <span className="saved-sidebar__vehicle-name">{vehicle.name}</span>
+                              {details && (
+                                <span className="saved-sidebar__vehicle-price">
+                                  Starting at ${details.priceMin.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              className="saved-sidebar__vehicle-unsave"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                removeSavedVehicle(vehicle.id);
+                              }}
+                              aria-label="Remove from saved"
+                              title="Remove from saved"
+                            >
+                              <Bookmark size={18} fill="currentColor" />
+                            </button>
+                          </Link>
+                          {details && (
+                            <button
+                              className="saved-sidebar__vehicle-dealers"
+                              onClick={() => {
+                                setDealerMapVehicle({
+                                  year: details.year,
+                                  make: details.make,
+                                  model: details.model,
+                                  msrp: details.priceMin,
+                                  image: details.image,
+                                  priceMin: details.priceMin,
+                                  priceMax: details.priceMax,
+                                });
+                                setIsDealerMapOpen(true);
+                              }}
+                            >
+                              <MapPin size={14} />
+                              <span>See cars available near you</span>
+                              <ChevronRight size={14} />
+                            </button>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
@@ -673,6 +701,18 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
           </Link>
         </div>
       </aside>
+
+      {/* Dealer Map Modal */}
+      {dealerMapVehicle && (
+        <DealerMapModal
+          isOpen={isDealerMapOpen}
+          onClose={() => {
+            setIsDealerMapOpen(false);
+            setDealerMapVehicle(null);
+          }}
+          vehicle={dealerMapVehicle}
+        />
+      )}
     </>
   );
 };

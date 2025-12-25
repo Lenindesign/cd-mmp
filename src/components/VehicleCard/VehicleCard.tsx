@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, ChevronUp, ChevronDown, ChevronRight, Bookmark } from 'lucide-react';
 import { OptimizedImage } from '../OptimizedImage';
 import { useAuth } from '../../contexts/AuthContext';
@@ -130,6 +130,7 @@ export const VehicleCard = ({
   showSaveButton = false,
 }: VehicleCardProps) => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
+  const navigate = useNavigate();
   const isUsedCar = !!mileage;
   // Enhanced card layout is no longer automatically triggered
   // All cards now use the standard layout with optional features
@@ -495,9 +496,9 @@ export const VehicleCard = ({
           <div className="vehicle-card__cd-says-row">
             <span className="vehicle-card__cd-says-label">C/D SAYS: </span>
             <span className="vehicle-card__cd-says-text">{cdSays}</span>
-            <Link to={`/${slug}`} className="vehicle-card__cd-says-link" onClick={(e) => e.stopPropagation()}>
+            <span className="vehicle-card__cd-says-link">
               Learn More
-            </Link>
+            </span>
           </div>
         )}
 
@@ -525,18 +526,21 @@ export const VehicleCard = ({
               const yearRating = detail?.rating || rating;
               
               return (
-                <Link 
+                <button 
                   key={year} 
-                  to={`/${year}/${slug.split('/').slice(1).join('/')}`}
                   className="vehicle-card__year-item"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/${year}/${slug.split('/').slice(1).join('/')}`);
+                  }}
                 >
                   <div className="vehicle-card__year-info">
                     <span className="vehicle-card__year-label">View {year} {displayModelName} Details</span>
                     <span className="vehicle-card__year-meta">Starting at {yearPrice} · {yearRating}/10</span>
                   </div>
                   <ChevronRight size={20} className="vehicle-card__year-arrow" aria-hidden="true" />
-                </Link>
+                </button>
               );
             })}
           </div>

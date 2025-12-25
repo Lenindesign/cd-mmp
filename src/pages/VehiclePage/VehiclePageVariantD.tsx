@@ -241,7 +241,7 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
               currentValue={Math.round(vehicle.priceMin * 0.78)}
               forecastYear1Value={Math.round(vehicle.priceMin * 0.70)}
               forecastYear2Value={Math.round(vehicle.priceMin * 0.62)}
-              expertTip={`Average purchasing price of a ${vehicle.year} ${vehicle.make} ${vehicle.model} in your area is $${Math.round(vehicle.priceMin * 0.75).toLocaleString()}. Consider this vehicle for excellent value retention in its segment.`}
+              expertTip={`Vehicle value drops most during first year of ownership. Consider shopping for a 1-3 year old ${vehicle.make} ${vehicle.model} for the best bang for your buck.`}
               shopUrl={`/vehicles/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase()}`}
               tradeInUrl="#trade-in"
             />

@@ -61,9 +61,6 @@
 
 /* Status Badge */
 .negotiation__status {
-  position: absolute;
-  top: var(--spacing-3);
-  left: var(--spacing-5);
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-1);
@@ -74,6 +71,7 @@
   border-radius: var(--border-radius-full);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-2);
 }
 
 .negotiation__status--pending {

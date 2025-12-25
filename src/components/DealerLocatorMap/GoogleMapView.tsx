@@ -1,5 +1,6 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, type ReactNode } from 'react';
 import { APIProvider, Map, useMap } from '@vis.gl/react-google-maps';
+import { List, X } from 'lucide-react';
 import type { DealerWithScore } from '../../services/dealerService';
 import DealerMarker from './DealerMarker';
 import './DealerLocatorMap.css';
@@ -21,6 +22,13 @@ interface GoogleMapViewProps {
   onDealerSelect?: (dealer: DealerWithScore) => void;
   onDealerHover?: (dealer: DealerWithScore | null) => void;
   apiKey?: string;
+  vehicleImage?: string;
+  vehicleName?: string;
+  sidebarContent?: ReactNode;
+  sidebarTitle?: string;
+  dealerDetailContent?: ReactNode;
+  isDealerDetailOpen?: boolean;
+  onCloseDealerDetail?: () => void;
 }
 
 // Inner component that uses the map context and handles center changes
@@ -31,6 +39,8 @@ const MapContent = ({
   hoveredDealerId,
   onDealerSelect,
   onDealerHover,
+  vehicleImage,
+  vehicleName,
 }: Omit<GoogleMapViewProps, 'apiKey'>) => {
   const map = useMap();
 
@@ -65,6 +75,8 @@ const MapContent = ({
           isHovered={hoveredDealerId === dealer.id}
           onClick={() => handleMarkerClick(dealer)}
           onHover={handleMarkerHover}
+          vehicleImage={vehicleImage}
+          vehicleName={vehicleName}
         />
       ))}
     </>
@@ -79,8 +91,68 @@ const GoogleMapView = ({
   onDealerSelect,
   onDealerHover,
   apiKey,
+  vehicleImage,
+  vehicleName,
+  sidebarContent,
+  sidebarTitle = 'Dealers',
+  dealerDetailContent,
+  isDealerDetailOpen = false,
+  onCloseDealerDetail,
 }: GoogleMapViewProps) => {
   const [mapError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Track fullscreen state
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      // Reset sidebar to open when entering fullscreen
+      if (document.fullscreenElement) {
+        setIsSidebarOpen(true);
+      }
+    };
+    
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  // Custom fullscreen handler - intercepts Google Maps fullscreen button
+  // and properly requests fullscreen on the map container element
+  useEffect(() => {
+    const handleClick = async (e: Event) => {
+      const target = e.target as HTMLElement;
+      const fullscreenBtn = target.closest('.gm-fullscreen-control') as HTMLButtonElement;
+      
+      if (fullscreenBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const mapContainer = document.querySelector('.google-map-view') as HTMLElement;
+        
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else if (mapContainer) {
+            await mapContainer.requestFullscreen();
+          }
+        } catch (err) {
+          console.error('Fullscreen request failed:', err);
+        }
+      }
+    };
+    
+    document.addEventListener('click', handleClick, true);
+    
+    return () => {
+      document.removeEventListener('click', handleClick, true);
+    };
+  }, []);
 
   // If no API key, show placeholder
   if (!apiKey) {
@@ -134,12 +206,60 @@ const GoogleMapView = ({
             hoveredDealerId={hoveredDealerId}
             onDealerSelect={onDealerSelect}
             onDealerHover={onDealerHover}
+            vehicleImage={vehicleImage}
+            vehicleName={vehicleName}
           />
         </Map>
       </APIProvider>
+
+      {/* Floating Sidebar for Fullscreen Mode */}
+      {isFullscreen && sidebarContent && (
+        <>
+          {/* Toggle Button (shown when sidebar is closed) */}
+          <button
+            className={`dealer-locator__fullscreen-toggle ${isSidebarOpen ? 'dealer-locator__fullscreen-toggle--hidden' : ''}`}
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <List size={18} />
+            <span>Show Dealers</span>
+          </button>
+
+          {/* Floating Sidebar */}
+          <div className={`dealer-locator__fullscreen-sidebar ${!isSidebarOpen ? 'dealer-locator__fullscreen-sidebar--hidden' : ''}`}>
+            <div className="dealer-locator__fullscreen-sidebar-header">
+              <h3 className="dealer-locator__fullscreen-sidebar-title">{sidebarTitle}</h3>
+              <button
+                className="dealer-locator__fullscreen-sidebar-close"
+                onClick={() => setIsSidebarOpen(false)}
+                aria-label="Close sidebar"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="dealer-locator__fullscreen-sidebar-content">
+              {sidebarContent}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Dealer Detail Panel for Fullscreen Mode - overlays the dealers list */}
+      {isFullscreen && isDealerDetailOpen && dealerDetailContent && (
+        <div className="dealer-locator__fullscreen-detail">
+          <button 
+            className="dealer-locator__fullscreen-detail-close"
+            onClick={onCloseDealerDetail}
+            aria-label="Close dealer details"
+          >
+            <X size={20} />
+          </button>
+          <div className="dealer-locator__fullscreen-detail-content">
+            {dealerDetailContent}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default GoogleMapView;
-

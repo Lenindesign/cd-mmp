@@ -1,57 +1,17 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import { MapPin, List, Map, ChevronDown } from 'lucide-react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { MapPin, List, Map, ChevronDown, Loader2, Navigation } from 'lucide-react';
 import VehicleContextHeader, { type VehicleInfo } from './VehicleContextHeader';
 import DealerCard from './DealerCard';
-import DealerBottomSheet from './DealerBottomSheet';
+import DealerBottomSheet, { DealerDetailContent } from './DealerBottomSheet';
 import GoogleMapView from './GoogleMapView';
 import MakeOfferModal from './MakeOfferModal';
 import type { OfferData } from './MakeOfferModal';
 import { getDealersForVehicle, sortDealers, type DealerWithScore, type SortOption, type VehicleInventoryItem } from '../../services/dealerService';
+import { useGooglePlacesAutocomplete, type PlacePrediction } from '../../hooks/useGooglePlacesAutocomplete';
 import './DealerLocatorMap.css';
 
 // Get API key from environment variable
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
-
-// Mock geocoding data for demo purposes
-// In production, use Google Geocoding API
-const LOCATION_COORDINATES: Record<string, { lat: number; lng: number }> = {
-  'miami': { lat: 25.7617, lng: -80.1918 },
-  'miami, fl': { lat: 25.7617, lng: -80.1918 },
-  '33101': { lat: 25.7617, lng: -80.1918 },
-  'los angeles': { lat: 34.0522, lng: -118.2437 },
-  'los angeles, ca': { lat: 34.0522, lng: -118.2437 },
-  '90001': { lat: 33.9425, lng: -118.2551 },
-  'lake forest': { lat: 33.6469, lng: -117.6891 },
-  'lake forest, ca': { lat: 33.6469, lng: -117.6891 },
-  '92630': { lat: 33.6469, lng: -117.6891 },
-  'new york': { lat: 40.7128, lng: -74.0060 },
-  'new york, ny': { lat: 40.7128, lng: -74.0060 },
-  '10001': { lat: 40.7484, lng: -73.9967 },
-  'chicago': { lat: 41.8781, lng: -87.6298 },
-  'chicago, il': { lat: 41.8781, lng: -87.6298 },
-  '60601': { lat: 41.8819, lng: -87.6278 },
-  'houston': { lat: 29.7604, lng: -95.3698 },
-  'houston, tx': { lat: 29.7604, lng: -95.3698 },
-  '77001': { lat: 29.7523, lng: -95.3583 },
-  'phoenix': { lat: 33.4484, lng: -112.0740 },
-  'phoenix, az': { lat: 33.4484, lng: -112.0740 },
-  '85001': { lat: 33.4484, lng: -112.0773 },
-  'san diego': { lat: 32.7157, lng: -117.1611 },
-  'san diego, ca': { lat: 32.7157, lng: -117.1611 },
-  '92101': { lat: 32.7194, lng: -117.1628 },
-  'dallas': { lat: 32.7767, lng: -96.7970 },
-  'dallas, tx': { lat: 32.7767, lng: -96.7970 },
-  '75201': { lat: 32.7872, lng: -96.7985 },
-  'irvine': { lat: 33.6846, lng: -117.8265 },
-  'irvine, ca': { lat: 33.6846, lng: -117.8265 },
-  '92618': { lat: 33.6694, lng: -117.8231 },
-};
-
-// Simple geocoding function (mock for demo)
-const geocodeLocation = (locationText: string): { lat: number; lng: number } | null => {
-  const normalized = locationText.toLowerCase().trim();
-  return LOCATION_COORDINATES[normalized] || null;
-};
 
 export interface DealerLocatorMapProps {
   vehicle: VehicleInfo;
@@ -97,6 +57,27 @@ const DealerLocatorMap = ({
   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
   const [offerVehicle, setOfferVehicle] = useState<VehicleInventoryItem | null>(null);
   const [offerDealer, setOfferDealer] = useState<DealerWithScore | null>(null);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [selectedPredictionIndex, setSelectedPredictionIndex] = useState(-1);
+  const autocompleteRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Google Places Autocomplete hook
+  const {
+    predictions,
+    isLoading: isLoadingPredictions,
+    isReady: isPlacesReady,
+    searchPlaces,
+    getPlaceDetails,
+    reverseGeocode,
+    clearPredictions,
+  } = useGooglePlacesAutocomplete({
+    apiKey: GOOGLE_MAPS_API_KEY,
+    debounceMs: 300,
+    types: ['(regions)'], // Cities, states, postal codes
+    componentRestrictions: { country: 'us' },
+  });
 
   // Get dealers data based on search location (NOT map view center)
   const dealers = useMemo(() => {
@@ -105,10 +86,13 @@ const DealerLocatorMap = ({
       vehicle.model,
       searchLocation.lat,
       searchLocation.lng,
-      vehicle.msrp
+      vehicle.msrp,
+      100, // max distance
+      vehicle.priceMin,
+      vehicle.priceMax
     );
     return sortDealers(allDealers, sortBy).slice(0, maxResults);
-  }, [vehicle.make, vehicle.model, vehicle.msrp, searchLocation.lat, searchLocation.lng, sortBy, maxResults]);
+  }, [vehicle.make, vehicle.model, vehicle.msrp, vehicle.priceMin, vehicle.priceMax, searchLocation.lat, searchLocation.lng, sortBy, maxResults]);
 
   // Center map on the #1 Best Deal dealer on initial load
   const [hasInitializedCenter, setHasInitializedCenter] = useState(false);
@@ -149,52 +133,174 @@ const DealerLocatorMap = ({
   };
 
   const handleLocationChange = () => {
-    setLocationInput(location);
+    setLocationInput('');
+    clearPredictions();
+    setShowAutocomplete(false);
+    setSelectedPredictionIndex(-1);
     setIsLocationModalOpen(true);
+    // Focus input after modal opens
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  const handleLocationSubmit = (e: React.FormEvent) => {
+  // Handle input change with autocomplete
+  const handleLocationInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocationInput(value);
+    setSelectedPredictionIndex(-1);
+    
+    if (value.trim().length >= 2) {
+      searchPlaces(value);
+      setShowAutocomplete(true);
+    } else {
+      clearPredictions();
+      setShowAutocomplete(false);
+    }
+  };
+
+  // Handle selecting an autocomplete prediction
+  const handleSelectPrediction = async (prediction: PlacePrediction) => {
+    try {
+      const details = await getPlaceDetails(prediction.placeId);
+      
+      // Update both search location (for dealer filtering) and map view center
+      setSearchLocation({ lat: details.lat, lng: details.lng });
+      setMapViewCenter({ lat: details.lat, lng: details.lng });
+      setLocation(details.formattedAddress);
+      setLocationInput('');
+      clearPredictions();
+      setShowAutocomplete(false);
+      setIsLocationModalOpen(false);
+      setHasInitializedCenter(false); // Allow re-centering on best deal
+      console.log('Location updated to:', details.formattedAddress, 'Coords:', { lat: details.lat, lng: details.lng });
+    } catch (error) {
+      console.error('Error getting place details:', error);
+      alert('Unable to get location details. Please try again.');
+    }
+  };
+
+  // Handle keyboard navigation in autocomplete
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showAutocomplete || predictions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedPredictionIndex(prev => 
+          prev < predictions.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedPredictionIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedPredictionIndex >= 0 && predictions[selectedPredictionIndex]) {
+          handleSelectPrediction(predictions[selectedPredictionIndex]);
+        }
+        break;
+      case 'Escape':
+        setShowAutocomplete(false);
+        clearPredictions();
+        break;
+    }
+  };
+
+  const handleLocationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newLocation = locationInput.trim();
-    if (newLocation) {
-      // Try to geocode the location
-      const coords = geocodeLocation(newLocation);
-      if (coords) {
+    
+    // If there are predictions and one is selected, use that
+    if (selectedPredictionIndex >= 0 && predictions[selectedPredictionIndex]) {
+      await handleSelectPrediction(predictions[selectedPredictionIndex]);
+      return;
+    }
+    
+    // If there are predictions, use the first one
+    if (predictions.length > 0) {
+      await handleSelectPrediction(predictions[0]);
+      return;
+    }
+    
+    // Otherwise show a message
+    if (locationInput.trim()) {
+      alert('Please select a location from the suggestions.');
+    }
+  };
+
+  const handleUseCurrentLocation = async () => {
+    if (!('geolocation' in navigator)) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    setIsGettingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const coords = { lat: latitude, lng: longitude };
+        
+        try {
+          // Try to reverse geocode to get a nice address
+          if (isPlacesReady) {
+            const details = await reverseGeocode(latitude, longitude);
+            setLocation(details.formattedAddress);
+          } else {
+            setLocation('Current Location');
+          }
+        } catch (error) {
+          console.error('Reverse geocode failed:', error);
+          setLocation('Current Location');
+        }
+        
         // Update both search location (for dealer filtering) and map view center
         setSearchLocation(coords);
         setMapViewCenter(coords);
-        setLocation(newLocation);
-        setLocationInput('');
         setIsLocationModalOpen(false);
         setHasInitializedCenter(false); // Allow re-centering on best deal
-        console.log('Location updated to:', newLocation, 'Coords:', coords);
-      } else {
-        // Location not found in our mock data
-        alert(`Location "${newLocation}" not found. Try: Miami, Los Angeles, New York, Chicago, Houston, Phoenix, San Diego, Dallas, Irvine, Lake Forest, or their ZIP codes.`);
+        setIsGettingLocation(false);
+        console.log('Using current location:', latitude, longitude);
+      },
+      (error) => {
+        setIsGettingLocation(false);
+        let message = 'Unable to get your location.';
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            message = 'Location access was denied. Please enable location permissions in your browser settings.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            message = 'Location information is unavailable.';
+            break;
+          case error.TIMEOUT:
+            message = 'Location request timed out. Please try again.';
+            break;
+        }
+        alert(message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5 minutes
       }
-    }
+    );
   };
 
-  const handleUseCurrentLocation = () => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const coords = { lat: latitude, lng: longitude };
-          // Update both search location (for dealer filtering) and map view center
-          setSearchLocation(coords);
-          setMapViewCenter(coords);
-          setLocation('Current Location');
-          setIsLocationModalOpen(false);
-          setHasInitializedCenter(false); // Allow re-centering on best deal
-          console.log('Using current location:', latitude, longitude);
-        },
-        () => {
-          alert('Unable to get your location. Please enter it manually.');
-        }
-      );
+  // Close autocomplete when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (autocompleteRef.current && !autocompleteRef.current.contains(e.target as Node)) {
+        setShowAutocomplete(false);
+      }
+    };
+
+    if (showAutocomplete) {
+      document.addEventListener('mousedown', handleClickOutside);
     }
-  };
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showAutocomplete]);
 
   const handleMakeOffer = useCallback((dealer: DealerWithScore, vehicleItem: VehicleInventoryItem) => {
     setOfferDealer(dealer);
@@ -329,6 +435,47 @@ const DealerLocatorMap = ({
             onDealerSelect={handleDealerSelect}
             onDealerHover={handleMapMarkerHover}
             apiKey={GOOGLE_MAPS_API_KEY}
+            vehicleImage={vehicle.image}
+            vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+            sidebarTitle={`${dealers.length} Dealers Near You`}
+            sidebarContent={
+              dealers.length === 0 ? (
+                <div className="dealer-locator__empty">
+                  <p>No dealers found in your area.</p>
+                </div>
+              ) : (
+                <ul className={`dealer-locator__dealers ${cardVariant === 'compact' ? 'dealer-locator__dealers--compact' : ''}`} role="list">
+                  {dealers.map((dealer, idx) => (
+                    <li key={dealer.id}>
+                      <DealerCard
+                        dealer={dealer}
+                        vehicleModel={vehicle.model}
+                        index={idx + 1}
+                        isSelected={selectedDealer?.id === dealer.id}
+                        isHovered={hoveredDealerId === dealer.id}
+                        variant={cardVariant}
+                        onSelect={handleDealerSelect}
+                        onHover={handleSidebarHover}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+            isDealerDetailOpen={isBottomSheetOpen}
+            onCloseDealerDetail={() => {
+              setIsBottomSheetOpen(false);
+              setSelectedDealer(null);
+            }}
+            dealerDetailContent={
+              selectedDealer ? (
+                <DealerDetailContent
+                  dealer={selectedDealer}
+                  vehicleModel={vehicle.model}
+                  onMakeOffer={handleMakeOffer}
+                />
+              ) : null
+            }
           />
         </div>
 
@@ -387,17 +534,66 @@ const DealerLocatorMap = ({
               <label htmlFor="location-input" className="location-modal__label">
                 Enter city, state or ZIP code
               </label>
-              <input
-                id="location-input"
-                type="text"
-                className="location-modal__input"
-                value={locationInput}
-                onChange={(e) => setLocationInput(e.target.value)}
-                placeholder="e.g., Miami, FL or 33101"
-                autoFocus
-              />
+              <div className="location-modal__input-wrapper" ref={autocompleteRef}>
+                <input
+                  ref={inputRef}
+                  id="location-input"
+                  type="text"
+                  className="location-modal__input"
+                  value={locationInput}
+                  onChange={handleLocationInputChange}
+                  onKeyDown={handleInputKeyDown}
+                  onFocus={() => {
+                    if (predictions.length > 0) setShowAutocomplete(true);
+                  }}
+                  placeholder="e.g., Miami, FL or 33101"
+                  autoComplete="off"
+                  aria-autocomplete="list"
+                  aria-controls="location-autocomplete-list"
+                  aria-expanded={showAutocomplete && predictions.length > 0}
+                />
+                {isLoadingPredictions && (
+                  <div className="location-modal__input-loader">
+                    <Loader2 size={18} className="spinning" />
+                  </div>
+                )}
+                
+                {/* Autocomplete Dropdown */}
+                {showAutocomplete && predictions.length > 0 && (
+                  <ul 
+                    id="location-autocomplete-list"
+                    className="location-modal__autocomplete"
+                    role="listbox"
+                  >
+                    {predictions.map((prediction, index) => (
+                      <li
+                        key={prediction.placeId}
+                        role="option"
+                        aria-selected={index === selectedPredictionIndex}
+                        className={`location-modal__autocomplete-item ${
+                          index === selectedPredictionIndex ? 'location-modal__autocomplete-item--selected' : ''
+                        }`}
+                        onClick={() => handleSelectPrediction(prediction)}
+                        onMouseEnter={() => setSelectedPredictionIndex(index)}
+                      >
+                        <MapPin size={16} className="location-modal__autocomplete-icon" />
+                        <div className="location-modal__autocomplete-text">
+                          <span className="location-modal__autocomplete-main">
+                            {prediction.mainText}
+                          </span>
+                          {prediction.secondaryText && (
+                            <span className="location-modal__autocomplete-secondary">
+                              {prediction.secondaryText}
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               
-              <button type="submit" className="location-modal__submit">
+              <button type="submit" className="location-modal__submit" disabled={predictions.length === 0 && locationInput.trim().length > 0}>
                 Update Location
               </button>
             </form>
@@ -410,9 +606,19 @@ const DealerLocatorMap = ({
               type="button"
               className="location-modal__current"
               onClick={handleUseCurrentLocation}
+              disabled={isGettingLocation}
             >
-              <MapPin size={18} />
-              Use my current location
+              {isGettingLocation ? (
+                <>
+                  <Loader2 size={18} className="spinning" />
+                  Getting location...
+                </>
+              ) : (
+                <>
+                  <Navigation size={18} />
+                  Use my current location
+                </>
+              )}
             </button>
 
             <button 

@@ -153,7 +153,6 @@ const PriceHistory = ({
     const currentYear = new Date().getFullYear();
     if (activeTab === 'history') {
       // For history tab, show 3 consecutive years ending with current year
-      // This avoids duplicate years when vehicleYear equals currentYear - 1
       return [currentYear - 2, currentYear - 1, currentYear];
     } else {
       // For forecast tab, show current year and next 2 years
@@ -373,12 +372,12 @@ const PriceHistory = ({
             </div>
             <p className="price-history__expert-tip-text u-m-0">
               {(() => {
-                const match = expertTip.match(/^(.*?\$[\d,]+\.\s*)/);
+                // Make the first sentence bold (up to the first period)
+                const match = expertTip.match(/^([^.]+\.)\s*/);
                 if (match) {
                   return (
                     <>
-                      <strong>{match[1]}</strong>
-                      {expertTip.slice(match[1].length)}
+                      <strong>{match[1]}</strong> {expertTip.slice(match[0].length)}
                     </>
                   );
                 }

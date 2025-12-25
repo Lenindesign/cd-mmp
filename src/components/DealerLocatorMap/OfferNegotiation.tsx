@@ -112,6 +112,7 @@ const OfferNegotiation = ({
         <button className="negotiation__close" onClick={onClose} aria-label="Close">
           <X size={20} />
         </button>
+        {getStatusBadge()}
         <div className="negotiation__header-content">
           <h2 className="negotiation__title">Offer Negotiation</h2>
           <p className="negotiation__vehicle">
@@ -119,7 +120,6 @@ const OfferNegotiation = ({
           </p>
           <p className="negotiation__dealer">{negotiation.dealerName}</p>
         </div>
-        {getStatusBadge()}
       </header>
 
       {/* Summary Bar */}

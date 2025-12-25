@@ -384,6 +384,49 @@
   color: var(--color-success);
 }
 
+/* Vehicle Wrapper - contains vehicle card + dealers link */
+.saved-sidebar__vehicle-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* See cars available near you button */
+.saved-sidebar__vehicle-dealers {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  margin-top: -1px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-blue-cobalt);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-top: none;
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.saved-sidebar__vehicle-dealers:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-color: var(--color-blue-cobalt);
+}
+
+.saved-sidebar__vehicle-dealers span {
+  flex: 1;
+}
+
+/* Adjust vehicle card border radius when dealers link is present */
+.saved-sidebar__vehicle-wrapper .saved-sidebar__vehicle {
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
 
 /* Empty State */
 .saved-sidebar__empty {

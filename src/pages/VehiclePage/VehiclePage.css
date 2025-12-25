@@ -408,14 +408,10 @@
 /* Dealer Locator Section */
 .vehicle-page__dealer-locator {
   background: var(--color-white);
-  padding: var(--spacing-8) 0;
+  padding: var(--spacing-8) 24px;
   margin-top: var(--spacing-8);
 }
 
-.vehicle-page__dealer-locator .dealer-locator {
-  max-width: 1400px;
-  margin: 0 auto;
-}
 
 /* Responsive */
 @media (max-width: 1024px) {

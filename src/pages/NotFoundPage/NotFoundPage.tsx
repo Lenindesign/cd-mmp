@@ -19,19 +19,6 @@ const NotFoundPage = () => {
         {/* 404 Graphic */}
         <div className="not-found__graphic">
           <span className="not-found__number">404</span>
-          <div className="not-found__car">
-            <svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <title>Lost Car</title>
-              {/* Simple car illustration */}
-              <rect x="40" y="40" width="120" height="40" rx="8" fill="var(--color-neutrals-3)" />
-              <rect x="60" y="25" width="80" height="30" rx="6" fill="var(--color-neutrals-4)" />
-              {/* Wheels */}
-              <circle cx="70" cy="80" r="12" fill="var(--color-neutrals-1)" />
-              <circle cx="70" cy="80" r="6" fill="var(--color-neutrals-6)" />
-              <circle cx="130" cy="80" r="12" fill="var(--color-neutrals-1)" />
-              <circle cx="130" cy="80" r="6" fill="var(--color-neutrals-6)" />
-            </svg>
-          </div>
         </div>
 
         {/* Content */}

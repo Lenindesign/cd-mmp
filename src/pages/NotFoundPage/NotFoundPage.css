@@ -102,14 +102,16 @@
 }
 
 .not-found__btn--primary {
-  background: var(--color-primary-1);
-  color: var(--color-white);
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  border: 2px solid var(--color-blue-cobalt);
 }
 
 .not-found__btn--primary:hover {
-  background: var(--color-red-dark);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(233, 12, 23, 0.3);
+  box-shadow: 0 4px 12px rgba(27, 95, 138, 0.3);
 }
 
 .not-found__btn--secondary {
