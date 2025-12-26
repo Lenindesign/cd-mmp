@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import cdIconSvg from '/cd-icon.svg';
 import './OnboardingWelcome.css';
+
+// Use a constant for the public asset path - works in both Vite dev and Storybook
+const cdIconSvg = '/cd-icon.svg';
 
 // Confetti Component
 interface ConfettiPiece {

@@ -71,7 +71,7 @@
   font-weight: var(--font-weight-extrabold);
   border-radius: var(--border-radius-full);
   border: 2px solid var(--color-black);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
   z-index: 2;
 }
 
@@ -187,7 +187,7 @@
   border-radius: 50%;
   cursor: pointer;
   transition: transform var(--transition-fast);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 .vehicle-card__accolade:hover {
@@ -229,7 +229,7 @@
   border-radius: 50%;
   cursor: pointer;
   transition: all var(--transition-fast);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
   color: var(--color-gray-500);
   z-index: 3;
 }
@@ -400,6 +400,7 @@
 
 /* ============================================
    CTA BUTTONS SECTION
+   Now uses <Button> component from design system
    ============================================ */
 
 .vehicle-card__ctas {
@@ -412,42 +413,8 @@
   justify-content: flex-end;
 }
 
-.vehicle-card__ctas .cta {
+.vehicle-card__ctas .btn {
   white-space: nowrap;
-}
-
-/* Additional CTA Variants not in global styles */
-.vehicle-card__ctas .cta--success {
-  background-color: var(--color-success);
-  color: var(--color-white);
-  border: 1px solid var(--color-success);
-}
-
-.vehicle-card__ctas .cta--success:hover {
-  background-color: var(--color-success-dark);
-  border-color: var(--color-success-dark);
-}
-
-.vehicle-card__ctas .cta--success-outline {
-  background-color: transparent;
-  color: var(--color-success);
-  border: 1px solid var(--color-success);
-}
-
-.vehicle-card__ctas .cta--success-outline:hover {
-  background-color: var(--color-success);
-  color: var(--color-white);
-}
-
-.vehicle-card__ctas .cta--danger {
-  background-color: var(--color-error);
-  color: var(--color-white);
-  border: 1px solid var(--color-error);
-}
-
-.vehicle-card__ctas .cta--danger:hover {
-  background-color: var(--color-error-dark);
-  border-color: var(--color-error-dark);
 }
 
 /* ============================================
@@ -498,7 +465,7 @@
 
 /* Static label - Inter bold */
 .vehicle-card__cd-says-label {
-  font-family: 'Inter', var(--font-body), sans-serif;
+  font-family: var(--font-body);
   font-weight: 700;
   color: var(--color-neutrals-2);
 }
@@ -525,34 +492,13 @@
 
 /* ============================================
    EXPAND MODEL YEARS BUTTON
+   Uses <Button variant="ghost"> from design system
    ============================================ */
 
-.vehicle-card__expand-years {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-1);
+.vehicle-card__expand-years.btn {
   width: 100%;
-  padding: var(--spacing-2) 0;
   margin-top: auto;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-blue-cobalt);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: color var(--transition-fast);
-}
-
-.vehicle-card__expand-years:hover {
-  color: var(--color-blue-cobalt-dark);
-}
-
-.vehicle-card__expand-years svg {
-  color: inherit;
+  justify-content: center;
 }
 
 /* ============================================
@@ -654,34 +600,13 @@
   flex-shrink: 0;
 }
 
-/* Collapse Button */
-.vehicle-card__collapse-years {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-1);
+/* Collapse Button - Uses <Button variant="ghost"> from design system */
+.vehicle-card__collapse-years.btn {
   width: 100%;
-  padding: var(--spacing-3) 0;
   margin-top: auto;
-  border: none;
   border-top: 1px solid var(--color-gray-200);
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-blue-cobalt);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: color var(--transition-fast);
-}
-
-.vehicle-card__collapse-years:hover {
-  color: var(--color-blue-cobalt-dark);
-}
-
-.vehicle-card__collapse-years svg {
-  color: inherit;
+  border-radius: 0;
+  justify-content: center;
 }
 
 /* ============================================

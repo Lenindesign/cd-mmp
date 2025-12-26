@@ -1,5 +1,6 @@
 import { Facebook, Twitter, Instagram, Youtube, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Button } from '../Button';
 import './Footer.css';
 
 const Footer = () => {
@@ -58,9 +59,13 @@ const Footer = () => {
                     placeholder="Enter your email"
                     className="footer__newsletter-input"
                   />
-                  <button className="footer__newsletter-btn">
-                    <Mail size={18} />
-                  </button>
+                  <Button 
+                    variant="primary" 
+                    size="small"
+                    className="footer__newsletter-btn"
+                    iconLeft={<Mail size={18} />}
+                    aria-label="Subscribe"
+                  />
                 </div>
               </div>
             </div>

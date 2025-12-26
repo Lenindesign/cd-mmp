@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { ChevronDown, Info, ArrowUpRight, Clock, AlertCircle } from 'lucide-react';
 import { getVehicleIncentives, getCurrentPeriod } from '../../services/incentivesService';
 import type { Incentive } from '../../services/incentivesService';
+import { Button } from '../Button';
 import './Incentives.css';
 
 interface IncentivesProps {
@@ -95,9 +96,9 @@ const Incentives = ({
                 <Clock size={18} />
                 <p>Don't miss out on <strong>up to {formatCurrency(totalSavings)}</strong> in savings. Year-end deals won't last forever!</p>
               </div>
-              <button className="incentives__urgency-cta">
+              <Button variant="primary" className="incentives__urgency-cta">
                 Claim Your Incentive Now
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -165,7 +166,9 @@ const Incentives = ({
 
             <div className="incentives__location">
               <span className="incentives__zip">📍 {zipCode}</span>
-              <button className="incentives__change-location">Change Location</button>
+              <Button variant="ghost" size="small" className="incentives__change-location">
+                Change Location
+              </Button>
             </div>
           </div>
 
@@ -198,9 +201,13 @@ const Incentives = ({
                     )}
                   </div>
                 </div>
-                <button className="incentives__item-link" aria-label="View details">
-                  <ArrowUpRight size={18} />
-                </button>
+                <Button 
+                  variant="outline" 
+                  size="small" 
+                  className="incentives__item-link" 
+                  aria-label="View details"
+                  iconLeft={<ArrowUpRight size={18} />}
+                />
               </div>
             ))}
           </div>

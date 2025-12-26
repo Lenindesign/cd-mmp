@@ -968,7 +968,7 @@ const ResponsiveDesignPage = () => (
 );
 
 const meta: Meta = {
-  title: 'Design System/Responsive Design',
+  title: 'Foundation/Responsive Design',
   component: ResponsiveDesignPage,
   parameters: {
     layout: 'fullscreen',

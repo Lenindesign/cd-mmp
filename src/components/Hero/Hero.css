@@ -527,7 +527,7 @@
   padding: var(--spacing-1) var(--spacing-3);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
-  font-family: 'Inter', var(--font-body);
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.05em;

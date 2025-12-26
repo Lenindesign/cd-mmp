@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5); /* Modal overlay - intentional opacity */
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -22,7 +22,7 @@
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-xl);
   animation: modalSlideIn 0.3s ease-out;
 }
 
@@ -42,7 +42,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-4) var(--spacing-5);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .rating-history__title {
@@ -87,7 +87,7 @@
   display: flex;
   gap: var(--spacing-3);
   padding: var(--spacing-4) var(--spacing-5);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--color-gray-200);
   background: var(--color-apple-bg-secondary);
 }
 
@@ -95,7 +95,7 @@
   padding: var(--spacing-2-5) var(--spacing-4);
   font-family: var(--font-body);
   font-size: var(--font-size-base);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--spacing-2);
   background: var(--color-white);
   color: var(--color-apple-text-primary);
@@ -106,7 +106,7 @@
 .rating-history__select:focus {
   outline: none;
   border-color: var(--color-blue-cobalt);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+  box-shadow: 0 0 0 3px var(--color-info-light);
 }
 
 .rating-history__content {
@@ -138,7 +138,7 @@
 }
 
 .rating-history__month {
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--spacing-3);
   overflow: hidden;
 }
@@ -184,7 +184,7 @@
   gap: var(--spacing-3);
   align-items: center;
   padding: var(--spacing-3) var(--spacing-4);
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid var(--color-gray-100);
   background: var(--color-white);
 }
 
@@ -243,18 +243,18 @@
 }
 
 .rating-history__diff--green {
-  color: var(--color-apple-green);
-  background: rgba(52, 199, 89, 0.1);
+  color: var(--color-success);
+  background: var(--color-success-light);
 }
 
 .rating-history__diff--red {
-  color: var(--color-apple-red);
-  background: rgba(255, 59, 48, 0.1);
+  color: var(--color-error);
+  background: var(--color-error-light);
 }
 
 .rating-history__diff--gray {
-  color: var(--color-apple-text-tertiary);
-  background: rgba(134, 134, 139, 0.1);
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
 }
 
 .rating-history__entry-date {
@@ -266,7 +266,7 @@
 
 .rating-history__footer {
   padding: var(--spacing-3) var(--spacing-5);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--color-gray-200);
   background: var(--color-apple-bg-secondary);
 }
 

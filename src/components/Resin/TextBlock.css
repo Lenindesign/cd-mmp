@@ -4,7 +4,8 @@
    ========================================================================== */
 
 .text-block {
-  font-family: var(--font-body);
+  font-family: 'Lora', var(--font-serif);
+  font-style: normal;
   color: var(--color-dark);
   line-height: var(--line-height-loose);
 }
@@ -128,7 +129,8 @@
 .text-block--drop-cap > p:first-of-type::first-letter,
 .text-block--drop-cap > .text-block__paragraph:first-of-type::first-letter {
   float: left;
-  font-family: var(--font-display);
+  font-family: 'Lora', var(--font-serif);
+  font-style: normal;
   font-size: 4em;
   font-weight: var(--font-weight-bold);
   line-height: 0.8;
@@ -148,7 +150,8 @@
 
 .text-block em,
 .text-block i {
-  font-style: italic;
+  font-style: normal;
+  font-weight: var(--font-weight-semibold);
 }
 
 .text-block u {
@@ -196,7 +199,7 @@
 .text-block__quote p,
 .text-block blockquote p {
   font-size: var(--font-size-lg);
-  font-style: italic;
+  font-style: normal;
   color: var(--color-gray-700);
   margin: 0;
 }

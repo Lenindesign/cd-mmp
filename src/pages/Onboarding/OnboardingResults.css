@@ -37,7 +37,7 @@
 }
 
 .onboarding-results__nav-link {
-  font-family: 'Inter', var(--font-body);
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 500;
   text-transform: uppercase;
@@ -63,7 +63,7 @@
 }
 
 .onboarding-results__title {
-  font-family: 'Inter', var(--font-display);
+  font-family: var(--font-display);
   font-size: var(--font-size-4xl);
   font-weight: 800;
   color: var(--color-white);
@@ -100,7 +100,7 @@
   align-items: center;
   gap: var(--spacing-2);
   padding: var(--spacing-4) 0;
-  font-family: 'Inter', var(--font-body);
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 500;
   text-transform: uppercase;
@@ -241,7 +241,7 @@
   padding: var(--spacing-0-5) var(--spacing-2);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
-  font-family: 'Inter', var(--font-body);
+  font-family: var(--font-body);
   font-size: var(--font-size-2xs);
   font-weight: 800;
   text-transform: uppercase;
@@ -262,7 +262,7 @@
 }
 
 .results-card__title {
-  font-family: 'Inter', var(--font-display);
+  font-family: var(--font-display);
   font-size: var(--font-size-md);
   font-weight: 800;
   color: var(--color-dark);
@@ -271,7 +271,7 @@
 }
 
 .results-card__price {
-  font-family: 'Inter', var(--font-body);
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-blue-cobalt);

@@ -1,0 +1,275 @@
+/* ============================================
+   NEWS + STORIES PAGE
+   Car and Driver Design System
+   ============================================ */
+
+.news-page {
+  background: var(--color-white);
+}
+
+/* ============================================
+   HERO SECTION - Full Width Featured Story
+   ============================================ */
+
+.news-page__hero {
+  position: relative;
+  background: var(--color-gray-100);
+}
+
+.news-page__hero-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.news-page__hero-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+}
+
+.news-page__hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.news-page__hero-link:hover .news-page__hero-image img {
+  transform: scale(1.02);
+}
+
+.news-page__hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-8) var(--spacing-6);
+  text-align: center;
+}
+
+.news-page__hero-category {
+  display: inline-block;
+  padding: var(--spacing-1) var(--spacing-3);
+  background: var(--color-dark);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-4);
+}
+
+.news-page__hero-headline {
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-5xl));
+  font-weight: var(--font-weight-black);
+  line-height: 1.05;
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-4);
+  letter-spacing: -0.02em;
+}
+
+.news-page__hero-link:hover .news-page__hero-headline {
+  color: var(--color-blue-cobalt);
+}
+
+.news-page__hero-subheadline {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin: 0 0 var(--spacing-4);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.news-page__hero-byline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1-5);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.news-page__hero-verified {
+  color: var(--color-blue-cobalt);
+}
+
+.news-page__hero-author {
+  color: var(--color-blue-cobalt);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+
+.news-page__section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-10) var(--spacing-6);
+}
+
+.news-page__section--alt {
+  background: var(--color-gray-50);
+  max-width: 100%;
+}
+
+.news-page__section--alt > * {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.news-page__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 2px solid var(--color-dark);
+}
+
+.news-page__section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.news-page__section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.news-page__section-link:hover {
+  color: var(--color-blue-dark);
+  text-decoration: underline;
+}
+
+/* ============================================
+   GRID LAYOUTS
+   ============================================ */
+
+.news-page__grid {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.news-page__grid--4col {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.news-page__grid--3col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.news-page__grid--2col {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Article Card Overrides for News Page */
+.news-page__grid .article-card {
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  transition: box-shadow var(--transition-normal);
+}
+
+.news-page__grid .article-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.news-page__grid .article-card__content {
+  padding: var(--spacing-4);
+}
+
+.news-page__grid .article-card__headline {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+  color: var(--color-dark);
+}
+
+.news-page__grid .article-card:hover .article-card__headline {
+  color: var(--color-blue-cobalt);
+}
+
+.news-page__grid .article-card__sponsor {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .news-page__grid--4col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .news-page__grid--4col,
+  .news-page__grid--3col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .news-page__hero-image {
+    aspect-ratio: 16 / 9;
+  }
+
+  .news-page__hero-content {
+    padding: var(--spacing-6) var(--spacing-4);
+  }
+
+  .news-page__section {
+    padding: var(--spacing-8) var(--spacing-4);
+  }
+}
+
+@media (max-width: 600px) {
+  .news-page__grid--4col,
+  .news-page__grid--3col,
+  .news-page__grid--2col {
+    grid-template-columns: 1fr;
+  }
+
+  .news-page__hero-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .news-page__hero-headline {
+    font-size: var(--font-size-2xl);
+  }
+
+  .news-page__hero-subheadline {
+    font-size: var(--font-size-base);
+  }
+
+  .news-page__section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+}
+

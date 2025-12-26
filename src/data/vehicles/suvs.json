@@ -2061,5 +2061,42 @@
     "slug": "2025/Toyota/RAV4-Hybrid",
     "editorsChoice": true,
     "tenBest": true
+  },
+  {
+    "id": "solterra-2026",
+    "year": "2026",
+    "make": "Subaru",
+    "model": "Solterra",
+    "bodyStyle": "SUV",
+    "imageSource": "2026 Subaru Solterra",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/2025-subaru-solterra-101.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/2025-subaru-solterra-101.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/2025-subaru-solterra-102.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/2025-subaru-solterra-103.jpg"
+    ],
+    "priceRange": "$44,995 - $54,995",
+    "priceMin": 44995,
+    "priceMax": 54995,
+    "staffRating": 8.5,
+    "communityRating": 8.2,
+    "reviewCount": 47,
+    "fuelType": "Electric",
+    "drivetrain": "AWD",
+    "transmission": "Single-Speed",
+    "mpg": "228 mi range",
+    "horsepower": 338,
+    "seatingCapacity": 5,
+    "cargoSpace": 30.0,
+    "features": [
+      "Dual-Motor AWD",
+      "DC Fast Charging",
+      "Subaru STARLINK",
+      "EyeSight Driver Assist"
+    ],
+    "slug": "2026/Subaru/Solterra",
+    "evOfTheYear": false,
+    "editorsChoice": false,
+    "tenBest": false
   }
 ]

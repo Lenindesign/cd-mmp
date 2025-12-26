@@ -325,7 +325,7 @@ const ColorsPage = () => (
 );
 
 const meta: Meta = {
-  title: 'Tokens/Colors',
+  title: 'Foundation/Colors',
   component: ColorsPage,
   parameters: {
     layout: 'fullscreen',

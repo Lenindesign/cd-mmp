@@ -58,7 +58,7 @@ const Header = () => {
     { label: 'Research Cars', href: '#' },
     { label: 'Expert Reviews', href: '#' },
     { label: "What's My Car Worth?", href: '#' },
-    { label: 'News + Stories', href: '#' },
+    { label: 'News + Stories', href: '/news' },
   ];
 
   // Handle search input changes

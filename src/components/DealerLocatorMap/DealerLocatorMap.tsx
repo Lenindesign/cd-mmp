@@ -434,6 +434,7 @@ const DealerLocatorMap = ({
             onDealerHover={handleMapMarkerHover}
             apiKey={GOOGLE_MAPS_API_KEY}
             vehicleImage={vehicle.image}
+            vehicleImages={vehicle.galleryImages}
             vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
             sidebarTitle={`${dealers.length} Dealers Near You`}
             sidebarContent={

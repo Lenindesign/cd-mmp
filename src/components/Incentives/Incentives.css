@@ -141,19 +141,10 @@
   color: var(--color-gray-600);
 }
 
-.incentives__change-location {
-  background: none;
-  border: none;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-blue-cobalt);
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.incentives__change-location:hover {
-  text-decoration: underline;
+/* Change Location - Uses <Button variant="ghost"> */
+.incentives__change-location.btn {
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 /* Incentives List */
@@ -180,40 +171,48 @@
   gap: var(--spacing-4);
 }
 
-/* Badge */
+/* Badge - Using solid chip style from design system */
 .incentives__badge {
-  display: inline-block;
-  padding: var(--spacing-1) var(--spacing-3);
-  border-radius: var(--border-radius-sm);
-  font-family: var(--font-heading);
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--spacing-1);
+  font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   text-transform: capitalize;
   white-space: nowrap;
+  border: none;
+  /* Default: unselected chip style */
+  background: var(--color-white);
+  color: var(--color-dark);
+  border: 1px solid var(--color-gray-300);
+  transition: all var(--transition-fast);
 }
 
+/* All category badges use solid filled style for clear identification */
 .incentives__badge--lease {
-  background: var(--color-badge-lease-bg);
-  color: var(--color-badge-lease-text);
-  border: 1px solid var(--color-badge-lease-border);
+  background: var(--color-warning);
+  color: var(--color-white);
+  border-color: var(--color-warning);
 }
 
 .incentives__badge--cash {
-  background: var(--color-badge-lease-bg);
-  color: var(--color-badge-lease-text);
-  border: 1px solid var(--color-badge-lease-border);
+  background: var(--color-success);
+  color: var(--color-white);
+  border-color: var(--color-success);
 }
 
 .incentives__badge--finance {
-  background: var(--color-badge-finance-bg);
-  color: var(--color-badge-finance-text);
-  border: 1px solid var(--color-badge-finance-border);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-color: var(--color-blue-cobalt);
 }
 
 .incentives__badge--special {
-  background: var(--color-badge-special-bg);
-  color: var(--color-badge-special-text);
-  border: 1px solid var(--color-badge-special-border);
+  background: var(--color-success);
+  color: var(--color-white);
+  border-color: var(--color-success);
 }
 
 /* Item Info */
@@ -281,25 +280,12 @@
   color: var(--color-gray-700);
 }
 
-/* Item Link */
-.incentives__item-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Item Link - Uses <Button variant="outline"> */
+.incentives__item-link.btn {
   width: var(--spacing-9);
-  height: var(--spacing-9);
-  background: none;
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--border-radius-sm);
-  color: var(--color-gray-500);
-  cursor: pointer;
-  transition: all var(--transition-fast);
+  min-width: var(--spacing-9);
+  padding: 0;
   flex-shrink: 0;
-}
-
-.incentives__item-link:hover {
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-blue-cobalt);
 }
 
 /* Urgency CTA */
@@ -370,26 +356,10 @@
   font-weight: var(--font-weight-bold);
 }
 
-.incentives__urgency-cta {
+/* Urgency CTA - Uses <Button> component */
+.incentives__urgency-cta.btn {
   flex-shrink: 0;
-  padding: var(--spacing-3) var(--spacing-5);
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
   white-space: nowrap;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  box-shadow: 0 2px 4px rgba(27, 95, 138, 0.3);
-}
-
-.incentives__urgency-cta:hover {
-  background: var(--color-black);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Source Attribution */

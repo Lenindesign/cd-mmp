@@ -334,6 +334,7 @@
 @media (max-width: 900px) {
   .header__top {
     flex-wrap: wrap;
+    row-gap: var(--spacing-1); /* Reduced gap between first row and second row (search) */
   }
 
   .header__logo {
@@ -349,7 +350,7 @@
     order: 3;
     flex: 0 0 100%;
     max-width: none;
-    margin-top: var(--spacing-3);
+    margin-top: 0; /* Gap is now controlled by row-gap on parent */
   }
 
   .header__actions {

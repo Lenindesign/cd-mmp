@@ -137,6 +137,7 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
+  --font-weight-black: 900;
   
   /* Font Sizes - Complete Scale */
   --font-size-2xs: 0.5rem;      /* 8px - tiny labels */

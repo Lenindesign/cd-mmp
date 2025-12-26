@@ -45,7 +45,7 @@
 }
 
 .article-card--vertical .article-card__content {
-  padding: var(--spacing-3) 0;
+  padding: var(--spacing-4);
 }
 
 /* Compact - Smaller version for tight spaces */

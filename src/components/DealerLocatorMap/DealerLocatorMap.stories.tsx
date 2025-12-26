@@ -161,19 +161,28 @@ import { DealerLocatorMap } from '@/components/DealerLocatorMap';
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Default vehicle data
+// Default vehicle data - using real gallery images from vehicle database
 const defaultVehicle = {
   year: 2025,
   make: 'Chevrolet',
   model: 'Trax',
   msrp: 21895,
   image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
+  galleryImages: [
+    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c171a38f50008ca1b6e/009-2025-chevrolet-trax-exterior-side-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c1e811993000831eb00/012-2025-chevrolet-trax-exterior-front-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg',
+  ],
   rating: 8.5,
   bodyStyle: 'SUV',
   mpg: 28,
 };
 
 // Alternative vehicle for variety
+// Using real gallery images from vehicle database
 const hondaAccord = {
   year: 2025,
   make: 'Honda',
@@ -181,6 +190,13 @@ const hondaAccord = {
   trim: 'Sport',
   msrp: 29610,
   image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
+  galleryImages: [
+    'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b803565f0008090975/21-2025-honda-accord-front-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/679d37bb03565f0008090977/22-2025-honda-accord-rear-view.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/671a754a2647660009869398/003-2025-honda-accord-hybrid.jpg',
+    'https://d2kde5ohu8qb21.cloudfront.net/files/66e8824d603db5000878f458/2025hondaaccordhybridfrontthreequarters.jpg',
+  ],
   rating: 9.0,
   bodyStyle: 'Sedan',
   mpg: 32,

@@ -324,6 +324,7 @@ const VehiclePageVariantB = ({ variant }: VehiclePageVariantBProps) => {
           <TrimSelector 
             trims={trimData}
             subtitle={`The ${recommendedTrimName} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
+            vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
           />
         </section>
         

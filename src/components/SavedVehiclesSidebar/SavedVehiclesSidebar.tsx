@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { vehicleDatabase } from '../../data/vehicles';
 import { clearRecentlyViewed } from '../../services/recentlyViewedService';
 import { OptimizedImage } from '../OptimizedImage';
+import { Button } from '../Button';
 import { DealerMapModal } from '../DealerLocatorMap';
 import type { VehicleInfo } from '../DealerLocatorMap';
 import './SavedVehiclesSidebar.css';
@@ -241,13 +242,14 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
             <Bookmark size={20} fill="currentColor" className="saved-sidebar__header-icon" />
             <h2 className="saved-sidebar__title">My Garage</h2>
           </div>
-          <button 
+          <Button 
+            variant="ghost"
+            size="small"
             className="saved-sidebar__close" 
             onClick={onClose}
             aria-label="Close sidebar"
-          >
-            <X size={24} />
-          </button>
+            iconLeft={<X size={24} />}
+          />
         </div>
 
         {/* Welcome message */}
@@ -287,17 +289,26 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                       Recently Viewed ({recentlyViewed.length})
                     </span>
                     <div className="saved-sidebar__section-actions">
-                      <button 
+                      <Button 
+                        variant="ghost"
+                        size="small"
                         className="saved-sidebar__clear-btn"
                         onClick={handleClearRecentlyViewed}
-                        title="Clear recently viewed"
+                        iconLeft={<Trash2 size={14} />}
                       >
-                        <Trash2 size={14} />
                         Clear
-                      </button>
-                      <Link to="/vehicles" className="saved-sidebar__section-link" onClick={onClose}>
-                        Shop Now <ChevronRight size={14} />
-                      </Link>
+                      </Button>
+                      <Button 
+                        as="a" 
+                        href="/vehicles" 
+                        variant="ghost"
+                        size="small"
+                        className="saved-sidebar__section-link" 
+                        onClick={onClose}
+                        iconRight={<ChevronRight size={14} />}
+                      >
+                        Shop Now
+                      </Button>
                     </div>
                   </div>
                   <div className="saved-sidebar__vehicles">
@@ -439,6 +450,7 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                                   model: details.model,
                                   msrp: details.priceMin,
                                   image: details.image,
+                                  galleryImages: details.galleryImages,
                                   priceMin: details.priceMin,
                                   priceMax: details.priceMax,
                                 });
@@ -534,13 +546,14 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                   )}
                 </div>
               ) : (
-                <button 
+                <Button 
+                  variant="outline"
                   className="saved-sidebar__add-btn"
                   onClick={() => setShowAddVehicleWant(true)}
+                  iconLeft={<Plus size={18} />}
                 >
-                  <Plus size={18} />
-                  <span>Add a Vehicle</span>
-                </button>
+                  Add a Vehicle
+                </Button>
               )}
             </div>
           )}
@@ -678,13 +691,14 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                   )}
                 </div>
               ) : (
-                <button 
+                <Button 
+                  variant="outline"
                   className="saved-sidebar__add-btn"
                   onClick={() => setShowAddVehicle(true)}
+                  iconLeft={<Plus size={18} />}
                 >
-                  <Plus size={18} />
-                  <span>Add a Vehicle</span>
-                </button>
+                  Add a Vehicle
+                </Button>
               )}
             </div>
           )}
@@ -692,13 +706,16 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
 
         {/* Footer */}
         <div className="saved-sidebar__footer">
-          <Link 
-            to="/account?tab=saved" 
+          <Button 
+            as="a"
+            href="/account?tab=saved" 
+            variant="primary"
+            fullWidth
             className="saved-sidebar__footer-btn"
             onClick={onClose}
           >
             View All Saved
-          </Link>
+          </Button>
         </div>
       </aside>
 

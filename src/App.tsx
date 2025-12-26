@@ -39,6 +39,15 @@ const CardAudit = lazy(() => import('./pages/CardAudit/CardAudit'));
 // Account pages - lazy loaded
 const MyAccount = lazy(() => import('./pages/Account/MyAccount'));
 
+// Article pages - lazy loaded
+const ArticlePage = lazy(() => import('./pages/ArticlePage/ArticlePage'));
+
+// News pages - lazy loaded
+const NewsPage = lazy(() => import('./pages/NewsPage/NewsPage'));
+
+// Listicle pages - lazy loaded
+const ListiclePage = lazy(() => import('./pages/ListiclePage/ListiclePage'));
+
 // Loading fallback component
 const PageLoader = () => (
   <div className="page-loader">
@@ -103,6 +112,13 @@ function App() {
             
             {/* Account Pages */}
             <Route path="/account" element={<MyAccount />} />
+            
+            {/* News + Stories Pages */}
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/news-stories" element={<NewsPage />} />
+            <Route path="/news/:slug" element={<ArticlePage />} />
+            <Route path="/article/:slug" element={<ArticlePage />} />
+            <Route path="/listicle/:slug" element={<ListiclePage />} />
             
             {/* Individual Vehicle Pages - Dynamic routes based on slug */}
             <Route path="/:year/:make/:model" element={<VehiclePage />} />

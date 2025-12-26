@@ -13,7 +13,7 @@ import TargetPriceRange from '../../components/TargetPriceRange';
 import Incentives from '../../components/Incentives';
 import BuyingPotential from '../../components/BuyingPotential';
 import AdSidebar from '../../components/AdSidebar';
-import { TrimSelectorWithCTA } from '../../components/TrimSelector';
+import TrimSelector from '../../components/TrimSelector';
 import Warranty, { defaultWarrantyItems } from '../../components/Warranty';
 import Comparison from '../../components/Comparison';
 import VehicleRanking from '../../components/VehicleRanking';
@@ -272,14 +272,10 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         />
         
         <section id="pricing">
-          <TrimSelectorWithCTA 
+          <TrimSelector 
             trims={trimData}
             subtitle={`The ${recommendedTrimName} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
-            variant="v5d"
-            make={vehicle.make}
-            model={vehicle.model}
-            msrp={vehicle.priceMin}
-            location="Miami, FL"
+            vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
           />
         </section>
         
@@ -308,6 +304,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               make: vehicle.make,
               model: vehicle.model,
               image: vehicle.image,
+              galleryImages: vehicle.galleryImages,
               msrp: vehicle.priceMin,
               priceMin: vehicle.priceMin,
               priceMax: vehicle.priceMax,

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ChevronDown, ArrowRight, TrendingUp, TrendingDown, Minus, Info, CheckCircle } from 'lucide-react';
 import { vehicleDatabase } from '../../data/vehicles';
+import { Button } from '../Button';
 import './WhatsMyCarWorth.css';
 
 interface WhatsMyCarWorthProps {
@@ -291,15 +292,17 @@ const WhatsMyCarWorth = ({
           </div>
 
           {/* CTA Button */}
-          <button
-            type="button"
-            className={`whats-my-car-worth__cta ${isFormComplete ? '' : 'whats-my-car-worth__cta--disabled'}`}
+          <Button
+            variant="success"
+            size="large"
+            fullWidth
+            className="whats-my-car-worth__cta"
             onClick={handleGetEstimate}
             disabled={!isFormComplete}
+            iconRight={<ArrowRight size={18} />}
           >
             GET MY ESTIMATE
-            <ArrowRight size={18} />
-          </button>
+          </Button>
         </div>
 
         {/* Estimate Results */}
@@ -371,13 +374,19 @@ const WhatsMyCarWorth = ({
             </div>
 
             <div className="whats-my-car-worth__results-actions">
-              <button className="whats-my-car-worth__action-btn whats-my-car-worth__action-btn--primary">
-                <CheckCircle size={18} />
+              <Button 
+                variant="primary"
+                className="whats-my-car-worth__action-btn"
+                iconLeft={<CheckCircle size={18} />}
+              >
                 GET DEALER OFFERS
-              </button>
-              <button className="whats-my-car-worth__action-btn whats-my-car-worth__action-btn--secondary">
+              </Button>
+              <Button 
+                variant="outline"
+                className="whats-my-car-worth__action-btn"
+              >
                 SHOP WITH TRADE-IN
-              </button>
+              </Button>
             </div>
 
             <p className="whats-my-car-worth__powered-by">

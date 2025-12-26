@@ -14,7 +14,7 @@ import '../index.css';
  */
 
 const meta: Meta = {
-  title: 'Design System/CTA Variations Test',
+  title: 'Elements/CTA Patterns',
   parameters: {
     layout: 'centered',
     docs: {

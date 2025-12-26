@@ -10,6 +10,7 @@ export interface VehicleInfo {
   priceMin?: number;
   priceMax?: number;
   image: string;
+  galleryImages?: string[]; // Array of images for slideshow
   rating?: number;
   bodyStyle?: string;
   mpg?: number;

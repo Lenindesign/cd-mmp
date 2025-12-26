@@ -4,6 +4,7 @@ import { ChevronRight, ChevronLeft, MapPin, Gauge, Calendar, Bookmark, Phone, Na
 import { getListingsNearYou } from '../../services/listingsService';
 import type { Listing } from '../../services/listingsService';
 import { OptimizedImage } from '../OptimizedImage';
+import { Button } from '../Button';
 import './ForSaleNearYou.css';
 
 interface ForSaleNearYouProps {
@@ -93,7 +94,9 @@ const ForSaleNearYou = ({
           <div className="for-sale__location">
             <MapPin size={16} />
             <span>{location}</span>
-            <button className="for-sale__change-location">Change Location</button>
+            <Button variant="ghost" size="small" className="for-sale__change-location">
+              Change Location
+            </Button>
           </div>
         </div>
         
@@ -218,12 +221,22 @@ const ForSaleNearYou = ({
 
                   {/* CTA */}
                   <div className="for-sale__card-actions">
-                    <Link to={`/${listing.slug}`} className="for-sale__card-btn for-sale__card-btn--primary">
+                    <Button 
+                      as="a" 
+                      href={`/${listing.slug}`} 
+                      variant="primary"
+                      size="small"
+                      className="for-sale__card-btn"
+                    >
                       View Details
-                    </Link>
-                    <button className="for-sale__card-btn for-sale__card-btn--secondary">
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      size="small"
+                      className="for-sale__card-btn"
+                    >
                       Check Availability
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -245,10 +258,15 @@ const ForSaleNearYou = ({
           <div className="for-sale__results-count">
             Showing {listings.length} of {listings.length + 150}+ listings near {location}
           </div>
-          <a href="#" className="for-sale__cta-btn">
+          <Button 
+            as="a" 
+            href="#" 
+            variant="primary"
+            iconRight={<ChevronRight size={18} />}
+            className="for-sale__cta-btn"
+          >
             See All {vehicleName} Listings
-            <ChevronRight size={18} />
-          </a>
+          </Button>
         </div>
       </div>
     </section>

@@ -4,7 +4,7 @@
 .exit-modal__overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.8); /* Modal overlay - intentional dark backdrop */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -40,9 +40,7 @@
   max-height: 90vh;
   background: var(--color-blue-cobalt-dark);
   border-radius: var(--spacing-5);
-  box-shadow: 
-    0 0 0 1px rgba(0, 0, 0, 0.04),
-    0 24px 68px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-xl);
   animation: modalSlideIn 0.4s cubic-bezier(0.32, 0.72, 0, 1);
   overflow: hidden;
   position: relative;
@@ -51,14 +49,25 @@
 
 /* Responsive: Stack vertically on smaller screens */
 @media (max-width: 800px) {
+  .exit-modal__overlay {
+    align-items: flex-start;
+    padding: var(--spacing-4);
+  }
+  
   .exit-modal {
     grid-template-columns: 1fr;
     max-width: 500px;
-    max-height: 95vh;
+    max-height: none;
+    margin: auto;
   }
   
   .exit-modal__visual {
-    min-height: 300px;
+    min-height: 280px;
+  }
+  
+  .exit-modal__form-panel {
+    max-height: none;
+    overflow: visible;
   }
 }
 
@@ -98,18 +107,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.06); /* Subtle close button bg */
   border: none;
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--color-gray-500);
   cursor: pointer;
   border-radius: 50%;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   z-index: 10;
 }
 
 .exit-modal__close:hover {
-  background: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.1); /* Slightly darker on hover */
+  color: var(--color-gray-700);
 }
 
 /* Left Panel - Visual */
@@ -204,7 +213,7 @@
   font-size: var(--font-size-15);
   font-weight: var(--font-weight-medium);
   color: var(--color-blue-cobalt);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   animation: cardFloat 5s ease-in-out infinite;
   white-space: nowrap;
 }
@@ -439,7 +448,7 @@
 
 /* Elegant Input Focus - Refined interaction */
 .exit-modal--elegant .exit-modal__input:focus {
-  box-shadow: 0 0 0 3px rgba(0, 97, 175, 0.08);
+  box-shadow: 0 0 0 3px var(--color-info-light);
   border-color: var(--color-blue-cobalt);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -451,7 +460,7 @@
 
 .exit-modal--elegant .exit-modal__submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 97, 175, 0.25);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Elegant Social Buttons - Refined hover */
@@ -461,13 +470,13 @@
 
 .exit-modal--elegant .exit-modal__social-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
 }
 
 /* Logo */
 .exit-modal__logo {
   padding-top: var(--spacing-6);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider on dark bg */
   margin-bottom: var(--spacing-4);
   text-align: center;
   position: relative;
@@ -581,8 +590,6 @@
   display: flex;
   flex-direction: column;
   background: var(--color-white);
-  overflow-y: auto;
-  max-height: 90vh;
   border-radius: 0 20px 20px 0;
 }
 
@@ -657,19 +664,19 @@
   outline-style: none !important;
   outline-offset: 0 !important;
   border-color: var(--color-gray-300);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .exit-modal__input:focus {
   background: var(--color-white);
   border-color: var(--color-gray-300);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .exit-modal__input:focus:valid,
 .exit-modal__input:focus:invalid {
   border-color: var(--color-gray-300);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .exit-modal__input:invalid,
@@ -839,12 +846,10 @@
     right: 0;
   }
   
+  /* Hide logo and stats on mobile */
+  .exit-modal__logo,
   .exit-modal__stats {
-    gap: var(--spacing-4);
-  }
-  
-  .exit-modal__stat-value {
-    font-size: var(--font-size-md);
+    display: none;
   }
   
   .exit-modal__form-panel {
@@ -854,44 +859,47 @@
 
 @media (max-width: 480px) {
   .exit-modal__overlay {
-    padding: var(--spacing-4);
-    align-items: flex-end;
+    padding: 0;
+    align-items: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .exit-modal {
     max-width: 100%;
-    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
-    animation: modalSlideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    max-height: none;
+    min-height: min-content;
+    border-radius: 0;
+    animation: modalFadeIn 0.3s ease-out;
+    overflow: visible;
+    margin: 0;
   }
   
   .exit-modal--closing {
-    animation: modalSlideDown 0.2s ease-in forwards;
+    animation: modalFadeOut 0.2s ease-in forwards;
   }
   
-  @keyframes modalSlideUp {
+  @keyframes modalFadeIn {
     from {
       opacity: 0;
-      transform: translateY(100%);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
     }
   }
   
-  @keyframes modalSlideDown {
+  @keyframes modalFadeOut {
     from {
       opacity: 1;
-      transform: translateY(0);
     }
     to {
       opacity: 0;
-      transform: translateY(100%);
     }
   }
   
   .exit-modal__visual {
     padding: var(--spacing-6);
+    min-height: auto;
   }
   
   .exit-modal__visual-title {
@@ -927,21 +935,15 @@
     left: var(--spacing-2-5);
   }
   
+  .exit-modal__logo,
   .exit-modal__stats {
-    gap: var(--spacing-3);
-    padding-top: var(--spacing-4);
-  }
-  
-  .exit-modal__stat-value {
-    font-size: var(--font-size-15);
-  }
-  
-  .exit-modal__stat-label {
-    font-size: var(--font-size-2xs);
+    display: none;
   }
   
   .exit-modal__form-panel {
     padding: var(--spacing-6);
+    padding-bottom: env(safe-area-inset-bottom, var(--spacing-8));
+    border-radius: 0;
   }
   
   .exit-modal__title {
@@ -966,10 +968,30 @@
     right: var(--spacing-3);
     width: var(--spacing-7);
     height: var(--spacing-7);
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--color-white);
+  }
+  
+  .exit-modal__close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: var(--color-white);
   }
   
   .exit-modal__close svg {
     width: var(--spacing-4);
     height: var(--spacing-4);
+  }
+  
+  /* Ensure social buttons and terms are visible */
+  .exit-modal__social {
+    margin-bottom: var(--spacing-4);
+  }
+  
+  .exit-modal__terms {
+    padding-bottom: var(--spacing-2);
+  }
+  
+  .exit-modal__skip {
+    padding-bottom: var(--spacing-4);
   }
 }

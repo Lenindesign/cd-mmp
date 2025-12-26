@@ -256,17 +256,9 @@ const DealerBottomSheet = ({
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
-  // Prevent body scroll when open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
+  // Note: We don't lock body scroll here because this is an inline panel,
+  // not a full-page modal. The parent component (DealerLocatorMap) handles
+  // its own scrolling within its container.
 
   // Focus trap
   useEffect(() => {

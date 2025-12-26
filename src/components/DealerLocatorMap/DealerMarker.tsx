@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { AdvancedMarker, InfoWindow, useAdvancedMarkerRef } from '@vis.gl/react-google-maps';
-import { Award, Star, MapPin } from 'lucide-react';
+import { Award, Star, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { DealerWithScore } from '../../services/dealerService';
 import { formatPrice, formatDistance } from '../../services/dealerService';
 import './DealerLocatorMap.css';
@@ -13,6 +13,7 @@ interface DealerMarkerProps {
   onClick?: () => void;
   onHover?: (dealer: DealerWithScore | null) => void;
   vehicleImage?: string;
+  vehicleImages?: string[]; // Array of images for slideshow
   vehicleName?: string;
 }
 
@@ -24,10 +25,29 @@ const DealerMarker = ({
   onClick,
   onHover,
   vehicleImage,
+  vehicleImages = [],
   vehicleName,
 }: DealerMarkerProps) => {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [showInfoWindow, setShowInfoWindow] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Combine single image with images array, removing duplicates
+  const allImages = vehicleImages.length > 0 
+    ? vehicleImages 
+    : vehicleImage 
+      ? [vehicleImage] 
+      : [];
+
+  const handlePrevImage = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex(prev => (prev === 0 ? allImages.length - 1 : prev - 1));
+  }, [allImages.length]);
+
+  const handleNextImage = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex(prev => (prev === allImages.length - 1 ? 0 : prev + 1));
+  }, [allImages.length]);
 
   const handleClick = useCallback(() => {
     onClick?.();
@@ -125,10 +145,52 @@ const DealerMarker = ({
           className="dealer-info-window"
         >
           <div className="dealer-info-window__content">
-            {/* Vehicle Image */}
-            {vehicleImage && (
-              <div className="dealer-info-window__image">
-                <img src={vehicleImage} alt={vehicleName || 'Vehicle'} />
+            {/* Vehicle Image Slideshow */}
+            {allImages.length > 0 && (
+              <div className="dealer-info-window__slideshow">
+                <img 
+                  src={allImages[currentImageIndex]} 
+                  alt={`${vehicleName || 'Vehicle'} - Photo ${currentImageIndex + 1}`} 
+                  className="dealer-info-window__slide-image"
+                  onError={(e) => {
+                    // Fallback to first image if current fails
+                    const target = e.target as HTMLImageElement;
+                    if (currentImageIndex !== 0 && allImages[0]) {
+                      target.src = allImages[0];
+                    }
+                  }}
+                />
+                {allImages.length > 1 && (
+                  <>
+                    <button 
+                      className="dealer-info-window__nav dealer-info-window__nav--prev"
+                      onClick={handlePrevImage}
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button 
+                      className="dealer-info-window__nav dealer-info-window__nav--next"
+                      onClick={handleNextImage}
+                      aria-label="Next image"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                    <div className="dealer-info-window__dots">
+                      {allImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          className={`dealer-info-window__dot ${idx === currentImageIndex ? 'dealer-info-window__dot--active' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentImageIndex(idx);
+                          }}
+                          aria-label={`Go to image ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             )}
             

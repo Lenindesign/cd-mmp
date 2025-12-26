@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, ChevronUp, ChevronDown, ChevronRight, Bookmark } from 'lucide-react';
 import { OptimizedImage } from '../OptimizedImage';
+import { Button } from '../Button';
 import { useAuth } from '../../contexts/AuthContext';
 import './VehicleCard.css';
 
@@ -16,13 +17,28 @@ export interface YearDetail {
   rating: number;
 }
 
+// Map CTA variants to Button component variants
 export type CTAVariant = 'primary' | 'secondary' | 'outline' | 'success' | 'success-outline' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
 
 export interface CTAConfig {
   text: string;
   variant?: CTAVariant;
   onClick?: (e: React.MouseEvent) => void;
 }
+
+// Helper to map CTA variants to Button variants
+const mapCtaToButtonVariant = (ctaVariant: CTAVariant = 'outline'): ButtonVariant => {
+  const variantMap: Record<CTAVariant, ButtonVariant> = {
+    primary: 'primary',
+    secondary: 'secondary',
+    outline: 'outline',
+    success: 'success',
+    'success-outline': 'success', // Button component handles success as outline style
+    danger: 'danger',
+  };
+  return variantMap[ctaVariant];
+};
 
 export interface VehicleCardProps {
   // Vehicle Info
@@ -84,19 +100,6 @@ const getBadgeLabel = (badge: string) => {
     case 'editors-choice': return "Editor's Choice";
     default: return '';
   }
-};
-
-// Helper to get CTA class based on variant
-const getCtaClass = (variant: CTAVariant = 'outline'): string => {
-  const variantMap: Record<CTAVariant, string> = {
-    primary: 'cta--primary',
-    secondary: 'cta--secondary',
-    outline: 'cta--outline',
-    success: 'cta--success',
-    'success-outline': 'cta--success-outline',
-    danger: 'cta--danger',
-  };
-  return `cta ${variantMap[variant]} cta--sm`;
 };
 
 export const VehicleCard = ({
@@ -252,12 +255,13 @@ export const VehicleCard = ({
               <span className="vehicle-card__price-value-enhanced">{price}</span>
             </div>
             {showShopButton && (
-              <button
-                className="vehicle-card__shop-btn"
+              <Button
+                variant="outline"
+                size="small"
                 onClick={handleShopClick}
               >
                 Shop Now
-              </button>
+              </Button>
             )}
           </div>
 
@@ -288,13 +292,15 @@ export const VehicleCard = ({
 
           {/* Expand Model Years */}
           {availableYears && availableYears.length > 0 && (
-            <button 
+            <Button 
+              variant="ghost"
+              size="small"
               className="vehicle-card__expand-years"
               onClick={handleYearsToggle}
+              iconRight={<ChevronUp size={18} aria-hidden="true" />}
             >
-              <span>EXPAND ALL MODEL YEARS</span>
-              <ChevronUp size={18} aria-hidden="true" />
-            </button>
+              EXPAND ALL MODEL YEARS
+            </Button>
           )}
 
           {/* Years List (expandable) */}
@@ -450,9 +456,10 @@ export const VehicleCard = ({
             {/* Multiple CTAs */}
             {ctas && ctas.length > 0 ? (
               ctas.map((cta, index) => (
-                <button
+                <Button
                   key={index}
-                  className={getCtaClass(cta.variant)}
+                  variant={mapCtaToButtonVariant(cta.variant)}
+                  size="small"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -460,17 +467,18 @@ export const VehicleCard = ({
                   }}
                 >
                   {cta.text}
-                </button>
+                </Button>
               ))
             ) : (
               /* Legacy single button */
               showShopButton && (
-                <button
-                  className={getCtaClass(shopButtonVariant)}
+                <Button
+                  variant={mapCtaToButtonVariant(shopButtonVariant)}
+                  size="small"
                   onClick={handleShopClick}
                 >
                   {shopButtonText}
-                </button>
+                </Button>
               )
             )}
           </div>
@@ -504,13 +512,15 @@ export const VehicleCard = ({
 
         {/* Expand Model Years */}
         {availableYears && availableYears.length > 0 && !isYearsExpanded && (
-          <button 
+          <Button 
+            variant="ghost"
+            size="small"
             className="vehicle-card__expand-years"
             onClick={handleYearsToggle}
+            iconRight={<ChevronUp size={18} aria-hidden="true" />}
           >
-            <span>EXPAND ALL MODEL YEARS</span>
-            <ChevronUp size={18} aria-hidden="true" />
-          </button>
+            EXPAND ALL MODEL YEARS
+          </Button>
         )}
       </div>
 
@@ -544,13 +554,15 @@ export const VehicleCard = ({
               );
             })}
           </div>
-          <button 
+          <Button 
+            variant="ghost"
+            size="small"
             className="vehicle-card__collapse-years"
             onClick={handleYearsToggle}
+            iconRight={<ChevronDown size={18} aria-hidden="true" />}
           >
-            <span>COLLAPSE</span>
-            <ChevronDown size={18} aria-hidden="true" />
-          </button>
+            COLLAPSE
+          </Button>
         </div>
       )}
     </Link>

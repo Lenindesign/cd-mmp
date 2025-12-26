@@ -270,6 +270,230 @@ const TypographyPage = () => (
           padding: 24px 0 12px;
           border-bottom: 2px solid var(--color-dark);
         }
+        
+        /* Live Samples Styles */
+        .samples-container {
+          background: var(--color-white);
+          border: 1px solid var(--color-border);
+          border-radius: var(--border-radius-lg);
+          padding: 48px;
+          margin-bottom: 32px;
+        }
+        
+        .samples-container h1 {
+          font-family: var(--font-display);
+          font-size: var(--font-size-4xl);
+          font-weight: var(--font-weight-extrabold);
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+          color: var(--color-dark);
+          margin: 0 0 24px 0;
+        }
+        
+        .samples-container h2 {
+          font-family: var(--font-heading);
+          font-size: var(--font-size-3xl);
+          font-weight: var(--font-weight-bold);
+          line-height: 1.2;
+          letter-spacing: -0.01em;
+          color: var(--color-dark);
+          margin: 0 0 20px 0;
+        }
+        
+        .samples-container h3 {
+          font-family: var(--font-heading);
+          font-size: var(--font-size-2xl);
+          font-weight: var(--font-weight-bold);
+          line-height: 1.3;
+          color: var(--color-dark);
+          margin: 0 0 16px 0;
+        }
+        
+        .samples-container h4 {
+          font-family: var(--font-heading);
+          font-size: var(--font-size-xl);
+          font-weight: var(--font-weight-semibold);
+          line-height: 1.4;
+          color: var(--color-dark);
+          margin: 0 0 12px 0;
+        }
+        
+        .samples-container p {
+          font-family: var(--font-body);
+          font-size: var(--font-size-md);
+          font-weight: var(--font-weight-regular);
+          line-height: 1.6;
+          color: var(--color-dark);
+          margin: 0 0 16px 0;
+        }
+        
+        .samples-container .lead {
+          font-family: var(--font-body);
+          font-size: var(--font-size-xl);
+          font-weight: var(--font-weight-regular);
+          line-height: 1.5;
+          color: var(--color-text-secondary);
+          margin: 0 0 24px 0;
+        }
+        
+        .samples-container .byline {
+          font-family: var(--font-body);
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
+          color: var(--color-dark);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        
+        .samples-container .byline a {
+          color: var(--color-blue-cobalt);
+          text-decoration: none;
+        }
+        
+        .samples-container .datestamp {
+          font-family: var(--font-body);
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-regular);
+          color: var(--color-text-secondary);
+        }
+        
+        .samples-container .caption {
+          font-family: var(--font-body);
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-regular);
+          color: var(--color-text-secondary);
+          font-style: italic;
+          line-height: 1.5;
+        }
+        
+        .samples-container blockquote {
+          font-family: var(--font-article);
+          font-size: var(--font-size-xl);
+          font-weight: var(--font-weight-regular);
+          font-style: italic;
+          line-height: 1.6;
+          color: var(--color-dark);
+          margin: 24px 0;
+          padding-left: 24px;
+          border-left: 4px solid var(--color-blue-cobalt);
+        }
+        
+        .samples-container blockquote cite {
+          display: block;
+          font-family: var(--font-body);
+          font-size: var(--font-size-sm);
+          font-style: normal;
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-secondary);
+          margin-top: 12px;
+        }
+        
+        .samples-container ul,
+        .samples-container ol {
+          font-family: var(--font-body);
+          font-size: var(--font-size-md);
+          line-height: 1.6;
+          color: var(--color-dark);
+          margin: 0 0 16px 0;
+          padding-left: 0;
+          list-style: none;
+        }
+        
+        .samples-container ul li,
+        .samples-container ol li {
+          margin-bottom: 8px;
+          padding-left: 24px;
+          position: relative;
+        }
+        
+        .samples-container ul li::before {
+          content: '•';
+          color: var(--color-blue-cobalt);
+          font-weight: bold;
+          position: absolute;
+          left: 8px;
+        }
+        
+        .samples-container ol {
+          counter-reset: list-counter;
+        }
+        
+        .samples-container ol li {
+          counter-increment: list-counter;
+        }
+        
+        .samples-container ol li::before {
+          content: counter(list-counter) '.';
+          color: var(--color-blue-cobalt);
+          font-weight: var(--font-weight-semibold);
+          position: absolute;
+          left: 0;
+        }
+        
+        .samples-container table {
+          width: 100%;
+          border-collapse: collapse;
+          font-family: var(--font-body);
+          font-size: var(--font-size-base);
+          margin: 24px 0;
+        }
+        
+        .samples-container th {
+          text-align: left;
+          font-weight: var(--font-weight-semibold);
+          padding: 12px 16px;
+          background: var(--color-bg-secondary);
+          border-bottom: 2px solid var(--color-border);
+          color: var(--color-dark);
+        }
+        
+        .samples-container td {
+          padding: 12px 16px;
+          border-bottom: 1px solid var(--color-border);
+          color: var(--color-dark);
+        }
+        
+        .samples-container tr:last-child td {
+          border-bottom: none;
+        }
+        
+        .sample-label {
+          display: inline-block;
+          font-size: var(--font-size-xs);
+          font-weight: var(--font-weight-semibold);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--color-white);
+          background: var(--color-blue-cobalt);
+          padding: 4px 8px;
+          border-radius: var(--border-radius-sm);
+          margin-bottom: 12px;
+        }
+        
+        .sample-divider {
+          height: 1px;
+          background: var(--color-border);
+          margin: 32px 0;
+        }
+        
+        .meta-row {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 16px;
+        }
+        
+        .image-placeholder {
+          background: var(--color-bg-secondary);
+          border-radius: var(--border-radius-md);
+          height: 200px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--color-text-secondary);
+          font-size: var(--font-size-sm);
+          margin-bottom: 8px;
+        }
       `}
     </style>
     <div className="docs-container">
@@ -720,12 +944,252 @@ const TypographyPage = () => (
           <span className="size-sample" style={{ fontSize: 'var(--font-size-display-lg)', fontWeight: 'var(--font-weight-extrabold)' }}>Lg</span>
         </div>
       </div>
+      
+      <div className="docs-section">
+        <h2 className="docs-section-title">Live Text Samples</h2>
+        <p className="docs-section-subtitle">
+          Real-world examples of typography in context, showing how text elements work together.
+        </p>
+        
+        {/* Headings */}
+        <div className="samples-container">
+          <span className="sample-label">H1 - Page Title</span>
+          <h1>2025 Honda Accord Review: The Benchmark Midsize Sedan</h1>
+          
+          <div className="sample-divider" />
+          
+          <span className="sample-label">H2 - Section Title</span>
+          <h2>Performance and Handling</h2>
+          
+          <div className="sample-divider" />
+          
+          <span className="sample-label">H3 - Subsection Title</span>
+          <h3>Engine Options and Fuel Economy</h3>
+          
+          <div className="sample-divider" />
+          
+          <span className="sample-label">H4 - Minor Heading</span>
+          <h4>Standard Safety Features</h4>
+        </div>
+        
+        {/* Lead, Byline, Datestamp */}
+        <div className="samples-container">
+          <span className="sample-label">Lead Paragraph</span>
+          <p className="lead">
+            The Honda Accord continues to set the standard for midsize sedans, combining 
+            refined driving dynamics with a spacious interior and cutting-edge technology.
+          </p>
+          
+          <div className="sample-divider" />
+          
+          <span className="sample-label">Byline + Datestamp</span>
+          <div className="meta-row">
+            <span className="byline">By <a href="#">Tony Quiroga</a></span>
+            <span className="datestamp">December 26, 2025</span>
+          </div>
+        </div>
+        
+        {/* Body Paragraph */}
+        <div className="samples-container">
+          <span className="sample-label">P - Body Paragraph</span>
+          <p>
+            The 2025 Honda Accord arrives with subtle styling updates and enhanced tech features 
+            that keep it at the top of the midsize sedan class. Under the hood, buyers can choose 
+            between a turbocharged 1.5-liter four-cylinder producing 192 horsepower or a hybrid 
+            powertrain that combines a 2.0-liter engine with two electric motors for a total of 
+            204 horsepower.
+          </p>
+          <p>
+            Inside, the Accord's cabin is a masterclass in ergonomics and material quality. 
+            The dashboard features a clean, horizontal design with a 12.3-inch touchscreen 
+            running Honda's latest infotainment software. Wireless Apple CarPlay and Android 
+            Auto come standard, as does a wireless smartphone charging pad.
+          </p>
+        </div>
+        
+        {/* Blockquote */}
+        <div className="samples-container">
+          <span className="sample-label">Blockquote</span>
+          <blockquote>
+            "The Accord's blend of comfort, efficiency, and driving enjoyment makes it the 
+            quintessential family sedan. It's the car we'd recommend to anyone shopping in 
+            this segment."
+            <cite>— Car and Driver Editors</cite>
+          </blockquote>
+        </div>
+        
+        {/* Lists */}
+        <div className="samples-container">
+          <span className="sample-label">Unordered List</span>
+          <ul>
+            <li>Standard Honda Sensing suite with adaptive cruise control</li>
+            <li>Available 19-inch alloy wheels on Sport and Touring trims</li>
+            <li>Wireless Apple CarPlay and Android Auto connectivity</li>
+            <li>12.3-inch digital instrument cluster</li>
+          </ul>
+          
+          <div className="sample-divider" />
+          
+          <span className="sample-label">Ordered List</span>
+          <ol>
+            <li>Honda Accord Hybrid Touring — Best overall value</li>
+            <li>Toyota Camry XSE — Sportiest driving dynamics</li>
+            <li>Mazda 6 Signature — Premium interior quality</li>
+            <li>Hyundai Sonata Limited — Most tech features</li>
+          </ol>
+        </div>
+        
+        {/* Table */}
+        <div className="samples-container">
+          <span className="sample-label">Table</span>
+          <table>
+            <thead>
+              <tr>
+                <th>Specification</th>
+                <th>1.5T</th>
+                <th>Hybrid</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Horsepower</td>
+                <td>192 hp</td>
+                <td>204 hp</td>
+              </tr>
+              <tr>
+                <td>Torque</td>
+                <td>192 lb-ft</td>
+                <td>247 lb-ft</td>
+              </tr>
+              <tr>
+                <td>MPG (City/Hwy)</td>
+                <td>29/37</td>
+                <td>51/44</td>
+              </tr>
+              <tr>
+                <td>0-60 mph</td>
+                <td>7.4 sec</td>
+                <td>7.2 sec</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        {/* Caption */}
+        <div className="samples-container">
+          <span className="sample-label">Caption</span>
+          <div className="image-placeholder">
+            [Vehicle Image]
+          </div>
+          <p className="caption">
+            The 2025 Honda Accord Touring shown in Meteorite Gray Metallic with optional 
+            19-inch machined alloy wheels. Photo: Car and Driver
+          </p>
+        </div>
+        
+        {/* Full Article Example */}
+        <div className="samples-container">
+          <span className="sample-label">Full Article Context</span>
+          
+          <h1>2025 Honda Accord First Drive: Still the One to Beat</h1>
+          
+          <p className="lead">
+            Honda's midsize sedan remains the benchmark, with refinements that make 
+            an already excellent car even better.
+          </p>
+          
+          <div className="meta-row">
+            <span className="byline">By <a href="#">Eric Stafford</a></span>
+            <span className="datestamp">December 26, 2025</span>
+          </div>
+          
+          <div className="sample-divider" />
+          
+          <h2>What's New for 2025</h2>
+          
+          <p>
+            The eleventh-generation Accord enters its third model year with minor updates 
+            that include a refreshed front fascia, new wheel designs, and expanded standard 
+            equipment. The hybrid powertrain remains unchanged, continuing to offer an 
+            impressive combination of performance and efficiency.
+          </p>
+          
+          <h3>Exterior Updates</h3>
+          
+          <p>
+            Visual changes are subtle but effective. The front grille features a new mesh 
+            pattern, while the LED headlights have been reshaped for a more aggressive look. 
+            Two new colors join the palette: Canyon River Blue Metallic and Urban Gray Pearl.
+          </p>
+          
+          <blockquote>
+            "The Accord doesn't need dramatic changes because the fundamentals are so strong. 
+            These updates simply keep it fresh."
+            <cite>— Honda Product Planning</cite>
+          </blockquote>
+          
+          <h3>Interior Improvements</h3>
+          
+          <h4>Technology Features</h4>
+          
+          <ul>
+            <li>Google built-in with Google Assistant, Google Maps, and Google Play</li>
+            <li>Updated 12.3-inch touchscreen with faster processor</li>
+            <li>New Bose premium audio system with 12 speakers</li>
+          </ul>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Trim Level</th>
+                <th>Base Price</th>
+                <th>Key Features</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LX</td>
+                <td>$28,990</td>
+                <td>Honda Sensing, 7" display</td>
+              </tr>
+              <tr>
+                <td>EX</td>
+                <td>$31,560</td>
+                <td>12.3" display, sunroof</td>
+              </tr>
+              <tr>
+                <td>Sport</td>
+                <td>$32,560</td>
+                <td>19" wheels, sport styling</td>
+              </tr>
+              <tr>
+                <td>EX-L</td>
+                <td>$34,560</td>
+                <td>Leather, heated seats</td>
+              </tr>
+              <tr>
+                <td>Touring</td>
+                <td>$38,990</td>
+                <td>All features, HUD</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div className="image-placeholder">
+            [Interior Gallery Image]
+          </div>
+          <p className="caption">
+            The Accord's interior features high-quality materials and an intuitive layout. 
+            The 12.3-inch touchscreen is standard on EX and above trims.
+          </p>
+        </div>
+      </div>
     </div>
   </>
 );
 
 const meta: Meta = {
-  title: 'Tokens/Typography',
+  title: 'Foundation/Typography',
   component: TypographyPage,
   parameters: {
     layout: 'fullscreen',

@@ -403,7 +403,7 @@ const SpacingPage = () => (
 );
 
 const meta: Meta = {
-  title: 'Tokens/Spacing',
+  title: 'Foundation/Spacing',
   component: SpacingPage,
   parameters: {
     layout: 'fullscreen',

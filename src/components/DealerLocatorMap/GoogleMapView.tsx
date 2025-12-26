@@ -23,6 +23,7 @@ interface GoogleMapViewProps {
   onDealerHover?: (dealer: DealerWithScore | null) => void;
   apiKey?: string;
   vehicleImage?: string;
+  vehicleImages?: string[]; // Array of images for slideshow
   vehicleName?: string;
   sidebarContent?: ReactNode;
   sidebarTitle?: string;
@@ -40,6 +41,7 @@ const MapContent = ({
   onDealerSelect,
   onDealerHover,
   vehicleImage,
+  vehicleImages,
   vehicleName,
 }: Omit<GoogleMapViewProps, 'apiKey'>) => {
   const map = useMap();
@@ -76,6 +78,7 @@ const MapContent = ({
           onClick={() => handleMarkerClick(dealer)}
           onHover={handleMarkerHover}
           vehicleImage={vehicleImage}
+          vehicleImages={vehicleImages}
           vehicleName={vehicleName}
         />
       ))}
@@ -92,6 +95,7 @@ const GoogleMapView = ({
   onDealerHover,
   apiKey,
   vehicleImage,
+  vehicleImages,
   vehicleName,
   sidebarContent,
   sidebarTitle = 'Dealers',
@@ -207,6 +211,7 @@ const GoogleMapView = ({
             onDealerSelect={onDealerSelect}
             onDealerHover={onDealerHover}
             vehicleImage={vehicleImage}
+            vehicleImages={vehicleImages}
             vehicleName={vehicleName}
           />
         </Map>
