@@ -1,17 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter } from 'react-router-dom';
 import { NewsPage } from './NewsPage';
 
 const meta: Meta<typeof NewsPage> = {
   title: 'Pages/News + Stories',
   component: NewsPage,
-  decorators: [
-    (Story) => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    ),
-  ],
   parameters: {
     layout: 'fullscreen',
     docs: {
