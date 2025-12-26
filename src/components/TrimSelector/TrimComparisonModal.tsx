@@ -174,7 +174,6 @@ const TrimComparisonModal = ({ isOpen, onClose, trims, vehicleName }: TrimCompar
 
     const sortedByPrice = [...trims].sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
     const recommendedPrice = parsePrice(recommendedTrim.price);
-    const lowestPrice = parsePrice(sortedByPrice[0].price);
     const highestPrice = parsePrice(sortedByPrice[sortedByPrice.length - 1].price);
     const pricePosition = sortedByPrice.findIndex(t => t.id === recommendedTrim.id);
 

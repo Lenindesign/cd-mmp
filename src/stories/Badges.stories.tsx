@@ -4,7 +4,7 @@ import {
   Clock, Check, X, Info, FileText, 
   Award, Tag, Zap, Fuel, Leaf, 
   Car, ShieldCheck, History, User,
-  TrendingDown, TrendingUp, Minus
+  TrendingDown, Minus
 } from 'lucide-react';
 
 /**

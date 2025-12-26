@@ -6,14 +6,7 @@ import { BigStoryCard } from '../../components/Resin/BigStoryCard';
 import { vehicleDatabase } from '../../data/vehicles';
 import './NewsPage.css';
 
-// Get vehicles from database for images
-const getVehicleImage = (make: string, model: string): string => {
-  const vehicle = vehicleDatabase.find(v => 
-    v.make.toLowerCase() === make.toLowerCase() && 
-    v.model.toLowerCase() === model.toLowerCase()
-  );
-  return vehicle?.image || '';
-};
+// Vehicle database is used for images below
 
 // Hero story data (featured article)
 interface HeroStory {
@@ -39,16 +32,13 @@ interface Story {
 }
 
 // Get specific vehicles from database
-const subaruForester = vehicleDatabase.find(v => v.make === 'Subaru' && v.model === 'Forester');
 const hyundaiSantaFe = vehicleDatabase.find(v => v.make === 'Hyundai' && v.model === 'Santa Fe');
 const hondaAccord = vehicleDatabase.find(v => v.make === 'Honda' && v.model === 'Accord');
 const toyotaCorolla = vehicleDatabase.find(v => v.make === 'Toyota' && v.model === 'Corolla');
 const fordF150 = vehicleDatabase.find(v => v.make === 'Ford' && v.model === 'F-150');
 const chevyTrailblazer = vehicleDatabase.find(v => v.make === 'Chevrolet' && v.model === 'Trailblazer');
 const kiaTelluride = vehicleDatabase.find(v => v.make === 'Kia' && v.model === 'Telluride');
-const subaruBRZ = vehicleDatabase.find(v => v.make === 'Subaru' && v.model === 'BRZ');
 const porscheCayenne = vehicleDatabase.find(v => v.make === 'Porsche' && v.model === 'Cayenne');
-const acuraMDX = vehicleDatabase.find(v => v.make === 'Acura' && v.model === 'MDX');
 
 // Sample data using real vehicle images
 const heroStory: HeroStory = {

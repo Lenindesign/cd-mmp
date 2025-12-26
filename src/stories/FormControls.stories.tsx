@@ -295,12 +295,13 @@ interface RadioProps {
 
 const Radio: React.FC<RadioProps> = ({
   label,
-  name,
+  name: _name,
   value,
   checked = false,
   disabled = false,
   onChange,
 }) => {
+  void _name; // Used for form grouping
   return (
     <label style={{
       display: 'flex',

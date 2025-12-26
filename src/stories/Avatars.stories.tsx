@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { User, Car, Heart, Leaf, Zap, DollarSign, Compass } from 'lucide-react';
+import { User, Car, Leaf, Zap, DollarSign, Compass } from 'lucide-react';
 
 /**
  * # Avatars
