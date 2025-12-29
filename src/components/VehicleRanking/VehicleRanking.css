@@ -245,7 +245,7 @@
   padding: var(--spacing-2) var(--spacing-3);
   background: var(--color-neutrals-1);
   color: var(--color-white);
-  font-family: 'Poppins', var(--font-heading), sans-serif;
+  font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: 600;
   white-space: nowrap;

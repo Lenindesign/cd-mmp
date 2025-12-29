@@ -27,10 +27,11 @@ const cardPatterns = [
     name: 'VehicleCard',
     location: 'src/components/VehicleCard/',
     usedIn: ['TopTenCarouselLeads', 'VehiclesListPage', 'OnboardingResults'],
+    status: 'reusable',
     features: [
       'Vehicle name & rating header',
       'Image with badges (rank, accolades, body style)',
-      'Price section with CTAs',
+      'Price section with CTAs (using Button component)',
       'EPA MPG display',
       'C/D Says editorial content',
       'Expandable model years overlay',
@@ -48,9 +49,45 @@ const cardPatterns = [
     ],
   },
   {
+    name: 'ArticleCard',
+    location: 'src/components/Resin/ArticleCard/',
+    usedIn: ['NewsPage', 'ArticlePage (related articles)'],
+    status: 'reusable',
+    features: [
+      'Responsive image with hover zoom',
+      'Category badge',
+      'Headline with hover underline',
+      'Author byline',
+      'Horizontal and vertical variants',
+    ],
+    props: [
+      'image, imageAlt, category, categorySlug',
+      'headline, author, href',
+      'variant (vertical | horizontal)',
+    ],
+  },
+  {
+    name: 'BigStoryCard',
+    location: 'src/components/Resin/BigStoryCard/',
+    usedIn: ['NewsPage (Editor\'s Pick section)'],
+    status: 'reusable',
+    features: [
+      'Large featured story layout',
+      'Side-by-side image and content',
+      'Category badge',
+      'Headline, subheadline, byline',
+      'Read More CTA',
+    ],
+    props: [
+      'image, imageAlt, category, categorySlug',
+      'headline, subheadline, author, href',
+    ],
+  },
+  {
     name: 'VehicleRanking Card',
     location: 'src/components/VehicleRanking/',
     usedIn: ['VehiclePage (Where This Vehicle Ranks section)'],
+    status: 'inline',
     features: [
       'Horizontal layout with rank badge',
       'Image with accolade tooltips',
@@ -64,6 +101,7 @@ const cardPatterns = [
     name: 'Comparison Card',
     location: 'src/components/Comparison/',
     usedIn: ['VehiclePage (Competitors section)'],
+    status: 'inline',
     features: [
       'Header with title & rating',
       'Image with accolade badges',
@@ -78,6 +116,7 @@ const cardPatterns = [
     name: 'ForSaleNearYou Card',
     location: 'src/components/ForSaleNearYou/',
     usedIn: ['VehiclePage (Used listings section)'],
+    status: 'inline',
     features: [
       'Image with favorite button',
       'NEW LISTING / PRICE REDUCED badges',
@@ -85,7 +124,7 @@ const cardPatterns = [
       'Specs row (mileage, year)',
       'Feature tags',
       'Dealer info with rating',
-      'Contact actions (phone, directions)',
+      'Contact actions (using Button component)',
       'View Details / Check Availability CTAs',
     ],
     props: ['Inline card styling, not a separate component'],
@@ -94,6 +133,7 @@ const cardPatterns = [
     name: 'RankingsPage Hero Card',
     location: 'src/pages/RankingsPage/',
     usedIn: ['RankingsPage (#1 vehicle showcase)'],
+    status: 'inline',
     features: [
       'Large hero layout',
       'Header with title & rating',
@@ -108,6 +148,7 @@ const cardPatterns = [
     name: 'RankingsPage Category Card',
     location: 'src/pages/RankingsPage/',
     usedIn: ['RankingsPage (category grid)'],
+    status: 'inline',
     features: [
       'Category image',
       'Category name',
@@ -120,6 +161,7 @@ const cardPatterns = [
     name: 'TopTen View All Card',
     location: 'src/components/TopTenCarouselLeads/',
     usedIn: ['TopTenCarouselLeads (end of carousel)'],
+    status: 'inline',
     features: [
       'Dark gradient background',
       '10Best icon',
@@ -127,6 +169,70 @@ const cardPatterns = [
       'Full Rankings CTA',
     ],
     props: ['Inline card styling, not a separate component'],
+  },
+  {
+    name: 'ListicleCard',
+    location: 'src/components/Resin/ListicleCard/',
+    usedIn: ['ListiclePage'],
+    status: 'reusable',
+    features: [
+      'Numbered rank badge (circle)',
+      'Image with hover effects',
+      'Title and description',
+      'Specs grid',
+      'Shop CTA button',
+    ],
+    props: [
+      'rank, image, imageAlt',
+      'title, description',
+      'specs (array), href',
+    ],
+  },
+];
+
+// Recent Design System Improvements
+const recentImprovements = [
+  {
+    date: 'Dec 29, 2025',
+    category: 'Button Migration',
+    items: [
+      'Migrated VehicleCard CTAs to use Button component',
+      'Migrated Incentives buttons to Button component',
+      'Migrated SavedVehiclesSidebar buttons to Button component',
+      'Migrated ForSaleNearYou contact buttons to Button component',
+      'Migrated WhatsMyCarWorth buttons to Button component',
+      'Migrated Footer newsletter button to Button component',
+    ],
+  },
+  {
+    date: 'Dec 29, 2025',
+    category: 'Color Tokens',
+    items: [
+      'Replaced hardcoded rgba() colors in DealerLocatorMap.css',
+      'Replaced hardcoded colors in ExitIntentModal.css',
+      'Replaced 12 hardcoded rgba() colors in RatingHistory.css',
+      'Standardized shadow tokens across components',
+    ],
+  },
+  {
+    date: 'Dec 29, 2025',
+    category: 'Typography',
+    items: [
+      'Removed redundant font-family declarations (Inter fallbacks)',
+      'Removed hardcoded Poppins reference in VehicleRanking.css',
+      'Standardized on Inter for UI, Lora for article body text',
+      'Added --font-weight-black: 900 for extra bold headlines',
+    ],
+  },
+  {
+    date: 'Dec 29, 2025',
+    category: 'New Pages',
+    items: [
+      'Created ArticlePage with sidebar ad layout',
+      'Created NewsPage (News + Stories index)',
+      'Created ListiclePage with full-width ad interruptions',
+      'Added ArticleCard, BigStoryCard components',
+    ],
   },
 ];
 
@@ -167,7 +273,7 @@ const universalCardFeatures = {
 };
 
 const CardAudit = () => {
-  const [activeTab, setActiveTab] = useState<'audit' | 'proposal' | 'preview' | 'compare'>('audit');
+  const [activeTab, setActiveTab] = useState<'audit' | 'proposal' | 'preview' | 'compare' | 'updates'>('audit');
 
   // Get real vehicles from database
   const sampleVehicles = useMemo(() => {
@@ -229,6 +335,12 @@ const CardAudit = () => {
           onClick={() => setActiveTab('preview')}
         >
           Live Preview
+        </button>
+        <button
+          className={`card-audit__tab ${activeTab === 'updates' ? 'card-audit__tab--active' : ''}`}
+          onClick={() => setActiveTab('updates')}
+        >
+          Recent Updates
         </button>
       </div>
 
@@ -498,15 +610,21 @@ const CardAudit = () => {
         <div className="card-audit__content">
           <h2 className="card-audit__section-title">Current Card Implementations</h2>
           <p className="card-audit__section-desc">
-            Found <strong>{cardPatterns.length} different card patterns</strong> across the codebase. 
-            Only <strong>VehicleCard</strong> is a reusable component - the rest are inline implementations.
+            Found <strong>{cardPatterns.length} card patterns</strong> across the codebase. 
+            <strong> {cardPatterns.filter(p => p.status === 'reusable').length} are reusable components</strong>, 
+            {cardPatterns.filter(p => p.status === 'inline').length} are inline implementations.
           </p>
 
           <div className="card-audit__patterns">
             {cardPatterns.map((pattern, index) => (
-              <div key={index} className="card-audit__pattern">
+              <div key={index} className={`card-audit__pattern ${pattern.status === 'reusable' ? 'card-audit__pattern--reusable' : ''}`}>
                 <div className="card-audit__pattern-header">
-                  <h3 className="card-audit__pattern-name">{pattern.name}</h3>
+                  <h3 className="card-audit__pattern-name">
+                    {pattern.name}
+                    <span className={`card-audit__pattern-status card-audit__pattern-status--${pattern.status}`}>
+                      {pattern.status === 'reusable' ? '✓ Reusable' : '⚠ Inline'}
+                    </span>
+                  </h3>
                   <span className="card-audit__pattern-location">{pattern.location}</span>
                 </div>
                 
@@ -538,11 +656,12 @@ const CardAudit = () => {
           <div className="card-audit__summary">
             <h3>Key Findings</h3>
             <ul>
-              <li>✅ <strong>VehicleCard</strong> is the most feature-rich and reusable</li>
-              <li>⚠️ <strong>6 other card patterns</strong> are inline CSS/JSX implementations</li>
+              <li>✅ <strong>4 reusable card components:</strong> VehicleCard, ArticleCard, BigStoryCard, ListicleCard</li>
+              <li>✅ <strong>Button component adopted:</strong> VehicleCard, ForSaleNearYou, Incentives now use Button</li>
+              <li>✅ <strong>Design tokens standardized:</strong> Colors, shadows, typography use CSS variables</li>
+              <li>⚠️ <strong>6 inline card patterns</strong> still need migration to reusable components</li>
               <li>🔄 <strong>Common elements:</strong> Image, Title, Rating, Price, CTAs</li>
-              <li>🎨 <strong>Styling inconsistencies:</strong> Different border-radius, shadows, spacing</li>
-              <li>📱 <strong>Responsive behavior:</strong> Varies between implementations</li>
+              <li>📱 <strong>Responsive behavior:</strong> Consistent in reusable components, varies in inline</li>
             </ul>
           </div>
         </div>
@@ -794,13 +913,66 @@ const CardAudit = () => {
           <div className="card-audit__next-steps">
             <h3>Next Steps</h3>
             <ol>
-              <li>Extend VehicleCard with new variants (horizontal, hero, compact)</li>
-              <li>Add missing features (favorite button, contact actions)</li>
-              <li>Refactor Comparison, ForSaleNearYou, VehicleRanking to use VehicleCard</li>
+              <li className="card-audit__step--done">✅ Migrate buttons to use Button component</li>
+              <li className="card-audit__step--done">✅ Replace hardcoded colors with design tokens</li>
+              <li className="card-audit__step--done">✅ Create ArticleCard, BigStoryCard, ListicleCard components</li>
+              <li className="card-audit__step--done">✅ Standardize typography (remove Poppins, use Inter/Lora)</li>
+              <li>Extend VehicleCard with horizontal, hero, compact variants</li>
+              <li>Add favorite button and status badges to VehicleCard</li>
+              <li>Refactor Comparison, VehicleRanking to use VehicleCard</li>
               <li>Update RankingsPage hero cards to use VehicleCard variant="hero"</li>
-              <li>Create Storybook stories for all variants</li>
-              <li>Remove duplicate inline card CSS</li>
+              <li>Remove remaining duplicate inline card CSS</li>
             </ol>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Updates Tab */}
+      {activeTab === 'updates' && (
+        <div className="card-audit__content">
+          <h2 className="card-audit__section-title">Recent Design System Updates</h2>
+          <p className="card-audit__section-desc">
+            Tracking improvements made to ensure consistency across the codebase.
+          </p>
+
+          <div className="card-audit__updates-timeline">
+            {recentImprovements.map((update, index) => (
+              <div key={index} className="card-audit__update">
+                <div className="card-audit__update-header">
+                  <span className="card-audit__update-date">{update.date}</span>
+                  <span className={`card-audit__update-category card-audit__update-category--${update.category.toLowerCase().replace(/\s+/g, '-')}`}>
+                    {update.category}
+                  </span>
+                </div>
+                <ul className="card-audit__update-items">
+                  {update.items.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="card-audit__metrics">
+            <h3>Design System Health Metrics</h3>
+            <div className="card-audit__metrics-grid">
+              <div className="card-audit__metric">
+                <span className="card-audit__metric-value card-audit__metric-value--success">4</span>
+                <span className="card-audit__metric-label">Reusable Card Components</span>
+              </div>
+              <div className="card-audit__metric">
+                <span className="card-audit__metric-value card-audit__metric-value--warning">6</span>
+                <span className="card-audit__metric-label">Inline Implementations (to migrate)</span>
+              </div>
+              <div className="card-audit__metric">
+                <span className="card-audit__metric-value card-audit__metric-value--success">100%</span>
+                <span className="card-audit__metric-label">Button Component Adoption</span>
+              </div>
+              <div className="card-audit__metric">
+                <span className="card-audit__metric-value card-audit__metric-value--success">0</span>
+                <span className="card-audit__metric-label">Hardcoded Poppins References</span>
+              </div>
+            </div>
           </div>
         </div>
       )}

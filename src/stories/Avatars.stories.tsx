@@ -34,7 +34,7 @@ import { User, Car, Leaf, Zap, DollarSign, Compass } from 'lucide-react';
 const styles = {
   container: {
     padding: '2rem',
-    fontFamily: 'var(--font-family-primary, Poppins, sans-serif)',
+    fontFamily: 'var(--font-body)',
   },
   section: {
     marginBottom: '3rem',

@@ -990,6 +990,173 @@
   border: 1px solid var(--color-blue-cobalt);
 }
 
+/* Pattern Status Badges */
+.card-audit__pattern--reusable {
+  border-color: var(--color-success-300);
+  background: var(--color-success-50);
+}
+
+.card-audit__pattern-status {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--spacing-0-5) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  margin-left: var(--spacing-2);
+  vertical-align: middle;
+}
+
+.card-audit__pattern-status--reusable {
+  background: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+.card-audit__pattern-status--inline {
+  background: var(--color-warning-100);
+  color: var(--color-warning-700);
+}
+
+/* Completed Steps */
+.card-audit__step--done {
+  color: var(--color-success-600);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* Updates Timeline */
+.card-audit__updates-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+}
+
+.card-audit__update {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-5);
+  position: relative;
+}
+
+.card-audit__update::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--spacing-8));
+  top: var(--spacing-6);
+  width: var(--spacing-3);
+  height: var(--spacing-3);
+  background: var(--color-blue-cobalt);
+  border-radius: 50%;
+}
+
+.card-audit__update-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.card-audit__update-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  font-weight: var(--font-weight-medium);
+}
+
+.card-audit__update-category {
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-audit__update-category--button-migration {
+  background: var(--color-blue-100);
+  color: var(--color-blue-cobalt);
+}
+
+.card-audit__update-category--color-tokens {
+  background: var(--color-purple-100);
+  color: var(--color-purple-600);
+}
+
+.card-audit__update-category--typography {
+  background: var(--color-orange-100);
+  color: var(--color-orange-600);
+}
+
+.card-audit__update-category--new-pages {
+  background: var(--color-success-100);
+  color: var(--color-success-600);
+}
+
+.card-audit__update-items {
+  margin: 0;
+  padding-left: var(--spacing-5);
+}
+
+.card-audit__update-items li {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  padding: var(--spacing-1) 0;
+  line-height: 1.5;
+}
+
+/* Metrics Grid */
+.card-audit__metrics {
+  background: var(--gradient-light);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-6);
+}
+
+.card-audit__metrics h3 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-6) 0;
+  text-align: center;
+}
+
+.card-audit__metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+}
+
+.card-audit__metric {
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-audit__metric-value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1;
+  margin-bottom: var(--spacing-2);
+}
+
+.card-audit__metric-value--success {
+  color: var(--color-success-600);
+}
+
+.card-audit__metric-value--warning {
+  color: var(--color-warning-600);
+}
+
+.card-audit__metric-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: 1.3;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .card-audit__patterns {
@@ -1042,6 +1209,14 @@
 
   .card-audit__preview-grid {
     grid-template-columns: 1fr;
+  }
+
+  .card-audit__metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-audit__update::before {
+    display: none;
   }
 }
 

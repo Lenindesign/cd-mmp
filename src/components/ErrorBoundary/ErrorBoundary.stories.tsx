@@ -139,7 +139,7 @@ const CustomFallback = () => (
     <div style={{ fontSize: '48px' }}>🚗💨</div>
     <h2 style={{ 
       margin: 0, 
-      fontFamily: 'var(--font-heading, Poppins, sans-serif)',
+      fontFamily: 'var(--font-heading)',
       fontSize: '24px',
     }}>
       Oops! Hit a speed bump

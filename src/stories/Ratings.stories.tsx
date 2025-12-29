@@ -28,7 +28,7 @@ import { Star, Users, BadgeCheck } from 'lucide-react';
 const styles = {
   container: {
     padding: '2rem',
-    fontFamily: 'var(--font-family-primary, Poppins, sans-serif)',
+    fontFamily: 'var(--font-body)',
   },
   section: {
     marginBottom: '3rem',
@@ -134,7 +134,7 @@ const CDScore: React.FC<CDScoreProps> = ({
       <div style={{ 
         display: 'flex', 
         alignItems: 'baseline',
-        fontFamily: 'var(--font-display, Poppins, sans-serif)',
+        fontFamily: 'var(--font-display)',
         fontWeight: 700,
         color: 'var(--color-dark, #222)',
         lineHeight: 1,

@@ -48,7 +48,7 @@ const BADGE_URLS = {
 const styles = {
   container: {
     padding: '2rem',
-    fontFamily: 'var(--font-family-primary, Poppins, sans-serif)',
+    fontFamily: 'var(--font-body)',
   },
   section: {
     marginBottom: '3rem',
@@ -379,7 +379,7 @@ const indexStyles = {
     fontWeight: 700,
     marginBottom: '12px',
     color: 'var(--color-dark, #1a1a1a)',
-    fontFamily: 'var(--font-display, Poppins, sans-serif)',
+    fontFamily: 'var(--font-display)',
   },
   pageDescription: {
     fontSize: '1.125rem',
@@ -1308,7 +1308,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({ rank, size = 'md', variant = 'def
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontFamily: 'var(--font-heading, Poppins, sans-serif)',
+      fontFamily: 'var(--font-heading)',
       fontSize: sizeConfig.fontSize,
       fontWeight: 800,
       backgroundColor: isSpecial ? 'var(--color-blue-cobalt, #1B5F8A)' : 'white',

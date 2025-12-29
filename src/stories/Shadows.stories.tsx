@@ -72,7 +72,7 @@ const ShadowsPage = () => (
         }
         
         .docs-header h1 {
-          font-family: var(--font-display, 'Poppins', sans-serif);
+          font-family: var(--font-display);
           font-size: 48px;
           font-weight: 600;
           letter-spacing: -0.02em;
@@ -93,7 +93,7 @@ const ShadowsPage = () => (
         }
         
         .section h2 {
-          font-family: var(--font-display, 'Poppins', sans-serif);
+          font-family: var(--font-display);
           font-size: 28px;
           font-weight: 600;
           letter-spacing: -0.01em;
