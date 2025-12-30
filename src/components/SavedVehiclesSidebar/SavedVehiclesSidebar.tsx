@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Bookmark, Car, Clock, ChevronRight, Search, Plus, Trash2, MapPin } from 'lucide-react';
+import { X, Bookmark, Car, Clock, ChevronRight, Search, Plus, Trash2, MapPin, Star, GitCompare, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { vehicleDatabase } from '../../data/vehicles';
 import { clearRecentlyViewed } from '../../services/recentlyViewedService';
@@ -8,6 +8,7 @@ import { OptimizedImage } from '../OptimizedImage';
 import { Button } from '../Button';
 import { DealerMapModal } from '../DealerLocatorMap';
 import type { VehicleInfo } from '../DealerLocatorMap';
+import VehicleComparisonModal from './VehicleComparisonModal';
 import './SavedVehiclesSidebar.css';
 
 interface SavedVehiclesSidebarProps {
@@ -43,6 +44,11 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
   // Dealer map modal state
   const [isDealerMapOpen, setIsDealerMapOpen] = useState(false);
   const [dealerMapVehicle, setDealerMapVehicle] = useState<VehicleInfo | null>(null);
+  
+  // Compare feature state
+  const [compareMode, setCompareMode] = useState(false);
+  const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
   // Load recently viewed from localStorage
   useEffect(() => {
@@ -206,6 +212,40 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
     }
   }, [showAddVehicleWant]);
 
+  // Toggle compare selection for a vehicle
+  const toggleCompareSelection = (vehicleId: string) => {
+    setSelectedForCompare(prev => {
+      if (prev.includes(vehicleId)) {
+        return prev.filter(id => id !== vehicleId);
+      }
+      // Max 3 vehicles for comparison
+      if (prev.length >= 3) {
+        return prev;
+      }
+      return [...prev, vehicleId];
+    });
+  };
+
+  // Handle compare action - open modal
+  const handleCompare = () => {
+    if (selectedForCompare.length >= 2) {
+      setIsCompareModalOpen(true);
+    }
+  };
+
+  // Get vehicles selected for comparison
+  const getVehiclesForComparison = () => {
+    return selectedForCompare
+      .map(id => recentlyViewed.find(v => v.id === id))
+      .filter((v): v is RecentlyViewedVehicle => v !== undefined);
+  };
+
+  // Reset compare mode when switching tabs
+  useEffect(() => {
+    setCompareMode(false);
+    setSelectedForCompare([]);
+  }, [activeTab]);
+
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -311,59 +351,129 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                       </Button>
                     </div>
                   </div>
-                  <div className="saved-sidebar__vehicles">
-                    {recentlyViewed.map((vehicle, index) => (
-                      <Link
-                        key={`${vehicle.id}-${index}`}
-                        to={`/${vehicle.slug}`}
-                        className="saved-sidebar__vehicle"
-                        onClick={onClose}
+
+                  {/* Compare Mode Toggle */}
+                  {recentlyViewed.length >= 2 && (
+                    <div className="saved-sidebar__compare-toggle">
+                      <button
+                        className={`saved-sidebar__compare-btn ${compareMode ? 'saved-sidebar__compare-btn--active' : ''}`}
+                        onClick={() => {
+                          setCompareMode(!compareMode);
+                          if (compareMode) {
+                            setSelectedForCompare([]);
+                          }
+                        }}
                       >
-                        <div className="saved-sidebar__vehicle-image">
-                          <OptimizedImage
-                            src={vehicle.image}
-                            alt={vehicle.name}
-                            width={80}
-                            height={60}
-                          />
-                        </div>
-                        <div className="saved-sidebar__vehicle-info">
-                          <span className="saved-sidebar__vehicle-name">{vehicle.name}</span>
-                          <span className="saved-sidebar__vehicle-price">
-                            ${vehicle.price.toLocaleString()}
-                            {vehicle.mileage && (
-                              <span className="saved-sidebar__vehicle-mileage">
-                                • {vehicle.mileage.toLocaleString()} mi
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <button 
-                          className={`saved-sidebar__vehicle-favorite ${user?.savedVehicles?.some(sv => sv.name === vehicle.name) ? 'saved-sidebar__vehicle-favorite--active' : ''}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const isSaved = user?.savedVehicles?.some(sv => sv.name === vehicle.name);
-                            if (isSaved) {
-                              const savedVehicle = user?.savedVehicles?.find(sv => sv.name === vehicle.name);
-                              if (savedVehicle) {
-                                removeSavedVehicle(savedVehicle.id);
-                              }
-                            } else {
-                              addSavedVehicle({
-                                id: `want-${vehicle.id}-${Date.now()}`,
-                                name: vehicle.name,
-                                ownership: 'want',
-                                savedAt: new Date().toISOString()
-                              });
-                            }
-                          }}
-                          aria-label={user?.savedVehicles?.some(sv => sv.name === vehicle.name) ? "Remove from saved" : "Save vehicle"}
+                        <GitCompare size={16} />
+                        <span>{compareMode ? 'Cancel Compare' : 'Compare Vehicles'}</span>
+                      </button>
+                      {compareMode && selectedForCompare.length >= 2 && (
+                        <Button
+                          variant="primary"
+                          size="small"
+                          className="saved-sidebar__compare-action"
+                          onClick={handleCompare}
                         >
-                          <Bookmark size={18} fill={user?.savedVehicles?.some(sv => sv.name === vehicle.name) ? 'currentColor' : 'none'} />
-                        </button>
-                      </Link>
-                    ))}
+                          Compare ({selectedForCompare.length})
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                  {compareMode && (
+                    <p className="saved-sidebar__compare-hint">
+                      Select 2-3 vehicles to compare
+                    </p>
+                  )}
+
+                  <div className="saved-sidebar__vehicles">
+                    {recentlyViewed.map((vehicle, index) => {
+                      const vehicleDetails = getVehicleDetails(vehicle.name);
+                      const isSelectedForCompare = selectedForCompare.includes(vehicle.id);
+                      
+                      return (
+                        <div 
+                          key={`${vehicle.id}-${index}`}
+                          className={`saved-sidebar__vehicle-container ${isSelectedForCompare ? 'saved-sidebar__vehicle-container--selected' : ''}`}
+                        >
+                          {compareMode && (
+                            <button
+                              className={`saved-sidebar__compare-checkbox ${isSelectedForCompare ? 'saved-sidebar__compare-checkbox--checked' : ''}`}
+                              onClick={() => toggleCompareSelection(vehicle.id)}
+                              aria-label={isSelectedForCompare ? "Remove from compare" : "Add to compare"}
+                            >
+                              {isSelectedForCompare && <Check size={14} />}
+                            </button>
+                          )}
+                          <Link
+                            to={`/${vehicle.slug}`}
+                            className="saved-sidebar__vehicle"
+                            onClick={(e) => {
+                              if (compareMode) {
+                                e.preventDefault();
+                                toggleCompareSelection(vehicle.id);
+                              } else {
+                                onClose();
+                              }
+                            }}
+                          >
+                            <div className="saved-sidebar__vehicle-image">
+                              <OptimizedImage
+                                src={vehicle.image}
+                                alt={vehicle.name}
+                                width={80}
+                                height={60}
+                              />
+                            </div>
+                            <div className="saved-sidebar__vehicle-info">
+                              <span className="saved-sidebar__vehicle-name">{vehicle.name}</span>
+                              <div className="saved-sidebar__vehicle-meta">
+                                <span className="saved-sidebar__vehicle-price">
+                                  ${vehicle.price.toLocaleString()}
+                                </span>
+                                {vehicleDetails?.staffRating && (
+                                  <span className="saved-sidebar__vehicle-rating">
+                                    <Star size={12} fill="currentColor" />
+                                    <span>{vehicleDetails.staffRating.toFixed(1)}</span>
+                                    <span className="saved-sidebar__vehicle-rating-label">C/D</span>
+                                  </span>
+                                )}
+                              </div>
+                              {vehicle.mileage && (
+                                <span className="saved-sidebar__vehicle-mileage">
+                                  {vehicle.mileage.toLocaleString()} mi
+                                </span>
+                              )}
+                            </div>
+                            {!compareMode && (
+                              <button 
+                                className={`saved-sidebar__vehicle-favorite ${user?.savedVehicles?.some(sv => sv.name === vehicle.name) ? 'saved-sidebar__vehicle-favorite--active' : ''}`}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  const isSaved = user?.savedVehicles?.some(sv => sv.name === vehicle.name);
+                                  if (isSaved) {
+                                    const savedVehicle = user?.savedVehicles?.find(sv => sv.name === vehicle.name);
+                                    if (savedVehicle) {
+                                      removeSavedVehicle(savedVehicle.id);
+                                    }
+                                  } else {
+                                    addSavedVehicle({
+                                      id: `want-${vehicle.id}-${Date.now()}`,
+                                      name: vehicle.name,
+                                      ownership: 'want',
+                                      savedAt: new Date().toISOString()
+                                    });
+                                  }
+                                }}
+                                aria-label={user?.savedVehicles?.some(sv => sv.name === vehicle.name) ? "Remove from saved" : "Save vehicle"}
+                              >
+                                <Bookmark size={18} fill={user?.savedVehicles?.some(sv => sv.name === vehicle.name) ? 'currentColor' : 'none'} />
+                              </button>
+                            )}
+                          </Link>
+                        </div>
+                      );
+                    })}
                   </div>
                 </>
               ) : (
@@ -421,11 +531,20 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                             </div>
                             <div className="saved-sidebar__vehicle-info">
                               <span className="saved-sidebar__vehicle-name">{vehicle.name}</span>
-                              {details && (
-                                <span className="saved-sidebar__vehicle-price">
-                                  Starting at ${details.priceMin.toLocaleString()}
-                                </span>
-                              )}
+                              <div className="saved-sidebar__vehicle-meta">
+                                {details && (
+                                  <span className="saved-sidebar__vehicle-price">
+                                    ${details.priceMin.toLocaleString()}
+                                  </span>
+                                )}
+                                {details?.staffRating && (
+                                  <span className="saved-sidebar__vehicle-rating">
+                                    <Star size={12} fill="currentColor" />
+                                    <span>{details.staffRating.toFixed(1)}</span>
+                                    <span className="saved-sidebar__vehicle-rating-label">C/D</span>
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <button
                               className="saved-sidebar__vehicle-unsave"
@@ -594,11 +713,20 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                           </div>
                           <div className="saved-sidebar__vehicle-info">
                             <span className="saved-sidebar__vehicle-name">{vehicle.name}</span>
-                            {details && (
-                              <span className="saved-sidebar__vehicle-price">
-                                Starting at ${details.priceMin.toLocaleString()}
-                              </span>
-                            )}
+                            <div className="saved-sidebar__vehicle-meta">
+                              {details && (
+                                <span className="saved-sidebar__vehicle-price">
+                                  ${details.priceMin.toLocaleString()}
+                                </span>
+                              )}
+                              {details?.staffRating && (
+                                <span className="saved-sidebar__vehicle-rating">
+                                  <Star size={12} fill="currentColor" />
+                                  <span>{details.staffRating.toFixed(1)}</span>
+                                  <span className="saved-sidebar__vehicle-rating-label">C/D</span>
+                                </span>
+                              )}
+                            </div>
                           </div>
                           <button
                             className="saved-sidebar__vehicle-unsave"
@@ -730,6 +858,17 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
           vehicle={dealerMapVehicle}
         />
       )}
+
+      {/* Vehicle Comparison Modal */}
+      <VehicleComparisonModal
+        isOpen={isCompareModalOpen}
+        onClose={() => {
+          setIsCompareModalOpen(false);
+          setCompareMode(false);
+          setSelectedForCompare([]);
+        }}
+        vehicles={getVehiclesForComparison()}
+      />
     </>
   );
 };

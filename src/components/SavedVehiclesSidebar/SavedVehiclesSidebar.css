@@ -339,6 +339,40 @@
 .saved-sidebar__vehicle-mileage {
   font-weight: var(--font-weight-normal);
   color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+}
+
+/* Vehicle Meta Row - contains price and rating */
+.saved-sidebar__vehicle-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+/* C/D Rating Badge */
+.saved-sidebar__vehicle-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-0-5) var(--spacing-2);
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-full);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.saved-sidebar__vehicle-rating svg {
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+
+.saved-sidebar__vehicle-rating-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  font-size: 10px;
+  margin-left: 1px;
 }
 
 .saved-sidebar__vehicle-favorite {
@@ -731,6 +765,128 @@
   font-size: var(--font-size-sm);
   color: var(--color-gray-600);
   text-align: center;
+}
+
+/* Compare Feature Styles */
+.saved-sidebar__compare-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+  padding: var(--spacing-2) 0;
+}
+
+.saved-sidebar__compare-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.saved-sidebar__compare-btn:hover {
+  color: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-gray-50);
+}
+
+.saved-sidebar__compare-btn--active {
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+}
+
+.saved-sidebar__compare-btn--active:hover {
+  background: var(--color-blue-cobalt-dark);
+  color: var(--color-white);
+}
+
+.saved-sidebar__compare-btn svg {
+  flex-shrink: 0;
+}
+
+.saved-sidebar__compare-action {
+  flex-shrink: 0;
+}
+
+.saved-sidebar__compare-hint {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-3);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Vehicle Container for Compare Mode */
+.saved-sidebar__vehicle-container {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
+}
+
+.saved-sidebar__vehicle-container .saved-sidebar__vehicle {
+  flex: 1;
+  border-radius: var(--border-radius-md);
+}
+
+.saved-sidebar__vehicle-container--selected {
+  background: var(--color-info-light);
+  border-radius: var(--border-radius-md);
+}
+
+.saved-sidebar__vehicle-container--selected .saved-sidebar__vehicle {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-info-light);
+}
+
+/* Compare Checkbox */
+.saved-sidebar__compare-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-6);
+  min-width: var(--spacing-6);
+  height: auto;
+  background: var(--color-white);
+  border: 2px solid var(--color-gray-300);
+  border-right: none;
+  border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.saved-sidebar__compare-checkbox:hover {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-gray-50);
+}
+
+.saved-sidebar__compare-checkbox--checked {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.saved-sidebar__compare-checkbox--checked:hover {
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
+}
+
+/* Adjust vehicle card when checkbox is present */
+.saved-sidebar__vehicle-container .saved-sidebar__compare-checkbox + .saved-sidebar__vehicle {
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  border-left: none;
 }
 
 /* Mobile Adjustments */

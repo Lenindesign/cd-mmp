@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronRight, Bookmark } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Bookmark } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -741,27 +741,54 @@ const RankingsPage = () => {
         </div>
       </div>
 
-      {/* Related Categories */}
+      {/* Related Categories Carousel */}
       <div className="rankings-page__related">
         <div className="container">
-          <h2 className="rankings-page__section-title">Explore Other Rankings</h2>
-          <div className="rankings-page__related-grid">
-            {Object.entries(BODY_STYLE_CONFIG)
-              .filter(([key]) => key !== bodyStyle?.toLowerCase())
-              .slice(0, 4)
-              .map(([key, value]) => (
-                <Link key={key} to={`/rankings/${key}`} className="rankings-page__related-card">
-                  {BODY_STYLE_ICONS[key] && (
-                    <img 
-                      src={BODY_STYLE_ICONS[key]} 
-                      alt="" 
-                      className="rankings-page__related-icon"
-                    />
-                  )}
-                  <h3>{value.title}</h3>
-                  <ChevronRight size={20} />
-                </Link>
-              ))}
+          <div className="rankings-page__related-header">
+            <h2 className="rankings-page__section-title">Explore Other Rankings</h2>
+            <div className="rankings-page__carousel-controls">
+              <button 
+                className="rankings-page__carousel-btn rankings-page__carousel-btn--prev"
+                onClick={() => {
+                  const container = document.querySelector('.rankings-page__related-carousel');
+                  if (container) container.scrollBy({ left: -280, behavior: 'smooth' });
+                }}
+                aria-label="Previous"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button 
+                className="rankings-page__carousel-btn rankings-page__carousel-btn--next"
+                onClick={() => {
+                  const container = document.querySelector('.rankings-page__related-carousel');
+                  if (container) container.scrollBy({ left: 280, behavior: 'smooth' });
+                }}
+                aria-label="Next"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+          <div className="rankings-page__related-carousel">
+            {Object.entries(BODY_STYLE_CONFIG).map(([key, value]) => (
+              <Link 
+                key={key} 
+                to={`/rankings/${key}`} 
+                className={`rankings-page__related-card ${key === bodyStyle?.toLowerCase() ? 'rankings-page__related-card--active' : ''}`}
+              >
+                {BODY_STYLE_ICONS[key] && (
+                  <img 
+                    src={BODY_STYLE_ICONS[key]} 
+                    alt="" 
+                    className="rankings-page__related-icon"
+                  />
+                )}
+                <h3>{value.title}</h3>
+                <span className="rankings-page__related-count">
+                  {getAllVehicles().filter(v => v.bodyStyle.toLowerCase() === key).length} vehicles
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </div>

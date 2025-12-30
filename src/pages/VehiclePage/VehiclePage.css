@@ -408,7 +408,7 @@
 /* Dealer Locator Section */
 .vehicle-page__dealer-locator {
   background: var(--color-white);
-  padding: var(--spacing-8) 24px;
+  padding: var(--spacing-8) var(--spacing-6); /* 32px top/bottom, 24px left/right */
   margin-top: var(--spacing-8);
 }
 

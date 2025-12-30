@@ -888,29 +888,77 @@
   background: var(--color-black);
 }
 
-/* Related Categories */
+/* Related Categories Carousel */
 .rankings-page__related {
   background: var(--color-white);
   padding: var(--spacing-10) 0;
   border-top: 1px solid var(--color-gray-200);
 }
 
-.rankings-page__related-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.rankings-page__related-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.rankings-page__carousel-controls {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.rankings-page__carousel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--color-gray-300);
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.rankings-page__carousel-btn:hover {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+  background: var(--color-blue-100);
+}
+
+.rankings-page__related-carousel {
+  display: flex;
   gap: var(--spacing-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: var(--spacing-2);
+}
+
+.rankings-page__related-carousel::-webkit-scrollbar {
+  display: none;
 }
 
 .rankings-page__related-card {
+  flex: 0 0 260px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-2);
   padding: var(--spacing-5);
   background: var(--color-gray-100);
-  border-radius: var(--border-radius-md);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-lg);
   text-decoration: none;
   transition: all var(--transition-fast);
+  scroll-snap-align: start;
+}
+
+.rankings-page__related-card--active {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-blue-100);
 }
 
 .rankings-page__related-icon {
@@ -921,6 +969,7 @@
 
 .rankings-page__related-card:hover {
   background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
   transform: translateY(-2px);
 }
 
@@ -938,8 +987,22 @@
   color: var(--color-white);
 }
 
-.rankings-page__related-card svg {
-  display: none;
+.rankings-page__related-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  transition: color var(--transition-fast);
+}
+
+.rankings-page__related-card:hover .rankings-page__related-count {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.rankings-page__related-card--active h3 {
+  color: var(--color-blue-cobalt);
+}
+
+.rankings-page__related-card--active .rankings-page__related-count {
+  color: var(--color-blue-cobalt);
 }
 
 
@@ -1150,8 +1213,8 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .rankings-page__related-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .rankings-page__related-card {
+    flex: 0 0 220px;
   }
 
   .rankings-page__hero-card-title {
@@ -1176,8 +1239,14 @@
     grid-template-columns: 1fr;
   }
 
-  .rankings-page__related-grid {
-    grid-template-columns: 1fr;
+  .rankings-page__related-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+  }
+
+  .rankings-page__related-card {
+    flex: 0 0 200px;
   }
 
   .rankings-page__subnav-links {
