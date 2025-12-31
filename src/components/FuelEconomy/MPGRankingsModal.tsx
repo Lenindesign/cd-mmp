@@ -54,7 +54,6 @@ const MPGRankingsModal = ({
 
   const categoryName = bodyStyle.charAt(0).toUpperCase() + bodyStyle.slice(1).toLowerCase();
   const topVehicle = vehicles[0];
-  const currentVehicle = vehicles.find(v => v.isCurrentVehicle);
 
   // Get ranking badge info
   const getRankBadge = (rank: number) => {

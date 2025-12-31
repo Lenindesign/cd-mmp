@@ -254,7 +254,7 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
             slug: details.slug,
             image: details.image,
             price: details.priceMin,
-            viewedAt: new Date(savedVehicle.savedAt)
+            viewedAt: savedVehicle.savedAt ? new Date(savedVehicle.savedAt) : new Date()
           } as RecentlyViewedVehicle;
         })
         .filter((v): v is RecentlyViewedVehicle => v !== undefined);
