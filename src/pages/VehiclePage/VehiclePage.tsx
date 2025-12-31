@@ -7,6 +7,7 @@ import { useSupabaseRating, getCategory } from '../../hooks/useSupabaseRating';
 import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
 import Hero from '../../components/Hero';
 import QuickSpecs from '../../components/QuickSpecs';
+import FuelEconomy from '../../components/FuelEconomy';
 import CostToOwn from '../../components/CostToOwn';
 import PriceHistory from '../../components/PriceHistory';
 import TargetPriceRange from '../../components/TargetPriceRange';
@@ -164,6 +165,12 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               year={parseInt(vehicle.year)}
               verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${supabaseRating}/10, it delivers good value for its class.`}
             />
+            <FuelEconomy
+              year={parseInt(vehicle.year)}
+              make={vehicle.make}
+              model={vehicle.model}
+              bodyStyle={vehicle.bodyStyle}
+            />
           </div>
           <AdSidebar />
         </div>
@@ -280,7 +287,13 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         </section>
         
         <section id="warranty">
-          <Warranty items={defaultWarrantyItems} />
+          <Warranty 
+            items={defaultWarrantyItems}
+            make={vehicle.make}
+            model={vehicle.model}
+            year={vehicle.year}
+            bodyStyle={vehicle.bodyStyle}
+          />
         </section>
         
         <Comparison 

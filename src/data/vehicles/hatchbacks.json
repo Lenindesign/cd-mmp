@@ -126,7 +126,13 @@
     "model": "Elantra GT",
     "bodyStyle": "Hatchback",
     "imageSource": "2024 Hyundai Elantra GT",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4627ed6f46400082cc27b/2024-hyundai-elantra-n-line-4.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4627de8b3c90008d9353f/2024-hyundai-elantra-n-line-5.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a46284b4af830008ae7428/2024-hyundai-elantra-n-line-15.jpg"
+    ],
     "priceRange": "$22,750 - $28,500",
     "priceMin": 22750,
     "priceMax": 28500,
@@ -266,7 +272,12 @@
     "model": "500",
     "bodyStyle": "Hatchback",
     "imageSource": "2024 Fiat 500",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66b2aacb93573c00081738fa/003-2024-fiat-500e-la-prima.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66b2aac8ef8e7a00089a9fdb/001-2024-fiat-500e-la-prima.jpg"
+    ],
     "priceRange": "$17,495 - $21,995",
     "priceMin": 17495,
     "priceMax": 21995,

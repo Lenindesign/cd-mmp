@@ -184,7 +184,10 @@ const vehicleImageMap: Record<string, string> = {
   // Sedans/Hatchbacks
   'civic': 'https://d2kde5ohu8qb21.cloudfront.net/files/65dcf5210e091c0008b94fd0/2020-honda-civic-si-coupe-front-three-quarter.jpg',
   'accord': 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b803565f0008090975/21-2025-honda-accord-front-view.jpg',
-  'corolla': 'https://d2kde5ohu8qb21.cloudfront.net/files/68dc6648bbe5640002b8f5db/007-2025-toyota-gr-corolla.jpg',
+  'corolla': 'https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png',
+  '2025 toyota corolla': 'https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png',
+  'toyota corolla': 'https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png',
+  '2024 toyota corolla': 'https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png',
   'camry': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a1d8a7a9b759000861b9bf/2024-toyota-camry-xse-hybrid-front-view-17.jpg',
   '2024 toyota camry': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a1d8a7a9b759000861b9bf/2024-toyota-camry-xse-hybrid-front-view-17.jpg',
   '2023 toyota camry': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a1d8a7a9b759000861b9bf/2024-toyota-camry-xse-hybrid-front-view-17.jpg',
@@ -216,26 +219,43 @@ const vehicleImageMap: Record<string, string> = {
   '2025 ariya': 'https://d2kde5ohu8qb21.cloudfront.net/files/674f871cc21d900008177dcc/036-2025-nissan-ariya-nismo.jpg',
   'nissan ariya': 'https://d2kde5ohu8qb21.cloudfront.net/files/674f871cc21d900008177dcc/036-2025-nissan-ariya-nismo.jpg',
   'ariya': 'https://d2kde5ohu8qb21.cloudfront.net/files/674f871cc21d900008177dcc/036-2025-nissan-ariya-nismo.jpg',
+  // Nissan Kicks
+  '2024 nissan kicks': 'https://hips.hearstapps.com/mtg-prod/65a4d3978e9ce60008076461/2-2024-nissan-kicks-front-view.jpg',
+  'nissan kicks': 'https://hips.hearstapps.com/mtg-prod/65a4d3978e9ce60008076461/2-2024-nissan-kicks-front-view.jpg',
+  'kicks': 'https://hips.hearstapps.com/mtg-prod/65a4d3978e9ce60008076461/2-2024-nissan-kicks-front-view.jpg',
   'gti': 'https://d2kde5ohu8qb21.cloudfront.net/files/68ed9049b76c7c0002cf2115/025-2026volkswagen-golf-gti-r-coty.jpg',
   // Volkswagen Golf R
   '2024 volkswagen golf r': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4c/14-2024-volkswagen-golf-r-front-view.jpg',
   'volkswagen golf r': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4c/14-2024-volkswagen-golf-r-front-view.jpg',
   'golf r': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4c/14-2024-volkswagen-golf-r-front-view.jpg',
-  'jetta': 'https://d2kde5ohu8qb21.cloudfront.net/files/666b4e8e4afb2f0008bc447b/029-2024-volkswagen-jetta-gli.jpg',
-  'volkswagen jetta': 'https://d2kde5ohu8qb21.cloudfront.net/files/666b4e8e4afb2f0008bc447b/029-2024-volkswagen-jetta-gli.jpg',
-  '2024 volkswagen jetta': 'https://d2kde5ohu8qb21.cloudfront.net/files/666b4e8e4afb2f0008bc447b/029-2024-volkswagen-jetta-gli.jpg',
-  '2023 volkswagen jetta': 'https://d2kde5ohu8qb21.cloudfront.net/files/666b4e8e4afb2f0008bc447b/029-2024-volkswagen-jetta-gli.jpg',
-  '2022 volkswagen jetta': 'https://d2kde5ohu8qb21.cloudfront.net/files/666b4e8e4afb2f0008bc447b/029-2024-volkswagen-jetta-gli.jpg',
-  '2021 volkswagen jetta': 'https://d2kde5ohu8qb21.cloudfront.net/files/666b4e8e4afb2f0008bc447b/029-2024-volkswagen-jetta-gli.jpg',
-  '2020 volkswagen jetta': 'https://d2kde5ohu8qb21.cloudfront.net/files/666b4e8e4afb2f0008bc447b/029-2024-volkswagen-jetta-gli.jpg',
+  'jetta': 'https://hips.hearstapps.com/mtg-prod/68018764fefe760008830ec8/001-2025-volkswagen-jetta-sel.jpg',
+  'volkswagen jetta': 'https://hips.hearstapps.com/mtg-prod/68018764fefe760008830ec8/001-2025-volkswagen-jetta-sel.jpg',
+  '2025 volkswagen jetta': 'https://hips.hearstapps.com/mtg-prod/68018764fefe760008830ec8/001-2025-volkswagen-jetta-sel.jpg',
+  '2024 volkswagen jetta': 'https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg',
+  '2024 volkswagen jetta gli': 'https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg',
+  'jetta gli': 'https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg',
+  '2023 volkswagen jetta': 'https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg',
+  '2022 volkswagen jetta': 'https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg',
+  '2021 volkswagen jetta': 'https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg',
+  '2020 volkswagen jetta': 'https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg',
   'sonata': 'https://d2kde5ohu8qb21.cloudfront.net/files/66a7f7b4bd127000082bdd96/011-2024-hyundai-sonata-hybrid.jpg',
   '2024 hyundai sonata': 'https://d2kde5ohu8qb21.cloudfront.net/files/66a7f7b4bd127000082bdd96/011-2024-hyundai-sonata-hybrid.jpg',
   '2023 hyundai sonata': 'https://d2kde5ohu8qb21.cloudfront.net/files/66a7f7b4bd127000082bdd96/011-2024-hyundai-sonata-hybrid.jpg',
   '2022 hyundai sonata': 'https://d2kde5ohu8qb21.cloudfront.net/files/66a7f7b4bd127000082bdd96/011-2024-hyundai-sonata-hybrid.jpg',
   '2021 hyundai sonata': 'https://d2kde5ohu8qb21.cloudfront.net/files/66a7f7b4bd127000082bdd96/011-2024-hyundai-sonata-hybrid.jpg',
-  'elantra': 'https://d2kde5ohu8qb21.cloudfront.net/files/6839cc6968e67e00082737e8/2025hyundaielantrasedan.jpg',
-  '2025 hyundai elantra': 'https://d2kde5ohu8qb21.cloudfront.net/files/6839cc6968e67e00082737e8/2025hyundaielantrasedan.jpg',
-  'hyundai elantra': 'https://d2kde5ohu8qb21.cloudfront.net/files/6839cc6968e67e00082737e8/2025hyundaielantrasedan.jpg',
+  'elantra': 'https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg',
+  '2025 hyundai elantra': 'https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg',
+  'hyundai elantra': 'https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg',
+  '2025 hyundai elantra hybrid': 'https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg',
+  'hyundai elantra hybrid': 'https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg',
+  'elantra hybrid': 'https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg',
+  // Hyundai Elantra GT / N-Line
+  '2024 hyundai elantra gt': 'https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg',
+  'hyundai elantra gt': 'https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg',
+  'elantra gt': 'https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg',
+  '2024 hyundai elantra n-line': 'https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg',
+  'hyundai elantra n-line': 'https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg',
+  'elantra n-line': 'https://hips.hearstapps.com/mtg-prod/65a4627da29f2d0008527017/2024-hyundai-elantra-n-line-1.jpg',
   'mini cooper': 'https://d2kde5ohu8qb21.cloudfront.net/files/67f9688559c85d000885a489/12-2025-mini-cooper-convertible-fd.jpg',
   'mini': 'https://d2kde5ohu8qb21.cloudfront.net/files/67f9688559c85d000885a489/12-2025-mini-cooper-convertible-fd.jpg',
   'cooper': 'https://d2kde5ohu8qb21.cloudfront.net/files/67f9688559c85d000885a489/12-2025-mini-cooper-convertible-fd.jpg',
@@ -553,6 +573,11 @@ const vehicleImageMap: Record<string, string> = {
   'chevrolet traverse': 'https://d2kde5ohu8qb21.cloudfront.net/files/66ff05f3dbf3c7000834735d/4-2025-chevrolet-traverse-z71-front-view.jpg',
   '2025 chevrolet traverse': 'https://d2kde5ohu8qb21.cloudfront.net/files/66ff05f3dbf3c7000834735d/4-2025-chevrolet-traverse-z71-front-view.jpg',
   '2025 traverse': 'https://d2kde5ohu8qb21.cloudfront.net/files/66ff05f3dbf3c7000834735d/4-2025-chevrolet-traverse-z71-front-view.jpg',
+  // Chevrolet Trailblazer
+  '2025 chevrolet trailblazer': 'https://hips.hearstapps.com/mtg-prod/6685e0580bcd680008156657/7-2025-chevrolet-trailblazer-front-view.jpg',
+  '2025 trailblazer': 'https://hips.hearstapps.com/mtg-prod/6685e0580bcd680008156657/7-2025-chevrolet-trailblazer-front-view.jpg',
+  'chevrolet trailblazer': 'https://hips.hearstapps.com/mtg-prod/6685e0580bcd680008156657/7-2025-chevrolet-trailblazer-front-view.jpg',
+  'trailblazer': 'https://hips.hearstapps.com/mtg-prod/6685e0580bcd680008156657/7-2025-chevrolet-trailblazer-front-view.jpg',
   'bronco raptor': 'https://d2kde5ohu8qb21.cloudfront.net/files/67f436b279a6060008bc3b95/1-2025-ford-bronco-raptor-front-view.jpg',
   'ford bronco raptor': 'https://d2kde5ohu8qb21.cloudfront.net/files/67f436b279a6060008bc3b95/1-2025-ford-bronco-raptor-front-view.jpg',
   '2025 ford bronco raptor': 'https://d2kde5ohu8qb21.cloudfront.net/files/67f436b279a6060008bc3b95/1-2025-ford-bronco-raptor-front-view.jpg',
@@ -776,7 +801,9 @@ const vehicleImageMap: Record<string, string> = {
   '2021 subaru crosstrek': 'https://d2kde5ohu8qb21.cloudfront.net/files/66c3b57031c1ec0008b2690e/042-2024-subaru-crosstrek-sport.jpg',
   '2020 subaru crosstrek': 'https://d2kde5ohu8qb21.cloudfront.net/files/66c3b57031c1ec0008b2690e/042-2024-subaru-crosstrek-sport.jpg',
   
-  'impreza': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a184ea38db2a00083e1756/2024-subaru-impreza-hatchback-debut-15.jpg',
+  'impreza': 'https://hips.hearstapps.com/mtg-prod/6753609a02b410000856677a/1-2025-subaru-impreza-front-view.jpg',
+  'subaru impreza': 'https://hips.hearstapps.com/mtg-prod/6753609a02b410000856677a/1-2025-subaru-impreza-front-view.jpg',
+  '2025 subaru impreza': 'https://hips.hearstapps.com/mtg-prod/6753609a02b410000856677a/1-2025-subaru-impreza-front-view.jpg',
   '2024 subaru impreza': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a184ea38db2a00083e1756/2024-subaru-impreza-hatchback-debut-15.jpg',
   '2023 subaru impreza': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a184ea38db2a00083e1756/2024-subaru-impreza-hatchback-debut-15.jpg',
   '2022 subaru impreza': 'https://d2kde5ohu8qb21.cloudfront.net/files/65a184ea38db2a00083e1756/2024-subaru-impreza-hatchback-debut-15.jpg',
@@ -826,6 +853,11 @@ const vehicleImageMap: Record<string, string> = {
   '2025 ev9': 'https://d2kde5ohu8qb21.cloudfront.net/files/673793ca8635c80008fa9151/003-2025-kia-ev9-awd-front-view.jpg',
   'kia ev9': 'https://d2kde5ohu8qb21.cloudfront.net/files/673793ca8635c80008fa9151/003-2025-kia-ev9-awd-front-view.jpg',
   'ev9': 'https://d2kde5ohu8qb21.cloudfront.net/files/673793ca8635c80008fa9151/003-2025-kia-ev9-awd-front-view.jpg',
+
+  // Kia Forte
+  '2024 kia forte': 'https://hips.hearstapps.com/mtg-prod/65a4ab3de6ee9d0008b6d247/15-2024-kia-forte-front-view.jpg',
+  'kia forte': 'https://hips.hearstapps.com/mtg-prod/65a4ab3de6ee9d0008b6d247/15-2024-kia-forte-front-view.jpg',
+  'forte': 'https://hips.hearstapps.com/mtg-prod/65a4ab3de6ee9d0008b6d247/15-2024-kia-forte-front-view.jpg',
 
   // Polestar
   '2025 polestar 2': 'https://d2kde5ohu8qb21.cloudfront.net/files/690aa02511b26c00025c25fe/029-2025-polestar-3-performance-pack-2-motor.jpg',
@@ -917,11 +949,12 @@ const vehicleImageMap: Record<string, string> = {
   'ct6': 'https://d2kde5ohu8qb21.cloudfront.net/files/65caa9930b94520008716341/2018-cadillac-ct6-with-super-cruise-22.jpg',
   
   // Fiat
-  '2024 fiat 500e': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
-  '2024 fiat 500': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
-  'fiat 500e': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
-  'fiat 500': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg',
-  '500e': 'https://d2kde5ohu8qb21.cloudfront.net/files/672506a43540f000085fc59c/001-2024-fiat-500e-inspired-by-music-lead.jpg'
+  '2024 fiat 500e': 'https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg',
+  '2024 fiat 500': 'https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg',
+  'fiat 500e': 'https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg',
+  'fiat 500': 'https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg',
+  '500e': 'https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg',
+  'fiat 500e la prima': 'https://hips.hearstapps.com/mtg-prod/66b2aacd22dd5e0008db7280/004-2024-fiat-500e-la-prima.jpg'
 };
 
 export const vehicleImageFor = (vehicleName: string): string => {

@@ -235,9 +235,31 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
 
   // Get vehicles selected for comparison
   const getVehiclesForComparison = () => {
-    return selectedForCompare
-      .map(id => recentlyViewed.find(v => v.id === id))
-      .filter((v): v is RecentlyViewedVehicle => v !== undefined);
+    // Check if we're comparing from recently viewed or cars I want
+    if (activeTab === 'recently-viewed') {
+      return selectedForCompare
+        .map(id => recentlyViewed.find(v => v.id === id))
+        .filter((v): v is RecentlyViewedVehicle => v !== undefined);
+    } else if (activeTab === 'want') {
+      // For cars I want, we need to construct the vehicle data from the saved vehicles
+      return selectedForCompare
+        .map(id => {
+          const savedVehicle = carsIWant.find(v => v.id === id);
+          if (!savedVehicle) return undefined;
+          const details = getVehicleDetails(savedVehicle.name);
+          if (!details) return undefined;
+          return {
+            id: savedVehicle.id,
+            name: savedVehicle.name,
+            slug: details.slug,
+            image: details.image,
+            price: details.priceMin,
+            viewedAt: new Date(savedVehicle.savedAt)
+          } as RecentlyViewedVehicle;
+        })
+        .filter((v): v is RecentlyViewedVehicle => v !== undefined);
+    }
+    return [];
   };
 
   // Reset compare mode when switching tabs
@@ -338,47 +360,45 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                       >
                         Clear
                       </Button>
-                      <Button 
-                        as="a" 
-                        href="/vehicles" 
-                        variant="ghost"
-                        size="small"
-                        className="saved-sidebar__section-link" 
-                        onClick={onClose}
-                        iconRight={<ChevronRight size={14} />}
-                      >
-                        Shop Now
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Compare Mode Toggle */}
-                  {recentlyViewed.length >= 2 && (
-                    <div className="saved-sidebar__compare-toggle">
-                      <button
-                        className={`saved-sidebar__compare-btn ${compareMode ? 'saved-sidebar__compare-btn--active' : ''}`}
-                        onClick={() => {
-                          setCompareMode(!compareMode);
-                          if (compareMode) {
-                            setSelectedForCompare([]);
-                          }
-                        }}
-                      >
-                        <GitCompare size={16} />
-                        <span>{compareMode ? 'Cancel Compare' : 'Compare Vehicles'}</span>
-                      </button>
-                      {compareMode && selectedForCompare.length >= 2 && (
-                        <Button
-                          variant="primary"
-                          size="small"
-                          className="saved-sidebar__compare-action"
-                          onClick={handleCompare}
-                        >
-                          Compare ({selectedForCompare.length})
-                        </Button>
+                      {recentlyViewed.length >= 2 && (
+                        compareMode ? (
+                          selectedForCompare.length >= 2 ? (
+                            <Button
+                              variant="primary"
+                              size="small"
+                              className="saved-sidebar__compare-action"
+                              onClick={handleCompare}
+                              iconLeft={<GitCompare size={14} />}
+                            >
+                              COMPARE ({selectedForCompare.length})
+                            </Button>
+                          ) : (
+                            <Button 
+                              variant="ghost"
+                              size="small"
+                              className="saved-sidebar__section-link"
+                              onClick={() => {
+                                setCompareMode(false);
+                                setSelectedForCompare([]);
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          )
+                        ) : (
+                          <Button 
+                            variant="ghost"
+                            size="small"
+                            className="saved-sidebar__section-link" 
+                            onClick={() => setCompareMode(true)}
+                            iconLeft={<GitCompare size={14} />}
+                          >
+                            COMPARE
+                          </Button>
+                        )
                       )}
                     </div>
-                  )}
+                  </div>
                   {compareMode && (
                     <p className="saved-sidebar__compare-hint">
                       Select 2-3 vehicles to compare
@@ -504,16 +524,80 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                     <span className="saved-sidebar__section-title">
                       Cars I Want ({carsIWant.length})
                     </span>
+                    <div className="saved-sidebar__section-actions">
+                      {carsIWant.length >= 2 && (
+                        compareMode ? (
+                          selectedForCompare.length >= 2 ? (
+                            <Button
+                              variant="primary"
+                              size="small"
+                              className="saved-sidebar__compare-action"
+                              onClick={handleCompare}
+                              iconLeft={<GitCompare size={14} />}
+                            >
+                              COMPARE ({selectedForCompare.length})
+                            </Button>
+                          ) : (
+                            <Button 
+                              variant="ghost"
+                              size="small"
+                              className="saved-sidebar__section-link"
+                              onClick={() => {
+                                setCompareMode(false);
+                                setSelectedForCompare([]);
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          )
+                        ) : (
+                          <Button 
+                            variant="ghost"
+                            size="small"
+                            className="saved-sidebar__section-link" 
+                            onClick={() => setCompareMode(true)}
+                            iconLeft={<GitCompare size={14} />}
+                          >
+                            COMPARE
+                          </Button>
+                        )
+                      )}
+                    </div>
                   </div>
+                  {compareMode && (
+                    <p className="saved-sidebar__compare-hint">
+                      Select 2-3 vehicles to compare
+                    </p>
+                  )}
                   <div className="saved-sidebar__vehicles">
                     {carsIWant.map((vehicle) => {
                       const details = getVehicleDetails(vehicle.name);
+                      const isSelectedForCompare = selectedForCompare.includes(vehicle.id);
                       return (
-                        <div key={vehicle.id} className="saved-sidebar__vehicle-wrapper">
+                        <div 
+                          key={vehicle.id} 
+                          className={`saved-sidebar__vehicle-wrapper ${compareMode ? 'saved-sidebar__vehicle-wrapper--with-checkbox' : ''} ${isSelectedForCompare ? 'saved-sidebar__vehicle-wrapper--selected' : ''}`}
+                        >
+                          {compareMode && (
+                            <button
+                              className={`saved-sidebar__compare-checkbox ${isSelectedForCompare ? 'saved-sidebar__compare-checkbox--checked' : ''}`}
+                              onClick={() => toggleCompareSelection(vehicle.id)}
+                              aria-label={isSelectedForCompare ? "Remove from compare" : "Add to compare"}
+                            >
+                              {isSelectedForCompare && <Check size={14} />}
+                            </button>
+                          )}
                           <Link
                             to={details ? `/${details.slug}` : '/vehicles'}
                             className="saved-sidebar__vehicle"
-                            onClick={onClose}
+                            onClick={(e) => {
+                              if (compareMode) {
+                                e.preventDefault();
+                                toggleCompareSelection(vehicle.id);
+                              } else {
+                                onClose();
+                              }
+                            }}
                           >
                             <div className="saved-sidebar__vehicle-image">
                               {details?.image ? (
@@ -546,20 +630,22 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                                 )}
                               </div>
                             </div>
-                            <button
-                              className="saved-sidebar__vehicle-unsave"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                removeSavedVehicle(vehicle.id);
-                              }}
-                              aria-label="Remove from saved"
-                              title="Remove from saved"
-                            >
-                              <Bookmark size={18} fill="currentColor" />
-                            </button>
+                            {!compareMode && (
+                              <button
+                                className="saved-sidebar__vehicle-unsave"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  removeSavedVehicle(vehicle.id);
+                                }}
+                                aria-label="Remove from saved"
+                                title="Remove from saved"
+                              >
+                                <Bookmark size={18} fill="currentColor" />
+                              </button>
+                            )}
                           </Link>
-                          {details && (
+                          {details && !compareMode && (
                             <button
                               className="saved-sidebar__vehicle-dealers"
                               onClick={() => {

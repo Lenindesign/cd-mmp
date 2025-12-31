@@ -157,7 +157,13 @@
     "model": "Kicks",
     "bodyStyle": "SUV",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a4d3979397b0000889ffbd/9-2024-nissan-kicks-front-view.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/65a4d3978e9ce60008076461/2-2024-nissan-kicks-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/65a4d3978e9ce60008076461/2-2024-nissan-kicks-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4d3979397b0000889ffbc/10-2024-nissan-kicks-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4d3979397b0000889ffbe/1-2024-nissan-kicks-rear-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4f2cab19bbd0008217c4c/4-2024-nissan-kicks-interior.jpg"
+    ],
     "priceRange": "$21,500 - $25,800",
     "priceMin": 21500,
     "priceMax": 25800,
@@ -1316,7 +1322,13 @@
     "model": "Trailblazer",
     "bodyStyle": "SUV",
     "imageSource": "2025 Chevrolet Trailblazer",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/6685e0580bcd680008156657/7-2025-chevrolet-trailblazer-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/6685e0580bcd680008156657/7-2025-chevrolet-trailblazer-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6685e04e42956900088ddc78/4-2025-chevrolet-trailblazer-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6685e049ff20c0000906765e/3-2025-chevrolet-trailblazer-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6685e07bf348f900083f0777/18-2025-chevrolet-trailblazer-interior.jpg"
+    ],
     "priceRange": "$22,100 - $30,500",
     "priceMin": 22100,
     "priceMax": 30500,

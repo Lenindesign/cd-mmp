@@ -423,6 +423,61 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  transition: all var(--transition-fast);
+}
+
+/* Vehicle wrapper with compare checkbox */
+.saved-sidebar__vehicle-wrapper.saved-sidebar__vehicle-wrapper--with-checkbox {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.saved-sidebar__vehicle-wrapper--selected {
+  background: var(--color-info-light);
+  border-radius: var(--border-radius-md);
+}
+
+.saved-sidebar__vehicle-wrapper--selected .saved-sidebar__vehicle {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-info-light);
+}
+
+/* Compare checkbox in wrapper */
+.saved-sidebar__vehicle-wrapper > .saved-sidebar__compare-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  min-width: var(--spacing-10);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-right: none;
+  border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.saved-sidebar__vehicle-wrapper > .saved-sidebar__compare-checkbox:hover {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-gray-50);
+}
+
+.saved-sidebar__vehicle-wrapper > .saved-sidebar__compare-checkbox.saved-sidebar__compare-checkbox--checked {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.saved-sidebar__vehicle-wrapper > .saved-sidebar__compare-checkbox.saved-sidebar__compare-checkbox--checked:hover {
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
+}
+
+/* Adjust vehicle card when checkbox is present in wrapper */
+.saved-sidebar__vehicle-wrapper > .saved-sidebar__compare-checkbox + .saved-sidebar__vehicle {
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  border-left: none;
+  flex: 1;
 }
 
 /* See cars available near you button */
@@ -768,54 +823,9 @@
 }
 
 /* Compare Feature Styles */
-.saved-sidebar__compare-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-3);
-  padding: var(--spacing-2) 0;
-}
-
-.saved-sidebar__compare-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-3);
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.saved-sidebar__compare-btn:hover {
-  color: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-  background: var(--color-gray-50);
-}
-
-.saved-sidebar__compare-btn--active {
-  color: var(--color-white);
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-}
-
-.saved-sidebar__compare-btn--active:hover {
-  background: var(--color-blue-cobalt-dark);
-  color: var(--color-white);
-}
-
-.saved-sidebar__compare-btn svg {
-  flex-shrink: 0;
-}
-
 .saved-sidebar__compare-action {
-  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .saved-sidebar__compare-hint {

@@ -315,7 +315,13 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
         </section>
         
         <section id="warranty">
-          <Warranty items={defaultWarrantyItems} />
+          <Warranty 
+            items={defaultWarrantyItems}
+            make={vehicle.make}
+            model={vehicle.model}
+            year={vehicle.year}
+            bodyStyle={vehicle.bodyStyle}
+          />
         </section>
         
         <Comparison 

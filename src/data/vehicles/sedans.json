@@ -252,7 +252,13 @@
     "model": "Forte",
     "bodyStyle": "Sedan",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a4ab44cd06f600080e4953/14-2024-kia-forte-front-view.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/65a4ab3de6ee9d0008b6d247/15-2024-kia-forte-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/65a4ab3de6ee9d0008b6d247/15-2024-kia-forte-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4ab4338ca5d0008f620bd/13-2024-kia-forte-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4ab3d9677b70008821b36/12-2024-kia-forte-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4ab43e1460f0008f5bf70/8-2024-kia-forte-interior.jpg"
+    ],
     "priceRange": "$19,890 - $26,490",
     "priceMin": 19890,
     "priceMax": 26490,
@@ -279,7 +285,13 @@
     "model": "Jetta",
     "bodyStyle": "Sedan",
     "imageSource": "2024 Volkswagen Jetta",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a479ef39c2000008a7fe80/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-16.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a479effc8dbb0008e5ccc7/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-12.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a479f6217f17000803d86d/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-5.jpg"
+    ],
     "priceRange": "$21,995 - $30,995",
     "priceMin": 21995,
     "priceMax": 30995,
@@ -658,7 +670,13 @@
     "model": "Corolla",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Toyota Corolla",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png",
+      "https://hips.hearstapps.com/mtg-prod/665f02a283395a00088cb6ba/2025toyotacorollafx4.png",
+      "https://hips.hearstapps.com/mtg-prod/665f02a483395a00088cb6bc/2025toyotacorollafx3.png",
+      "https://hips.hearstapps.com/mtg-prod/665635fd1f37bc00080a6c5a/19-2025-toyota-corolla-interior.jpg"
+    ],
     "priceRange": "$22,950 - $28,450",
     "priceMin": 22950,
     "priceMax": 28450,
@@ -946,7 +964,13 @@
     "model": "Elantra",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Hyundai Elantra",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/66ac0d180f315b0008c0573d/5-2025-hyundai-elantra-hybrid-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66ac0d6076c812000808fd0a/21-2025-hyundai-elantra-hybrid-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66ac0d2576c812000808fd05/8-2025-hyundai-elantra-hybrid-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66ac0d490f315b0008c05742/17-2025-hyundai-elantra-hybrid-interior.jpg"
+    ],
     "priceRange": "$20,950 - $28,450",
     "priceMin": 20950,
     "priceMax": 28450,
@@ -973,7 +997,13 @@
     "model": "Impreza",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Subaru Impreza",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/6753609a02b410000856677a/1-2025-subaru-impreza-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/6753609a02b410000856677a/1-2025-subaru-impreza-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/675360a81fc5040008fe8ec5/2-2025-subaru-impreza-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/675360ac59b2140008beef8c/3-2025-subaru-impreza-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/675360b259b2140008beef8e/5-2025-subaru-impreza-front-view.jpg"
+    ],
     "priceRange": "$22,995 - $28,195",
     "priceMin": 22995,
     "priceMax": 28195,
@@ -1000,7 +1030,13 @@
     "model": "Jetta",
     "bodyStyle": "Sedan",
     "imageSource": "2025 Volkswagen Jetta",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/68018764fefe760008830ec8/001-2025-volkswagen-jetta-sel.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/68018764fefe760008830ec8/001-2025-volkswagen-jetta-sel.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6801876638b8ca0008cfb9c8/004-2025-volkswagen-jetta-sel.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6801876ffefe760008830ecb/008-2025-volkswagen-jetta-sel.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6801878cf773260008edb1fb/021-2025-volkswagen-jetta-sel.jpg"
+    ],
     "priceRange": "$20,655 - $30,995",
     "priceMin": 20655,
     "priceMax": 30995,
