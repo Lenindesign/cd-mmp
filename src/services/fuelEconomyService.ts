@@ -391,7 +391,7 @@ export function getFuelCategory(fuelType: string): FuelCategory {
 /**
  * Check if a vehicle model name indicates it's a hybrid
  */
-function isHybridModel(model: string): boolean {
+export function isHybridModel(model: string): boolean {
   const lower = model.toLowerCase();
   return lower.includes('hybrid') || lower.includes('prime');
 }

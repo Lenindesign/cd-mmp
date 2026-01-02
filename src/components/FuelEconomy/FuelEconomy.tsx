@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Fuel, Leaf, DollarSign, Gauge, Info, ExternalLink, ChevronDown, ChevronUp, Trophy, MapPin } from 'lucide-react';
+import { Fuel, Leaf, DollarSign, Gauge, Info, ExternalLink, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import {
   searchVehicle,
   getVehicleVariants,

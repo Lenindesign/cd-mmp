@@ -62,7 +62,7 @@ const MPGRankingsModal = ({
   vehicles,
   vehiclesByFuelType,
   availableCategories = ['gas'],
-  currentRank,
+  currentRank: _currentRank,
   currentMake,
   currentModel,
   currentMPG,

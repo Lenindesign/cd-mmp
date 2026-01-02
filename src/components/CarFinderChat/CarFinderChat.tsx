@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { vehicleDatabase } from '../../data/vehicles';
 import type { Vehicle } from '../../types/vehicle';
-import { Button } from '../Button';
 import './CarFinderChat.css';
 
 interface CarFinderChatProps {
@@ -206,7 +205,7 @@ const searchVehicles = (context: ConversationContext): Vehicle[] => {
 const generateResponse = (
   context: ConversationContext, 
   vehicles: Vehicle[],
-  userMessage: string
+  _userMessage: string
 ): string => {
   if (vehicles.length === 0) {
     return "I couldn't find any vehicles matching your criteria. Could you try adjusting your budget or preferences? I'm here to help you find the perfect car!";

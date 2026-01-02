@@ -7,7 +7,7 @@ const WhatsMyCarWorthPage = () => {
     year: string;
     make: string;
     model: string;
-    mileage: string;
+    mileage: number;
     condition: string;
   }) => {
     console.log('Trade-in estimate requested:', data);
