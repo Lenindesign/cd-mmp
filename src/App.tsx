@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { AuthProvider } from './contexts/AuthContext';
+import { CarFinderChat } from './components/CarFinderChat';
 import './App.css';
 
 // Lazy load pages for code splitting
@@ -48,6 +49,9 @@ const NewsPage = lazy(() => import('./pages/NewsPage/NewsPage'));
 // Listicle pages - lazy loaded
 const ListiclePage = lazy(() => import('./pages/ListiclePage/ListiclePage'));
 
+// What's My Car Worth page - lazy loaded
+const WhatsMyCarWorthPage = lazy(() => import('./pages/WhatsMyCarWorthPage/WhatsMyCarWorthPage'));
+
 // Loading fallback component
 const PageLoader = () => (
   <div className="page-loader">
@@ -87,11 +91,12 @@ function App() {
             <Route path="/onboarding/welcome" element={<OnboardingWelcome />} />
             <Route path="/onboarding/results" element={<OnboardingResults />} />
             
-            {/* Home Page - Browse New Vehicles */}
-            <Route path="/" element={<VehiclesListPage />} />
+            {/* Home Page - News + Stories */}
+            <Route path="/" element={<NewsPage />} />
             
-            {/* Also keep /vehicles route for backwards compatibility */}
+            {/* Browse Vehicles */}
             <Route path="/vehicles" element={<VehiclesListPage />} />
+            <Route path="/browse" element={<VehiclesListPage />} />
             
             {/* Used Cars - Redirect to VehiclesListPage with type=used */}
             <Route path="/used-cars" element={<Navigate to="/?type=used" replace />} />
@@ -119,6 +124,10 @@ function App() {
             <Route path="/news/:slug" element={<ArticlePage />} />
             <Route path="/article/:slug" element={<ArticlePage />} />
             <Route path="/listicle/:slug" element={<ListiclePage />} />
+            
+            {/* What's My Car Worth */}
+            <Route path="/whats-my-car-worth" element={<WhatsMyCarWorthPage />} />
+            <Route path="/trade-in-value" element={<WhatsMyCarWorthPage />} />
             
             {/* Individual Vehicle Pages - Dynamic routes based on slug */}
             <Route path="/:year/:make/:model" element={<VehiclePage />} />
@@ -159,6 +168,18 @@ function App() {
         </main>
         
         {!isOnboardingPage && <Footer />}
+        
+        {/* AI Car Finder Chat - Floating Widget (visible on all non-onboarding pages) */}
+        {!isOnboardingPage && (
+          <CarFinderChat 
+            floating
+            position="bottom-right"
+            onVehicleSelect={(vehicle) => {
+              // Navigate to vehicle page when user selects a vehicle
+              window.location.href = `/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase().replace(/\s+/g, '-')}`;
+            }}
+          />
+        )}
       </div>
     </AuthProvider>
   );

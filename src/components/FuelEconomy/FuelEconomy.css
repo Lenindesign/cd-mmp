@@ -4,8 +4,8 @@
 .fuel-economy {
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-6);
-  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-8) var(--spacing-10);
+  box-shadow: var(--shadow-md);
 }
 
 /* Header */
@@ -14,23 +14,19 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-6);
-  padding-bottom: var(--spacing-4);
-  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .fuel-economy__title {
   font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-900);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
+  font-size: var(--font-size-36);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  letter-spacing: 0.5px;
   margin: 0;
 }
 
 .fuel-economy__title svg {
-  color: var(--color-blue-cobalt);
+  display: none;
 }
 
 .fuel-economy__source {
@@ -39,7 +35,12 @@
   gap: var(--spacing-1);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-400);
+  text-decoration: none;
+}
+
+.fuel-economy__source:hover {
+  color: var(--color-gray-600);
 }
 
 /* Loading State */
@@ -106,37 +107,63 @@
   text-decoration: underline;
 }
 
-/* Main MPG Display */
-.fuel-economy__main {
-  margin-bottom: var(--spacing-6);
-}
-
-.fuel-economy__mpg-hero {
+/* Combined MPG & Cost Section */
+.fuel-economy__main-combined {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--spacing-8);
-  margin-bottom: var(--spacing-4);
-  padding: var(--spacing-8);
+  padding: var(--spacing-6);
   background: var(--color-gray-50);
   border-radius: var(--border-radius-lg);
+  margin-bottom: var(--spacing-4);
+}
+
+.fuel-economy__mpg-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-6);
+}
+
+.fuel-economy__mpg-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.fuel-economy__section-divider {
+  width: 1px;
+  background: var(--color-gray-300);
+  align-self: stretch;
+  min-height: 140px;
+}
+
+.fuel-economy__cost-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  min-width: 0;
 }
 
 .fuel-economy__mpg-combined {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-self: end;
   background: linear-gradient(135deg, var(--color-blue-cobalt) 0%, var(--color-blue-dark) 100%);
   color: var(--color-white);
-  padding: var(--spacing-8) var(--spacing-12);
+  padding: var(--spacing-6) var(--spacing-8);
   border-radius: var(--border-radius-lg);
-  min-width: 200px;
+  min-width: 160px;
 }
 
 .fuel-economy__mpg-value {
   font-family: var(--font-heading);
-  font-size: 80px;
+  font-size: 54px;
   font-weight: var(--font-weight-bold);
   line-height: 1;
 }
@@ -161,58 +188,49 @@
 
 .fuel-economy__mpg-breakdown {
   display: flex;
-  align-items: center;
-  justify-self: start;
-  gap: var(--spacing-8);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--spacing-3);
 }
 
 .fuel-economy__mpg-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  min-width: 100px;
+  gap: var(--spacing-2);
+  min-width: 80px;
 }
 
 .fuel-economy__mpg-item-value {
   font-family: var(--font-heading);
-  font-size: 56px;
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-gray-900);
   line-height: 1;
+  min-width: 32px;
 }
 
 .fuel-economy__mpg-item-label {
   font-family: var(--font-body);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-xs);
   color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: var(--spacing-2);
 }
 
 .fuel-economy__mpg-divider {
-  width: 1px;
-  height: 70px;
-  background: var(--color-gray-300);
+  display: none;
 }
 
-/* Comparison */
-.fuel-economy__comparison {
-  margin-top: var(--spacing-3);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--spacing-3);
-}
-
+/* Comparison Badge */
 .fuel-economy__vs-segment {
   display: inline-block;
   font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  padding: var(--spacing-2) var(--spacing-4);
+  padding: var(--spacing-1-5) var(--spacing-3);
   border-radius: var(--border-radius-full);
+  white-space: nowrap;
 }
 
 .fuel-economy__vs-segment--positive {
@@ -249,6 +267,214 @@
 
 .fuel-economy__rankings-link svg {
   color: currentColor;
+}
+
+/* Cost to Drive Section (Compact - in combined row) */
+.fuel-economy__cost-to-drive-header {
+  margin-bottom: var(--spacing-4);
+  text-align: center;
+}
+
+.fuel-economy__cost-to-drive-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.fuel-economy__cost-to-drive-title svg {
+  color: var(--color-gray-400);
+  cursor: help;
+}
+
+/* Info Tooltip */
+.fuel-economy__info-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.fuel-economy__info-tooltip::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 280px;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-gray-900);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 100;
+  pointer-events: none;
+  white-space: normal;
+  text-align: left;
+}
+
+.fuel-economy__info-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-gray-900);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 100;
+}
+
+.fuel-economy__info-tooltip:hover::after,
+.fuel-economy__info-tooltip:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Remove native title tooltip when custom tooltip is shown */
+.fuel-economy__info-tooltip:hover {
+  /* The title attribute will still work as fallback */
+}
+
+.fuel-economy__cost-to-drive-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0;
+}
+
+.fuel-economy__cost-to-drive-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+}
+
+.fuel-economy__cost-to-drive-vehicle,
+.fuel-economy__cost-to-drive-average {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-width: 100px;
+}
+
+.fuel-economy__cost-to-drive-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fuel-economy__cost-to-drive-icon--vehicle {
+  background: var(--color-blue-light);
+  color: var(--color-blue-cobalt);
+}
+
+.fuel-economy__cost-to-drive-icon--average {
+  background: var(--color-gray-200);
+  color: var(--color-gray-600);
+}
+
+.fuel-economy__cost-to-drive-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.fuel-economy__cost-to-drive-value {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+}
+
+.fuel-economy__cost-to-drive-value--muted {
+  color: var(--color-gray-600);
+}
+
+.fuel-economy__cost-to-drive-period {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.fuel-economy__cost-to-drive-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.fuel-economy__cost-to-drive-vs {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+  padding: 0 var(--spacing-4);
+  position: relative;
+}
+
+.fuel-economy__cost-to-drive-vs::before,
+.fuel-economy__cost-to-drive-vs::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 60px;
+  background: var(--color-gray-300);
+  transform: translateY(-50%);
+}
+
+.fuel-economy__cost-to-drive-vs::before {
+  left: 0;
+}
+
+.fuel-economy__cost-to-drive-vs::after {
+  right: 0;
+}
+
+.fuel-economy__cost-to-drive-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background: transparent;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-blue-cobalt);
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--transition-fast);
+  visibility: visible;
+}
+
+.fuel-economy__cost-to-drive-cta:hover {
+  color: var(--color-blue-dark);
+}
+
+.fuel-economy__cost-to-drive-cta svg {
+  transition: transform var(--transition-fast);
+}
+
+.fuel-economy__cost-to-drive-cta:hover svg {
+  transform: translateX(4px) rotate(-90deg) !important;
 }
 
 /* Scores Grid */
@@ -411,19 +637,20 @@
   gap: var(--spacing-2);
   margin-top: var(--spacing-3);
   padding: var(--spacing-2) var(--spacing-4);
-  background: var(--color-success);
-  border: none;
+  background: transparent;
+  border: 2px solid var(--color-success);
   border-radius: var(--border-radius-md);
   font-family: var(--font-heading);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-white);
+  color: var(--color-success);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .fuel-economy__gas-stations-btn:hover {
-  background: var(--color-success-dark);
+  background: var(--color-success);
+  color: var(--color-white);
   transform: translateY(-1px);
 }
 
@@ -608,20 +835,68 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .fuel-economy__mpg-hero {
-    grid-template-columns: 1fr;
-    justify-items: center;
+@media (max-width: 1200px) {
+  .fuel-economy__main-combined {
     gap: var(--spacing-6);
-    padding: var(--spacing-6);
+    padding: var(--spacing-5);
+  }
+}
+
+@media (max-width: 900px) {
+  .fuel-economy__main-combined {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-5);
+    padding: var(--spacing-5);
   }
 
-  .fuel-economy__mpg-combined {
-    justify-self: center;
+  .fuel-economy__mpg-section {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-6);
+  }
+
+  .fuel-economy__mpg-right {
+    align-items: center;
   }
 
   .fuel-economy__mpg-breakdown {
-    justify-self: center;
+    flex-direction: row;
+    gap: var(--spacing-4);
+  }
+
+  .fuel-economy__section-divider {
+    width: 100%;
+    height: 1px;
+    min-height: auto;
+  }
+
+  .fuel-economy__cost-section {
+    padding: var(--spacing-2) 0 0 0;
+  }
+
+  .fuel-economy__cost-to-drive-comparison {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .fuel-economy__mpg-section {
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .fuel-economy__mpg-right {
+    align-items: center;
+  }
+
+  .fuel-economy__mpg-breakdown {
+    flex-direction: row;
+    gap: var(--spacing-4);
+  }
+
+  .fuel-economy__mpg-item {
+    flex-direction: column;
+    gap: var(--spacing-1);
   }
 }
 
@@ -630,29 +905,22 @@
     padding: var(--spacing-4);
   }
 
-  .fuel-economy__mpg-hero {
-    padding: var(--spacing-5);
+  .fuel-economy__main-combined {
+    padding: var(--spacing-4);
   }
 
   .fuel-economy__mpg-combined {
-    padding: var(--spacing-5) var(--spacing-8);
-    min-width: 160px;
+    padding: var(--spacing-5) var(--spacing-6);
+    min-width: 140px;
   }
 
   .fuel-economy__mpg-value {
-    font-size: 56px;
-  }
-
-  .fuel-economy__mpg-breakdown {
-    gap: var(--spacing-6);
+    font-size: 42px;
   }
 
   .fuel-economy__mpg-item-value {
-    font-size: 40px;
-  }
-
-  .fuel-economy__mpg-divider {
-    height: 50px;
+    font-size: var(--font-size-xl);
+    min-width: auto;
   }
 
   .fuel-economy__comparison {
@@ -663,6 +931,48 @@
 
   .fuel-economy__rankings-link {
     justify-content: center;
+  }
+
+  .fuel-economy__cost-to-drive-comparison {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .fuel-economy__cost-to-drive-vs {
+    padding: var(--spacing-2) 0;
+  }
+
+  .fuel-economy__cost-to-drive-vs::before,
+  .fuel-economy__cost-to-drive-vs::after {
+    display: none;
+  }
+
+  .fuel-economy__cost-to-drive-vehicle,
+  .fuel-economy__cost-to-drive-average {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--spacing-3);
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    min-width: auto;
+  }
+
+  .fuel-economy__cost-to-drive-icon {
+    order: 1;
+    width: 36px;
+    height: 36px;
+  }
+
+  .fuel-economy__cost-to-drive-amount {
+    order: 2;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .fuel-economy__cost-to-drive-label {
+    order: 3;
+    text-align: right;
   }
 }
 

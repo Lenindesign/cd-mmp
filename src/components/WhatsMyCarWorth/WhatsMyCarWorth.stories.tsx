@@ -14,12 +14,20 @@ const meta: Meta<typeof WhatsMyCarWorth> = {
 A trade-in value estimator component that allows users to get an instant estimate of their vehicle's worth.
 
 ## Features
+- **Two Input Methods**: Select vehicle manually OR scan VIN
 - Year, Make, Model selection from vehicle database
+- **VIN Scanner**: Camera, photo upload, or manual VIN entry
 - Mileage input with formatting
 - Condition selector with descriptions
 - Instant value estimate with range (low/mid/high)
 - Market trend indicator
 - Trust badges for credibility
+
+## VIN Scanner Features
+- 📷 **Camera Mode** - Point at VIN barcode or plate
+- 📤 **Photo Upload** - Upload an existing image
+- ⌨️ **Manual Entry** - Type the 17-character VIN
+- 🚗 **Auto-decode** - Automatically fills vehicle details
 
 ## Usage
 \`\`\`tsx
@@ -31,7 +39,9 @@ import WhatsMyCarWorth from '@/components/WhatsMyCarWorth';
 \`\`\`
 
 ## Integration
-This component is powered by Black Book data (mock) and can be integrated with actual valuation APIs.
+- Trade-in values powered by Black Book data (mock)
+- VIN decoding via NHTSA vPIC API (mock)
+- Image OCR via Google Cloud Vision API (mock)
         `,
       },
     },
@@ -111,4 +121,28 @@ export const PrefilledBMW3Series: Story = {
   },
 };
 
+/**
+ * The component now features two tabs:
+ * 1. **Select Vehicle** - Traditional dropdown selection
+ * 2. **Scan VIN** - Camera/upload/manual VIN entry
+ * 
+ * Click the "Scan VIN" tab to see the VIN scanner functionality.
+ */
+export const WithVINScanner: Story = {
+  args: {},
+  parameters: {
+    docs: {
+      description: {
+        story: `
+This story showcases the new VIN Scanner tab. Click "Scan VIN" to see:
+- Camera scanning option
+- Photo upload option  
+- Manual VIN entry option
+
+The VIN scanner uses Google Cloud Vision API (mocked) for OCR and NHTSA vPIC API (mocked) for vehicle decoding.
+        `,
+      },
+    },
+  },
+};
 

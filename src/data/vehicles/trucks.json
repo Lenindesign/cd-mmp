@@ -68,7 +68,13 @@
     "model": "1500",
     "bodyStyle": "Truck",
     "imageSource": "2024 Ram 1500",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff4/8-2024-ram-1500-limited-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff4/8-2024-ram-1500-limited-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff3/3-2024-ram-1500-laramie-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff5/9-2024-ram-1500-limited-rear-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a470e6819c700008a4c3a1/7-2024-ram-1500-limited-interior.jpg"
+    ],
     "priceRange": "$38,970 - $73,340",
     "priceMin": 38970,
     "priceMax": 73340,

@@ -14,6 +14,7 @@ import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
 import ForSaleNearYou from '../../components/ForSaleNearYou';
 import ExitIntentModal from '../../components/ExitIntentModal';
+import { CarFinderChat } from '../../components/CarFinderChat';
 import { suvs } from '../../services/vehicleService';
 
 // Get the 2025 Chevrolet Trax from database
@@ -189,6 +190,16 @@ const HomePage = () => {
         vehicleName="2025 Chevrolet Trax" 
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+      />
+      
+      {/* AI Car Finder Chat - Floating Widget */}
+      <CarFinderChat 
+        floating
+        position="bottom-right"
+        onVehicleSelect={(vehicle) => {
+          // Navigate to vehicle page when user selects a vehicle
+          window.location.href = `/vehicles/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase().replace(/\s+/g, '-')}`;
+        }}
       />
     </>
   );

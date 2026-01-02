@@ -1,5 +1,22 @@
-import { useState, useMemo } from 'react';
-import { ChevronDown, ArrowRight, TrendingUp, TrendingDown, Minus, Info, CheckCircle } from 'lucide-react';
+import { useState, useMemo, useRef, useCallback } from 'react';
+import { 
+  ChevronDown, 
+  ArrowRight, 
+  TrendingUp, 
+  TrendingDown, 
+  Minus, 
+  Info, 
+  CheckCircle,
+  Car,
+  Scan,
+  Camera,
+  Upload,
+  Keyboard,
+  X,
+  Loader2,
+  AlertCircle,
+  RotateCcw
+} from 'lucide-react';
 import { vehicleDatabase } from '../../data/vehicles';
 import { Button } from '../Button';
 import './WhatsMyCarWorth.css';
@@ -25,12 +42,81 @@ const conditions = [
   { value: 'poor', label: 'Poor', description: 'Significant wear or damage' },
 ];
 
+type InputMethod = 'select' | 'vin';
+type VinScanMode = 'idle' | 'camera' | 'uploading' | 'processing' | 'success' | 'error';
+
+interface VinDecodedData {
+  vin: string;
+  year: string;
+  make: string;
+  model: string;
+  trim?: string;
+  engine?: string;
+}
+
+// Mock VIN decoder (in production, this would call NHTSA API)
+const decodeVin = async (vin: string): Promise<VinDecodedData | null> => {
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  
+  const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/i;
+  if (!vinRegex.test(vin)) return null;
+  
+  const mockDecodings: Record<string, Partial<VinDecodedData>> = {
+    '1': { make: 'Chevrolet' },
+    '2': { make: 'Ford' },
+    '3': { make: 'Chrysler' },
+    '4': { make: 'Buick' },
+    '5': { make: 'Honda' },
+    'J': { make: 'Toyota' },
+    'W': { make: 'BMW' },
+  };
+  
+  const firstChar = vin.charAt(0).toUpperCase();
+  const baseData = mockDecodings[firstChar] || { make: 'Unknown' };
+  const matchingVehicle = vehicleDatabase.find(v => 
+    v.make.toLowerCase() === baseData.make?.toLowerCase()
+  );
+  
+  // Extract year from VIN position 10 (simplified)
+  const yearCodes: Record<string, string> = {
+    'R': '2024', 'S': '2025', 'T': '2026', 'N': '2022', 'M': '2021', 'L': '2020',
+    'K': '2019', 'J': '2018', 'H': '2017', 'G': '2016', 'F': '2015'
+  };
+  const yearChar = vin.charAt(9).toUpperCase();
+  const decodedYear = yearCodes[yearChar] || '2024';
+  
+  return {
+    vin: vin.toUpperCase(),
+    year: decodedYear,
+    make: baseData.make || 'Unknown',
+    model: matchingVehicle?.model || 'Model',
+    trim: matchingVehicle?.trim || 'Base',
+    engine: '2.0L 4-Cylinder',
+  };
+};
+
+// Simulate OCR extraction from image
+const extractVinFromImage = async (): Promise<string | null> => {
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  const sampleVins = [
+    '1HGBH41JXMN109186',
+    '5YJSA1E26MF123456',
+    'WVWZZZ3CZWE123456',
+    '1G1YY22G965109876',
+  ];
+  return sampleVins[Math.floor(Math.random() * sampleVins.length)];
+};
+
 const WhatsMyCarWorth = ({
   defaultYear = '',
   defaultMake = '',
   defaultModel = '',
   onGetEstimate,
 }: WhatsMyCarWorthProps) => {
+  // Input method tab
+  const [inputMethod, setInputMethod] = useState<InputMethod>('select');
+  
+  // Manual selection states
   const [year, setYear] = useState(defaultYear);
   const [make, setMake] = useState(defaultMake);
   const [model, setModel] = useState(defaultModel);
@@ -43,6 +129,18 @@ const WhatsMyCarWorth = ({
   const [makeOpen, setMakeOpen] = useState(false);
   const [modelOpen, setModelOpen] = useState(false);
   const [conditionOpen, setConditionOpen] = useState(false);
+  
+  // VIN Scanner states
+  const [vinScanMode, setVinScanMode] = useState<VinScanMode>('idle');
+  const [manualVin, setManualVin] = useState('');
+  const [showManualVinInput, setShowManualVinInput] = useState(false);
+  const [vinError, setVinError] = useState<string | null>(null);
+  const [decodedVin, setDecodedVin] = useState<VinDecodedData | null>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get unique makes from database
   const makes = useMemo(() => {
@@ -139,6 +237,136 @@ const WhatsMyCarWorth = ({
 
   const isFormComplete = year && make && model && mileage;
 
+  // VIN Scanner functions
+  const startCamera = useCallback(async () => {
+    try {
+      setVinScanMode('camera');
+      setVinError(null);
+      
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+      });
+      
+      setCameraStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch {
+      setVinError('Unable to access camera. Please check permissions or upload an image.');
+      setVinScanMode('idle');
+    }
+  }, []);
+
+  const stopCamera = useCallback(() => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
+    setVinScanMode('idle');
+  }, [cameraStream]);
+
+  const processImage = async () => {
+    setVinScanMode('processing');
+    
+    try {
+      const extractedVin = await extractVinFromImage();
+      
+      if (!extractedVin) {
+        setVinError('Could not detect a VIN. Please try again or enter manually.');
+        setVinScanMode('error');
+        return;
+      }
+      
+      const decoded = await decodeVin(extractedVin);
+      
+      if (!decoded) {
+        setVinError('Invalid VIN format. Please try again or enter manually.');
+        setVinScanMode('error');
+        return;
+      }
+      
+      setDecodedVin(decoded);
+      setVinScanMode('success');
+    } catch {
+      setVinError('An error occurred. Please try again.');
+      setVinScanMode('error');
+    }
+  };
+
+  const capturePhoto = useCallback(async () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    
+    stopCamera();
+    await processImage();
+  }, [stopCamera]);
+
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    setVinScanMode('uploading');
+    setVinError(null);
+    
+    // Simulate reading file
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await processImage();
+  }, []);
+
+  const handleManualVinSubmit = async () => {
+    if (!manualVin || manualVin.length !== 17) {
+      setVinError('Please enter a valid 17-character VIN');
+      return;
+    }
+    
+    setVinScanMode('processing');
+    setVinError(null);
+    
+    const decoded = await decodeVin(manualVin);
+    
+    if (!decoded) {
+      setVinError('Invalid VIN. Please check and try again.');
+      setVinScanMode('error');
+      return;
+    }
+    
+    setDecodedVin(decoded);
+    setVinScanMode('success');
+  };
+
+  const useVinData = () => {
+    if (decodedVin) {
+      setYear(decodedVin.year);
+      setMake(decodedVin.make);
+      setModel(decodedVin.model);
+      setInputMethod('select');
+      setVinScanMode('idle');
+      setDecodedVin(null);
+    }
+  };
+
+  const resetVinScanner = () => {
+    setVinScanMode('idle');
+    setDecodedVin(null);
+    setVinError(null);
+    setManualVin('');
+    setShowManualVinInput(false);
+    stopCamera();
+  };
+
+  const formatVinInput = (value: string) => {
+    return value.replace(/[IOQ]/gi, '').replace(/[^A-HJ-NPR-Z0-9]/gi, '').toUpperCase().slice(0, 17);
+  };
+
   return (
     <section className="whats-my-car-worth">
       <div className="whats-my-car-worth__container">
@@ -152,7 +380,28 @@ const WhatsMyCarWorth = ({
           </div>
         </div>
 
-        {/* Form */}
+        {/* Input Method Tabs */}
+        <div className="whats-my-car-worth__tabs">
+          <button
+            type="button"
+            className={`whats-my-car-worth__tab ${inputMethod === 'select' ? 'whats-my-car-worth__tab--active' : ''}`}
+            onClick={() => { setInputMethod('select'); resetVinScanner(); }}
+          >
+            <Car size={18} />
+            <span>Select Vehicle</span>
+          </button>
+          <button
+            type="button"
+            className={`whats-my-car-worth__tab ${inputMethod === 'vin' ? 'whats-my-car-worth__tab--active' : ''}`}
+            onClick={() => setInputMethod('vin')}
+          >
+            <Scan size={18} />
+            <span>Scan VIN</span>
+          </button>
+        </div>
+
+        {/* Form - Select Vehicle Tab */}
+        {inputMethod === 'select' && (
         <div className="whats-my-car-worth__form">
           <div className="whats-my-car-worth__form-row">
             {/* Year */}
@@ -304,6 +553,264 @@ const WhatsMyCarWorth = ({
             GET MY ESTIMATE
           </Button>
         </div>
+        )}
+
+        {/* VIN Scanner Tab */}
+        {inputMethod === 'vin' && (
+          <div className="whats-my-car-worth__vin-scanner">
+            {/* Idle State - Show Options */}
+            {vinScanMode === 'idle' && !showManualVinInput && (
+              <div className="whats-my-car-worth__vin-options">
+                <button 
+                  className="whats-my-car-worth__vin-option"
+                  onClick={startCamera}
+                >
+                  <div className="whats-my-car-worth__vin-option-icon">
+                    <Camera size={28} />
+                  </div>
+                  <div className="whats-my-car-worth__vin-option-text">
+                    <span className="whats-my-car-worth__vin-option-title">Use Camera</span>
+                    <span className="whats-my-car-worth__vin-option-desc">Point at VIN barcode or plate</span>
+                  </div>
+                </button>
+                
+                <button 
+                  className="whats-my-car-worth__vin-option"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <div className="whats-my-car-worth__vin-option-icon">
+                    <Upload size={28} />
+                  </div>
+                  <div className="whats-my-car-worth__vin-option-text">
+                    <span className="whats-my-car-worth__vin-option-title">Upload Photo</span>
+                    <span className="whats-my-car-worth__vin-option-desc">Select an image of your VIN</span>
+                  </div>
+                </button>
+                
+                <button 
+                  className="whats-my-car-worth__vin-option whats-my-car-worth__vin-option--secondary"
+                  onClick={() => setShowManualVinInput(true)}
+                >
+                  <div className="whats-my-car-worth__vin-option-icon whats-my-car-worth__vin-option-icon--secondary">
+                    <Keyboard size={22} />
+                  </div>
+                  <div className="whats-my-car-worth__vin-option-text">
+                    <span className="whats-my-car-worth__vin-option-title">Enter Manually</span>
+                    <span className="whats-my-car-worth__vin-option-desc">Type your 17-character VIN</span>
+                  </div>
+                </button>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileUpload}
+                  className="whats-my-car-worth__file-input"
+                />
+                
+                <div className="whats-my-car-worth__vin-help">
+                  <Info size={16} />
+                  <p>
+                    Find your VIN on the driver's side dashboard (visible through windshield), 
+                    driver's door jamb, or your vehicle registration.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Manual VIN Input */}
+            {showManualVinInput && vinScanMode === 'idle' && (
+              <div className="whats-my-car-worth__vin-manual">
+                <div className="whats-my-car-worth__vin-manual-header">
+                  <h3 className="whats-my-car-worth__vin-manual-title">Enter Your VIN</h3>
+                  <button 
+                    className="whats-my-car-worth__vin-back-btn"
+                    onClick={() => setShowManualVinInput(false)}
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+                
+                <div className="whats-my-car-worth__vin-input-wrapper">
+                  <input
+                    type="text"
+                    className="whats-my-car-worth__vin-input"
+                    placeholder="e.g. 1HGBH41JXMN109186"
+                    value={manualVin}
+                    onChange={(e) => setManualVin(formatVinInput(e.target.value))}
+                    maxLength={17}
+                  />
+                  <span className="whats-my-car-worth__vin-char-count">
+                    {manualVin.length}/17
+                  </span>
+                </div>
+                
+                {vinError && (
+                  <div className="whats-my-car-worth__vin-error">
+                    <AlertCircle size={16} />
+                    <span>{vinError}</span>
+                  </div>
+                )}
+                
+                <Button
+                  variant="primary"
+                  size="large"
+                  fullWidth
+                  onClick={handleManualVinSubmit}
+                  disabled={manualVin.length !== 17}
+                >
+                  DECODE VIN
+                </Button>
+              </div>
+            )}
+
+            {/* Camera View */}
+            {vinScanMode === 'camera' && (
+              <div className="whats-my-car-worth__vin-camera">
+                <video 
+                  ref={videoRef}
+                  className="whats-my-car-worth__vin-video"
+                  playsInline
+                  autoPlay
+                  muted
+                />
+                <canvas ref={canvasRef} className="whats-my-car-worth__vin-canvas" />
+                
+                <div className="whats-my-car-worth__vin-camera-overlay">
+                  <div className="whats-my-car-worth__vin-scan-frame">
+                    <div className="whats-my-car-worth__vin-scan-corner whats-my-car-worth__vin-scan-corner--tl" />
+                    <div className="whats-my-car-worth__vin-scan-corner whats-my-car-worth__vin-scan-corner--tr" />
+                    <div className="whats-my-car-worth__vin-scan-corner whats-my-car-worth__vin-scan-corner--bl" />
+                    <div className="whats-my-car-worth__vin-scan-corner whats-my-car-worth__vin-scan-corner--br" />
+                    <div className="whats-my-car-worth__vin-scan-line" />
+                  </div>
+                  <p className="whats-my-car-worth__vin-camera-hint">
+                    Position the VIN within the frame
+                  </p>
+                </div>
+                
+                <div className="whats-my-car-worth__vin-camera-controls">
+                  <button 
+                    className="whats-my-car-worth__vin-camera-btn whats-my-car-worth__vin-camera-btn--cancel"
+                    onClick={stopCamera}
+                  >
+                    <X size={24} />
+                  </button>
+                  <button 
+                    className="whats-my-car-worth__vin-camera-btn whats-my-car-worth__vin-camera-btn--capture"
+                    onClick={capturePhoto}
+                  >
+                    <div className="whats-my-car-worth__vin-capture-ring" />
+                  </button>
+                  <button 
+                    className="whats-my-car-worth__vin-camera-btn whats-my-car-worth__vin-camera-btn--manual"
+                    onClick={() => { stopCamera(); setShowManualVinInput(true); }}
+                  >
+                    <Keyboard size={24} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Processing State */}
+            {(vinScanMode === 'processing' || vinScanMode === 'uploading') && (
+              <div className="whats-my-car-worth__vin-processing">
+                <div className="whats-my-car-worth__vin-processing-animation">
+                  <Loader2 size={48} className="whats-my-car-worth__vin-spinner" />
+                  <Car size={28} className="whats-my-car-worth__vin-car-icon" />
+                </div>
+                <h3 className="whats-my-car-worth__vin-processing-title">
+                  {vinScanMode === 'uploading' ? 'Uploading Image...' : 'Decoding VIN...'}
+                </h3>
+                <p className="whats-my-car-worth__vin-processing-text">
+                  {vinScanMode === 'uploading' 
+                    ? 'Preparing your image for analysis'
+                    : 'Identifying your vehicle details'
+                  }
+                </p>
+              </div>
+            )}
+
+            {/* Error State */}
+            {vinScanMode === 'error' && (
+              <div className="whats-my-car-worth__vin-error-state">
+                <div className="whats-my-car-worth__vin-error-icon">
+                  <AlertCircle size={48} />
+                </div>
+                <h3 className="whats-my-car-worth__vin-error-title">Unable to Decode</h3>
+                <p className="whats-my-car-worth__vin-error-text">{vinError}</p>
+                <div className="whats-my-car-worth__vin-error-actions">
+                  <Button
+                    variant="primary"
+                    onClick={resetVinScanner}
+                    iconLeft={<RotateCcw size={18} />}
+                  >
+                    TRY AGAIN
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => { resetVinScanner(); setShowManualVinInput(true); }}
+                    iconLeft={<Keyboard size={18} />}
+                  >
+                    ENTER MANUALLY
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Success State */}
+            {vinScanMode === 'success' && decodedVin && (
+              <div className="whats-my-car-worth__vin-success">
+                <div className="whats-my-car-worth__vin-success-header">
+                  <CheckCircle size={24} className="whats-my-car-worth__vin-success-icon" />
+                  <span className="whats-my-car-worth__vin-success-label">Vehicle Identified</span>
+                </div>
+                
+                <div className="whats-my-car-worth__vin-vehicle-card">
+                  <h3 className="whats-my-car-worth__vin-vehicle-title">
+                    {decodedVin.year} {decodedVin.make} {decodedVin.model}
+                  </h3>
+                  {decodedVin.trim && (
+                    <span className="whats-my-car-worth__vin-vehicle-trim">{decodedVin.trim}</span>
+                  )}
+                  
+                  <div className="whats-my-car-worth__vin-vehicle-vin">
+                    <span className="whats-my-car-worth__vin-label">VIN:</span>
+                    <span className="whats-my-car-worth__vin-value">{decodedVin.vin}</span>
+                  </div>
+                  
+                  {decodedVin.engine && (
+                    <div className="whats-my-car-worth__vin-vehicle-spec">
+                      <span className="whats-my-car-worth__vin-spec-label">Engine:</span>
+                      <span className="whats-my-car-worth__vin-spec-value">{decodedVin.engine}</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="whats-my-car-worth__vin-success-actions">
+                  <Button
+                    variant="success"
+                    size="large"
+                    fullWidth
+                    onClick={useVinData}
+                    iconRight={<ArrowRight size={18} />}
+                  >
+                    USE THIS VEHICLE
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="large"
+                    fullWidth
+                    onClick={resetVinScanner}
+                  >
+                    SCAN ANOTHER VIN
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Estimate Results */}
         {showEstimate && estimatedValue && (

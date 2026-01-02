@@ -183,7 +183,15 @@ const vehicleImageMap: Record<string, string> = {
 
   // Sedans/Hatchbacks
   'civic': 'https://d2kde5ohu8qb21.cloudfront.net/files/65dcf5210e091c0008b94fd0/2020-honda-civic-si-coupe-front-three-quarter.jpg',
-  'accord': 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b803565f0008090975/21-2025-honda-accord-front-view.jpg',
+  'accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  'honda accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  '2025 honda accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  '2025 honda accord hybrid': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  '2024 honda accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  '2023 honda accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  '2022 honda accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  '2021 honda accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
+  '2020 honda accord': 'https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg',
   'corolla': 'https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png',
   '2025 toyota corolla': 'https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png',
   'toyota corolla': 'https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png',

@@ -1,0 +1,420 @@
+/* What's My Car Worth Page */
+
+.whats-my-car-worth-page {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+}
+
+/* Hero Section - Rankings Page Style */
+.whats-my-car-worth-page__hero {
+  background: var(--gradient-dark);
+  color: var(--color-white);
+  padding: var(--spacing-12) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating Dollar Sign Icon - Similar to TenBest badge */
+.whats-my-car-worth-page__hero::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(calc(-50% + 410px)) translateY(-50%);
+  width: 450px;
+  height: 500px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231B5F8A;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23E31837;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M100 10 L180 55 L180 145 L100 190 L20 145 L20 55 Z' fill='url(%23grad1)' stroke='%23ffffff' stroke-width='3'/%3E%3Ctext x='100' y='125' font-family='Arial Black, sans-serif' font-size='80' font-weight='900' fill='white' text-anchor='middle'%3E$%3C/text%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 1;
+  pointer-events: none;
+  animation: tradeInLogoFloat 3s ease-in-out infinite;
+}
+
+@keyframes tradeInLogoFloat {
+  0%, 100% {
+    transform: translateX(calc(-50% + 410px)) translateY(-50%);
+  }
+  50% {
+    transform: translateX(calc(-50% + 410px)) translateY(calc(-50% - 12px));
+  }
+}
+
+@media (max-width: 1200px) {
+  .whats-my-car-worth-page__hero::before {
+    transform: translateX(calc(-50% + 350px)) translateY(-50%);
+    animation: tradeInLogoFloatMd 3s ease-in-out infinite;
+  }
+}
+
+@keyframes tradeInLogoFloatMd {
+  0%, 100% {
+    transform: translateX(calc(-50% + 350px)) translateY(-50%);
+  }
+  50% {
+    transform: translateX(calc(-50% + 350px)) translateY(calc(-50% - 12px));
+  }
+}
+
+@media (max-width: 900px) {
+  .whats-my-car-worth-page__hero::before {
+    display: none;
+  }
+}
+
+/* Subtle pattern overlay */
+.whats-my-car-worth-page__hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.whats-my-car-worth-page__hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+}
+
+.whats-my-car-worth-page__hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background: rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-full);
+  margin-bottom: var(--spacing-4);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.whats-my-car-worth-page__hero-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
+.whats-my-car-worth-page__hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.1;
+  margin: 0 0 var(--spacing-4) 0;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+}
+
+.whats-my-car-worth-page__hero-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+  color: var(--color-gray-300);
+  margin: 0 0 var(--spacing-4) 0;
+  max-width: 600px;
+}
+
+/* Hero Stats */
+.whats-my-car-worth-page__hero-stats {
+  display: flex;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-6);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.whats-my-car-worth-page__hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.whats-my-car-worth-page__hero-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-white);
+  line-height: 1;
+}
+
+.whats-my-car-worth-page__hero-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Content Layout */
+.whats-my-car-worth-page__content {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--spacing-8);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-8) var(--spacing-6);
+}
+
+.whats-my-car-worth-page__main {
+  min-width: 0;
+}
+
+/* Sidebar */
+.whats-my-car-worth-page__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.whats-my-car-worth-page__info-card {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.whats-my-car-worth-page__info-card--highlight {
+  background: linear-gradient(135deg, var(--color-blue-cobalt) 0%, var(--color-blue-dark) 100%);
+  color: var(--color-white);
+}
+
+.whats-my-car-worth-page__info-card--highlight .whats-my-car-worth-page__info-title {
+  color: var(--color-white);
+}
+
+.whats-my-car-worth-page__info-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-4) 0;
+}
+
+/* Steps */
+.whats-my-car-worth-page__steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.whats-my-car-worth-page__step {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+.whats-my-car-worth-page__step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-radius: var(--border-radius-full);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.whats-my-car-worth-page__step-content {
+  flex: 1;
+}
+
+.whats-my-car-worth-page__step-content strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin-bottom: 2px;
+}
+
+.whats-my-car-worth-page__step-content p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Benefits */
+.whats-my-car-worth-page__benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.whats-my-car-worth-page__benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: 1.4;
+}
+
+.whats-my-car-worth-page__benefits svg {
+  color: var(--color-success);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Highlight Card */
+.whats-my-car-worth-page__info-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 var(--spacing-4) 0;
+  line-height: 1.5;
+}
+
+.whats-my-car-worth-page__cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  text-decoration: none;
+  transition: gap var(--transition-fast);
+}
+
+.whats-my-car-worth-page__cta-link:hover {
+  gap: var(--spacing-2);
+}
+
+/* FAQ Section */
+.whats-my-car-worth-page__faq {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-12) var(--spacing-6) var(--spacing-16);
+}
+
+.whats-my-car-worth-page__faq-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-black);
+  text-align: center;
+  margin: 0 0 var(--spacing-8) 0;
+  text-transform: uppercase;
+}
+
+.whats-my-car-worth-page__faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-6);
+}
+
+.whats-my-car-worth-page__faq-item {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.whats-my-car-worth-page__faq-item h4 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-3) 0;
+}
+
+.whats-my-car-worth-page__faq-item p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .whats-my-car-worth-page__content {
+    grid-template-columns: 1fr;
+  }
+
+  .whats-my-car-worth-page__sidebar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-4);
+  }
+
+  .whats-my-car-worth-page__info-card--highlight {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .whats-my-car-worth-page__hero {
+    padding: var(--spacing-8) 0;
+  }
+
+  .whats-my-car-worth-page__hero-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .whats-my-car-worth-page__hero-stats {
+    flex-wrap: wrap;
+    gap: var(--spacing-6);
+  }
+
+  .whats-my-car-worth-page__hero-stat-value {
+    font-size: var(--font-size-2xl);
+  }
+
+  .whats-my-car-worth-page__content {
+    padding: var(--spacing-6) var(--spacing-4);
+  }
+
+  .whats-my-car-worth-page__sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .whats-my-car-worth-page__info-card--highlight {
+    grid-column: span 1;
+  }
+
+  .whats-my-car-worth-page__faq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .whats-my-car-worth-page__faq {
+    padding: var(--spacing-8) var(--spacing-4) var(--spacing-12);
+  }
+}
+
+@media (max-width: 480px) {
+  .whats-my-car-worth-page__hero-badge {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-1) var(--spacing-3);
+  }
+
+  .whats-my-car-worth-page__hero-title {
+    font-size: var(--font-size-28);
+  }
+
+  .whats-my-car-worth-page__hero-subtitle {
+    font-size: var(--font-size-base);
+  }
+}
+

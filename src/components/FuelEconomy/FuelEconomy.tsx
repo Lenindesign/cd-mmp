@@ -28,7 +28,12 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
   const [showAllVariants, setShowAllVariants] = useState(false);
   const [showRankingsModal, setShowRankingsModal] = useState(false);
   const [showGasStationsModal, setShowGasStationsModal] = useState(false);
-  const [rankingsData, setRankingsData] = useState<{ vehicles: TopMPGVehicle[]; currentRank: number | null }>({ vehicles: [], currentRank: null });
+  const [rankingsData, setRankingsData] = useState<{ 
+    vehicles: TopMPGVehicle[]; 
+    vehiclesByFuelType?: import('../../services/fuelEconomyService').TopMPGByFuelType;
+    availableCategories?: import('../../services/fuelEconomyService').FuelCategory[];
+    currentRank: number | null 
+  }>({ vehicles: [], currentRank: null });
 
   useEffect(() => {
     const fetchFuelEconomy = async () => {
@@ -146,38 +151,88 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
         </span>
       </div>
 
-      {/* Main MPG Display */}
-      <div className="fuel-economy__main">
-        <div className="fuel-economy__mpg-hero">
+      {/* Combined MPG & Cost to Drive Section */}
+      <div className="fuel-economy__main-combined">
+        {/* MPG Section (Combined + City/Highway stacked) */}
+        <div className="fuel-economy__mpg-section">
           <div className="fuel-economy__mpg-combined">
             <span className="fuel-economy__mpg-value">{fuelData.comb08}</span>
             <span className="fuel-economy__mpg-unit">MPG</span>
             <span className="fuel-economy__mpg-label">Combined</span>
           </div>
-          <div className="fuel-economy__mpg-breakdown">
-            <div className="fuel-economy__mpg-item">
-              <span className="fuel-economy__mpg-item-value">{fuelData.city08}</span>
-              <span className="fuel-economy__mpg-item-label">City</span>
+          <div className="fuel-economy__mpg-right">
+            <div className="fuel-economy__mpg-breakdown">
+              <div className="fuel-economy__mpg-item">
+                <span className="fuel-economy__mpg-item-value">{fuelData.city08}</span>
+                <span className="fuel-economy__mpg-item-label">City</span>
+              </div>
+              <div className="fuel-economy__mpg-item">
+                <span className="fuel-economy__mpg-item-value">{fuelData.highway08}</span>
+                <span className="fuel-economy__mpg-item-label">Highway</span>
+              </div>
             </div>
-            <div className="fuel-economy__mpg-divider" />
-            <div className="fuel-economy__mpg-item">
-              <span className="fuel-economy__mpg-item-value">{fuelData.highway08}</span>
-              <span className="fuel-economy__mpg-item-label">Highway</span>
-            </div>
+            <span className={`fuel-economy__vs-segment ${vsSegment >= 0 ? 'fuel-economy__vs-segment--positive' : 'fuel-economy__vs-segment--negative'}`}>
+              {vsSegment >= 0 ? '+' : ''}{vsSegment} MPG vs {bodyStyle?.toLowerCase() || 'segment'} average
+            </span>
           </div>
         </div>
 
-        {/* Comparison to segment */}
-        <div className="fuel-economy__comparison">
-          <span className={`fuel-economy__vs-segment ${vsSegment >= 0 ? 'fuel-economy__vs-segment--positive' : 'fuel-economy__vs-segment--negative'}`}>
-            {vsSegment >= 0 ? '+' : ''}{vsSegment} MPG vs {bodyStyle?.toLowerCase() || 'segment'} average
-          </span>
+        {/* Divider */}
+        <div className="fuel-economy__section-divider" />
+
+        {/* Cost to Drive */}
+        <div className="fuel-economy__cost-section">
+          <div className="fuel-economy__cost-to-drive-header">
+            <h3 className="fuel-economy__cost-to-drive-title">
+              Cost to Drive
+              <span 
+                className="fuel-economy__info-tooltip"
+                title={`Calculated as: (15,000 miles/year ÷ ${fuelData.comb08} MPG) × $3.50/gallon ÷ 12 months = $${Math.round(fuelData.fuelCost08 / 12)}/mo. Average ${bodyStyle || 'vehicle'} uses ${segmentAverage} MPG for comparison.`}
+              >
+                <Info size={14} />
+              </span>
+            </h3>
+            <p className="fuel-economy__cost-to-drive-subtitle">
+              Monthly estimates based on California costs
+            </p>
+          </div>
+          
+          <div className="fuel-economy__cost-to-drive-comparison">
+            <div className="fuel-economy__cost-to-drive-vehicle">
+              <div className="fuel-economy__cost-to-drive-icon fuel-economy__cost-to-drive-icon--vehicle">
+                <Fuel size={20} />
+              </div>
+              <div className="fuel-economy__cost-to-drive-amount">
+                <span className="fuel-economy__cost-to-drive-value">
+                  ${Math.round(fuelData.fuelCost08 / 12)}
+                </span>
+                <span className="fuel-economy__cost-to-drive-period">/mo</span>
+              </div>
+              <span className="fuel-economy__cost-to-drive-label">{model}</span>
+            </div>
+
+            <div className="fuel-economy__cost-to-drive-vs">vs</div>
+
+            <div className="fuel-economy__cost-to-drive-average">
+              <div className="fuel-economy__cost-to-drive-icon fuel-economy__cost-to-drive-icon--average">
+                <Fuel size={20} />
+              </div>
+              <div className="fuel-economy__cost-to-drive-amount">
+                <span className="fuel-economy__cost-to-drive-value fuel-economy__cost-to-drive-value--muted">
+                  ${Math.round((15000 / segmentAverage) * 3.50 / 12)}
+                </span>
+                <span className="fuel-economy__cost-to-drive-period">/mo</span>
+              </div>
+              <span className="fuel-economy__cost-to-drive-label">Avg. {bodyStyle || 'Vehicle'}</span>
+            </div>
+          </div>
+
           <button 
-            className="fuel-economy__rankings-link"
+            className="fuel-economy__cost-to-drive-cta"
             onClick={handleOpenRankings}
           >
-            <Trophy size={16} />
-            See Best MPG {bodyStyle || 'Vehicles'}
+            See Best MPG {bodyStyle || 'Vehicle'}
+            <ChevronDown size={16} style={{ transform: 'rotate(-90deg)' }} />
           </button>
         </div>
       </div>
@@ -377,6 +432,8 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
         isOpen={showRankingsModal}
         onClose={() => setShowRankingsModal(false)}
         vehicles={rankingsData.vehicles}
+        vehiclesByFuelType={rankingsData.vehiclesByFuelType}
+        availableCategories={rankingsData.availableCategories}
         currentRank={rankingsData.currentRank}
         currentMake={make}
         currentModel={model}

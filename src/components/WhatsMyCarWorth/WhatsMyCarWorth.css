@@ -549,6 +549,615 @@
   color: var(--color-blue-cobalt);
 }
 
+/* ============================================
+   TABS
+   ============================================ */
+
+.whats-my-car-worth__tabs {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+  background: var(--color-gray-100);
+  padding: var(--spacing-1);
+  border-radius: var(--border-radius-md);
+}
+
+.whats-my-car-worth__tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.whats-my-car-worth__tab:hover {
+  color: var(--color-gray-800);
+}
+
+.whats-my-car-worth__tab--active {
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+  box-shadow: var(--shadow-sm);
+}
+
+.whats-my-car-worth__tab svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   VIN SCANNER
+   ============================================ */
+
+.whats-my-car-worth__vin-scanner {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+/* VIN Options */
+.whats-my-car-worth__vin-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-5);
+}
+
+.whats-my-car-worth__vin-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.whats-my-car-worth__vin-option:hover {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.whats-my-car-worth__vin-option--secondary {
+  background: var(--color-gray-50);
+  border-style: dashed;
+}
+
+.whats-my-car-worth__vin-option--secondary:hover {
+  background: var(--color-white);
+}
+
+.whats-my-car-worth__vin-option-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--color-blue-cobalt) 0%, var(--color-blue-dark) 100%);
+  border-radius: var(--border-radius-md);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+
+.whats-my-car-worth__vin-option-icon--secondary {
+  width: 44px;
+  height: 44px;
+  background: var(--color-gray-200);
+  color: var(--color-gray-600);
+}
+
+.whats-my-car-worth__vin-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.whats-my-car-worth__vin-option-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.whats-my-car-worth__vin-option-desc {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.whats-my-car-worth__file-input {
+  display: none;
+}
+
+.whats-my-car-worth__vin-help {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background: var(--color-info-light);
+  border-radius: var(--border-radius-sm);
+  margin-top: var(--spacing-2);
+}
+
+.whats-my-car-worth__vin-help svg {
+  flex-shrink: 0;
+  color: var(--color-blue-cobalt);
+  margin-top: 2px;
+}
+
+.whats-my-car-worth__vin-help p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Manual VIN Input */
+.whats-my-car-worth__vin-manual {
+  padding: var(--spacing-5);
+}
+
+.whats-my-car-worth__vin-manual-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-4);
+}
+
+.whats-my-car-worth__vin-manual-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+.whats-my-car-worth__vin-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: var(--border-radius-full);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.whats-my-car-worth__vin-back-btn:hover {
+  background: var(--color-gray-200);
+  color: var(--color-gray-800);
+}
+
+.whats-my-car-worth__vin-input-wrapper {
+  position: relative;
+  margin-bottom: var(--spacing-4);
+}
+
+.whats-my-car-worth__vin-input {
+  width: 100%;
+  height: 56px;
+  padding: 0 var(--spacing-4);
+  padding-right: 60px;
+  background: var(--color-white);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-black);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all var(--transition-fast);
+}
+
+.whats-my-car-worth__vin-input:focus {
+  outline: none;
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.15);
+}
+
+.whats-my-car-worth__vin-input::placeholder {
+  color: var(--color-gray-400);
+  letter-spacing: 1px;
+  text-transform: none;
+}
+
+.whats-my-car-worth__vin-char-count {
+  position: absolute;
+  right: var(--spacing-4);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+}
+
+.whats-my-car-worth__vin-error {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background: var(--color-error-light);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-error-dark);
+}
+
+/* Camera View */
+.whats-my-car-worth__vin-camera {
+  position: relative;
+  background: var(--color-black);
+  aspect-ratio: 4/3;
+  max-height: 320px;
+}
+
+.whats-my-car-worth__vin-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.whats-my-car-worth__vin-canvas {
+  display: none;
+}
+
+.whats-my-car-worth__vin-camera-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.whats-my-car-worth__vin-scan-frame {
+  position: relative;
+  width: 80%;
+  max-width: 280px;
+  height: 70px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius-md);
+}
+
+.whats-my-car-worth__vin-scan-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--color-white);
+}
+
+.whats-my-car-worth__vin-scan-corner--tl {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+  border-radius: var(--border-radius-sm) 0 0 0;
+}
+
+.whats-my-car-worth__vin-scan-corner--tr {
+  top: -2px;
+  right: -2px;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 var(--border-radius-sm) 0 0;
+}
+
+.whats-my-car-worth__vin-scan-corner--bl {
+  bottom: -2px;
+  left: -2px;
+  border-right: none;
+  border-top: none;
+  border-radius: 0 0 0 var(--border-radius-sm);
+}
+
+.whats-my-car-worth__vin-scan-corner--br {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+  border-radius: 0 0 var(--border-radius-sm) 0;
+}
+
+.whats-my-car-worth__vin-scan-line {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--color-blue-cobalt-light);
+  box-shadow: 0 0 8px var(--color-blue-cobalt-light);
+  animation: vinScanLine 2s ease-in-out infinite;
+}
+
+@keyframes vinScanLine {
+  0%, 100% { top: 10%; }
+  50% { top: 80%; }
+}
+
+.whats-my-car-worth__vin-camera-hint {
+  margin-top: var(--spacing-3);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-white);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.whats-my-car-worth__vin-camera-controls {
+  position: absolute;
+  bottom: var(--spacing-4);
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-6);
+}
+
+.whats-my-car-worth__vin-camera-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border: none;
+  border-radius: var(--border-radius-full);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.whats-my-car-worth__vin-camera-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.whats-my-car-worth__vin-camera-btn--cancel,
+.whats-my-car-worth__vin-camera-btn--manual {
+  width: 44px;
+  height: 44px;
+}
+
+.whats-my-car-worth__vin-camera-btn--capture {
+  width: 64px;
+  height: 64px;
+  background: var(--color-white);
+  border: 4px solid rgba(255, 255, 255, 0.5);
+}
+
+.whats-my-car-worth__vin-camera-btn--capture:hover {
+  background: var(--color-gray-100);
+  transform: scale(1.05);
+}
+
+.whats-my-car-worth__vin-capture-ring {
+  width: 48px;
+  height: 48px;
+  background: var(--color-red);
+  border-radius: var(--border-radius-full);
+  transition: transform var(--transition-fast);
+}
+
+.whats-my-car-worth__vin-camera-btn--capture:hover .whats-my-car-worth__vin-capture-ring {
+  transform: scale(0.9);
+}
+
+/* Processing State */
+.whats-my-car-worth__vin-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-10);
+  text-align: center;
+}
+
+.whats-my-car-worth__vin-processing-animation {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-bottom: var(--spacing-5);
+}
+
+.whats-my-car-worth__vin-spinner {
+  position: absolute;
+  inset: 0;
+  color: var(--color-blue-cobalt);
+  animation: vinSpin 1s linear infinite;
+}
+
+@keyframes vinSpin {
+  to { transform: rotate(360deg); }
+}
+
+.whats-my-car-worth__vin-car-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-blue-cobalt);
+}
+
+.whats-my-car-worth__vin-processing-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.whats-my-car-worth__vin-processing-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+/* Error State */
+.whats-my-car-worth__vin-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-8);
+  text-align: center;
+}
+
+.whats-my-car-worth__vin-error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  background: var(--color-error-light);
+  border-radius: var(--border-radius-full);
+  color: var(--color-error);
+  margin-bottom: var(--spacing-4);
+}
+
+.whats-my-car-worth__vin-error-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.whats-my-car-worth__vin-error-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0 0 var(--spacing-5) 0;
+  max-width: 280px;
+}
+
+.whats-my-car-worth__vin-error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  width: 100%;
+  max-width: 240px;
+}
+
+/* Success State */
+.whats-my-car-worth__vin-success {
+  padding: var(--spacing-5);
+}
+
+.whats-my-car-worth__vin-success-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+}
+
+.whats-my-car-worth__vin-success-icon {
+  color: var(--color-success);
+}
+
+.whats-my-car-worth__vin-success-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.whats-my-car-worth__vin-vehicle-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-5);
+}
+
+.whats-my-car-worth__vin-vehicle-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.whats-my-car-worth__vin-vehicle-trim {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-3);
+}
+
+.whats-my-car-worth__vin-vehicle-vin {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-3);
+}
+
+.whats-my-car-worth__vin-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+}
+
+.whats-my-car-worth__vin-value {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-black);
+  letter-spacing: 1px;
+}
+
+.whats-my-car-worth__vin-vehicle-spec {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.whats-my-car-worth__vin-spec-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.whats-my-car-worth__vin-spec-value {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-800);
+}
+
+.whats-my-car-worth__vin-success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .whats-my-car-worth__header {
@@ -587,6 +1196,24 @@
   .whats-my-car-worth__trust {
     flex-direction: column;
     gap: var(--spacing-3);
+  }
+  
+  .whats-my-car-worth__tabs {
+    flex-direction: column;
+  }
+  
+  .whats-my-car-worth__vin-option {
+    padding: var(--spacing-3);
+  }
+  
+  .whats-my-car-worth__vin-option-icon {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .whats-my-car-worth__vin-camera {
+    aspect-ratio: 3/4;
+    max-height: none;
   }
 }
 

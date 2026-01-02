@@ -57,7 +57,7 @@ const Header = () => {
     { label: 'Shop Used Cars', href: '/used-cars', isRoute: true },
     { label: 'Research Cars', href: '#' },
     { label: 'Expert Reviews', href: '#' },
-    { label: "What's My Car Worth?", href: '#' },
+    { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },
     { label: 'News + Stories', href: '/news' },
   ];
 

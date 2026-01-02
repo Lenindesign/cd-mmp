@@ -105,40 +105,50 @@
 
 .footer__newsletter-form {
   display: flex;
+  align-items: stretch;
+  height: 44px;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
 }
 
 .footer__newsletter-input {
   flex: 1;
-  padding: var(--spacing-3);
-  background: var(--color-gray-800);
-  border: 1px solid var(--color-gray-700);
-  border-right: none;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--spacing-4);
+  background: var(--color-gray-700);
+  border: none;
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: var(--color-white);
   outline: none;
-  transition: border-color var(--transition-fast);
 }
 
 .footer__newsletter-input::placeholder {
-  color: var(--color-gray-500);
+  color: var(--color-gray-400);
 }
 
 .footer__newsletter-input:focus {
-  border-color: var(--color-blue-cobalt);
+  outline: none;
 }
 
 .footer__newsletter-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-3);
+  width: 48px;
+  height: 100%;
   background: var(--color-blue-cobalt);
+  border: none;
+  border-radius: 0px 4px 4px 0px;
   color: var(--color-white);
-  transition: all var(--transition-fast);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .footer__newsletter-btn:hover {
-  background: var(--color-blue-cobalt-dark);
+  background: var(--color-blue-dark);
 }
 
 /* Sections */
