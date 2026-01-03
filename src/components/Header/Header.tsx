@@ -53,10 +53,10 @@ const Header = () => {
 
   const navItems = [
     { label: 'Browse All Vehicles', href: '/vehicles', isRoute: true },
-    { label: 'Shop New Cars', href: '/', isRoute: true },
-    { label: 'Shop Used Cars', href: '/used-cars', isRoute: true },
+    { label: 'Shop New Cars', href: '/vehicles?type=new&sort=rating', isRoute: true },
+    { label: 'Shop Used Cars', href: '/vehicles?type=used&sort=price-low', isRoute: true },
     { label: 'Research Cars', href: '#' },
-    { label: 'Expert Reviews', href: '#' },
+    { label: 'Expert Reviews', href: '/rankings', isRoute: true },
     { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },
     { label: 'News + Stories', href: '/news' },
   ];

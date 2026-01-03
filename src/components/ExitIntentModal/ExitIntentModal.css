@@ -179,7 +179,7 @@
 
 .exit-modal__visual-title span {
   display: block;
-  font-size: var(--font-size-4xl);
+  font-size: 43px;
   color: var(--color-white);
   font-weight: 800;
   -webkit-text-fill-color: unset;

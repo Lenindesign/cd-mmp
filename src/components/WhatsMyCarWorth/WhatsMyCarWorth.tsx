@@ -54,45 +54,74 @@ interface VinDecodedData {
   engine?: string;
 }
 
-// Mock VIN decoder (in production, this would call NHTSA API)
+// NHTSA vPIC API response types
+interface NHTSAResult {
+  Variable: string;
+  Value: string | null;
+  ValueId: string | null;
+}
+
+interface NHTSAResponse {
+  Results: NHTSAResult[];
+}
+
+// Real VIN decoder using NHTSA vPIC API (free, no API key required)
 const decodeVin = async (vin: string): Promise<VinDecodedData | null> => {
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
   const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/i;
   if (!vinRegex.test(vin)) return null;
   
-  const mockDecodings: Record<string, Partial<VinDecodedData>> = {
-    '1': { make: 'Chevrolet' },
-    '2': { make: 'Ford' },
-    '3': { make: 'Chrysler' },
-    '4': { make: 'Buick' },
-    '5': { make: 'Honda' },
-    'J': { make: 'Toyota' },
-    'W': { make: 'BMW' },
-  };
-  
-  const firstChar = vin.charAt(0).toUpperCase();
-  const baseData = mockDecodings[firstChar] || { make: 'Unknown' };
-  const matchingVehicle = vehicleDatabase.find(v => 
-    v.make.toLowerCase() === baseData.make?.toLowerCase()
-  );
-  
-  // Extract year from VIN position 10 (simplified)
-  const yearCodes: Record<string, string> = {
-    'R': '2024', 'S': '2025', 'T': '2026', 'N': '2022', 'M': '2021', 'L': '2020',
-    'K': '2019', 'J': '2018', 'H': '2017', 'G': '2016', 'F': '2015'
-  };
-  const yearChar = vin.charAt(9).toUpperCase();
-  const decodedYear = yearCodes[yearChar] || '2024';
-  
-  return {
-    vin: vin.toUpperCase(),
-    year: decodedYear,
-    make: baseData.make || 'Unknown',
-    model: matchingVehicle?.model || 'Model',
-    trim: matchingVehicle?.trim || 'Base',
-    engine: '2.0L 4-Cylinder',
-  };
+  try {
+    const response = await fetch(
+      `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${vin}?format=json`
+    );
+    
+    if (!response.ok) {
+      throw new Error('NHTSA API request failed');
+    }
+    
+    const data: NHTSAResponse = await response.json();
+    
+    // Extract values from NHTSA response
+    const getValue = (variableName: string): string | null => {
+      const result = data.Results.find(r => r.Variable === variableName);
+      return result?.Value || null;
+    };
+    
+    const year = getValue('Model Year');
+    const make = getValue('Make');
+    const model = getValue('Model');
+    const trim = getValue('Trim') || getValue('Series');
+    const engineDisplacement = getValue('Displacement (L)');
+    const engineCylinders = getValue('Engine Number of Cylinders');
+    const fuelType = getValue('Fuel Type - Primary');
+    
+    // Check if we got valid data (NHTSA returns empty values for invalid VINs)
+    if (!year || !make || !model) {
+      // NHTSA couldn't decode this VIN
+      return null;
+    }
+    
+    // Build engine string
+    let engine = '';
+    if (engineDisplacement && engineCylinders) {
+      engine = `${engineDisplacement}L ${engineCylinders}-Cylinder`;
+      if (fuelType && fuelType !== 'Gasoline') {
+        engine += ` ${fuelType}`;
+      }
+    }
+    
+    return {
+      vin: vin.toUpperCase(),
+      year,
+      make,
+      model,
+      trim: trim || undefined,
+      engine: engine || undefined,
+    };
+  } catch (error) {
+    console.error('VIN decode error:', error);
+    return null;
+  }
 };
 
 // Simulate OCR extraction from image

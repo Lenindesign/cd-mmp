@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Fuel, Leaf, DollarSign, Gauge, Info, ExternalLink, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { Fuel, Leaf, DollarSign, Gauge, Info, ExternalLink, ChevronDown, ChevronUp, MapPin, Zap } from 'lucide-react';
 import {
   searchVehicle,
   getVehicleVariants,
@@ -136,6 +136,14 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
   const fuelCostInfo = formatFuelCost(fuelData.fuelCost08, fuelData.youSaveSpend);
   const segmentAverage = getSegmentAverage();
   const vsSegment = fuelData.comb08 - segmentAverage;
+  
+  // Determine if this is an electric or plug-in hybrid vehicle
+  const isElectric = fuelData.fuelType1?.toLowerCase().includes('electric') || 
+                     fuelData.fuelType?.toLowerCase().includes('electric') ||
+                     fuelData.evMotor !== undefined && fuelData.evMotor !== '';
+  const isPluginHybrid = fuelData.fuelType1?.toLowerCase().includes('plug-in') ||
+                         fuelData.phevComb !== undefined && fuelData.phevComb > 0;
+  const mpgUnit = (isElectric || isPluginHybrid) ? 'MPGe' : 'MPG';
 
   return (
     <section className="fuel-economy">
@@ -157,7 +165,7 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
         <div className="fuel-economy__mpg-section">
           <div className="fuel-economy__mpg-combined">
             <span className="fuel-economy__mpg-value">{fuelData.comb08}</span>
-            <span className="fuel-economy__mpg-unit">MPG</span>
+            <span className="fuel-economy__mpg-unit">{mpgUnit}</span>
             <span className="fuel-economy__mpg-label">Combined</span>
           </div>
           <div className="fuel-economy__mpg-right">
@@ -171,9 +179,12 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
                 <span className="fuel-economy__mpg-item-label">Highway</span>
               </div>
             </div>
-            <span className={`fuel-economy__vs-segment ${vsSegment >= 0 ? 'fuel-economy__vs-segment--positive' : 'fuel-economy__vs-segment--negative'}`}>
-              {vsSegment >= 0 ? '+' : ''}{vsSegment} MPG vs {bodyStyle?.toLowerCase() || 'segment'} average
-            </span>
+            <button 
+              className="fuel-economy__cost-to-drive-cta"
+              onClick={handleOpenRankings}
+            >
+              See Best {mpgUnit} {bodyStyle || 'Vehicle'}
+            </button>
           </div>
         </div>
 
@@ -187,7 +198,9 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
               Cost to Drive
               <span 
                 className="fuel-economy__info-tooltip"
-                title={`Calculated as: (15,000 miles/year ÷ ${fuelData.comb08} MPG) × $3.50/gallon ÷ 12 months = $${Math.round(fuelData.fuelCost08 / 12)}/mo. Average ${bodyStyle || 'vehicle'} uses ${segmentAverage} MPG for comparison.`}
+                title={isElectric 
+                  ? `Based on EPA estimated annual fuel cost of $${fuelData.fuelCost08}. Monthly estimate: $${Math.round(fuelData.fuelCost08 / 12)}/mo.`
+                  : `Calculated as: (15,000 miles/year ÷ ${fuelData.comb08} ${mpgUnit}) × $3.50/gallon ÷ 12 months = $${Math.round(fuelData.fuelCost08 / 12)}/mo. Average ${bodyStyle || 'vehicle'} uses ${segmentAverage} ${mpgUnit} for comparison.`}
               >
                 <Info size={14} />
               </span>
@@ -200,7 +213,7 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
           <div className="fuel-economy__cost-to-drive-comparison">
             <div className="fuel-economy__cost-to-drive-vehicle">
               <div className="fuel-economy__cost-to-drive-icon fuel-economy__cost-to-drive-icon--vehicle">
-                <Fuel size={20} />
+                {isElectric ? <Zap size={20} /> : <Fuel size={20} />}
               </div>
               <div className="fuel-economy__cost-to-drive-amount">
                 <span className="fuel-economy__cost-to-drive-value">
@@ -215,25 +228,21 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
 
             <div className="fuel-economy__cost-to-drive-average">
               <div className="fuel-economy__cost-to-drive-icon fuel-economy__cost-to-drive-icon--average">
-                <Fuel size={20} />
+                {isElectric ? <Zap size={20} /> : <Fuel size={20} />}
               </div>
               <div className="fuel-economy__cost-to-drive-amount">
                 <span className="fuel-economy__cost-to-drive-value fuel-economy__cost-to-drive-value--muted">
                   ${Math.round((15000 / segmentAverage) * 3.50 / 12)}
                 </span>
-                <span className="fuel-economy__cost-to-drive-period">/mo</span>
+                <span className="fuel-economy__cost-to-drive-period fuel-economy__cost-to-drive-period--muted">/mo</span>
               </div>
-              <span className="fuel-economy__cost-to-drive-label">Avg. {bodyStyle || 'Vehicle'}</span>
+              <span className="fuel-economy__cost-to-drive-label fuel-economy__cost-to-drive-label--muted">Avg. {bodyStyle || 'Vehicle'}</span>
             </div>
           </div>
 
-          <button 
-            className="fuel-economy__cost-to-drive-cta"
-            onClick={handleOpenRankings}
-          >
-            See Best MPG {bodyStyle || 'Vehicle'}
-            <ChevronDown size={16} style={{ transform: 'rotate(-90deg)' }} />
-          </button>
+          <span className={`fuel-economy__vs-segment ${vsSegment >= 0 ? 'fuel-economy__vs-segment--positive' : 'fuel-economy__vs-segment--negative'}`}>
+            {vsSegment >= 0 ? '+' : ''}{vsSegment} {mpgUnit} vs {bodyStyle?.toLowerCase() || 'segment'} average
+          </span>
         </div>
       </div>
 
@@ -326,8 +335,8 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
             className="fuel-economy__gas-stations-btn"
             onClick={() => setShowGasStationsModal(true)}
           >
-            <MapPin size={16} />
-            Find Gas Stations Near Me
+            {isElectric ? <Zap size={16} /> : <MapPin size={16} />}
+            {isElectric ? 'Find Charging Stations Near Me' : 'Find Gas Stations Near Me'}
           </button>
         </div>
       </div>
@@ -337,11 +346,18 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
         <h3 className="fuel-economy__details-title">Powertrain Details</h3>
         <div className="fuel-economy__details-grid">
           <div className="fuel-economy__detail-item">
-            <span className="fuel-economy__detail-label">Engine</span>
+            <span className="fuel-economy__detail-label">{isElectric ? 'Motor' : 'Engine'}</span>
             <span className="fuel-economy__detail-value">
-              {fuelData.displ}L {fuelData.cylinders}-cyl
-              {fuelData.tCharger === 'T' && ' Turbo'}
-              {fuelData.sCharger === 'S' && ' Supercharged'}
+              {isElectric 
+                ? (fuelData.evMotor || 'Electric Motor')
+                : (
+                  <>
+                    {fuelData.displ}L {fuelData.cylinders}-cyl
+                    {fuelData.tCharger === 'T' && ' Turbo'}
+                    {fuelData.sCharger === 'S' && ' Supercharged'}
+                  </>
+                )
+              }
             </span>
           </div>
           <div className="fuel-economy__detail-item">
@@ -442,11 +458,12 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
         year={year}
       />
 
-      {/* Gas Stations Modal */}
+      {/* Gas/Charging Stations Modal */}
       <GasStationsModal
         isOpen={showGasStationsModal}
         onClose={() => setShowGasStationsModal(false)}
         vehicleName={`${year} ${make} ${model}`}
+        isElectric={isElectric}
       />
     </section>
   );
