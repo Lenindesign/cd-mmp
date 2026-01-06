@@ -14,6 +14,7 @@ const VehiclePageVariant = lazy(() => import('./pages/VehiclePage/VehiclePageVar
 const VehiclePageVariantB = lazy(() => import('./pages/VehiclePage/VehiclePageVariantB'));
 const VehiclePageVariantC = lazy(() => import('./pages/VehiclePage/VehiclePageVariantC'));
 const VehiclePageVariantD = lazy(() => import('./pages/VehiclePage/VehiclePageVariantD'));
+const VehiclePageConcept = lazy(() => import('./pages/VehiclePage/VehiclePageConcept'));
 const VehiclesListPage = lazy(() => import('./pages/VehiclesListPage/VehiclesListPage'));
 const DesignSystem = lazy(() => import('./pages/DesignSystem/DesignSystem'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
@@ -160,6 +161,9 @@ function App() {
             <Route path="/:year/:make/:model/v3d" element={<VehiclePageVariantD variant="v3d" />} />
             <Route path="/:year/:make/:model/v4d" element={<VehiclePageVariantD variant="v4d" />} />
             <Route path="/:year/:make/:model/v5d" element={<VehiclePageVariantD variant="v5d" />} />
+            
+            {/* Concept - Ultraminimalist Design */}
+            <Route path="/:year/:make/:model/concept" element={<VehiclePageConcept />} />
             
             {/* 404 Not Found - Catch all unmatched routes */}
             <Route path="*" element={<NotFoundPage />} />

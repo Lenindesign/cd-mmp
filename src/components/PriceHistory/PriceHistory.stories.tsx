@@ -160,3 +160,97 @@ export const StableValue: Story = {
     tradeInUrl: '#',
   },
 };
+
+export const WithCompetitorComparison: Story = {
+  args: {
+    vehicleYear: 2025,
+    make: 'Chevrolet',
+    model: 'Trax',
+    trim: 'Base',
+    asNewValue: 20400,
+    previousYearValue: 17340,
+    currentValue: 15912,
+    forecastYear1Value: 14200,
+    forecastYear2Value: 12800,
+    expertTip: 'Vehicle value drops most during first year of ownership. Consider shopping for a 1-3 year old Chevrolet Trax for the best bang for your buck.',
+    shopUrl: '#',
+    tradeInUrl: '#',
+    competitors: [
+      {
+        name: 'Honda HR-V',
+        asNewValue: 24650,
+        previousYearValue: 21500,
+        currentValue: 19800,
+        depreciationPercent: 19.7,
+      },
+      {
+        name: 'Toyota Corolla Cross',
+        asNewValue: 23500,
+        previousYearValue: 21200,
+        currentValue: 19500,
+        depreciationPercent: 17.0,
+      },
+      {
+        name: 'Mazda CX-30',
+        asNewValue: 27400,
+        previousYearValue: 24100,
+        currentValue: 22300,
+        depreciationPercent: 18.6,
+      },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Price history with competitor comparison feature. Toggle "Compare with Top 3 Competitors" to overlay competitor depreciation curves on the chart. Different colored lines help visualize how the vehicle\'s value retention compares to similar models in the market.',
+      },
+    },
+  },
+};
+
+export const CompetitorComparisonLuxury: Story = {
+  args: {
+    vehicleYear: 2023,
+    make: 'BMW',
+    model: 'X5',
+    trim: 'xDrive40i',
+    asNewValue: 72000,
+    previousYearValue: 62000,
+    currentValue: 58000,
+    forecastYear1Value: 52000,
+    forecastYear2Value: 47000,
+    expertTip: 'Luxury SUVs typically depreciate faster than mainstream models. Consider trading in before the 3-year mark for best value retention.',
+    shopUrl: '#',
+    tradeInUrl: '#',
+    competitors: [
+      {
+        name: 'Mercedes-Benz GLE',
+        asNewValue: 75000,
+        previousYearValue: 65500,
+        currentValue: 61000,
+        depreciationPercent: 18.7,
+      },
+      {
+        name: 'Audi Q7',
+        asNewValue: 70000,
+        previousYearValue: 59500,
+        currentValue: 55000,
+        depreciationPercent: 21.4,
+      },
+      {
+        name: 'Lexus RX',
+        asNewValue: 58000,
+        previousYearValue: 53000,
+        currentValue: 50500,
+        depreciationPercent: 12.9,
+      },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Luxury vehicle comparison showing how different premium brands depreciate. The Lexus RX typically holds value better than German competitors.',
+      },
+    },
+  },
+};

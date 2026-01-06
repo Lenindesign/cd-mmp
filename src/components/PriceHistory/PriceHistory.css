@@ -143,7 +143,7 @@
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
-  overflow: hidden;
+  overflow: visible;
   text-align: left;
 }
 
@@ -272,9 +272,141 @@
   background: var(--color-black);
 }
 
+/* Competitor Overlay Toggle */
+.price-history__overlay-toggle {
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.price-history__overlay-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  cursor: pointer;
+  user-select: none;
+}
+
+.price-history__overlay-toggle-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.price-history__overlay-toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--color-gray-300);
+  border-radius: var(--border-radius-full);
+  transition: background-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.price-history__overlay-toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-white);
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.price-history__overlay-toggle-checkbox:checked + .price-history__overlay-toggle-switch {
+  background: var(--color-blue-cobalt);
+}
+
+.price-history__overlay-toggle-checkbox:checked + .price-history__overlay-toggle-switch::after {
+  transform: translateX(20px);
+}
+
+.price-history__overlay-toggle-checkbox:focus + .price-history__overlay-toggle-switch {
+  box-shadow: 0 0 0 2px var(--color-blue-cobalt-light);
+}
+
+.price-history__overlay-toggle-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+}
+
+/* Legend */
+.price-history__overlay-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.price-history__overlay-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.price-history__overlay-legend-line {
+  width: 24px;
+  height: 3px;
+  border-radius: var(--border-radius-full);
+}
+
+.price-history__overlay-legend-name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-600);
+}
+
+.price-history__overlay-legend-item--current .price-history__overlay-legend-name {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+/* Competitor chart points (HTML divs) */
+.price-history__chart-point--competitor {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--color-white);
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  transform: translateY(-50%) scale(0);
+  z-index: 2;
+  opacity: 0;
+  animation: competitorPointAppear 0.3s ease forwards;
+}
+
+@keyframes competitorPointAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+.price-history__line-segment--competitor {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawLine 1.5s ease forwards;
+  opacity: 0.8;
+}
+
 /* Chart */
 .price-history__chart {
-  padding: var(--spacing-6) var(--spacing-4);
+  padding: var(--spacing-8) var(--spacing-4) var(--spacing-6);
+  position: relative;
+  overflow: visible;
 }
 
 .price-history__chart-years {
@@ -308,6 +440,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   overflow: visible;
+  z-index: 1;
 }
 
 /* Hover columns for interaction */
@@ -439,14 +572,14 @@
 /* Forecast Tooltip */
 .price-history__forecast-tooltip {
   position: absolute;
-  transform: translate(-50%, -130%);
+  transform: translate(-50%, -110%);
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-3) var(--spacing-4);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: var(--spacing-2) var(--spacing-3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
-  z-index: 10;
+  z-index: 9999;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -478,6 +611,170 @@
   border-style: solid;
   border-color: var(--color-white) transparent transparent transparent;
   z-index: 1;
+}
+
+.price-history__forecast-tooltip-vehicle {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-1);
+  padding-bottom: var(--spacing-1);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+/* Comparison tooltip (when overlay is on) */
+.price-history__forecast-tooltip--comparison {
+  min-width: 260px;
+  max-width: 300px;
+  z-index: 9999;
+  white-space: normal;
+}
+
+.price-history__tooltip-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-1);
+}
+
+.price-history__tooltip-comparison-row {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  align-items: start;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1-5);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.price-history__tooltip-comparison-row--main {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.price-history__tooltip-comparison-row--active {
+  background: var(--color-gray-100);
+}
+
+.price-history__tooltip-comparison-color {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.price-history__tooltip-comparison-name {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.price-history__tooltip-comparison-row--main .price-history__tooltip-comparison-name {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.price-history__tooltip-comparison-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  line-height: 1.2;
+  text-align: right;
+}
+
+.price-history__tooltip-comparison-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.price-history__tooltip-comparison-diff {
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+}
+
+.price-history__tooltip-comparison-diff--higher {
+  color: var(--color-error-dark);
+}
+
+.price-history__tooltip-comparison-diff--lower {
+  color: var(--color-success);
+}
+
+.price-history__tooltip-comparison-depreciation {
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-500);
+  padding: 1px 4px;
+  border-radius: var(--border-radius-sm);
+  background: var(--color-gray-100);
+}
+
+/* Color-coded depreciation scale */
+.price-history__tooltip-comparison-depreciation--excellent {
+  color: var(--color-success);
+  background: rgba(39, 135, 13, 0.12);
+}
+
+.price-history__tooltip-comparison-depreciation--good {
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.price-history__tooltip-comparison-depreciation--moderate {
+  color: #ca8a04;
+  background: rgba(202, 138, 4, 0.12);
+}
+
+.price-history__tooltip-comparison-depreciation--poor {
+  color: var(--color-error-dark);
+  background: rgba(220, 38, 38, 0.12);
+}
+
+/* Dollars lost display */
+.price-history__tooltip-comparison-dollars-lost {
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-600);
+}
+
+/* Monthly depreciation cost */
+.price-history__tooltip-comparison-monthly {
+  font-size: 9px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-400);
+}
+
+/* Best Value badge */
+.price-history__tooltip-best-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--spacing-1);
+  padding: 1px 5px;
+  background: var(--color-success);
+  color: var(--color-white);
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-radius: var(--border-radius-sm);
+  white-space: nowrap;
 }
 
 .price-history__forecast-tooltip-label {

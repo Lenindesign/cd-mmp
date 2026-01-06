@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Check, Info, ChevronRight, ChevronLeft, GitCompare } from 'lucide-react';
+import { Check, ChevronRight, ChevronLeft, Plus, MapPin } from 'lucide-react';
 import TrimComparisonModal, { type ComparisonTrim } from './TrimComparisonModal';
 import type { TrimData } from '../../services/trimService';
 import './TrimSelector.css';
@@ -9,17 +9,18 @@ interface TrimSelectorProps {
   title?: string;
   subtitle?: string;
   vehicleName?: string;
+  zipCode?: string;
+  maxSelections?: number;
 }
 
 const TrimSelector = ({ 
   trims, 
-  title = "Pricing and Which One to Buy", 
-  subtitle,
-  vehicleName 
+  title = "Compare Trims", 
+  subtitle = "Select up to 5 trims to compare features, specs, prices, and performance.",
+  vehicleName,
+  zipCode = "10940",
+  maxSelections = 5
 }: TrimSelectorProps) => {
-  const [selectedTrim, setSelectedTrim] = useState(
-    trims.find(t => t.recommended)?.id || trims[0]?.id
-  );
   const [compareTrims, setCompareTrims] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -57,20 +58,19 @@ const TrimSelector = ({
 
   // Toggle trim in comparison list
   const toggleCompare = (trimId: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card selection
+    e.stopPropagation();
     setCompareTrims(prev => {
       if (prev.includes(trimId)) {
         return prev.filter(id => id !== trimId);
       }
-      // Max 4 trims for comparison
-      if (prev.length >= 4) {
+      if (prev.length >= maxSelections) {
         return prev;
       }
       return [...prev, trimId];
     });
   };
 
-  // Get trims for comparison modal - includes full specs from trimService
+  // Get trims for comparison modal
   const getComparisonTrims = (): ComparisonTrim[] => {
     return trims
       .filter(t => compareTrims.includes(t.id))
@@ -80,7 +80,7 @@ const TrimSelector = ({
         price: t.price,
         features: t.features,
         recommended: t.recommended,
-        specs: t.specs, // Pass through the full specs from trimService
+        specs: t.specs,
       }));
   };
 
@@ -91,151 +91,171 @@ const TrimSelector = ({
     }
   };
 
-  // Clear all selections
-  const clearCompare = () => {
-    setCompareTrims([]);
+  // Extract MPG from trim specs if available
+  const getMpg = (trim: TrimData): string | null => {
+    if (trim.specs?.fuelEconomy && trim.specs.fuelEconomy !== '—') {
+      return trim.specs.fuelEconomy;
+    }
+    return null;
   };
 
   return (
     <section className="trim-selector">
       <div className="container">
+        {/* Header */}
         <div className="trim-selector__header">
-          <div className="trim-selector__header-top">
-            <div>
-              <h2 className="trim-selector__title">{title}</h2>
-              {subtitle && <p className="trim-selector__subtitle">{subtitle}</p>}
-            </div>
-            
-            {/* Compare Button */}
-            <div className="trim-selector__compare-actions">
-              {compareTrims.length > 0 && (
-                <button 
-                  className="trim-selector__clear-btn"
-                  onClick={clearCompare}
-                >
-                  Clear ({compareTrims.length})
-                </button>
-              )}
-              <button 
-                className={`trim-selector__compare-btn ${compareTrims.length >= 2 ? 'trim-selector__compare-btn--active' : ''}`}
-                onClick={openCompareModal}
-                disabled={compareTrims.length < 2}
-              >
-                <GitCompare size={18} />
-                <span>Compare Trims</span>
-                {compareTrims.length > 0 && (
-                  <span className="trim-selector__compare-count">{compareTrims.length}</span>
-                )}
-              </button>
-            </div>
+          <div className="trim-selector__header-left">
+            <h2 className="trim-selector__title">{title}</h2>
+            <p className="trim-selector__subtitle">{subtitle}</p>
           </div>
           
-          {/* Compare instruction */}
-          {compareTrims.length === 0 && (
-            <p className="trim-selector__compare-hint">
-              Select 2-4 trims to compare specifications side by side
-            </p>
-          )}
-          {compareTrims.length === 1 && (
-            <p className="trim-selector__compare-hint trim-selector__compare-hint--active">
-              Select at least one more trim to compare
-            </p>
-          )}
+          <div className="trim-selector__header-right">
+            <span className="trim-selector__selection-count">
+              {compareTrims.length} of {maxSelections} selected
+            </span>
+            <button 
+              className={`trim-selector__compare-btn ${compareTrims.length >= 2 ? 'trim-selector__compare-btn--active' : ''}`}
+              onClick={openCompareModal}
+              disabled={compareTrims.length < 2}
+            >
+              Compare Trims
+            </button>
+          </div>
         </div>
         
+        {/* Carousel */}
         <div className="trim-selector__carousel-wrapper">
-          {canScrollLeft && (
-            <button 
-              className="trim-selector__nav trim-selector__nav--left"
-              onClick={() => scroll('left')}
-              aria-label="Scroll left"
-            >
-              <ChevronLeft size={24} />
-            </button>
-          )}
-          
-          <div 
-            className="trim-selector__carousel"
-            ref={carouselRef}
-            onScroll={handleScroll}
-          >
-            {sortedTrims.map((trim) => (
+          {/* Recommended Card - Fixed outside scroll */}
+          {sortedTrims.filter(t => t.recommended).map((trim) => {
+            const isSelected = compareTrims.includes(trim.id);
+            const mpg = getMpg(trim);
+            
+            return (
               <div 
                 key={trim.id}
-                className={`trim-card ${selectedTrim === trim.id ? 'trim-card--selected' : ''} ${trim.recommended ? 'trim-card--recommended trim-card--sticky' : ''} ${compareTrims.includes(trim.id) ? 'trim-card--comparing' : ''}`}
-                onClick={() => setSelectedTrim(trim.id)}
+                className={`trim-card trim-card--recommended ${isSelected ? 'trim-card--selected' : ''}`}
               >
-                {trim.recommended && (
-                  <div className="trim-card__badge">
-                    <span>Recommended</span>
+                <div className="trim-card__top">
+                  <div className="trim-card__name-row">
+                    {isSelected && (
+                      <Check size={18} className="trim-card__check-icon" />
+                    )}
+                    <h3 className="trim-card__name">{trim.name}</h3>
+                    <span className="trim-card__badge">Recommended</span>
                   </div>
-                )}
+                  <button
+                    className={`trim-card__add-btn ${isSelected ? 'trim-card__add-btn--selected' : ''}`}
+                    onClick={(e) => toggleCompare(trim.id, e)}
+                    aria-label={isSelected ? `Remove ${trim.name} from comparison` : `Add ${trim.name} to comparison`}
+                  >
+                    <Plus size={18} />
+                  </button>
+                </div>
                 
-                {/* Compare Checkbox */}
-                <button
-                  className={`trim-card__compare-checkbox ${compareTrims.includes(trim.id) ? 'trim-card__compare-checkbox--checked' : ''}`}
-                  onClick={(e) => toggleCompare(trim.id, e)}
-                  aria-label={compareTrims.includes(trim.id) ? `Remove ${trim.name} from comparison` : `Add ${trim.name} to comparison`}
-                  title={compareTrims.includes(trim.id) ? 'Remove from comparison' : 'Add to comparison'}
-                >
-                  {compareTrims.includes(trim.id) ? (
-                    <Check size={14} />
-                  ) : (
-                    <GitCompare size={14} />
-                  )}
-                </button>
-                
-                <div className="trim-card__header">
-                  <h3 className="trim-card__name">{trim.name}</h3>
-                  <div className="trim-card__price">
-                    <span className="trim-card__price-label">Starting at</span>
-                    <span className="trim-card__price-value">{trim.price}</span>
-                  </div>
+                <div className="trim-card__pricing">
+                  <span className="trim-card__price">{trim.price}</span>
+                  {mpg && <span className="trim-card__mpg">{mpg}</span>}
                 </div>
                 
                 <ul className="trim-card__features">
-                  {trim.features.map((feature, index) => (
+                  {trim.features.slice(0, 2).map((feature, index) => (
                     <li key={index} className="trim-card__feature">
-                      <Check size={16} className="trim-card__feature-icon" />
+                      <span className="trim-card__feature-bullet">•</span>
                       <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 
-                <div className="trim-card__actions">
-                  <button className="trim-card__btn trim-card__btn--primary">
-                    Build This Trim
-                    <ChevronRight size={16} />
-                  </button>
-                  <button className="trim-card__btn trim-card__btn--ghost">
-                    <Info size={16} />
-                    More Details
-                  </button>
-                </div>
-                
-                {selectedTrim === trim.id && (
-                  <div className="trim-card__selected-indicator">
-                    <Check size={16} />
-                  </div>
-                )}
+                <button className="trim-card__shop-btn">
+                  Shop
+                  <ChevronRight size={16} />
+                </button>
               </div>
-            ))}
-          </div>
-          
-          {canScrollRight && (
-            <button 
-              className="trim-selector__nav trim-selector__nav--right"
-              onClick={() => scroll('right')}
-              aria-label="Scroll right"
+            );
+          })}
+
+          {/* Scrollable Carousel for other trims */}
+          <div className="trim-selector__carousel-scroll-area">
+            {canScrollLeft && (
+              <button 
+                className="trim-selector__nav trim-selector__nav--left"
+                onClick={() => scroll('left')}
+                aria-label="Scroll left"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+            
+            <div 
+              className="trim-selector__carousel"
+              ref={carouselRef}
+              onScroll={handleScroll}
             >
-              <ChevronRight size={24} />
-            </button>
-          )}
+              {sortedTrims.filter(t => !t.recommended).map((trim) => {
+                const isSelected = compareTrims.includes(trim.id);
+                const mpg = getMpg(trim);
+                
+                return (
+                  <div 
+                    key={trim.id}
+                    className={`trim-card ${isSelected ? 'trim-card--selected' : ''}`}
+                  >
+                    <div className="trim-card__top">
+                      <div className="trim-card__name-row">
+                        {isSelected && (
+                          <Check size={18} className="trim-card__check-icon" />
+                        )}
+                        <h3 className="trim-card__name">{trim.name}</h3>
+                      </div>
+                      <button
+                        className={`trim-card__add-btn ${isSelected ? 'trim-card__add-btn--selected' : ''}`}
+                        onClick={(e) => toggleCompare(trim.id, e)}
+                        aria-label={isSelected ? `Remove ${trim.name} from comparison` : `Add ${trim.name} to comparison`}
+                      >
+                        <Plus size={18} />
+                      </button>
+                    </div>
+                    
+                    <div className="trim-card__pricing">
+                      <span className="trim-card__price">{trim.price}</span>
+                      {mpg && <span className="trim-card__mpg">{mpg}</span>}
+                    </div>
+                    
+                    <ul className="trim-card__features">
+                      {trim.features.slice(0, 2).map((feature, index) => (
+                        <li key={index} className="trim-card__feature">
+                          <span className="trim-card__feature-bullet">•</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <button className="trim-card__shop-btn">
+                      Shop
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {canScrollRight && (
+              <button 
+                className="trim-selector__nav trim-selector__nav--right"
+                onClick={() => scroll('right')}
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={20} />
+              </button>
+            )}
+          </div>
         </div>
         
-        <div className="trim-selector__disclaimer">
-          <Info size={16} />
-          <p>Prices shown are manufacturer's suggested retail prices (MSRP). Actual prices may vary based on location, dealer, and available inventory.</p>
+        {/* Location */}
+        <div className="trim-selector__location">
+          <MapPin size={16} />
+          <span>{zipCode}</span>
+          <button className="trim-selector__change-location">Change Location</button>
         </div>
       </div>
 

@@ -10,22 +10,22 @@ const meta: Meta<typeof TrimSelector> = {
     docs: {
       description: {
         component: `
-The TrimSelector component allows users to browse, select, and compare different trim levels for a vehicle.
+The TrimSelector (Compare Trims) component allows users to browse, select, and compare different trim levels for a vehicle.
 
 ## Features
+- **Clean Card Design**: Modern, minimal trim cards with price, MPG, and key features
+- **Selection Counter**: Shows "X of 5 selected" with Compare Trims button
 - **Carousel Navigation**: Horizontal scrolling with navigation arrows
-- **Recommended Badge**: Highlights the recommended trim option
-- **Trim Comparison**: Select 2-4 trims to compare specifications side-by-side in a modal
-- **Full Specifications**: Compare engine, horsepower, fuel economy, and 15+ features
-- **Responsive Design**: Adapts to mobile and desktop layouts
+- **Recommended Badge**: Green badge highlights the recommended trim option
+- **Location-aware**: Shows zip code with "Change Location" option
+- **Trim Comparison**: Select 2-5 trims to compare specifications side-by-side in a modal
 
-## Comparison Modal
-Click the checkbox icon on any trim card to add it to comparison. Once you have 2+ trims selected, click "Compare Trims" to open the comparison modal showing:
-- **Pricing**: Starting MSRP
-- **Performance**: Engine, horsepower, torque, transmission, drivetrain, fuel economy
-- **Interior & Comfort**: Seating, cargo, heated/ventilated/leather seats, sunroof
-- **Technology**: Navigation, premium audio, wireless charging, remote start, heads-up display
-- **Safety**: Adaptive cruise, blind spot monitor, lane departure, emergency braking, parking assist
+## Design
+Based on the Car and Driver design system with:
+- Green borders/badges for selected/recommended trims
+- Blue cobalt accent for prices and CTAs
+- Clean typography hierarchy
+- Subtle shadows and borders
         `,
       },
     },
@@ -47,15 +47,22 @@ export const Default: Story = {
   args: {
     trims: toyotaCamryTrims,
     vehicleName: '2025 Toyota Camry',
+    zipCode: '10940',
   },
 };
 
-export const WithSubtitle: Story = {
+export const KiaTelluride: Story = {
   args: {
-    trims: toyotaCamryTrims,
-    title: 'Choose Your Trim',
-    subtitle: 'Select the perfect configuration for your needs',
-    vehicleName: '2025 Toyota Camry',
+    trims: getVehicleTrims('Kia', 'Telluride', 37490, 54990),
+    vehicleName: '2025 Kia Telluride',
+    zipCode: '10940',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Kia Telluride with SX, SX X-Line, and SX Prestige trims - matching the reference design.',
+      },
+    },
   },
 };
 

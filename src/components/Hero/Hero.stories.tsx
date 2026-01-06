@@ -126,6 +126,15 @@ These badges increase user trust and can improve conversion rates.
         category: 'Animation',
       },
     },
+    showModelInButtons: {
+      description: 'Show model name in Shop New/Shop Used buttons (e.g., "SHOP NEW TRAX")',
+      control: 'boolean',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+        category: 'Content',
+      },
+    },
   },
 };
 
@@ -286,6 +295,7 @@ export const WithAnimatedButtons: Story = {
   args: {
     vehicle: chevroletTrax,
     animateButtons: true,
+    showModelInButtons: false,
   },
   parameters: {
     docs: {
@@ -425,6 +435,43 @@ useEffect(() => {
 - Animation respects \`prefers-reduced-motion\` media query
 - Buttons remain functional even if animation fails
 - Focus states work independently of animation state
+        `,
+      },
+    },
+  },
+};
+
+export const WithAnimatedButtonsAndModelName: Story = {
+  args: {
+    vehicle: chevroletTrax,
+    animateButtons: true,
+    showModelInButtons: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## Animated Shop Buttons with Model Name
+
+Hero with animated shop buttons that include the vehicle model name. Buttons display "SHOP NEW TRAX" and "SHOP USED TRAX" instead of generic "SHOP NEW" / "SHOP USED".
+
+---
+
+### Benefits
+
+- **Clearer Intent** — Users immediately know what they're shopping for
+- **Better UX** — Reinforces the vehicle they're researching
+- **SEO Potential** — More specific CTA text for tracking
+
+---
+
+### When to Use
+
+- ✅ Single vehicle pages where model is clear
+- ✅ A/B testing more specific CTAs
+- ✅ High-intent landing pages
+- ❌ Comparison pages with multiple vehicles
+- ❌ Very long model names that might break layout
         `,
       },
     },

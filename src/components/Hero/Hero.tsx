@@ -23,9 +23,10 @@ interface HeroProps {
     evOfTheYear?: boolean;
   };
   animateButtons?: boolean;
+  showModelInButtons?: boolean;
 }
 
-const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
+const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: HeroProps) => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -367,10 +368,10 @@ const Hero = ({ vehicle, animateButtons = false }: HeroProps) => {
                   className={`hero__shop-buttons ${animateButtons ? (buttonsInView ? 'hero__shop-buttons--animated' : 'hero__shop-buttons--hidden') : ''}`}
                 >
                   <Button variant="primary" size="small" className={`hero__shop-btn ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-1' : ''}`}>
-                    SHOP NEW
+                    {showModelInButtons ? `SHOP NEW ${vehicle.model.toUpperCase()}` : 'SHOP NEW'}
                   </Button>
                   <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--outline ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-2' : ''}`}>
-                    SHOP USED
+                    {showModelInButtons ? `SHOP USED ${vehicle.model.toUpperCase()}` : 'SHOP USED'}
                   </Button>
                   <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--trade-in ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-3' : ''}`}>
                     GET YOUR TRADE-IN VALUE

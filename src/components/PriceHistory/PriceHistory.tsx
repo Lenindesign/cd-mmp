@@ -16,6 +16,8 @@ interface CompetitorData {
   name: string;
   /** As new value */
   asNewValue: number;
+  /** Previous year value (optional, will be interpolated if not provided) */
+  previousYearValue?: number;
   /** Current value */
   currentValue: number;
   /** Total depreciation percentage */
@@ -107,6 +109,13 @@ const AnimatedCurrency = ({ value }: { value: number }) => {
   );
 };
 
+// Competitor line colors
+const COMPETITOR_COLORS = [
+  { stroke: '#3b82f6', name: 'Blue' },    // Blue
+  { stroke: '#f59e0b', name: 'Amber' },   // Amber
+  { stroke: '#8b5cf6', name: 'Purple' },  // Purple
+];
+
 const PriceHistory = ({
   vehicleYear,
   make,
@@ -128,6 +137,8 @@ const PriceHistory = ({
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [selectedColumn, setSelectedColumn] = useState<number>(2); // Default to current value column
   const [showCompetitors, setShowCompetitors] = useState<boolean>(false);
+  const [showCompetitorOverlay, setShowCompetitorOverlay] = useState<boolean>(false);
+  const [hoveredCompetitor, setHoveredCompetitor] = useState<number | null>(null); // Track which competitor is hovered
   const chartRef = useRef<HTMLDivElement>(null);
 
   // Determine which column to highlight (hovered takes precedence, then selected)
@@ -285,6 +296,43 @@ const PriceHistory = ({
     return [...competitors].sort((a, b) => a.depreciationPercent - b.depreciationPercent);
   }, [competitors]);
 
+  // Get top 3 competitors for chart overlay
+  const topCompetitors = useMemo(() => {
+    return sortedCompetitors.slice(0, 3);
+  }, [sortedCompetitors]);
+
+  // Calculate competitor chart positions (using same scale as main vehicle)
+  const competitorChartPositions = useMemo(() => {
+    if (!topCompetitors.length) return [];
+    
+    // Get all values to determine scale (include main vehicle and all competitors)
+    const allValues = [
+      asNewValue, previousYearValue, currentValue,
+      ...topCompetitors.flatMap(c => [c.asNewValue, c.previousYearValue || (c.asNewValue + c.currentValue) / 2, c.currentValue])
+    ];
+    
+    const maxValue = Math.max(...allValues);
+    const minValue = Math.min(...allValues);
+    const range = maxValue - minValue || 1;
+    const padding = range * 0.3;
+    const adjustedMax = maxValue + padding;
+    const adjustedMin = minValue - padding;
+    const adjustedRange = adjustedMax - adjustedMin;
+    
+    return topCompetitors.map((competitor, index) => {
+      // Use previousYearValue if provided, otherwise interpolate
+      const midValue = competitor.previousYearValue || (competitor.asNewValue + competitor.currentValue) / 2;
+      
+      return {
+        name: competitor.name,
+        color: COMPETITOR_COLORS[index],
+        start: ((adjustedMax - competitor.asNewValue) / adjustedRange) * 100,
+        mid: ((adjustedMax - midValue) / adjustedRange) * 100,
+        end: ((adjustedMax - competitor.currentValue) / adjustedRange) * 100,
+      };
+    });
+  }, [topCompetitors, asNewValue, previousYearValue, currentValue]);
+
   return (
     <div 
       className="price-history u-card"
@@ -437,6 +485,36 @@ const PriceHistory = ({
           </button>
         </div>
 
+        {/* Competitor Overlay Toggle */}
+        {competitors && competitors.length > 0 && (
+          <div className="price-history__overlay-toggle">
+            <label className="price-history__overlay-toggle-label">
+              <input
+                type="checkbox"
+                checked={showCompetitorOverlay}
+                onChange={(e) => setShowCompetitorOverlay(e.target.checked)}
+                className="price-history__overlay-toggle-checkbox"
+              />
+              <span className="price-history__overlay-toggle-switch" />
+              <span className="price-history__overlay-toggle-text">Compare with Top 3 Competitors</span>
+            </label>
+            {showCompetitorOverlay && (
+              <div className="price-history__overlay-legend">
+                <div className="price-history__overlay-legend-item price-history__overlay-legend-item--current">
+                  <span className="price-history__overlay-legend-line" style={{ background: '#dc2626' }} />
+                  <span className="price-history__overlay-legend-name">{make} {model}</span>
+                </div>
+                {competitorChartPositions.map((comp, index) => (
+                  <div key={index} className="price-history__overlay-legend-item">
+                    <span className="price-history__overlay-legend-line" style={{ background: comp.color.stroke }} />
+                    <span className="price-history__overlay-legend-name">{comp.name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Chart */}
         <div 
           ref={chartRef}
@@ -479,7 +557,33 @@ const PriceHistory = ({
             />
             
             {/* Line - key forces re-render to trigger animation */}
-            <svg key={activeTab} className="price-history__chart-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <svg key={`${activeTab}-${showCompetitorOverlay}`} className="price-history__chart-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {/* Competitor overlay lines (rendered first so main line is on top) */}
+              {showCompetitorOverlay && competitorChartPositions.map((comp, index) => (
+                <g key={index}>
+                  {/* First segment */}
+                  <path
+                    className="price-history__line-segment price-history__line-segment--competitor"
+                    d={`M 16.66,${comp.start} L 50,${comp.mid}`}
+                    stroke={comp.color.stroke}
+                    strokeWidth="2"
+                    fill="none"
+                    vectorEffect="non-scaling-stroke"
+                    style={{ animationDelay: `${0.2 + index * 0.15}s` }}
+                  />
+                  {/* Second segment */}
+                  <path
+                    className="price-history__line-segment price-history__line-segment--competitor"
+                    d={`M 50,${comp.mid} L 83.33,${comp.end}`}
+                    stroke={comp.color.stroke}
+                    strokeWidth="2"
+                    fill="none"
+                    vectorEffect="non-scaling-stroke"
+                    style={{ animationDelay: `${0.4 + index * 0.15}s` }}
+                  />
+                </g>
+              ))}
+              
               {/* Solid line extending from left edge (only on forecast tab) */}
               {activeTab === 'forecast' && (
                 <path
@@ -552,48 +656,220 @@ const PriceHistory = ({
               aria-hidden="true"
             />
 
+            {/* Competitor Data Points (as HTML divs to avoid SVG distortion) */}
+            {showCompetitorOverlay && competitorChartPositions.map((comp, index) => (
+              <div key={`competitor-points-${index}`}>
+                <div 
+                  className={`price-history__chart-point price-history__chart-point--competitor ${hoveredCompetitor === index && activeColumn === 0 ? 'price-history__chart-point--active' : ''}`}
+                  style={{ 
+                    left: '16.66%', 
+                    top: `${comp.start}%`,
+                    borderColor: comp.color.stroke,
+                    animationDelay: `${0.3 + index * 0.15}s`
+                  }}
+                  onMouseEnter={() => { setHoveredCompetitor(index); setHoveredColumn(0); }}
+                  onMouseLeave={() => { setHoveredCompetitor(null); setHoveredColumn(null); }}
+                  aria-hidden="true"
+                />
+                <div 
+                  className={`price-history__chart-point price-history__chart-point--competitor ${hoveredCompetitor === index && activeColumn === 1 ? 'price-history__chart-point--active' : ''}`}
+                  style={{ 
+                    left: '50%', 
+                    top: `${comp.mid}%`,
+                    borderColor: comp.color.stroke,
+                    animationDelay: `${0.5 + index * 0.15}s`
+                  }}
+                  onMouseEnter={() => { setHoveredCompetitor(index); setHoveredColumn(1); }}
+                  onMouseLeave={() => { setHoveredCompetitor(null); setHoveredColumn(null); }}
+                  aria-hidden="true"
+                />
+                <div 
+                  className={`price-history__chart-point price-history__chart-point--competitor ${hoveredCompetitor === index && activeColumn === 2 ? 'price-history__chart-point--active' : ''}`}
+                  style={{ 
+                    left: '83.33%', 
+                    top: `${comp.end}%`,
+                    borderColor: comp.color.stroke,
+                    animationDelay: `${0.7 + index * 0.15}s`
+                  }}
+                  onMouseEnter={() => { setHoveredCompetitor(index); setHoveredColumn(2); }}
+                  onMouseLeave={() => { setHoveredCompetitor(null); setHoveredColumn(null); }}
+                  aria-hidden="true"
+                />
+              </div>
+            ))}
+
             {/* Tooltip - always show for active column (hovered or selected) */}
-            <div 
-              className="price-history__forecast-tooltip price-history__forecast-tooltip--visible"
-              style={{ 
-                left: activeColumn === 0 ? '16.66%' : activeColumn === 1 ? '50%' : '83.33%', 
-                top: `${activeColumn === 0 ? chartPositions.start : activeColumn === 1 ? chartPositions.mid : chartPositions.end}%` 
-              }}
-              role="tooltip"
-            >
-              <span className="price-history__forecast-tooltip-label">
-                {years[activeColumn]} Value:
-              </span>
-              <span className="price-history__forecast-tooltip-value">
-                {formatCurrency(getValueForColumn(activeColumn))}
-              </span>
-              {/* Year-over-year change */}
-              {activeColumn > 0 && (
-                <span className="price-history__forecast-tooltip-change">
-                  {(() => {
-                    const yearChange = activeColumn === 1 
-                      ? displayValues.first - displayValues.second 
-                      : displayValues.second - displayValues.third;
-                    const isDepreciation = yearChange > 0;
-                    return `${isDepreciation ? '↓' : '↑'} ${formatCurrency(Math.abs(yearChange))} from previous year`;
-                  })()}
-                </span>
-              )}
-              {/* Total depreciation from original As New value - always show */}
-              <span className="price-history__forecast-tooltip-total">
-                {(() => {
-                  const currentColumnValue = getValueForColumn(activeColumn);
-                  // Always calculate from the original As New value (asNewValue prop)
-                  const totalChange = asNewValue - currentColumnValue;
-                  const totalPercent = ((totalChange / asNewValue) * 100).toFixed(1);
-                  const isDepreciation = totalChange > 0;
-                  if (activeColumn === 0 && activeTab === 'history') {
-                    return 'Original As New Value';
-                  }
-                  return `Total ${isDepreciation ? 'depreciation' : 'appreciation'} from new: ${formatCurrency(Math.abs(totalChange))} (${totalPercent}%)`;
-                })()}
-              </span>
-            </div>
+            {(() => {
+              // Helper to get competitor value for a column
+              const getCompetitorValueForColumn = (compData: typeof topCompetitors[0], colIndex: number) => {
+                const midValue = compData.previousYearValue || (compData.asNewValue + compData.currentValue) / 2;
+                switch (colIndex) {
+                  case 0: return compData.asNewValue;
+                  case 1: return midValue;
+                  case 2: return compData.currentValue;
+                  default: return 0;
+                }
+              };
+
+              // When competitor overlay is ON, show comparison tooltip with all vehicles
+              if (showCompetitorOverlay && topCompetitors.length > 0) {
+                return (
+                  <div 
+                    className="price-history__forecast-tooltip price-history__forecast-tooltip--visible price-history__forecast-tooltip--comparison"
+                    style={{ 
+                      left: activeColumn === 0 ? '16.66%' : activeColumn === 1 ? '50%' : '83.33%', 
+                      top: `${activeColumn === 0 ? chartPositions.start : activeColumn === 1 ? chartPositions.mid : chartPositions.end}%`
+                    }}
+                    role="tooltip"
+                  >
+                    <span className="price-history__forecast-tooltip-label">
+                      {years[activeColumn]} Values:
+                    </span>
+                    
+                    {/* All vehicles comparison list */}
+                    <div className="price-history__tooltip-comparison">
+                      {/* Build sorted list with all vehicles for best retention badge */}
+                      {(() => {
+                        const mainCurrentValue = getValueForColumn(activeColumn);
+                        const mainDepreciation = ((asNewValue - mainCurrentValue) / asNewValue) * 100;
+                        const mainDollarsLost = asNewValue - mainCurrentValue;
+                        
+                        // Create array of all vehicles with their depreciation data
+                        const allVehicles = [
+                          {
+                            name: `${make} ${model}`,
+                            value: mainCurrentValue,
+                            depreciation: mainDepreciation,
+                            dollarsLost: mainDollarsLost,
+                            asNewValue: asNewValue,
+                            color: '#dc2626',
+                            isMain: true,
+                            diff: 0
+                          },
+                          ...topCompetitors.map((compData, index) => {
+                            const compValue = getCompetitorValueForColumn(compData, activeColumn);
+                            const compDepreciation = ((compData.asNewValue - compValue) / compData.asNewValue) * 100;
+                            const compDollarsLost = compData.asNewValue - compValue;
+                            return {
+                              name: compData.name,
+                              value: compValue,
+                              depreciation: compDepreciation,
+                              dollarsLost: compDollarsLost,
+                              asNewValue: compData.asNewValue,
+                              color: competitorChartPositions[index]?.color.stroke || '#666',
+                              isMain: false,
+                              diff: compValue - mainCurrentValue,
+                              originalIndex: index
+                            };
+                          })
+                        ];
+                        
+                        // Find the best retention (lowest depreciation %)
+                        const bestRetentionVehicle = allVehicles.reduce((best, current) => 
+                          current.depreciation < best.depreciation ? current : best
+                        );
+                        
+                        // Helper to get depreciation color class
+                        const getDepreciationColorClass = (depreciation: number) => {
+                          if (depreciation <= 15) return 'price-history__tooltip-comparison-depreciation--excellent';
+                          if (depreciation <= 25) return 'price-history__tooltip-comparison-depreciation--good';
+                          if (depreciation <= 35) return 'price-history__tooltip-comparison-depreciation--moderate';
+                          return 'price-history__tooltip-comparison-depreciation--poor';
+                        };
+                        
+                        // Calculate monthly depreciation
+                        const getMonthlyDepreciation = (dollarsLost: number) => {
+                          // Assuming 5 years (60 months) for forecast period
+                          const months = activeTab === 'forecast' ? 24 : 24; // 2 years shown
+                          return Math.round(dollarsLost / months);
+                        };
+                        
+                        return allVehicles.map((vehicle, idx) => (
+                          <div 
+                            key={idx} 
+                            className={`price-history__tooltip-comparison-row ${vehicle.isMain ? 'price-history__tooltip-comparison-row--main' : ''} ${!vehicle.isMain && hoveredCompetitor === (vehicle as { originalIndex?: number }).originalIndex ? 'price-history__tooltip-comparison-row--active' : ''}`}
+                          >
+                            <span 
+                              className="price-history__tooltip-comparison-color" 
+                              style={{ background: vehicle.color }}
+                            />
+                            <span className="price-history__tooltip-comparison-name">
+                              {vehicle.name}
+                              {vehicle.name === bestRetentionVehicle.name && (
+                                <span className="price-history__tooltip-best-badge">Best</span>
+                              )}
+                            </span>
+                            <span className="price-history__tooltip-comparison-value">
+                              {formatCurrency(vehicle.value)}
+                              <span className="price-history__tooltip-comparison-meta">
+                                {!vehicle.isMain && vehicle.diff !== 0 && (
+                                  <span className={`price-history__tooltip-comparison-diff ${vehicle.diff > 0 ? 'price-history__tooltip-comparison-diff--higher' : 'price-history__tooltip-comparison-diff--lower'}`}>
+                                    {vehicle.diff > 0 ? '+' : ''}{formatCurrency(vehicle.diff)}
+                                  </span>
+                                )}
+                                <span className={`price-history__tooltip-comparison-depreciation ${getDepreciationColorClass(vehicle.depreciation)}`}>
+                                  ↓ {vehicle.depreciation.toFixed(1)}%
+                                </span>
+                                <span className="price-history__tooltip-comparison-dollars-lost">
+                                  −{formatCurrency(vehicle.dollarsLost)} lost
+                                </span>
+                                <span className="price-history__tooltip-comparison-monthly">
+                                  ≈ {formatCurrency(getMonthlyDepreciation(vehicle.dollarsLost))}/mo
+                                </span>
+                              </span>
+                            </span>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                );
+              }
+              
+              // Default single-vehicle tooltip when overlay is OFF
+              return (
+                <div 
+                  className="price-history__forecast-tooltip price-history__forecast-tooltip--visible"
+                  style={{ 
+                    left: activeColumn === 0 ? '16.66%' : activeColumn === 1 ? '50%' : '83.33%', 
+                    top: `${activeColumn === 0 ? chartPositions.start : activeColumn === 1 ? chartPositions.mid : chartPositions.end}%`
+                  }}
+                  role="tooltip"
+                >
+                  <span className="price-history__forecast-tooltip-label">
+                    {years[activeColumn]} Value:
+                  </span>
+                  <span className="price-history__forecast-tooltip-value">
+                    {formatCurrency(getValueForColumn(activeColumn))}
+                  </span>
+                  {/* Year-over-year change */}
+                  {activeColumn > 0 && (
+                    <span className="price-history__forecast-tooltip-change">
+                      {(() => {
+                        const yearChange = activeColumn === 1 
+                          ? displayValues.first - displayValues.second 
+                          : displayValues.second - displayValues.third;
+                        const isDepreciation = yearChange > 0;
+                        return `${isDepreciation ? '↓' : '↑'} ${formatCurrency(Math.abs(yearChange))} from previous year`;
+                      })()}
+                    </span>
+                  )}
+                  {/* Total depreciation from original As New value - always show */}
+                  <span className="price-history__forecast-tooltip-total">
+                    {(() => {
+                      const currentColumnValue = getValueForColumn(activeColumn);
+                      const totalChange = asNewValue - currentColumnValue;
+                      const totalPercent = ((totalChange / asNewValue) * 100).toFixed(1);
+                      const isDepreciation = totalChange > 0;
+                      if (activeColumn === 0 && activeTab === 'history') {
+                        return 'Original As New Value';
+                      }
+                      return `Total ${isDepreciation ? 'depreciation' : 'appreciation'} from new: ${formatCurrency(Math.abs(totalChange))} (${totalPercent}%)`;
+                    })()}
+                  </span>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Value Labels with Trend Indicators */}

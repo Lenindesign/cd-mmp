@@ -1,129 +1,99 @@
-/* Car and Driver Authentic Trim Selector */
+/* Compare Trims - Clean Card Design */
 .trim-selector {
-  padding: var(--spacing-12) 0;
+  padding: var(--spacing-10) 0;
   background: var(--color-white);
 }
 
 /* Header */
 .trim-selector__header {
-  margin-bottom: var(--spacing-6);
-}
-
-.trim-selector__header-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--spacing-4);
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
-  margin-bottom: var(--spacing-2);
+}
+
+.trim-selector__header-left {
+  flex: 1;
+  min-width: 280px;
 }
 
 .trim-selector__title {
   font-family: var(--font-heading);
-  font-size: var(--font-size-36);
+  font-size: var(--font-size-32);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  letter-spacing: 0.5px;
-  margin-bottom: var(--spacing-2);
+  margin: 0 0 var(--spacing-2) 0;
 }
 
 .trim-selector__subtitle {
+  font-family: var(--font-body);
   font-size: var(--font-size-base);
   color: var(--color-gray-600);
-  max-width: 600px;
+  margin: 0;
+  max-width: 520px;
 }
 
-/* Compare Actions */
-.trim-selector__compare-actions {
+.trim-selector__header-right {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-4);
+}
+
+.trim-selector__selection-count {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-blue-cobalt);
+  font-weight: var(--font-weight-medium);
 }
 
 .trim-selector__compare-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2-5) var(--spacing-4);
+  padding: var(--spacing-2-5) var(--spacing-5);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   background: var(--color-white);
-  color: var(--color-gray-500);
+  color: var(--color-gray-400);
   border: 2px solid var(--color-gray-300);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-sm);
   cursor: not-allowed;
   transition: all var(--transition-fast);
 }
 
 .trim-selector__compare-btn--active {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border-color: var(--color-blue-cobalt);
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-400);
   cursor: pointer;
 }
 
 .trim-selector__compare-btn--active:hover {
-  background: var(--color-black);
-  border-color: var(--color-black);
-}
-
-.trim-selector__compare-count {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--spacing-5);
-  height: var(--spacing-5);
-  padding: 0 var(--spacing-1);
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: var(--border-radius-full);
-  font-size: var(--font-size-xs);
-}
-
-.trim-selector__clear-btn {
-  padding: var(--spacing-2) var(--spacing-3);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: color var(--transition-fast);
-}
-
-.trim-selector__clear-btn:hover {
-  color: var(--color-red-cd);
-}
-
-.trim-selector__compare-hint {
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
-  margin: 0;
-}
-
-.trim-selector__compare-hint--active {
-  color: var(--color-blue-cobalt);
-  font-weight: var(--font-weight-medium);
-}
-
-/* Grid (legacy - kept for backwards compatibility) */
-.trim-selector__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-6);
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-500);
 }
 
 /* Carousel Wrapper */
 .trim-selector__carousel-wrapper {
   position: relative;
-  margin-bottom: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+  background: var(--color-white);
+  display: flex;
+  gap: var(--spacing-4);
+  align-items: stretch;
 }
 
-/* Carousel Track */
+/* Scroll area container */
+.trim-selector__carousel-scroll-area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Carousel Track - scrollable area for non-recommended cards */
 .trim-selector__carousel {
   display: flex;
   gap: var(--spacing-4);
@@ -131,239 +101,235 @@
   scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding: var(--spacing-2) 0;
-  margin: 0 calc(-1 * var(--spacing-2));
-  padding-left: var(--spacing-2);
-  padding-right: var(--spacing-2);
+  /* Add padding to show card borders and shadows on all sides */
+  padding: 8px 16px 8px 8px;
 }
 
 .trim-selector__carousel::-webkit-scrollbar {
   display: none;
 }
 
-/* Carousel Navigation Arrows */
+/* Navigation Arrows */
 .trim-selector__nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: var(--spacing-12);
-  height: var(--spacing-12);
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-white);
-  border: 2px solid var(--color-blue-cobalt);
+  border: 1px solid var(--color-gray-300);
   border-radius: 50%;
   cursor: pointer;
-  z-index: 20;
+  z-index: 10;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  color: var(--color-blue-cobalt);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--color-gray-600);
 }
 
-.trim-selector__nav:hover:not(:disabled) {
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-white);
+.trim-selector__nav:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-400);
+  color: var(--color-gray-700);
 }
 
 .trim-selector__nav--left {
-  left: -24px;
+  left: -16px;
 }
 
 .trim-selector__nav--right {
-  right: -24px;
+  right: 0;
 }
 
-.trim-selector__nav--disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+/* Location */
+.trim-selector__location {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  justify-content: flex-end;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
 }
 
-.trim-selector__nav--disabled:hover {
-  background: var(--color-white);
-  border-color: var(--color-gray-300);
-  color: inherit;
+.trim-selector__location svg {
+  color: var(--color-red);
 }
 
-/* Carousel Trim Card sizing */
-.trim-selector__carousel .trim-card {
-  flex: 0 0 300px;
-  min-width: 300px;
+.trim-selector__change-location {
+  background: none;
+  border: none;
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  padding: 0;
+  margin-left: var(--spacing-2);
 }
 
-/* Sticky Recommended Card */
-.trim-selector__carousel .trim-card--sticky {
-  position: sticky;
-  left: 0;
-  z-index: 10;
-  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12);
-  border-color: var(--color-blue-cobalt);
+.trim-selector__change-location:hover {
+  text-decoration: underline;
 }
 
-.trim-selector__carousel .trim-card--sticky::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -24px;
-  width: var(--spacing-6);
-  height: 100%;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.95), transparent);
-  pointer-events: none;
-  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
-}
-
-@media (max-width: 768px) {
-  .trim-selector__nav {
-    display: none;
-  }
-  
-  .trim-selector__carousel .trim-card {
-    flex: 0 0 280px;
-    min-width: 280px;
-  }
-}
-
-/* Trim Card - Unified card style matching eLot cards */
+/* ============================================
+   TRIM CARD - Clean Modern Design
+   ============================================ */
 .trim-card {
-  position: relative;
+  flex: 0 0 280px;
+  min-width: 280px;
   display: flex;
   flex-direction: column;
   background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
-  cursor: pointer;
+  padding: var(--spacing-4);
   transition: all var(--transition-fast);
-  overflow: hidden;
+  position: relative;
 }
 
 .trim-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  border-color: var(--color-gray-300);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+/* Selected State - Green Border */
 .trim-card--selected {
-  border-color: var(--color-blue-cobalt);
-  border-width: var(--spacing-1);
-  box-shadow: 0 0 0 4px var(--color-blue-cobalt);
+  border-color: var(--color-success);
+  border-width: 2px;
+  box-shadow: 0 0 0 1px var(--color-success);
 }
 
+/* Recommended Card - Fixed position outside scroll */
 .trim-card--recommended {
-  border-color: var(--color-blue-cobalt);
-  border-width: var(--spacing-1);
-  border-radius: var(--border-radius-lg);
+  flex-shrink: 0;
+  border-color: var(--color-success);
+  border-width: 2px;
+  /* Solid white background with green gradient overlay */
+  background: 
+    linear-gradient(
+      to right,
+      rgba(38, 135, 13, 0.10) 0%,
+      rgba(38, 135, 13, 0.05) 50%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    var(--color-white);
+  /* Ensure it's properly sized */
+  align-self: flex-start;
 }
 
-/* Badge - Consistent with eLot badges */
-.trim-card__badge {
-  position: absolute;
-  top: var(--spacing-3);
-  left: var(--spacing-3);
-  padding: var(--spacing-1) var(--spacing-3);
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-extrabold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: var(--border-radius-sm);
-  z-index: 2;
+/* Card Top Row - Name and Add Button */
+.trim-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
 }
 
-/* Compare Checkbox */
-.trim-card__compare-checkbox {
-  position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
+.trim-card__name-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: var(--spacing-7);
-  height: var(--spacing-7);
-  background: var(--color-white);
-  border: 2px solid var(--color-gray-300);
-  border-radius: var(--border-radius-sm);
-  color: var(--color-gray-400);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  z-index: 3;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
 }
 
-.trim-card__compare-checkbox:hover {
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-blue-cobalt);
-  background: var(--color-blue-50, #eff6ff);
-}
-
-.trim-card__compare-checkbox--checked {
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-white);
-}
-
-.trim-card__compare-checkbox--checked:hover {
-  background: var(--color-black);
-  border-color: var(--color-black);
-  color: var(--color-white);
-}
-
-/* Comparing state for card */
-.trim-card--comparing {
-  box-shadow: 0 0 0 3px var(--color-blue-cobalt), var(--shadow-md);
-}
-
-.trim-card--recommended .trim-card__compare-checkbox {
-  top: calc(var(--spacing-3) + 32px);
-}
-
-/* Header */
-.trim-card__header {
-  padding: var(--spacing-5) var(--spacing-4) var(--spacing-4);
-  background: linear-gradient(180deg, var(--color-gray-100) 0%, var(--color-white) 100%);
-}
-
-.trim-card--recommended .trim-card__header {
-  padding-top: calc(var(--spacing-5) + 32px);
+.trim-card__check-icon {
+  color: var(--color-success);
+  flex-shrink: 0;
 }
 
 .trim-card__name {
   font-family: var(--font-heading);
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-extrabold);
+  font-weight: var(--font-weight-bold);
   color: var(--color-black);
+  margin: 0;
+}
+
+/* Recommended card name stays green */
+.trim-card--recommended .trim-card__name {
+  color: var(--color-badge-certified);
+}
+
+.trim-card__badge {
+  display: inline-flex;
+  padding: var(--spacing-0-5) var(--spacing-2);
+  background: var(--color-success);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  margin-bottom: var(--spacing-2);
+  letter-spacing: 0.5px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Add Button */
+.trim-card__add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.trim-card__add-btn:hover {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+}
+
+.trim-card__add-btn--selected {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+  transform: rotate(45deg);
+}
+
+.trim-card__add-btn--selected:hover {
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
+}
+
+/* Pricing */
+.trim-card__pricing {
+  margin-bottom: var(--spacing-3);
 }
 
 .trim-card__price {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-0-5);
-}
-
-.trim-card__price-label {
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.trim-card__price-value {
+  display: block;
   font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-extrabold);
-  color: var(--color-blue-cobalt);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-1);
+}
+
+.trim-card__mpg {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
 }
 
 /* Features */
 .trim-card__features {
   flex: 1;
+  list-style: none;
+  margin: 0 0 var(--spacing-4) 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  padding: var(--spacing-4);
 }
 
 .trim-card__feature {
@@ -376,111 +342,90 @@
   line-height: 1.4;
 }
 
-.trim-card__feature-icon {
-  flex-shrink: 0;
+.trim-card__feature-bullet {
   color: var(--color-blue-cobalt);
-  margin-top: var(--spacing-0-5);
+  flex-shrink: 0;
 }
 
-/* Actions */
-.trim-card__actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-  padding: var(--spacing-4);
-  border-top: 1px solid var(--color-gray-100);
-  background: var(--color-white);
-}
-
-.trim-card__btn {
+/* Shop Button */
+.trim-card__shop-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-1);
+  width: 100%;
   padding: var(--spacing-3) var(--spacing-4);
   font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-extrabold);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+  border: 2px solid var(--color-blue-cobalt);
   border-radius: var(--border-radius-sm);
-  border: none;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.trim-card__btn--primary {
+.trim-card__shop-btn:hover {
   background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
-.trim-card__btn--primary:hover {
-  background: var(--color-black);
-}
-
-.trim-card--selected .trim-card__btn--primary,
-.trim-card--recommended .trim-card__btn--primary {
-  background: var(--color-blue-cobalt);
-}
-
-.trim-card--selected .trim-card__btn--primary:hover,
-.trim-card--recommended .trim-card__btn--primary:hover {
-  background: var(--color-black);
-}
-
-.trim-card__btn--ghost {
-  background: transparent;
-  color: var(--color-gray-600);
-  border: 1px solid var(--color-gray-200);
-}
-
-.trim-card__btn--ghost:hover {
-  color: var(--color-blue-cobalt);
+/* Selected card shop button */
+.trim-card--selected .trim-card__shop-btn,
+.trim-card--recommended .trim-card__shop-btn {
   border-color: var(--color-blue-cobalt);
 }
 
-/* Selected Indicator */
-.trim-card__selected-indicator {
-  position: absolute;
-  top: var(--spacing-3);
-  right: var(--spacing-3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--spacing-6);
-  height: var(--spacing-6);
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-  border-radius: var(--border-radius-sm);
-}
-
-.trim-card--recommended .trim-card__selected-indicator {
-  top: calc(var(--spacing-3) + 32px);
-}
-
-/* Disclaimer */
-.trim-selector__disclaimer {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-3);
-  padding: var(--spacing-4);
-  background: var(--color-gray-50);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
-  margin-top: var(--spacing-6);
-}
-
-.trim-selector__disclaimer svg {
-  flex-shrink: 0;
-  margin-top: var(--spacing-0-5);
-  color: var(--color-gray-500);
-}
-
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 @media (max-width: 768px) {
-  .trim-selector__grid {
-    grid-template-columns: 1fr;
+  .trim-selector__header {
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+  
+  .trim-selector__header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .trim-selector__nav {
+    display: none;
+  }
+  
+  /* On mobile, stack the layout */
+  .trim-selector__carousel-wrapper {
+    flex-direction: column;
+  }
+  
+  .trim-card {
+    flex: 0 0 260px;
+    min-width: 260px;
+  }
+  
+  .trim-card--recommended {
+    width: 100%;
+    flex: none;
+    min-width: auto;
+    max-width: 320px;
+  }
+  
+  .trim-selector__location {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .trim-selector__title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .trim-card {
+    flex: 0 0 240px;
+    min-width: 240px;
   }
 }
