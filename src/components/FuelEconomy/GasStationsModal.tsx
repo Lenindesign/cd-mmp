@@ -17,9 +17,6 @@ interface Station {
   placeId?: string;
 }
 
-// Keep GasStation as alias for backwards compatibility
-type GasStation = Station;
-
 interface GasStationsModalProps {
   isOpen: boolean;
   onClose: () => void;

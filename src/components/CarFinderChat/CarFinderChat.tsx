@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   Send, 
   Sparkles, 
-  Car, 
+  Car,
   X, 
   MessageCircle,
   ChevronRight,
@@ -474,7 +474,7 @@ const CarFinderChat = ({
         {messages.length === 0 ? (
           <div className="car-finder-chat__welcome">
             <div className="car-finder-chat__welcome-icon">
-              <Car size={32} />
+              <Sparkles size={32} />
             </div>
             <h4 className="car-finder-chat__welcome-title">
               Hi! I'm your AI car shopping assistant

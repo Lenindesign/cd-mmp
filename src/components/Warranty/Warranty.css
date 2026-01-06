@@ -406,18 +406,6 @@
   border-color: var(--color-gray-400);
 }
 
-.warranty__recall-item--high {
-  border-left: 3px solid var(--color-red);
-}
-
-.warranty__recall-item--medium {
-  border-left: 3px solid var(--color-warning);
-}
-
-.warranty__recall-item--low {
-  border-left: 3px solid var(--color-blue-cobalt);
-}
-
 /* Recall Header (Clickable) */
 .warranty__recall-header {
   display: flex;
