@@ -7,9 +7,7 @@ import {
   Gauge, 
   Users, 
   Cog,
-  Shield,
   Star,
-  Play,
   Bookmark,
   Share2,
   ArrowRight,
@@ -21,7 +19,6 @@ import './VehiclePageConcept.css';
 
 const VehiclePageConcept = () => {
   const params = useParams<{ year: string; make: string; model: string }>();
-  const [activeSection, setActiveSection] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [expandedSpec, setExpandedSpec] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
