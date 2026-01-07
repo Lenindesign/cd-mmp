@@ -300,14 +300,45 @@ export const getRankingVehiclesFormatted = (
   limit: number = 10,
   maxPrice?: number
 ): RankedVehicle[] => {
-  const vehicles = getRankingVehicles(bodyStyle, limit, maxPrice);
-  const rankedVehicles = vehicles.map((vehicle, index) => 
-    formatForRanking(vehicle, index + 1, currentVehicleId)
-  );
+  // Get all vehicles in category to find current vehicle's rank
+  const allVehiclesInCategory = getRankingVehicles(bodyStyle, 100, maxPrice);
+  
+  // Get top vehicles for display (limit - 1 to leave room for current vehicle)
+  const topVehicles = getRankingVehicles(bodyStyle, limit - 1, maxPrice);
+  
+  // Check if current vehicle is already in top results
+  const currentVehicleInTop = currentVehicleId 
+    ? topVehicles.some(v => v.id === currentVehicleId)
+    : false;
+  
+  // Find the current vehicle and its actual rank
+  const currentVehicle = currentVehicleId 
+    ? allVehiclesInCategory.find(v => v.id === currentVehicleId)
+    : null;
+  const currentVehicleRank = currentVehicle 
+    ? allVehiclesInCategory.findIndex(v => v.id === currentVehicleId) + 1
+    : 0;
+  
+  // Build the final list
+  let vehiclesToDisplay: Vehicle[];
+  if (currentVehicleInTop || !currentVehicle) {
+    // Current vehicle is in top results or not found, just use top vehicles
+    vehiclesToDisplay = getRankingVehicles(bodyStyle, limit, maxPrice);
+  } else {
+    // Current vehicle is not in top results, add it as the last card
+    vehiclesToDisplay = [...topVehicles, currentVehicle];
+  }
+  
+  // Format vehicles with their actual ranks
+  const rankedVehicles = vehiclesToDisplay.map((vehicle) => {
+    // Find actual rank in full category
+    const actualRank = allVehiclesInCategory.findIndex(v => v.id === vehicle.id) + 1;
+    return formatForRanking(vehicle, actualRank, currentVehicleId);
+  });
   
   // Find the best candidate for each badge (only one of each type)
-  const editorsChoiceIdx = vehicles.findIndex(v => v.award === "Editor's Choice" || v.staffRating >= 9.5);
-  const bestValueIdx = vehicles.findIndex(v => v.priceMin < 25000 && v.staffRating >= 8);
+  const editorsChoiceIdx = vehiclesToDisplay.findIndex(v => v.award === "Editor's Choice" || v.staffRating >= 9.5);
+  const bestValueIdx = vehiclesToDisplay.findIndex(v => v.priceMin < 25000 && v.staffRating >= 8);
   
   // Assign Editor's Choice badge
   if (editorsChoiceIdx !== -1) {

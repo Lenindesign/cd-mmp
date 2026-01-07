@@ -22,6 +22,7 @@ import { getVehicleBySlug, getAvailableYears } from '../../services/vehicleServi
 import { vehicleDatabase } from '../../data/vehicles';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import Warranty from '../../components/Warranty/Warranty';
+import { getVehicleSafetyRatings, parseStarRating, type NHTSASafetyRating } from '../../services/nhtsaService';
 import TrimSelector from '../../components/TrimSelector/TrimSelector';
 import { getVehicleTrims } from '../../services/trimService';
 import FuelEconomy from '../../components/FuelEconomy/FuelEconomy';
@@ -41,6 +42,10 @@ const VehiclePageConcept = () => {
   const [showTradeIn, setShowTradeIn] = useState(false);
   const [showSafety, setShowSafety] = useState(false);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
+  const [safetyRatings, setSafetyRatings] = useState<NHTSASafetyRating | null>(null);
+  const [isLoadingSafety, setIsLoadingSafety] = useState(false);
+  const [showInteriorGallery, setShowInteriorGallery] = useState(false);
+  const [interiorIndex, setInteriorIndex] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   
@@ -80,6 +85,31 @@ const VehiclePageConcept = () => {
       .slice(0, 3);
   }, [vehicle]);
 
+  // Interior gallery photos (vehicle-specific)
+  const interiorPhotos = useMemo(() => {
+    if (!vehicle) return [];
+    
+    // Toyota Corolla 2026 interior photos
+    if (vehicle.make === 'Toyota' && vehicle.model === 'Corolla') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/688292d0da86330002f61f4f/2026toyotacorollacorollahybridsedanfwdawd-17.jpg',
+        'https://hips.hearstapps.com/mtg-prod/688292c96b5a7400029e067b/2026toyotacorollacorollahybridsedanfwdawd-12.jpg',
+        'https://hips.hearstapps.com/mtg-prod/688292d24698760002da9587/2026toyotacorollacorollahybridsedanfwdawd-18.jpg',
+        'https://hips.hearstapps.com/mtg-prod/688292cc4698760002da9584/2026toyotacorollacorollahybridsedanfwdawd-14.jpg',
+        'https://hips.hearstapps.com/mtg-prod/688292cf4698760002da9586/2026toyotacorollacorollahybridsedanfwdawd-16.jpg',
+        'https://hips.hearstapps.com/mtg-prod/688292cd6b5a7400029e067c/2026toyotacorollacorollahybridsedanfwdawd-15.jpg',
+        'https://hips.hearstapps.com/mtg-prod/688292cb7d11a100027d9027/2026toyotacorollacorollahybridsedanfwdawd-13.jpg',
+      ];
+    }
+    
+    // Fallback to gallery images if available
+    if (vehicle.galleryImages && vehicle.galleryImages.length > 0) {
+      return vehicle.galleryImages;
+    }
+    
+    return [vehicle.image];
+  }, [vehicle]);
+
   // Get trims for this vehicle
   const vehicleTrims = useMemo(() => {
     if (!vehicle) return [];
@@ -90,6 +120,41 @@ const VehiclePageConcept = () => {
   const availableYears = useMemo(() => {
     if (!vehicle) return [];
     return getAvailableYears(vehicle.make, vehicle.model);
+  }, [vehicle]);
+
+  // Track if using previous year's data
+  const [safetyDataYear, setSafetyDataYear] = useState<string | null>(null);
+
+  // Fetch safety ratings (try current year, fallback to previous years)
+  useEffect(() => {
+    if (vehicle) {
+      setIsLoadingSafety(true);
+      setSafetyDataYear(null);
+      
+      const tryFetchSafetyData = async () => {
+        const currentYear = parseInt(vehicle.year);
+        const yearsToTry = [currentYear, currentYear - 1, currentYear - 2];
+        
+        for (const year of yearsToTry) {
+          try {
+            const data = await getVehicleSafetyRatings(vehicle.make, vehicle.model, String(year));
+            if (data && data.OverallRating && data.OverallRating !== 'Not Rated') {
+              setSafetyRatings(data);
+              setSafetyDataYear(year !== currentYear ? String(year) : null);
+              return;
+            }
+          } catch {
+            // Continue to next year
+          }
+        }
+        // No data found for any year
+        setSafetyRatings(null);
+      };
+      
+      tryFetchSafetyData().finally(() => {
+        setIsLoadingSafety(false);
+      });
+    }
   }, [vehicle]);
 
   // Close year dropdown when clicking outside
@@ -687,11 +752,23 @@ const VehiclePageConcept = () => {
       </section>
 
       {/* Full-width Image Break - Interior */}
-      <section className="concept__image-break">
+      <section 
+        className="concept__image-break concept__image-break--clickable"
+        onClick={() => {
+          setInteriorIndex(0);
+          setShowInteriorGallery(true);
+        }}
+      >
         <img 
-          src={vehicle.galleryImages?.[vehicle.galleryImages.length - 1] || vehicle.image} 
+          src={interiorPhotos[0] || vehicle.galleryImages?.[vehicle.galleryImages.length - 1] || vehicle.image} 
           alt={`${vehicle.make} ${vehicle.model} interior`}
         />
+        <div className="concept__image-break-overlay">
+          <div className="concept__image-break-cta">
+            <span>View Interior Gallery</span>
+            <span className="concept__image-break-count">{interiorPhotos.length} photos</span>
+          </div>
+        </div>
         <div className="concept__image-break-caption">
           <span>Interior crafted with precision</span>
         </div>
@@ -785,34 +862,131 @@ const VehiclePageConcept = () => {
           </div>
 
           <div className="concept__safety-rating">
+            {/* NHTSA Overall Rating */}
             <div className="concept__safety-score">
-              <span className="concept__safety-score-value">5</span>
-              <span className="concept__safety-score-label">★ NHTSA</span>
+              {isLoadingSafety ? (
+                <span className="concept__safety-score-value">...</span>
+              ) : safetyRatings ? (
+                <>
+                  <div className="concept__safety-score-row">
+                    <span className="concept__safety-score-value">
+                      {parseStarRating(safetyRatings.OverallRating) || 'N/A'}
+                    </span>
+                    <div className="concept__safety-stars">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star 
+                          key={star} 
+                          size={16} 
+                          fill={(parseStarRating(safetyRatings.OverallRating) || 0) >= star ? 'currentColor' : 'none'}
+                          strokeWidth={(parseStarRating(safetyRatings.OverallRating) || 0) >= star ? 0 : 2}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <span className="concept__safety-score-label">NHTSA Overall</span>
+                </>
+              ) : (
+                <>
+                  <span className="concept__safety-score-value">Not Rated</span>
+                  <span className="concept__safety-score-label">NHTSA</span>
+                </>
+              )}
             </div>
-            <div className="concept__safety-score">
-              <span className="concept__safety-score-value">TSP+</span>
-              <span className="concept__safety-score-label">IIHS</span>
-            </div>
+
+            {/* Frontal Crash Rating */}
+            {safetyRatings && parseStarRating(safetyRatings.OverallFrontCrashRating) && (
+              <div className="concept__safety-score">
+                <div className="concept__safety-score-row">
+                  <span className="concept__safety-score-value">
+                    {parseStarRating(safetyRatings.OverallFrontCrashRating)}
+                  </span>
+                  <div className="concept__safety-stars">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star 
+                        key={star} 
+                        size={16} 
+                        fill={(parseStarRating(safetyRatings.OverallFrontCrashRating) || 0) >= star ? 'currentColor' : 'none'}
+                        strokeWidth={(parseStarRating(safetyRatings.OverallFrontCrashRating) || 0) >= star ? 0 : 2}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <span className="concept__safety-score-label">Frontal Crash</span>
+              </div>
+            )}
+
+            {/* Side Crash Rating */}
+            {safetyRatings && parseStarRating(safetyRatings.OverallSideCrashRating) && (
+              <div className="concept__safety-score">
+                <div className="concept__safety-score-row">
+                  <span className="concept__safety-score-value">
+                    {parseStarRating(safetyRatings.OverallSideCrashRating)}
+                  </span>
+                  <div className="concept__safety-stars">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star 
+                        key={star} 
+                        size={16} 
+                        fill={(parseStarRating(safetyRatings.OverallSideCrashRating) || 0) >= star ? 'currentColor' : 'none'}
+                        strokeWidth={(parseStarRating(safetyRatings.OverallSideCrashRating) || 0) >= star ? 0 : 2}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <span className="concept__safety-score-label">Side Crash</span>
+              </div>
+            )}
           </div>
 
+          {/* Safety Features from NHTSA data */}
           <div className="concept__safety-features">
-            <div className="concept__safety-feature">
-              <ShieldCheck size={18} />
-              <span>Forward Collision Warning</span>
-            </div>
-            <div className="concept__safety-feature">
-              <ShieldCheck size={18} />
-              <span>Automatic Emergency Braking</span>
-            </div>
-            <div className="concept__safety-feature">
-              <ShieldCheck size={18} />
-              <span>Lane Departure Warning</span>
-            </div>
-            <div className="concept__safety-feature">
-              <ShieldCheck size={18} />
-              <span>Blind Spot Monitoring</span>
-            </div>
+            {safetyRatings?.NHTSAForwardCollisionWarning === 'Standard' && (
+              <div className="concept__safety-feature">
+                <ShieldCheck size={18} />
+                <span>Forward Collision Warning</span>
+              </div>
+            )}
+            {safetyRatings?.NHTSALaneDepartureWarning === 'Standard' && (
+              <div className="concept__safety-feature">
+                <ShieldCheck size={18} />
+                <span>Lane Departure Warning</span>
+              </div>
+            )}
+            {safetyRatings?.NHTSAElectronicStabilityControl === 'Standard' && (
+              <div className="concept__safety-feature">
+                <ShieldCheck size={18} />
+                <span>Electronic Stability Control</span>
+              </div>
+            )}
+            {/* Fallback features if no NHTSA data */}
+            {!safetyRatings && !isLoadingSafety && (
+              <>
+                <div className="concept__safety-feature">
+                  <ShieldCheck size={18} />
+                  <span>Forward Collision Warning</span>
+                </div>
+                <div className="concept__safety-feature">
+                  <ShieldCheck size={18} />
+                  <span>Automatic Emergency Braking</span>
+                </div>
+                <div className="concept__safety-feature">
+                  <ShieldCheck size={18} />
+                  <span>Lane Departure Warning</span>
+                </div>
+                <div className="concept__safety-feature">
+                  <ShieldCheck size={18} />
+                  <span>Blind Spot Monitoring</span>
+                </div>
+              </>
+            )}
           </div>
+
+          {/* Disclaimer for previous year data */}
+          {safetyDataYear && (
+            <p className="concept__safety-disclaimer">
+              * Safety ratings shown are from the {safetyDataYear} model year. {vehicle.year} ratings not yet available.
+            </p>
+          )}
 
         </div>
       </section>
@@ -832,12 +1006,31 @@ const VehiclePageConcept = () => {
                 >
                   <div className="concept__compare-image">
                     <img src={similar.image} alt={`${similar.make} ${similar.model}`} />
+                    <div className="concept__compare-rating">
+                      <Star size={14} fill="currentColor" />
+                      {similar.staffRating}
+                    </div>
                   </div>
                   <div className="concept__compare-info">
+                    <span className="concept__compare-year">{similar.year}</span>
                     <span className="concept__compare-name">
-                      {similar.year} {similar.make} {similar.model}
+                      {similar.make} {similar.model}
                     </span>
                     <span className="concept__compare-price">{similar.priceRange}</span>
+                    <div className="concept__compare-specs">
+                      <div className="concept__compare-spec">
+                        <span className="concept__compare-spec-label">MPG</span>
+                        <span className="concept__compare-spec-value">{similar.mpg}</span>
+                      </div>
+                      <div className="concept__compare-spec">
+                        <span className="concept__compare-spec-label">HP</span>
+                        <span className="concept__compare-spec-value">{similar.horsepower}</span>
+                      </div>
+                      <div className="concept__compare-spec">
+                        <span className="concept__compare-spec-label">Drive</span>
+                        <span className="concept__compare-spec-value">{similar.drivetrain}</span>
+                      </div>
+                    </div>
                   </div>
                 </Link>
               ))}
@@ -996,6 +1189,78 @@ const VehiclePageConcept = () => {
               year={vehicle.year}
               bodyStyle={vehicle.bodyStyle}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Interior Gallery Modal */}
+      {showInteriorGallery && (
+        <div 
+          className="concept__interior-modal"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowInteriorGallery(false);
+          }}
+        >
+          <button 
+            className="concept__interior-close"
+            onClick={() => setShowInteriorGallery(false)}
+            aria-label="Close gallery"
+          >
+            ×
+          </button>
+          
+          <div className="concept__interior-content">
+            <img 
+              src={interiorPhotos[interiorIndex]} 
+              alt={`${vehicle.make} ${vehicle.model} interior ${interiorIndex + 1}`}
+              className="concept__interior-image"
+            />
+          </div>
+
+          {/* Navigation */}
+          {interiorPhotos.length > 1 && (
+            <>
+              <button 
+                className="concept__interior-nav concept__interior-nav--prev"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setInteriorIndex(prev => prev === 0 ? interiorPhotos.length - 1 : prev - 1);
+                }}
+                aria-label="Previous photo"
+              >
+                <ChevronLeft size={32} />
+              </button>
+              <button 
+                className="concept__interior-nav concept__interior-nav--next"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setInteriorIndex(prev => prev === interiorPhotos.length - 1 ? 0 : prev + 1);
+                }}
+                aria-label="Next photo"
+              >
+                <ChevronRight size={32} />
+              </button>
+            </>
+          )}
+
+          {/* Progress dots */}
+          <div className="concept__interior-dots">
+            {interiorPhotos.map((_, idx) => (
+              <button
+                key={idx}
+                className={`concept__interior-dot ${idx === interiorIndex ? 'concept__interior-dot--active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setInteriorIndex(idx);
+                }}
+                aria-label={`Go to photo ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Counter */}
+          <div className="concept__interior-counter">
+            {interiorIndex + 1} / {interiorPhotos.length}
           </div>
         </div>
       )}
