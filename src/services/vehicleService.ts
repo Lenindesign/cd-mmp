@@ -311,13 +311,10 @@ export const getRankingVehiclesFormatted = (
     ? topVehicles.some(v => v.id === currentVehicleId)
     : false;
   
-  // Find the current vehicle and its actual rank
+  // Find the current vehicle
   const currentVehicle = currentVehicleId 
     ? allVehiclesInCategory.find(v => v.id === currentVehicleId)
     : null;
-  const currentVehicleRank = currentVehicle 
-    ? allVehiclesInCategory.findIndex(v => v.id === currentVehicleId) + 1
-    : 0;
   
   // Build the final list
   let vehiclesToDisplay: Vehicle[];
