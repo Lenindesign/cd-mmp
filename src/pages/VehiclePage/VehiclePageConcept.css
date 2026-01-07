@@ -377,11 +377,19 @@
   margin-bottom: var(--spacing-4);
 }
 
+/* Year + Make Row */
+.concept__year-make-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-2);
+}
+
 /* Year Selector */
 .concept__year-selector {
   position: relative;
   display: inline-block;
-  margin-bottom: var(--spacing-3);
 }
 
 .concept__year-pill {
@@ -488,12 +496,13 @@
 }
 
 .concept__make {
-  font-family: var(--font-heading);
-  font-size: clamp(1rem, 3vw, 1.25rem);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: 3px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 1px;
   text-transform: uppercase;
-  opacity: 0.8;
+  color: var(--color-white);
+  opacity: 0.9;
 }
 
 .concept__model {

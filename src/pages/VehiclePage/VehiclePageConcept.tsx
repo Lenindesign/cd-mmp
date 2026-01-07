@@ -390,41 +390,43 @@ const VehiclePageConcept = () => {
           )}
 
           <div className="concept__hero-text">
-            <div className="concept__year-selector" ref={yearDropdownRef}>
-              <button 
-                className={`concept__year-pill ${isYearDropdownOpen ? 'concept__year-pill--open' : ''}`}
-                onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
-                aria-expanded={isYearDropdownOpen}
-                aria-haspopup="listbox"
-              >
-                <span>{vehicle.year}</span>
-                <ChevronDown size={14} className={`concept__year-chevron ${isYearDropdownOpen ? 'concept__year-chevron--rotated' : ''}`} />
-              </button>
-              
-              {isYearDropdownOpen && (
-                <ul className="concept__year-dropdown" role="listbox">
-                  {availableYears.length > 1 ? (
-                    availableYears.map((yr) => (
-                      <li 
-                        key={yr}
-                        role="option"
-                        aria-selected={yr === String(vehicle.year)}
-                        className={`concept__year-option ${yr === String(vehicle.year) ? 'concept__year-option--selected' : ''}`}
-                        onClick={() => handleYearSelect(yr)}
-                      >
-                        {yr}
+            <div className="concept__year-make-row">
+              <div className="concept__year-selector" ref={yearDropdownRef}>
+                <button 
+                  className={`concept__year-pill ${isYearDropdownOpen ? 'concept__year-pill--open' : ''}`}
+                  onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                  aria-expanded={isYearDropdownOpen}
+                  aria-haspopup="listbox"
+                >
+                  <span>{vehicle.year}</span>
+                  <ChevronDown size={14} className={`concept__year-chevron ${isYearDropdownOpen ? 'concept__year-chevron--rotated' : ''}`} />
+                </button>
+                
+                {isYearDropdownOpen && (
+                  <ul className="concept__year-dropdown" role="listbox">
+                    {availableYears.length > 1 ? (
+                      availableYears.map((yr) => (
+                        <li 
+                          key={yr}
+                          role="option"
+                          aria-selected={yr === String(vehicle.year)}
+                          className={`concept__year-option ${yr === String(vehicle.year) ? 'concept__year-option--selected' : ''}`}
+                          onClick={() => handleYearSelect(yr)}
+                        >
+                          {yr}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="concept__year-option concept__year-option--only">
+                        Only {vehicle.year} available
                       </li>
-                    ))
-                  ) : (
-                    <li className="concept__year-option concept__year-option--only">
-                      Only {vehicle.year} available
-                    </li>
-                  )}
-                </ul>
-              )}
+                    )}
+                  </ul>
+                )}
+              </div>
+              <span className="concept__make">{vehicle.make}</span>
             </div>
             <h1 className="concept__title">
-              <span className="concept__make">{vehicle.make}</span>
               <span className="concept__model">{vehicle.model}</span>
             </h1>
           </div>
