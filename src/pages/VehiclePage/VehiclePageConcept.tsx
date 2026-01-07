@@ -12,12 +12,10 @@ import {
   Cog,
   Star,
   Bookmark,
-  Share2,
   ArrowRight,
   Check,
   Minus,
   Plus,
-  Shield,
   ShieldCheck
 } from 'lucide-react';
 import { getVehicleBySlug, getAvailableYears } from '../../services/vehicleService';
