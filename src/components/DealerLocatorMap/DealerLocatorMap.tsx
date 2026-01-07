@@ -22,6 +22,7 @@ export interface DealerLocatorMapProps {
   maxResults?: number;
   cardVariant?: 'full' | 'compact';
   onDealerSelect?: (dealer: DealerWithScore) => void;
+  onClose?: () => void;
 }
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -40,6 +41,7 @@ const DealerLocatorMap = ({
   maxResults = 20,
   cardVariant = 'full',
   onDealerSelect,
+  onClose,
 }: DealerLocatorMapProps) => {
   const [currentView, setCurrentView] = useState<'map' | 'list'>(defaultView);
   const [sortBy, setSortBy] = useState<SortOption>('bestDeal');
@@ -318,7 +320,7 @@ const DealerLocatorMap = ({
     <div className="dealer-locator">
       {/* Vehicle Context Header */}
       {showVehiclePreview && (
-        <VehicleContextHeader vehicle={vehicle} />
+        <VehicleContextHeader vehicle={vehicle} onClose={onClose} />
       )}
 
       {/* Location Bar */}
@@ -332,6 +334,10 @@ const DealerLocatorMap = ({
           >
             Change
           </button>
+          <span className="dealer-locator__location-divider">·</span>
+          <span className="dealer-locator__location-stats">
+            {dealers.length} dealers · {totalInventory} {vehicle.model} in stock
+          </span>
         </div>
 
         <div className="dealer-locator__sort">
@@ -385,13 +391,6 @@ const DealerLocatorMap = ({
           <Map size={18} />
           <span>Map</span>
         </button>
-      </div>
-
-      {/* Results Summary */}
-      <div className="dealer-locator__summary">
-        <span className="dealer-locator__count">
-          {dealers.length} dealers · {totalInventory} {vehicle.model} in stock
-        </span>
       </div>
 
       {/* Main Content Area */}

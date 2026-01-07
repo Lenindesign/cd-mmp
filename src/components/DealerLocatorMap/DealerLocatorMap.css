@@ -4,9 +4,32 @@
 
 /* ---- Vehicle Context Header ---- */
 .vehicle-context {
+  position: relative;
   background: var(--color-white);
   border-bottom: 1px solid var(--color-gray-200);
   padding: var(--spacing-6);
+}
+
+.vehicle-context__close {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: 50%;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vehicle-context__close:hover {
+  background: var(--color-gray-200);
+  color: var(--color-dark);
 }
 
 .vehicle-context__title {
@@ -187,6 +210,15 @@
   color: var(--color-blue-cobalt-dark);
 }
 
+.dealer-locator__location-divider {
+  color: var(--color-gray-400);
+  margin: 0 var(--spacing-1);
+}
+
+.dealer-locator__location-stats {
+  color: var(--color-gray-600);
+}
+
 /* Sort Dropdown */
 .dealer-locator__sort {
   display: flex;
@@ -306,14 +338,6 @@
   background: var(--color-blue-cobalt);
   border-color: var(--color-blue-cobalt);
   color: var(--color-white);
-}
-
-/* Results Summary */
-.dealer-locator__summary {
-  padding: var(--spacing-3) var(--spacing-6);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
 }
 
 /* Content Area */
@@ -1273,6 +1297,11 @@
     flex-wrap: wrap;
   }
 
+  .dealer-locator__location-divider,
+  .dealer-locator__location-stats {
+    display: none;
+  }
+
   .dealer-locator__sort {
     justify-content: center;
   }
@@ -1280,12 +1309,6 @@
   /* View Toggle - Mobile */
   .dealer-locator__view-toggle {
     padding: var(--spacing-3) var(--spacing-4);
-  }
-
-  /* Results Summary - Mobile */
-  .dealer-locator__summary {
-    padding: var(--spacing-2) var(--spacing-4);
-    text-align: center;
   }
 
   /* Content Area - Mobile */

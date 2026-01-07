@@ -3,7 +3,9 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   ArrowLeft, 
-  ChevronDown, 
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight, 
   Fuel, 
   Gauge, 
   Users, 
@@ -14,14 +16,18 @@ import {
   ArrowRight,
   Check,
   Minus,
-  Plus
+  Plus,
+  Shield,
+  ShieldCheck
 } from 'lucide-react';
 import { getVehicleBySlug, getAvailableYears } from '../../services/vehicleService';
 import { vehicleDatabase } from '../../data/vehicles';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
+import Warranty from '../../components/Warranty/Warranty';
 import TrimSelector from '../../components/TrimSelector/TrimSelector';
 import { getVehicleTrims } from '../../services/trimService';
 import FuelEconomy from '../../components/FuelEconomy/FuelEconomy';
+import WhatsMyCarWorth from '../../components/WhatsMyCarWorth/WhatsMyCarWorth';
 import './VehiclePageConcept.css';
 
 const VehiclePageConcept = () => {
@@ -34,6 +40,8 @@ const VehiclePageConcept = () => {
   const [showDealerMap, setShowDealerMap] = useState(false);
   const [showTrimSelector, setShowTrimSelector] = useState(false);
   const [showFuelEconomy, setShowFuelEconomy] = useState(false);
+  const [showTradeIn, setShowTradeIn] = useState(false);
+  const [showSafety, setShowSafety] = useState(false);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
@@ -174,6 +182,38 @@ const VehiclePageConcept = () => {
       ];
     }
     
+    // Custom gallery for Mazda 3 with video as first slide
+    if (vehicle.make === 'Mazda' && vehicle.model === '3') {
+      return [
+        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/mazda3.mp4' },
+        ...baseImages.map(src => ({ type: 'image' as const, src })),
+      ];
+    }
+    
+    // Custom gallery for Toyota Corolla with video as first slide
+    if (vehicle.make === 'Toyota' && vehicle.model === 'Corolla') {
+      return [
+        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/corolla2.mp4' },
+        ...baseImages.map(src => ({ type: 'image' as const, src })),
+      ];
+    }
+    
+    // Custom gallery for Tesla Model 3 with video as first slide
+    if (vehicle.make === 'Tesla' && vehicle.model === 'Model 3') {
+      return [
+        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/tesla.mp4' },
+        ...baseImages.map(src => ({ type: 'image' as const, src })),
+      ];
+    }
+    
+    // Custom gallery for Honda Accord with video as first slide
+    if (vehicle.make === 'Honda' && vehicle.model === 'Accord') {
+      return [
+        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/accord2.mp4' },
+        ...baseImages.map(src => ({ type: 'image' as const, src })),
+      ];
+    }
+    
     return baseImages.map(src => ({ type: 'image' as const, src }));
   }, [vehicle]);
 
@@ -285,7 +325,7 @@ const VehiclePageConcept = () => {
     headline: `${vehicle.year} ${vehicle.make} ${vehicle.model} Review: The Benchmark Evolves`,
     author: 'Eric Stafford',
     authorTitle: 'Senior Editor',
-    authorAvatar: 'https://hips.hearstapps.com/rover/profile_photos/b0a7701a-6f5f-43a6-8e77-04a218486845_1671476805.file?fill=1:1&resize=200:*',
+    authorAvatar: 'https://media.muckrack.com/profile/images/524536/eric-stafford.jpeg.256x256_q100_crop-smart.jpg',
     date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
     leadParagraph: `The ${vehicle.year} ${vehicle.make} ${vehicle.model} continues to set the standard in the ${vehicle.bodyStyle.toLowerCase()} segment, delivering a compelling blend of performance, comfort, and technology that few rivals can match. After spending a week with this latest iteration, we came away impressed by how ${vehicle.make} has refined an already excellent formula.`,
     fullReview: [
@@ -317,15 +357,29 @@ const VehiclePageConcept = () => {
         </Link>
         <div className="concept__nav-title">
           {isScrolled && (
-            <span>{vehicle.year} {vehicle.make} {vehicle.model}</span>
+            <>
+              <span className="concept__nav-vehicle-name">{vehicle.year} {vehicle.make} {vehicle.model}</span>
+              <span className="concept__nav-price">{vehicle.priceRange}</span>
+              <span className="concept__nav-rating">
+                <Star size={14} fill="var(--color-gold)" stroke="var(--color-gold)" />
+                {vehicle.staffRating} C/D
+              </span>
+            </>
           )}
         </div>
         <div className="concept__nav-actions">
+          {isScrolled && (
+            <>
+              <button className="concept__nav-cta concept__nav-cta--primary">
+                Shop New
+              </button>
+              <button className="concept__nav-cta concept__nav-cta--outline">
+                Shop Used
+              </button>
+            </>
+          )}
           <button className="concept__nav-btn" aria-label="Save vehicle">
             <Bookmark size={20} />
-          </button>
-          <button className="concept__nav-btn" aria-label="Share">
-            <Share2 size={20} />
           </button>
         </div>
       </nav>
@@ -348,12 +402,139 @@ const VehiclePageConcept = () => {
                 style={{ backgroundImage: `url(${currentMedia.src})` }}
               />
             )}
-            <div className="concept__hero-overlay" />
+            <div 
+              className="concept__hero-overlay"
+              onClick={(e) => {
+                if (galleryMedia.length <= 1) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const halfWidth = rect.width / 2;
+                
+                if (clickX < halfWidth) {
+                  // Left side - previous slide
+                  setCurrentImageIndex(prev => prev === 0 ? galleryMedia.length - 1 : prev - 1);
+                } else {
+                  // Right side - next slide
+                  setCurrentImageIndex(prev => (prev + 1) % galleryMedia.length);
+                }
+              }}
+              style={{ cursor: galleryMedia.length > 1 ? 'pointer' : 'default' }}
+            />
+            
+            {/* Slider Arrows */}
+            {galleryMedia.length > 1 && (
+              <>
+                <button 
+                  className="concept__slider-arrow concept__slider-arrow--prev"
+                  onClick={() => setCurrentImageIndex(prev => prev === 0 ? galleryMedia.length - 1 : prev - 1)}
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button 
+                  className="concept__slider-arrow concept__slider-arrow--next"
+                  onClick={() => setCurrentImageIndex(prev => (prev + 1) % galleryMedia.length)}
+                  aria-label="Next slide"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </>
+            )}
           </div>
 
-          {/* Gallery Progress & Save - Top of screen */}
-          <div className="concept__top-bar">
-            <div className="concept__top-bar-spacer" />
+          {/* Hero Content - Top */}
+          <div className="concept__hero-content concept__hero-content--top">
+            {/* Save button */}
+            <button 
+              className={`concept__save-btn ${isSaved ? 'concept__save-btn--saved' : ''}`}
+              onClick={handleSaveClick}
+              aria-label={isSaved ? 'Remove from saved' : 'Save vehicle'}
+            >
+              <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
+            </button>
+
+            <div className="concept__hero-text">
+              <div className="concept__year-make-row">
+                {/* Badges */}
+                {(vehicle.editorsChoice || vehicle.tenBest) && (
+                  <div className="concept__badges">
+                    {vehicle.editorsChoice && (
+                      <span className="concept__badge">
+                        <img 
+                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" 
+                          alt="Editor's Choice" 
+                          className="concept__badge-icon"
+                        />
+                        Editor's Choice
+                      </span>
+                    )}
+                    {vehicle.tenBest && (
+                      <span className="concept__badge">
+                        <img 
+                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" 
+                          alt="10Best" 
+                          className="concept__badge-icon"
+                        />
+                        10Best
+                      </span>
+                    )}
+                  </div>
+                )}
+                
+                <div className="concept__year-selector" ref={yearDropdownRef}>
+                  <button 
+                    className={`concept__year-pill ${isYearDropdownOpen ? 'concept__year-pill--open' : ''}`}
+                    onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                    aria-expanded={isYearDropdownOpen}
+                    aria-haspopup="listbox"
+                  >
+                    <span>{vehicle.year}</span>
+                    <ChevronDown size={14} className={`concept__year-chevron ${isYearDropdownOpen ? 'concept__year-chevron--rotated' : ''}`} />
+                  </button>
+                  
+                  {isYearDropdownOpen && (
+                    <ul className="concept__year-dropdown" role="listbox">
+                      {availableYears.length > 1 ? (
+                        availableYears.map((yr) => (
+                          <li 
+                            key={yr}
+                            role="option"
+                            aria-selected={yr === String(vehicle.year)}
+                            className={`concept__year-option ${yr === String(vehicle.year) ? 'concept__year-option--selected' : ''}`}
+                            onClick={() => handleYearSelect(yr)}
+                          >
+                            {yr}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="concept__year-option concept__year-option--only">
+                          Only {vehicle.year} available
+                        </li>
+                      )}
+                    </ul>
+                  )}
+                </div>
+                <span className="concept__make">{vehicle.make}</span>
+              </div>
+              <h1 className="concept__title">
+                <span className="concept__model">{vehicle.model}</span>
+              </h1>
+            </div>
+
+            <div className="concept__hero-meta">
+              <div className="concept__rating">
+                <Star size={18} fill="currentColor" />
+                <span className="concept__rating-value">{vehicle.staffRating}</span>
+                <span className="concept__rating-max">/10</span>
+              </div>
+              <span className="concept__divider">•</span>
+              <span className="concept__price">{vehicle.priceRange}</span>
+            </div>
+          </div>
+
+          {/* Hero Content - Bottom */}
+          <div className="concept__hero-content concept__hero-content--bottom">
+            {/* Gallery Progress */}
             {galleryMedia.length > 1 && (
               <div className="concept__gallery-progress">
                 {galleryMedia.map((media, idx) => (
@@ -368,90 +549,17 @@ const VehiclePageConcept = () => {
                 ))}
               </div>
             )}
+
+            {/* Scroll Indicator */}
             <button 
-              className={`concept__save-btn ${isSaved ? 'concept__save-btn--saved' : ''}`}
-              onClick={handleSaveClick}
-              aria-label={isSaved ? 'Remove from saved' : 'Save vehicle'}
+              className="concept__scroll-hint"
+              onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+              aria-label="Scroll to learn more"
             >
-              <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
+              <span>Discover</span>
+              <ChevronDown size={24} />
             </button>
           </div>
-
-        <div className="concept__hero-content">
-          {/* Badges */}
-          {(vehicle.editorsChoice || vehicle.tenBest) && (
-            <div className="concept__badges">
-              {vehicle.editorsChoice && (
-                <span className="concept__badge concept__badge--ec">Editor's Choice</span>
-              )}
-              {vehicle.tenBest && (
-                <span className="concept__badge concept__badge--10best">10Best</span>
-              )}
-            </div>
-          )}
-
-          <div className="concept__hero-text">
-            <div className="concept__year-make-row">
-              <div className="concept__year-selector" ref={yearDropdownRef}>
-                <button 
-                  className={`concept__year-pill ${isYearDropdownOpen ? 'concept__year-pill--open' : ''}`}
-                  onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
-                  aria-expanded={isYearDropdownOpen}
-                  aria-haspopup="listbox"
-                >
-                  <span>{vehicle.year}</span>
-                  <ChevronDown size={14} className={`concept__year-chevron ${isYearDropdownOpen ? 'concept__year-chevron--rotated' : ''}`} />
-                </button>
-                
-                {isYearDropdownOpen && (
-                  <ul className="concept__year-dropdown" role="listbox">
-                    {availableYears.length > 1 ? (
-                      availableYears.map((yr) => (
-                        <li 
-                          key={yr}
-                          role="option"
-                          aria-selected={yr === String(vehicle.year)}
-                          className={`concept__year-option ${yr === String(vehicle.year) ? 'concept__year-option--selected' : ''}`}
-                          onClick={() => handleYearSelect(yr)}
-                        >
-                          {yr}
-                        </li>
-                      ))
-                    ) : (
-                      <li className="concept__year-option concept__year-option--only">
-                        Only {vehicle.year} available
-                      </li>
-                    )}
-                  </ul>
-                )}
-              </div>
-              <span className="concept__make">{vehicle.make}</span>
-            </div>
-            <h1 className="concept__title">
-              <span className="concept__model">{vehicle.model}</span>
-            </h1>
-          </div>
-
-          <div className="concept__hero-meta">
-            <div className="concept__rating">
-              <Star size={18} fill="currentColor" />
-              <span className="concept__rating-value">{vehicle.staffRating}</span>
-              <span className="concept__rating-max">/10</span>
-            </div>
-            <span className="concept__divider">•</span>
-            <span className="concept__price">{vehicle.priceRange}</span>
-          </div>
-
-          {/* Scroll Indicator */}
-          <button 
-            className="concept__scroll-hint"
-            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-            aria-label="Scroll to learn more"
-          >
-            <span>Discover</span>
-            <ChevronDown size={24} />
-          </button>
-        </div>
       </section>
 
       {/* Overview Section */}
@@ -464,12 +572,14 @@ const VehiclePageConcept = () => {
           <div className="concept__cta-row">
             <button className="concept__cta concept__cta--primary">
               <span>Shop New</span>
-              <ArrowRight size={18} />
             </button>
             <button className="concept__cta concept__cta--secondary">
               <span>Shop Used</span>
             </button>
-            <button className="concept__cta concept__cta--tertiary">
+            <button 
+              className="concept__cta concept__cta--tertiary"
+              onClick={() => setShowTradeIn(true)}
+            >
               <span>Get Trade-In Value</span>
             </button>
           </div>
@@ -581,7 +691,7 @@ const VehiclePageConcept = () => {
       {/* Full-width Image Break - Interior */}
       <section className="concept__image-break">
         <img 
-          src="https://hips.hearstapps.com/mtg-prod/66984f2dc46bda0008bb416b/8-2025-mazda-cx-5-interior.jpg" 
+          src={vehicle.galleryImages?.[vehicle.galleryImages.length - 1] || vehicle.image} 
           alt={`${vehicle.make} ${vehicle.model} interior`}
         />
         <div className="concept__image-break-caption">
@@ -620,24 +730,92 @@ const VehiclePageConcept = () => {
           </div>
           
           <div className="concept__pricing-card">
-            <div className="concept__pricing-header">
-              <span className="concept__pricing-label">Starting MSRP</span>
-              <span className="concept__pricing-value">${vehicle.priceMin.toLocaleString()}</span>
-            </div>
-            <div className="concept__pricing-range">
-              <div className="concept__pricing-bar">
-                <div className="concept__pricing-fill" style={{ width: '30%' }} />
-                <div className="concept__pricing-marker" style={{ left: '30%' }} />
-              </div>
-              <div className="concept__pricing-labels">
-                <span>Base</span>
-                <span>${vehicle.priceMax.toLocaleString()}</span>
-              </div>
-            </div>
-            <p className="concept__pricing-note">
-              Price excludes destination, taxes, and fees. Actual pricing may vary.
-            </p>
+            {(() => {
+              const recommendedTrim = vehicleTrims.find(t => t.recommended) || vehicleTrims[0];
+              const baseTrim = vehicleTrims.length > 0 ? vehicleTrims.reduce((min, t) => {
+                const minPrice = parseInt(min.price.replace(/[$,]/g, ''));
+                const tPrice = parseInt(t.price.replace(/[$,]/g, ''));
+                return tPrice < minPrice ? t : min;
+              }, vehicleTrims[0]) : null;
+              
+              const basePrice = baseTrim ? parseInt(baseTrim.price.replace(/[$,]/g, '')) : vehicle.priceMin;
+              const maxPrice = vehicle.priceMax;
+              const recommendedPrice = recommendedTrim ? parseInt(recommendedTrim.price.replace(/[$,]/g, '')) : vehicle.priceMin;
+              
+              // Calculate position as percentage
+              const range = maxPrice - basePrice;
+              const position = range > 0 ? ((recommendedPrice - basePrice) / range) * 100 : 0;
+              
+              return (
+                <>
+                  <div className="concept__pricing-header">
+                    <span className="concept__pricing-label">{recommendedTrim?.name || 'Base'} <span className="concept__pricing-recommended">Recommended</span></span>
+                    <span className="concept__pricing-value">${recommendedPrice.toLocaleString()}</span>
+                  </div>
+                  <div className="concept__pricing-range">
+                    <div className="concept__pricing-bar">
+                      <div className="concept__pricing-fill" style={{ width: `${position}%` }} />
+                      <div className="concept__pricing-marker" style={{ left: `${position}%` }} />
+                    </div>
+                    <div className="concept__pricing-labels">
+                      <span>Base ${basePrice.toLocaleString()}</span>
+                      <span>${maxPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <p className="concept__pricing-note">
+                    Price excludes destination, taxes, and fees. Actual pricing may vary.
+                  </p>
+                </>
+              );
+            })()}
           </div>
+        </div>
+      </section>
+
+      {/* Safety Section */}
+      <section className="concept__section concept__safety">
+        <div className="concept__container">
+          <div className="concept__safety-header-row">
+            <h2 className="concept__section-title">Safety</h2>
+            <button 
+              className="concept__safety-link"
+              onClick={() => setShowSafety(true)}
+            >
+              See All Safety Info
+              <ArrowRight size={16} />
+            </button>
+          </div>
+
+          <div className="concept__safety-rating">
+            <div className="concept__safety-score">
+              <span className="concept__safety-score-value">5</span>
+              <span className="concept__safety-score-label">★ NHTSA</span>
+            </div>
+            <div className="concept__safety-score">
+              <span className="concept__safety-score-value">TSP+</span>
+              <span className="concept__safety-score-label">IIHS</span>
+            </div>
+          </div>
+
+          <div className="concept__safety-features">
+            <div className="concept__safety-feature">
+              <ShieldCheck size={18} />
+              <span>Forward Collision Warning</span>
+            </div>
+            <div className="concept__safety-feature">
+              <ShieldCheck size={18} />
+              <span>Automatic Emergency Braking</span>
+            </div>
+            <div className="concept__safety-feature">
+              <ShieldCheck size={18} />
+              <span>Lane Departure Warning</span>
+            </div>
+            <div className="concept__safety-feature">
+              <ShieldCheck size={18} />
+              <span>Blind Spot Monitoring</span>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -693,20 +871,8 @@ const VehiclePageConcept = () => {
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="dealer-modal-title"
+            aria-label="Find dealers near you"
           >
-            <div className="concept__modal-header">
-              <h2 id="dealer-modal-title" className="concept__modal-title">
-                Find {vehicle.make} Dealers Near You
-              </h2>
-              <button 
-                className="concept__modal-close"
-                onClick={() => setShowDealerMap(false)}
-                aria-label="Close dealer map"
-              >
-                <Plus size={24} style={{ transform: 'rotate(45deg)' }} />
-              </button>
-            </div>
             <div className="concept__modal-body">
               <DealerLocatorMap
                 vehicle={{
@@ -725,6 +891,7 @@ const VehiclePageConcept = () => {
                 cardVariant="compact"
                 initialLocation={{ lat: 34.0522, lng: -118.2437 }}
                 initialZipCode="Los Angeles, CA"
+                onClose={() => setShowDealerMap(false)}
               />
             </div>
           </div>
@@ -780,6 +947,55 @@ const VehiclePageConcept = () => {
               year={parseInt(vehicle.year)}
               make={vehicle.make}
               model={vehicle.model}
+              bodyStyle={vehicle.bodyStyle}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Trade-In Modal */}
+      {showTradeIn && (
+        <div 
+          className="concept__modal-backdrop"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowTradeIn(false);
+          }}
+        >
+          <div className="concept__modal concept__modal--trade-in">
+            <button 
+              className="concept__modal-close"
+              onClick={() => setShowTradeIn(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <WhatsMyCarWorth />
+          </div>
+        </div>
+      )}
+
+      {/* Safety Modal */}
+      {showSafety && (
+        <div 
+          className="concept__modal-backdrop"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowSafety(false);
+          }}
+        >
+          <div className="concept__modal concept__modal--safety">
+            <button 
+              className="concept__modal-close"
+              onClick={() => setShowSafety(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <Warranty
+              items={[]}
+              title="Safety & Reliability"
+              make={vehicle.make}
+              model={vehicle.model}
+              year={vehicle.year}
               bodyStyle={vehicle.bodyStyle}
             />
           </div>

@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react';
+import { Star, X } from 'lucide-react';
 import './DealerLocatorMap.css';
 
 export interface VehicleInfo {
@@ -20,12 +20,14 @@ interface VehicleContextHeaderProps {
   vehicle: VehicleInfo;
   variant?: 'full' | 'compact';
   className?: string;
+  onClose?: () => void;
 }
 
 const VehicleContextHeader = ({
   vehicle,
   variant = 'full',
   className = '',
+  onClose,
 }: VehicleContextHeaderProps) => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -64,6 +66,15 @@ const VehicleContextHeader = ({
 
   return (
     <header className={`vehicle-context ${className}`}>
+      {onClose && (
+        <button 
+          className="vehicle-context__close"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <X size={20} />
+        </button>
+      )}
       <h1 className="vehicle-context__title">
         Find Dealers for {vehicleTitle}
       </h1>

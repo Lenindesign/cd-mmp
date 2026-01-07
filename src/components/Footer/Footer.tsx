@@ -7,19 +7,43 @@ const Footer = () => {
   const footerLinks = [
     {
       title: 'New Cars',
-      links: ['Car Rankings', 'SUV Rankings', 'Truck Rankings', 'Electric Vehicles', 'Compare Cars'],
+      links: [
+        { label: 'Car Rankings', path: '/rankings' },
+        { label: 'SUV Rankings', path: '/rankings' },
+        { label: 'Truck Rankings', path: '/rankings' },
+        { label: 'Electric Vehicles', path: '/vehicles' },
+        { label: 'Compare Cars', path: '/vehicles' },
+      ],
     },
     {
       title: 'Research',
-      links: ['Car Reviews', 'Road Tests', 'Buyer\'s Guide', 'Best Cars Lists', 'Car Finder'],
+      links: [
+        { label: 'Car Reviews', path: '/vehicles' },
+        { label: 'Road Tests', path: '/vehicles' },
+        { label: 'Buyer\'s Guide', path: '/vehicles' },
+        { label: 'Best Cars Lists', path: '/rankings' },
+        { label: 'Car Finder', path: '/vehicles' },
+      ],
     },
     {
       title: 'News',
-      links: ['Latest News', 'Industry News', 'Future Cars', 'Auto Shows', 'Motorsports'],
+      links: [
+        { label: 'Latest News', path: '/news' },
+        { label: 'Industry News', path: '/news' },
+        { label: 'Future Cars', path: '/news' },
+        { label: 'Auto Shows', path: '/news' },
+        { label: 'Motorsports', path: '/news' },
+      ],
     },
     {
-      title: 'Company',
-      links: ['About Us', 'Advertise', 'Careers', 'Contact', 'Licensing'],
+      title: 'Prototypes',
+      links: [
+        { label: 'Design System', path: 'https://lenindesign.github.io/cd-mmp/?path=/docs/introduction--docs', external: true },
+        { label: 'Honda Accord (Concept)', path: '/2026/Honda/Accord/concept' },
+        { label: 'Honda Accord (Standard)', path: '/2026/Honda/Accord' },
+        { label: 'Mazda CX-5', path: '/2026/Mazda/CX-5/concept' },
+        { label: 'Card Audit', path: '/audit/cards' },
+      ],
     },
   ];
 
@@ -76,7 +100,11 @@ const Footer = () => {
                 <ul className="footer__section-links">
                   {section.links.map((link, linkIndex) => (
                     <li key={linkIndex}>
-                      <a href="#" className="footer__link">{link}</a>
+                      {link.external ? (
+                        <a href={link.path} className="footer__link" target="_blank" rel="noopener noreferrer">{link.label}</a>
+                      ) : (
+                        <Link to={link.path} className="footer__link">{link.label}</Link>
+                      )}
                     </li>
                   ))}
                 </ul>

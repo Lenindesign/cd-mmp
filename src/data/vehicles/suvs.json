@@ -70,7 +70,13 @@
     "model": "HR-V",
     "bodyStyle": "SUV",
     "imageSource": "2024 Honda HR-V",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6658e668f31254000921b1fe/27-2025-honda-hr-v-sport-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6658e65cfdc012000866527f/18-2025-honda-hr-v-sport-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6658e66ef31254000921b1ff/30-2025-honda-hr-v-sport-interior.jpg"
+    ],
     "priceRange": "$24,800 - $30,650",
     "priceMin": 24800,
     "priceMax": 30650,
@@ -97,7 +103,13 @@
     "model": "Venue",
     "bodyStyle": "SUV",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66315e20fe80c50008274c1e/031-2024-hyundai-venue.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/66bfd23776cd2a00085a8484/001-2025-hyundai-venue-front-three-quarter-motion-lead.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/66bfd23776cd2a00085a8484/001-2025-hyundai-venue-front-three-quarter-motion-lead.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66bfd279bdc7b7000805a54a/022-2025-hyundai-venue-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66bfd2966c4bdd00086dfcf9/030-2025-hyundai-venue-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66bfd23a42a00b0008c08f78/002-2025-hyundai-venue-interior-dash.jpg"
+    ],
     "priceRange": "$20,750 - $24,600",
     "priceMin": 20750,
     "priceMax": 24600,
@@ -1288,12 +1300,12 @@
     "model": "Venue",
     "bodyStyle": "SUV",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66bfd2996f17de000892beed/031-2025-hyundai-venue-front-view.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/66bfd23776cd2a00085a8484/001-2025-hyundai-venue-front-three-quarter-motion-lead.jpg",
     "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/66bfd2996f17de000892beed/031-2025-hyundai-venue-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/66bfd279bdc7b7000805a54a/022-2025-hyundai-venue-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/66bfd27c5e64df0008f777e5/023-2025-hyundai-venue-side-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/66bfd281a88f040008a8e2c2/025-2025-hyundai-venue-rear-view.jpg"
+      "https://hips.hearstapps.com/mtg-prod/66bfd23776cd2a00085a8484/001-2025-hyundai-venue-front-three-quarter-motion-lead.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66bfd279bdc7b7000805a54a/022-2025-hyundai-venue-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66bfd2966c4bdd00086dfcf9/030-2025-hyundai-venue-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/66bfd23a42a00b0008c08f78/002-2025-hyundai-venue-interior-dash.jpg"
     ],
     "priceRange": "$19,650 - $23,250",
     "priceMin": 19650,
@@ -1629,7 +1641,13 @@
     "model": "HR-V",
     "bodyStyle": "SUV",
     "imageSource": "2025 Honda HR-V",
-    "image": null,
+    "image": "https://hips.hearstapps.com/mtg-prod/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/mtg-prod/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6658e668f31254000921b1fe/27-2025-honda-hr-v-sport-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6658e65cfdc012000866527f/18-2025-honda-hr-v-sport-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6658e66ef31254000921b1ff/30-2025-honda-hr-v-sport-interior.jpg"
+    ],
     "priceRange": "$24,895 - $29,995",
     "priceMin": 24895,
     "priceMax": 29995,
