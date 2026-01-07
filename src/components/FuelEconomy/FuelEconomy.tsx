@@ -151,7 +151,10 @@ const FuelEconomy = ({ year, make, model, bodyStyle }: FuelEconomyProps) => {
       <div className="fuel-economy__header">
         <h2 className="fuel-economy__title">
           <Fuel size={24} />
-          Fuel Economy
+          <span>
+            <span className="fuel-economy__title-vehicle">{year} {make} {model}</span>
+            <span className="fuel-economy__title-label">Fuel Economy</span>
+          </span>
         </h2>
         <span className="fuel-economy__source">
           <Info size={14} />

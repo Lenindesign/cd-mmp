@@ -17,12 +17,36 @@
 }
 
 .fuel-economy__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
   font-family: var(--font-heading);
   font-size: var(--font-size-36);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   letter-spacing: 0.5px;
   margin: 0;
+}
+
+.fuel-economy__title > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fuel-economy__title-vehicle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.fuel-economy__title-label {
+  font-size: var(--font-size-36);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  line-height: 1;
 }
 
 .fuel-economy__title svg {
