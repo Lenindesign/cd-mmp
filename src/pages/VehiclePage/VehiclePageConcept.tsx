@@ -36,7 +36,6 @@ const VehiclePageConcept = () => {
   const [showFuelEconomy, setShowFuelEconomy] = useState(false);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-  const dealerMapRef = useRef<HTMLDivElement>(null);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   
   const year = params.year;
@@ -768,7 +767,7 @@ const VehiclePageConcept = () => {
               ×
             </button>
             <FuelEconomy
-              year={vehicle.year}
+              year={parseInt(vehicle.year)}
               make={vehicle.make}
               model={vehicle.model}
               bodyStyle={vehicle.bodyStyle}
