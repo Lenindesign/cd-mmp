@@ -285,6 +285,7 @@ const VehiclePageConcept = () => {
     headline: `${vehicle.year} ${vehicle.make} ${vehicle.model} Review: The Benchmark Evolves`,
     author: 'Eric Stafford',
     authorTitle: 'Senior Editor',
+    authorAvatar: 'https://hips.hearstapps.com/rover/profile_photos/b0a7701a-6f5f-43a6-8e77-04a218486845_1671476805.file?fill=1:1&resize=200:*',
     date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
     leadParagraph: `The ${vehicle.year} ${vehicle.make} ${vehicle.model} continues to set the standard in the ${vehicle.bodyStyle.toLowerCase()} segment, delivering a compelling blend of performance, comfort, and technology that few rivals can match. After spending a week with this latest iteration, we came away impressed by how ${vehicle.make} has refined an already excellent formula.`,
     fullReview: [
@@ -483,8 +484,15 @@ const VehiclePageConcept = () => {
               <h2 className="concept__review-headline">{editorialReview.headline}</h2>
               <div className="concept__review-meta">
                 <div className="concept__review-author">
-                  <span className="concept__review-author-name">{editorialReview.author}</span>
-                  <span className="concept__review-author-title">{editorialReview.authorTitle}</span>
+                  <img 
+                    src={editorialReview.authorAvatar} 
+                    alt={editorialReview.author}
+                    className="concept__review-avatar"
+                  />
+                  <div className="concept__review-author-info">
+                    <span className="concept__review-author-name">{editorialReview.author}</span>
+                    <span className="concept__review-author-title">{editorialReview.authorTitle}</span>
+                  </div>
                 </div>
                 <time className="concept__review-date">{editorialReview.date}</time>
               </div>

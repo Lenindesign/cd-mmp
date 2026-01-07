@@ -729,6 +729,20 @@
 
 .concept__review-author {
   display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.concept__review-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-gray-200);
+}
+
+.concept__review-author-info {
+  display: flex;
   flex-direction: column;
   gap: 2px;
 }
