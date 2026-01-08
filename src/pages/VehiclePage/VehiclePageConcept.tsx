@@ -102,6 +102,100 @@ const VehiclePageConcept = () => {
       ];
     }
     
+    // Honda Accord interior photos
+    if (vehicle.make === 'Honda' && vehicle.model === 'Accord') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/671a7545a32dcb0008742bac/001-2025-honda-accord-hybrid.jpg',
+        'https://hips.hearstapps.com/mtg-prod/671a7548a32dcb0008742bad/002-2025-honda-accord-hybrid.jpg',
+        'https://hips.hearstapps.com/mtg-prod/671a754a2647660009869398/003-2025-honda-accord-hybrid.jpg',
+        'https://hips.hearstapps.com/mtg-prod/671a754d958c1a00082e2e5e/004-2025-honda-accord-hybrid.jpg',
+        'https://hips.hearstapps.com/mtg-prod/671a754ea32dcb0008742bae/005-2025-honda-accord-hybrid.jpg',
+        'https://hips.hearstapps.com/mtg-prod/671a7551958c1a00082e2e60/006-2025-honda-accord-hybrid.jpg',
+      ];
+    }
+    
+    // Tesla Model 3 interior photos
+    if (vehicle.make === 'Tesla' && vehicle.model === 'Model 3') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/uploads/2024/04/2024teslamodel3performancehighland42.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a10a52f2c7000819a0c9/014-2024-tesla-model-3-awd-long-range-dashboard.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a10a52f2c7000819a0c7/012-2024-tesla-model-3-awd-long-range.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a10a32222600089f8f0d/018-2024-tesla-model-3-awd-long-range.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a0f6f4ad5b00088978c2/016-2024-tesla-model-3-rwd-short-range-infotainment-screen.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a0f6f4ad5b00088978c0/013-2024-tesla-model-3-awd-long-range-cup-holder.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a111391bac000853ba03/011-2024-tesla-model-3-awd-long-range.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a111391bac000853ba02/009-2024-tesla-model-3-awd-long-range.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a111f4ad5b00088978d8/006-2024-tesla-model-3-awd-long-range-rear-seats.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4a0fded5cac0008b1c2a6/009-2024-tesla-model-3-awd-long-range-cup-holder.jpg',
+      ];
+    }
+    
+    // Mazda 3 interior photos
+    if (vehicle.make === 'Mazda' && vehicle.model === '3') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/677873e336112c0008bec62f/4-2025-mazda-mazda3-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/677873e6a64de300081603f2/5-2025-mazda-mazda3-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/677873e9a64de300081603f3/6-2025-mazda-mazda3-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/677873edfc798600080bec3f/7-2025-mazda-mazda3-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/677873f036112c0008bec633/8-2025-mazda-mazda3-interior.jpg',
+      ];
+    }
+    
+    // Mazda CX-5 interior photos
+    if (vehicle.make === 'Mazda' && vehicle.model === 'CX-5') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/686c4f4fbf3cec0002569567/2026mazdacx-514.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66984f194051cb0008709c50/1-2025-mazda-cx-5-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66984f1cc46bda0008bb4168/2-2025-mazda-cx-5-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66984f2dc46bda0008bb416b/8-2025-mazda-cx-5-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66984f31c46bda0008bb416c/9-2025-mazda-cx-5-interior.jpg',
+      ];
+    }
+    
+    // Honda HR-V interior photos
+    if (vehicle.make === 'Honda' && vehicle.model === 'HR-V') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/6658e6710045830008a2e0b4/31-2025-honda-hr-v-sport-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/6658e66ef31254000921b1ff/30-2025-honda-hr-v-sport-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/6658e67620298f0008243b8b/48-2025-honda-hr-v-sport-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/6658e674fdc0120008665281/33-2025-honda-hr-v-sport-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a4f2c3221e6d000823b27b/2024-honda-hr-v-awd-ex-l-interior-4.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a1884037e1e8000812fe29/2024-honda-hr-v-awd-ex-l-interior-11.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a1882152adb600099972ee/2024-honda-hr-v-awd-ex-l-interior-5.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a1883f868dc0000845b7f9/2024-honda-hr-v-awd-ex-l-interior-8.jpg',
+        'https://hips.hearstapps.com/mtg-prod/65a18830979de90008c6886d/2024-honda-hr-v-awd-ex-l-interior-7.jpg',
+      ];
+    }
+    
+    // Infiniti QX60 interior photos
+    if (vehicle.make === 'Infiniti' && vehicle.model === 'QX60') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/669fef93e0f1950008a6089a/1-2025-infiniti-qx60-blck-edit-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/669fefb152fc9900098cff43/8-2025-infiniti-qx60-blck-edit-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/669fefac151a5200084648d9/7-2025-infiniti-qx60-blck-edit-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/669fefcc051a870008e0a5b2/12-2025-infiniti-qx60-blck-edit-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/669fefcf151a5200084648db/13-2025-infiniti-qx60-blck-edit-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/669fefebdf56f80008a94121/22-2025-infiniti-qx60-blck-edit-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/669fefe8051a870008e0a5b6/21-2025-infiniti-qx60-blck-edit-cargo.jpg',
+      ];
+    }
+    
+    // Hyundai Venue interior photos
+    if (vehicle.make === 'Hyundai' && vehicle.model === 'Venue') {
+      return [
+        'https://hips.hearstapps.com/mtg-prod/66bfd23a42a00b0008c08f78/002-2025-hyundai-venue-interior-dash.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd23ee0c704000824664d/003-2025-hyundai-venue-interior-seat.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd24fa88f040008a8e2bd/008-2025-hyundai-venue-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd24b42a00b0008c08f7a/007-2025-hyundai-venue-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd2485e64df0008f777e2/006-2025-hyundai-venue-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd257e0c704000824664f/010-2025-hyundai-venue-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd25ce0c7040008246650/012-2025-hyundai-venue-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd259a88f040008a8e2be/011-2025-hyundai-venue-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd26396736e00081ded5d/014-2025-hyundai-venue-interior.jpg',
+        'https://hips.hearstapps.com/mtg-prod/66bfd26696736e00081ded5e/015-2025-hyundai-venue-interior.jpg',
+      ];
+    }
+    
     // Fallback to gallery images if available
     if (vehicle.galleryImages && vehicle.galleryImages.length > 0) {
       return vehicle.galleryImages;
@@ -231,6 +325,9 @@ const VehiclePageConcept = () => {
 
   // Build gallery media (images + video for specific vehicles)
   const galleryMedia = useMemo(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:galleryMedia',message:'galleryMedia useMemo called',data:{vehicleMake:vehicle?.make,vehicleModel:vehicle?.model,hasVehicle:!!vehicle},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+    // #endregion
     if (!vehicle) return [{ type: 'image' as const, src: '' }];
     
     const baseImages = vehicle.galleryImages || [vehicle.image];
@@ -238,8 +335,8 @@ const VehiclePageConcept = () => {
     // Custom gallery for Mazda CX-5 with Hearst images and video
     if (vehicle.make === 'Mazda' && vehicle.model === 'CX-5') {
       return [
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/cx5.mp4' },
         { type: 'image' as const, src: 'https://hips.hearstapps.com/mtg-prod/6778870454a81800085167ef/18-2025-mazda-cx-90-front-view.jpg' },
-        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/mazda-x4-broll.mp4' },
         { type: 'image' as const, src: 'https://hips.hearstapps.com/mtg-prod/686c4f4fbf3cec0002569567/2026mazdacx-514.jpg' },
         { type: 'image' as const, src: 'https://hips.hearstapps.com/mtg-prod/686c4f46308c7d00024e576e/2026mazdacx-55.jpg' },
       ];
@@ -248,7 +345,7 @@ const VehiclePageConcept = () => {
     // Custom gallery for Mazda 3 with video as first slide
     if (vehicle.make === 'Mazda' && vehicle.model === '3') {
       return [
-        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/mazda3.mp4' },
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/mazda3.mp4' },
         ...baseImages.map(src => ({ type: 'image' as const, src })),
       ];
     }
@@ -256,7 +353,7 @@ const VehiclePageConcept = () => {
     // Custom gallery for Toyota Corolla with video as first slide
     if (vehicle.make === 'Toyota' && vehicle.model === 'Corolla') {
       return [
-        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/corolla2.mp4' },
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/corolla2.mp4' },
         ...baseImages.map(src => ({ type: 'image' as const, src })),
       ];
     }
@@ -264,7 +361,7 @@ const VehiclePageConcept = () => {
     // Custom gallery for Tesla Model 3 with video as first slide
     if (vehicle.make === 'Tesla' && vehicle.model === 'Model 3') {
       return [
-        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/tesla.mp4' },
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/tesla.mp4' },
         ...baseImages.map(src => ({ type: 'image' as const, src })),
       ];
     }
@@ -272,15 +369,51 @@ const VehiclePageConcept = () => {
     // Custom gallery for Honda Accord with video as first slide
     if (vehicle.make === 'Honda' && vehicle.model === 'Accord') {
       return [
-        { type: 'video' as const, src: 'https://aceray.com/wp-content/uploads/2026/01/accord2.mp4' },
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/accord2.mp4' },
         ...baseImages.map(src => ({ type: 'image' as const, src })),
       ];
     }
     
+    // Custom gallery for Honda HR-V with video as first slide
+    if (vehicle.make === 'Honda' && vehicle.model === 'HR-V') {
+      return [
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/HR-V3.mp4' },
+        ...baseImages.map(src => ({ type: 'image' as const, src })),
+      ];
+    }
+    
+    // Custom gallery for Hyundai Venue with video as first slide
+    if (vehicle.make === 'Hyundai' && vehicle.model === 'Venue') {
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:VenueMatch',message:'Hyundai Venue matched - returning video',data:{videoUrl:'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/venue.mp4',baseImagesCount:baseImages.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H4'})}).catch(()=>{});
+      // #endregion
+      return [
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/venue.mp4' },
+        ...baseImages.map(src => ({ type: 'image' as const, src })),
+      ];
+    }
+    
+    // Custom gallery for Infiniti QX60 with video as first slide
+    if (vehicle.make === 'Infiniti' && vehicle.model === 'QX60') {
+      return [
+        { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/qx60.mp4' },
+        ...baseImages.map(src => ({ type: 'image' as const, src })),
+      ];
+    }
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:defaultGallery',message:'No vehicle match - using default gallery (no video)',data:{make:vehicle.make,model:vehicle.model},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+    // #endregion
     return baseImages.map(src => ({ type: 'image' as const, src }));
   }, [vehicle]);
 
   const currentMedia = galleryMedia[currentImageIndex] || { type: 'image', src: '' };
+  
+  // #region agent log
+  useEffect(() => {
+    fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:galleryState',message:'Gallery media state',data:{galleryLength:galleryMedia.length,firstItemType:galleryMedia[0]?.type,firstItemSrc:galleryMedia[0]?.src?.substring(0,50),currentIndex:currentImageIndex,currentType:currentMedia.type},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4-H5'})}).catch(()=>{});
+  }, [galleryMedia, currentImageIndex, currentMedia]);
+  // #endregion
 
   // Preload images
   useEffect(() => {
@@ -327,6 +460,40 @@ const VehiclePageConcept = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, [galleryMedia.length, currentMedia.type]);
+
+  // Keyboard navigation for gallery and interior modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Interior gallery modal navigation
+      if (showInteriorGallery) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          setShowInteriorGallery(false);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          setInteriorIndex(prev => prev === 0 ? interiorPhotos.length - 1 : prev - 1);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          setInteriorIndex(prev => prev === interiorPhotos.length - 1 ? 0 : prev + 1);
+        }
+        return;
+      }
+      
+      // Hero gallery navigation
+      if (galleryMedia.length <= 1) return;
+      
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setCurrentImageIndex(prev => prev === 0 ? galleryMedia.length - 1 : prev - 1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setCurrentImageIndex(prev => (prev + 1) % galleryMedia.length);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [galleryMedia.length, showInteriorGallery, interiorPhotos.length]);
 
   if (!vehicle) {
     return (

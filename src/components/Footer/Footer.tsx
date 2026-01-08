@@ -42,7 +42,7 @@ const Footer = () => {
         { label: 'Honda Accord (Concept)', path: '/2026/Honda/Accord/concept' },
         { label: 'Honda Accord (Standard)', path: '/2026/Honda/Accord' },
         { label: 'Mazda CX-5', path: '/2026/Mazda/CX-5/concept' },
-        { label: 'Card Audit', path: '/audit/cards' },
+        { label: 'Vehicle Ranking', path: '/rankings' },
       ],
     },
   ];
@@ -126,7 +126,7 @@ const Footer = () => {
               <a href="#" className="footer__legal-link">Cookie Policy</a>
               <a href="#" className="footer__legal-link">Accessibility</a>
               <Link to="/design-system" className="footer__legal-link">Design System</Link>
-              <Link to="/audit/cards" className="footer__legal-link">Card Audit</Link>
+              <Link to="/rankings" className="footer__legal-link">Vehicle Ranking</Link>
               <Link to="/admin/vehicle-ratings" className="footer__legal-link">Editor Portal</Link>
             </div>
           </div>
