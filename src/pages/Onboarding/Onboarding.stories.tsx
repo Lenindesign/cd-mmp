@@ -3,11 +3,11 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { 
   SignIn, 
-  OnboardingStep1, 
-  OnboardingStep2, 
-  OnboardingStep3, 
-  OnboardingStep4, 
-  OnboardingWelcome 
+  OnboardingStep1, // Archived: "Let's get to know each other"
+  OnboardingStep2, // Active: "What describes you best" - Step 1
+  OnboardingStep3, // Archived: "Tell us about your ride"
+  OnboardingStep4, // Active: "Newsletter" - Step 2
+  OnboardingWelcome, // Archived: "Welcome to the club"
 } from './index';
 
 // ============================================
@@ -21,7 +21,16 @@ const meta: Meta = {
     router: { skip: true }, // This page provides its own MemoryRouter with initialEntries
     docs: {
       description: {
-        component: 'The Car and Driver onboarding flow guides new users through account setup, preferences, and personalization.',
+        component: `The Car and Driver onboarding flow guides new users through account setup.
+
+**Current Active Flow (2 Steps):**
+1. What describes you best (Car Buyer / Enthusiast / Both)
+2. Newsletter subscription
+
+**Archived Steps (available for future use):**
+- Let's get to know each other (name/location)
+- Tell us about your ride (vehicle search)
+- Welcome to the club (membership card)`,
       },
     },
   },
@@ -54,10 +63,56 @@ export const SignInPage: StoryObj = {
 };
 
 // ============================================
-// STEP 1 - Personal Information
+// ACTIVE FLOW - STEP 1: What Describes You Best
 // ============================================
 
-export const Step1_PersonalInfo: StoryObj = {
+export const Step1_UserType: StoryObj = {
+  render: () => (
+    <AuthProvider>
+    <MemoryRouter initialEntries={['/onboarding/step-1']}>
+      <Routes>
+        <Route path="*" element={<OnboardingStep2 />} />
+      </Routes>
+    </MemoryRouter>
+    </AuthProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '**ACTIVE** - Step 1 of the current onboarding flow. Users select their type: Car Buyer, Car Enthusiast, or Both.',
+      },
+    },
+  },
+};
+
+// ============================================
+// ACTIVE FLOW - STEP 2: Newsletter Subscription
+// ============================================
+
+export const Step2_Newsletter: StoryObj = {
+  render: () => (
+    <AuthProvider>
+    <MemoryRouter initialEntries={['/onboarding/step-2']}>
+      <Routes>
+        <Route path="*" element={<OnboardingStep4 />} />
+      </Routes>
+    </MemoryRouter>
+    </AuthProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '**ACTIVE** - Step 2 (final step) of the current onboarding flow. Users can subscribe to the Car and Driver newsletter.',
+      },
+    },
+  },
+};
+
+// ============================================
+// ARCHIVED STEPS - Available for Future Use
+// ============================================
+
+export const Archived_PersonalInfo: StoryObj = {
   render: () => (
     <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/step-1']}>
@@ -70,40 +125,13 @@ export const Step1_PersonalInfo: StoryObj = {
   parameters: {
     docs: {
       description: {
-        story: 'Step 1 of the onboarding flow. Users enter their name and optional location.',
+        story: '**ARCHIVED** - "Let\'s get to know each other" step. Users enter their name and optional location. Not currently used in the active flow.',
       },
     },
   },
 };
 
-// ============================================
-// STEP 2 - User Type Selection
-// ============================================
-
-export const Step2_UserType: StoryObj = {
-  render: () => (
-    <AuthProvider>
-    <MemoryRouter initialEntries={['/onboarding/step-2']}>
-      <Routes>
-        <Route path="*" element={<OnboardingStep2 />} />
-      </Routes>
-    </MemoryRouter>
-    </AuthProvider>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Step 2 of the onboarding flow. Users select their shopping intent (buying, researching, etc.).',
-      },
-    },
-  },
-};
-
-// ============================================
-// STEP 3 - Interests Selection
-// ============================================
-
-export const Step3_Interests: StoryObj = {
+export const Archived_VehicleSelection: StoryObj = {
   render: () => (
     <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/step-3']}>
@@ -116,40 +144,13 @@ export const Step3_Interests: StoryObj = {
   parameters: {
     docs: {
       description: {
-        story: 'Step 3 of the onboarding flow. Users select their lifestyle interests and preferences.',
+        story: '**ARCHIVED** - "Tell Us About Your Ride" step. Users can search and select vehicles they own or want. Not currently used in the active flow.',
       },
     },
   },
 };
 
-// ============================================
-// STEP 4 - Vehicle Type Preferences
-// ============================================
-
-export const Step4_VehicleTypes: StoryObj = {
-  render: () => (
-    <AuthProvider>
-    <MemoryRouter initialEntries={['/onboarding/step-4']}>
-      <Routes>
-        <Route path="*" element={<OnboardingStep4 />} />
-      </Routes>
-    </MemoryRouter>
-    </AuthProvider>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Step 4 of the onboarding flow. Users select their preferred vehicle types.',
-      },
-    },
-  },
-};
-
-// ============================================
-// WELCOME - Completion Page
-// ============================================
-
-export const Welcome_Completion: StoryObj = {
+export const Archived_WelcomeCard: StoryObj = {
   render: () => (
     <AuthProvider>
     <MemoryRouter initialEntries={['/onboarding/welcome']}>
@@ -162,7 +163,7 @@ export const Welcome_Completion: StoryObj = {
   parameters: {
     docs: {
       description: {
-        story: 'Welcome/completion page shown after finishing the onboarding flow.',
+        story: '**ARCHIVED** - "Welcome to the Club" completion page with membership card and confetti animation. Not currently used in the active flow.',
       },
     },
   },

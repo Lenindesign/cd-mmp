@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Menu, X, User, LogOut, Bookmark } from 'lucide-react';
+import { Search, Menu, X, User, LogOut, Bookmark, Car, GitCompare, Sparkles } from 'lucide-react';
 import { searchVehicles, getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,6 +9,9 @@ import { Button } from '../Button';
 import ExitIntentModal from '../ExitIntentModal';
 import { SavedVehiclesSidebar } from '../SavedVehiclesSidebar';
 import './Header.css';
+
+// Key for tracking if welcome tooltip has been shown
+const WELCOME_TOOLTIP_SHOWN_KEY = 'cd_welcome_tooltip_shown';
 
 const Header = () => {
   const location = useLocation();
@@ -22,11 +25,52 @@ const Header = () => {
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSavedSidebar, setShowSavedSidebar] = useState(false);
+  const [showWelcomeTooltip, setShowWelcomeTooltip] = useState(false);
   const searchRef = useRef<HTMLFormElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const welcomeTooltipRef = useRef<HTMLDivElement>(null);
   
   // Fetch all ratings from Supabase in production
   const { getRating: getSupabaseRating } = useSupabaseRatings();
+
+  // Show welcome tooltip for newly onboarded users
+  useEffect(() => {
+    if (isAuthenticated && user?.onboardingCompleted) {
+      // Check if we've already shown the welcome tooltip
+      const hasShownTooltip = localStorage.getItem(WELCOME_TOOLTIP_SHOWN_KEY);
+      
+      if (!hasShownTooltip) {
+        // Small delay to let the page settle after navigation
+        const timer = setTimeout(() => {
+          setShowWelcomeTooltip(true);
+        }, 500);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isAuthenticated, user?.onboardingCompleted]);
+
+  // Close welcome tooltip when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        welcomeTooltipRef.current && 
+        !welcomeTooltipRef.current.contains(e.target as Node)
+      ) {
+        handleDismissWelcomeTooltip();
+      }
+    };
+
+    if (showWelcomeTooltip) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showWelcomeTooltip]);
+
+  const handleDismissWelcomeTooltip = () => {
+    setShowWelcomeTooltip(false);
+    localStorage.setItem(WELCOME_TOOLTIP_SHOWN_KEY, 'true');
+  };
   
   // Fallback placeholder image for vehicles without images
   const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
@@ -276,7 +320,12 @@ const Header = () => {
                 <>
                   <button 
                     className="header__user-btn header__user-btn--authenticated"
-                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    onClick={() => {
+                      if (showWelcomeTooltip) {
+                        handleDismissWelcomeTooltip();
+                      }
+                      setShowUserMenu(!showUserMenu);
+                    }}
                     aria-label="User menu"
                     aria-expanded={showUserMenu}
                   >
@@ -292,6 +341,76 @@ const Header = () => {
                       )}
                     </div>
                   </button>
+
+                  {/* Welcome Tooltip - Shows after onboarding */}
+                  {showWelcomeTooltip && (
+                    <div 
+                      ref={welcomeTooltipRef}
+                      className="header__welcome-tooltip"
+                      role="dialog"
+                      aria-labelledby="welcome-tooltip-title"
+                    >
+                      <div className="header__welcome-tooltip-arrow" />
+                      <button 
+                        className="header__welcome-tooltip-close"
+                        onClick={handleDismissWelcomeTooltip}
+                        aria-label="Close welcome message"
+                      >
+                        <X size={16} />
+                      </button>
+                      
+                      <div className="header__welcome-tooltip-header">
+                        <Sparkles size={24} className="header__welcome-tooltip-icon" />
+                        <h3 id="welcome-tooltip-title" className="header__welcome-tooltip-title">
+                          Welcome, {user.name?.split(' ')[0] || 'Member'}! 🎉
+                        </h3>
+                      </div>
+                      
+                      <p className="header__welcome-tooltip-subtitle">
+                        You're all set! Here's what you can do:
+                      </p>
+                      
+                      <ul className="header__welcome-tooltip-features">
+                        <li className="header__welcome-tooltip-feature">
+                          <div className="header__welcome-tooltip-feature-icon">
+                            <Bookmark size={18} />
+                          </div>
+                          <div className="header__welcome-tooltip-feature-text">
+                            <strong>Save Cars</strong>
+                            <span>Bookmark vehicles you love to your garage</span>
+                          </div>
+                        </li>
+                        <li className="header__welcome-tooltip-feature">
+                          <div className="header__welcome-tooltip-feature-icon">
+                            <GitCompare size={18} />
+                          </div>
+                          <div className="header__welcome-tooltip-feature-text">
+                            <strong>Compare Cars</strong>
+                            <span>See how vehicles stack up side by side</span>
+                          </div>
+                        </li>
+                        <li className="header__welcome-tooltip-feature">
+                          <div className="header__welcome-tooltip-feature-icon">
+                            <Car size={18} />
+                          </div>
+                          <div className="header__welcome-tooltip-feature-text">
+                            <strong>Track Prices</strong>
+                            <span>Get alerts when prices drop on saved cars</span>
+                          </div>
+                        </li>
+                      </ul>
+                      
+                      <button 
+                        className="header__welcome-tooltip-cta"
+                        onClick={() => {
+                          handleDismissWelcomeTooltip();
+                          navigate('/vehicles');
+                        }}
+                      >
+                        Start Exploring
+                      </button>
+                    </div>
+                  )}
                   
                   {showUserMenu && (
                     <div className="header__user-menu">

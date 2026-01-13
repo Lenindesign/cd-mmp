@@ -19,12 +19,11 @@ const VehiclesListPage = lazy(() => import('./pages/VehiclesListPage/VehiclesLis
 const DesignSystem = lazy(() => import('./pages/DesignSystem/DesignSystem'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 
-// Onboarding pages - lazy loaded as a group
-const OnboardingStep1 = lazy(() => import('./pages/Onboarding/OnboardingStep1'));
-const OnboardingStep2 = lazy(() => import('./pages/Onboarding/OnboardingStep2'));
-const OnboardingStep3 = lazy(() => import('./pages/Onboarding/OnboardingStep3'));
-const OnboardingStep4 = lazy(() => import('./pages/Onboarding/OnboardingStep4'));
-const OnboardingWelcome = lazy(() => import('./pages/Onboarding/OnboardingWelcome'));
+// Onboarding pages - lazy loaded as a group (2-step flow)
+// Step 1: What describes you best (OnboardingStep2 component)
+// Step 2: Newsletter subscription (OnboardingStep4 component)
+const OnboardingStep1 = lazy(() => import('./pages/Onboarding/OnboardingStep2')); // "What describes you best"
+const OnboardingStep2 = lazy(() => import('./pages/Onboarding/OnboardingStep4')); // "Newsletter"
 const OnboardingResults = lazy(() => import('./pages/Onboarding/OnboardingResults'));
 const SignIn = lazy(() => import('./pages/Onboarding/SignIn'));
 const SignUp = lazy(() => import('./pages/Onboarding/SignUp'));
@@ -84,12 +83,12 @@ function App() {
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             
-            {/* Onboarding Flow */}
+            {/* Onboarding Flow - 2 Steps */}
+            {/* Step 1: What describes you best */}
             <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
+            {/* Step 2: Newsletter subscription (final step) */}
             <Route path="/onboarding/step-2" element={<OnboardingStep2 />} />
-            <Route path="/onboarding/step-3" element={<OnboardingStep3 />} />
-            <Route path="/onboarding/step-4" element={<OnboardingStep4 />} />
-            <Route path="/onboarding/welcome" element={<OnboardingWelcome />} />
+            {/* Results page (optional) */}
             <Route path="/onboarding/results" element={<OnboardingResults />} />
             
             {/* Home Page - News + Stories */}

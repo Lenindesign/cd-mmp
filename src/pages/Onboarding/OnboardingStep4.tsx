@@ -3,20 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep4.css';
 
-// Speedometer Step Indicator Component (consistent with Steps 1-3)
+// Speedometer Step Indicator Component - Now shows 2 steps total
 const StepIndicator: React.FC<{ step: number }> = ({ step }) => {
   const stepImages: Record<number, string> = {
     1: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e811a35f00029a6a69/step1.svg',
-    2: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e711a35f00029a6a67/step2.svg',
-    3: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a65/step3.svg',
-    4: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a63/step4.svg',
+    2: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a63/step4.svg', // Using step4 image for step 2 (full gauge)
   };
 
   return (
     <div className="step-indicator">
       <img 
         src={stepImages[step]} 
-        alt={`Step ${step} of 4`} 
+        alt={`Step ${step} of 2`} 
         className="step-indicator-img"
       />
     </div>
@@ -119,11 +117,13 @@ const OnboardingStep4: React.FC = () => {
     } catch (err) {
       console.error('Failed to complete onboarding:', err);
     }
-    navigate('/onboarding/welcome');
+    // Navigate directly to home page - no welcome screen
+    navigate('/');
   };
 
   const handleBack = () => {
-    navigate('/onboarding/step-3');
+    // Go back to step 1 (What describes you best)
+    navigate('/onboarding/step-1');
   };
 
   const handleSkip = async () => {
@@ -132,14 +132,15 @@ const OnboardingStep4: React.FC = () => {
     } catch (err) {
       console.error('Failed to complete onboarding:', err);
     }
-    navigate('/onboarding/welcome');
+    // Navigate directly to home page - no welcome screen
+    navigate('/');
   };
 
   return (
     <div className="onboarding-step4">
       <div className="step4-container">
-        {/* Step Indicator - Speedometer Graphic */}
-        <StepIndicator step={4} />
+        {/* Step Indicator - Speedometer Graphic - Now Step 2 of 2 */}
+        <StepIndicator step={2} />
 
         {/* Header Section */}
         <header className="step4-header">
