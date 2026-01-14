@@ -252,6 +252,9 @@ export async function getRecalls(
   try {
     // Skip API call for future model years (NHTSA doesn't have data for future years)
     const year: number = typeof modelYear === 'string' ? parseInt(modelYear, 10) : modelYear;
+    if (isNaN(year)) {
+      return [] as NHTSARecall[];
+    }
     const currentYear = new Date().getFullYear();
     if (year > currentYear) {
       return [] as NHTSARecall[];
@@ -293,6 +296,9 @@ export async function getVehicleId(
   try {
     const url = `${NHTSA_BASE_URL}/SafetyRatings/modelyear/${modelYear}/make/${encodeURIComponent(make)}/model/${encodeURIComponent(model)}?format=json`;
     
+    if (isNaN(year)) {
+      return null;
+    }
     const response = await fetch(url);
     
     // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
@@ -442,6 +448,9 @@ export async function getComplaints(
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
+    }
+    if (isNaN(year)) {
+      return [] as NHTSAComplaint[];
     }
     
     const data: ComplaintsResponse = await response.json();
