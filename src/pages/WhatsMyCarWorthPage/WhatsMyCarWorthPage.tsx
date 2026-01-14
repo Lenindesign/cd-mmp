@@ -1,8 +1,11 @@
 import { DollarSign } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import WhatsMyCarWorth from '../../components/WhatsMyCarWorth';
 import './WhatsMyCarWorthPage.css';
 
 const WhatsMyCarWorthPage = () => {
+  const navigate = useNavigate();
+
   const handleGetEstimate = (data: {
     year: string;
     make: string;
@@ -11,7 +14,15 @@ const WhatsMyCarWorthPage = () => {
     condition: string;
   }) => {
     console.log('Trade-in estimate requested:', data);
-    // In production, this would send data to an API or analytics
+    // Navigate to results page with form data as URL params
+    const params = new URLSearchParams({
+      year: data.year,
+      make: data.make,
+      model: data.model,
+      mileage: data.mileage.toString(),
+      condition: data.condition,
+    });
+    navigate(`/whats-my-car-worth/results?${params.toString()}`);
   };
 
   return (

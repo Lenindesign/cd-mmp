@@ -51,6 +51,7 @@ const ListiclePage = lazy(() => import('./pages/ListiclePage/ListiclePage'));
 
 // What's My Car Worth page - lazy loaded
 const WhatsMyCarWorthPage = lazy(() => import('./pages/WhatsMyCarWorthPage/WhatsMyCarWorthPage'));
+const WhatsMyCarWorthResultsPage = lazy(() => import('./pages/WhatsMyCarWorthResultsPage/WhatsMyCarWorthResultsPage'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -127,7 +128,9 @@ function App() {
             
             {/* What's My Car Worth */}
             <Route path="/whats-my-car-worth" element={<WhatsMyCarWorthPage />} />
+            <Route path="/whats-my-car-worth/results" element={<WhatsMyCarWorthResultsPage />} />
             <Route path="/trade-in-value" element={<WhatsMyCarWorthPage />} />
+            <Route path="/trade-in-value/results" element={<WhatsMyCarWorthResultsPage />} />
             
             {/* Individual Vehicle Pages - Dynamic routes based on slug */}
             <Route path="/:year/:make/:model" element={<VehiclePage />} />
