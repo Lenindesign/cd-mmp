@@ -264,8 +264,6 @@ export async function getRecalls(
     
     const response = await fetch(url);
     
-    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
-    if (response.status === 400) {
       return [];
     }
     
@@ -307,8 +305,6 @@ export async function getVehicleId(
     const url = `${NHTSA_BASE_URL}/SafetyRatings/modelyear/${modelYear}/make/${encodeURIComponent(make)}/model/${encodeURIComponent(model)}?format=json`;
     const response = await fetch(url);
     
-    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
-    if (response.status === 400) {
       return null;
     }
     
@@ -340,8 +336,6 @@ export async function getSafetyRatings(
     
     const response = await fetch(url);
     
-    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
-    if (response.status === 400) {
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
@@ -455,8 +449,6 @@ export async function getComplaints(
     
     const response = await fetch(url);
     
-    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
-    if (response.status === 400) {
       return [];
     }
     
