@@ -250,9 +250,21 @@ export async function getRecalls(
   modelYear: number | string
 ): Promise<NHTSARecall[]> {
   try {
+    // Skip API call for future model years (NHTSA doesn\'t have data for future years)
+    const year = typeof modelYear === \'string\' ? parseInt(modelYear, 10) : modelYear;
+    const currentYear = new Date().getFullYear();
+    if (year > currentYear) {
+      return [];
+    }
+
     const url = `${NHTSA_BASE_URL}/recalls/recallsByVehicle?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&modelYear=${modelYear}`;
     
     const response = await fetch(url);
+    
+    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
+    if (response.status === 400) {
+      return [];
+    }
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
@@ -262,7 +274,10 @@ export async function getRecalls(
     // API returns 'results' (lowercase) but TypeScript interface uses 'Results'
     return data.results || data.Results || [];
   } catch (error) {
-    console.error('Error fetching NHTSA recalls:', error);
+    // Only log unexpected errors (network issues, 500 errors, etc.)
+    if (error instanceof Error && !error.message.includes(\'400\')) {
+      console.error(\'Error fetching NHTSA recalls:\', error);
+    }
     return [];
   }
 }
@@ -279,6 +294,11 @@ export async function getVehicleId(
     const url = `${NHTSA_BASE_URL}/SafetyRatings/modelyear/${modelYear}/make/${encodeURIComponent(make)}/model/${encodeURIComponent(model)}?format=json`;
     
     const response = await fetch(url);
+    
+    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
+    if (response.status === 400) {
+      return [];
+    }
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
@@ -307,6 +327,11 @@ export async function getSafetyRatings(
     const url = `${NHTSA_BASE_URL}/SafetyRatings/VehicleId/${vehicleId}?format=json`;
     
     const response = await fetch(url);
+    
+    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
+    if (response.status === 400) {
+      return [];
+    }
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
@@ -409,6 +434,11 @@ export async function getComplaints(
     const url = `${NHTSA_BASE_URL}/complaints/complaintsByVehicle?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&modelYear=${modelYear}`;
     
     const response = await fetch(url);
+    
+    // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
+    if (response.status === 400) {
+      return [];
+    }
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
