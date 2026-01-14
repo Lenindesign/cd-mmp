@@ -294,11 +294,17 @@ export async function getVehicleId(
   modelYear: number | string
 ): Promise<number | null> {
   try {
-    const url = `${NHTSA_BASE_URL}/SafetyRatings/modelyear/${modelYear}/make/${encodeURIComponent(make)}/model/${encodeURIComponent(model)}?format=json`;
-    
+    // Skip API call for future model years (NHTSA doesn't have data for future years)
+    const year: number = typeof modelYear === 'string' ? parseInt(modelYear, 10) : modelYear;
     if (isNaN(year)) {
       return null;
     }
+    const currentYear = new Date().getFullYear();
+    if (year > currentYear) {
+      return null;
+    }
+
+    const url = `${NHTSA_BASE_URL}/SafetyRatings/modelyear/${modelYear}/make/${encodeURIComponent(make)}/model/${encodeURIComponent(model)}?format=json`;
     const response = await fetch(url);
     
     // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
@@ -437,6 +443,16 @@ export async function getComplaints(
   modelYear: number | string
 ): Promise<NHTSAComplaint[]> {
   try {
+    // Skip API call for future model years (NHTSA doesn't have data for future years)
+    const year: number = typeof modelYear === 'string' ? parseInt(modelYear, 10) : modelYear;
+    if (isNaN(year)) {
+      return [] as NHTSAComplaint[];
+    }
+    const currentYear = new Date().getFullYear();
+    if (year > currentYear) {
+      return [] as NHTSAComplaint[];
+    }
+
     const url = `${NHTSA_BASE_URL}/complaints/complaintsByVehicle?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&modelYear=${modelYear}`;
     
     const response = await fetch(url);
