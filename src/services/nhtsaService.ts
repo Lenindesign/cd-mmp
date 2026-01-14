@@ -309,7 +309,7 @@ export async function getVehicleId(
     
     // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
     if (response.status === 400) {
-      return [];
+      return null;
     }
     
     if (!response.ok) {
@@ -464,9 +464,6 @@ export async function getComplaints(
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
-    }
-    if (isNaN(year)) {
-      return [] as NHTSAComplaint[];
     }
     
     const data: ComplaintsResponse = await response.json();
