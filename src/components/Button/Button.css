@@ -1,0 +1,269 @@
+/* ============================================
+   BUTTON COMPONENT - Car and Driver Design System
+   ============================================ */
+
+/* Base Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-0-5);
+}
+
+/* ============================================
+   SIZES
+   ============================================ */
+
+.btn--small {
+  height: var(--spacing-8);
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-xs);
+}
+
+.btn--medium {
+  height: var(--spacing-10);
+  padding: 0 var(--spacing-5);
+  font-size: var(--font-size-sm);
+}
+
+.btn--large {
+  height: var(--spacing-12);
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-base);
+}
+
+/* ============================================
+   VARIANTS
+   ============================================ */
+
+/* Primary - Blue Cobalt */
+.btn--primary {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary - Gray */
+.btn--secondary {
+  background: var(--color-gray-100);
+  color: var(--color-dark);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: var(--color-gray-200);
+}
+
+.btn--secondary:active:not(:disabled) {
+  background: var(--color-gray-300);
+}
+
+/* Outline */
+.btn--outline {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.btn--outline:active:not(:disabled) {
+  background: var(--color-blue-cobalt-dark);
+}
+
+/* Ghost - Transparent */
+.btn--ghost {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--color-teal-light);
+}
+
+.btn--ghost:active:not(:disabled) {
+  background: var(--color-gray-200);
+}
+
+/* Danger - Red */
+.btn--danger {
+  background: var(--color-red);
+  color: var(--color-white);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: var(--color-red-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--danger:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Success - Green Outline (Trade-In CTA) */
+.btn--success {
+  background: transparent;
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.btn--success:hover:not(:disabled) {
+  background: var(--color-success);
+  color: var(--color-white);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--success:active:not(:disabled) {
+  background: var(--color-success-dark);
+  color: var(--color-white);
+  transform: translateY(0);
+}
+
+/* ============================================
+   STATES
+   ============================================ */
+
+/* Full Width */
+.btn--full-width {
+  width: 100%;
+}
+
+/* Disabled */
+.btn--disabled,
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Loading */
+.btn--loading {
+  cursor: wait;
+}
+
+.btn--loading .btn__text {
+  opacity: 0.7;
+}
+
+/* ============================================
+   INNER ELEMENTS
+   ============================================ */
+
+.btn__text {
+  display: inline-block;
+}
+
+.btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn__icon--left {
+  margin-right: calc(var(--spacing-1) * -1);
+}
+
+.btn__icon--right {
+  margin-left: calc(var(--spacing-1) * -1);
+}
+
+.btn__icon svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* Spinner */
+.btn__spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn__spinner-icon {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  animation: btn-spin 0.8s linear infinite;
+}
+
+.btn--large .btn__spinner-icon {
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+}
+
+@keyframes btn-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   ICON-ONLY BUTTON VARIANT
+   ============================================ */
+
+.btn--icon-only {
+  padding: 0;
+  width: var(--spacing-10);
+  min-width: var(--spacing-10);
+}
+
+.btn--icon-only.btn--small {
+  width: var(--spacing-8);
+  min-width: var(--spacing-8);
+}
+
+.btn--icon-only.btn--large {
+  width: var(--spacing-12);
+  min-width: var(--spacing-12);
+}
+
+.btn--icon-only .btn__icon {
+  margin: 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .btn--large {
+    height: 44px;
+    padding: 0 var(--spacing-5);
+  }
+}
+

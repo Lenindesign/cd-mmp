@@ -1,0 +1,431 @@
+/* Compare Trims - Clean Card Design */
+.trim-selector {
+  padding: var(--spacing-10) 0;
+  background: var(--color-white);
+}
+
+/* Header */
+.trim-selector__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+  flex-wrap: wrap;
+}
+
+.trim-selector__header-left {
+  flex: 1;
+  min-width: 280px;
+}
+
+.trim-selector__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.trim-selector__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  margin: 0;
+  max-width: 520px;
+}
+
+.trim-selector__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.trim-selector__selection-count {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-blue-cobalt);
+  font-weight: var(--font-weight-medium);
+}
+
+.trim-selector__compare-btn {
+  padding: var(--spacing-2-5) var(--spacing-5);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--color-white);
+  color: var(--color-gray-400);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  cursor: not-allowed;
+  transition: all var(--transition-fast);
+}
+
+.trim-selector__compare-btn--active {
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-400);
+  cursor: pointer;
+}
+
+.trim-selector__compare-btn--active:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-500);
+}
+
+/* Carousel Wrapper */
+.trim-selector__carousel-wrapper {
+  position: relative;
+  margin-bottom: var(--spacing-4);
+  background: var(--color-white);
+  display: flex;
+  gap: var(--spacing-4);
+  align-items: stretch;
+}
+
+/* Scroll area container */
+.trim-selector__carousel-scroll-area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Carousel Track - scrollable area for non-recommended cards */
+.trim-selector__carousel {
+  display: flex;
+  gap: var(--spacing-4);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* Add padding to show card borders and shadows on all sides */
+  padding: 8px 16px 8px 8px;
+}
+
+.trim-selector__carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Navigation Arrows */
+.trim-selector__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--color-gray-600);
+}
+
+.trim-selector__nav:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-400);
+  color: var(--color-gray-700);
+}
+
+.trim-selector__nav--left {
+  left: -16px;
+}
+
+.trim-selector__nav--right {
+  right: 0;
+}
+
+/* Location */
+.trim-selector__location {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  justify-content: flex-end;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.trim-selector__location svg {
+  color: var(--color-red);
+}
+
+.trim-selector__change-location {
+  background: none;
+  border: none;
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  padding: 0;
+  margin-left: var(--spacing-2);
+}
+
+.trim-selector__change-location:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   TRIM CARD - Clean Modern Design
+   ============================================ */
+.trim-card {
+  flex: 0 0 280px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-4);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.trim-card:hover {
+  border-color: var(--color-gray-300);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Selected State - Green Border */
+.trim-card--selected {
+  border-color: var(--color-success);
+  border-width: 2px;
+  box-shadow: 0 0 0 1px var(--color-success);
+}
+
+/* Recommended Card - Fixed position outside scroll */
+.trim-card--recommended {
+  flex-shrink: 0;
+  border-color: var(--color-success);
+  border-width: 2px;
+  /* Solid white background with green gradient overlay */
+  background: 
+    linear-gradient(
+      to right,
+      rgba(38, 135, 13, 0.10) 0%,
+      rgba(38, 135, 13, 0.05) 50%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    var(--color-white);
+  /* Ensure it's properly sized */
+  align-self: flex-start;
+}
+
+/* Card Top Row - Name and Add Button */
+.trim-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
+.trim-card__name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.trim-card__check-icon {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.trim-card__name {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+/* Recommended card name stays green */
+.trim-card--recommended .trim-card__name {
+  color: var(--color-badge-certified);
+}
+
+.trim-card__badge {
+  display: inline-flex;
+  padding: var(--spacing-0-5) var(--spacing-2);
+  background: var(--color-success);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Add Button */
+.trim-card__add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.trim-card__add-btn:hover {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+}
+
+.trim-card__add-btn--selected {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+  transform: rotate(45deg);
+}
+
+.trim-card__add-btn--selected:hover {
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
+}
+
+/* Pricing */
+.trim-card__pricing {
+  margin-bottom: var(--spacing-3);
+}
+
+.trim-card__price {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-1);
+}
+
+.trim-card__mpg {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+/* Features */
+.trim-card__features {
+  flex: 1;
+  list-style: none;
+  margin: 0 0 var(--spacing-4) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.trim-card__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: 1.4;
+}
+
+.trim-card__feature-bullet {
+  color: var(--color-blue-cobalt);
+  flex-shrink: 0;
+}
+
+/* Shop Button */
+.trim-card__shop-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.trim-card__shop-btn:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+/* Selected card shop button */
+.trim-card--selected .trim-card__shop-btn,
+.trim-card--recommended .trim-card__shop-btn {
+  border-color: var(--color-blue-cobalt);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .trim-selector__header {
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+  
+  .trim-selector__header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .trim-selector__nav {
+    display: none;
+  }
+  
+  /* On mobile, stack the layout */
+  .trim-selector__carousel-wrapper {
+    flex-direction: column;
+  }
+  
+  .trim-card {
+    flex: 0 0 260px;
+    min-width: 260px;
+  }
+  
+  .trim-card--recommended {
+    width: 100%;
+    flex: none;
+    min-width: auto;
+    max-width: 320px;
+  }
+  
+  .trim-selector__location {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .trim-selector__title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .trim-card {
+    flex: 0 0 240px;
+    min-width: 240px;
+  }
+}

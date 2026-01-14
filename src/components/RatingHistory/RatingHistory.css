@@ -1,0 +1,298 @@
+/* Rating History Modal */
+.rating-history__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Modal overlay - intentional opacity */
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: var(--spacing-4);
+}
+
+.rating-history__modal {
+  background: var(--color-white);
+  border-radius: var(--spacing-4);
+  width: 100%;
+  max-width: 700px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rating-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.rating-history__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.rating-history__title h2 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-apple-text-primary);
+  margin: 0;
+}
+
+.rating-history__title svg {
+  color: var(--color-blue-cobalt);
+}
+
+.rating-history__close {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border: none;
+  background: var(--color-apple-bg-secondary);
+  border-radius: 50%;
+  font-size: var(--font-size-xl);
+  color: var(--color-apple-text-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.rating-history__close:hover {
+  background: var(--color-apple-bg-tertiary);
+  color: var(--color-apple-text-primary);
+}
+
+.rating-history__filters {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-gray-200);
+  background: var(--color-apple-bg-secondary);
+}
+
+.rating-history__select {
+  padding: var(--spacing-2-5) var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--spacing-2);
+  background: var(--color-white);
+  color: var(--color-apple-text-primary);
+  cursor: pointer;
+  min-width: 140px;
+}
+
+.rating-history__select:focus {
+  outline: none;
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px var(--color-info-light);
+}
+
+.rating-history__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-4) var(--spacing-5);
+}
+
+.rating-history__loading,
+.rating-history__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  color: var(--color-apple-text-tertiary);
+  text-align: center;
+}
+
+.rating-history__empty svg {
+  margin-bottom: var(--spacing-3);
+  opacity: 0.5;
+}
+
+.rating-history__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.rating-history__month {
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--spacing-3);
+  overflow: hidden;
+}
+
+.rating-history__month-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-apple-bg-secondary);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.2s ease;
+}
+
+.rating-history__month-header:hover {
+  background: var(--color-apple-bg-tertiary);
+}
+
+.rating-history__month-label {
+  font-size: var(--font-size-15);
+  font-weight: 600;
+  color: var(--color-apple-text-primary);
+}
+
+.rating-history__month-count {
+  font-size: var(--font-size-13);
+  color: var(--color-apple-text-tertiary);
+  margin-right: auto;
+  margin-left: var(--spacing-2);
+}
+
+.rating-history__entries {
+  display: flex;
+  flex-direction: column;
+}
+
+.rating-history__entry {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--spacing-3);
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
+  background: var(--color-white);
+}
+
+.rating-history__entry:hover {
+  background: var(--color-gray-50);
+}
+
+.rating-history__entry-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0-5);
+}
+
+.rating-history__vehicle-name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-apple-text-primary);
+}
+
+.rating-history__category {
+  font-size: var(--font-size-sm);
+  color: var(--color-apple-text-tertiary);
+}
+
+.rating-history__entry-change {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.rating-history__old-rating {
+  font-size: var(--font-size-base);
+  color: var(--color-apple-text-tertiary);
+  font-weight: 500;
+}
+
+.rating-history__arrow {
+  color: var(--color-apple-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.rating-history__new-rating {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-apple-text-primary);
+}
+
+.rating-history__diff {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-0-5);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--spacing-0-5) var(--spacing-1-5);
+  border-radius: var(--spacing-1);
+}
+
+.rating-history__diff--green {
+  color: var(--color-success);
+  background: var(--color-success-light);
+}
+
+.rating-history__diff--red {
+  color: var(--color-error);
+  background: var(--color-error-light);
+}
+
+.rating-history__diff--gray {
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+}
+
+.rating-history__entry-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-apple-text-tertiary);
+  text-align: right;
+  min-width: 100px;
+}
+
+.rating-history__footer {
+  padding: var(--spacing-3) var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-apple-bg-secondary);
+}
+
+.rating-history__total {
+  font-size: var(--font-size-13);
+  color: var(--color-apple-text-tertiary);
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .rating-history__modal {
+    max-height: 90vh;
+    margin: var(--spacing-2);
+  }
+
+  .rating-history__entry {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2);
+  }
+
+  .rating-history__entry-change {
+    order: -1;
+  }
+
+  .rating-history__entry-date {
+    text-align: left;
+  }
+}
+

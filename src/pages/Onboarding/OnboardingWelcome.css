@@ -1,0 +1,502 @@
+/* ============================================
+   ONBOARDING WELCOME - COMPLETION PAGE
+   Car and Driver Design System
+   Based on Figma Design: CD-Onboarding
+   Consistent with OnboardingStep1-4
+   ============================================ */
+
+/* Confetti Celebration Animation */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  border-radius: var(--spacing-0-5);
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    top: -20px;
+    opacity: 1;
+    transform: translateX(0) rotateZ(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: translateX(50px) rotateZ(90deg) rotateY(180deg);
+  }
+  50% {
+    transform: translateX(-30px) rotateZ(180deg) rotateY(360deg);
+  }
+  75% {
+    transform: translateX(40px) rotateZ(270deg) rotateY(540deg);
+  }
+  100% {
+    top: 100vh;
+    opacity: 0;
+    transform: translateX(-20px) rotateZ(360deg) rotateY(720deg);
+  }
+}
+
+.onboarding-welcome {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-gray-100);
+  padding: var(--spacing-12);
+}
+
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: var(--spacing-12);
+  background-color: var(--color-gray-100);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Header with Logo */
+.welcome-header {
+  margin-bottom: var(--spacing-6);
+}
+
+.welcome-logo {
+  height: var(--spacing-10);
+  width: auto;
+  overflow: visible;
+}
+
+/* Animated Logo */
+.welcome-logo--animated {
+  color: var(--color-black);
+}
+
+/* All paths start hidden */
+.welcome-logo--animated path {
+  opacity: 0;
+}
+
+/* Individual letter animation - scale in with smooth landing */
+.welcome-logo__letter {
+  transform: scale(0.3);
+  transform-origin: center center;
+  animation: welcomeLetterScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Red and blue bars */
+.welcome-logo__bar {
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: welcomeBarReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Animation delays by child position in SVG */
+.welcome-logo--animated path:nth-child(1) { animation-delay: 0.05s; }   /* C */
+.welcome-logo--animated path:nth-child(2) { animation-delay: 0.1s; }    /* A */
+.welcome-logo--animated path:nth-child(3) { animation-delay: 0.15s; }   /* R */
+.welcome-logo--animated path:nth-child(4) { animation-delay: 0.2s; }    /* Red bar */
+.welcome-logo--animated path:nth-child(5) { animation-delay: 0.25s; }   /* Blue bar */
+.welcome-logo--animated path:nth-child(6) { animation-delay: 0.3s; }    /* A (AND) */
+.welcome-logo--animated path:nth-child(7) { animation-delay: 0.32s; }   /* N (AND) */
+.welcome-logo--animated path:nth-child(8) { animation-delay: 0.34s; }   /* D (AND) */
+.welcome-logo--animated path:nth-child(9) { animation-delay: 0.4s; }    /* D */
+.welcome-logo--animated path:nth-child(10) { animation-delay: 0.45s; }  /* R */
+.welcome-logo--animated path:nth-child(11) { animation-delay: 0.5s; }   /* I */
+.welcome-logo--animated path:nth-child(12) { animation-delay: 0.55s; }  /* V */
+.welcome-logo--animated path:nth-child(13) { animation-delay: 0.6s; }   /* E */
+.welcome-logo--animated path:nth-child(14) { animation-delay: 0.65s; }  /* R */
+
+@keyframes welcomeLetterScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes welcomeBarReveal {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scaleX(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* Content */
+.welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.welcome-content--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Typography */
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-blue-cobalt);
+  margin: 0 0 var(--spacing-2) 0;
+  line-height: 1.2;
+}
+
+.welcome-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-8) 0;
+  opacity: 0.8;
+}
+
+/* Membership Card - Scalable Design */
+/* Base design at 520px width, scales proportionally */
+.membership-card-wrapper {
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: var(--spacing-8);
+}
+
+.membership-card {
+  position: relative;
+  width: 100%;
+  padding-bottom: 62.5%; /* 1.6:1 aspect ratio (100/1.6 = 62.5%) */
+  background: var(--gradient-dark-alt);
+  border-radius: var(--spacing-4);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.membership-card__inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Scale content based on container width - base is 520px */
+  font-size: calc(16px * (var(--card-scale, 1)));
+}
+
+/* Watermark logo */
+.membership-card__watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 115%;
+  max-width: none;
+  height: auto;
+  opacity: 0.05;
+  pointer-events: none;
+  filter: brightness(0) invert(1);
+}
+
+/* Card shimmer effect - single sweep */
+.membership-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: cardShimmer 1.5s ease-in-out 1.2s forwards;
+}
+
+@keyframes cardShimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+/* Card Header - Absolute positioning */
+.membership-card__header {
+  position: absolute;
+  top: 12%;
+  left: 8%;
+  display: flex;
+  align-items: center;
+  gap: 4%;
+}
+
+.membership-card__badge {
+  flex-shrink: 0;
+  width: 19%; /* ~100px at 520px = 19.2% */
+  aspect-ratio: 1;
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: badgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both;
+}
+
+@keyframes badgePop {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+
+.membership-card__badge svg {
+  width: 100%;
+  height: 100%;
+}
+
+.membership-card__header-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0-5);
+  text-align: left;
+}
+
+.membership-card__title {
+  font-family: var(--font-display);
+  font-size: 1.625em; /* 26px at base 16px */
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  animation: textSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+}
+
+.membership-card__subtitle {
+  font-family: var(--font-body);
+  font-size: 1em; /* 16px at base 16px */
+  font-weight: var(--font-weight-regular);
+  color: var(--color-white);
+  margin: 0;
+  opacity: 0.8;
+  white-space: nowrap;
+  animation: textSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.85s both;
+}
+
+@keyframes textSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Card Details - Absolute positioning */
+.membership-card__details {
+  position: absolute;
+  bottom: 14%;
+  left: 8%;
+  right: 8%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 4% 8%;
+}
+
+.membership-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0-5);
+  animation: fieldFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.membership-card__field:nth-child(1) {
+  animation-delay: 1s;
+}
+
+.membership-card__field:nth-child(2) {
+  animation-delay: 1.1s;
+}
+
+.membership-card__field:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+.membership-card__field:nth-child(4) {
+  animation-delay: 1.3s;
+}
+
+@keyframes fieldFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.membership-card__label {
+  font-family: var(--font-body);
+  font-size: 0.75em; /* 12px at base 16px */
+  font-weight: var(--font-weight-regular);
+  color: var(--color-white);
+  opacity: 0.7;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.membership-card__value {
+  font-family: var(--font-display);
+  font-size: 1em; /* 16px at base 16px */
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Navigation (consistent with Steps 1-4) */
+.welcome-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-4);
+}
+
+/* Skip Link (same as Steps 1-4) */
+.welcome-skip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  text-decoration: underline;
+  text-underline-offset: var(--spacing-0-5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity var(--transition-normal);
+}
+
+.welcome-skip:hover {
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .onboarding-welcome {
+    padding: var(--spacing-4);
+  }
+
+  .welcome-container {
+    padding: var(--spacing-6);
+    max-width: 100%;
+  }
+
+  .welcome-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .welcome-logo {
+    height: var(--spacing-8);
+  }
+
+  /* Card scales automatically via percentage-based positioning */
+  .membership-card-wrapper {
+    max-width: 100%;
+  }
+
+  .membership-card {
+    border-radius: var(--spacing-3);
+  }
+
+  .membership-card__inner {
+    font-size: var(--font-size-base); /* Slightly smaller base font on mobile */
+  }
+
+  .welcome-navigation {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-3);
+  }
+
+  .welcome-navigation .cta {
+    flex: 1;
+    min-width: 120px;
+    max-width: 160px;
+  }
+
+  .welcome-skip {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    padding: var(--spacing-2);
+  }
+}
+
+@media (max-width: 400px) {
+  .membership-card__inner {
+    font-size: var(--font-size-sm); /* Even smaller on very small screens */
+  }
+  
+  .membership-card {
+    border-radius: var(--spacing-2-5);
+  }
+}

@@ -1,0 +1,300 @@
+/* ============================================
+   ONBOARDING STEP 2 - Car and Driver Design System
+   Based on Figma Design: CD-Onboarding
+   Consistent with OnboardingStep1
+   ============================================ */
+
+.onboarding-step2 {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-gray-100);
+  padding: var(--spacing-12);
+}
+
+.step2-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  padding: var(--spacing-12);
+  background-color: var(--color-gray-100);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Step Indicator - Speedometer Graphic (consistent with Step 1) */
+.step-indicator {
+  margin-bottom: var(--spacing-4);
+}
+
+.step-indicator-img {
+  display: block;
+  width: 162px;
+  height: auto;
+}
+
+/* Header Section */
+.step2-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+  gap: var(--spacing-2);
+}
+
+.step2-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-blue-cobalt);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.step2-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-dark);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Selection Cards - Horizontal Row (Figma Design) */
+.step2-cards {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-5);
+  margin-bottom: var(--spacing-8);
+  width: 100%;
+  justify-content: center;
+}
+
+.step2-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  width: 200px;
+  position: relative;
+  box-shadow: var(--shadow-md);
+}
+
+.step2-card:hover {
+  border-color: var(--color-blue-cobalt);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.step2-card--selected {
+  border-color: var(--color-blue-cobalt);
+  background-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 2px var(--color-blue-cobalt), var(--shadow-lg);
+}
+
+.step2-card--selected .step2-card__title,
+.step2-card--selected .step2-card__description {
+  color: var(--color-white);
+}
+
+/* Image Container - Dark background with icon */
+.step2-card__image {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-1);
+  padding: var(--spacing-4) 0 var(--spacing-2) 0;
+}
+
+.step2-card__icon {
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  min-width: var(--spacing-16);
+  min-height: var(--spacing-16);
+  border-radius: 50%;
+  background-color: var(--color-blue-cobalt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  transition: all var(--transition-fast);
+}
+
+.step2-card--selected .step2-card__icon {
+  background-color: var(--color-white);
+  color: var(--color-blue-cobalt);
+  transform: scale(1.1);
+}
+
+/* Text Content */
+.step2-card__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 0 var(--spacing-2);
+}
+
+.step2-card__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.step2-card__description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Navigation (consistent with Step 1) */
+.step2-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-4);
+}
+
+/* Skip Link (same as Step 1) */
+.step2-skip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  text-decoration: underline;
+  text-underline-offset: var(--spacing-0-5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity var(--transition-normal);
+}
+
+.step2-skip:hover {
+  opacity: 0.8;
+}
+
+/* Logo */
+.step2-logo {
+  margin-top: var(--spacing-6);
+  display: flex;
+  justify-content: center;
+}
+
+.step2-logo-img {
+  height: var(--spacing-6);
+  width: auto;
+  filter: brightness(0);
+  opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .onboarding-step2 {
+    padding: var(--spacing-4);
+  }
+
+  .step2-container {
+    padding: var(--spacing-6);
+    max-width: 100%;
+  }
+
+  .step2-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+
+  .step2-card {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: row;
+    padding: var(--spacing-4);
+    gap: var(--spacing-4);
+    align-items: center;
+  }
+
+  .step2-card__image {
+    padding: 0;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    width: auto;
+  }
+
+  .step2-card__icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .step2-card__content {
+    align-items: flex-start;
+    text-align: left;
+    flex: 1;
+    gap: var(--spacing-1);
+    padding: 0;
+  }
+
+  .step2-card__title {
+    font-size: var(--font-size-md);
+  }
+
+  .step2-card__description {
+    font-size: var(--font-size-sm);
+  }
+
+  .step2-navigation {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-3);
+  }
+
+  .step2-navigation .cta {
+    flex: 1;
+    min-width: 120px;
+    max-width: 160px;
+  }
+
+  .step2-skip {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    padding: var(--spacing-2);
+  }
+
+  .step2-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .step-indicator-img {
+    width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .step2-card {
+    max-width: 100%;
+  }
+
+  .step2-card__icon {
+    width: var(--spacing-12);
+    height: var(--spacing-12);
+  }
+}

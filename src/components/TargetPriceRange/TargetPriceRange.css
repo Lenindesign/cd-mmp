@@ -1,0 +1,508 @@
+/* Target Price Range - Car and Driver Design System */
+.target-price {
+  background: var(--color-white);
+}
+
+.target-price__card {
+  width: 100%;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-10) var(--spacing-12);
+  box-shadow: var(--shadow-md);
+}
+
+/* Header */
+.target-price__header {
+  margin-bottom: var(--spacing-6);
+}
+
+.target-price__header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Trim Selector - Matching Cost to Own style */
+.target-price__trim {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.target-price__trim-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-black);
+}
+
+.target-price__select-wrapper {
+  position: relative;
+}
+
+.target-price__select {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-black);
+  cursor: pointer;
+  min-width: 120px;
+  transition: all var(--transition-fast);
+}
+
+.target-price__select:hover {
+  border-color: var(--color-gray-400);
+}
+
+.target-price__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  list-style: none;
+  padding: var(--spacing-1) 0;
+  margin: var(--spacing-1) 0 0 0;
+}
+
+.target-price__option {
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-black);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.target-price__option:hover,
+.target-price__option.active {
+  background: var(--color-gray-100);
+}
+
+.target-price__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-36);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-2);
+}
+
+
+.target-price__description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+}
+
+/* Visual Range */
+.target-price__range-visual {
+  position: relative;
+  margin-bottom: var(--spacing-10);
+  padding: var(--spacing-12) 0 var(--spacing-8);
+}
+
+/* Markers */
+.target-price__markers {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  position: relative;
+  margin-bottom: var(--spacing-2);
+  padding-left: 10%;
+  padding-right: 35%;
+}
+
+.target-price__marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.target-price__marker:hover {
+  z-index: 9999;
+}
+
+.target-price__marker-price {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-1);
+}
+
+.target-price__marker-icon {
+  width: var(--spacing-7);
+  height: var(--spacing-7);
+  background: linear-gradient(135deg, var(--color-gray-600) 0%, var(--color-gray-700) 100%);
+  border-radius: var(--border-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  margin-bottom: var(--spacing-1);
+}
+
+.target-price__marker-icon--green {
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
+}
+
+.target-price__marker-pin {
+  width: var(--spacing-0-5);
+  height: var(--spacing-4);
+  background: var(--color-gray-400);
+}
+
+.target-price__marker-pin--green {
+  background: var(--color-success);
+}
+
+.target-price__marker-pin::after {
+  content: '';
+  display: block;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  background: var(--color-gray-400);
+  border-radius: var(--border-radius-full);
+  margin-left: -3px;
+  margin-top: -2px;
+}
+
+.target-price__marker-pin--green::after {
+  background: var(--color-success);
+}
+
+/* Tooltips */
+.target-price__tooltip {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  padding: var(--spacing-4);
+  z-index: 9999;
+}
+
+.target-price__tooltip::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--color-white);
+}
+
+.target-price__tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.target-price__tooltip-icon--success {
+  color: var(--color-success);
+}
+
+.target-price__tooltip-icon--fair {
+  color: var(--color-blue-cobalt);
+}
+
+.target-price__tooltip-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+}
+
+.target-price__tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+}
+
+.target-price__tooltip-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
+  line-height: 1.4;
+}
+
+.target-price__tooltip-row svg {
+  flex-shrink: 0;
+  color: var(--color-gray-500);
+  margin-top: 1px;
+}
+
+.target-price__tooltip-row strong {
+  color: var(--color-black);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.target-price__tooltip-tip {
+  padding: var(--spacing-2);
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
+}
+
+/* Target Label */
+.target-price__target-label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin: 0 var(--spacing-2);
+  position: relative;
+  top: -20px;
+}
+
+.target-price__dashed-line {
+  flex: 1;
+  height: 1px;
+  border-top: 2px dashed var(--color-gray-300);
+}
+
+.target-price__target-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  padding: 0 var(--spacing-3);
+  white-space: nowrap;
+}
+
+/* Range Bar */
+.target-price__bar {
+  position: relative;
+  height: var(--spacing-3);
+  width: 100%;
+}
+
+.target-price__bar-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: var(--spacing-2);
+  background: var(--color-gray-200);
+  border-radius: var(--border-radius-full);
+  transform: translateY(-50%);
+}
+
+.target-price__bar-range {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 55%;
+  height: var(--spacing-2);
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-success) 50%, var(--color-success-border) 100%);
+  border-radius: var(--border-radius-full);
+  transform: translateY(-50%);
+}
+
+/* Dealer Price Indicator */
+.target-price__bar-dealer {
+  position: absolute;
+  top: 50%;
+  right: 12%;
+  transform: translateY(-50%);
+}
+
+.target-price__dealer-dot {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  background: var(--color-error);
+  border: 3px solid var(--color-white);
+  border-radius: var(--border-radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.target-price__dealer-tooltip {
+  position: absolute;
+  top: calc(100% + var(--spacing-4));
+  right: -60px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-3) var(--spacing-4);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.target-price__dealer-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--spacing-3);
+  height: var(--spacing-3);
+  background: var(--color-white);
+  border-left: 1px solid var(--color-gray-200);
+  border-top: 1px solid var(--color-gray-200);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.target-price__dealer-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-1);
+}
+
+.target-price__dealer-value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+}
+
+/* Info Boxes */
+.target-price__info-boxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6) 0;
+  border-top: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
+  margin-bottom: var(--spacing-6);
+}
+
+@media (max-width: 768px) {
+  .target-price__info-boxes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.target-price__info-box {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+}
+
+.target-price__info-icon {
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-600);
+}
+
+.target-price__info-icon--green {
+  color: var(--color-success);
+}
+
+.target-price__info-icon svg {
+  stroke-width: 1.5;
+}
+
+.target-price__info-value--range {
+  color: var(--color-success-dark);
+}
+
+.target-price__info-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.target-price__info-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+}
+
+.target-price__info-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.target-price__info-btn {
+  background: none;
+  border: none;
+  color: var(--color-gray-400);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.target-price__info-btn:hover {
+  color: var(--color-gray-600);
+}
+
+/* CTA Section */
+.target-price__cta-section {
+  text-align: center;
+}
+
+.target-price__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-blue-cobalt);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.target-price__cta-btn:hover {
+  background: var(--color-black);
+}
+
+@media (max-width: 768px) {
+  .target-price__card {
+    padding: 1.5rem;
+  }
+}
+

@@ -1,0 +1,231 @@
+/* Car and Driver Authentic Footer */
+.footer {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+/* Main Footer */
+.footer__main {
+  padding: var(--spacing-12) 0;
+  border-bottom: 1px solid var(--color-gray-800);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  gap: var(--spacing-8);
+}
+
+@media (max-width: 1024px) {
+  .footer__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .footer__brand {
+    grid-column: span 3;
+    margin-bottom: var(--spacing-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-6);
+  }
+  
+  .footer__brand {
+    grid-column: span 2;
+  }
+}
+
+/* Brand Section */
+.footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.footer__logo {
+  display: inline-block;
+}
+
+.footer__logo-text {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.footer__tagline {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  line-height: var(--line-height-relaxed);
+  max-width: 280px;
+}
+
+/* Social Links */
+.footer__social {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.footer__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
+  background: var(--color-gray-800);
+  color: var(--color-gray-500);
+  transition: all var(--transition-fast);
+}
+
+.footer__social-link:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+/* Newsletter */
+.footer__newsletter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.footer__newsletter-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-white);
+}
+
+.footer__newsletter-form {
+  display: flex;
+  align-items: stretch;
+  height: 44px;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.footer__newsletter-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--spacing-4);
+  background: var(--color-gray-700);
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-white);
+  outline: none;
+}
+
+.footer__newsletter-input::placeholder {
+  color: var(--color-gray-400);
+}
+
+.footer__newsletter-input:focus {
+  outline: none;
+}
+
+.footer__newsletter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 100%;
+  background: var(--color-blue-cobalt);
+  border: none;
+  border-radius: 0px 4px 4px 0px;
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.footer__newsletter-btn:hover {
+  background: var(--color-blue-dark);
+}
+
+/* Sections */
+.footer__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.footer__section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-white);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 2px solid var(--color-blue-cobalt);
+}
+
+.footer__section-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.footer__link {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  transition: color var(--transition-fast);
+}
+
+.footer__link:hover {
+  color: var(--color-white);
+}
+
+/* Bottom Footer */
+.footer__bottom {
+  padding: var(--spacing-4) 0;
+}
+
+.footer__bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+}
+
+.footer__copyright {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+}
+
+.footer__legal {
+  display: flex;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+}
+
+.footer__legal-link {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  transition: color var(--transition-fast);
+}
+
+.footer__legal-link:hover {
+  color: var(--color-white);
+}
+
+@media (max-width: 640px) {
+  .footer__bottom-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer__legal {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,170 @@
+/* ============================================
+   DEALER MAP MODAL
+   Car and Driver Design System
+   ============================================ */
+
+/* Backdrop */
+.dealer-map-modal__backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1200;
+  animation: dealerMapBackdropFadeIn 0.2s ease-out;
+}
+
+@keyframes dealerMapBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Container */
+.dealer-map-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95vw;
+  max-width: 1200px;
+  height: 90vh;
+  max-height: 800px;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 1201;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: dealerMapModalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dealerMapModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Header */
+.dealer-map-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+
+.dealer-map-modal__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dealer-map-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.dealer-map-modal__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Content */
+.dealer-map-modal__content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Override dealer locator styles for modal context */
+.dealer-map-modal__content .dealer-locator {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dealer-map-modal__content .dealer-locator__content {
+  flex: 1;
+  min-height: 0;
+}
+
+.dealer-map-modal__content .dealer-locator__map {
+  height: 100%;
+}
+
+.dealer-map-modal__content .dealer-locator__list {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+/* Hide sticky header in modal */
+.dealer-map-modal__content .dealer-locator__sticky-header {
+  display: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .dealer-map-modal {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+
+  @keyframes dealerMapModalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dealer-map-modal__header {
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .dealer-map-modal__title {
+    font-size: var(--font-size-base);
+  }
+
+  .dealer-map-modal__close {
+    width: var(--spacing-9);
+    height: var(--spacing-9);
+  }
+}
+
+@media (max-width: 480px) {
+  .dealer-map-modal__title {
+    font-size: var(--font-size-sm);
+  }
+}
+

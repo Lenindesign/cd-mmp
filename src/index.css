@@ -1,0 +1,624 @@
+/* ============================================
+   CAR AND DRIVER - AUTHENTIC DESIGN SYSTEM
+   Based on Figma Design File
+   ============================================ */
+
+/* Import Fonts - Car and Driver Design System Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* Import Utility Classes */
+@import './styles/utilities.css';
+
+:root {
+  /* ============================================
+     COLOR SYSTEM - Car and Driver Design System
+     Optimized: ~50 tokens (down from 80+)
+     ============================================ */
+  
+  /* ---- PRIMARY BRAND ---- */
+  --color-blue-cobalt: #1B5F8A;
+  --color-blue-cobalt-dark: #154d70;
+  --color-blue-cobalt-light: #60A5FA;
+  --color-blue-dark: #154d70;  /* Alias for --color-blue-cobalt-dark */
+  
+  /* ---- SECONDARY ACCENT ---- */
+  --color-red: #D2232A;  /* Official C/D Red */
+  --color-red-dark: #b31f24;
+  
+  /* ---- NEUTRALS (Car and Driver Official Gray Scale - Simplified) ---- */
+  --color-black: #000000;
+  --color-dark: #222222;           /* Darkest - headers, footers, primary text */
+  --color-gray-700: #4a4a4a;       /* Dark text */
+  --color-gray-600: #666666;       /* Secondary text */
+  --color-gray-500: #6b6b6b;       /* Muted text - WCAG AA: 5.0:1 on white */
+  --color-gray-300: #cdcdcd;       /* Borders */
+  --color-gray-200: #e5e5e5;       /* Light borders, dividers */
+  --color-gray-100: #f5f5f5;       /* Light backgrounds */
+  --color-gray-50: #fafafa;        /* Lightest backgrounds */
+  --color-white: #ffffff;
+  
+  /* Legacy aliases (for backwards compatibility) */
+  --color-gray-900: var(--color-dark);
+  --color-gray-800: var(--color-gray-700);
+  --color-gray-400: var(--color-gray-500);
+  
+  /* Neutrals aliases (map to gray scale) */
+  --color-neutrals-1: var(--color-dark);
+  --color-neutrals-2: var(--color-gray-700);
+  --color-neutrals-3: var(--color-gray-700);
+  --color-neutrals-4: var(--color-gray-600);
+  --color-neutrals-5: var(--color-gray-500);
+  --color-neutrals-6: var(--color-gray-200);
+  --color-neutrals-7: var(--color-gray-100);
+  --color-neutrals-8: var(--color-gray-50);
+  
+  /* ---- SEMANTIC: SUCCESS ---- */
+  --color-success: #26870D;
+  --color-success-dark: #1e6a0a;
+  --color-success-light: rgba(38, 135, 13, 0.08);
+  --color-success-border: #a3d98f;
+  --color-success-50: #f0fdf4;
+  
+  /* ---- SEMANTIC: WARNING ---- */
+  --color-warning: #f59e0b;
+  --color-warning-dark: #c2410c;
+  --color-warning-light: rgba(245, 158, 11, 0.08);
+  
+  /* ---- SEMANTIC: ERROR ---- */
+  --color-error: #ef4444;
+  --color-error-dark: #dc2626;
+  --color-error-light: rgba(239, 68, 68, 0.1);
+  --color-error-50: #fef2f2;
+  
+  /* ---- SEMANTIC: INFO ---- */
+  --color-info: #0288d1;
+  --color-info-light: rgba(2, 136, 209, 0.08);
+  --color-info-border: rgba(27, 95, 138, 0.2);
+  
+  /* ---- SPECIAL COLORS ---- */
+  --color-gold: #DBCA8B;
+  --color-gold-light: #FEF3C7;    /* Light gold for gradients */
+  --color-gold-dark: #A59143;     /* Dark gold for text on gold bg */
+  --color-teal-light: #F1F7F7;
+  --color-cream: #F7E4CA;         /* Warm cream background */
+  --color-highlight: #fef08a;     /* Yellow text highlight */
+  --color-facebook: #1877F2;
+  
+  /* ---- GREEN (for success buttons/CTAs) ---- */
+  --color-green: var(--color-success);
+  --color-green-dark: var(--color-success-dark);
+  
+  /* ---- DARK THEME ---- */
+  --color-dark-bg: #0a1628;
+  --color-dark-surface: #1a1a2e;
+  --color-dark-border: #0f3460;
+  --color-dark-border-active: #4a90d9;
+  --color-dark-surface-hover: #1f3a5f;
+  
+  
+  /* ---- BADGE COLORS ---- */
+  --color-badge-certified: var(--color-success);
+  --color-badge-certified-bg: var(--color-success);
+  --color-badge-lease-bg: #FEF3E7;
+  --color-badge-lease-text: #C27A0E;
+  --color-badge-lease-border: #F5D5A8;
+  --color-badge-finance-bg: rgba(27, 95, 138, 0.08);
+  --color-badge-finance-text: var(--color-blue-cobalt);
+  --color-badge-finance-border: rgba(27, 95, 138, 0.25);
+  --color-badge-special-bg: var(--color-success-light);
+  --color-badge-special-text: var(--color-success-dark);
+  --color-badge-special-border: var(--color-success-border);
+  
+  /* ---- GRADIENTS ---- */
+  --gradient-dark: linear-gradient(90deg, var(--color-dark-bg) 0%, var(--color-blue-cobalt-dark) 100%);
+  --gradient-dark-alt: linear-gradient(45deg, var(--color-dark-bg) 0%, var(--color-blue-cobalt-dark) 100%);
+  --gradient-blue: linear-gradient(135deg, var(--color-blue-cobalt) 0%, #2a7ab8 100%);
+  --gradient-success: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  --gradient-light: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --gradient-blue-light: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
+  
+  /* ============================================
+     TYPOGRAPHY - Car and Driver Style
+     Using Inter 800 (Extrabold) for headlines
+     ============================================ */
+  
+  /* Base Font Stacks */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  
+  /* Semantic Font Aliases */
+  --font-display: var(--font-sans);
+  --font-heading: var(--font-sans);
+  --font-body: var(--font-sans);
+  --font-article: var(--font-serif);
+  
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+  
+  /* Font Sizes - Complete Scale */
+  --font-size-2xs: 0.5rem;      /* 8px - tiny labels */
+  --font-size-xs: 0.6875rem;    /* 11px */
+  --font-size-sm: 0.75rem;      /* 12px */
+  --font-size-13: 0.8125rem;    /* 13px */
+  --font-size-base: 0.875rem;   /* 14px */
+  --font-size-15: 0.9375rem;    /* 15px */
+  --font-size-md: 1rem;         /* 16px */
+  --font-size-17: 1.0625rem;    /* 17px - Apple system size */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-22: 1.375rem;     /* 22px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-28: 1.75rem;      /* 28px */
+  --font-size-3xl: 2rem;        /* 32px */
+  --font-size-36: 2.25rem;      /* 36px - section titles */
+  --font-size-40: 2.5rem;       /* 40px */
+  --font-size-4xl: 3rem;        /* 48px */
+  --font-size-5xl: 4rem;        /* 64px */
+  --font-size-80: 5rem;         /* 80px - hero display */
+  --font-size-6xl: 5.625rem;    /* 90px - Figma title size */
+  --font-size-7xl: 7.5rem;      /* 120px - massive display */
+  
+  /* Font Size Aliases (for semantic naming) */
+  --font-size-caption: var(--font-size-xs);
+  --font-size-body: var(--font-size-base);
+  --font-size-body-lg: var(--font-size-md);
+  --font-size-heading-sm: var(--font-size-lg);
+  --font-size-heading: var(--font-size-2xl);
+  --font-size-heading-lg: var(--font-size-3xl);
+  --font-size-display: var(--font-size-4xl);
+  --font-size-display-lg: var(--font-size-5xl);
+  
+  /* Line Heights */
+  --line-height-none: 1;
+  --line-height-tight: 0.9;
+  --line-height-snug: 1.1;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 1.75;
+  
+  /* ============================================
+     SPACING
+     ============================================ */
+  
+  --spacing-0: 0;
+  --spacing-px: 1px;       /* 1px - borders, fine adjustments */
+  --spacing-0-5: 0.125rem; /* 2px */
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-1-5: 0.375rem; /* 6px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-2-5: 0.625rem; /* 10px */
+  --spacing-3: 0.75rem;    /* 12px */
+  --spacing-3-5: 0.875rem; /* 14px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px */
+  --spacing-7: 1.75rem;    /* 28px */
+  --spacing-8: 2rem;       /* 32px */
+  --spacing-9: 2.25rem;    /* 36px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-11: 2.75rem;   /* 44px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-14: 3.5rem;    /* 56px */
+  --spacing-16: 4rem;      /* 64px */
+  --spacing-20: 5rem;      /* 80px */
+  --spacing-24: 6rem;      /* 96px */
+  --spacing-28: 7rem;      /* 112px */
+  --spacing-32: 8rem;      /* 128px */
+  
+  /* ============================================
+     LAYOUT
+     ============================================ */
+  
+  --max-width-container: 1280px;
+  --max-width-content: 1280px;
+  --max-width-narrow: 960px;
+  --content-padding: var(--spacing-8);
+  --header-height: 46px;
+  --subnav-height: 50px;
+  
+  /* ============================================
+     EFFECTS
+     ============================================ */
+  
+  --border-radius-sm: 4px;      /* Small: inputs, small buttons */
+  --border-radius-md: 6px;      /* Medium: cards, dropdowns */
+  --border-radius-lg: 8px;      /* Large: modals, large cards */
+  --border-radius-xl: 12px;     /* Extra large: hero cards */
+  --border-radius-2xl: 16px;    /* 2X large: feature cards */
+  --border-radius-full: 9999px; /* Circular: avatars, badges */
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+  
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--font-size-md);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-md);
+  color: var(--color-black);
+  background-color: var(--color-white);
+  line-height: var(--line-height-normal);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-snug);
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+
+.container {
+  width: 100%;
+  max-width: var(--max-width-container);
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+}
+
+.container--narrow {
+  max-width: var(--max-width-narrow);
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Skip Link - Appears on focus for keyboard users */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: var(--spacing-4);
+  z-index: 10000;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: var(--spacing-4);
+  outline: 2px solid var(--color-white);
+  outline-offset: var(--spacing-0-5);
+}
+
+/* Focus Styles - Consistent visible focus for all interactive elements */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-0-5);
+}
+
+/* Remove browser validation styling (red outlines) */
+input:invalid,
+input:-moz-ui-invalid,
+textarea:invalid,
+textarea:-moz-ui-invalid {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Dark background focus */
+.dark-bg :focus-visible,
+[data-theme="dark"] :focus-visible {
+  outline-color: var(--color-white);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-gray-200: #c0c0c0;
+    --color-gray-300: #a0a0a0;
+    --color-gray-600: #404040;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Show on focus (for skip links and similar) */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Text utilities */
+.text-uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================
+   CTA UTILITY CLASSES
+   Shared button/CTA styles for use across components
+   ============================================ */
+
+/* Base CTA - use with variant classes */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-extrabold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-0-5);
+}
+
+/* CTA Sizes */
+.cta--sm {
+  height: var(--spacing-8);
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-xs);
+}
+
+.cta--md {
+  height: var(--spacing-10);
+  padding: 0 var(--spacing-4);
+  font-size: var(--font-size-sm);
+}
+
+.cta--lg {
+  height: var(--spacing-12);
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-base);
+}
+
+/* CTA Variants */
+.cta--primary {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.cta--primary:hover {
+  background: var(--color-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta--secondary {
+  background: var(--color-gray-100);
+  color: var(--color-dark);
+}
+
+.cta--secondary:hover {
+  background: var(--color-gray-200);
+}
+
+.cta--outline {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.cta--outline:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.cta--ghost {
+  background: transparent;
+  color: var(--color-blue-cobalt);
+}
+
+.cta--ghost:hover {
+  background: var(--color-teal-light);
+}
+
+.cta--white {
+  background: var(--color-white);
+  color: var(--color-dark);
+}
+
+.cta--white:hover {
+  background: var(--color-gray-100);
+}
+
+/* Success variants (for trade-in, confirmation CTAs) */
+.cta--success {
+  background: var(--color-success);
+  color: var(--color-white);
+  border: 1px solid var(--color-success);
+}
+
+.cta--success:hover {
+  background: var(--color-success-dark);
+  border-color: var(--color-success-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta--success-outline {
+  background: transparent;
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.cta--success-outline:hover {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+/* Danger variants (for destructive actions) */
+.cta--danger {
+  background: var(--color-error);
+  color: var(--color-white);
+  border: 1px solid var(--color-error);
+}
+
+.cta--danger:hover {
+  background: var(--color-error-dark);
+  border-color: var(--color-error-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta--danger-outline {
+  background: transparent;
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+.cta--danger-outline:hover {
+  background: var(--color-error);
+  color: var(--color-white);
+}
+
+/* CTA Modifiers */
+.cta--full {
+  width: 100%;
+}
+
+.cta--disabled,
+.cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Car and Driver styled section title */
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin-bottom: var(--spacing-4);
+}
+
+/* Link styles */
+.link-primary {
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+
+.link-primary:hover {
+  color: var(--color-blue-cobalt-dark);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: var(--border-radius-full);
+  }
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+  }
+
+/* Selection */
+::selection {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}

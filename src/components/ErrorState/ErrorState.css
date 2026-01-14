@@ -1,0 +1,117 @@
+/* ============================================
+   ERROR STATE - Car and Driver Design System
+   ============================================ */
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-8);
+  min-height: 300px;
+}
+
+/* Icon */
+.error-state__icon {
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  margin-bottom: var(--spacing-4);
+  color: var(--color-gray-400);
+}
+
+.error-state__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Variant-specific icon colors */
+.error-state--error .error-state__icon {
+  color: var(--color-error);
+}
+
+.error-state--empty .error-state__icon {
+  color: var(--color-gray-400);
+}
+
+.error-state--not-found .error-state__icon {
+  color: var(--color-warning);
+}
+
+.error-state--offline .error-state__icon {
+  color: var(--color-gray-500);
+}
+
+/* Title */
+.error-state__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+/* Message */
+.error-state__message {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  margin: 0 0 var(--spacing-6) 0;
+  max-width: 400px;
+  line-height: var(--line-height-normal);
+}
+
+/* Actions */
+.error-state__actions {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .error-state {
+    padding: var(--spacing-6);
+    min-height: 250px;
+  }
+
+  .error-state__icon {
+    width: var(--spacing-12);
+    height: var(--spacing-12);
+  }
+
+  .error-state__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .error-state__message {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* ============================================
+   INLINE ERROR MESSAGE
+   ============================================ */
+
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background: var(--color-error-light);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--border-radius-md);
+  color: var(--color-error-dark);
+  font-size: var(--font-size-sm);
+}
+
+.error-message__icon {
+  flex-shrink: 0;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+
+.error-message__text {
+  flex: 1;
+  line-height: var(--line-height-normal);
+}
+

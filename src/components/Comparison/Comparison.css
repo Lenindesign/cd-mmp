@@ -1,0 +1,448 @@
+/* Car and Driver Authentic Comparison */
+.comparison {
+  padding: 3rem 0;
+  background: var(--color-white);
+}
+
+.comparison > .container {
+  padding: 0 var(--spacing-6);
+}
+
+/* Header */
+.comparison__header {
+  margin-bottom: var(--spacing-8);
+}
+
+.comparison__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-36);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-2);
+}
+
+
+.comparison__subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  margin-top: var(--spacing-4);
+}
+
+/* Carousel Wrapper */
+.comparison__carousel-wrapper {
+  position: relative;
+  margin-bottom: var(--spacing-8);
+}
+
+/* Navigation Arrows */
+.comparison__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.comparison__nav:hover:not(:disabled) {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-400);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.comparison__nav--left {
+  left: -24px;
+}
+
+.comparison__nav--right {
+  right: -24px;
+}
+
+.comparison__nav--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.comparison__nav svg {
+  color: var(--color-black);
+}
+
+/* Carousel */
+.comparison__carousel {
+  display: flex;
+  gap: var(--spacing-5);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: var(--spacing-2) 0;
+}
+
+.comparison__carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* VehicleCard in Carousel */
+.comparison__carousel .vehicle-card {
+  flex: 0 0 calc((100% - 2 * var(--spacing-5)) / 3);
+  min-width: 320px;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 1024px) {
+  .comparison__carousel .vehicle-card {
+    flex: 0 0 calc((100% - var(--spacing-5)) / 2);
+    min-width: 300px;
+  }
+  
+  .comparison__nav--left {
+    left: var(--spacing-2);
+  }
+  
+  .comparison__nav--right {
+    right: var(--spacing-2);
+  }
+}
+
+@media (max-width: 640px) {
+  .comparison__carousel .vehicle-card {
+    flex: 0 0 calc(100% - 40px);
+    min-width: 280px;
+  }
+}
+
+/* Legacy Card - Unified Styling (keeping for backwards compatibility) */
+.comparison__card {
+  flex: 0 0 calc((100% - 2 * var(--spacing-5)) / 3);
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.25rem;
+  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.11);
+  overflow: hidden;
+  scroll-snap-align: start;
+  transition: all var(--transition-normal);
+}
+
+.comparison__card:hover {
+  box-shadow: 4px 4px 16px 4px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 1024px) {
+  .comparison__card {
+    flex: 0 0 calc((100% - var(--spacing-5)) / 2);
+    min-width: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .comparison__card {
+    flex: 0 0 calc(100% - 40px);
+    min-width: 280px;
+  }
+}
+
+/* Card Top - Title and Rating */
+.comparison__card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
+  gap: var(--spacing-2);
+}
+
+.comparison__card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-22);
+  font-weight: 700;
+  color: var(--color-black);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+.comparison__card-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.comparison__card-rating-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.comparison__card-rating-score {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-28);
+  font-weight: 700;
+  color: var(--color-black);
+  line-height: 1;
+}
+
+.comparison__card-rating-max {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-gray-500);
+}
+
+.comparison__card-rating-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xs);
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Card Image */
+.comparison__card-image {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--color-gray-100);
+  overflow: hidden;
+}
+
+.comparison__card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.comparison__card:hover .comparison__card-image img {
+  transform: scale(1.03);
+}
+
+/* Accolades Badges - Upper Right Corner of Image */
+.comparison__card-accolades {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  display: flex;
+  gap: var(--spacing-1);
+  z-index: 2;
+}
+
+.comparison__card-accolade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  background: var(--color-white);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.comparison__card-accolade:hover {
+  transform: scale(1.1);
+}
+
+.comparison__card-accolade--ec img {
+  display: block;
+  width: var(--spacing-5);
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.comparison__card-accolade--10best img {
+  display: block;
+  width: 18px;
+  height: var(--spacing-5);
+  flex-shrink: 0;
+}
+
+/* Price Row */
+.comparison__card-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+}
+
+.comparison__card-price-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.comparison__card-price-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.comparison__card-price-action {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.comparison__card-price-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-black);
+}
+
+.comparison__card-shop-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: transparent;
+  border: 1px solid var(--color-gray-400);
+  border-radius: 0.25rem;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-black);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.comparison__card-shop-btn:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-600);
+}
+
+/* MPG Section */
+.comparison__card-mpg {
+  padding: 0 var(--spacing-4) var(--spacing-4);
+}
+
+.comparison__card-mpg-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-1);
+}
+
+.comparison__card-mpg-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2);
+}
+
+.comparison__card-mpg-number {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-22);
+  font-weight: 700;
+  color: var(--color-black);
+}
+
+.comparison__card-mpg-unit {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+}
+
+/* Divider */
+.comparison__card-divider {
+  height: 1px;
+  background: var(--color-gray-200);
+  margin: 0 var(--spacing-4);
+}
+
+/* Review Section */
+.comparison__card-review {
+  padding: var(--spacing-4);
+  flex: 1;
+}
+
+.comparison__card-review-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-gray-700);
+  margin: 0;
+}
+
+.comparison__card-review-text strong {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-black);
+}
+
+.comparison__card-review-link {
+  display: inline;
+  margin-left: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+  text-underline-offset: var(--spacing-0-5);
+}
+
+.comparison__card-review-link:hover {
+  color: var(--color-blue-dark);
+}
+
+/* Expand Button */
+.comparison__card-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--color-gray-200);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-blue-cobalt);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.comparison__card-expand:hover {
+  background: var(--color-gray-50);
+  color: var(--color-blue-dark);
+}
+
+/* CTA */
+.comparison__cta {
+  display: flex;
+  justify-content: center;
+}
+
+.comparison__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 0.25rem;
+  transition: all var(--transition-fast);
+}
+
+.comparison__cta-btn:hover {
+  background: var(--color-blue-cobalt);
+  gap: var(--spacing-3);
+}

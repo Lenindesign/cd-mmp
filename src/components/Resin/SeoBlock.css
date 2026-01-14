@@ -1,0 +1,193 @@
+/* ==========================================================================
+   SEO Block Component
+   Car and Driver Design System
+   ========================================================================== */
+
+.seo-block {
+  width: 100%;
+}
+
+/* Header */
+.seo-block__header {
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 2px solid var(--color-dark);
+}
+
+.seo-block__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+/* Grid Layout */
+.seo-block__grid {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+/* Column variants */
+.seo-block--cols-2 .seo-block__grid {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.seo-block--cols-3 .seo-block__grid {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.seo-block--cols-4 .seo-block__grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.seo-block--cols-5 .seo-block__grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.seo-block--cols-6 .seo-block__grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 640px) {
+  .seo-block--cols-2 .seo-block__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .seo-block--cols-3 .seo-block__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .seo-block--cols-4 .seo-block__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .seo-block--cols-5 .seo-block__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .seo-block--cols-6 .seo-block__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .seo-block--cols-4 .seo-block__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .seo-block--cols-5 .seo-block__grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .seo-block--cols-6 .seo-block__grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* Item */
+.seo-block__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.seo-block__link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.seo-block__link:hover .seo-block__headline {
+  color: var(--color-blue-cobalt);
+}
+
+.seo-block__link:hover .seo-block__image {
+  transform: scale(1.05);
+}
+
+/* Image */
+.seo-block__image-wrapper {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--color-gray-100);
+  margin-bottom: var(--spacing-3);
+}
+
+.seo-block__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+/* Content */
+.seo-block__headline {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-dark);
+  line-height: var(--line-height-snug);
+  margin: 0;
+  transition: color var(--transition-fast);
+  
+  /* Clamp to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Variant: Cards
+   ========================================================================== */
+
+.seo-block--cards .seo-block__grid {
+  gap: var(--spacing-3);
+}
+
+.seo-block--cards .seo-block__item {
+  margin-bottom: var(--spacing-2);
+}
+
+.seo-block--cards .seo-block__image-wrapper {
+  border-radius: var(--border-radius-sm);
+}
+
+.seo-block--cards .seo-block__headline {
+  font-size: var(--font-size-xs);
+}
+
+/* ==========================================================================
+   Variant: Minimal
+   ========================================================================== */
+
+.seo-block--minimal .seo-block__header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.seo-block--minimal .seo-block__image-wrapper {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .seo-block__grid {
+    gap: var(--spacing-4);
+  }
+
+  .seo-block--cards .seo-block__grid {
+    padding: var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+}

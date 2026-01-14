@@ -1,0 +1,286 @@
+/* ============================================
+   VIDEO CARD - Resin Component
+   Car and Driver Design System
+   ============================================ */
+
+.video-card {
+  position: relative;
+  background: var(--color-white);
+}
+
+.video-card__link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================================
+   THUMBNAIL CONTAINER
+   ============================================ */
+
+.video-card__thumbnail-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-900);
+}
+
+/* Aspect ratios by variant */
+.video-card--large .video-card__thumbnail-container {
+  aspect-ratio: 16 / 9;
+}
+
+.video-card--medium .video-card__thumbnail-container {
+  aspect-ratio: 16 / 9;
+}
+
+.video-card--small .video-card__thumbnail-container {
+  aspect-ratio: 4 / 3;
+}
+
+.video-card__thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow), opacity var(--transition-fast);
+}
+
+.video-card:hover .video-card__thumbnail {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* ============================================
+   PLAY OVERLAY
+   ============================================ */
+
+.video-card__play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  transition: background var(--transition-fast);
+}
+
+.video-card:hover .video-card__play-overlay {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.video-card__play-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.video-card--medium .video-card__play-button {
+  width: 48px;
+  height: 48px;
+}
+
+.video-card--small .video-card__play-button {
+  width: 40px;
+  height: 40px;
+}
+
+.video-card:hover .video-card__play-button {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-xl);
+}
+
+.video-card__play-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--color-dark);
+  margin-left: 4px; /* Visual centering for play icon */
+}
+
+.video-card--medium .video-card__play-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 3px;
+}
+
+.video-card--small .video-card__play-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+}
+
+/* ============================================
+   DURATION BADGE
+   ============================================ */
+
+.video-card__duration {
+  position: absolute;
+  bottom: var(--spacing-3);
+  right: var(--spacing-3);
+  padding: var(--spacing-1) var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: var(--border-radius-sm);
+}
+
+/* ============================================
+   OVERLAY TEXT
+   ============================================ */
+
+.video-card__overlay-text {
+  position: absolute;
+  bottom: var(--spacing-6);
+  left: var(--spacing-4);
+  right: var(--spacing-4);
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+  color: var(--color-white);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  
+  /* Limit to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-card--medium .video-card__overlay-text {
+  font-size: var(--font-size-xl);
+}
+
+.video-card--small .video-card__overlay-text {
+  font-size: var(--font-size-lg);
+  bottom: var(--spacing-4);
+  left: var(--spacing-3);
+  right: var(--spacing-3);
+}
+
+/* ============================================
+   CONTENT
+   ============================================ */
+
+.video-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-4) 0;
+}
+
+.video-card--small .video-card__content {
+  padding: var(--spacing-3) 0;
+}
+
+/* Sponsor */
+.video-card__sponsor {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  text-transform: capitalize;
+}
+
+/* Label - matches design system tag style */
+.video-card__label {
+  display: inline-block;
+  align-self: flex-start;
+  padding: var(--spacing-0-5) var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-dark);
+  background: var(--color-gold);
+}
+
+/* Title */
+.video-card__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
+  color: var(--color-dark);
+  margin: 0;
+  transition: color var(--transition-fast);
+  
+  /* Limit to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-card--large .video-card__title {
+  font-size: var(--font-size-xl);
+}
+
+.video-card--small .video-card__title {
+  font-size: var(--font-size-md);
+  -webkit-line-clamp: 2;
+}
+
+.video-card:hover .video-card__title {
+  color: var(--color-gray-600);
+}
+
+/* Meta */
+.video-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.video-card__author {
+  color: var(--color-gray-500);
+}
+
+.video-card__author-name {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-medium);
+}
+
+.video-card__date {
+  color: var(--color-gray-500);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .video-card__play-button {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .video-card__play-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 3px;
+  }
+  
+  .video-card__overlay-text {
+    font-size: var(--font-size-xl);
+  }
+  
+  .video-card--large .video-card__title {
+    font-size: var(--font-size-lg);
+  }
+}
+

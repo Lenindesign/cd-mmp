@@ -1,0 +1,599 @@
+/* ============================================
+   GAS STATIONS MODAL
+   Car and Driver Design System
+   ============================================ */
+
+/* Backdrop */
+.gas-stations-modal__backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1200;
+  animation: gasModalBackdropFadeIn 0.2s ease-out;
+}
+
+@keyframes gasModalBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Container */
+.gas-stations-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95vw;
+  max-width: 1200px;
+  height: 90vh;
+  max-height: 800px;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 1201;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: gasModalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes gasModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Header */
+.gas-stations-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-success);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+
+.gas-stations-modal__header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.gas-stations-modal__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}
+
+.gas-stations-modal__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  opacity: 0.9;
+}
+
+.gas-stations-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.gas-stations-modal__close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Content */
+.gas-stations-modal__content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Loading State */
+.gas-stations-modal__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--spacing-4);
+  color: var(--color-gray-500);
+  font-family: var(--font-body);
+}
+
+.gas-stations-modal__spinner {
+  animation: gasSpinner 1s linear infinite;
+  color: var(--color-success);
+}
+
+@keyframes gasSpinner {
+  to { transform: rotate(360deg); }
+}
+
+/* Error State */
+.gas-stations-modal__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--spacing-4);
+  color: var(--color-gray-400);
+  font-family: var(--font-body);
+  text-align: center;
+  padding: var(--spacing-8);
+}
+
+.gas-stations-modal__fallback-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-5);
+  background: var(--color-success);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  border-radius: var(--border-radius-md);
+  transition: background var(--transition-fast);
+}
+
+.gas-stations-modal__fallback-link:hover {
+  background: var(--color-success-dark);
+}
+
+/* Map Container */
+.gas-stations-modal__map-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gas-stations-modal__location-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+}
+
+/* Layout */
+.gas-stations-modal__layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .gas-stations-modal__layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 200px;
+  }
+
+  .gas-stations-modal__sidebar {
+    order: 2;
+    max-height: 200px;
+  }
+
+  .gas-stations-modal__map {
+    order: 1;
+  }
+}
+
+/* Sidebar */
+.gas-stations-modal__sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-gray-200);
+  overflow: hidden;
+  background: var(--color-white);
+}
+
+.gas-stations-modal__sidebar-header {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
+  flex-shrink: 0;
+}
+
+.gas-stations-modal__sidebar-header h3 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+.gas-stations-modal__sidebar-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+}
+
+.gas-stations-modal__sidebar-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  color: var(--color-gray-500);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+}
+
+/* Stations List */
+.gas-stations-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.gas-stations-modal__list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-100);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.gas-stations-modal__list-item:hover {
+  background: var(--color-gray-50);
+}
+
+.gas-stations-modal__list-item--selected {
+  background: var(--color-success-light);
+  border-left: 3px solid var(--color-success);
+}
+
+.gas-stations-modal__station-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-success-light);
+  color: var(--color-success);
+  border-radius: var(--border-radius-md);
+  flex-shrink: 0;
+}
+
+.gas-stations-modal__station-icon--electric {
+  background: var(--color-blue-light, #e0f2fe);
+  color: var(--color-blue-cobalt);
+}
+
+.gas-stations-modal__station-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gas-stations-modal__station-name {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--spacing-1) 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gas-stations-modal__station-address {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-1) 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gas-stations-modal__station-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.gas-stations-modal__station-rating {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-warning);
+  font-weight: var(--font-weight-medium);
+}
+
+.gas-stations-modal__station-status {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: var(--border-radius-sm);
+}
+
+.gas-stations-modal__station-status--open {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.gas-stations-modal__station-status--closed {
+  background: var(--color-gray-100);
+  color: var(--color-gray-500);
+}
+
+.gas-stations-modal__station-directions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.gas-stations-modal__station-directions:hover {
+  background: var(--color-blue-dark);
+}
+
+/* GasBuddy Section */
+.gas-stations-modal__gasbuddy {
+  padding: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+  flex-shrink: 0;
+}
+
+.gas-stations-modal__gasbuddy p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.gas-stations-modal__gasbuddy-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.gas-stations-modal__gasbuddy-link:hover {
+  color: var(--color-blue-dark);
+  text-decoration: underline;
+}
+
+.gas-stations-modal__gasbuddy-link img {
+  border-radius: 2px;
+}
+
+/* Map */
+.gas-stations-modal__map {
+  position: relative;
+  height: 100%;
+}
+
+.gas-stations-modal__map-element {
+  width: 100%;
+  height: 100%;
+}
+
+/* Map Markers */
+.gas-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-success);
+  color: var(--color-white);
+  border-radius: 50%;
+  border: 3px solid var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.gas-marker:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.gas-marker--selected {
+  background: var(--color-blue-cobalt);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.gas-marker--user {
+  background: var(--color-blue-cobalt);
+  width: 40px;
+  height: 40px;
+  z-index: 10;
+}
+
+.gas-marker--electric {
+  background: var(--color-blue-cobalt);
+}
+
+.gas-marker--electric:hover {
+  background: var(--color-blue-dark);
+}
+
+.gas-marker--electric.gas-marker--selected {
+  background: var(--color-success);
+}
+
+/* Info Window */
+.gas-info-window {
+  padding: var(--spacing-2);
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.gas-info-window__name {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.gas-info-window__address {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.gas-info-window__rating {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-2);
+}
+
+.gas-info-window__stars {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-warning);
+  font-weight: var(--font-weight-medium);
+}
+
+.gas-info-window__count {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+}
+
+.gas-info-window__status {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-2);
+}
+
+.gas-info-window__status--open {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.gas-info-window__status--closed {
+  background: var(--color-gray-100);
+  color: var(--color-gray-500);
+}
+
+.gas-info-window__actions {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.gas-info-window__directions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.gas-info-window__directions:hover {
+  background: var(--color-blue-dark);
+}
+
+/* Footer */
+.gas-stations-modal__footer {
+  padding: var(--spacing-3) var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+  flex-shrink: 0;
+}
+
+.gas-stations-modal__disclaimer {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  margin: 0;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .gas-stations-modal {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .gas-stations-modal__header {
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .gas-stations-modal__title {
+    font-size: var(--font-size-base);
+  }
+
+  .gas-stations-modal__subtitle {
+    display: none;
+  }
+
+  .gas-stations-modal__layout {
+    grid-template-rows: 1fr 180px;
+  }
+
+  .gas-stations-modal__sidebar {
+    max-height: 180px;
+  }
+
+  .gas-stations-modal__gasbuddy {
+    padding: var(--spacing-3);
+  }
+}
+

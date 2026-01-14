@@ -1,0 +1,375 @@
+/* ========================================
+   Body Style Selector - Base Styles
+   ======================================== */
+
+.body-style-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  padding: var(--spacing-4) 0;
+}
+
+.body-style-selector__scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+}
+
+.body-style-selector__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.body-style-selector__items {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2);
+}
+
+.body-style-selector__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.body-style-selector__item:hover {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.body-style-selector__item--selected {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 2px var(--color-blue-cobalt);
+  background: var(--color-primary-light);
+}
+
+.body-style-selector__icon-wrapper {
+  width: var(--spacing-20);
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.body-style-selector__icon {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover animation - scale from center */
+.body-style-selector__item:hover .body-style-selector__icon {
+  transform: scale(1.08);
+}
+
+/* Click/Active animation - quick press */
+.body-style-selector__item:active .body-style-selector__icon {
+  transform: scale(0.95);
+  transition: transform 0.1s ease-out;
+}
+
+.body-style-selector__label {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--font-size-13);
+  font-weight: 500;
+  color: var(--color-text);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.body-style-selector__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.body-style-selector__nav:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
+
+/* ========================================
+   Variant: Minimal
+   Clean, borderless design with subtle hover
+   ======================================== */
+
+.body-style-selector--minimal .body-style-selector__item {
+  border: 1px solid var(--color-gray-200);
+  background: var(--color-surface);
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+}
+
+.body-style-selector--minimal .body-style-selector__item:hover {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.body-style-selector--minimal .body-style-selector__item--selected {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 2px var(--color-blue-cobalt);
+  background: var(--color-primary-light);
+}
+
+.body-style-selector--minimal .body-style-selector__item--selected .body-style-selector__label {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.body-style-selector--minimal .body-style-selector__icon-wrapper {
+  width: 100px;
+  height: 60px;
+  background: transparent;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-2);
+  overflow: hidden;
+}
+
+/* Minimal variant hover - scale from center */
+.body-style-selector--minimal .body-style-selector__item:hover .body-style-selector__icon {
+  transform: scale(1.1);
+}
+
+.body-style-selector--minimal .body-style-selector__item:active .body-style-selector__icon {
+  transform: scale(0.96);
+}
+
+.body-style-selector--minimal .body-style-selector__nav {
+  border: none;
+  background: transparent;
+}
+
+.body-style-selector--minimal .body-style-selector__nav:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* ========================================
+   Variant: Cards
+   Elevated card design with shadows
+   ======================================== */
+
+.body-style-selector--cards .body-style-selector__item {
+  border: none;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-4);
+  min-width: 120px;
+}
+
+.body-style-selector--cards .body-style-selector__item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.body-style-selector--cards .body-style-selector__item--selected {
+  box-shadow: 0 4px 16px rgba(0, 102, 204, 0.25);
+  background: var(--gradient-blue-light);
+}
+
+.body-style-selector--cards .body-style-selector__icon-wrapper {
+  width: 90px;
+  height: 55px;
+}
+
+.body-style-selector--cards .body-style-selector__label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+.body-style-selector--cards .body-style-selector__nav {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+/* ========================================
+   Variant: Pills
+   Compact horizontal pill design
+   ======================================== */
+
+.body-style-selector--pills .body-style-selector__items {
+  gap: var(--spacing-2);
+}
+
+.body-style-selector--pills .body-style-selector__item {
+  flex-direction: row;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: 9999px;
+  min-width: auto;
+  gap: var(--spacing-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-gray-200);
+}
+
+.body-style-selector--pills .body-style-selector__item:hover {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.body-style-selector--pills .body-style-selector__item--selected {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 2px var(--color-blue-cobalt);
+}
+
+.body-style-selector--pills .body-style-selector__item--selected .body-style-selector__label {
+  color: white;
+}
+
+.body-style-selector--pills .body-style-selector__icon-wrapper {
+  width: var(--spacing-10);
+  height: 25px;
+  overflow: hidden;
+}
+
+.body-style-selector--pills .body-style-selector__item--selected .body-style-selector__icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Pills variant hover - scale from center */
+.body-style-selector--pills .body-style-selector__item:hover .body-style-selector__icon {
+  transform: scale(1.12);
+}
+
+.body-style-selector--pills .body-style-selector__item:active .body-style-selector__icon {
+  transform: scale(0.94);
+}
+
+.body-style-selector--pills .body-style-selector__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========================================
+   Variant: Dark
+   Dark theme with vibrant accents
+   ======================================== */
+
+.body-style-selector--dark {
+  background: var(--color-dark-surface);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
+}
+
+.body-style-selector--dark .body-style-selector__item {
+  background: var(--color-dark-surface-alt);
+  border: 2px solid var(--color-dark-border);
+  min-width: 115px;
+}
+
+.body-style-selector--dark .body-style-selector__item:hover {
+  background: var(--color-dark-surface-hover);
+  border-color: var(--color-dark-border-active);
+}
+
+.body-style-selector--dark .body-style-selector__item--selected {
+  background: linear-gradient(135deg, var(--color-dark-border) 0%, var(--color-blue-cobalt) 100%);
+  border-color: var(--color-dark-border-active);
+  box-shadow: 0 0 20px rgba(74, 144, 217, 0.3);
+}
+
+.body-style-selector--dark .body-style-selector__icon-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2);
+  width: 85px;
+  height: 55px;
+}
+
+.body-style-selector--dark .body-style-selector__icon {
+  filter: brightness(0.9) contrast(1.1);
+}
+
+.body-style-selector--dark .body-style-selector__label {
+  color: var(--color-gray-200);
+  font-weight: 500;
+}
+
+.body-style-selector--dark .body-style-selector__item--selected .body-style-selector__label {
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+.body-style-selector--dark .body-style-selector__nav {
+  background: var(--color-dark-surface-alt);
+  border-color: var(--color-dark-border);
+  color: var(--color-gray-400);
+}
+
+.body-style-selector--dark .body-style-selector__nav:hover {
+  background: var(--color-dark-surface-hover);
+  border-color: var(--color-dark-border-active);
+  color: var(--color-white);
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+@media (max-width: 768px) {
+  .body-style-selector__nav {
+    display: none;
+  }
+
+  .body-style-selector__item {
+    min-width: 90px;
+    padding: var(--spacing-2);
+  }
+
+  .body-style-selector__icon-wrapper {
+    width: 60px;
+    height: var(--spacing-10);
+  }
+
+  .body-style-selector__label {
+    font-size: var(--font-size-xs);
+  }
+
+  .body-style-selector--cards .body-style-selector__item {
+    min-width: 100px;
+    padding: var(--spacing-3);
+  }
+
+  .body-style-selector--pills .body-style-selector__item {
+    padding: var(--spacing-1) var(--spacing-3);
+  }
+
+  .body-style-selector--pills .body-style-selector__icon-wrapper {
+    width: 30px;
+    height: var(--spacing-5);
+  }
+
+  .body-style-selector--pills .body-style-selector__label {
+    font-size: var(--font-size-2xs);
+  }
+}
+
