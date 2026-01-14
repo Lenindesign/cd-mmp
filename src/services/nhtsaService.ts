@@ -250,8 +250,8 @@ export async function getRecalls(
   modelYear: number | string
 ): Promise<NHTSARecall[]> {
   try {
-    // Skip API call for future model years (NHTSA doesn\'t have data for future years)
-    const year = typeof modelYear === \'string\' ? parseInt(modelYear, 10) : modelYear;
+    // Skip API call for future model years (NHTSA doesn't have data for future years)
+    const year = typeof modelYear === 'string' ? parseInt(modelYear, 10) : modelYear;
     const currentYear = new Date().getFullYear();
     if (year > currentYear) {
       return [];
@@ -275,8 +275,8 @@ export async function getRecalls(
     return data.results || data.Results || [];
   } catch (error) {
     // Only log unexpected errors (network issues, 500 errors, etc.)
-    if (error instanceof Error && !error.message.includes(\'400\')) {
-      console.error(\'Error fetching NHTSA recalls:\', error);
+    if (error instanceof Error && !error.message.includes('400')) {
+      console.error('Error fetching NHTSA recalls:', error);
     }
     return [];
   }
