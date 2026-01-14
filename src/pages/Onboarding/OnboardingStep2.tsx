@@ -7,8 +7,8 @@ import './OnboardingStep2.css';
 // Speedometer Step Indicator Component - Now shows 2 steps total
 const StepIndicator: React.FC<{ step: number }> = ({ step }) => {
   const stepImages: Record<number, string> = {
-    1: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e811a35f00029a6a69/step1.svg',
-    2: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a63/step4.svg', // Using step4 image for step 2 (full gauge)
+    1: 'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/Group%201318348123.svg',
+    2: 'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/Group%201318348124.svg',
   };
 
   return (
