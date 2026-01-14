@@ -342,8 +342,6 @@ export async function getSafetyRatings(
     
     // Handle 400 Bad Request gracefully (invalid parameters, future years, etc.)
     if (response.status === 400) {
-      return [];
-    }
     
     if (!response.ok) {
       throw new Error(`NHTSA API error: ${response.status}`);
