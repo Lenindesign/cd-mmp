@@ -952,5 +952,20 @@
 
   .trade-estimate__actions {
     flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .trade-estimate__actions button {
+    min-height: 56px; /* Larger touch target for mobile (56px recommended) */
+    width: 100%;
+    font-size: var(--font-size-base);
+    padding: var(--spacing-4) var(--spacing-6) !important; /* Override Button component padding */
+    height: auto !important; /* Override Button component height */
+  }
+
+  /* Ensure buttons are full width and properly spaced on mobile */
+  .trade-estimate__actions .btn {
+    width: 100%;
+    min-height: 56px;
   }
 }
