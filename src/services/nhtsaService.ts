@@ -251,10 +251,10 @@ export async function getRecalls(
 ): Promise<NHTSARecall[]> {
   try {
     // Skip API call for future model years (NHTSA doesn't have data for future years)
-    const year = typeof modelYear === 'string' ? parseInt(modelYear, 10) : modelYear;
+    const year: number = typeof modelYear === 'string' ? parseInt(modelYear, 10) : modelYear;
     const currentYear = new Date().getFullYear();
     if (year > currentYear) {
-      return [];
+      return [] as NHTSARecall[];
     }
 
     const url = `${NHTSA_BASE_URL}/recalls/recallsByVehicle?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&modelYear=${modelYear}`;
@@ -448,7 +448,7 @@ export async function getComplaints(
     return data.results || data.Results || [];
   } catch (error) {
     console.error('Error fetching NHTSA complaints:', error);
-    return [];
+    return [] as NHTSAComplaint[];
   }
 }
 
