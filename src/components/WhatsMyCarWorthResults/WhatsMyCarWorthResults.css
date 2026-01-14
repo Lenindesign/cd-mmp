@@ -10,7 +10,7 @@
 .trade-estimate {
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-6);
+  padding: var(--spacing-8);
   margin-bottom: var(--spacing-8);
   box-shadow: var(--shadow-lg);
   border: 2px solid var(--color-gray-100);
@@ -74,7 +74,7 @@
 .trade-estimate__primary {
   background: var(--gradient-blue);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-6);
+  padding: var(--spacing-8);
   text-align: center;
   color: var(--color-white);
   position: relative;
@@ -196,7 +196,7 @@
 .local-dealer__card {
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-6);
+  padding: var(--spacing-8);
   box-shadow: var(--shadow-md);
   border: 1px solid var(--color-gray-200);
   display: flex;
@@ -602,7 +602,7 @@
 .next-vehicle__card {
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-6);
+  padding: var(--spacing-8);
   box-shadow: var(--shadow-md);
   display: flex;
   gap: var(--spacing-6);
@@ -667,7 +667,7 @@
 .faqs__item {
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-6);
+  padding: var(--spacing-8);
   box-shadow: var(--shadow-sm);
 }
 

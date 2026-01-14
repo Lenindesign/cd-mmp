@@ -68,7 +68,6 @@ export const MarketplaceFocused: Story = {
     variant: 'marketplace-focused',
     tradeEstimate: defaultTradeEstimate,
     dealers: defaultDealers,
-    showELotCarousel: true,
     showSimilarVehicles: true,
     showNextVehicle: false,
   },
@@ -80,7 +79,6 @@ export const Balanced: Story = {
     variant: 'balanced',
     tradeEstimate: defaultTradeEstimate,
     dealers: defaultDealers,
-    showELotCarousel: true,
     showSimilarVehicles: false,
     showNextVehicle: true,
   },
@@ -92,7 +90,6 @@ export const ContentFocused: Story = {
     variant: 'content-focused',
     tradeEstimate: defaultTradeEstimate,
     dealers: defaultDealers,
-    showELotCarousel: true,
     showSimilarVehicles: false,
     showNextVehicle: false,
   },
@@ -110,7 +107,6 @@ export const AllVariants: Story = {
           variant="marketplace-focused"
           tradeEstimate={defaultTradeEstimate}
           dealers={defaultDealers}
-          showELotCarousel={true}
           showSimilarVehicles={true}
           showNextVehicle={false}
         />
@@ -124,7 +120,6 @@ export const AllVariants: Story = {
           variant="balanced"
           tradeEstimate={defaultTradeEstimate}
           dealers={defaultDealers}
-          showELotCarousel={true}
           showSimilarVehicles={false}
           showNextVehicle={true}
         />
@@ -138,7 +133,6 @@ export const AllVariants: Story = {
           variant="content-focused"
           tradeEstimate={defaultTradeEstimate}
           dealers={defaultDealers}
-          showELotCarousel={true}
           showSimilarVehicles={false}
           showNextVehicle={false}
         />

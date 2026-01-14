@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronRight, MapPin, Phone, Mail, Star, ArrowRight, Bookmark } from 'lucide-react';
+import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark } from 'lucide-react';
 import { Button } from '../Button';
 import ForSaleNearYou from '../ForSaleNearYou';
 import { vehicleDatabase } from '../../data/vehicles';
@@ -34,7 +34,6 @@ interface WhatsMyCarWorthResultsProps {
   variant?: 'marketplace-focused' | 'balanced' | 'content-focused';
   tradeEstimate: TradeEstimate;
   dealers: Dealer[];
-  showELotCarousel?: boolean;
   showSimilarVehicles?: boolean;
   showNextVehicle?: boolean;
 }
@@ -43,7 +42,6 @@ const WhatsMyCarWorthResults = ({
   variant = 'balanced',
   tradeEstimate,
   dealers,
-  showELotCarousel = true,
   showSimilarVehicles = true,
   showNextVehicle = true,
 }: WhatsMyCarWorthResultsProps) => {
@@ -86,50 +84,6 @@ const WhatsMyCarWorthResults = ({
     {
       question: 'Is my information secure?',
       answer: "Yes! We don't require any personal information to provide an estimate. Your vehicle information is only used to calculate the value and is not stored or shared.",
-    },
-  ];
-
-  // Mock eLot listings
-  const eLotListings = [
-    {
-      id: '1',
-      year: 2024,
-      make: tradeEstimate.vehicle.make,
-      model: tradeEstimate.vehicle.model,
-      price: '$28,995',
-      mileage: '12,450 mi',
-      image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
-      badge: 'NEW',
-    },
-    {
-      id: '2',
-      year: 2023,
-      make: tradeEstimate.vehicle.make,
-      model: tradeEstimate.vehicle.model,
-      price: '$24,995',
-      mileage: '18,200 mi',
-      image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
-      badge: 'USED',
-    },
-    {
-      id: '3',
-      year: 2024,
-      make: tradeEstimate.vehicle.make,
-      model: tradeEstimate.vehicle.model,
-      price: '$27,495',
-      mileage: '8,900 mi',
-      image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
-      badge: 'CERTIFIED',
-    },
-    {
-      id: '4',
-      year: 2023,
-      make: tradeEstimate.vehicle.make,
-      model: tradeEstimate.vehicle.model,
-      price: '$23,995',
-      mileage: '22,100 mi',
-      image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
-      badge: 'USED',
     },
   ];
 
@@ -181,7 +135,7 @@ const WhatsMyCarWorthResults = ({
             {/* Primary CTA - Most Important Action */}
             <div className="trade-estimate__actions">
               <Button variant="success" size="large" iconRight={<ChevronRight size={20} />}>
-                Get Your Trade-In Value
+                Get Trade-In Offer
               </Button>
               <Button 
                 variant="outline" 
@@ -252,39 +206,6 @@ const WhatsMyCarWorthResults = ({
       {/* Variant-specific content sections */}
       {variant === 'marketplace-focused' && (
         <>
-          {/* eLot Carousel - Prominent */}
-          {showELotCarousel && (
-            <section className="elot-carousel elot-carousel--prominent">
-              <div className="elot-carousel__header">
-                <h2 className="elot-carousel__title">Similar Vehicles for Sale</h2>
-                <a href="#" className="elot-carousel__link">
-                  View All Listings
-                  <ChevronRight size={16} />
-                </a>
-              </div>
-              <div className="elot-carousel__grid elot-carousel__grid--large">
-                {eLotListings.map((listing) => (
-                  <div key={listing.id} className="elot-carousel__card">
-                    <div className="elot-carousel__card-image">
-                      <img src={listing.image} alt={`${listing.year} ${listing.make} ${listing.model}`} />
-                      <span className="elot-carousel__card-badge">{listing.badge}</span>
-                    </div>
-                    <div className="elot-carousel__card-info">
-                      <span className="elot-carousel__card-title">{listing.year} {listing.make} {listing.model}</span>
-                      <span className="elot-carousel__card-price">{listing.price}</span>
-                      <span className="elot-carousel__card-mileage">{listing.mileage}</span>
-                    </div>
-                  </div>
-                ))}
-                <div className="elot-carousel__card elot-carousel__card--more">
-                  <span className="elot-carousel__more-count">+24</span>
-                  <span className="elot-carousel__more-text">More Listings</span>
-                  <ArrowRight size={20} />
-                </div>
-              </div>
-            </section>
-          )}
-
           {/* For Sale Near You - Full Component */}
           {showSimilarVehicles && primaryDealer && (
             <ForSaleNearYou
@@ -324,60 +245,12 @@ const WhatsMyCarWorthResults = ({
               </div>
             </section>
           )}
-
-          {/* eLot Carousel - Compact */}
-          {showELotCarousel && (
-            <section className="elot-carousel elot-carousel--compact">
-              <div className="elot-carousel__header">
-                <h2 className="elot-carousel__title">Similar Vehicles for Sale</h2>
-                <a href="#" className="elot-carousel__link">
-                  View All
-                  <ChevronRight size={16} />
-                </a>
-              </div>
-              <div className="elot-carousel__grid">
-                {eLotListings.slice(0, 4).map((listing) => (
-                  <div key={listing.id} className="elot-carousel__card">
-                    <div className="elot-carousel__card-image">
-                      <img src={listing.image} alt={`${listing.year} ${listing.make} ${listing.model}`} />
-                      <span className="elot-carousel__card-badge">{listing.badge}</span>
-                    </div>
-                    <div className="elot-carousel__card-info">
-                      <span className="elot-carousel__card-title">{listing.year} {listing.make} {listing.model}</span>
-                      <span className="elot-carousel__card-price">{listing.price}</span>
-                      <span className="elot-carousel__card-mileage">{listing.mileage}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
         </>
       )}
 
       {variant === 'content-focused' && (
         <>
-          {/* eLot Carousel - Minimal */}
-          {showELotCarousel && (
-            <section className="elot-carousel elot-carousel--minimal">
-              <div className="elot-carousel__header">
-                <h2 className="elot-carousel__title">Browse Similar Vehicles</h2>
-                <a href="#" className="elot-carousel__link">
-                  View All
-                  <ChevronRight size={16} />
-                </a>
-              </div>
-              <div className="elot-carousel__row">
-                {eLotListings.slice(0, 3).map((listing) => (
-                  <div key={listing.id} className="elot-carousel__item">
-                    <span className="elot-carousel__item-badge">{listing.badge}</span>
-                    <span className="elot-carousel__item-title">{listing.year} {listing.make} {listing.model}</span>
-                    <span className="elot-carousel__item-price">{listing.price}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+          {/* Content-focused variant has no additional vehicle sections */}
         </>
       )}
 
