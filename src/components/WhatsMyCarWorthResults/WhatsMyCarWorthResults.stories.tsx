@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import WhatsMyCarWorthResults from './WhatsMyCarWorthResults';
+import WhatsMyCarWorthResultsV2 from './WhatsMyCarWorthResultsV2';
 
 const meta: Meta<typeof WhatsMyCarWorthResults> = {
   title: 'Pages/WhatsMyCarWorthResults',
@@ -12,6 +13,7 @@ const meta: Meta<typeof WhatsMyCarWorthResults> = {
 
 export default meta;
 type Story = StoryObj<typeof WhatsMyCarWorthResults>;
+type StoryV2 = StoryObj<typeof WhatsMyCarWorthResultsV2>;
 
 const defaultTradeEstimate = {
   low: 18500,
@@ -138,5 +140,45 @@ export const AllVariants: Story = {
         />
       </div>
     </div>
+  ),
+};
+
+// V2 Design - Matching Reference
+export const V2Design: StoryV2 = {
+  render: () => (
+    <WhatsMyCarWorthResultsV2
+      tradeEstimate={{
+        low: 26145,
+        mid: 31002,
+        high: 39375,
+        vehicle: {
+          year: 2022,
+          make: 'Honda',
+          model: 'Pilot TrailSport',
+          mileage: 45000,
+          condition: 'Good',
+        },
+      }}
+    />
+  ),
+};
+
+// V2 Design with different vehicle
+export const V2DesignAccord: StoryV2 = {
+  render: () => (
+    <WhatsMyCarWorthResultsV2
+      tradeEstimate={{
+        low: 18500,
+        mid: 21500,
+        high: 24500,
+        vehicle: {
+          year: 2021,
+          make: 'Honda',
+          model: 'Accord',
+          mileage: 45000,
+          condition: 'Good',
+        },
+      }}
+    />
   ),
 };
