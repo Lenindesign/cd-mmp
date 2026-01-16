@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
-import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark } from 'lucide-react';
+import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, DollarSign } from 'lucide-react';
 import { Button } from '../Button';
 import ForSaleNearYou from '../ForSaleNearYou';
+import { DealerMapModal } from '../DealerLocatorMap';
 import { vehicleDatabase } from '../../data/vehicles';
 import './WhatsMyCarWorthResults.css';
 
@@ -48,6 +49,7 @@ const WhatsMyCarWorthResults = ({
   // Use first dealer as primary (the one who purchased the lead)
   const primaryDealer = dealers[0];
   const [saved, setSaved] = useState(false);
+  const [showDealersModal, setShowDealersModal] = useState(false);
 
   // Find vehicle image from database
   const vehicleImage = useMemo(() => {
@@ -67,6 +69,98 @@ const WhatsMyCarWorthResults = ({
       maximumFractionDigits: 0,
     }).format(price);
   };
+
+  // Calculate buying power metrics
+  const buyingPower = useMemo(() => {
+    const tradeValue = tradeEstimate.mid;
+    // Estimated monthly payment reduction (assuming 60-month loan at 6% APR)
+    const monthlyReduction = Math.round(tradeValue / 60);
+    // New car MSRP for same model
+    const newCarMsrp = 32825; // Example MSRP for new Accord
+    const afterTradeIn = newCarMsrp - tradeValue;
+    
+    return {
+      monthlyReduction,
+      newCarMsrp,
+      afterTradeIn,
+      coversDownPayment: tradeValue >= 5000,
+    };
+  }, [tradeEstimate.mid]);
+
+  // VIN-specific inventory with trade-in adjusted pricing - Kia K5 options
+  const inventoryWithTradeIn = useMemo(() => {
+    return [
+      { 
+        id: '1',
+        stockNumber: 'K5-78421',
+        daysOnLot: 12,
+        year: 2025, 
+        make: 'Kia', 
+        model: 'K5',
+        trim: 'GT-Line AWD',
+        exteriorColor: 'Wolf Gray',
+        interiorColor: 'Black',
+        msrp: 32190, 
+        image: 'https://d2kde5ohu8qb21.cloudfront.net/files/65a4c354fc591800081603fc/3-2024-kia-k5-front-view.jpg',
+        mileage: 0,
+        isNew: true,
+        dealer: 'Pinecrest Kia',
+        distance: 4.2,
+        incentives: [
+          { type: 'rebate', label: '$1,500 Customer Cash', amount: 1500 },
+          { type: 'apr', label: '1.9% APR for 60 mo', amount: 0 },
+        ],
+      },
+      { 
+        id: '2',
+        stockNumber: 'U-29156',
+        daysOnLot: 67,
+        year: 2024, 
+        make: 'Kia', 
+        model: 'K5',
+        trim: 'EX',
+        exteriorColor: 'Passion Red',
+        interiorColor: 'Gray',
+        msrp: 24890, 
+        image: 'https://d2kde5ohu8qb21.cloudfront.net/files/65a4ab44cd06f600080e4953/14-2024-kia-forte-front-view.jpg',
+        mileage: 18420,
+        isNew: false,
+        dealer: 'AutoNation Kia Miami',
+        distance: 8.6,
+        certified: true,
+        incentives: [
+          { type: 'rebate', label: '$2,000 Dealer Discount', amount: 2000 },
+          { type: 'apr', label: '2.9% APR for 72 mo', amount: 0 },
+          { type: 'warranty', label: '100K mi CPO Warranty', amount: 0 },
+        ],
+      },
+      { 
+        id: '3',
+        stockNumber: 'K5-78733',
+        daysOnLot: 45,
+        year: 2025, 
+        make: 'Kia', 
+        model: 'K5',
+        trim: 'GT',
+        exteriorColor: 'Snow White Pearl',
+        interiorColor: 'Red',
+        msrp: 34090, 
+        image: 'https://d2kde5ohu8qb21.cloudfront.net/files/690bee134ffec60002725d25/010-2025-kia-ev6.jpg',
+        mileage: 0,
+        isNew: true,
+        dealer: 'Kendall Kia',
+        distance: 12.1,
+        incentives: [
+          { type: 'rebate', label: '$1,000 Bonus Cash', amount: 1000 },
+          { type: 'loyalty', label: '$500 Loyalty Bonus', amount: 500 },
+        ],
+      },
+    ].map(car => ({
+      ...car,
+      afterTradeIn: car.msrp - tradeEstimate.mid,
+      monthlyPayment: Math.round((car.msrp - tradeEstimate.mid) / 60),
+    }));
+  }, [tradeEstimate]);
 
   const faqs = [
     {
@@ -132,10 +226,32 @@ const WhatsMyCarWorthResults = ({
               </div>
             </div>
 
-            {/* Primary CTA - Most Important Action */}
+            {/* Buying Power Section - NEW: Reframes value as forward-looking */}
+            <div className="trade-estimate__buying-power">
+              <div className="trade-estimate__buying-power-header">
+                <Car size={20} />
+                <span>Your Buying Power</span>
+              </div>
+              <div className="trade-estimate__buying-power-benefits">
+                <div className="trade-estimate__buying-power-item">
+                  <Check size={16} className="trade-estimate__check-icon" />
+                  <span>Cover most down payments on a new {tradeEstimate.vehicle.make}</span>
+                </div>
+                <div className="trade-estimate__buying-power-item">
+                  <Check size={16} className="trade-estimate__check-icon" />
+                  <span>Reduce monthly payments by ~{formatPrice(buyingPower.monthlyReduction)}/mo</span>
+                </div>
+                <div className="trade-estimate__buying-power-item">
+                  <Check size={16} className="trade-estimate__check-icon" />
+                  <span>Put you into a newer {tradeEstimate.vehicle.model} today</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Primary CTA - Forward-looking language */}
             <div className="trade-estimate__actions">
-              <Button variant="success" size="large" iconRight={<ChevronRight size={20} />}>
-                Get Trade-In Offer
+              <Button variant="success" size="large">
+                Apply Trade-In to New Cars
               </Button>
               <Button 
                 variant="outline" 
@@ -150,12 +266,123 @@ const WhatsMyCarWorthResults = ({
         </div>
       </section>
 
-      {/* Local Dealers Section */}
+      {/* NEW: Inventory Section BEFORE Dealers - with trade-in adjusted pricing */}
+      <section className="trade-inventory">
+        <div className="trade-inventory__header">
+          <h2 className="trade-inventory__title">
+            Kia K5 With Your {formatPrice(tradeEstimate.mid)} Trade-In
+          </h2>
+          <p className="trade-inventory__subtitle">
+            See how your trade-in applies to available K5 inventory near you
+          </p>
+        </div>
+        <div className="trade-inventory__grid">
+          {inventoryWithTradeIn.map((car) => (
+            <div key={car.id} className="trade-inventory__card">
+              <div className="trade-inventory__card-image">
+                <img src={car.image} alt={`${car.year} ${car.make} ${car.model}`} />
+                {car.isNew ? (
+                  <span className="trade-inventory__badge">New</span>
+                ) : car.certified ? (
+                  <span className="trade-inventory__badge trade-inventory__badge--certified">CPO</span>
+                ) : null}
+              </div>
+              <div className="trade-inventory__card-content">
+                <h3 className="trade-inventory__card-title">
+                  {car.year} {car.make} {car.model} {car.trim}
+                </h3>
+                <div className="trade-inventory__card-specs">
+                  <span className="trade-inventory__spec">{car.exteriorColor}</span>
+                  <span className="trade-inventory__spec-divider">•</span>
+                  <span className="trade-inventory__spec">{car.interiorColor} Interior</span>
+                  {!car.isNew && (
+                    <>
+                      <span className="trade-inventory__spec-divider">•</span>
+                      <span className="trade-inventory__spec">{car.mileage.toLocaleString()} mi</span>
+                    </>
+                  )}
+                </div>
+                <div className="trade-inventory__card-pricing">
+                  <div className="trade-inventory__price-row">
+                    <span className="trade-inventory__price-label">{car.isNew ? 'MSRP' : 'Price'}</span>
+                    <span className="trade-inventory__price-msrp">{formatPrice(car.msrp)}</span>
+                  </div>
+                  <div className="trade-inventory__price-row trade-inventory__price-row--highlight">
+                    <span className="trade-inventory__price-label">
+                      <TrendingDown size={14} />
+                      After trade-in
+                    </span>
+                    <span className="trade-inventory__price-after">~{formatPrice(car.afterTradeIn)} + tax</span>
+                  </div>
+                  <div className="trade-inventory__price-row">
+                    <span className="trade-inventory__price-label">Est. monthly</span>
+                    <span className="trade-inventory__price-monthly">~{formatPrice(car.monthlyPayment)}/mo</span>
+                  </div>
+                </div>
+                {car.incentives && car.incentives.length > 0 && (
+                  <div className="trade-inventory__card-incentives">
+                    {car.incentives.map((incentive, idx) => (
+                      <span 
+                        key={idx} 
+                        className={`trade-inventory__incentive trade-inventory__incentive--${incentive.type}`}
+                      >
+                        {incentive.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div className="trade-inventory__card-dealer">
+                  <MapPin size={12} />
+                  <span>{car.dealer}</span>
+                  <span className="trade-inventory__card-distance">{car.distance} mi</span>
+                </div>
+                <div className="trade-inventory__card-vin">
+                  <span>Stock #{car.stockNumber}</span>
+                  <span className={`trade-inventory__days-on-lot ${car.daysOnLot > 45 ? 'trade-inventory__days-on-lot--high' : ''}`}>
+                    {car.daysOnLot} days on lot
+                  </span>
+                </div>
+                <Button variant="primary" size="medium" className="trade-inventory__card-cta">
+                  Check Availability
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="trade-inventory__footer">
+          <Button 
+            variant="outline" 
+            size="medium" 
+            iconRight={<ChevronRight size={18} />}
+            onClick={() => setShowDealersModal(true)}
+          >
+            See All Kia K5 Near You
+          </Button>
+        </div>
+      </section>
+
+      {/* Dealer Map Modal - Shows the NEXT vehicle (K5), not the trade-in */}
+      <DealerMapModal
+        isOpen={showDealersModal}
+        onClose={() => setShowDealersModal(false)}
+        vehicle={{
+          year: 2025,
+          make: 'Kia',
+          model: 'K5',
+          image: inventoryWithTradeIn[0]?.image || vehicleImage,
+        }}
+        initialLocation={{ lat: 25.7617, lng: -80.1918 }}
+        initialZipCode="Miami, FL"
+      />
+
+      {/* Local Dealers Section - with contextual framing */}
       <section className="local-dealers">
         <div className="local-dealers__header">
-          <h2 className="local-dealers__title">Local Dealers Near You</h2>
+          <h2 className="local-dealers__title">
+            Use Your {formatPrice(tradeEstimate.mid)} Trade-In at These Dealers
+          </h2>
           <p className="local-dealers__subtitle">
-            {primaryDealer && `Top dealer: ${primaryDealer.name} (purchased your lead)`}
+            Confirm your value in person • No obligation • Most offers honored same day
           </p>
         </div>
 
@@ -287,8 +514,8 @@ const WhatsMyCarWorthResults = ({
         </div>
       </section>
 
-      {/* Car Shopping Secrets Content Recirc */}
-      <section className="content-recirc">
+      {/* Car Shopping Secrets Content Recirc - De-emphasized */}
+      <section className="content-recirc content-recirc--secondary">
         <div className="content-recirc__header">
           <h2 className="content-recirc__title">Car Shopping Secrets</h2>
           <a href="#" className="content-recirc__link">
@@ -318,6 +545,20 @@ const WhatsMyCarWorthResults = ({
           ))}
         </div>
       </section>
+
+      {/* Sticky Bottom Bar for Mobile - Keeps trade-in value visible */}
+      <div className="trade-estimate__sticky-bar">
+        <div className="trade-estimate__sticky-content">
+          <div className="trade-estimate__sticky-value">
+            <DollarSign size={18} />
+            <span className="trade-estimate__sticky-amount">{formatPrice(tradeEstimate.mid)}</span>
+            <span className="trade-estimate__sticky-label">Trade-In</span>
+          </div>
+          <Button variant="success" size="medium" iconRight={<ChevronRight size={18} />}>
+            Apply to New Car
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

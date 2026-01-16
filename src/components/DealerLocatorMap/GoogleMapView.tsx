@@ -158,19 +158,43 @@ const GoogleMapView = ({
     };
   }, []);
 
-  // If no API key, show placeholder
+  // If no API key, show static map image fallback
   if (!apiKey) {
     return (
-      <div className="google-map-view google-map-view--placeholder">
-        <div className="google-map-view__placeholder-content">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          <p>Google Maps</p>
-          <p className="google-map-view__placeholder-note">
-            Add VITE_GOOGLE_MAPS_API_KEY to enable interactive map
-          </p>
+      <div className="google-map-view google-map-view--static">
+        <img 
+          src={`https://maps.googleapis.com/maps/api/staticmap?center=${center.lat},${center.lng}&zoom=11&size=800x600&scale=2&maptype=roadmap&key=`}
+          alt="Map"
+          className="google-map-view__static-fallback"
+          onError={(e) => {
+            // If static map fails (no key), show OpenStreetMap embed
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+            target.parentElement?.classList.add('google-map-view--osm');
+          }}
+        />
+        <iframe
+          className="google-map-view__osm-fallback"
+          src={`https://www.openstreetmap.org/export/embed.html?bbox=${center.lng - 0.15},${center.lat - 0.1},${center.lng + 0.15},${center.lat + 0.1}&layer=mapnik&marker=${center.lat},${center.lng}`}
+          style={{ border: 0, width: '100%', height: '100%' }}
+          title="Map"
+        />
+        {/* Dealer markers overlay */}
+        <div className="google-map-view__markers-overlay">
+          {dealers.slice(0, 5).map((dealer, index) => (
+            <div 
+              key={dealer.id}
+              className="google-map-view__static-marker"
+              style={{
+                position: 'absolute',
+                left: `${20 + (index * 15)}%`,
+                top: `${30 + (index % 3) * 20}%`,
+              }}
+              onClick={() => onDealerSelect?.(dealer)}
+            >
+              <div className="google-map-view__marker-number">{index + 1}</div>
+            </div>
+          ))}
         </div>
       </div>
     );

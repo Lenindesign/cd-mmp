@@ -1966,6 +1966,64 @@
   max-width: 250px;
 }
 
+/* Static Map Fallback (when no API key) */
+.google-map-view--static {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.google-map-view__static-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.google-map-view__osm-fallback {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.google-map-view--static.google-map-view--osm .google-map-view__osm-fallback {
+  display: block;
+}
+
+.google-map-view__markers-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.google-map-view__static-marker {
+  width: 32px;
+  height: 32px;
+  background: var(--color-blue-cobalt);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.google-map-view__static-marker:hover {
+  transform: scale(1.15);
+}
+
+.google-map-view__marker-number {
+  color: white;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
 /* ---- Custom Dealer Markers ---- */
 .dealer-marker {
   position: relative;

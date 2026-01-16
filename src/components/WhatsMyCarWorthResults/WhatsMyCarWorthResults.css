@@ -18,7 +18,7 @@
 
 .trade-estimate__container {
   display: grid;
-  grid-template-columns: 550px 1fr;
+  grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
   gap: var(--spacing-8);
   align-items: stretch;
 }
@@ -161,6 +161,366 @@
 
 .trade-estimate__actions button {
   flex: 1;
+}
+
+/* Buying Power Section - NEW */
+.trade-estimate__buying-power {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid var(--color-success);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-5);
+  margin: var(--spacing-2) 0;
+}
+
+.trade-estimate__buying-power-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-success-dark);
+  margin-bottom: var(--spacing-4);
+}
+
+.trade-estimate__buying-power-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.trade-estimate__buying-power-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-800);
+  line-height: 1.4;
+}
+
+.trade-estimate__check-icon {
+  color: var(--color-success-dark);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Trade Inventory Section - NEW */
+.trade-inventory {
+  margin-bottom: var(--spacing-8);
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-8);
+  box-shadow: var(--shadow-md);
+}
+
+.trade-inventory__header {
+  margin-bottom: var(--spacing-6);
+}
+
+.trade-inventory__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-36);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-2);
+}
+
+.trade-inventory__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+.trade-inventory__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
+
+.trade-inventory__card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.trade-inventory__card:hover {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.trade-inventory__card-image {
+  position: relative;
+  height: 160px;
+  background: var(--color-gray-100);
+}
+
+.trade-inventory__card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trade-inventory__badge {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-2);
+  background: var(--color-success-dark);
+  color: var(--color-white);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-extrabold);
+  text-transform: uppercase;
+}
+
+.trade-inventory__card-content {
+  padding: var(--spacing-4);
+}
+
+.trade-inventory__card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-3);
+}
+
+.trade-inventory__card-pricing {
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
+.trade-inventory__price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-1) 0;
+}
+
+.trade-inventory__price-row--highlight {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  margin: var(--spacing-2) calc(var(--spacing-3) * -1);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+}
+
+.trade-inventory__price-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.trade-inventory__price-row--highlight .trade-inventory__price-label {
+  color: var(--color-success-dark);
+  font-weight: var(--font-weight-medium);
+}
+
+.trade-inventory__price-msrp {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-500);
+  text-decoration: line-through;
+}
+
+.trade-inventory__price-after {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-success-dark);
+}
+
+.trade-inventory__price-monthly {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.trade-inventory__card-mileage {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-3);
+}
+
+/* VIN-specific card elements */
+.trade-inventory__card-specs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-3);
+}
+
+.trade-inventory__spec {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.trade-inventory__spec-divider {
+  color: var(--color-gray-400);
+  font-size: var(--font-size-xs);
+}
+
+/* Incentives */
+.trade-inventory__card-incentives {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-3);
+}
+
+.trade-inventory__incentive {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.trade-inventory__incentive--rebate {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.trade-inventory__incentive--apr {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.trade-inventory__incentive--loyalty {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.trade-inventory__incentive--warranty {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.trade-inventory__card-dealer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-2);
+}
+
+.trade-inventory__card-dealer svg {
+  color: var(--color-gray-500);
+  flex-shrink: 0;
+}
+
+.trade-inventory__card-distance {
+  color: var(--color-gray-500);
+  margin-left: auto;
+}
+
+.trade-inventory__card-vin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  padding: var(--spacing-2);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-3);
+}
+
+.trade-inventory__days-on-lot {
+  color: var(--color-gray-500);
+}
+
+.trade-inventory__days-on-lot--high {
+  color: var(--color-success-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.trade-inventory__badge--certified {
+  background: var(--color-blue-cobalt);
+}
+
+.trade-inventory__card-cta {
+  width: 100%;
+}
+
+.trade-inventory__footer {
+  display: flex;
+  justify-content: center;
+}
+
+/* Sticky Bottom Bar for Mobile */
+.trade-estimate__sticky-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border-top: 1px solid var(--color-gray-200);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-3) var(--spacing-4);
+  z-index: 100;
+}
+
+.trade-estimate__sticky-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  max-width: var(--max-width-container);
+  margin: 0 auto;
+}
+
+.trade-estimate__sticky-value {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.trade-estimate__sticky-value svg {
+  color: var(--color-success-dark);
+}
+
+.trade-estimate__sticky-amount {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+}
+
+.trade-estimate__sticky-label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+/* De-emphasized content sections */
+.content-recirc--secondary {
+  opacity: 0.85;
+}
+
+.content-recirc--secondary .content-recirc__title {
+  font-size: var(--font-size-2xl);
 }
 
 /* Local Dealers Section */
@@ -852,6 +1212,19 @@
 }
 
 /* Responsive Design */
+
+/* Large screens - keep side by side */
+@media (max-width: 1200px) {
+  .trade-estimate__container {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-6);
+  }
+  
+  .trade-estimate {
+    padding: var(--spacing-6);
+  }
+}
+
 @media (max-width: 1024px) {
   .trade-estimate__container {
     grid-template-columns: 1fr;
@@ -861,11 +1234,13 @@
   .trade-estimate__image-wrapper {
     position: relative;
     max-width: 100%;
+    max-height: 400px;
     margin: 0 auto;
   }
 
   .trade-estimate__image {
-    min-height: 300px;
+    min-height: 280px;
+    max-height: 400px;
   }
 
   .trade-estimate__primary-amount {
@@ -878,6 +1253,11 @@
 
   .local-dealer__card {
     flex-direction: column;
+  }
+
+  /* Trade Inventory responsive - 2 columns on tablet */
+  .trade-inventory__grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   /* Carousels remain horizontal on tablet, just smaller cards */
@@ -906,15 +1286,94 @@
   .next-vehicle__image {
     width: 100%;
   }
+  
+  /* Titles responsive */
+  .trade-estimate__title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .local-dealers__title,
+  .trade-inventory__title {
+    font-size: var(--font-size-2xl);
+  }
 }
 
 @media (max-width: 768px) {
   .whats-my-car-worth-results {
-    padding: var(--spacing-6) var(--spacing-4);
+    padding: var(--spacing-4) var(--spacing-3);
+    padding-bottom: 100px; /* Space for sticky bar */
+  }
+  
+  .trade-estimate {
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+  }
+  
+  .trade-estimate__container {
+    gap: var(--spacing-4);
+  }
+  
+  .trade-estimate__image-wrapper {
+    max-height: 250px;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .trade-estimate__image {
+    min-height: 200px;
+    max-height: 250px;
+  }
+  
+  .trade-estimate__title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .trade-estimate__subtitle {
+    font-size: var(--font-size-base);
+  }
+  
+  .trade-estimate__primary {
+    padding: var(--spacing-5);
+    margin: var(--spacing-2) 0;
+  }
+  
+  .trade-estimate__primary-amount {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .trade-estimate__primary-range {
+    font-size: var(--font-size-xs);
+  }
+  
+  .trade-estimate__details {
+    padding: var(--spacing-3);
+  }
+  
+  .trade-estimate__detail-value {
+    font-size: var(--font-size-base);
   }
 
   .local-dealers__grid {
     grid-template-columns: 1fr;
+  }
+  
+  .local-dealers__title,
+  .trade-inventory__title {
+    font-size: var(--font-size-xl);
+  }
+
+  /* Trade Inventory responsive - 1 column on mobile */
+  .trade-inventory__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-inventory {
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+  }
+
+  /* Show sticky bar on mobile */
+  .trade-estimate__sticky-bar {
+    display: block;
   }
 
   /* Carousels remain horizontal on mobile, just smaller cards */
@@ -952,20 +1411,118 @@
 
   .trade-estimate__actions {
     flex-direction: column;
-    gap: var(--spacing-4);
+    gap: var(--spacing-3);
   }
 
   .trade-estimate__actions button {
-    min-height: 56px; /* Larger touch target for mobile (56px recommended) */
+    min-height: 52px;
     width: 100%;
-    font-size: var(--font-size-base);
-    padding: var(--spacing-4) var(--spacing-6) !important; /* Override Button component padding */
-    height: auto !important; /* Override Button component height */
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-3) var(--spacing-4) !important;
+    height: auto !important;
   }
 
   /* Ensure buttons are full width and properly spaced on mobile */
   .trade-estimate__actions .btn {
     width: 100%;
-    min-height: 56px;
+    min-height: 52px;
+  }
+
+  /* Buying power responsive */
+  .trade-estimate__buying-power {
+    padding: var(--spacing-3);
+    margin: var(--spacing-2) 0;
+  }
+
+  .trade-estimate__buying-power-header {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-3);
+  }
+  
+  .trade-estimate__buying-power-benefits {
+    gap: var(--spacing-2);
+  }
+
+  .trade-estimate__buying-power-item {
+    font-size: var(--font-size-sm);
+  }
+  
+  /* FAQs responsive */
+  .faqs__title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .faqs__item {
+    padding: var(--spacing-4);
+  }
+  
+  .faqs__question {
+    font-size: var(--font-size-base);
+  }
+  
+  .faqs__answer {
+    font-size: var(--font-size-sm);
+  }
+  
+  /* Newsletter responsive */
+  .newsletter {
+    padding: var(--spacing-6);
+  }
+  
+  .newsletter__title {
+    font-size: var(--font-size-xl);
+  }
+  
+  /* Content recirc responsive */
+  .content-recirc__title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .content-recirc__card-image {
+    height: 140px;
+  }
+  
+  /* Local dealer cards responsive */
+  .local-dealer__card {
+    padding: var(--spacing-4);
+  }
+  
+  .local-dealer__name {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .whats-my-car-worth-results {
+    padding: var(--spacing-3) var(--spacing-2);
+    padding-bottom: 90px;
+  }
+  
+  .trade-estimate {
+    padding: var(--spacing-3);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .trade-estimate__primary-amount {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .trade-estimate__sticky-content {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  
+  .trade-estimate__sticky-bar {
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+  
+  .trade-estimate__sticky-value {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .trade-estimate__sticky-bar button {
+    width: 100%;
   }
 }
