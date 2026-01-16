@@ -139,7 +139,6 @@ const WhatsMyCarWorthResultsV2 = ({
   const [savedListings, setSavedListings] = useState<Set<string>>(new Set());
   const [showDealersModal, setShowDealersModal] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const _similarCarouselRef = useRef<HTMLDivElement>(null);
 
   // Find vehicle image from database
   const vehicleImage = useMemo(() => {
