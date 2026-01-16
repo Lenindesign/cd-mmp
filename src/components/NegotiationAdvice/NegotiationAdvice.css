@@ -1,0 +1,145 @@
+/* NegotiationAdvice Component */
+
+.negotiation-advice {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-gray-200);
+}
+
+.negotiation-advice__header {
+  background: #b8d4e8;
+  padding: var(--spacing-4) var(--spacing-5);
+  border-left: 4px solid #4a90b8;
+}
+
+.negotiation-advice__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0;
+}
+
+.negotiation-advice__content {
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.negotiation-advice__summary {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-800);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.negotiation-advice__summary strong {
+  color: var(--color-black);
+}
+
+.negotiation-advice__tips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.negotiation-advice__tip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  line-height: 1.6;
+  margin: 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: #e8f4fc;
+  border-radius: var(--border-radius-md);
+}
+
+.negotiation-advice__tip strong {
+  color: var(--color-black);
+}
+
+.negotiation-advice__bottom-line {
+  padding: var(--spacing-3) var(--spacing-4);
+  background: #b8d4e8;
+  border-radius: var(--border-radius-md);
+}
+
+.negotiation-advice__bottom-line-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  display: block;
+  margin-bottom: var(--spacing-1);
+}
+
+.negotiation-advice__bottom-line-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-800);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.negotiation-advice__playbook {
+  margin-top: var(--spacing-2);
+}
+
+.negotiation-advice__playbook-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-3) 0;
+}
+
+.negotiation-advice__playbook-list {
+  list-style: disc;
+  padding-left: var(--spacing-5);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.negotiation-advice__playbook-item {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  line-height: 1.5;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: #e8f4fc;
+  border-radius: var(--border-radius-sm);
+  margin-left: var(--spacing-2);
+}
+
+.negotiation-advice__playbook-item strong {
+  color: var(--color-black);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .negotiation-advice__header {
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .negotiation-advice__title {
+    font-size: var(--font-size-base);
+  }
+
+  .negotiation-advice__content {
+    padding: var(--spacing-4);
+    gap: var(--spacing-3);
+  }
+
+  .negotiation-advice__summary,
+  .negotiation-advice__tip,
+  .negotiation-advice__bottom-line-text,
+  .negotiation-advice__playbook-item {
+    font-size: var(--font-size-sm);
+  }
+}
