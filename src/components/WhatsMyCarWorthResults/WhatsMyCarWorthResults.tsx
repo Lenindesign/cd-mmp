@@ -1,10 +1,68 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, DollarSign } from 'lucide-react';
 import { Button } from '../Button';
 import ForSaleNearYou from '../ForSaleNearYou';
 import { DealerMapModal } from '../DealerLocatorMap';
 import { vehicleDatabase } from '../../data/vehicles';
 import './WhatsMyCarWorthResults.css';
+
+// Rolling number animation component
+const RollingNumber = ({ value, duration = 2000 }: { value: number; duration?: number }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setIsAnimating(true);
+    startTimeRef.current = null;
+    
+    const animate = (timestamp: number) => {
+      if (!startTimeRef.current) {
+        startTimeRef.current = timestamp;
+      }
+      
+      const elapsed = timestamp - startTimeRef.current;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth deceleration
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      
+      // Start from a lower value and roll up
+      const startValue = value * 0.7;
+      const currentValue = Math.round(startValue + (value - startValue) * easeOutQuart);
+      
+      setDisplayValue(currentValue);
+      
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(value);
+        setIsAnimating(false);
+      }
+    };
+    
+    rafRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [value, duration]);
+
+  const formattedValue = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(displayValue);
+
+  return (
+    <span className={`rolling-number ${isAnimating ? 'rolling-number--animating' : ''}`}>
+      {formattedValue}
+    </span>
+  );
+};
 
 interface TradeEstimate {
   low: number;
@@ -207,7 +265,9 @@ const WhatsMyCarWorthResults = ({
             {/* Primary Estimate - Most Prominent */}
             <div className="trade-estimate__primary">
               <div className="trade-estimate__primary-label">Estimated Trade-In Value</div>
-              <div className="trade-estimate__primary-amount">{formatPrice(tradeEstimate.mid)}</div>
+              <div className="trade-estimate__primary-amount">
+                <RollingNumber value={tradeEstimate.mid} duration={1800} />
+              </div>
               <div className="trade-estimate__primary-badge">Most Likely</div>
               <div className="trade-estimate__primary-range">
                 Range: {formatPrice(tradeEstimate.low)} - {formatPrice(tradeEstimate.high)}

@@ -101,6 +101,25 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Rolling number animation */
+.rolling-number {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+.rolling-number--animating {
+  animation: pulse-glow 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    text-shadow: 0 2px 16px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .trade-estimate__primary-badge {
   display: inline-block;
   background: var(--color-white);
