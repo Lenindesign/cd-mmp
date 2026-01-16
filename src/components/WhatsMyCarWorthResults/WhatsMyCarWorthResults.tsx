@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, DollarSign } from 'lucide-react';
+import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, TrendingUp, DollarSign, Clock, BarChart3, Zap, ArrowDown } from 'lucide-react';
 import { Button } from '../Button';
 import ForSaleNearYou from '../ForSaleNearYou';
 import { DealerMapModal } from '../DealerLocatorMap';
@@ -274,6 +274,32 @@ const WhatsMyCarWorthResults = ({
               </div>
             </div>
 
+            {/* Value Forecast */}
+            <div className="trade-estimate__forecast">
+              <div className="trade-estimate__forecast-header">
+                <TrendingDown size={16} className="trade-estimate__forecast-icon trade-estimate__forecast-icon--down" />
+                <span className="trade-estimate__forecast-title">Value Forecast</span>
+              </div>
+              <div className="trade-estimate__forecast-content">
+                <div className="trade-estimate__forecast-item">
+                  <span className="trade-estimate__forecast-label">30 days</span>
+                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-$420</span>
+                </div>
+                <div className="trade-estimate__forecast-item">
+                  <span className="trade-estimate__forecast-label">60 days</span>
+                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-$890</span>
+                </div>
+                <div className="trade-estimate__forecast-item">
+                  <span className="trade-estimate__forecast-label">90 days</span>
+                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-$1,340</span>
+                </div>
+              </div>
+              <p className="trade-estimate__forecast-note">
+                <Clock size={12} />
+                Your {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model} is depreciating ~$14/day. Trade in sooner to maximize value.
+              </p>
+            </div>
+
             {/* Vehicle Details */}
             <div className="trade-estimate__details">
               <div className="trade-estimate__detail">
@@ -418,6 +444,112 @@ const WhatsMyCarWorthResults = ({
           >
             See All Kia K5 Near You
           </Button>
+        </div>
+      </section>
+
+      {/* Marketplace Analysis Section */}
+      <section className="marketplace-analysis">
+        <div className="marketplace-analysis__header">
+          <h2 className="marketplace-analysis__title">
+            <BarChart3 size={24} />
+            Kia K5 Market Analysis
+          </h2>
+          <p className="marketplace-analysis__subtitle">Real-time pricing intelligence for your area</p>
+        </div>
+        <div className="marketplace-analysis__grid">
+          <div className="marketplace-analysis__card">
+            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--speed">
+              <Zap size={20} />
+            </div>
+            <div className="marketplace-analysis__card-content">
+              <span className="marketplace-analysis__card-label">Market Speed</span>
+              <span className="marketplace-analysis__card-value">Hot</span>
+              <span className="marketplace-analysis__card-detail">K5s sell in avg. 18 days</span>
+            </div>
+          </div>
+          <div className="marketplace-analysis__card">
+            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--trend">
+              <TrendingDown size={20} />
+            </div>
+            <div className="marketplace-analysis__card-content">
+              <span className="marketplace-analysis__card-label">Price Trend</span>
+              <span className="marketplace-analysis__card-value marketplace-analysis__card-value--positive">Buyer's Market</span>
+              <span className="marketplace-analysis__card-detail">Prices down 3.2% this month</span>
+            </div>
+          </div>
+          <div className="marketplace-analysis__card">
+            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--inventory">
+              <Car size={20} />
+            </div>
+            <div className="marketplace-analysis__card-content">
+              <span className="marketplace-analysis__card-label">Local Inventory</span>
+              <span className="marketplace-analysis__card-value">47 Available</span>
+              <span className="marketplace-analysis__card-detail">Within 25 miles of you</span>
+            </div>
+          </div>
+          <div className="marketplace-analysis__card">
+            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--savings">
+              <DollarSign size={20} />
+            </div>
+            <div className="marketplace-analysis__card-content">
+              <span className="marketplace-analysis__card-label">Avg. Savings</span>
+              <span className="marketplace-analysis__card-value">$2,847</span>
+              <span className="marketplace-analysis__card-detail">Below MSRP in your area</span>
+            </div>
+          </div>
+        </div>
+        <div className="marketplace-analysis__insight">
+          <div className="marketplace-analysis__insight-icon">
+            <ArrowDown size={16} />
+          </div>
+          <p className="marketplace-analysis__insight-text">
+            <strong>Best time to buy:</strong> With 67+ day inventory and declining prices, you have strong negotiating power. 
+            Dealers are motivated to move K5s—use your {formatPrice(tradeEstimate.mid)} trade-in as leverage.
+          </p>
+        </div>
+      </section>
+
+      {/* eLot Carousel - More Vehicles */}
+      <section className="elot-section">
+        <div className="elot-section__header">
+          <h2 className="elot-section__title">More Vehicles That Match Your Budget</h2>
+          <a href="#" className="elot-section__link">
+            View All
+            <ChevronRight size={16} />
+          </a>
+        </div>
+        <div className="elot-section__carousel">
+          {[
+            { id: 'e1', year: 2025, make: 'Hyundai', model: 'Sonata', trim: 'SEL', price: 29550, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/65a4c354fc591800081603fc/3-2024-kia-k5-front-view.jpg', mileage: 0, isNew: true },
+            { id: 'e2', year: 2024, make: 'Toyota', model: 'Camry', trim: 'SE', price: 27890, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg', mileage: 15600, isNew: false },
+            { id: 'e3', year: 2025, make: 'Honda', model: 'Accord', trim: 'Sport', price: 31078, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66e8824d603db5000878f458/2025hondaaccordhybridfrontthreequarters.jpg', mileage: 0, isNew: true },
+            { id: 'e4', year: 2024, make: 'Mazda', model: 'Mazda6', trim: 'Touring', price: 26500, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/65a4ab44cd06f600080e4953/14-2024-kia-forte-front-view.jpg', mileage: 22100, isNew: false },
+            { id: 'e5', year: 2025, make: 'Nissan', model: 'Altima', trim: 'SV', price: 28790, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/690bee134ffec60002725d25/010-2025-kia-ev6.jpg', mileage: 0, isNew: true },
+          ].map((car) => (
+            <div key={car.id} className="elot-section__card">
+              <div className="elot-section__card-image">
+                <img src={car.image} alt={`${car.year} ${car.make} ${car.model}`} />
+                {car.isNew && <span className="elot-section__badge">New</span>}
+              </div>
+              <div className="elot-section__card-content">
+                <h3 className="elot-section__card-title">{car.year} {car.make} {car.model} {car.trim}</h3>
+                <div className="elot-section__card-pricing">
+                  <span className="elot-section__card-price">{formatPrice(car.price)}</span>
+                  <span className="elot-section__card-after">
+                    After trade-in: <strong>{formatPrice(car.price - tradeEstimate.mid)}</strong>
+                  </span>
+                </div>
+                {!car.isNew && <span className="elot-section__card-mileage">{car.mileage.toLocaleString()} mi</span>}
+              </div>
+            </div>
+          ))}
+          <div className="elot-section__card elot-section__card--more">
+            <div className="elot-section__more-content">
+              <span className="elot-section__more-count">142+</span>
+              <span className="elot-section__more-text">More vehicles in your budget</span>
+              <Button variant="outline" size="small">Browse All</Button>
+            </div>
+          </div>
         </div>
       </section>
 
