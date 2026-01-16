@@ -132,14 +132,14 @@ const faqs = [
 
 const WhatsMyCarWorthResultsV2 = ({
   tradeEstimate,
-  onStartOver,
+  onStartOver: _onStartOver,
 }: WhatsMyCarWorthResultsV2Props) => {
   const [selectedYear, setSelectedYear] = useState(2026);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [savedListings, setSavedListings] = useState<Set<string>>(new Set());
   const [showDealersModal, setShowDealersModal] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const similarCarouselRef = useRef<HTMLDivElement>(null);
+  const _similarCarouselRef = useRef<HTMLDivElement>(null);
 
   // Find vehicle image from database
   const vehicleImage = useMemo(() => {
@@ -189,7 +189,7 @@ const WhatsMyCarWorthResultsV2 = ({
   // Get similar vehicles with ratings
   const similarVehicles = useMemo(() => {
     return vehicleDatabase
-      .filter(v => v.bodyStyle === 'Sedan' && v.year >= 2020)
+      .filter(v => v.bodyStyle === 'Sedan' && Number(v.year) >= 2020)
       .slice(0, 3)
       .map((v, i) => ({
         id: `similar-${i}`,
@@ -558,6 +558,7 @@ const WhatsMyCarWorthResultsV2 = ({
           year: tradeEstimate.vehicle.year,
           make: tradeEstimate.vehicle.make,
           model: tradeEstimate.vehicle.model,
+          msrp: tradeEstimate.mid,
           image: vehicleImage,
         }}
         initialLocation={{ lat: 25.7617, lng: -80.1918 }}

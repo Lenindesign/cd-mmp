@@ -369,6 +369,7 @@ const WhatsMyCarWorthResults = ({
           year: 2025,
           make: 'Kia',
           model: 'K5',
+          msrp: inventoryWithTradeIn[0]?.msrp || 28590,
           image: inventoryWithTradeIn[0]?.image || vehicleImage,
         }}
         initialLocation={{ lat: 25.7617, lng: -80.1918 }}
