@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, TrendingUp, DollarSign, Clock, BarChart3, Zap, ArrowDown } from 'lucide-react';
+import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, DollarSign, Clock } from 'lucide-react';
 import { Button } from '../Button';
 import ForSaleNearYou from '../ForSaleNearYou';
 import { DealerMapModal } from '../DealerLocatorMap';
