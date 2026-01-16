@@ -489,16 +489,12 @@ const WhatsMyCarWorthResults = ({
       <section className="marketplace-analysis">
         <div className="marketplace-analysis__header">
           <h2 className="marketplace-analysis__title">
-            <BarChart3 size={24} />
             Kia K5 Market Analysis
           </h2>
           <p className="marketplace-analysis__subtitle">Real-time pricing intelligence for your area</p>
         </div>
         <div className="marketplace-analysis__grid">
           <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--speed">
-              <Zap size={20} />
-            </div>
             <div className="marketplace-analysis__card-content">
               <span className="marketplace-analysis__card-label">Market Speed</span>
               <span className="marketplace-analysis__card-value">Hot</span>
@@ -506,9 +502,6 @@ const WhatsMyCarWorthResults = ({
             </div>
           </div>
           <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--trend">
-              <TrendingDown size={20} />
-            </div>
             <div className="marketplace-analysis__card-content">
               <span className="marketplace-analysis__card-label">Price Trend</span>
               <span className="marketplace-analysis__card-value marketplace-analysis__card-value--positive">Buyer's Market</span>
@@ -516,9 +509,6 @@ const WhatsMyCarWorthResults = ({
             </div>
           </div>
           <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--inventory">
-              <Car size={20} />
-            </div>
             <div className="marketplace-analysis__card-content">
               <span className="marketplace-analysis__card-label">Local Inventory</span>
               <span className="marketplace-analysis__card-value">47 Available</span>
@@ -526,9 +516,6 @@ const WhatsMyCarWorthResults = ({
             </div>
           </div>
           <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-icon marketplace-analysis__card-icon--savings">
-              <DollarSign size={20} />
-            </div>
             <div className="marketplace-analysis__card-content">
               <span className="marketplace-analysis__card-label">Avg. Savings</span>
               <span className="marketplace-analysis__card-value">$2,847</span>
@@ -537,9 +524,6 @@ const WhatsMyCarWorthResults = ({
           </div>
         </div>
         <div className="marketplace-analysis__insight">
-          <div className="marketplace-analysis__insight-icon">
-            <ArrowDown size={16} />
-          </div>
           <p className="marketplace-analysis__insight-text">
             <strong>Best time to buy:</strong> With 67+ day inventory and declining prices, you have strong negotiating power. 
             Dealers are motivated to move K5s—use your {formatPrice(tradeEstimate.mid)} trade-in as leverage.

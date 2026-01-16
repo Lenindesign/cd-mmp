@@ -1162,41 +1162,10 @@
 .marketplace-analysis__card {
   display: flex;
   align-items: flex-start;
-  gap: var(--spacing-3);
   padding: var(--spacing-4);
   background: var(--color-gray-50);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-gray-100);
-}
-
-.marketplace-analysis__card-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--border-radius-md);
-  flex-shrink: 0;
-}
-
-.marketplace-analysis__card-icon--speed {
-  background: #fef3c7;
-  color: #d97706;
-}
-
-.marketplace-analysis__card-icon--trend {
-  background: #d1fae5;
-  color: #059669;
-}
-
-.marketplace-analysis__card-icon--inventory {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.marketplace-analysis__card-icon--savings {
-  background: #f3e8ff;
-  color: #7c3aed;
 }
 
 .marketplace-analysis__card-content {
@@ -1231,25 +1200,10 @@
 }
 
 .marketplace-analysis__insight {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-3);
   padding: var(--spacing-4);
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
   border: 1px solid var(--color-success);
   border-radius: var(--border-radius-md);
-}
-
-.marketplace-analysis__insight-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-success-dark);
-  color: white;
-  border-radius: 50%;
-  flex-shrink: 0;
 }
 
 .marketplace-analysis__insight-text {
