@@ -145,6 +145,43 @@ const WhatsMyCarWorthResults = ({
     };
   }, [tradeEstimate.mid]);
 
+  // Calculate realistic depreciation forecast
+  const depreciationForecast = useMemo(() => {
+    const currentValue = tradeEstimate.mid;
+    const vehicleAge = new Date().getFullYear() - tradeEstimate.vehicle.year;
+    
+    // Depreciation rates vary by age:
+    // Years 1-3: ~15-20% per year (steeper)
+    // Years 4-6: ~10-12% per year (moderate)
+    // Years 7+: ~7-8% per year (slower)
+    let annualDepreciationRate: number;
+    if (vehicleAge <= 3) {
+      annualDepreciationRate = 0.17; // 17% per year
+    } else if (vehicleAge <= 6) {
+      annualDepreciationRate = 0.11; // 11% per year
+    } else {
+      annualDepreciationRate = 0.075; // 7.5% per year
+    }
+    
+    // Convert to daily rate
+    const dailyDepreciationRate = annualDepreciationRate / 365;
+    const dailyDepreciation = Math.round(currentValue * dailyDepreciationRate);
+    
+    // Calculate 30/60/90 day projections
+    const day30Loss = Math.round(currentValue * dailyDepreciationRate * 30);
+    const day60Loss = Math.round(currentValue * dailyDepreciationRate * 60);
+    const day90Loss = Math.round(currentValue * dailyDepreciationRate * 90);
+    
+    return {
+      dailyDepreciation,
+      day30Loss,
+      day60Loss,
+      day90Loss,
+      annualRate: Math.round(annualDepreciationRate * 100),
+      vehicleAge,
+    };
+  }, [tradeEstimate.mid, tradeEstimate.vehicle.year]);
+
   // VIN-specific inventory with trade-in adjusted pricing - Kia K5 options
   const inventoryWithTradeIn = useMemo(() => {
     return [
@@ -279,24 +316,25 @@ const WhatsMyCarWorthResults = ({
               <div className="trade-estimate__forecast-header">
                 <TrendingDown size={16} className="trade-estimate__forecast-icon trade-estimate__forecast-icon--down" />
                 <span className="trade-estimate__forecast-title">Value Forecast</span>
+                <span className="trade-estimate__forecast-rate">~{depreciationForecast.annualRate}%/year</span>
               </div>
               <div className="trade-estimate__forecast-content">
                 <div className="trade-estimate__forecast-item">
                   <span className="trade-estimate__forecast-label">30 days</span>
-                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-$420</span>
+                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-{formatPrice(depreciationForecast.day30Loss)}</span>
                 </div>
                 <div className="trade-estimate__forecast-item">
                   <span className="trade-estimate__forecast-label">60 days</span>
-                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-$890</span>
+                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-{formatPrice(depreciationForecast.day60Loss)}</span>
                 </div>
                 <div className="trade-estimate__forecast-item">
                   <span className="trade-estimate__forecast-label">90 days</span>
-                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-$1,340</span>
+                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-{formatPrice(depreciationForecast.day90Loss)}</span>
                 </div>
               </div>
               <p className="trade-estimate__forecast-note">
                 <Clock size={12} />
-                Your {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model} is depreciating ~$14/day. Trade in sooner to maximize value.
+                Your {depreciationForecast.vehicleAge}-year-old {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model} is depreciating ~${depreciationForecast.dailyDepreciation}/day. Trade in sooner to maximize value.
               </p>
             </div>
 
