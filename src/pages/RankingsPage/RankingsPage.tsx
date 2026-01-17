@@ -7,6 +7,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { VehicleCard } from '../../components/VehicleCard';
 import { SEO } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
+import { GoogleOneTap } from '../../components/GoogleOneTap';
+import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import './RankingsPage.css';
 
 // Body style icons
@@ -109,7 +111,15 @@ const generateCdSays = (year: string, make: string, model: string): string => {
 const RankingsPage = () => {
   const { bodyStyle, subcategory } = useParams<{ bodyStyle: string; subcategory?: string }>();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
-  const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
+  const { user, isAuthenticated: isAuthContextAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
+
+  // Google One Tap integration for high-intent rankings page
+  const { shouldShowOneTap, isAuthenticated: isOneTapAuthenticated } = useGoogleOneTap({
+    pageType: 'rankings',
+  });
+
+  // Combined authentication state
+  const isAuthenticated = isAuthContextAuthenticated || isOneTapAuthenticated;
 
   // Get config for current body style
   const config = bodyStyle ? BODY_STYLE_CONFIG[bodyStyle.toLowerCase()] : null;
@@ -257,6 +267,14 @@ const RankingsPage = () => {
     return (
       <div className="rankings-page">
         <SEO title="Rankings | Car and Driver" />
+        
+        {/* Google One Tap for non-authenticated users */}
+        {shouldShowOneTap && (
+          <GoogleOneTap
+            pageType="rankings"
+            isAuthenticated={isAuthenticated}
+          />
+        )}
         <div className="rankings-page__hero rankings-page__hero--landing">
           <div className="container">
             <div className="rankings-page__hero-content">
@@ -358,6 +376,14 @@ const RankingsPage = () => {
         title={`${pageTitle} | Car and Driver Rankings`}
         description={config.description}
       />
+      
+      {/* Google One Tap for non-authenticated users */}
+      {shouldShowOneTap && (
+        <GoogleOneTap
+          pageType="rankings"
+          isAuthenticated={isAuthenticated}
+        />
+      )}
 
       {/* Hero Section */}
       <div className="rankings-page__hero">

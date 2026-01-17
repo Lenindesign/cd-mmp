@@ -25,6 +25,8 @@ import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
+import { GoogleOneTap } from '../../components/GoogleOneTap';
+import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import './VehiclePage.css';
 
 interface VehiclePageProps {
@@ -45,6 +47,16 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   const slug = `${year}/${make}/${model}`;
   
   const vehicle = useMemo(() => getVehicleBySlug(slug), [slug]);
+
+  // Google One Tap integration for high-intent MMP page
+  const { shouldShowOneTap, isAuthenticated } = useGoogleOneTap({
+    pageType: 'mmp',
+    vehicleInfo: vehicle ? {
+      year: parseInt(vehicle.year),
+      make: vehicle.make,
+      model: vehicle.model,
+    } : undefined,
+  });
 
   // Fetch rating from Supabase in production
   const category = vehicle ? getCategory(vehicle.bodyStyle) : '';
@@ -144,6 +156,20 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         keywords={[vehicle.make, vehicle.model, vehicle.bodyStyle, vehicle.fuelType, 'car review', 'pricing']}
         structuredData={structuredData}
       />
+      
+      {/* Google One Tap for non-authenticated users on high-intent pages */}
+      {shouldShowOneTap && (
+        <GoogleOneTap
+          pageType="mmp"
+          vehicleInfo={{
+            year: parseInt(vehicle.year),
+            make: vehicle.make,
+            model: vehicle.model,
+          }}
+          isAuthenticated={isAuthenticated}
+        />
+      )}
+      
       <main className="main">
         <Hero vehicle={vehicleData} animateButtons />
         

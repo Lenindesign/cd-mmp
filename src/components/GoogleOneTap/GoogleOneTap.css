@@ -1,0 +1,77 @@
+/* GoogleOneTap Component */
+/* Note: The actual One Tap UI is rendered by Google's script */
+/* This CSS is for any custom wrapper elements */
+
+.google-one-tap {
+  /* Hidden container - Google renders the prompt in a fixed position */
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* 
+ * Google One Tap prompt customization
+ * The prompt is rendered in an iframe, so we can only style the container
+ * Google provides limited customization through their API
+ */
+
+/* Custom prompt container if using prompt_parent_id */
+.google-one-tap-container {
+  position: fixed;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  z-index: 9999;
+}
+
+/* Fallback button for when One Tap is not available */
+.google-one-tap-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.google-one-tap-fallback:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-400);
+  box-shadow: var(--shadow-md);
+}
+
+.google-one-tap-fallback:active {
+  transform: scale(0.98);
+}
+
+.google-one-tap-fallback__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.google-one-tap-fallback__text {
+  white-space: nowrap;
+}
+
+/* Loading state */
+.google-one-tap--loading .google-one-tap-fallback {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Disabled state */
+.google-one-tap--disabled .google-one-tap-fallback {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
