@@ -8,22 +8,7 @@ import {
 import '../../types/google.d';
 import './GoogleOneTap.css';
 
-// Local interface definitions (not extending Window to avoid conflicts)
-interface GoogleOneTapConfigLocal {
-  client_id: string;
-  callback: (response: CredentialResponse) => void;
-  auto_select?: boolean;
-  cancel_on_tap_outside?: boolean;
-  context?: 'signin' | 'signup' | 'use';
-  itp_support?: boolean;
-  prompt_parent_id?: string;
-  nonce?: string;
-  state_cookie_domain?: string;
-  ux_mode?: 'popup' | 'redirect';
-  allowed_parent_origin?: string | string[];
-  intermediate_iframe_close_callback?: () => void;
-}
-
+// Local interface definitions
 interface CredentialResponse {
   credential: string;
   select_by: string;
