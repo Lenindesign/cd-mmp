@@ -1,106 +1,130 @@
-/* Welcome Email Template Styles */
-/* Note: For actual email sending, these styles should be inlined */
+/* Welcome Email Template Styles - Car and Driver Design System */
+/* Matches Figma Design: https://www.figma.com/design/6fmzY7f0nYYUN7ovoZRxQE/Community?node-id=2547-31473 */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 .welcome-email {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
   line-height: 1.5;
-  color: #ffffff;
-  background-color: #1a1a1a;
+  color: var(--color-neutrals-1, #141414);
+  background-color: var(--color-white, #ffffff);
   margin: 0;
   padding: 0;
 }
 
 .welcome-email__wrapper {
-  background-color: #1a1a1a;
-  padding: 20px;
+  background-color: var(--color-blue-cobalt, #1B5F8A);
+  padding: var(--spacing-8, 32px) var(--spacing-4, 16px);
   min-height: 100vh;
 }
 
 .welcome-email__container {
   max-width: 600px;
   margin: 0 auto;
-  background-color: #2a2a2a;
-  border-radius: 0;
+  background-color: var(--color-white, #ffffff);
+  border-radius: var(--spacing-2, 8px);
   overflow: hidden;
   width: 100%;
 }
 
 /* Header */
 .welcome-email__header {
-  background-color: #1a1a1a;
-  padding: 24px 32px;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-white, #ffffff);
+  padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
+  text-align: center;
 }
 
 .welcome-email__logo {
-  max-width: 200px;
-  height: auto;
-  /* Invert colors for dark background - makes black logo white */
-  filter: invert(1) brightness(1.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 342px;
+  max-width: 342px;
+  height: 101px;
+  /* Logo should be visible on white background - no filter needed */
+  filter: none;
 }
 
 /* Greeting */
 .welcome-email__greeting {
-  padding: 24px 32px;
-  background-color: #1a1a1a;
+  padding: 0 var(--spacing-8, 32px) 0;
+  background-color: var(--color-white, #ffffff);
 }
 
 .welcome-email__greeting-name {
-  font-size: 18px;
-  font-weight: 400;
-  margin: 0 0 12px 0;
-  color: #ffffff;
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-xl, 20px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: var(--line-height-snug, 1.4);
+  margin: 0 0 var(--spacing-2, 8px) 0;
+  color: var(--color-neutrals-1, #141414);
 }
 
 .welcome-email__greeting-text {
-  font-size: 14px;
-  line-height: 1.6;
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-relaxed, 1.625);
   margin: 0;
-  color: #cccccc;
+  padding-top: 21px;
+  padding-bottom: 21px;
+  color: var(--color-neutrals-1, #141414);
 }
 
 /* Benefits Section */
 .welcome-email__benefits {
-  padding: 0 32px 24px;
-  background-color: #1a1a1a;
+  padding: 0 var(--spacing-8, 32px) var(--spacing-6, 24px);
+  background-color: var(--color-white, #ffffff);
 }
 
 .welcome-email__benefits-title {
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0 0 12px 0;
-  color: #ffffff;
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: var(--line-height-snug, 1.4);
+  margin: 0 0 var(--spacing-3, 12px) 0;
+  color: var(--color-neutrals-1, #141414);
 }
 
 .welcome-email__benefits-list {
   margin: 0;
-  padding-left: 20px;
-  font-size: 13px;
-  color: #cccccc;
+  padding-left: var(--spacing-5, 20px);
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-relaxed, 1.625);
+  color: var(--color-neutrals-1, #141414);
 }
 
 .welcome-email__benefits-list li {
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1, 4px);
 }
 
 /* Section Titles */
 .welcome-email__section-title {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 16px 0;
-  color: #ffffff;
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 26.8px; /* From Figma */
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: 35.73px; /* From Figma */
+  margin: 0 0 var(--spacing-4, 16px) 0;
+  color: var(--color-neutrals-1, #141414);
 }
 
 /* Featured Article */
 .welcome-email__featured {
-  padding: 24px 32px;
-  background-color: #1a1a1a;
+  padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
+  background-color: var(--color-white, #ffffff);
 }
 
 .welcome-email__featured-card {
-  background-color: #2d2d2d;
-  border-radius: 4px;
+  background-color: var(--color-white, #ffffff);
+  border-radius: var(--spacing-2, 8px);
   overflow: hidden;
+  border: 1px solid var(--color-gray-200, #e5e5e5);
 }
 
 .welcome-email__featured-link {
@@ -113,143 +137,160 @@
   width: 100%;
   height: auto;
   display: block;
+  border-radius: var(--spacing-2, 8px) var(--spacing-2, 8px) 0 0;
 }
 
 .welcome-email__featured-content {
-  padding: 16px;
+  padding: var(--spacing-4, 16px);
 }
 
 .welcome-email__featured-title {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 4px 0;
-  color: #ffffff;
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 26.8px; /* From Figma */
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: 35.73px; /* From Figma */
+  margin: 0 0 var(--spacing-1-5, 6px) 0;
+  color: var(--color-neutrals-1, #141414);
 }
 
 .welcome-email__featured-description {
-  font-size: 13px;
-  color: #999999;
-  margin: 0 0 12px 0;
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-regular, 400);
+  line-height: var(--line-height-relaxed, 1.625);
+  color: var(--color-neutrals-2, #223045);
+  margin: 0 0 var(--spacing-3, 12px) 0;
 }
 
 .welcome-email__read-more-btn {
   display: inline-block;
-  padding: 8px 20px;
-  background-color: transparent;
-  border: 1px solid #555555;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
+  padding: var(--spacing-3, 12px) var(--spacing-6, 24px);
+  background-color: var(--color-blue-cobalt, #1B5F8A);
+  color: var(--color-white, #ffffff);
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+  text-transform: none;
   text-decoration: none;
-  border-radius: 2px;
+  border-radius: var(--spacing-2, 8px);
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s;
+  border: none;
 }
 
 .welcome-email__read-more-btn:hover {
-  background-color: #333333;
-  border-color: #777777;
+  background-color: var(--color-blue-cobalt-dark, #154d70);
 }
 
 /* Recommended Stories */
 .welcome-email__recommended {
-  padding: 24px 32px;
-  background-color: #1a1a1a;
+  padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
+  background-color: var(--color-white, #ffffff);
 }
 
 .welcome-email__stories {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-4, 16px);
 }
 
 .welcome-email__story-card {
   display: flex;
-  background-color: #2d2d2d;
-  border-radius: 4px;
+  background-color: var(--color-white, #ffffff);
+  border-radius: var(--spacing-2, 8px);
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: background-color 0.2s;
+  transition: box-shadow 0.2s;
+  border: 1px solid var(--color-gray-200, #e5e5e5);
 }
 
 .welcome-email__story-card:hover {
-  background-color: #363636;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .welcome-email__story-image {
-  width: 120px;
-  height: 80px;
+  width: 201px; /* From Figma */
+  height: 168px; /* From Figma */
   object-fit: cover;
   flex-shrink: 0;
+  border-radius: var(--spacing-2, 8px) 0 0 var(--spacing-2, 8px);
 }
 
 .welcome-email__story-content {
-  padding: 12px 16px;
+  padding: var(--spacing-4, 16px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   flex: 1;
+  gap: var(--spacing-1-5, 6px);
 }
 
 .welcome-email__story-title {
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0 0 2px 0;
-  color: #ffffff;
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 23.39px; /* From Figma */
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: 38.2px; /* From Figma */
+  margin: 0;
+  color: var(--color-neutrals-1, #141414);
 }
 
 .welcome-email__story-description {
-  font-size: 12px;
-  color: #999999;
-  margin: 0 0 8px 0;
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: 15.6px; /* From Figma */
+  font-weight: var(--font-weight-regular, 400);
+  line-height: 27.78px; /* From Figma */
+  color: var(--color-neutrals-2, #223045);
+  margin: 0;
 }
 
 /* CTA Button */
 .welcome-email__cta {
-  padding: 32px;
+  padding: var(--spacing-8, 32px);
   text-align: center;
-  background-color: #1a1a1a;
+  background-color: var(--color-white, #ffffff);
 }
 
 .welcome-email__cta-button {
   display: inline-block;
-  padding: 14px 40px;
-  background-color: #e31837;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
+  padding: var(--spacing-4, 16px) var(--spacing-8, 32px);
+  background-color: var(--color-blue-cobalt);
+  color: var(--color-white, #ffffff);
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 22.59px; /* From Figma */
+  font-weight: var(--font-weight-semibold, 600);
   text-transform: uppercase;
   text-decoration: none;
-  border-radius: 4px;
-  letter-spacing: 0.5px;
+  border-radius: 98.2px; /* From Figma - pill shape */
+  letter-spacing: 0;
   transition: background-color 0.2s;
+  border: none;
 }
 
 .welcome-email__cta-button:hover {
-  background-color: #c41530;
+  background-color: var(--color-blue-cobalt-dark, #154d70);
 }
 
 /* Footer */
 .welcome-email__footer {
-  padding: 32px;
+  padding: var(--spacing-8, 32px);
   text-align: center;
-  background-color: #1a1a1a;
-  border-top: 1px solid #333333;
+  background-color: var(--color-white, #ffffff);
+  border-top: 1px solid var(--color-gray-200, #e5e5e5);
 }
 
 .welcome-email__footer-follow {
-  font-size: 12px;
-  color: #999999;
-  margin: 0 0 12px 0;
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-sm, 12px);
+  color: var(--color-gray-600, #666666);
+  margin: 0 0 var(--spacing-3, 12px) 0;
 }
 
 .welcome-email__social-links {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--spacing-4, 16px);
+  margin-bottom: var(--spacing-5, 20px);
 }
 
 .welcome-email__social-link {
@@ -258,7 +299,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  color: #ffffff;
+  color: var(--color-neutrals-1, #141414);
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -273,35 +314,37 @@
 }
 
 .welcome-email__footer-links {
-  font-size: 11px;
-  margin-bottom: 16px;
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-xs, 11px);
+  margin-bottom: var(--spacing-4, 16px);
 }
 
 .welcome-email__footer-links a {
-  color: #6699cc;
+  color: var(--color-blue-cobalt, #1B5F8A);
   text-decoration: underline;
 }
 
 .welcome-email__footer-links a:hover {
-  color: #88bbee;
+  color: var(--color-blue-cobalt-dark, #154d70);
 }
 
 .welcome-email__footer-divider {
-  color: #666666;
-  margin: 0 8px;
+  color: var(--color-gray-600, #666666);
+  margin: 0 var(--spacing-2, 8px);
 }
 
 .welcome-email__footer-legal {
-  font-size: 10px;
-  color: #666666;
-  line-height: 1.5;
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-2xs, 10px);
+  color: var(--color-gray-600, #666666);
+  line-height: var(--line-height-normal, 1.5);
   margin: 0;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
   .welcome-email__wrapper {
-    padding: 0;
+    padding: var(--spacing-4, 16px);
   }
 
   .welcome-email__header,
@@ -311,29 +354,29 @@
   .welcome-email__recommended,
   .welcome-email__cta,
   .welcome-email__footer {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: var(--spacing-5, 20px);
+    padding-right: var(--spacing-5, 20px);
   }
 
   .welcome-email__story-image {
-    width: 100px;
-    height: 70px;
+    width: 120px;
+    height: 100px;
   }
 
   .welcome-email__story-content {
-    padding: 8px 12px;
+    padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
   }
 
   .welcome-email__story-title {
-    font-size: 13px;
+    font-size: var(--font-size-base, 14px);
   }
 
   .welcome-email__story-description {
-    font-size: 11px;
+    font-size: var(--font-size-sm, 12px);
   }
 
   .welcome-email__cta-button {
-    padding: 12px 32px;
-    font-size: 13px;
+    padding: var(--spacing-3, 12px) var(--spacing-6, 24px);
+    font-size: var(--font-size-md, 16px);
   }
 }
