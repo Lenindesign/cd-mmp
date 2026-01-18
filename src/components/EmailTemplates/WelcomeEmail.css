@@ -98,16 +98,23 @@
   font-weight: var(--font-weight-medium, 500);
   line-height: var(--line-height-relaxed, 1.625);
   color: var(--color-neutrals-1, #141414);
+  list-style-type: disc;
+  list-style-position: outside;
 }
 
 .welcome-email__benefits-list li {
   margin-bottom: var(--spacing-1, 4px);
+  padding-left: var(--spacing-1, 4px);
+}
+
+.welcome-email__benefits-list li::marker {
+  color: var(--color-blue-cobalt, #1B5F8A);
 }
 
 /* Section Titles */
 .welcome-email__section-title {
   font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
-  font-size: 26.8px; /* From Figma */
+  font-size: 20px;
   font-weight: var(--font-weight-semibold, 600);
   line-height: 35.73px; /* From Figma */
   margin: 0 0 var(--spacing-4, 16px) 0;
@@ -133,6 +140,10 @@
   display: block;
 }
 
+.welcome-email__featured-image-wrapper {
+  position: relative;
+}
+
 .welcome-email__featured-image {
   width: 100%;
   height: auto;
@@ -140,8 +151,52 @@
   border-radius: var(--spacing-2, 8px) var(--spacing-2, 8px) 0 0;
 }
 
+/* Accolades Badges on Featured Card */
+.welcome-email__accolades {
+  position: absolute;
+  top: var(--spacing-2, 8px);
+  right: var(--spacing-2, 8px);
+  display: flex;
+  gap: var(--spacing-1, 4px);
+  z-index: 2;
+}
+
+.welcome-email__accolade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-white, #ffffff);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-email__accolade--ec img {
+  width: 20px;
+  height: 18px;
+}
+
+.welcome-email__accolade--10best img {
+  width: 18px;
+  height: 20px;
+}
+
+.welcome-email__accolade--ev img {
+  width: 20px;
+  height: 20px;
+}
+
 .welcome-email__featured-content {
   padding: var(--spacing-4, 16px);
+}
+
+.welcome-email__featured-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-3, 12px);
+  margin-bottom: var(--spacing-1-5, 6px);
 }
 
 .welcome-email__featured-title {
@@ -149,8 +204,48 @@
   font-size: 26.8px; /* From Figma */
   font-weight: var(--font-weight-semibold, 600);
   line-height: 35.73px; /* From Figma */
-  margin: 0 0 var(--spacing-1-5, 6px) 0;
+  margin: 0;
   color: var(--color-neutrals-1, #141414);
+  flex: 1;
+}
+
+/* Rating Display */
+.welcome-email__rating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.welcome-email__rating-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.welcome-email__rating-score {
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 32px;
+  font-weight: var(--font-weight-extrabold, 800);
+  color: var(--color-neutrals-1, #141414);
+  line-height: 1;
+}
+
+.welcome-email__rating-max {
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 16px;
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-500, #666666);
+  line-height: 1;
+}
+
+.welcome-email__rating-label {
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: 11px;
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-500, #666666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: var(--spacing-0-5, 2px);
 }
 
 .welcome-email__featured-description {
@@ -176,10 +271,74 @@
   cursor: pointer;
   transition: background-color 0.2s;
   border: none;
+  align-self: flex-start; /* Prevent stretching in flex containers */
+  width: fit-content; /* Only as wide as content */
 }
 
 .welcome-email__read-more-btn:hover {
   background-color: var(--color-blue-cobalt-dark, #154d70);
+}
+
+.welcome-email__read-more-btn--primary {
+  background-color: var(--color-blue-cobalt, #1B5F8A);
+  padding: var(--spacing-3, 12px) var(--spacing-8, 32px);
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.welcome-email__read-more-btn--primary:hover {
+  background-color: var(--color-blue-cobalt-dark, #154d70);
+}
+
+/* Price Row - Featured Card (price + availability side by side) */
+.welcome-email__price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3, 12px);
+  margin-bottom: var(--spacing-3, 12px);
+  flex-wrap: wrap;
+}
+
+/* Price Section - Featured Card */
+.welcome-email__price-section {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-3, 12px);
+}
+
+.welcome-email__price {
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 28px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-neutrals-1, #141414);
+}
+
+.welcome-email__monthly {
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-600, #666666);
+}
+
+/* Availability Info */
+.welcome-email__listings-badge {
+  display: inline-block;
+  padding: var(--spacing-1, 4px) var(--spacing-3, 12px);
+  background-color: var(--color-green-light, #e8f5e9);
+  color: var(--color-green-dark, #2e7d32);
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-semibold, 600);
+  border-radius: var(--spacing-1, 4px);
+}
+
+.welcome-email__dealer-info {
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-600, #666666);
 }
 
 /* Recommended Stories */
@@ -203,18 +362,52 @@
   color: inherit;
   transition: box-shadow 0.2s;
   border: 1px solid var(--color-gray-200, #e5e5e5);
+  min-height: 168px;
 }
 
 .welcome-email__story-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.welcome-email__story-image-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 201px;
+  align-self: stretch;
+}
+
 .welcome-email__story-image {
   width: 201px; /* From Figma */
-  height: 168px; /* From Figma */
+  height: 100%;
   object-fit: cover;
-  flex-shrink: 0;
   border-radius: var(--spacing-2, 8px) 0 0 var(--spacing-2, 8px);
+  display: block;
+}
+
+/* Accolades on Story/Vehicle Cards */
+.welcome-email__card-accolades {
+  position: absolute;
+  top: var(--spacing-1-5, 6px);
+  right: var(--spacing-1-5, 6px);
+  display: flex;
+  gap: var(--spacing-0-5, 2px);
+  z-index: 2;
+}
+
+.welcome-email__card-accolade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--color-white, #ffffff);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.welcome-email__card-accolade img {
+  width: 14px;
+  height: 14px;
 }
 
 .welcome-email__story-content {
@@ -226,6 +419,13 @@
   gap: var(--spacing-1-5, 6px);
 }
 
+.welcome-email__story-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-2, 8px);
+}
+
 .welcome-email__story-title {
   font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
   font-size: 23.39px; /* From Figma */
@@ -233,6 +433,45 @@
   line-height: 38.2px; /* From Figma */
   margin: 0;
   color: var(--color-neutrals-1, #141414);
+  flex: 1;
+}
+
+/* Card Rating (smaller version for story cards) */
+.welcome-email__card-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.welcome-email__card-rating-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.welcome-email__card-rating-score {
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 24px;
+  font-weight: var(--font-weight-extrabold, 800);
+  color: var(--color-neutrals-1, #141414);
+  line-height: 1;
+}
+
+.welcome-email__card-rating-max {
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-500, #666666);
+  line-height: 1;
+}
+
+.welcome-email__card-rating-label {
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: 9px;
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-500, #666666);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .welcome-email__story-description {
@@ -242,6 +481,52 @@
   line-height: 27.78px; /* From Figma */
   color: var(--color-neutrals-2, #223045);
   margin: 0;
+}
+
+/* Vehicle Card Specific Styles */
+.welcome-email__vehicle-card {
+  position: relative;
+}
+
+/* Price + Availability Row for Story Cards */
+.welcome-email__card-price-availability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2, 8px);
+  flex-wrap: wrap;
+}
+
+.welcome-email__card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2, 8px);
+}
+
+.welcome-email__card-price {
+  font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
+  font-size: 20px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-neutrals-1, #141414);
+}
+
+.welcome-email__card-monthly {
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-xs, 12px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-600, #666666);
+}
+
+.welcome-email__card-availability {
+  display: inline-block;
+  padding: var(--spacing-0-5, 2px) var(--spacing-2, 8px);
+  background-color: var(--color-green-light, #e8f5e9);
+  color: var(--color-green-dark, #2e7d32);
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-xs, 12px);
+  font-weight: var(--font-weight-semibold, 600);
+  border-radius: var(--spacing-1, 4px);
+  white-space: nowrap;
 }
 
 /* CTA Button */
@@ -269,6 +554,14 @@
 
 .welcome-email__cta-button:hover {
   background-color: var(--color-blue-cobalt-dark, #154d70);
+}
+
+.welcome-email__cta-subtext {
+  font-family: var(--font-sans, 'Inter'), sans-serif;
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-gray-600, #666666);
+  margin: var(--spacing-3, 12px) 0 0 0;
 }
 
 /* Footer */
@@ -358,6 +651,10 @@
     padding-right: var(--spacing-5, 20px);
   }
 
+  .welcome-email__story-image-wrapper {
+    width: 120px;
+  }
+
   .welcome-email__story-image {
     width: 120px;
     height: 100px;
@@ -367,8 +664,14 @@
     padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
   }
 
+  .welcome-email__story-header {
+    flex-direction: column;
+    gap: var(--spacing-1, 4px);
+  }
+
   .welcome-email__story-title {
     font-size: var(--font-size-base, 14px);
+    line-height: 1.3;
   }
 
   .welcome-email__story-description {
@@ -378,5 +681,54 @@
   .welcome-email__cta-button {
     padding: var(--spacing-3, 12px) var(--spacing-6, 24px);
     font-size: var(--font-size-md, 16px);
+  }
+
+  /* Smaller accolades on mobile */
+  .welcome-email__card-accolades {
+    top: var(--spacing-1, 4px);
+    right: var(--spacing-1, 4px);
+  }
+
+  .welcome-email__card-accolade {
+    width: 20px;
+    height: 20px;
+  }
+
+  .welcome-email__card-accolade img {
+    width: 12px;
+    height: 12px;
+  }
+
+  .welcome-email__card-rating-score {
+    font-size: 18px;
+  }
+
+  .welcome-email__card-rating-max {
+    font-size: 10px;
+  }
+
+  .welcome-email__card-rating-label {
+    font-size: 8px;
+  }
+
+  .welcome-email__featured-header {
+    flex-direction: column;
+    gap: var(--spacing-2, 8px);
+  }
+
+  .welcome-email__rating {
+    align-self: flex-start;
+  }
+
+  .welcome-email__rating-score {
+    font-size: 24px;
+  }
+
+  .welcome-email__rating-max {
+    font-size: 12px;
+  }
+
+  .welcome-email__rating-label {
+    font-size: 9px;
   }
 }

@@ -5,6 +5,47 @@ import { getAuthUser, clearAuthUser, type GoogleUser } from '../../components/Go
 import { vehicleDatabase } from '../../data/vehicles';
 import './EmailPreviewPage.css';
 
+// Estimated base prices by make (fallback when not in database)
+const estimatedPricesByMake: Record<string, number> = {
+  'Chevrolet': 28500,
+  'Ford': 32000,
+  'Toyota': 31500,
+  'Honda': 29000,
+  'Ram': 42000,
+  'GMC': 45000,
+  'Jeep': 38000,
+  'Hyundai': 27500,
+  'Kia': 26500,
+  'Nissan': 28000,
+  'Subaru': 30000,
+  'Mazda': 29500,
+  'BMW': 55000,
+  'Mercedes-Benz': 58000,
+  'Audi': 52000,
+  'Lexus': 48000,
+  'Acura': 42000,
+  'Porsche': 85000,
+  'Tesla': 45000,
+  'Rivian': 75000,
+};
+
+const getEstimatedPrice = (make: string, model: string): number => {
+  // Check for specific model adjustments
+  const modelLower = model.toLowerCase();
+  let basePrice = estimatedPricesByMake[make] || 35000;
+  
+  // Adjust for truck/SUV models
+  if (modelLower.includes('1500') || modelLower.includes('f-150') || modelLower.includes('silverado')) {
+    basePrice = Math.max(basePrice, 45000);
+  }
+  if (modelLower.includes('trax') || modelLower.includes('trailblazer')) {
+    basePrice = Math.min(basePrice, 25000);
+  }
+  
+  // Add some variance
+  return basePrice + Math.floor(Math.random() * 5000) - 2500;
+};
+
 const EmailPreviewPage = () => {
   const [browsedVehicles, setBrowsedVehicles] = useState<BrowsedVehicle[]>([]);
   const [user, setUser] = useState<GoogleUser | null>(null);
@@ -58,13 +99,27 @@ const EmailPreviewPage = () => {
         }
       }
       
+      // Generate realistic pricing data based on vehicle
+      const basePrice = vehicleFromDb?.priceMin || getEstimatedPrice(v.make, v.model);
+      const monthlyPayment = Math.round(basePrice / 60); // Rough 60-month estimate
+      const listingsCount = Math.floor(Math.random() * 25) + 5; // 5-30 listings
+      
       return {
         year: v.year,
         make: v.make,
         model: v.model,
+        trim: vehicleFromDb?.trim,
         image: vehicleFromDb?.image,
         viewCount: v.viewCount,
         link: `/${v.year}/${v.make}/${v.model}`.toLowerCase().replace(/ /g, '-'),
+        price: basePrice,
+        monthlyPayment,
+        listingsCount,
+        // Include accolades and rating from database
+        staffRating: vehicleFromDb?.staffRating,
+        editorsChoice: vehicleFromDb?.editorsChoice,
+        tenBest: vehicleFromDb?.tenBest,
+        evOfTheYear: vehicleFromDb?.evOfTheYear,
       };
     });
     setBrowsedVehicles(mappedVehicles);

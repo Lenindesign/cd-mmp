@@ -1,5 +1,10 @@
 import './WelcomeEmail.css';
 
+// Badge URLs from Car and Driver design tokens
+const EDITORS_CHOICE_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE';
+const TEN_BEST_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg';
+const EV_OF_THE_YEAR_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ev-of-the-year.721e420.svg';
+
 export interface RecommendedStory {
   id: string;
   title: string;
@@ -12,9 +17,28 @@ export interface BrowsedVehicle {
   year: number;
   make: string;
   model: string;
+  trim?: string;
   image?: string;
   link?: string;
   viewCount?: number;
+  /** Starting MSRP price */
+  price?: number;
+  /** Dealer name */
+  dealerName?: string;
+  /** Dealer distance in miles */
+  dealerDistance?: number;
+  /** Number of listings available nearby */
+  listingsCount?: number;
+  /** Monthly payment estimate */
+  monthlyPayment?: number;
+  /** C/D Staff Rating (out of 10) */
+  staffRating?: number;
+  /** Editor's Choice award */
+  editorsChoice?: boolean;
+  /** 10Best award */
+  tenBest?: boolean;
+  /** EV of the Year award */
+  evOfTheYear?: boolean;
 }
 
 export interface WelcomeEmailProps {
@@ -105,6 +129,26 @@ const getVehicleImage = (vehicle: BrowsedVehicle): string => {
   return defaultStories[0].image;
 };
 
+// Format price with commas
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
+};
+
+// Format monthly payment
+const formatMonthly = (payment: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(payment);
+};
+
 const WelcomeEmail = ({
   userName = 'Greg',
   browsedVehicles = [],
@@ -164,15 +208,15 @@ const WelcomeEmail = ({
               <td className="welcome-email__greeting">
                 <h1 className="welcome-email__greeting-name">Hi {userName},</h1>
                 <p className="welcome-email__greeting-text">
-                  You're officially part of the Car And Driver family! From now on, you'll get 
-                  insider access to the latest car reviews, exclusive member stories, and the 
-                  best of automotive culture—delivered straight to your inbox.
+                  Welcome to Car And Driver! We're here to help you find the perfect car—whether 
+                  you're browsing new models, comparing prices, or ready to buy. Get expert reviews, 
+                  real pricing data, and connect with trusted dealers near you.
                 </p>
-                <h2 className="welcome-email__benefits-title">Your Car And Driver Membership Card unlocks:</h2>
+                <h2 className="welcome-email__benefits-title">Your Car And Driver account helps you:</h2>
                 <ul className="welcome-email__benefits-list">
-                  <li>A custom personalized experience just for you</li>
-                  <li>Exclusive newsletters, content, and more</li>
-                  <li>Member-only features such as Rate and Review your cars</li>
+                  <li>Compare vehicles side-by-side with expert ratings and specs</li>
+                  <li>Find the best deals from local dealers in your area</li>
+                  <li>Save your favorites and get price drop alerts</li>
                 </ul>
               </td>
             </tr>
@@ -181,29 +225,99 @@ const WelcomeEmail = ({
             <tr>
               <td className="welcome-email__featured">
                 <h2 className="welcome-email__section-title">
-                  {hasBrowsedVehicles ? 'Welcome to Car And Driver' : 'Welcome to Car And Driver'}
+                  {hasBrowsedVehicles ? 'Find Your Next Car' : 'Welcome to Car And Driver'}
                 </h2>
                 <div className="welcome-email__featured-card">
                   <a href={displayedFeaturedLink} className="welcome-email__featured-link">
-                    <img 
-                      src={displayedFeaturedImage} 
-                      alt={displayedFeaturedTitle}
-                      className="welcome-email__featured-image"
-                      onError={(e) => {
-                        console.error('[WelcomeEmail] Failed to load featured image:', displayedFeaturedImage);
-                        // Fallback to default image on error
-                        const target = e.target as HTMLImageElement;
-                        if (target.src !== defaultStories[0].image) {
-                          target.src = defaultStories[0].image;
-                        }
-                      }}
-                    />
+                    <div className="welcome-email__featured-image-wrapper">
+                      <img 
+                        src={displayedFeaturedImage} 
+                        alt={displayedFeaturedTitle}
+                        className="welcome-email__featured-image"
+                        onError={(e) => {
+                          console.error('[WelcomeEmail] Failed to load featured image:', displayedFeaturedImage);
+                          // Fallback to default image on error
+                          const target = e.target as HTMLImageElement;
+                          if (target.src !== defaultStories[0].image) {
+                            target.src = defaultStories[0].image;
+                          }
+                        }}
+                      />
+                      {/* Accolades Badges */}
+                      {primaryVehicle && (primaryVehicle.editorsChoice || primaryVehicle.tenBest || primaryVehicle.evOfTheYear) && (
+                        <div className="welcome-email__accolades">
+                          {primaryVehicle.editorsChoice && (
+                            <div className="welcome-email__accolade welcome-email__accolade--ec">
+                              <img src={EDITORS_CHOICE_BADGE_URL} alt="Editor's Choice" />
+                            </div>
+                          )}
+                          {primaryVehicle.tenBest && (
+                            <div className="welcome-email__accolade welcome-email__accolade--10best">
+                              <img src={TEN_BEST_BADGE_URL} alt="10Best" />
+                            </div>
+                          )}
+                          {primaryVehicle.evOfTheYear && (
+                            <div className="welcome-email__accolade welcome-email__accolade--ev">
+                              <img src={EV_OF_THE_YEAR_BADGE_URL} alt="EV of the Year" />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                     <div className="welcome-email__featured-content">
-                      <h3 className="welcome-email__featured-title">{displayedFeaturedTitle}</h3>
-                      <p className="welcome-email__featured-description">{displayedFeaturedDescription}</p>
-                      <span className="welcome-email__read-more-btn">
-                        {hasBrowsedVehicles ? 'View Details' : 'Read More'}
-                      </span>
+                      <div className="welcome-email__featured-header">
+                        <h3 className="welcome-email__featured-title">{displayedFeaturedTitle}</h3>
+                        {/* C/D Rating */}
+                        {primaryVehicle?.staffRating && (
+                          <div className="welcome-email__rating">
+                            <div className="welcome-email__rating-row">
+                              <span className="welcome-email__rating-score">{Math.round(primaryVehicle.staffRating)}</span>
+                              <span className="welcome-email__rating-max">/10</span>
+                            </div>
+                            <span className="welcome-email__rating-label">C/D RATING</span>
+                          </div>
+                        )}
+                      </div>
+                      {primaryVehicle ? (
+                        <>
+                          {/* Price Section with Availability */}
+                          <div className="welcome-email__price-row">
+                            {primaryVehicle.price && (
+                              <div className="welcome-email__price-section">
+                                <span className="welcome-email__price">{formatPrice(primaryVehicle.price)}</span>
+                                {primaryVehicle.monthlyPayment && (
+                                  <span className="welcome-email__monthly">
+                                    Est. {formatMonthly(primaryVehicle.monthlyPayment)}/mo
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            {/* Availability Badge */}
+                            {primaryVehicle.listingsCount && primaryVehicle.listingsCount > 0 ? (
+                              <span className="welcome-email__listings-badge">
+                                {primaryVehicle.listingsCount} available near you
+                              </span>
+                            ) : primaryVehicle.dealerName ? (
+                              <span className="welcome-email__dealer-info">
+                                {primaryVehicle.dealerName}
+                                {primaryVehicle.dealerDistance && ` • ${primaryVehicle.dealerDistance} mi away`}
+                              </span>
+                            ) : (
+                              <span className="welcome-email__dealer-info">
+                                Find dealers near you
+                              </span>
+                            )}
+                          </div>
+                          <span className="welcome-email__read-more-btn welcome-email__read-more-btn--primary">
+                            Shop Now
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <p className="welcome-email__featured-description">{displayedFeaturedDescription}</p>
+                          <span className="welcome-email__read-more-btn">Read More</span>
+                        </>
+                      )}
                     </div>
                   </a>
                 </div>
@@ -223,33 +337,89 @@ const WelcomeEmail = ({
                       <a 
                         key={`${vehicle.make}-${vehicle.model}-${index}`} 
                         href={vehicle.link || '#'} 
-                        className="welcome-email__story-card"
+                        className="welcome-email__story-card welcome-email__vehicle-card"
                       >
-                        <img 
-                          src={getVehicleImage(vehicle)} 
-                          alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                          className="welcome-email__story-image"
-                          onError={(e) => {
-                            const imageUrl = getVehicleImage(vehicle);
-                            console.error('[WelcomeEmail] Failed to load vehicle image:', imageUrl, vehicle);
-                            // Fallback to make-specific or default image on error
-                            const target = e.target as HTMLImageElement;
-                            const fallback = vehicleImageFallbacks[vehicle.make] || defaultStories[0].image;
-                            if (target.src !== fallback) {
-                              target.src = fallback;
-                            }
-                          }}
-                        />
+                        <div className="welcome-email__story-image-wrapper">
+                          <img 
+                            src={getVehicleImage(vehicle)} 
+                            alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                            className="welcome-email__story-image"
+                            onError={(e) => {
+                              const imageUrl = getVehicleImage(vehicle);
+                              console.error('[WelcomeEmail] Failed to load vehicle image:', imageUrl, vehicle);
+                              // Fallback to make-specific or default image on error
+                              const target = e.target as HTMLImageElement;
+                              const fallback = vehicleImageFallbacks[vehicle.make] || defaultStories[0].image;
+                              if (target.src !== fallback) {
+                                target.src = fallback;
+                              }
+                            }}
+                          />
+                          {/* Accolades Badges */}
+                          {(vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear) && (
+                            <div className="welcome-email__card-accolades">
+                              {vehicle.editorsChoice && (
+                                <div className="welcome-email__card-accolade">
+                                  <img src={EDITORS_CHOICE_BADGE_URL} alt="Editor's Choice" />
+                                </div>
+                              )}
+                              {vehicle.tenBest && (
+                                <div className="welcome-email__card-accolade">
+                                  <img src={TEN_BEST_BADGE_URL} alt="10Best" />
+                                </div>
+                              )}
+                              {vehicle.evOfTheYear && (
+                                <div className="welcome-email__card-accolade">
+                                  <img src={EV_OF_THE_YEAR_BADGE_URL} alt="EV of the Year" />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                         <div className="welcome-email__story-content">
-                          <h4 className="welcome-email__story-title">
-                            {vehicle.year} {vehicle.make} {vehicle.model}
-                          </h4>
-                          <p className="welcome-email__story-description">
-                            {vehicle.viewCount && vehicle.viewCount > 1 
-                              ? `Viewed ${vehicle.viewCount} times` 
-                              : 'Recently viewed'}
-                          </p>
-                          <span className="welcome-email__read-more-btn">View Details</span>
+                          <div className="welcome-email__story-header">
+                            <h4 className="welcome-email__story-title">
+                              {vehicle.year} {vehicle.make} {vehicle.model}
+                            </h4>
+                            {/* C/D Rating */}
+                            {vehicle.staffRating && (
+                              <div className="welcome-email__card-rating">
+                                <div className="welcome-email__card-rating-row">
+                                  <span className="welcome-email__card-rating-score">{Math.round(vehicle.staffRating)}</span>
+                                  <span className="welcome-email__card-rating-max">/10</span>
+                                </div>
+                                <span className="welcome-email__card-rating-label">C/D RATING</span>
+                              </div>
+                            )}
+                          </div>
+                          {/* Price + Availability Row for vehicle cards */}
+                          {vehicle.price ? (
+                            <div className="welcome-email__card-price-availability">
+                              <div className="welcome-email__card-price-row">
+                                <span className="welcome-email__card-price">{formatPrice(vehicle.price)}</span>
+                                {vehicle.monthlyPayment && (
+                                  <span className="welcome-email__card-monthly">
+                                    {formatMonthly(vehicle.monthlyPayment)}/mo*
+                                  </span>
+                                )}
+                              </div>
+                              {/* Availability badge */}
+                              {vehicle.listingsCount && vehicle.listingsCount > 0 && (
+                                <span className="welcome-email__card-availability">
+                                  {vehicle.listingsCount} nearby
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <p className="welcome-email__story-description">
+                              {vehicle.viewCount && vehicle.viewCount > 1 
+                                ? `Viewed ${vehicle.viewCount} times` 
+                                : 'Recently viewed'}
+                            </p>
+                          )}
+                          <span className="welcome-email__read-more-btn">
+                            {vehicle.price ? 'See Deals' : 'View Details'}
+                          </span>
                         </div>
                       </a>
                     ))
@@ -277,9 +447,14 @@ const WelcomeEmail = ({
             {/* CTA Button */}
             <tr>
               <td className="welcome-email__cta">
-                <a href={profileLink} className="welcome-email__cta-button">
-                  EXPLORE YOUR PROFILE
+                <a href={hasBrowsedVehicles ? '/vehicles' : profileLink} className="welcome-email__cta-button">
+                  {hasBrowsedVehicles ? 'FIND YOUR PERFECT CAR' : 'EXPLORE YOUR PROFILE'}
                 </a>
+                {hasBrowsedVehicles && (
+                  <p className="welcome-email__cta-subtext">
+                    Compare prices from local dealers • Get instant quotes
+                  </p>
+                )}
               </td>
             </tr>
 
