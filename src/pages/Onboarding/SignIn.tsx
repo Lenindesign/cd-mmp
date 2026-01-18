@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { signInWithGoogle } from '../../utils/googleAuth';
 import './SignIn.css';
 
 const SignIn: React.FC = () => {
@@ -51,11 +52,35 @@ const SignIn: React.FC = () => {
   };
 
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
+    // #region agent log
+    fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SignIn.tsx:handleSocialLogin',message:'Button click handler called',data:{provider,isLoading},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
     try {
-      await socialSignIn(provider);
-      // Navigation handled by useEffect
-    } catch {
-      // Error is handled by the context
+      setLocalError(null);
+      if (provider === 'google') {
+        // Use actual Google OAuth
+        console.log('[SignIn] Initiating Google sign-in...');
+        // #region agent log
+        fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SignIn.tsx:handleSocialLogin',message:'Calling signInWithGoogle',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
+        await signInWithGoogle();
+        console.log('[SignIn] Google sign-in initiated successfully');
+        // #region agent log
+        fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SignIn.tsx:handleSocialLogin',message:'signInWithGoogle completed',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
+        // Navigation handled by useEffect (auth state will update via event)
+      } else {
+        // Fallback to mock for other providers
+        await socialSignIn(provider);
+        // Navigation handled by useEffect
+      }
+    } catch (error) {
+      console.error('[SignIn] Social login error:', error);
+      // #region agent log
+      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SignIn.tsx:handleSocialLogin',message:'Error caught',data:{error:error instanceof Error ? error.message : String(error),errorStack:error instanceof Error ? error.stack : undefined},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in with Google. Please make sure VITE_GOOGLE_CLIENT_ID is configured.';
+      setLocalError(errorMessage);
     }
   };
 

@@ -33,6 +33,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #fff;
+  color: rgba(0, 0, 0, 1);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;

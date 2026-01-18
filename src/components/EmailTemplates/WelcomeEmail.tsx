@@ -146,7 +146,7 @@ const WelcomeEmail = ({
                   src="/car-and-driver-logo.svg" 
                   alt="Car and Driver" 
                   className="welcome-email__logo"
-                  width="200"
+                  width="342"
                   onError={(e) => {
                     console.error('[WelcomeEmail] Failed to load logo');
                     // Fallback to external URL if local file fails
@@ -168,12 +168,6 @@ const WelcomeEmail = ({
                   insider access to the latest car reviews, exclusive member stories, and the 
                   best of automotive culture—delivered straight to your inbox.
                 </p>
-              </td>
-            </tr>
-
-            {/* Membership Benefits */}
-            <tr>
-              <td className="welcome-email__benefits">
                 <h2 className="welcome-email__benefits-title">Your Car And Driver Membership Card unlocks:</h2>
                 <ul className="welcome-email__benefits-list">
                   <li>A custom personalized experience just for you</li>
@@ -187,7 +181,7 @@ const WelcomeEmail = ({
             <tr>
               <td className="welcome-email__featured">
                 <h2 className="welcome-email__section-title">
-                  {hasBrowsedVehicles ? 'Pick Up Where You Left Off' : 'Welcome to Car And Driver'}
+                  {hasBrowsedVehicles ? 'Welcome to Car And Driver' : 'Welcome to Car And Driver'}
                 </h2>
                 <div className="welcome-email__featured-card">
                   <a href={displayedFeaturedLink} className="welcome-email__featured-link">
