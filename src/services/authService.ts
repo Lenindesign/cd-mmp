@@ -58,6 +58,20 @@ export const isSessionActive = (): boolean => {
   return localStorage.getItem(STORAGE_KEYS.SESSION) === 'active';
 };
 
+// Map Google One Tap user into User and set as current (called from AuthContext / G1T flow)
+export const setUserFromGoogle = (googleUser: { id: string; email: string; name?: string; picture?: string }): void => {
+  const user: User = {
+    id: googleUser.id,
+    email: googleUser.email,
+    name: googleUser.name,
+    avatar: googleUser.picture,
+    createdAt: new Date().toISOString(),
+    onboardingCompleted: false,
+  };
+  setCurrentUser(user);
+  window.dispatchEvent(new CustomEvent('auth-changed'));
+};
+
 // Sign up a new user
 export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
   // Simulate network delay
@@ -281,6 +295,7 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
 export default {
   getCurrentUser,
   isSessionActive,
+  setUserFromGoogle,
   signUp,
   signIn,
   signOut,

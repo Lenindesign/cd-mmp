@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { User, SignInCredentials, SignUpCredentials, OnboardingData, SavedVehicle } from '../types/auth';
 import * as authService from '../services/authService';
+import { getAuthUser, clearAuthUser } from '../components/GoogleOneTap/GoogleOneTap';
 
 interface AuthContextType {
   user: User | null;
@@ -30,13 +31,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from localStorage and Google One Tap (cd_auth_user)
   useEffect(() => {
     const initAuth = () => {
       try {
-        const savedUser = authService.getCurrentUser();
+        let savedUser = authService.getCurrentUser();
         if (savedUser && authService.isSessionActive()) {
           setUser(savedUser);
+        } else {
+          const googleUser = getAuthUser();
+          if (googleUser) {
+            authService.setUserFromGoogle(googleUser);
+            savedUser = authService.getCurrentUser();
+            if (savedUser) setUser(savedUser);
+          }
         }
       } catch (err) {
         console.error('Failed to initialize auth:', err);
@@ -46,6 +54,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     initAuth();
+  }, []);
+
+  // React to auth changes (e.g. Google One Tap sign-in, auth-changed)
+  useEffect(() => {
+    const onAuthChanged = () => setUser(authService.getCurrentUser());
+    const onAuthGoogleSignIn = (e: Event) => {
+      const gu = (e as CustomEvent).detail;
+      if (gu?.id && gu?.email) {
+        authService.setUserFromGoogle(gu);
+        setUser(authService.getCurrentUser());
+      }
+    };
+    window.addEventListener('auth-changed', onAuthChanged);
+    window.addEventListener('auth-google-signin', onAuthGoogleSignIn);
+    return () => {
+      window.removeEventListener('auth-changed', onAuthChanged);
+      window.removeEventListener('auth-google-signin', onAuthGoogleSignIn);
+    };
   }, []);
 
   const clearError = useCallback(() => {
@@ -85,6 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = useCallback(async () => {
     setIsLoading(true);
     try {
+      clearAuthUser();
       await authService.signOut();
       setUser(null);
     } catch (err) {

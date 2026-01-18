@@ -29,6 +29,10 @@ export const getAvatarImageUrl = (avatarId: string | undefined): string | null =
   if (!avatarId || avatarId === 'initials') {
     return null;
   }
+  // Google/social profile picture URL
+  if (avatarId.startsWith('http://') || avatarId.startsWith('https://')) {
+    return avatarId;
+  }
 
   const config = LIFESTYLE_AVATAR_CONFIG[avatarId];
   if (config) {
