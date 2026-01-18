@@ -220,3 +220,65 @@ export const exportCDPData = (): {
     highIntentViews: getHighIntentPageViews(),
   };
 };
+
+/**
+ * Get unique vehicles the user has viewed (for personalization)
+ * Returns most recently viewed vehicles first, deduplicated by make+model
+ */
+export interface ViewedVehicle {
+  year: number;
+  make: string;
+  model: string;
+  trim?: string;
+  viewCount: number;
+  lastViewed: string;
+}
+
+export const getViewedVehicles = (limit = 5): ViewedVehicle[] => {
+  const views = getHighIntentPageViews();
+  
+  // Group by make+model and count views
+  const vehicleMap = new Map<string, ViewedVehicle>();
+  
+  views.forEach(view => {
+    if (view.vehicle_info?.make && view.vehicle_info?.model) {
+      const key = `${view.vehicle_info.make}-${view.vehicle_info.model}`;
+      const existing = vehicleMap.get(key);
+      
+      if (existing) {
+        existing.viewCount++;
+        // Update to most recent view
+        if (view.timestamp > existing.lastViewed) {
+          existing.lastViewed = view.timestamp;
+          if (view.vehicle_info.year) existing.year = view.vehicle_info.year;
+          if (view.vehicle_info.trim) existing.trim = view.vehicle_info.trim;
+        }
+      } else {
+        vehicleMap.set(key, {
+          year: view.vehicle_info.year || new Date().getFullYear(),
+          make: view.vehicle_info.make,
+          model: view.vehicle_info.model,
+          trim: view.vehicle_info.trim,
+          viewCount: 1,
+          lastViewed: view.timestamp,
+        });
+      }
+    }
+  });
+  
+  // Sort by last viewed (most recent first) and return limited results
+  return Array.from(vehicleMap.values())
+    .sort((a, b) => new Date(b.lastViewed).getTime() - new Date(a.lastViewed).getTime())
+    .slice(0, limit);
+};
+
+/**
+ * Get the most viewed vehicle (primary interest)
+ */
+export const getMostViewedVehicle = (): ViewedVehicle | null => {
+  const vehicles = getViewedVehicles(10);
+  if (vehicles.length === 0) return null;
+  
+  // Sort by view count and return the most viewed
+  return vehicles.sort((a, b) => b.viewCount - a.viewCount)[0];
+};

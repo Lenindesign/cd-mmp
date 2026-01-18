@@ -8,9 +8,20 @@ export interface RecommendedStory {
   link: string;
 }
 
+export interface BrowsedVehicle {
+  year: number;
+  make: string;
+  model: string;
+  image?: string;
+  link?: string;
+  viewCount?: number;
+}
+
 export interface WelcomeEmailProps {
   /** User's first name */
   userName: string;
+  /** Vehicles the user browsed before signing up */
+  browsedVehicles?: BrowsedVehicle[];
   /** Featured article title */
   featuredTitle?: string;
   /** Featured article description */
@@ -19,7 +30,7 @@ export interface WelcomeEmailProps {
   featuredImage?: string;
   /** Featured article link */
   featuredLink?: string;
-  /** Recommended stories list */
+  /** Recommended stories list (shown if no browsed vehicles) */
   recommendedStories?: RecommendedStory[];
   /** Profile link URL */
   profileLink?: string;
@@ -67,8 +78,28 @@ const defaultStories: RecommendedStory[] = [
   },
 ];
 
+// Default vehicle images by make (fallback when no image provided)
+const vehicleImageFallbacks: Record<string, string> = {
+  'Honda': 'https://hips.hearstapps.com/hmg-prod/images/2025-honda-cr-v-101-6724bd6899498.jpg?crop=0.574xw:0.431xh;0.218xw,0.323xh&resize=980:*',
+  'Toyota': 'https://hips.hearstapps.com/hmg-prod/images/2025-toyota-camry-xse-fwd-102-672528076ec9c.jpg?crop=0.683xw:0.512xh;0.158xw,0.263xh&resize=980:*',
+  'Chevrolet': 'https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-trax-activ-102-64e70db91e774.jpg?crop=0.668xw:0.501xh;0.147xw,0.321xh&resize=980:*',
+  'Ford': 'https://hips.hearstapps.com/hmg-prod/images/2024-ford-f-150-tremor-101-64b77bcfde3f2.jpg?crop=0.668xw:0.502xh;0.201xw,0.356xh&resize=980:*',
+  'Kia': 'https://hips.hearstapps.com/hmg-prod/images/2024-kia-ev9-gt-line-awd-101-6572b4470a628.jpg?crop=0.670xw:0.503xh;0.204xw,0.361xh&resize=980:*',
+  'Hyundai': 'https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-ioniq-5-n-101-66241eb57b4ce.jpg?crop=0.668xw:0.501xh;0.160xw,0.316xh&resize=980:*',
+  'Subaru': 'https://hips.hearstapps.com/hmg-prod/images/2025-subaru-forester-touring-101-66d7f1920cc53.jpg?crop=0.673xw:0.505xh;0.139xw,0.281xh&resize=980:*',
+  'BMW': 'https://hips.hearstapps.com/hmg-prod/images/2024-bmw-x5-m60i-102-64d0c8a0a6fc5.jpg?crop=0.670xw:0.503xh;0.165xw,0.332xh&resize=980:*',
+  'Mercedes-Benz': 'https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-amg-c63-s-e-performance-101-64345e5f79ffe.jpg?crop=0.668xw:0.502xh;0.217xw,0.370xh&resize=980:*',
+  'Audi': 'https://hips.hearstapps.com/hmg-prod/images/2024-audi-q8-e-tron-101-6439c3e38b8e3.jpg?crop=0.668xw:0.501xh;0.199xw,0.286xh&resize=980:*',
+};
+
+const getVehicleImage = (vehicle: BrowsedVehicle): string => {
+  if (vehicle.image) return vehicle.image;
+  return vehicleImageFallbacks[vehicle.make] || defaultStories[0].image;
+};
+
 const WelcomeEmail = ({
   userName = 'Greg',
+  browsedVehicles = [],
   featuredTitle = 'Welcome Car And Driver Article',
   featuredDescription = 'MMP Story',
   featuredImage = 'https://hips.hearstapps.com/hmg-prod/images/2024-acura-integra-type-s-102-64ccdc718d805.jpg?crop=0.668xw:0.502xh;0.189xw,0.356xh&resize=980:*',
@@ -78,6 +109,21 @@ const WelcomeEmail = ({
   unsubscribeLink = '#',
   privacyLink = '#',
 }: WelcomeEmailProps) => {
+  // Use browsed vehicles if available, otherwise fall back to recommended stories
+  const hasBrowsedVehicles = browsedVehicles.length > 0;
+  
+  // If user browsed vehicles, use the first one as the featured content
+  const primaryVehicle = hasBrowsedVehicles ? browsedVehicles[0] : null;
+  const displayedFeaturedTitle = primaryVehicle 
+    ? `${primaryVehicle.year} ${primaryVehicle.make} ${primaryVehicle.model}`
+    : featuredTitle;
+  const displayedFeaturedDescription = primaryVehicle
+    ? 'Continue where you left off'
+    : featuredDescription;
+  const displayedFeaturedImage = primaryVehicle
+    ? getVehicleImage(primaryVehicle)
+    : featuredImage;
+  const displayedFeaturedLink = primaryVehicle?.link || featuredLink;
   return (
     <div className="welcome-email">
       {/* Email wrapper with dark background */}
@@ -121,46 +167,81 @@ const WelcomeEmail = ({
               </td>
             </tr>
 
-            {/* Featured Article */}
+            {/* Featured Article / Vehicle */}
             <tr>
               <td className="welcome-email__featured">
-                <h2 className="welcome-email__section-title">Welcome to Car And Driver</h2>
+                <h2 className="welcome-email__section-title">
+                  {hasBrowsedVehicles ? 'Pick Up Where You Left Off' : 'Welcome to Car And Driver'}
+                </h2>
                 <div className="welcome-email__featured-card">
-                  <a href={featuredLink} className="welcome-email__featured-link">
+                  <a href={displayedFeaturedLink} className="welcome-email__featured-link">
                     <img 
-                      src={featuredImage} 
-                      alt={featuredTitle}
+                      src={displayedFeaturedImage} 
+                      alt={displayedFeaturedTitle}
                       className="welcome-email__featured-image"
                     />
                     <div className="welcome-email__featured-content">
-                      <h3 className="welcome-email__featured-title">{featuredTitle}</h3>
-                      <p className="welcome-email__featured-description">{featuredDescription}</p>
-                      <span className="welcome-email__read-more-btn">Read More</span>
+                      <h3 className="welcome-email__featured-title">{displayedFeaturedTitle}</h3>
+                      <p className="welcome-email__featured-description">{displayedFeaturedDescription}</p>
+                      <span className="welcome-email__read-more-btn">
+                        {hasBrowsedVehicles ? 'View Details' : 'Read More'}
+                      </span>
                     </div>
                   </a>
                 </div>
               </td>
             </tr>
 
-            {/* Recommended Stories */}
+            {/* Browsed Vehicles or Recommended Stories */}
             <tr>
               <td className="welcome-email__recommended">
-                <h2 className="welcome-email__section-title">Recommended For You</h2>
+                <h2 className="welcome-email__section-title">
+                  {hasBrowsedVehicles ? 'Vehicles You Viewed' : 'Recommended For You'}
+                </h2>
                 <div className="welcome-email__stories">
-                  {recommendedStories.map((story) => (
-                    <a key={story.id} href={story.link} className="welcome-email__story-card">
-                      <img 
-                        src={story.image} 
-                        alt={story.title}
-                        className="welcome-email__story-image"
-                      />
-                      <div className="welcome-email__story-content">
-                        <h4 className="welcome-email__story-title">{story.title}</h4>
-                        <p className="welcome-email__story-description">{story.description}</p>
-                        <span className="welcome-email__read-more-btn">Read More</span>
-                      </div>
-                    </a>
-                  ))}
+                  {hasBrowsedVehicles ? (
+                    // Show browsed vehicles (skip the first one as it's featured)
+                    browsedVehicles.slice(1, 6).map((vehicle, index) => (
+                      <a 
+                        key={`${vehicle.make}-${vehicle.model}-${index}`} 
+                        href={vehicle.link || '#'} 
+                        className="welcome-email__story-card"
+                      >
+                        <img 
+                          src={getVehicleImage(vehicle)} 
+                          alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                          className="welcome-email__story-image"
+                        />
+                        <div className="welcome-email__story-content">
+                          <h4 className="welcome-email__story-title">
+                            {vehicle.year} {vehicle.make} {vehicle.model}
+                          </h4>
+                          <p className="welcome-email__story-description">
+                            {vehicle.viewCount && vehicle.viewCount > 1 
+                              ? `Viewed ${vehicle.viewCount} times` 
+                              : 'Recently viewed'}
+                          </p>
+                          <span className="welcome-email__read-more-btn">View Details</span>
+                        </div>
+                      </a>
+                    ))
+                  ) : (
+                    // Show default recommended stories
+                    recommendedStories.map((story) => (
+                      <a key={story.id} href={story.link} className="welcome-email__story-card">
+                        <img 
+                          src={story.image} 
+                          alt={story.title}
+                          className="welcome-email__story-image"
+                        />
+                        <div className="welcome-email__story-content">
+                          <h4 className="welcome-email__story-title">{story.title}</h4>
+                          <p className="welcome-email__story-description">{story.description}</p>
+                          <span className="welcome-email__read-more-btn">Read More</span>
+                        </div>
+                      </a>
+                    ))
+                  )}
                 </div>
               </td>
             </tr>

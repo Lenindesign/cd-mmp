@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import WelcomeEmail from './WelcomeEmail';
+import type { BrowsedVehicle } from './WelcomeEmail';
 
 const meta: Meta<typeof WelcomeEmail> = {
   title: 'Email Templates/WelcomeEmail',
@@ -20,16 +21,27 @@ Welcome email template for new Car and Driver members.
 
 ## Features
 - Personalized greeting with user's name
+- **Personalized vehicle recommendations** based on browsing history
 - Membership benefits list
-- Featured welcome article
-- Recommended stories section (5 cards)
+- Featured welcome article OR user's most viewed vehicle
+- "Vehicles You Viewed" section (from CDP tracking) or recommended stories
 - "Explore Your Profile" CTA
 - Social media links
 - Footer with legal text
 
+## Personalization
+When \`browsedVehicles\` is provided (from CDP tracking data), the email shows:
+- The user's most recently viewed vehicle as the featured content
+- A "Vehicles You Viewed" section with their browsing history
+- "Pick Up Where You Left Off" messaging
+
 ## Usage
 This template is designed to be converted to inline styles for email sending.
 Use a tool like [juice](https://www.npmjs.com/package/juice) to inline the CSS.
+
+## Integration with Google One Tap
+When a user signs up via Google One Tap, use the CDP tracking data to populate
+the \`browsedVehicles\` prop with their viewing history.
         `,
       },
     },
@@ -40,9 +52,12 @@ Use a tool like [juice](https://www.npmjs.com/package/juice) to inline the CSS.
       control: 'text',
       description: 'User\'s first name for personalized greeting',
     },
+    browsedVehicles: {
+      description: 'Vehicles the user viewed before signing up (from CDP tracking)',
+    },
     featuredTitle: {
       control: 'text',
-      description: 'Title of the featured article',
+      description: 'Title of the featured article (used when no browsed vehicles)',
     },
     featuredDescription: {
       control: 'text',
@@ -58,8 +73,47 @@ Use a tool like [juice](https://www.npmjs.com/package/juice) to inline the CSS.
 export default meta;
 type Story = StoryObj<typeof WelcomeEmail>;
 
+// Sample browsed vehicles data (simulating CDP tracking data)
+const sampleBrowsedVehicles: BrowsedVehicle[] = [
+  {
+    year: 2025,
+    make: 'Honda',
+    model: 'CR-V',
+    viewCount: 3,
+    link: '/2025/honda/cr-v',
+  },
+  {
+    year: 2025,
+    make: 'Toyota',
+    model: 'RAV4',
+    viewCount: 2,
+    link: '/2025/toyota/rav4',
+  },
+  {
+    year: 2024,
+    make: 'Chevrolet',
+    model: 'Trax',
+    viewCount: 1,
+    link: '/2024/chevrolet/trax',
+  },
+  {
+    year: 2025,
+    make: 'Kia',
+    model: 'EV9',
+    viewCount: 2,
+    link: '/2025/kia/ev9',
+  },
+  {
+    year: 2025,
+    make: 'Subaru',
+    model: 'Forester',
+    viewCount: 1,
+    link: '/2025/subaru/forester',
+  },
+];
+
 /**
- * Default welcome email with sample content.
+ * Default welcome email with sample content (no browsing history).
  */
 export const Default: Story = {
   args: {
@@ -68,11 +122,69 @@ export const Default: Story = {
 };
 
 /**
- * Welcome email with custom user name.
+ * Personalized email with user's browsed vehicles from CDP tracking.
+ * This is what users see after signing up via Google One Tap.
  */
-export const CustomUser: Story = {
+export const PersonalizedWithBrowsingHistory: Story = {
   args: {
     userName: 'Sarah',
+    browsedVehicles: sampleBrowsedVehicles,
+  },
+};
+
+/**
+ * User who viewed only one vehicle.
+ */
+export const SingleVehicleViewed: Story = {
+  args: {
+    userName: 'Mike',
+    browsedVehicles: [
+      {
+        year: 2025,
+        make: 'Toyota',
+        model: 'Camry',
+        viewCount: 5,
+        link: '/2025/toyota/camry',
+      },
+    ],
+  },
+};
+
+/**
+ * User who viewed multiple vehicles of the same brand.
+ */
+export const BrandEnthusiast: Story = {
+  args: {
+    userName: 'Alex',
+    browsedVehicles: [
+      { year: 2025, make: 'BMW', model: 'X5', viewCount: 4, link: '/2025/bmw/x5' },
+      { year: 2025, make: 'BMW', model: 'X3', viewCount: 2, link: '/2025/bmw/x3' },
+      { year: 2024, make: 'BMW', model: 'i4', viewCount: 3, link: '/2024/bmw/i4' },
+      { year: 2025, make: 'Mercedes-Benz', model: 'GLC', viewCount: 1, link: '/2025/mercedes-benz/glc' },
+    ],
+  },
+};
+
+/**
+ * User researching electric vehicles.
+ */
+export const EVShopper: Story = {
+  args: {
+    userName: 'Jordan',
+    browsedVehicles: [
+      { year: 2025, make: 'Kia', model: 'EV9', viewCount: 6, link: '/2025/kia/ev9' },
+      { year: 2024, make: 'Hyundai', model: 'Ioniq 5', viewCount: 3, link: '/2024/hyundai/ioniq-5' },
+      { year: 2025, make: 'Chevrolet', model: 'Equinox EV', viewCount: 2, link: '/2025/chevrolet/equinox-ev' },
+    ],
+  },
+};
+
+/**
+ * Welcome email with custom user name (no browsing history).
+ */
+export const NewUserNoBrowsingHistory: Story = {
+  args: {
+    userName: 'Chris',
     featuredTitle: 'Your Personalized Car Journey Starts Here',
     featuredDescription: 'Discover features tailored just for you',
   },
@@ -123,11 +235,12 @@ export const CustomStories: Story = {
 };
 
 /**
- * Mobile preview width (375px).
+ * Mobile preview with browsing history.
  */
-export const MobilePreview: Story = {
+export const MobileWithBrowsingHistory: Story = {
   args: {
     userName: 'Chris',
+    browsedVehicles: sampleBrowsedVehicles.slice(0, 3),
   },
   parameters: {
     viewport: {
@@ -142,6 +255,7 @@ export const MobilePreview: Story = {
 export const TabletPreview: Story = {
   args: {
     userName: 'Jordan',
+    browsedVehicles: sampleBrowsedVehicles,
   },
   parameters: {
     viewport: {
