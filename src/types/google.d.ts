@@ -46,6 +46,7 @@ interface GoogleOneTapConfig {
   ux_mode?: 'popup' | 'redirect';
   allowed_parent_origin?: string | string[];
   intermediate_iframe_close_callback?: () => void;
+  use_fedcm_for_prompt?: boolean; // Disable FedCM to use legacy One Tap UI
 }
 
 interface GoogleCredentialResponse {
