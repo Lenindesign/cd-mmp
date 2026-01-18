@@ -151,11 +151,7 @@ export const VehicleCard = ({
   const handleSaveClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isAuthenticated) {
-      // Navigate to sign-in page when not authenticated
-      navigate('/sign-in');
-      return;
-    }
+    if (!isAuthenticated) return;
     
     if (isSaved) {
       const savedVehicle = user?.savedVehicles?.find(v => v.name === name);
@@ -358,7 +354,7 @@ export const VehicleCard = ({
             <span className={`vehicle-card__rank ${rank === 1 ? 'vehicle-card__rank--first' : ''} ${isCurrentVehicle ? 'vehicle-card__rank--current' : ''}`}>
               {rank}
             </span>
-            {showSaveButton && (
+            {showSaveButton && isAuthenticated && (
               <button
                 className={`vehicle-card__rank-save ${isSaved ? 'vehicle-card__rank-save--saved' : ''}`}
                 onClick={handleSaveClick}
@@ -413,7 +409,7 @@ export const VehicleCard = ({
         )}
 
         {/* Save Button (only show when no rank - ranked cards have save in rank container) */}
-        {showSaveButton && !rank && (
+        {showSaveButton && isAuthenticated && !rank && (
           <button
             className={`vehicle-card__save-btn ${isSaved ? 'vehicle-card__save-btn--saved' : ''}`}
             onClick={handleSaveClick}
