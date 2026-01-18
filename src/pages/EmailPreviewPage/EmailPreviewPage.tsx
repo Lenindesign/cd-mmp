@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { WelcomeEmail, type BrowsedVehicle } from '../../components/EmailTemplates';
 import { getViewedVehicles, exportCDPData, clearCDPData } from '../../utils/cdpTracking';
 import { getAuthUser, clearAuthUser, type GoogleUser } from '../../components/GoogleOneTap/GoogleOneTap';
+import { vehicleDatabase } from '../../data/vehicles';
 import './EmailPreviewPage.css';
 
 const EmailPreviewPage = () => {
@@ -13,13 +14,59 @@ const EmailPreviewPage = () => {
   // Load data on mount and when localStorage changes
   const loadData = () => {
     const vehicles = getViewedVehicles(10);
-    const mappedVehicles: BrowsedVehicle[] = vehicles.map(v => ({
-      year: v.year,
-      make: v.make,
-      model: v.model,
-      viewCount: v.viewCount,
-      link: `/${v.year}/${v.make}/${v.model}`.toLowerCase().replace(/ /g, '-'),
-    }));
+    const mappedVehicles: BrowsedVehicle[] = vehicles.map(v => {
+      // Normalize year for comparison (handle both string and number)
+      const yearStr = String(v.year);
+      const yearNum = typeof v.year === 'number' ? v.year : parseInt(String(v.year), 10);
+      
+      // Find matching vehicle in database to get image
+      // Try multiple matching strategies for better results
+      let vehicleFromDb = vehicleDatabase.find(
+        db => {
+          const dbYear = typeof db.year === 'string' ? parseInt(db.year, 10) : db.year;
+          return db.make.toLowerCase() === v.make.toLowerCase() && 
+                 db.model.toLowerCase() === v.model.toLowerCase() && 
+                 (db.year === yearStr || dbYear === yearNum || String(dbYear) === yearStr);
+        }
+      );
+      
+      // If no exact year match, try without year (any year of same make/model)
+      if (!vehicleFromDb) {
+        vehicleFromDb = vehicleDatabase.find(
+          db => db.make.toLowerCase() === v.make.toLowerCase() && 
+                db.model.toLowerCase() === v.model.toLowerCase()
+        );
+      }
+      
+      // If still no match, try partial model matching (e.g., "1500" matches "Ram 1500")
+      if (!vehicleFromDb) {
+        vehicleFromDb = vehicleDatabase.find(
+          db => db.make.toLowerCase() === v.make.toLowerCase() && 
+                (db.model.toLowerCase().includes(v.model.toLowerCase()) || 
+                 v.model.toLowerCase().includes(db.model.toLowerCase()))
+        );
+      }
+      
+      // Debug logging in development
+      if (import.meta.env.DEV) {
+        if (!vehicleFromDb) {
+          console.warn(`[EmailPreview] No vehicle found in database for: ${v.year} ${v.make} ${v.model}`);
+        } else if (!vehicleFromDb.image || vehicleFromDb.image.trim() === '') {
+          console.warn(`[EmailPreview] Vehicle found but no image: ${v.year} ${v.make} ${v.model}`, vehicleFromDb);
+        } else {
+          console.log(`[EmailPreview] Found image for ${v.year} ${v.make} ${v.model}:`, vehicleFromDb.image);
+        }
+      }
+      
+      return {
+        year: v.year,
+        make: v.make,
+        model: v.model,
+        image: vehicleFromDb?.image,
+        viewCount: v.viewCount,
+        link: `/${v.year}/${v.make}/${v.model}`.toLowerCase().replace(/ /g, '-'),
+      };
+    });
     setBrowsedVehicles(mappedVehicles);
     setUser(getAuthUser());
     setCdpData(exportCDPData());

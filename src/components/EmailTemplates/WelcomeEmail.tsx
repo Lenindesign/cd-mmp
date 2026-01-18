@@ -93,8 +93,16 @@ const vehicleImageFallbacks: Record<string, string> = {
 };
 
 const getVehicleImage = (vehicle: BrowsedVehicle): string => {
-  if (vehicle.image) return vehicle.image;
-  return vehicleImageFallbacks[vehicle.make] || defaultStories[0].image;
+  // Use vehicle image if available and valid
+  if (vehicle.image && vehicle.image.trim() !== '') {
+    return vehicle.image;
+  }
+  // Fall back to make-specific image
+  if (vehicleImageFallbacks[vehicle.make]) {
+    return vehicleImageFallbacks[vehicle.make];
+  }
+  // Final fallback to default story image
+  return defaultStories[0].image;
 };
 
 const WelcomeEmail = ({
@@ -179,6 +187,14 @@ const WelcomeEmail = ({
                       src={displayedFeaturedImage} 
                       alt={displayedFeaturedTitle}
                       className="welcome-email__featured-image"
+                      onError={(e) => {
+                        console.error('[WelcomeEmail] Failed to load featured image:', displayedFeaturedImage);
+                        // Fallback to default image on error
+                        const target = e.target as HTMLImageElement;
+                        if (target.src !== defaultStories[0].image) {
+                          target.src = defaultStories[0].image;
+                        }
+                      }}
                     />
                     <div className="welcome-email__featured-content">
                       <h3 className="welcome-email__featured-title">{displayedFeaturedTitle}</h3>
@@ -211,6 +227,16 @@ const WelcomeEmail = ({
                           src={getVehicleImage(vehicle)} 
                           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                           className="welcome-email__story-image"
+                          onError={(e) => {
+                            const imageUrl = getVehicleImage(vehicle);
+                            console.error('[WelcomeEmail] Failed to load vehicle image:', imageUrl, vehicle);
+                            // Fallback to make-specific or default image on error
+                            const target = e.target as HTMLImageElement;
+                            const fallback = vehicleImageFallbacks[vehicle.make] || defaultStories[0].image;
+                            if (target.src !== fallback) {
+                              target.src = fallback;
+                            }
+                          }}
                         />
                         <div className="welcome-email__story-content">
                           <h4 className="welcome-email__story-title">
