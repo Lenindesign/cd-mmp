@@ -94,11 +94,22 @@ export const useGoogleOneTap = ({
   }, [onSignOut]);
 
   // Track high-intent page view on mount
+  // For MMP pages, wait for vehicleInfo; for other pages, track immediately
   useEffect(() => {
-    if (enabled) {
+    if (!enabled) return;
+    
+    // For MMP pages, only track when we have vehicle info
+    if (pageType === 'mmp') {
+      if (vehicleInfo?.make && vehicleInfo?.model) {
+        console.log('[CDP] Tracking MMP page view:', vehicleInfo);
+        trackHighIntentPageView(pageType, vehicleInfo);
+      }
+    } else {
+      // For other page types (rankings, etc.), track immediately
+      console.log('[CDP] Tracking page view:', pageType);
       trackHighIntentPageView(pageType, vehicleInfo);
     }
-  }, [pageType, vehicleInfo, enabled]);
+  }, [pageType, vehicleInfo?.year, vehicleInfo?.make, vehicleInfo?.model, vehicleInfo?.trim, enabled]);
 
   // Listen for storage changes (for cross-tab sync)
   useEffect(() => {
