@@ -143,10 +143,18 @@ const WelcomeEmail = ({
             <tr>
               <td className="welcome-email__header">
                 <img 
-                  src="https://www.caranddriver.com/images/media/51/cd-black-background-350x90-1-3-png-1639084406.png" 
+                  src="/car-and-driver-logo.svg" 
                   alt="Car and Driver" 
                   className="welcome-email__logo"
                   width="200"
+                  onError={(e) => {
+                    console.error('[WelcomeEmail] Failed to load logo');
+                    // Fallback to external URL if local file fails
+                    const target = e.target as HTMLImageElement;
+                    if (!target.src.includes('caranddriver.com')) {
+                      target.src = 'https://www.caranddriver.com/images/media/51/cd-black-background-350x90-1-3-png-1639084406.png';
+                    }
+                  }}
                 />
               </td>
             </tr>

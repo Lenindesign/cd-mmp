@@ -35,6 +35,8 @@
 .welcome-email__logo {
   max-width: 200px;
   height: auto;
+  /* Invert colors for dark background - makes black logo white */
+  filter: invert(1) brightness(1.2);
 }
 
 /* Greeting */
