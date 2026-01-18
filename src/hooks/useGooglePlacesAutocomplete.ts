@@ -398,20 +398,7 @@ export const useGooglePlacesAutocomplete = ({
   };
 };
 
-// Type declarations for Google Maps
-declare global {
-  interface Window {
-    google: {
-      maps: {
-        Geocoder: new () => GoogleMapsGeocoder;
-        importLibrary: (library: string) => Promise<unknown>;
-        places?: {
-          Place?: unknown;
-          AutocompleteSuggestion?: unknown;
-        };
-      };
-    };
-  }
-}
+// Types are imported from the shared google.d.ts
+import '../types/google.d';
 
 export default useGooglePlacesAutocomplete;

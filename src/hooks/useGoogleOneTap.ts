@@ -1,6 +1,8 @@
 import { useEffect, useCallback, useState } from 'react';
 import { trackHighIntentPageView } from '../utils/cdpTracking';
 import { getAuthUser, isUserAuthenticated, type GoogleUser } from '../components/GoogleOneTap/GoogleOneTap';
+// Types are imported from the shared google.d.ts
+import '../types/google.d';
 
 export interface UseGoogleOneTapOptions {
   /** Page type for tracking */

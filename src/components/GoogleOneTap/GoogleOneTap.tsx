@@ -4,26 +4,12 @@ import {
   trackG1TPromptDismissed,
   trackUserRegistration,
 } from '../../utils/cdpTracking';
+// Types are imported from the shared google.d.ts
+import '../../types/google.d';
 import './GoogleOneTap.css';
 
-// Google Identity Services types
-declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        id: {
-          initialize: (config: GoogleOneTapConfig) => void;
-          prompt: (callback?: (notification: PromptMomentNotification) => void) => void;
-          cancel: () => void;
-          disableAutoSelect: () => void;
-          revoke: (email: string, callback: () => void) => void;
-        };
-      };
-    };
-  }
-}
-
-interface GoogleOneTapConfig {
+// Local interface definitions (not extending Window to avoid conflicts)
+interface GoogleOneTapConfigLocal {
   client_id: string;
   callback: (response: CredentialResponse) => void;
   auto_select?: boolean;

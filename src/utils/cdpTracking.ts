@@ -17,7 +17,7 @@ export interface UserRegistration {
 }
 
 export interface HighIntentPageView {
-  page_type: 'mmp' | 'rankings' | 'comparison' | 'pricing';
+  page_type: 'mmp' | 'rankings' | 'comparison' | 'pricing' | 'other';
   vehicle_info?: {
     year?: number;
     make?: string;
