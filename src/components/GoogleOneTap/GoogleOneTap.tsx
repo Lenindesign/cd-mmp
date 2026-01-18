@@ -149,7 +149,7 @@ const GoogleOneTap = ({
   vehicleInfo,
   isAuthenticated = false,
   className = '',
-  debug = false,
+  debug: _debug = false, // Prefixed to avoid unused warning (logging always enabled for now)
 }: GoogleOneTapProps) => {
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
