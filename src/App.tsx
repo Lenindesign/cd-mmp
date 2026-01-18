@@ -53,6 +53,9 @@ const ListiclePage = lazy(() => import('./pages/ListiclePage/ListiclePage'));
 const WhatsMyCarWorthPage = lazy(() => import('./pages/WhatsMyCarWorthPage/WhatsMyCarWorthPage'));
 const WhatsMyCarWorthResultsPage = lazy(() => import('./pages/WhatsMyCarWorthResultsPage/WhatsMyCarWorthResultsPage'));
 
+// Email Preview page - for testing personalized emails
+const EmailPreviewPage = lazy(() => import('./pages/EmailPreviewPage/EmailPreviewPage'));
+
 // Loading fallback component
 const PageLoader = () => (
   <div className="page-loader">
@@ -131,6 +134,9 @@ function App() {
             <Route path="/whats-my-car-worth/results" element={<WhatsMyCarWorthResultsPage />} />
             <Route path="/trade-in-value" element={<WhatsMyCarWorthPage />} />
             <Route path="/trade-in-value/results" element={<WhatsMyCarWorthResultsPage />} />
+            
+            {/* Email Preview - for testing personalized welcome emails */}
+            <Route path="/email-preview" element={<EmailPreviewPage />} />
             
             {/* Individual Vehicle Pages - Dynamic routes based on slug */}
             <Route path="/:year/:make/:model" element={<VehiclePage />} />
