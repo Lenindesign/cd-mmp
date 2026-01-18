@@ -67,6 +67,9 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const GOOGLE_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
 const AUTH_USER_KEY = 'cd_auth_user';
 
+// Log client ID status on module load
+console.log('[GoogleOneTap] Client ID configured:', GOOGLE_CLIENT_ID ? `${GOOGLE_CLIENT_ID.substring(0, 20)}...` : 'NOT SET');
+
 /**
  * Decode JWT token from Google
  */
@@ -155,11 +158,10 @@ const GoogleOneTap = ({
 
   const log = useCallback(
     (...args: unknown[]) => {
-      if (debug || import.meta.env.DEV) {
-        console.log('[GoogleOneTap]', ...args);
-      }
+      // Always log in production for debugging (can remove later)
+      console.log('[GoogleOneTap]', ...args);
     },
-    [debug]
+    []
   );
 
   // Handle successful sign-in
