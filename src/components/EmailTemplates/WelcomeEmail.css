@@ -1,0 +1,337 @@
+/* Welcome Email Template Styles */
+/* Note: For actual email sending, these styles should be inlined */
+
+.welcome-email {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  color: #ffffff;
+  background-color: #1a1a1a;
+  margin: 0;
+  padding: 0;
+}
+
+.welcome-email__wrapper {
+  background-color: #1a1a1a;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.welcome-email__container {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #2a2a2a;
+  border-radius: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Header */
+.welcome-email__header {
+  background-color: #1a1a1a;
+  padding: 24px 32px;
+  text-align: left;
+}
+
+.welcome-email__logo {
+  max-width: 200px;
+  height: auto;
+}
+
+/* Greeting */
+.welcome-email__greeting {
+  padding: 24px 32px;
+  background-color: #1a1a1a;
+}
+
+.welcome-email__greeting-name {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0 0 12px 0;
+  color: #ffffff;
+}
+
+.welcome-email__greeting-text {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  color: #cccccc;
+}
+
+/* Benefits Section */
+.welcome-email__benefits {
+  padding: 0 32px 24px;
+  background-color: #1a1a1a;
+}
+
+.welcome-email__benefits-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #ffffff;
+}
+
+.welcome-email__benefits-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #cccccc;
+}
+
+.welcome-email__benefits-list li {
+  margin-bottom: 4px;
+}
+
+/* Section Titles */
+.welcome-email__section-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: #ffffff;
+}
+
+/* Featured Article */
+.welcome-email__featured {
+  padding: 24px 32px;
+  background-color: #1a1a1a;
+}
+
+.welcome-email__featured-card {
+  background-color: #2d2d2d;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.welcome-email__featured-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.welcome-email__featured-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.welcome-email__featured-content {
+  padding: 16px;
+}
+
+.welcome-email__featured-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+}
+
+.welcome-email__featured-description {
+  font-size: 13px;
+  color: #999999;
+  margin: 0 0 12px 0;
+}
+
+.welcome-email__read-more-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  background-color: transparent;
+  border: 1px solid #555555;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.welcome-email__read-more-btn:hover {
+  background-color: #333333;
+  border-color: #777777;
+}
+
+/* Recommended Stories */
+.welcome-email__recommended {
+  padding: 24px 32px;
+  background-color: #1a1a1a;
+}
+
+.welcome-email__stories {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.welcome-email__story-card {
+  display: flex;
+  background-color: #2d2d2d;
+  border-radius: 4px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s;
+}
+
+.welcome-email__story-card:hover {
+  background-color: #363636;
+}
+
+.welcome-email__story-image {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.welcome-email__story-content {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.welcome-email__story-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  color: #ffffff;
+}
+
+.welcome-email__story-description {
+  font-size: 12px;
+  color: #999999;
+  margin: 0 0 8px 0;
+}
+
+/* CTA Button */
+.welcome-email__cta {
+  padding: 32px;
+  text-align: center;
+  background-color: #1a1a1a;
+}
+
+.welcome-email__cta-button {
+  display: inline-block;
+  padding: 14px 40px;
+  background-color: #e31837;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s;
+}
+
+.welcome-email__cta-button:hover {
+  background-color: #c41530;
+}
+
+/* Footer */
+.welcome-email__footer {
+  padding: 32px;
+  text-align: center;
+  background-color: #1a1a1a;
+  border-top: 1px solid #333333;
+}
+
+.welcome-email__footer-follow {
+  font-size: 12px;
+  color: #999999;
+  margin: 0 0 12px 0;
+}
+
+.welcome-email__social-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.welcome-email__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.welcome-email__social-link:hover {
+  opacity: 0.7;
+}
+
+.welcome-email__social-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+.welcome-email__footer-links {
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+
+.welcome-email__footer-links a {
+  color: #6699cc;
+  text-decoration: underline;
+}
+
+.welcome-email__footer-links a:hover {
+  color: #88bbee;
+}
+
+.welcome-email__footer-divider {
+  color: #666666;
+  margin: 0 8px;
+}
+
+.welcome-email__footer-legal {
+  font-size: 10px;
+  color: #666666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .welcome-email__wrapper {
+    padding: 0;
+  }
+
+  .welcome-email__header,
+  .welcome-email__greeting,
+  .welcome-email__benefits,
+  .welcome-email__featured,
+  .welcome-email__recommended,
+  .welcome-email__cta,
+  .welcome-email__footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .welcome-email__story-image {
+    width: 100px;
+    height: 70px;
+  }
+
+  .welcome-email__story-content {
+    padding: 8px 12px;
+  }
+
+  .welcome-email__story-title {
+    font-size: 13px;
+  }
+
+  .welcome-email__story-description {
+    font-size: 11px;
+  }
+
+  .welcome-email__cta-button {
+    padding: 12px 32px;
+    font-size: 13px;
+  }
+}
