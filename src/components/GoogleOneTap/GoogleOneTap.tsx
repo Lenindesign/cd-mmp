@@ -317,6 +317,10 @@ const GoogleOneTap = ({
 
     log('Initializing Google One Tap');
 
+    // #region agent log
+    fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:initialize',message:'about to initialize',data:{clientId:GOOGLE_CLIENT_ID?.substring(0,20),hasGoogleApi:!!window.google?.accounts?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
+
     try {
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
@@ -325,11 +329,19 @@ const GoogleOneTap = ({
         cancel_on_tap_outside: false, // Stay visible when clicking outside
         context: 'signin',
         itp_support: true, // Support Intelligent Tracking Prevention
+        use_fedcm_for_prompt: false, // Disable FedCM, use legacy One Tap UI (fixes NetworkError)
       });
+
+      // #region agent log
+      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:initializeSuccess',message:'initialized with use_fedcm_for_prompt:false',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
 
       setIsInitialized(true);
       log('Initialized successfully');
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:initializeError',message:'initialization failed',data:{error:String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
       log('Initialization error:', error);
       onError?.(`Initialization failed: ${error}`);
     }
