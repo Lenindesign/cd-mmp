@@ -428,9 +428,9 @@
 
 .welcome-email__story-title {
   font-family: 'Poppins', var(--font-sans, 'Inter'), sans-serif;
-  font-size: 23.39px; /* From Figma */
+  font-size: 16px;
   font-weight: var(--font-weight-semibold, 600);
-  line-height: 38.2px; /* From Figma */
+  line-height: 1.3;
   margin: 0;
   color: var(--color-neutrals-1, #141414);
   flex: 1;
