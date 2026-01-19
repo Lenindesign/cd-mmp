@@ -322,11 +322,66 @@ export const removeSavedVehicle = async (vehicleId: string): Promise<User> => {
 
 // Google OAuth Client ID
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const GOOGLE_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
+
+// Load Google Identity Services script if not already loaded
+const loadGoogleScript = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    // Already loaded
+    if (window.google?.accounts?.id) {
+      resolve();
+      return;
+    }
+    
+    // Check if script is already in DOM
+    const existingScript = document.querySelector(`script[src="${GOOGLE_SCRIPT_URL}"]`);
+    if (existingScript) {
+      // Wait for it to load
+      existingScript.addEventListener('load', () => resolve());
+      existingScript.addEventListener('error', () => reject(new Error('Failed to load Google script')));
+      // If already loaded, resolve immediately
+      if (window.google?.accounts?.id) {
+        resolve();
+      }
+      return;
+    }
+    
+    // Load the script
+    const script = document.createElement('script');
+    script.src = GOOGLE_SCRIPT_URL;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      // Wait a bit for google.accounts.id to be available
+      const checkGoogle = () => {
+        if (window.google?.accounts?.id) {
+          resolve();
+        } else {
+          setTimeout(checkGoogle, 50);
+        }
+      };
+      checkGoogle();
+    };
+    script.onerror = () => reject(new Error('Failed to load Google Identity Services'));
+    document.head.appendChild(script);
+  });
+};
 
 // Social login - Real Google OAuth, mock for Facebook/Apple
 export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): Promise<User> => {
   // For Google, use real Google Identity Services
-  if (provider === 'google' && GOOGLE_CLIENT_ID && window.google?.accounts?.id) {
+  if (provider === 'google' && GOOGLE_CLIENT_ID) {
+    // Load Google script if needed
+    try {
+      await loadGoogleScript();
+    } catch (err) {
+      console.error('[SocialSignIn] Failed to load Google script:', err);
+      throw new Error('Google Sign-In is not available. Please try again.');
+    }
+    
+    if (!window.google?.accounts?.id) {
+      throw new Error('Google Sign-In failed to initialize. Please refresh and try again.');
+    }
     return new Promise((resolve, reject) => {
       // Initialize and prompt for Google sign-in
       window.google!.accounts!.id.initialize({
