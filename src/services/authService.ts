@@ -320,13 +320,78 @@ export const removeSavedVehicle = async (vehicleId: string): Promise<User> => {
   return updateUser({ savedVehicles });
 };
 
-// Social login simulation (Google, Facebook, Apple)
-export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): Promise<User> => {
-  // Simulate OAuth flow delay
-  await new Promise(resolve => setTimeout(resolve, 1200));
+// Google OAuth Client ID
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-  // In production, this would handle OAuth callback
-  // For now, create a mock user based on provider
+// Social login - Real Google OAuth, mock for Facebook/Apple
+export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): Promise<User> => {
+  // For Google, use real Google Identity Services
+  if (provider === 'google' && GOOGLE_CLIENT_ID && window.google?.accounts?.id) {
+    return new Promise((resolve, reject) => {
+      // Initialize and prompt for Google sign-in
+      window.google!.accounts!.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response: { credential: string }) => {
+          // Decode the JWT to get user info
+          try {
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(
+              atob(base64)
+                .split('')
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+            );
+            const payload = JSON.parse(jsonPayload);
+            
+            const googleUser = {
+              id: payload.sub,
+              email: payload.email,
+              name: payload.name,
+              picture: payload.picture,
+            };
+            
+            // Use setUserFromGoogle to properly create/update user
+            const { user } = setUserFromGoogle(googleUser);
+            
+            // Store in Google auth storage for consistency
+            localStorage.setItem('cd_auth_user', JSON.stringify(googleUser));
+            
+            resolve(user);
+          } catch (err) {
+            reject(new Error('Failed to process Google sign-in'));
+          }
+        },
+        use_fedcm_for_prompt: false,
+      });
+      
+      // Show the Google sign-in prompt
+      window.google!.accounts!.id.prompt((notification: { 
+        isNotDisplayed: () => boolean; 
+        getNotDisplayedReason: () => string;
+        isSkippedMoment: () => boolean;
+        getSkippedReason: () => string;
+      }) => {
+        if (notification.isNotDisplayed()) {
+          const reason = notification.getNotDisplayedReason();
+          console.log('[SocialSignIn] Google prompt not displayed:', reason);
+          // If prompt can't be shown, reject with helpful message
+          if (reason === 'opt_out_or_no_session') {
+            reject(new Error('Please sign in to your Google account in this browser first, then try again.'));
+          } else {
+            reject(new Error(`Google Sign-In unavailable: ${reason}`));
+          }
+        } else if (notification.isSkippedMoment()) {
+          const reason = notification.getSkippedReason();
+          console.log('[SocialSignIn] Google prompt skipped:', reason);
+          reject(new Error('Google Sign-In was cancelled'));
+        }
+      });
+    });
+  }
+
+  // Mock OAuth for Facebook/Apple (or when Google API not available)
+  await new Promise(resolve => setTimeout(resolve, 1200));
   const mockEmail = `user_${Date.now()}@${provider}.com`;
   const mockName = `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`;
 
