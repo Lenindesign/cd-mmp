@@ -59,17 +59,86 @@ export const isSessionActive = (): boolean => {
 };
 
 // Map Google One Tap user into User and set as current (called from AuthContext / G1T flow)
-export const setUserFromGoogle = (googleUser: { id: string; email: string; name?: string; picture?: string }): void => {
-  const user: User = {
-    id: googleUser.id,
-    email: googleUser.email,
-    name: googleUser.name,
-    avatar: googleUser.picture,
-    createdAt: new Date().toISOString(),
-    onboardingCompleted: false,
-  };
-  setCurrentUser(user);
+// This properly integrates with the user database - checks for existing users and preserves their data
+// Returns { user, isNewUser } to allow caller to handle onboarding redirect
+export const setUserFromGoogle = (googleUser: { id: string; email: string; name?: string; picture?: string }): { user: User; isNewUser: boolean } => {
+  // #region agent log
+  fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'authService.ts:setUserFromGoogle',message:'called with googleUser',data:{id:googleUser.id,email:googleUser.email,name:googleUser.name,hasPicture:!!googleUser.picture},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'NAME'})}).catch(()=>{});
+  // #endregion
+  
+  const usersDb = getUsersDb();
+  
+  // Check if user already exists by email
+  const existingUser = Object.values(usersDb).find(u => u.email === googleUser.email);
+  
+  // #region agent log
+  fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'authService.ts:setUserFromGoogle',message:'existing user check',data:{existingUserFound:!!existingUser,existingUserName:existingUser?.name,existingUserEmail:existingUser?.email},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'NAME'})}).catch(()=>{});
+  // #endregion
+  
+  let sessionUser: User;
+  
+  if (existingUser) {
+    // Existing user - sign them in with their existing data
+    // Update avatar if they don't have one
+    sessionUser = {
+      id: existingUser.id,
+      email: existingUser.email,
+      name: existingUser.name || googleUser.name,
+      location: existingUser.location,
+      userType: existingUser.userType,
+      avatar: existingUser.avatar || googleUser.picture,
+      banner: existingUser.banner,
+      createdAt: existingUser.createdAt,
+      onboardingCompleted: existingUser.onboardingCompleted,
+      savedVehicles: existingUser.savedVehicles,
+      newsletterSubscriptions: existingUser.newsletterSubscriptions,
+    };
+    
+    // Update the database with any new info (avatar, name)
+    usersDb[existingUser.id] = {
+      ...existingUser,
+      name: existingUser.name || googleUser.name,
+      avatar: existingUser.avatar || googleUser.picture,
+    };
+    saveUsersDb(usersDb);
+  } else {
+    // New user - create account with onboardingCompleted: false
+    const newUser: User & { password: string } = {
+      id: googleUser.id,
+      email: googleUser.email,
+      password: `google_oauth_${googleUser.id}`, // Placeholder for OAuth users
+      name: googleUser.name || '',
+      avatar: googleUser.picture,
+      createdAt: new Date().toISOString(),
+      onboardingCompleted: false,
+      savedVehicles: [],
+      newsletterSubscriptions: [],
+    };
+    
+    // Save to database
+    usersDb[newUser.id] = newUser;
+    saveUsersDb(usersDb);
+    
+    sessionUser = {
+      id: newUser.id,
+      email: newUser.email,
+      name: newUser.name,
+      avatar: newUser.avatar,
+      createdAt: newUser.createdAt,
+      onboardingCompleted: false,
+      savedVehicles: [],
+      newsletterSubscriptions: [],
+    };
+  }
+  
+  setCurrentUser(sessionUser);
   window.dispatchEvent(new CustomEvent('auth-changed'));
+  
+  // #region agent log
+  fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'authService.ts:setUserFromGoogle',message:'user set',data:{sessionUserName:sessionUser.name,sessionUserEmail:sessionUser.email,isNewUser:!existingUser},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'NAME'})}).catch(()=>{});
+  // #endregion
+  
+  return { user: sessionUser, isNewUser: !existingUser };
 };
 
 // Sign up a new user

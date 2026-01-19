@@ -62,8 +62,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const onAuthGoogleSignIn = (e: Event) => {
       const gu = (e as CustomEvent).detail;
       if (gu?.id && gu?.email) {
-        authService.setUserFromGoogle(gu);
-        setUser(authService.getCurrentUser());
+        const { user: newUser, isNewUser } = authService.setUserFromGoogle(gu);
+        setUser(newUser);
+        
+        // Redirect new users to onboarding
+        if (isNewUser && !newUser.onboardingCompleted) {
+          // Use setTimeout to ensure state is updated before redirect
+          setTimeout(() => {
+            window.location.href = '/onboarding/step-1';
+          }, 100);
+        }
       }
     };
     window.addEventListener('auth-changed', onAuthChanged);
