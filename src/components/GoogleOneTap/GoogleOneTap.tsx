@@ -200,21 +200,6 @@ const GoogleOneTap = ({
   // Handle prompt moment notifications
   const handlePromptMoment = useCallback(
     (notification: PromptMomentNotification) => {
-      // #region agent log
-      try {
-        const state = {
-          isDisplayMoment: notification.isDisplayMoment?.(),
-          isDisplayed: notification.isDisplayed?.(),
-          isNotDisplayed: notification.isNotDisplayed?.(),
-          getNotDisplayedReason: notification.getNotDisplayedReason?.(),
-          isSkippedMoment: notification.isSkippedMoment?.(),
-          getSkippedReason: notification.getSkippedReason?.(),
-          isDismissedMoment: notification.isDismissedMoment?.(),
-          getDismissedReason: notification.getDismissedReason?.(),
-        };
-        fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:handlePromptMoment',message:'handlePromptMoment called',data:state,timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
-      } catch (_) {}
-      // #endregion
       if (notification.isDisplayMoment()) {
         if (notification.isDisplayed()) {
           log('Prompt displayed');
@@ -317,10 +302,6 @@ const GoogleOneTap = ({
 
     log('Initializing Google One Tap');
 
-    // #region agent log
-    fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:initialize',message:'about to initialize',data:{clientId:GOOGLE_CLIENT_ID?.substring(0,20),hasGoogleApi:!!window.google?.accounts?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-    // #endregion
-
     try {
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
@@ -332,16 +313,9 @@ const GoogleOneTap = ({
         use_fedcm_for_prompt: false, // Disable FedCM, use legacy One Tap UI (fixes NetworkError)
       });
 
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:initializeSuccess',message:'initialized with use_fedcm_for_prompt:false',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
-
       setIsInitialized(true);
       log('Initialized successfully');
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:initializeError',message:'initialization failed',data:{error:String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
       log('Initialization error:', error);
       onError?.(`Initialization failed: ${error}`);
     }
@@ -349,31 +323,19 @@ const GoogleOneTap = ({
 
   // Show prompt after delay
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:showPromptEffect',message:'effect run',data:{isInitialized,isAuthenticated,promptTriggered:promptTriggeredRef.current,promptDelay},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-    // #endregion
     if (!isInitialized || isAuthenticated || promptTriggeredRef.current) {
       return;
     }
 
     const timeoutId = setTimeout(() => {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:showPromptTimeout',message:'timeout fired',data:{hasGoogle:!!window.google?.accounts?.id,promptTriggered:promptTriggeredRef.current},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
       if (window.google?.accounts?.id && !promptTriggeredRef.current) {
         log(`Showing prompt after ${promptDelay}ms delay`);
         promptTriggeredRef.current = true;
-        // #region agent log
-        fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:promptCall',message:'calling prompt()',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
-        // #endregion
         window.google.accounts.id.prompt(handlePromptMoment);
       }
     }, promptDelay);
 
     return () => {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:showPromptCleanup',message:'effect cleanup clearTimeout',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
       clearTimeout(timeoutId);
     };
   }, [isInitialized, isAuthenticated, promptDelay, handlePromptMoment, log]);
@@ -382,9 +344,6 @@ const GoogleOneTap = ({
   // when React Strict Mode or parent re-render unmounts after we've shown it)
   useEffect(() => {
     return () => {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GoogleOneTap.tsx:unmountCleanup',message:'unmount cancel()',data:{hasGoogle:!!window.google?.accounts?.id,promptTriggered:promptTriggeredRef.current,willCancel:!!(window.google?.accounts?.id && !promptTriggeredRef.current)},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
       if (window.google?.accounts?.id && !promptTriggeredRef.current) {
         window.google.accounts.id.cancel();
       }

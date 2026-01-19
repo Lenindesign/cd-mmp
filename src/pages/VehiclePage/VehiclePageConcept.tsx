@@ -325,9 +325,6 @@ const VehiclePageConcept = () => {
 
   // Build gallery media (images + video for specific vehicles)
   const galleryMedia = useMemo(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:galleryMedia',message:'galleryMedia useMemo called',data:{vehicleMake:vehicle?.make,vehicleModel:vehicle?.model,hasVehicle:!!vehicle},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-    // #endregion
     if (!vehicle) return [{ type: 'image' as const, src: '' }];
     
     const baseImages = vehicle.galleryImages || [vehicle.image];
@@ -384,9 +381,6 @@ const VehiclePageConcept = () => {
     
     // Custom gallery for Hyundai Venue with video as first slide
     if (vehicle.make === 'Hyundai' && vehicle.model === 'Venue') {
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:VenueMatch',message:'Hyundai Venue matched - returning video',data:{videoUrl:'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/venue.mp4',baseImagesCount:baseImages.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H4'})}).catch(()=>{});
-      // #endregion
       return [
         { type: 'video' as const, src: 'https://pub-29d8f12b08c34438be643f74f38892b0.r2.dev/venue.mp4' },
         ...baseImages.map(src => ({ type: 'image' as const, src })),
@@ -401,19 +395,10 @@ const VehiclePageConcept = () => {
       ];
     }
     
-    // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:defaultGallery',message:'No vehicle match - using default gallery (no video)',data:{make:vehicle.make,model:vehicle.model},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-    // #endregion
     return baseImages.map(src => ({ type: 'image' as const, src }));
   }, [vehicle]);
 
   const currentMedia = galleryMedia[currentImageIndex] || { type: 'image', src: '' };
-  
-  // #region agent log
-  useEffect(() => {
-    fetch('http://127.0.0.1:7244/ingest/8001da2e-0c34-4135-a77e-d17e5ce7e6e0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'VehiclePageConcept.tsx:galleryState',message:'Gallery media state',data:{galleryLength:galleryMedia.length,firstItemType:galleryMedia[0]?.type,firstItemSrc:galleryMedia[0]?.src?.substring(0,50),currentIndex:currentImageIndex,currentType:currentMedia.type},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4-H5'})}).catch(()=>{});
-  }, [galleryMedia, currentImageIndex, currentMedia]);
-  // #endregion
 
   // Preload images
   useEffect(() => {

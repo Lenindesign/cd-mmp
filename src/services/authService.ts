@@ -62,18 +62,10 @@ export const isSessionActive = (): boolean => {
 // This properly integrates with the user database - checks for existing users and preserves their data
 // Returns { user, isNewUser } to allow caller to handle onboarding redirect
 export const setUserFromGoogle = (googleUser: { id: string; email: string; name?: string; picture?: string }): { user: User; isNewUser: boolean } => {
-  // #region agent log
-  fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'authService.ts:setUserFromGoogle',message:'called with googleUser',data:{id:googleUser.id,email:googleUser.email,name:googleUser.name,hasPicture:!!googleUser.picture},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'NAME'})}).catch(()=>{});
-  // #endregion
-  
   const usersDb = getUsersDb();
   
   // Check if user already exists by email
   const existingUser = Object.values(usersDb).find(u => u.email === googleUser.email);
-  
-  // #region agent log
-  fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'authService.ts:setUserFromGoogle',message:'existing user check',data:{existingUserFound:!!existingUser,existingUserName:existingUser?.name,existingUserEmail:existingUser?.email},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'NAME'})}).catch(()=>{});
-  // #endregion
   
   let sessionUser: User;
   
@@ -133,10 +125,6 @@ export const setUserFromGoogle = (googleUser: { id: string; email: string; name?
   
   setCurrentUser(sessionUser);
   window.dispatchEvent(new CustomEvent('auth-changed'));
-  
-  // #region agent log
-  fetch('http://127.0.0.1:7247/ingest/b1f928f3-83be-4f10-b70f-73adfefe6bd0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'authService.ts:setUserFromGoogle',message:'user set',data:{sessionUserName:sessionUser.name,sessionUserEmail:sessionUser.email,isNewUser:!existingUser},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'NAME'})}).catch(()=>{});
-  // #endregion
   
   return { user: sessionUser, isNewUser: !existingUser };
 };
