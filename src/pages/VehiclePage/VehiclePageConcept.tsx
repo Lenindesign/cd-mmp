@@ -27,6 +27,7 @@ import TrimSelector from '../../components/TrimSelector/TrimSelector';
 import { getVehicleTrims } from '../../services/trimService';
 import FuelEconomy from '../../components/FuelEconomy/FuelEconomy';
 import WhatsMyCarWorth from '../../components/WhatsMyCarWorth/WhatsMyCarWorth';
+import SignInToSaveModal from '../../components/SignInToSaveModal';
 import './VehiclePageConcept.css';
 
 const VehiclePageConcept = () => {
@@ -46,6 +47,7 @@ const VehiclePageConcept = () => {
   const [isLoadingSafety, setIsLoadingSafety] = useState(false);
   const [showInteriorGallery, setShowInteriorGallery] = useState(false);
   const [interiorIndex, setInteriorIndex] = useState(0);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   
@@ -61,7 +63,12 @@ const VehiclePageConcept = () => {
   const isSaved = user?.savedVehicles?.some(v => v.name === vehicleName) || false;
   
   const handleSaveClick = () => {
-    if (!isAuthenticated || !vehicle) return;
+    if (!vehicle) return;
+    
+    if (!isAuthenticated) {
+      setShowSignInModal(true);
+      return;
+    }
     
     if (isSaved) {
       const savedVehicle = user?.savedVehicles?.find(v => v.name === vehicleName);
@@ -1416,6 +1423,15 @@ const VehiclePageConcept = () => {
           </div>
         </div>
       )}
+
+      {/* Sign In to Save Modal */}
+      <SignInToSaveModal
+        isOpen={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
+        itemType="vehicle"
+        itemName={vehicleName}
+        itemImage={vehicle?.image}
+      />
     </div>
   );
 };

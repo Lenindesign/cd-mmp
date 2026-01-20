@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Bookmark } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
@@ -9,6 +9,7 @@ import { SEO } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
+import SignInToSaveModal from '../../components/SignInToSaveModal';
 import './RankingsPage.css';
 
 // Body style icons
@@ -121,6 +122,10 @@ const RankingsPage = () => {
   // Combined authentication state
   const isAuthenticated = isAuthContextAuthenticated || isOneTapAuthenticated;
 
+  // State for sign-in modal
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
+
   // Get config for current body style
   const config = bodyStyle ? BODY_STYLE_CONFIG[bodyStyle.toLowerCase()] : null;
 
@@ -130,10 +135,14 @@ const RankingsPage = () => {
   };
 
   // Handle save click for hero cards
-  const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string }) => {
+  const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      setPendingSaveVehicle(vehicle);
+      setShowSignInModal(true);
+      return;
+    }
     
     const isSaved = isVehicleSaved(vehicle.name);
     if (isSaved) {
@@ -503,15 +512,13 @@ const RankingsPage = () => {
                         <div className="rankings-page__hero-card-image-container">
                           <div className="rankings-page__hero-card-rank-container">
                             <div className="rankings-page__hero-card-rank rankings-page__hero-card-rank--first">1</div>
-                            {isAuthenticated && (
-                              <button
-                                className={`rankings-page__hero-card-save ${isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
-                                onClick={(e) => handleSaveClick(e, { name: `${sub.vehicles[0].year} ${sub.vehicles[0].name}`, slug: sub.vehicles[0].slug })}
-                                aria-label={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
-                              >
-                                <Bookmark size={18} fill={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'currentColor' : 'none'} />
-                              </button>
-                            )}
+                            <button
+                              className={`rankings-page__hero-card-save ${isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
+                              onClick={(e) => handleSaveClick(e, { name: `${sub.vehicles[0].year} ${sub.vehicles[0].name}`, slug: sub.vehicles[0].slug, image: sub.vehicles[0].image })}
+                              aria-label={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
+                            >
+                              <Bookmark size={18} fill={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'currentColor' : 'none'} />
+                            </button>
                           </div>
                           <img 
                             src={sub.vehicles[0].image} 
@@ -630,15 +637,13 @@ const RankingsPage = () => {
                         <div className="rankings-page__hero-card-image-container">
                           <div className="rankings-page__hero-card-rank-container">
                             <div className="rankings-page__hero-card-rank rankings-page__hero-card-rank--first">1</div>
-                            {isAuthenticated && (
-                              <button
-                                className={`rankings-page__hero-card-save ${isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
-                                onClick={(e) => handleSaveClick(e, { name: `${formattedVehicles[0].year} ${formattedVehicles[0].name}`, slug: formattedVehicles[0].slug })}
-                                aria-label={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
-                              >
-                                <Bookmark size={18} fill={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'currentColor' : 'none'} />
-                              </button>
-                            )}
+                            <button
+                              className={`rankings-page__hero-card-save ${isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
+                              onClick={(e) => handleSaveClick(e, { name: `${formattedVehicles[0].year} ${formattedVehicles[0].name}`, slug: formattedVehicles[0].slug, image: formattedVehicles[0].image })}
+                              aria-label={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
+                            >
+                              <Bookmark size={18} fill={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'currentColor' : 'none'} />
+                            </button>
                           </div>
                           <img 
                             src={formattedVehicles[0].image} 
@@ -818,6 +823,18 @@ const RankingsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Sign In to Save Modal */}
+      <SignInToSaveModal
+        isOpen={showSignInModal}
+        onClose={() => {
+          setShowSignInModal(false);
+          setPendingSaveVehicle(null);
+        }}
+        itemType="vehicle"
+        itemName={pendingSaveVehicle?.name}
+        itemImage={pendingSaveVehicle?.image}
+      />
     </div>
   );
 };

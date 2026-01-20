@@ -5,6 +5,7 @@ import { getAvailableYears } from '../../services/vehicleService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../Button';
 import { OptimizedImage } from '../OptimizedImage';
+import SignInToSaveModal from '../SignInToSaveModal';
 import './Hero.css';
 
 interface HeroProps {
@@ -32,6 +33,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [buttonsInView, setButtonsInView] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
@@ -46,8 +48,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   // Handle save/unsave click
   const handleSaveClick = () => {
     if (!isAuthenticated) {
-      // Optionally redirect to sign in or show a message
-      navigate('/sign-in');
+      setShowSignInModal(true);
       return;
     }
     
@@ -435,6 +436,15 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
           </div>
         </div>
       </div>
+
+      {/* Sign In to Save Modal */}
+      <SignInToSaveModal
+        isOpen={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
+        itemType="vehicle"
+        itemName={vehicleName}
+        itemImage={vehicle.image}
+      />
     </section>
   );
 };

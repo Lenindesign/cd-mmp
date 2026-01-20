@@ -15,6 +15,8 @@ import { TextBlock } from '../../components/Resin/TextBlock';
 import { ArticleCard } from '../../components/Resin/ArticleCard';
 import { OptimizedImage } from '../../components/OptimizedImage';
 import DealerMapModal from '../../components/DealerLocatorMap/DealerMapModal';
+import SignInToSaveModal from '../../components/SignInToSaveModal';
+import { useAuth } from '../../contexts/AuthContext';
 import { vehicleDatabase } from '../../data/vehicles';
 import './ArticlePage.css';
 
@@ -184,9 +186,11 @@ interface ArticlePageProps {
 export const ArticlePage: React.FC<ArticlePageProps> = ({ 
   article = sampleArticle 
 }) => {
+  const { isAuthenticated } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [showDealerMap, setShowDealerMap] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const [relatedScrollPosition, setRelatedScrollPosition] = useState(0);
 
   // Find related vehicle in database for dealer map
@@ -229,6 +233,10 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
   };
 
   const handleSave = () => {
+    if (!isAuthenticated) {
+      setShowSignInModal(true);
+      return;
+    }
     setIsSaved(!isSaved);
   };
 
@@ -614,6 +622,15 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
         isOpen={showDealerMap}
         onClose={() => setShowDealerMap(false)}
         vehicle={dealerMapVehicle}
+      />
+
+      {/* Sign In to Save Modal */}
+      <SignInToSaveModal
+        isOpen={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
+        itemType="article"
+        itemName={article.headline}
+        itemImage={article.heroImage.src}
       />
     </article>
   );

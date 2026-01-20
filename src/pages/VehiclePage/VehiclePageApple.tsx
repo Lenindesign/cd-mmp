@@ -17,6 +17,7 @@ import { ChevronDown, Heart, Share2, ArrowRight, Check, Star, Shield, Zap, Gauge
 import { getVehicleBySlug, getAllVehicles } from '../../services/vehicleService';
 import { useAuth } from '../../contexts/AuthContext';
 import { OptimizedImage } from '../../components/OptimizedImage';
+import SignInToSaveModal from '../../components/SignInToSaveModal';
 import './VehiclePageApple.css';
 
 const VehiclePageApple = () => {
@@ -24,6 +25,7 @@ const VehiclePageApple = () => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const [activeSection, setActiveSection] = useState<string>('overview');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   
   // Build slug from URL params
@@ -58,7 +60,12 @@ const VehiclePageApple = () => {
 
   // Handle save/unsave
   const handleSaveClick = () => {
-    if (!isAuthenticated || !vehicle) return;
+    if (!vehicle) return;
+    
+    if (!isAuthenticated) {
+      setShowSignInModal(true);
+      return;
+    }
     
     if (isSaved) {
       const savedVehicle = user?.savedVehicles?.find(v => v.name === vehicleName);
@@ -502,6 +509,15 @@ const VehiclePageApple = () => {
           </div>
         </div>
       </section>
+
+      {/* Sign In to Save Modal */}
+      <SignInToSaveModal
+        isOpen={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
+        itemType="vehicle"
+        itemName={vehicleName}
+        itemImage={vehicle?.image}
+      />
     </div>
   );
 };
