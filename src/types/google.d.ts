@@ -67,6 +67,17 @@ interface GooglePromptMomentNotification {
   getMomentType: () => string;
 }
 
+interface GoogleButtonConfig {
+  type?: 'standard' | 'icon';
+  theme?: 'outline' | 'filled_blue' | 'filled_black';
+  size?: 'large' | 'medium' | 'small';
+  text?: 'signin_with' | 'signup_with' | 'continue_with' | 'signin';
+  shape?: 'rectangular' | 'pill' | 'circle' | 'square';
+  logo_alignment?: 'left' | 'center';
+  width?: number | string;
+  locale?: string;
+}
+
 // Unified Window.google declaration
 declare global {
   interface Window {
@@ -85,6 +96,7 @@ declare global {
         id: {
           initialize: (config: GoogleOneTapConfig) => void;
           prompt: (callback?: (notification: GooglePromptMomentNotification) => void) => void;
+          renderButton: (parent: HTMLElement, options: GoogleButtonConfig) => void;
           cancel: () => void;
           disableAutoSelect: () => void;
           revoke: (email: string, callback: () => void) => void;
@@ -100,4 +112,5 @@ export {
   GoogleOneTapConfig,
   GoogleCredentialResponse,
   GooglePromptMomentNotification,
+  GoogleButtonConfig,
 };
