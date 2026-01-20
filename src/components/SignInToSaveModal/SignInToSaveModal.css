@@ -177,6 +177,24 @@
 .save-modal__social {
   display: flex;
   flex-direction: column;
+}
+
+/* Google One Tap Button Container */
+.save-modal__google-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* Style the Google button iframe to match our design */
+.save-modal__google-btn-container iframe {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+.save-modal__google-btn-container > div {
+  width: 100% !important;
   gap: var(--spacing-2);
 }
 

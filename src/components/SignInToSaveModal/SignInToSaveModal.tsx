@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Bookmark, FileText, Play } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { storeAuthUser, type GoogleUser } from '../GoogleOneTap/GoogleOneTap';
+import { trackUserRegistration } from '../../utils/cdpTracking';
 import './SignInToSaveModal.css';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const GOOGLE_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
 
 export type SaveItemType = 'vehicle' | 'article' | 'video';
 
@@ -32,6 +37,37 @@ const getItemTypeIcon = (type: SaveItemType) => {
   }
 };
 
+/**
+ * Decode JWT token from Google
+ */
+const decodeJWT = (token: string): GoogleUser | null => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const payload = JSON.parse(jsonPayload);
+    
+    return {
+      id: payload.sub,
+      email: payload.email,
+      name: payload.name,
+      given_name: payload.given_name,
+      family_name: payload.family_name,
+      picture: payload.picture,
+      email_verified: payload.email_verified,
+      locale: payload.locale,
+    };
+  } catch (error) {
+    console.error('Failed to decode JWT:', error);
+    return null;
+  }
+};
+
 const SignInToSaveModal = ({ 
   isOpen,
   onClose,
@@ -43,6 +79,133 @@ const SignInToSaveModal = ({
   const { socialSignIn } = useAuth();
   const [isClosing, setIsClosing] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isGoogleReady, setIsGoogleReady] = useState(false);
+  const googleButtonRef = useRef<HTMLDivElement>(null);
+  const scriptLoadedRef = useRef(false);
+
+  // Handle successful Google sign-in
+  const handleGoogleCredentialResponse = useCallback((response: { credential: string }) => {
+    console.log('[SignInToSaveModal] Google credential response received');
+    
+    const user = decodeJWT(response.credential);
+    
+    if (user) {
+      console.log('[SignInToSaveModal] User decoded:', user.email);
+      
+      // Store user in localStorage
+      storeAuthUser(user);
+      
+      // Notify AuthContext so Header can show user and avatar
+      window.dispatchEvent(new CustomEvent('auth-google-signin', { detail: user }));
+
+      // Track registration with CDP
+      trackUserRegistration('google_one_tap', {
+        email: user.email,
+        name: user.name,
+        user_id: user.id,
+      });
+      
+      // Close modal after successful sign-in
+      setIsClosing(true);
+      setTimeout(() => {
+        setIsClosing(false);
+        onClose();
+      }, 200);
+    } else {
+      console.error('[SignInToSaveModal] Failed to decode user information');
+      setIsSigningIn(false);
+    }
+  }, [onClose]);
+
+  // Load Google Identity Services script
+  useEffect(() => {
+    if (!isOpen || scriptLoadedRef.current) return;
+
+    // Check if script is already loaded
+    if (window.google?.accounts?.id) {
+      console.log('[SignInToSaveModal] Google script already loaded');
+      setIsGoogleReady(true);
+      scriptLoadedRef.current = true;
+      return;
+    }
+
+    // Check if script tag already exists
+    const existingScript = document.querySelector(`script[src="${GOOGLE_SCRIPT_URL}"]`);
+    if (existingScript) {
+      console.log('[SignInToSaveModal] Script tag exists, waiting for load');
+      existingScript.addEventListener('load', () => {
+        setIsGoogleReady(true);
+        scriptLoadedRef.current = true;
+      });
+      // Also check if it's already loaded
+      if (window.google?.accounts?.id) {
+        setIsGoogleReady(true);
+        scriptLoadedRef.current = true;
+      }
+      return;
+    }
+
+    console.log('[SignInToSaveModal] Loading Google Identity Services script');
+    
+    const script = document.createElement('script');
+    script.src = GOOGLE_SCRIPT_URL;
+    script.async = true;
+    script.defer = true;
+    
+    script.onload = () => {
+      console.log('[SignInToSaveModal] Script loaded');
+      setIsGoogleReady(true);
+      scriptLoadedRef.current = true;
+    };
+    
+    script.onerror = () => {
+      console.error('[SignInToSaveModal] Failed to load Google Identity Services script');
+    };
+    
+    document.head.appendChild(script);
+  }, [isOpen]);
+
+  // Initialize Google button when ready
+  useEffect(() => {
+    if (!isOpen || !isGoogleReady || !googleButtonRef.current || !GOOGLE_CLIENT_ID) return;
+
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      if (!window.google?.accounts?.id || !googleButtonRef.current) return;
+
+      console.log('[SignInToSaveModal] Initializing Google button');
+
+      try {
+        // Initialize Google Identity Services
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: false,
+          context: 'signin',
+          itp_support: true,
+          use_fedcm_for_prompt: false,
+        });
+
+        // Render the Google Sign-In button
+        window.google.accounts.id.renderButton(googleButtonRef.current, {
+          type: 'standard',
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          shape: 'rectangular',
+          logo_alignment: 'left',
+          width: googleButtonRef.current.offsetWidth || 320,
+        });
+
+        console.log('[SignInToSaveModal] Google button rendered');
+      } catch (error) {
+        console.error('[SignInToSaveModal] Error initializing Google button:', error);
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [isOpen, isGoogleReady, handleGoogleCredentialResponse]);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -62,14 +225,13 @@ const SignInToSaveModal = ({
     navigate('/sign-up');
   };
 
-  const handleSocialLogin = async (provider: 'apple' | 'google') => {
+  const handleAppleLogin = async () => {
     setIsSigningIn(true);
     try {
-      await socialSignIn(provider);
+      await socialSignIn('apple');
       handleClose();
-      // After sign in, user can save the item
     } catch (error) {
-      console.error('Social sign-in failed:', error);
+      console.error('Apple sign-in failed:', error);
       setIsSigningIn(false);
     }
   };
@@ -134,7 +296,7 @@ const SignInToSaveModal = ({
           <div className="save-modal__social">
             <button 
               className="save-modal__social-btn save-modal__social-btn--apple" 
-              onClick={() => handleSocialLogin('apple')}
+              onClick={handleAppleLogin}
               disabled={isSigningIn}
             >
               <svg viewBox="0 0 24 24" width="18" height="18">
@@ -142,19 +304,12 @@ const SignInToSaveModal = ({
               </svg>
               {isSigningIn ? 'Signing in...' : 'Continue with Apple'}
             </button>
-            <button 
-              className="save-modal__social-btn save-modal__social-btn--google" 
-              onClick={() => handleSocialLogin('google')}
-              disabled={isSigningIn}
-            >
-              <svg viewBox="0 0 24 24" width="18" height="18">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              {isSigningIn ? 'Signing in...' : 'Continue with Google'}
-            </button>
+            {/* Google One Tap Button Container */}
+            <div 
+              ref={googleButtonRef} 
+              className="save-modal__google-btn-container"
+              style={{ minHeight: '44px' }}
+            />
           </div>
 
           <div className="save-modal__divider">
