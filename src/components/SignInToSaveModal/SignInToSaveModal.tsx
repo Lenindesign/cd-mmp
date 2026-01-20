@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { X, Bookmark, FileText, Play } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -241,7 +242,8 @@ const SignInToSaveModal = ({
   const typeLabel = getItemTypeLabel(itemType);
   const TypeIcon = () => getItemTypeIcon(itemType);
 
-  return (
+  // Use portal to render modal at document body level (prevents rendering inside cards/links)
+  return createPortal(
     <div 
       className={`save-modal__overlay ${isClosing ? 'save-modal__overlay--closing' : ''}`} 
       onClick={handleClose}
@@ -337,7 +339,8 @@ const SignInToSaveModal = ({
           By continuing, you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
