@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronRight, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, DollarSign, Clock } from 'lucide-react';
+import { ChevronRight, ChevronLeft, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, DollarSign, Clock } from 'lucide-react';
 import { Button } from '../Button';
+import { VehicleCard } from '../VehicleCard/VehicleCard';
 import ForSaleNearYou from '../ForSaleNearYou';
 import { DealerMapModal } from '../DealerLocatorMap';
 import { vehicleDatabase } from '../../data/vehicles';
@@ -393,6 +394,17 @@ const WhatsMyCarWorthResults = ({
 
   return (
     <div className={`whats-my-car-worth-results whats-my-car-worth-results--${variant}`}>
+      {/* Page Header */}
+      <section className="wmcw-page-header">
+        <h1 className="wmcw-page-header__title">What's My Car Worth?</h1>
+        <p className="wmcw-page-header__subtitle">
+          Here's your vehicle's value! It's an estimate of what you should expect to get if you're 
+          trading it in to a dealer or selling it privately. Its value is calculated from the information 
+          you provided and is based on the same Black Book® data dealers rely on for appraising 
+          vehicles.
+        </p>
+      </section>
+
       {/* Value Section - New Design */}
       <section className="value-section">
         {/* Header */}
@@ -528,51 +540,168 @@ const WhatsMyCarWorthResults = ({
         </div>
       </section>
 
+      {/* Your Next Vehicle - VehicleCard variant */}
+      <section className="your-next-vehicle-section">
+        <VehicleCard
+          id="next-vehicle-recommendation"
+          variant="next-vehicle"
+          name="2026 Honda CR-V"
+          slug="honda/cr-v/2026"
+          image="https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg"
+          price="$27,775"
+          priceLabel="Estimated Price"
+          priceRange="$27,775 - $32,905"
+          rating={10}
+          editorsChoice
+          tenBest
+          evOfTheYear
+          epaMpgRange="32-37"
+          cdSays="The 2026 Honda CR-V brings a new design, fresh features, and a roomier interior that make the compact SUV's sixth generation better than ever."
+          ctas={[
+            { text: 'SHOP NEW CR-V', variant: 'primary' },
+            { text: 'SHOP USED CR-V', variant: 'outline' },
+          ]}
+        />
+      </section>
+
+      {/* eLot - For Sale Near You */}
+      <section className="elot-for-sale">
+        <div className="elot-for-sale__header">
+          <h2 className="elot-for-sale__title">For Sale Near You</h2>
+          <a href="#" className="elot-for-sale__see-all">
+            See all results for <span className="elot-for-sale__see-all-link">2026 Honda CR-Vs for sale</span> near 12345
+            <span className="elot-for-sale__arrow">→</span>
+          </a>
+        </div>
+        <div className="elot-for-sale__carousel-wrapper">
+          <button 
+            className="elot-for-sale__nav elot-for-sale__nav--left"
+            aria-label="Previous listings"
+            onClick={(e) => {
+              e.preventDefault();
+              const carousel = e.currentTarget.parentElement?.querySelector('.elot-for-sale__carousel');
+              if (carousel) {
+                carousel.scrollBy({ left: -220, behavior: 'smooth' });
+              }
+            }}
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <div className="elot-for-sale__carousel">
+            {[
+              { id: 'el1', year: 2026, make: 'Honda', model: 'CR-V', trim: 'EX-L AWD', price: 38150, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg', certified: true, goodPrice: true },
+              { id: 'el2', year: 2026, make: 'Honda', model: 'CR-V', trim: 'Sport', price: 33550, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/680c099a59ad1f00089429b2/008-2026-honda-cr-v-first-look.jpg', certified: true, goodPrice: true },
+              { id: 'el3', year: 2026, make: 'Honda', model: 'CR-V', trim: 'Touring', price: 41550, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/685edc61b46e00000219aa39/01-2026-honda-cr-v-trailsport.jpg', certified: false, goodPrice: true },
+              { id: 'el4', year: 2026, make: 'Honda', model: 'CR-V', trim: 'Sport-L', price: 36100, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/685edc6a171ad600026f197c/04-2026-honda-cr-v-trailsport.jpg', certified: true, goodPrice: false },
+              { id: 'el5', year: 2026, make: 'Honda', model: 'CR-V', trim: 'EX', price: 35250, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/685edc173f5dd40002189d2a/09-2026-honda-cr-v-trailsport.jpg', certified: true, goodPrice: true },
+              { id: 'el6', year: 2026, make: 'Honda', model: 'CR-V', trim: 'Hybrid Sport-L', price: 39850, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/685edbf6b46e00000219aa37/08-2026-honda-cr-v-trailsport.jpg', certified: false, goodPrice: true },
+              { id: 'el7', year: 2026, make: 'Honda', model: 'CR-V', trim: 'LX', price: 31250, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg', certified: true, goodPrice: true },
+              { id: 'el8', year: 2026, make: 'Honda', model: 'CR-V', trim: 'Sport Hybrid', price: 37450, image: 'https://d2kde5ohu8qb21.cloudfront.net/files/680c099a59ad1f00089429b2/008-2026-honda-cr-v-first-look.jpg', certified: true, goodPrice: true },
+            ].map((car) => (
+              <div key={car.id} className="elot-for-sale__card">
+                <div className="elot-for-sale__card-image">
+                  {car.goodPrice && <span className="elot-for-sale__badge">GOOD PRICE</span>}
+                  <img src={car.image} alt={`${car.year} ${car.make} ${car.model}`} />
+                </div>
+                <div className="elot-for-sale__card-content">
+                  <span className="elot-for-sale__card-certified">Certified {car.year}</span>
+                  <h3 className="elot-for-sale__card-title">{car.year} {car.make}</h3>
+                  <h4 className="elot-for-sale__card-model">{car.model}</h4>
+                  <p className="elot-for-sale__card-trim">{car.trim}</p>
+                  <p className="elot-for-sale__card-price">{formatPrice(car.price)}</p>
+                  <div className="elot-for-sale__card-location">
+                    <MapPin size={14} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button 
+            className="elot-for-sale__nav elot-for-sale__nav--right"
+            aria-label="Next listings"
+            onClick={(e) => {
+              e.preventDefault();
+              const carousel = e.currentTarget.parentElement?.querySelector('.elot-for-sale__carousel');
+              if (carousel) {
+                carousel.scrollBy({ left: 220, behavior: 'smooth' });
+              }
+            }}
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+      </section>
+
       {/* Trade Inventory Section - Hidden for now */}
 
-      {/* Marketplace Analysis Section */}
-      <section className="marketplace-analysis">
-        <div className="marketplace-analysis__header">
-          <h2 className="marketplace-analysis__title">
-            Kia K5 Market Analysis
-          </h2>
-          <p className="marketplace-analysis__subtitle">Real-time pricing intelligence for your area</p>
-        </div>
-        <div className="marketplace-analysis__grid">
-          <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-content">
-              <span className="marketplace-analysis__card-label">Market Speed</span>
-              <span className="marketplace-analysis__card-value">Hot</span>
-              <span className="marketplace-analysis__card-detail">K5s sell in avg. 18 days</span>
+      {/* Combined Marketplace Analysis + Newsletter Section */}
+      <section className="market-newsletter-section">
+        <div className="market-newsletter-section__inner">
+          {/* Marketplace Analysis */}
+          <div className="marketplace-analysis">
+            <div className="marketplace-analysis__header">
+              <h2 className="marketplace-analysis__title">
+                Kia K5 Market Analysis
+              </h2>
+              <p className="marketplace-analysis__subtitle">Real-time pricing intelligence for your area</p>
+            </div>
+            <div className="marketplace-analysis__grid">
+              <div className="marketplace-analysis__card">
+                <div className="marketplace-analysis__card-content">
+                  <span className="marketplace-analysis__card-label">Market Speed</span>
+                  <span className="marketplace-analysis__card-value">Hot</span>
+                  <span className="marketplace-analysis__card-detail">K5s sell in avg. 18 days</span>
+                </div>
+              </div>
+              <div className="marketplace-analysis__card">
+                <div className="marketplace-analysis__card-content">
+                  <span className="marketplace-analysis__card-label">Price Trend</span>
+                  <span className="marketplace-analysis__card-value marketplace-analysis__card-value--positive">Buyer's Market</span>
+                  <span className="marketplace-analysis__card-detail">Prices down 3.2% this month</span>
+                </div>
+              </div>
+              <div className="marketplace-analysis__card">
+                <div className="marketplace-analysis__card-content">
+                  <span className="marketplace-analysis__card-label">Local Inventory</span>
+                  <span className="marketplace-analysis__card-value">47 Available</span>
+                  <span className="marketplace-analysis__card-detail">Within 25 miles of you</span>
+                </div>
+              </div>
+              <div className="marketplace-analysis__card">
+                <div className="marketplace-analysis__card-content">
+                  <span className="marketplace-analysis__card-label">Avg. Savings</span>
+                  <span className="marketplace-analysis__card-value">$2,847</span>
+                  <span className="marketplace-analysis__card-detail">Below MSRP in your area</span>
+                </div>
+              </div>
+            </div>
+            <div className="marketplace-analysis__insight">
+              <p className="marketplace-analysis__insight-text">
+                <strong>Best time to buy:</strong> With 67+ day inventory and declining prices, you have strong negotiating power. 
+                Dealers are motivated to move K5s—use your {formatPrice(tradeEstimate.mid)} trade-in as leverage.
+              </p>
             </div>
           </div>
-          <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-content">
-              <span className="marketplace-analysis__card-label">Price Trend</span>
-              <span className="marketplace-analysis__card-value marketplace-analysis__card-value--positive">Buyer's Market</span>
-              <span className="marketplace-analysis__card-detail">Prices down 3.2% this month</span>
+
+          {/* Newsletter Sign-Up */}
+          <div className="newsletter newsletter--combined">
+            <div className="newsletter__content">
+              <h2 className="newsletter__title">Stay Updated on Car Values</h2>
+              <p className="newsletter__subtitle">
+                Get weekly updates on market trends, pricing insights, and exclusive dealer offers.
+              </p>
+              <form className="newsletter__form">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="newsletter__input"
+                />
+                <Button variant="primary" size="medium">
+                  Subscribe
+                </Button>
+              </form>
             </div>
           </div>
-          <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-content">
-              <span className="marketplace-analysis__card-label">Local Inventory</span>
-              <span className="marketplace-analysis__card-value">47 Available</span>
-              <span className="marketplace-analysis__card-detail">Within 25 miles of you</span>
-            </div>
-          </div>
-          <div className="marketplace-analysis__card">
-            <div className="marketplace-analysis__card-content">
-              <span className="marketplace-analysis__card-label">Avg. Savings</span>
-              <span className="marketplace-analysis__card-value">$2,847</span>
-              <span className="marketplace-analysis__card-detail">Below MSRP in your area</span>
-            </div>
-          </div>
-        </div>
-        <div className="marketplace-analysis__insight">
-          <p className="marketplace-analysis__insight-text">
-            <strong>Best time to buy:</strong> With 67+ day inventory and declining prices, you have strong negotiating power. 
-            Dealers are motivated to move K5s—use your {formatPrice(tradeEstimate.mid)} trade-in as leverage.
-          </p>
         </div>
       </section>
 
@@ -751,26 +880,6 @@ const WhatsMyCarWorthResults = ({
               <p className="faqs__answer">{faq.answer}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Newsletter Sign-Up */}
-      <section className="newsletter">
-        <div className="newsletter__content">
-          <h2 className="newsletter__title">Stay Updated on Car Values</h2>
-          <p className="newsletter__subtitle">
-            Get weekly updates on market trends, pricing insights, and exclusive dealer offers.
-          </p>
-          <form className="newsletter__form">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="newsletter__input"
-            />
-            <Button variant="primary" size="medium">
-              Subscribe
-            </Button>
-          </form>
         </div>
       </section>
 

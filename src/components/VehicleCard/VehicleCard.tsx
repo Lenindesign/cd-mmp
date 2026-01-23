@@ -52,6 +52,7 @@ export interface VehicleCardProps {
   // Pricing
   price: string;
   priceLabel?: string;
+  priceRange?: string; // For "next-vehicle" variant: "$27,775 - $32,905"
   
   // Rating (for new vehicles)
   rating?: number;
@@ -86,6 +87,7 @@ export interface VehicleCardProps {
   
   // New fields for enhanced card
   epaMpg?: number;
+  epaMpgRange?: string; // For "next-vehicle" variant: "32-37"
   cdSays?: string;
   availableYears?: number[];
   yearDetails?: YearDetail[];
@@ -93,6 +95,9 @@ export interface VehicleCardProps {
 
   // Save/Bookmark functionality
   showSaveButton?: boolean;
+  
+  // Variant
+  variant?: 'default' | 'next-vehicle';
 }
 
 const getBadgeLabel = (badge: string) => {
@@ -110,6 +115,7 @@ export const VehicleCard = ({
   bodyStyle,
   price,
   priceLabel = 'Starting at',
+  priceRange,
   rating,
   rank,
   badge,
@@ -127,11 +133,13 @@ export const VehicleCard = ({
   ctas,
   isCurrentVehicle = false,
   epaMpg,
+  epaMpgRange,
   cdSays,
   availableYears,
   yearDetails,
   modelName,
   showSaveButton = false,
+  variant = 'default',
 }: VehicleCardProps) => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const navigate = useNavigate();
@@ -194,6 +202,152 @@ export const VehicleCard = ({
       setIsYearsExpanded(true);
     }
   };
+
+  // Next Vehicle Variant - Horizontal card with header above
+  if (variant === 'next-vehicle') {
+    return (
+      <div className="vehicle-card-next">
+        {/* Header Title - Above the card */}
+        <h2 className="vehicle-card-next__header-title">YOUR NEXT VEHICLE</h2>
+
+        {/* Main Card Content */}
+        <div className="vehicle-card-next__card vehicle-card-next__inner">
+          {/* Vehicle Title */}
+          <h3 className="vehicle-card-next__name">{name}</h3>
+
+          {/* Content Grid: Image+CDSays Left, Specs+CTAs Right */}
+          <div className="vehicle-card-next__content">
+            {/* Left Side: Image and C/D Says */}
+            <div className="vehicle-card-next__left">
+              <Link to={`/${slug}`} className="vehicle-card-next__image-link">
+                <div className="vehicle-card-next__image">
+                  <OptimizedImage 
+                    src={image} 
+                    alt={name}
+                    aspectRatio="16/10"
+                  />
+                </div>
+              </Link>
+
+              {/* C/D Says Section - Below image on left */}
+              {cdSays && (
+                <div className="vehicle-card-next__cd-says">
+                  <span className="vehicle-card-next__cd-says-label">C/D SAYS:</span>
+                  <span className="vehicle-card-next__cd-says-text"> {cdSays}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Right Side: Rating, Badges, Specs, CTAs */}
+            <div className="vehicle-card-next__right">
+              {/* Rating and Badges Row */}
+              <div className="vehicle-card-next__rating-badges">
+                {rating && (
+                  <div className="vehicle-card-next__rating">
+                    <span className="vehicle-card-next__rating-score">{rating}</span>
+                    <span className="vehicle-card-next__rating-max">/10</span>
+                    <span className="vehicle-card-next__rating-label">C/D RATING</span>
+                  </div>
+                )}
+
+                {/* Accolades Badges */}
+                {(editorsChoice || tenBest || evOfTheYear || badge === 'editors-choice') && (
+                  <div className="vehicle-card-next__accolades">
+                    {(editorsChoice || badge === 'editors-choice') && (
+                      <div className="vehicle-card-next__accolade vehicle-card-next__accolade--ec">
+                        <img 
+                          src={EDITORS_CHOICE_BADGE_URL} 
+                          alt="Editor's Choice"
+                        />
+                      </div>
+                    )}
+                    {tenBest && (
+                      <div className="vehicle-card-next__accolade vehicle-card-next__accolade--10best">
+                        <img 
+                          src={TEN_BEST_BADGE_URL} 
+                          alt="10Best"
+                        />
+                      </div>
+                    )}
+                    {evOfTheYear && (
+                      <div className="vehicle-card-next__accolade vehicle-card-next__accolade--ev">
+                        <img 
+                          src={EV_OF_THE_YEAR_BADGE_URL} 
+                          alt="EV of the Year"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Specs: Price and MPG */}
+              <div className="vehicle-card-next__specs">
+                {/* Estimated Price */}
+                <div className="vehicle-card-next__spec">
+                  <span className="vehicle-card-next__spec-label">{priceLabel || 'Estimated Price'}</span>
+                  <span className="vehicle-card-next__spec-value">
+                    {priceRange || price}
+                    {priceRange && <span className="vehicle-card-next__spec-suffix">est</span>}
+                  </span>
+                </div>
+
+                {/* EPA MPG */}
+                {(epaMpgRange || epaMpg) && (
+                  <div className="vehicle-card-next__spec">
+                    <span className="vehicle-card-next__spec-label">EPA MPG</span>
+                    <span className="vehicle-card-next__spec-value">
+                      {epaMpgRange || epaMpg}
+                      <span className="vehicle-card-next__spec-suffix">combined</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* CTA Buttons - Stacked on right */}
+              <div className="vehicle-card-next__ctas">
+                {ctas && ctas.length > 0 ? (
+                  ctas.map((cta, index) => (
+                    <Button
+                      key={index}
+                      variant={mapCtaToButtonVariant(cta.variant)}
+                      size="small"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        cta.onClick?.(e);
+                      }}
+                    >
+                      {cta.text}
+                    </Button>
+                  ))
+                ) : (
+                  showShopButton && (
+                    <>
+                      <Button
+                        variant="primary"
+                        size="small"
+                        onClick={handleShopClick}
+                      >
+                        Shop New {displayModelName}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="small"
+                        onClick={handleShopClick}
+                      >
+                        Shop Used {displayModelName}
+                      </Button>
+                    </>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Enhanced Card Layout (matches Figma design with Lora font)
   if (isEnhancedCard) {

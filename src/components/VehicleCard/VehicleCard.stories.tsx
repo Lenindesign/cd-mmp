@@ -25,6 +25,7 @@ Card component for displaying vehicle information in lists, grids, and carousels
 | **Used Vehicle** | Shows mileage, dealer info, and distance |
 | **Ranked** | Shows rank number for Top 10 lists |
 | **With Shop CTA** | Includes shop button for purchase flow |
+| **Next Vehicle** | Horizontal card with header banner for showcasing recommended vehicles |
 
 ---
 
@@ -709,5 +710,136 @@ export const GridLayout: Story = {
       </div>
     ),
   ],
+};
+
+// ============================================
+// NEXT VEHICLE VARIANT
+// Horizontal card with header banner for
+// showcasing recommended next vehicle
+// ============================================
+
+export const NextVehicle: Story = {
+  decorators: [
+    (Story) => (
+      <div style={{ width: '100%', maxWidth: '960px', background: '#f5f5f5', padding: '24px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  args: {
+    id: 'next-vehicle-1',
+    name: '2026 Honda CR-V',
+    slug: 'honda/cr-v/2026',
+    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg',
+    price: '$27,775',
+    priceLabel: 'Estimated Price',
+    priceRange: '$27,775 - $32,905',
+    rating: 10,
+    variant: 'next-vehicle',
+    editorsChoice: true,
+    tenBest: true,
+    evOfTheYear: true,
+    epaMpgRange: '32-37',
+    cdSays: 'The 2026 Honda CR-V brings a new design, fresh features, and a roomier interior that make the compact SUV\'s sixth generation better than ever.',
+    ctas: [
+      { text: 'SHOP NEW CR-V', variant: 'primary' },
+      { text: 'SHOP USED CR-V', variant: 'outline' },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## Next Vehicle Variant
+
+A horizontal card layout with a header banner designed to showcase recommended vehicles. This variant is ideal for:
+
+- **Trade-in flow results** - Show the user their recommended next vehicle
+- **Personalized recommendations** - Display a featured vehicle suggestion
+- **Comparison landing pages** - Highlight the winning vehicle
+
+### Features
+
+- Dark header banner with "YOUR NEXT VEHICLE" title
+- Horizontal layout with image on left, details on right
+- Large rating display with C/D RATING label
+- Award badges (Editor's Choice, 10Best, EV of the Year)
+- Price range with "est" suffix
+- EPA MPG range
+- C/D SAYS editorial blurb with accent border
+- Dual CTA buttons (Shop New / Shop Used)
+
+### Responsive Behavior
+
+On mobile, the layout stacks vertically with the image on top.
+        `,
+      },
+    },
+  },
+};
+
+export const NextVehicleMinimal: Story = {
+  decorators: [
+    (Story) => (
+      <div style={{ width: '100%', maxWidth: '960px', background: '#f5f5f5', padding: '24px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  args: {
+    id: 'next-vehicle-2',
+    name: '2025 Toyota RAV4',
+    slug: 'toyota/rav4/2025',
+    image: sampleImage,
+    price: '$29,825',
+    priceLabel: 'Starting at',
+    rating: 8.5,
+    variant: 'next-vehicle',
+    epaMpg: 30,
+    showShopButton: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Next Vehicle variant with minimal content - no badges, no C/D Says, single MPG value.',
+      },
+    },
+  },
+};
+
+export const NextVehicleWithBadges: Story = {
+  decorators: [
+    (Story) => (
+      <div style={{ width: '100%', maxWidth: '960px', background: '#f5f5f5', padding: '24px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+  args: {
+    id: 'next-vehicle-3',
+    name: '2025 Mazda CX-5',
+    slug: 'mazda/cx-5/2025',
+    image: 'https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=600&h=400&fit=crop',
+    price: '$30,300',
+    priceLabel: 'Estimated Price',
+    priceRange: '$30,300 - $42,250',
+    rating: 9,
+    variant: 'next-vehicle',
+    editorsChoice: true,
+    tenBest: true,
+    epaMpgRange: '26-31',
+    cdSays: 'The Mazda CX-5 continues to impress with its engaging driving dynamics and upscale interior that rivals luxury competitors.',
+    ctas: [
+      { text: 'SHOP NEW CX-5', variant: 'primary' },
+      { text: 'SHOP USED CX-5', variant: 'outline' },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Next Vehicle variant with Editor\'s Choice and 10Best badges.',
+      },
+    },
+  },
 };
 

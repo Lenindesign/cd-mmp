@@ -7,6 +7,35 @@
 }
 
 /* ========================================
+   PAGE HEADER - What's My Car Worth?
+   ======================================== */
+.wmcw-page-header {
+  text-align: center;
+  margin-bottom: var(--spacing-8);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wmcw-page-header__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-4) 0;
+  line-height: 1.2;
+}
+
+.wmcw-page-header__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  color: var(--color-gray-600);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========================================
    VALUE SECTION - New Design
    ======================================== */
 .value-section {
@@ -466,7 +495,7 @@
   font-family: var(--font-heading);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: #166534;
+  color: var(--color-badge-certified);
 }
 
 .value-section__tip-text {
@@ -556,7 +585,7 @@
 .value-section__local-dealer-title {
   font-family: 'Inter', sans-serif;
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-dark);
   margin: 0;
   text-transform: uppercase;
@@ -1910,13 +1939,272 @@
   margin-bottom: var(--spacing-4);
 }
 
+/* Your Next Vehicle Section - VehicleCard wrapper */
+.your-next-vehicle-section {
+  margin-bottom: 0;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+}
+
+/* ========================================
+   eLot - For Sale Near You
+   ======================================== */
+.elot-for-sale {
+  background: var(--color-gray-100);
+  margin-top: -1px; /* Ensure seamless connection with previous gray section */
+  margin-bottom: var(--spacing-8);
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+  padding: var(--spacing-6) 0 var(--spacing-8) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.elot-for-sale__header,
+.elot-for-sale__carousel-wrapper {
+  width: 100%;
+  max-width: 1280px;
+  padding: 0 var(--spacing-6);
+  box-sizing: border-box;
+}
+
+/* Carousel Wrapper with Navigation */
+.elot-for-sale__carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+/* Navigation Buttons */
+.elot-for-sale__nav {
+  position: absolute;
+  top: 35%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.elot-for-sale__nav:hover {
+  background: var(--color-gray-50);
+  box-shadow: var(--shadow-lg);
+}
+
+.elot-for-sale__nav--left {
+  left: var(--spacing-2);
+}
+
+.elot-for-sale__nav--right {
+  right: var(--spacing-2);
+}
+
+.elot-for-sale__nav svg {
+  color: var(--color-dark);
+}
+
+.elot-for-sale__header {
+  margin-bottom: var(--spacing-5);
+}
+
+.elot-for-sale__title {
+  font-family: 'Inter', var(--font-body);
+  font-size: 32px;
+  font-weight: 700;
+  font-style: normal;
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.elot-for-sale__see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  text-decoration: none;
+}
+
+.elot-for-sale__see-all-link {
+  color: var(--color-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.elot-for-sale__see-all:hover .elot-for-sale__see-all-link {
+  color: var(--color-blue-cobalt);
+}
+
+.elot-for-sale__arrow {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-dark);
+}
+
+/* Carousel */
+.elot-for-sale__carousel {
+  display: flex;
+  gap: var(--spacing-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 var(--spacing-8);
+  margin: 0 var(--spacing-6);
+  flex: 1;
+}
+
+.elot-for-sale__carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Card */
+.elot-for-sale__card {
+  flex: 0 0 180px;
+  min-width: 180px;
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  scroll-snap-align: start;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-200);
+}
+
+.elot-for-sale__card-image {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: var(--color-gray-800);
+}
+
+.elot-for-sale__card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Good Price Badge */
+.elot-for-sale__badge {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-2);
+  background: #166534;
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  z-index: 1;
+}
+
+/* Card Content */
+.elot-for-sale__card-content {
+  padding: var(--spacing-3);
+}
+
+.elot-for-sale__card-certified {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-1);
+}
+
+.elot-for-sale__card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.elot-for-sale__card-model {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-1) 0;
+  line-height: 1.2;
+}
+
+.elot-for-sale__card-trim {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-3) 0;
+}
+
+.elot-for-sale__card-price {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.elot-for-sale__card-location {
+  color: var(--color-blue-cobalt);
+}
+
+.elot-for-sale__card-location svg {
+  width: 14px;
+  height: 14px;
+}
+
 /* Marketplace Analysis Section */
+/* ========================================
+   Combined Market Analysis + Newsletter Section
+   ======================================== */
+.market-newsletter-section {
+  background: var(--color-gray-100);
+  margin-bottom: var(--spacing-8);
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+  padding: var(--spacing-8) 0;
+  display: flex;
+  justify-content: center;
+}
+
+.market-newsletter-section__inner {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--spacing-6);
+  width: 100%;
+  max-width: 1280px;
+  padding: 0 var(--spacing-6);
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .market-newsletter-section__inner {
+    grid-template-columns: 1fr;
+  }
+}
+
 .marketplace-analysis {
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-8);
-  margin-bottom: var(--spacing-8);
-  box-shadow: var(--shadow-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-200);
 }
 
 .marketplace-analysis__header {
@@ -2241,6 +2529,34 @@
   padding: var(--spacing-8);
   margin-bottom: var(--spacing-8);
   text-align: center;
+}
+
+.newsletter.newsletter--combined {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+}
+
+.newsletter--combined .newsletter__form {
+  flex-direction: column;
+  max-width: 300px;
+}
+
+.newsletter--combined .newsletter__input {
+  width: 100%;
+  margin-bottom: var(--spacing-3);
+}
+
+.newsletter--combined .newsletter__title {
+  font-size: var(--font-size-2xl);
+}
+
+.newsletter--combined .newsletter__subtitle {
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-4);
 }
 
 .newsletter__title {
