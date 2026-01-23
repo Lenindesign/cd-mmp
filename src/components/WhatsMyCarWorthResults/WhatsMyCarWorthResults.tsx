@@ -6,6 +6,94 @@ import { DealerMapModal } from '../DealerLocatorMap';
 import { vehicleDatabase } from '../../data/vehicles';
 import './WhatsMyCarWorthResults.css';
 
+// Black Book logo component - using official logo from Black Book
+const BlackBookLogo = () => (
+  <div className="black-book-logo">
+    <img 
+      src="https://app.blackbookinformation.com/app/assets/img/cdtt-bb-logo.png" 
+      alt="Powered by Black Book" 
+      className="black-book-logo__image"
+    />
+  </div>
+);
+
+// Filled help icon (circle with question mark)
+const HelpIcon = ({ className }: { className?: string }) => (
+  <svg 
+    className={className}
+    width="18" 
+    height="18" 
+    viewBox="0 0 24 24" 
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="12" cy="12" r="12" fill="currentColor" />
+    <text 
+      x="12" 
+      y="17" 
+      textAnchor="middle" 
+      fill="white" 
+      fontSize="14" 
+      fontWeight="bold"
+      fontFamily="system-ui, sans-serif"
+    >
+      ?
+    </text>
+  </svg>
+);
+
+// Custom map pin icon
+const CustomMapPinIcon = ({ size = 14 }: { size?: number }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 9 13" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path 
+      d="M4.03125 11.7656C0.609375 6.84375 0 6.32812 0 4.5C0 2.01562 1.99219 0 4.5 0C6.98438 0 9 2.01562 9 4.5C9 6.32812 8.36719 6.84375 4.94531 11.7656C4.73438 12.0938 4.24219 12.0938 4.03125 11.7656ZM4.5 6.375C5.53125 6.375 6.375 5.55469 6.375 4.5C6.375 3.46875 5.53125 2.625 4.5 2.625C3.44531 2.625 2.625 3.46875 2.625 4.5C2.625 5.55469 3.44531 6.375 4.5 6.375Z" 
+      fill="#1B5F8A"
+    />
+  </svg>
+);
+
+// Custom phone icon
+const CustomPhoneIcon = ({ size = 14 }: { size?: number }) => (
+  <svg 
+    width={Math.round(size * 9 / 14)} 
+    height={size} 
+    viewBox="0 0 9 14" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path 
+      d="M0 1.75C0 0.792969 0.765625 0 1.75 0H7C7.95703 0 8.75 0.792969 8.75 1.75V12.25C8.75 13.2344 7.95703 14 7 14H1.75C0.765625 14 0 13.2344 0 12.25V1.75ZM1.75 6.34375C1.75 6.72656 2.02344 7 2.40625 7H6.34375C6.69922 7 7 6.72656 7 6.34375V4.15625C7 3.80078 6.69922 3.5 6.34375 3.5H2.40625C2.02344 3.5 1.75 3.80078 1.75 4.15625V6.34375ZM2.1875 9.625C2.54297 9.625 2.84375 9.35156 2.84375 8.96875C2.84375 8.61328 2.54297 8.3125 2.1875 8.3125C1.80469 8.3125 1.53125 8.61328 1.53125 8.96875C1.53125 9.35156 1.80469 9.625 2.1875 9.625ZM2.1875 10.5C1.80469 10.5 1.53125 10.8008 1.53125 11.1562C1.53125 11.5391 1.80469 11.8125 2.1875 11.8125C2.54297 11.8125 2.84375 11.5391 2.84375 11.1562C2.84375 10.8008 2.54297 10.5 2.1875 10.5ZM4.375 9.625C4.73047 9.625 5.03125 9.35156 5.03125 8.96875C5.03125 8.61328 4.73047 8.3125 4.375 8.3125C3.99219 8.3125 3.71875 8.61328 3.71875 8.96875C3.71875 9.35156 3.99219 9.625 4.375 9.625ZM4.375 10.5C3.99219 10.5 3.71875 10.8008 3.71875 11.1562C3.71875 11.5391 3.99219 11.8125 4.375 11.8125C4.73047 11.8125 5.03125 11.5391 5.03125 11.1562C5.03125 10.8008 4.73047 10.5 4.375 10.5ZM6.5625 9.625C6.91797 9.625 7.21875 9.35156 7.21875 8.96875C7.21875 8.61328 6.91797 8.3125 6.5625 8.3125C6.17969 8.3125 5.90625 8.61328 5.90625 8.96875C5.90625 9.35156 6.17969 9.625 6.5625 9.625ZM6.5625 10.5C6.17969 10.5 5.90625 10.8008 5.90625 11.1562C5.90625 11.5391 6.17969 11.8125 6.5625 11.8125C6.91797 11.8125 7.21875 11.5391 7.21875 11.1562C7.21875 10.8008 6.91797 10.5 6.5625 10.5ZM3.5 1.3125C3.25391 1.3125 3.0625 1.53125 3.0625 1.75C3.0625 1.99609 3.25391 2.1875 3.5 2.1875H5.25C5.46875 2.1875 5.6875 1.99609 5.6875 1.75C5.6875 1.53125 5.46875 1.3125 5.25 1.3125H3.5Z" 
+      fill="#1B5F8A"
+    />
+  </svg>
+);
+
+// Custom seal check icon (for Expert Tip)
+const SealCheckIcon = ({ size = 18, className }: { size?: number; className?: string }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    aria-hidden="true"
+  >
+    <path 
+      d="M21.1744 9.63937C20.8209 9.27 20.4553 8.88937 20.3175 8.55469C20.19 8.24813 20.1825 7.74 20.175 7.24781C20.1609 6.33281 20.1459 5.29594 19.425 4.575C18.7041 3.85406 17.6672 3.83906 16.7522 3.825C16.26 3.8175 15.7519 3.81 15.4453 3.6825C15.1116 3.54469 14.73 3.17906 14.3606 2.82562C13.7137 2.20406 12.9787 1.5 12 1.5C11.0213 1.5 10.2872 2.20406 9.63937 2.82562C9.27 3.17906 8.88937 3.54469 8.55469 3.6825C8.25 3.81 7.74 3.8175 7.24781 3.825C6.33281 3.83906 5.29594 3.85406 4.575 4.575C3.85406 5.29594 3.84375 6.33281 3.825 7.24781C3.8175 7.74 3.81 8.24813 3.6825 8.55469C3.54469 8.88844 3.17906 9.27 2.82562 9.63937C2.20406 10.2862 1.5 11.0213 1.5 12C1.5 12.9787 2.20406 13.7128 2.82562 14.3606C3.17906 14.73 3.54469 15.1106 3.6825 15.4453C3.81 15.7519 3.8175 16.26 3.825 16.7522C3.83906 17.6672 3.85406 18.7041 4.575 19.425C5.29594 20.1459 6.33281 20.1609 7.24781 20.175C7.74 20.1825 8.24813 20.19 8.55469 20.3175C8.88844 20.4553 9.27 20.8209 9.63937 21.1744C10.2862 21.7959 11.0213 22.5 12 22.5C12.9787 22.5 13.7128 21.7959 14.3606 21.1744C14.73 20.8209 15.1106 20.4553 15.4453 20.3175C15.7519 20.19 16.26 20.1825 16.7522 20.175C17.6672 20.1609 18.7041 20.1459 19.425 19.425C20.1459 18.7041 20.1609 17.6672 20.175 16.7522C20.1825 16.26 20.19 15.7519 20.3175 15.4453C20.4553 15.1116 20.8209 14.73 21.1744 14.3606C21.7959 13.7137 22.5 12.9787 22.5 12C22.5 11.0213 21.7959 10.2872 21.1744 9.63937ZM20.0916 13.3228C19.6425 13.7916 19.1775 14.2763 18.9309 14.8716C18.6947 15.4434 18.6844 16.0969 18.675 16.7297C18.6656 17.3859 18.6553 18.0731 18.3638 18.3638C18.0722 18.6544 17.3897 18.6656 16.7297 18.675C16.0969 18.6844 15.4434 18.6947 14.8716 18.9309C14.2763 19.1775 13.7916 19.6425 13.3228 20.0916C12.8541 20.5406 12.375 21 12 21C11.625 21 11.1422 20.5387 10.6772 20.0916C10.2122 19.6444 9.72375 19.1775 9.12844 18.9309C8.55656 18.6947 7.90313 18.6844 7.27031 18.675C6.61406 18.6656 5.92687 18.6553 5.63625 18.3638C5.34562 18.0722 5.33437 17.3897 5.325 16.7297C5.31562 16.0969 5.30531 15.4434 5.06906 14.8716C4.8225 14.2763 4.3575 13.7916 3.90844 13.3228C3.45937 12.8541 3 12.375 3 12C3 11.625 3.46125 11.1422 3.90844 10.6772C4.35562 10.2122 4.8225 9.72375 5.06906 9.12844C5.30531 8.55656 5.31562 7.90313 5.325 7.27031C5.33437 6.61406 5.34469 5.92687 5.63625 5.63625C5.92781 5.34562 6.61031 5.33437 7.27031 5.325C7.90313 5.31562 8.55656 5.30531 9.12844 5.06906C9.72375 4.8225 10.2084 4.3575 10.6772 3.90844C11.1459 3.45937 11.625 3 12 3C12.375 3 12.8578 3.46125 13.3228 3.90844C13.7878 4.35562 14.2763 4.8225 14.8716 5.06906C15.4434 5.30531 16.0969 5.31562 16.7297 5.325C17.3859 5.33437 18.0731 5.34469 18.3638 5.63625C18.6544 5.92781 18.6656 6.61031 18.675 7.27031C18.6844 7.90313 18.6947 8.55656 18.9309 9.12844C19.1775 9.72375 19.6425 10.2084 20.0916 10.6772C20.5406 11.1459 21 11.625 21 12C21 12.375 20.5387 12.8578 20.0916 13.3228ZM16.2806 9.21937C16.3504 9.28903 16.4057 9.37175 16.4434 9.46279C16.4812 9.55384 16.5006 9.65144 16.5006 9.75C16.5006 9.84856 16.4812 9.94616 16.4434 10.0372C16.4057 10.1283 16.3504 10.211 16.2806 10.2806L11.0306 15.5306C10.961 15.6004 10.8783 15.6557 10.7872 15.6934C10.6962 15.7312 10.5986 15.7506 10.5 15.7506C10.4014 15.7506 10.3038 15.7312 10.2128 15.6934C10.1217 15.6557 10.039 15.6004 9.96937 15.5306L7.71937 13.2806C7.57864 13.1399 7.49958 12.949 7.49958 12.75C7.49958 12.551 7.57864 12.3601 7.71937 12.2194C7.86011 12.0786 8.05098 11.9996 8.25 11.9996C8.44902 11.9996 8.63989 12.0786 8.78063 12.2194L10.5 13.9397L15.2194 9.21937C15.289 9.14964 15.3717 9.09432 15.4628 9.05658C15.5538 9.01884 15.6514 8.99941 15.75 8.99941C15.8486 8.99941 15.9462 9.01884 16.0372 9.05658C16.1283 9.09432 16.211 9.14964 16.2806 9.21937Z" 
+      fill="#26870D"
+    />
+  </svg>
+);
+
 // Rolling number animation component
 const RollingNumber = ({ value, duration = 2000 }: { value: number; duration?: number }) => {
   const [displayValue, setDisplayValue] = useState(0);
@@ -145,6 +233,33 @@ const WhatsMyCarWorthResults = ({
     };
   }, [tradeEstimate.mid]);
 
+  // Calculate condition-based values (Clean, Average, Rough)
+  const conditionValues = useMemo(() => {
+    const baseValue = tradeEstimate.mid;
+    return {
+      clean: {
+        tradeIn: Math.round(baseValue * 1.1),
+        privateParty: Math.round(baseValue * 1.2),
+      },
+      average: {
+        tradeIn: baseValue,
+        privateParty: Math.round(baseValue * 1.1),
+      },
+      rough: {
+        tradeIn: Math.round(baseValue * 0.9),
+        privateParty: baseValue,
+      },
+    };
+  }, [tradeEstimate.mid]);
+
+  // Vehicle options (mock data - would come from API)
+  const vehicleOptions = useMemo(() => {
+    return [
+      { name: 'Power Running Boards', price: 450 },
+      { name: 'Elevation Edition', price: 30 },
+    ];
+  }, []);
+
   // Calculate realistic depreciation forecast
   const depreciationForecast = useMemo(() => {
     const currentValue = tradeEstimate.mid;
@@ -278,212 +393,142 @@ const WhatsMyCarWorthResults = ({
 
   return (
     <div className={`whats-my-car-worth-results whats-my-car-worth-results--${variant}`}>
-      {/* Trade Estimate Section */}
-      <section className="trade-estimate">
-        <div className="trade-estimate__container">
-          {/* Vehicle Image */}
-          <div className="trade-estimate__image-wrapper">
-            <img 
-              src={vehicleImage} 
-              alt={`${tradeEstimate.vehicle.year} ${tradeEstimate.vehicle.make} ${tradeEstimate.vehicle.model}`}
-              className="trade-estimate__image"
-            />
+      {/* Value Section - New Design */}
+      <section className="value-section">
+        {/* Header */}
+        <div className="value-section__header">
+          <div className="value-section__header-left">
+            <span className="value-section__label">YOUR VEHICLE'S RESALE VALUE</span>
+            <h1 className="value-section__title">
+              {tradeEstimate.vehicle.year} {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model}
+            </h1>
+            <button className="value-section__change-link">Change Vehicle</button>
           </div>
+          <BlackBookLogo />
+        </div>
 
-          {/* Content */}
-          <div className="trade-estimate__content">
-            <div className="trade-estimate__header">
-              <h1 className="trade-estimate__title">Your Trade Estimate</h1>
-              <p className="trade-estimate__subtitle">
-                {tradeEstimate.vehicle.year} {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model}
-              </p>
-            </div>
-            
-            {/* Primary Estimate - Most Prominent */}
-            <div className="trade-estimate__primary">
-              <div className="trade-estimate__primary-label">Estimated Trade-In Value</div>
-              <div className="trade-estimate__primary-amount">
-                <RollingNumber value={tradeEstimate.mid} duration={1800} />
+        {/* Vehicle Details - Secondary Info */}
+        <div className="value-section__details">
+          <div className="value-section__detail">
+            <span className="value-section__detail-label">Style</span>
+            <span className="value-section__detail-value">4D SUV FWD</span>
+          </div>
+          <span className="value-section__detail-divider">•</span>
+          <div className="value-section__detail">
+            <span className="value-section__detail-label">Mileage</span>
+            <span className="value-section__detail-value">{tradeEstimate.vehicle.mileage.toLocaleString()}</span>
+          </div>
+          {vehicleOptions.length > 0 && (
+            <>
+              <span className="value-section__detail-divider">•</span>
+              <div className="value-section__detail">
+                <span className="value-section__detail-label">Options</span>
+                <span className="value-section__detail-value">
+                  {vehicleOptions.map(o => o.name).join(', ')} (+${vehicleOptions.reduce((sum, o) => sum + o.price, 0)})
+                </span>
               </div>
-              <div className="trade-estimate__primary-badge">Most Likely</div>
-              <div className="trade-estimate__primary-range">
-                Range: {formatPrice(tradeEstimate.low)} - {formatPrice(tradeEstimate.high)}
-              </div>
-            </div>
+            </>
+          )}
+        </div>
 
-            {/* Value Forecast */}
-            <div className="trade-estimate__forecast">
-              <div className="trade-estimate__forecast-header">
-                <TrendingDown size={16} className="trade-estimate__forecast-icon trade-estimate__forecast-icon--down" />
-                <span className="trade-estimate__forecast-title">Value Forecast</span>
-                <span className="trade-estimate__forecast-rate">~{depreciationForecast.annualRate}%/year</span>
-              </div>
-              <div className="trade-estimate__forecast-content">
-                <div className="trade-estimate__forecast-item">
-                  <span className="trade-estimate__forecast-label">30 days</span>
-                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-{formatPrice(depreciationForecast.day30Loss)}</span>
-                </div>
-                <div className="trade-estimate__forecast-item">
-                  <span className="trade-estimate__forecast-label">60 days</span>
-                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-{formatPrice(depreciationForecast.day60Loss)}</span>
-                </div>
-                <div className="trade-estimate__forecast-item">
-                  <span className="trade-estimate__forecast-label">90 days</span>
-                  <span className="trade-estimate__forecast-value trade-estimate__forecast-value--down">-{formatPrice(depreciationForecast.day90Loss)}</span>
-                </div>
-              </div>
-              <p className="trade-estimate__forecast-note">
-                <Clock size={12} />
-                Your {depreciationForecast.vehicleAge}-year-old {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model} is depreciating ~${depreciationForecast.dailyDepreciation}/day. Trade in sooner to maximize value.
-              </p>
-            </div>
-
-            {/* Vehicle Details */}
-            <div className="trade-estimate__details">
-              <div className="trade-estimate__detail">
-                <span className="trade-estimate__detail-label">Mileage</span>
-                <span className="trade-estimate__detail-value">{tradeEstimate.vehicle.mileage.toLocaleString()} mi</span>
-              </div>
-              <div className="trade-estimate__detail">
-                <span className="trade-estimate__detail-label">Condition</span>
-                <span className="trade-estimate__detail-value">{tradeEstimate.vehicle.condition}</span>
-              </div>
-            </div>
-
-            {/* Buying Power Section - NEW: Reframes value as forward-looking */}
-            <div className="trade-estimate__buying-power">
-              <div className="trade-estimate__buying-power-header">
-                <Car size={20} />
-                <span>Your Buying Power</span>
-              </div>
-              <div className="trade-estimate__buying-power-benefits">
-                <div className="trade-estimate__buying-power-item">
-                  <Check size={16} className="trade-estimate__check-icon" />
-                  <span>Cover most down payments on a new {tradeEstimate.vehicle.make}</span>
-                </div>
-                <div className="trade-estimate__buying-power-item">
-                  <Check size={16} className="trade-estimate__check-icon" />
-                  <span>Reduce monthly payments by ~{formatPrice(buyingPower.monthlyReduction)}/mo</span>
-                </div>
-                <div className="trade-estimate__buying-power-item">
-                  <Check size={16} className="trade-estimate__check-icon" />
-                  <span>Put you into a newer {tradeEstimate.vehicle.model} today</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Primary CTA - Forward-looking language */}
-            <div className="trade-estimate__actions">
-              <Button variant="success" size="large">
-                Apply Trade-In to New Cars
-              </Button>
-              <Button 
-                variant="outline" 
-                size="large" 
-                onClick={() => setSaved(!saved)}
-                iconLeft={<Bookmark size={18} fill={saved ? 'currentColor' : 'none'} />}
-              >
-                {saved ? 'Saved' : 'Save Estimate'}
-              </Button>
-            </div>
+        {/* Trade-In Values - Primary Focus */}
+        <div className="value-section__values">
+          <div className="value-section__value-card">
+            <span className="value-section__value-label">
+              Clean
+              <HelpIcon className="value-section__help-icon" />
+            </span>
+            <span className="value-section__value-amount">
+              {formatPrice(conditionValues.clean.tradeIn)}
+            </span>
+          </div>
+          
+          <div className="value-section__value-card value-section__value-card--primary">
+            <span className="value-section__value-badge">Most Common</span>
+            <span className="value-section__value-label">
+              Average
+              <HelpIcon className="value-section__help-icon" />
+            </span>
+            <span className="value-section__value-amount value-section__value-amount--primary">
+              {formatPrice(conditionValues.average.tradeIn)}
+            </span>
+          </div>
+          
+          <div className="value-section__value-card">
+            <span className="value-section__value-label">
+              Rough
+              <HelpIcon className="value-section__help-icon" />
+            </span>
+            <span className="value-section__value-amount">
+              {formatPrice(conditionValues.rough.tradeIn)}
+            </span>
           </div>
         </div>
-      </section>
 
-      {/* NEW: Inventory Section BEFORE Dealers - with trade-in adjusted pricing */}
-      <section className="trade-inventory">
-        <div className="trade-inventory__header">
-          <h2 className="trade-inventory__title">
-            Kia K5 With Your {formatPrice(tradeEstimate.mid)} Trade-In
-          </h2>
-          <p className="trade-inventory__subtitle">
-            See how your trade-in applies to available K5 inventory near you
+        {/* Private Party Link */}
+        <div className="value-section__private-party">
+          <span className="value-section__private-party-text">Interested in selling your vehicle yourself?</span>
+          <a href="#" className="value-section__private-party-link">
+            See the private party values for your {tradeEstimate.vehicle.year} {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model}.
+          </a>
+        </div>
+
+        {/* Expert Tip */}
+        <div className="value-section__tip">
+          <div className="value-section__tip-header">
+            <SealCheckIcon size={18} className="value-section__tip-icon" />
+            <span className="value-section__tip-title">C/D Expert Tip:</span>
+          </div>
+          <p className="value-section__tip-text">
+            <strong>Choose the condition that best matches your car today,</strong> not how it looked when it was new.
+          </p>
+          <ul className="value-section__tip-list">
+            <li><strong>Clean:</strong> No major dents, scratches, or mechanical issues—well cared for inside and out.</li>
+            <li><strong>Average:</strong> Normal wear and tear for its age, but nothing that needs immediate repair.</li>
+            <li><strong>Rough:</strong> Visible damage, mechanical problems, or heavy interior wear.</li>
+          </ul>
+          <p className="value-section__tip-stat">
+            <TrendingDown size={14} />
+            <strong>About 70% of trade-ins are rated in average condition,</strong> making it the most accurate choice for most vehicles when you're unsure.
           </p>
         </div>
-        <div className="trade-inventory__grid">
-          {inventoryWithTradeIn.map((car) => (
-            <div key={car.id} className="trade-inventory__card">
-              <div className="trade-inventory__card-image">
-                <img src={car.image} alt={`${car.year} ${car.make} ${car.model}`} />
-                {car.isNew ? (
-                  <span className="trade-inventory__badge">New</span>
-                ) : car.certified ? (
-                  <span className="trade-inventory__badge trade-inventory__badge--certified">CPO</span>
-                ) : null}
+
+        {/* Your Local Dealer */}
+        <div className="value-section__local-dealer">
+          <div className="value-section__local-dealer-header">
+            <div className="value-section__local-dealer-title-row">
+              <div className="value-section__local-dealer-check">
+                <Check size={16} />
               </div>
-              <div className="trade-inventory__card-content">
-                <h3 className="trade-inventory__card-title">
-                  {car.year} {car.make} {car.model} {car.trim}
-                </h3>
-                <div className="trade-inventory__card-specs">
-                  <span className="trade-inventory__spec">{car.exteriorColor}</span>
-                  <span className="trade-inventory__spec-divider">•</span>
-                  <span className="trade-inventory__spec">{car.interiorColor} Interior</span>
-                  {!car.isNew && (
-                    <>
-                      <span className="trade-inventory__spec-divider">•</span>
-                      <span className="trade-inventory__spec">{car.mileage.toLocaleString()} mi</span>
-                    </>
-                  )}
-                </div>
-                <div className="trade-inventory__card-pricing">
-                  <div className="trade-inventory__price-row">
-                    <span className="trade-inventory__price-label">{car.isNew ? 'MSRP' : 'Price'}</span>
-                    <span className="trade-inventory__price-msrp">{formatPrice(car.msrp)}</span>
-                  </div>
-                  <div className="trade-inventory__price-row trade-inventory__price-row--highlight">
-                    <span className="trade-inventory__price-label">
-                      <TrendingDown size={14} />
-                      After trade-in
-                    </span>
-                    <span className="trade-inventory__price-after">~{formatPrice(car.afterTradeIn)} + tax</span>
-                  </div>
-                  <div className="trade-inventory__price-row">
-                    <span className="trade-inventory__price-label">Est. monthly</span>
-                    <span className="trade-inventory__price-monthly">~{formatPrice(car.monthlyPayment)}/mo</span>
-                  </div>
-                </div>
-                {car.incentives && car.incentives.length > 0 && (
-                  <div className="trade-inventory__card-incentives">
-                    {car.incentives.map((incentive, idx) => (
-                      <span 
-                        key={idx} 
-                        className={`trade-inventory__incentive trade-inventory__incentive--${incentive.type}`}
-                      >
-                        {incentive.label}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <div className="trade-inventory__card-dealer">
-                  <MapPin size={12} />
-                  <span>{car.dealer}</span>
-                  <span className="trade-inventory__card-distance">{car.distance} mi</span>
-                </div>
-                <div className="trade-inventory__card-vin">
-                  <span>Stock #{car.stockNumber}</span>
-                  <span className={`trade-inventory__days-on-lot ${car.daysOnLot > 45 ? 'trade-inventory__days-on-lot--high' : ''}`}>
-                    {car.daysOnLot} days on lot
-                  </span>
-                </div>
-                <Button variant="primary" size="medium" className="trade-inventory__card-cta">
-                  Check Availability
-                </Button>
+              <h3 className="value-section__local-dealer-title">YOUR LOCAL DEALER</h3>
+            </div>
+            <p className="value-section__local-dealer-subtitle">They may contact you to discuss the next steps.</p>
+          </div>
+          <div className="value-section__local-dealer-card">
+            <div className="value-section__local-dealer-info">
+              <h4 className="value-section__local-dealer-name">Serra Buick GMC Cadillac</h4>
+              <p className="value-section__local-dealer-address">12300 Thirty Mile Road</p>
+              <p className="value-section__local-dealer-city">Washington Township, MI</p>
+            </div>
+            <div className="value-section__local-dealer-contact">
+              <a href="tel:5862812800" className="value-section__local-dealer-phone">
+                <CustomPhoneIcon size={14} />
+                (586) 281-2800
+              </a>
+              <p className="value-section__local-dealer-distance">
+                <CustomMapPinIcon size={14} />
+                18 miles away
+              </p>
+              <div className="value-section__local-dealer-links">
+                <a href="#" className="value-section__local-dealer-link">Map</a>
+                <a href="#" className="value-section__local-dealer-link">Directions</a>
               </div>
             </div>
-          ))}
-        </div>
-        <div className="trade-inventory__footer">
-          <Button 
-            variant="outline" 
-            size="medium" 
-            iconRight={<ChevronRight size={18} />}
-            onClick={() => setShowDealersModal(true)}
-          >
-            See All Kia K5 Near You
-          </Button>
+          </div>
         </div>
       </section>
+
+      {/* Trade Inventory Section - Hidden for now */}
 
       {/* Marketplace Analysis Section */}
       <section className="marketplace-analysis">

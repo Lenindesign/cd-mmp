@@ -505,13 +505,13 @@ const TypographyPage = () => (
         </p>
       </div>
       
-      <div className="docs-section">
+        <div className="docs-section">
         <h2 className="docs-section-title">Primary Fonts</h2>
         <p className="docs-section-subtitle">
-          Our design system uses two typefaces: Inter for UI and Lora for editorial content.
+          Our design system uses three typefaces: Inter for UI, Lora for editorial content, and Barlow Condensed for labels.
         </p>
         
-        <div className="font-showcase">
+        <div className="font-showcase" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
           <div className="font-showcase-item">
             <div className="font-showcase-name" style={{ fontFamily: "'Inter', sans-serif" }}>Inter</div>
             <div className="font-showcase-sample" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -537,6 +537,19 @@ const TypographyPage = () => (
               Adds a premium, editorial feel to long-form content.
             </div>
           </div>
+          
+          <div className="font-showcase-item">
+            <div className="font-showcase-name" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600 }}>Barlow Condensed</div>
+            <div className="font-showcase-sample" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600 }}>
+              ABCDEFGHIJKLMNOPQRSTUVWXYZ<br/>
+              abcdefghijklmnopqrstuvwxyz<br/>
+              0123456789
+            </div>
+            <div className="font-showcase-desc">
+              <strong>Condensed Sans-serif</strong> — Used for labels, badges, condition headers, and compact UI elements.
+              Space-efficient with strong visual presence.
+            </div>
+          </div>
         </div>
         
         <div className="font-box">
@@ -548,6 +561,10 @@ const TypographyPage = () => (
           <div className="font-item">
             <code>--font-serif</code>
             <span>'Lora', Georgia, serif</span>
+          </div>
+          <div className="font-item">
+            <code>--font-condensed</code>
+            <span>'Barlow Condensed', -apple-system, BlinkMacSystemFont, sans-serif</span>
           </div>
         </div>
         
@@ -568,6 +585,10 @@ const TypographyPage = () => (
           <div className="font-item">
             <code>--font-article</code>
             <span>var(--font-serif)</span>
+          </div>
+          <div className="font-item">
+            <code>--font-label</code>
+            <span>var(--font-condensed)</span>
           </div>
         </div>
       </div>
@@ -690,6 +711,49 @@ const TypographyPage = () => (
           </div>
           <div className="type-sample" style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-regular)' }}>
             The quick brown fox jumps over the lazy dog.
+          </div>
+        </div>
+      </div>
+
+      <div className="docs-section">
+        <h2 className="docs-section-title">Label Text (Condensed)</h2>
+        <p className="docs-section-subtitle">
+          Condensed text styles using Barlow Condensed for labels, badges, and compact UI elements.
+        </p>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Label Large</div>
+              <div className="type-specs">var(--font-size-lg) · 18px / Barlow Condensed / 600</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-condensed)', fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            CLEAN CONDITION
+          </div>
+        </div>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Label Default</div>
+              <div className="type-specs">var(--font-size-base) · 14px / Barlow Condensed / 600</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-condensed)', fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-semibold)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            AVERAGE CONDITION
+          </div>
+        </div>
+        
+        <div className="type-row">
+          <div className="type-meta">
+            <div>
+              <div className="type-name">Label Small</div>
+              <div className="type-specs">var(--font-size-sm) · 12px / Barlow Condensed / 600</div>
+            </div>
+          </div>
+          <div className="type-sample" style={{ fontFamily: 'var(--font-condensed)', fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            ROUGH CONDITION
           </div>
         </div>
       </div>
@@ -1199,7 +1263,7 @@ const meta: Meta = {
 
 ## Primary Fonts
 
-Our design system uses **two typefaces**:
+Our design system uses **three typefaces**:
 
 ### Inter (Sans-serif)
 - **Usage:** Display headlines, headings, body text, and all UI elements
@@ -1211,6 +1275,12 @@ Our design system uses **two typefaces**:
 - **Why:** Adds a premium, editorial feel to long-form content
 - **Variables:** \`--font-serif\`, \`--font-article\`
 
+### Barlow Condensed (Condensed Sans-serif)
+- **Usage:** Labels, badges, condition headers, and compact UI elements
+- **Why:** Space-efficient with strong visual presence, perfect for uppercase labels
+- **Variables:** \`--font-condensed\`, \`--font-label\`
+- **Weight:** Semibold (600) only
+
 ## Font Variables
 
 ### Base Font Stacks
@@ -1218,6 +1288,7 @@ Our design system uses **two typefaces**:
 |----------|------------|
 | \`--font-sans\` | 'Inter', -apple-system, BlinkMacSystemFont, sans-serif |
 | \`--font-serif\` | 'Lora', Georgia, serif |
+| \`--font-condensed\` | 'Barlow Condensed', -apple-system, BlinkMacSystemFont, sans-serif |
 
 ### Semantic Aliases
 | Variable | References |
@@ -1226,6 +1297,7 @@ Our design system uses **two typefaces**:
 | \`--font-heading\` | var(--font-sans) |
 | \`--font-body\` | var(--font-sans) |
 | \`--font-article\` | var(--font-serif) |
+| \`--font-label\` | var(--font-condensed) |
 
 ## Font Weights
 
@@ -1233,7 +1305,7 @@ Our design system uses **two typefaces**:
 |----------|-------|-------|
 | \`--font-weight-regular\` | 400 | Body text |
 | \`--font-weight-medium\` | 500 | Emphasis, labels |
-| \`--font-weight-semibold\` | 600 | Subheadings |
+| \`--font-weight-semibold\` | 600 | Subheadings, condensed labels |
 | \`--font-weight-bold\` | 700 | Headings |
 | \`--font-weight-extrabold\` | 800 | Display headlines |
 
@@ -1263,6 +1335,15 @@ Our design system uses **two typefaces**:
 .cd-says-text {
   font-family: var(--font-serif);
   font-style: italic;
+}
+
+/* Condensed for labels and badges */
+.condition-label {
+  font-family: var(--font-label);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 \`\`\`
 `,

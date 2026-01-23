@@ -182,3 +182,161 @@ export const V2DesignAccord: StoryV2 = {
     />
   ),
 };
+
+// Current Iteration - January 2026
+// Features:
+// - Compact horizontal condition values (Clean | Average | Rough)
+// - "Most Common" badge on Average
+// - Vehicle details bar (Style • Mileage • Options)
+// - Private party values link
+// - Local dealer section
+// - Expert tip section
+// - No trade inventory module
+export const CurrentIteration: Story = {
+  args: {
+    variant: 'balanced',
+    tradeEstimate: {
+      low: 13760,
+      mid: 15289,
+      high: 16818,
+      vehicle: {
+        year: 2024,
+        make: 'Honda',
+        model: 'Pilot',
+        mileage: 40000,
+        condition: 'Average',
+      },
+    },
+    dealers: [
+      {
+        name: 'Serra Buick GMC Cadillac',
+        address: '12300 Thirty Mile Road',
+        city: 'Washington Township',
+        state: 'MI',
+        zip: '48095',
+        phone: '(586) 281-2800',
+        email: 'sales@serrabuickgmc.com',
+        rating: 4.8,
+        distance: 18,
+      },
+    ],
+    showSimilarVehicles: false,
+    showNextVehicle: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+## Current Iteration - January 2026
+
+This is the latest design iteration featuring:
+
+### Value Section
+- **Compact horizontal layout** with Clean, Average, and Rough conditions side by side
+- **"Most Common" badge** highlighting the Average condition
+- **Large, prominent pricing** (32-38px bold) for easy scanning
+- **Vehicle details bar** showing Style, Mileage, and Options in a single line
+- **Private party values link** for users interested in selling themselves
+
+### Local Dealer Section
+- Green checkmark header with "YOUR LOCAL DEALER" title
+- Dealer card with name, address, phone, distance, and Map/Directions links
+
+### Expert Tip Section
+- Helpful guidance on choosing the right condition
+- Statistics about trade-in conditions
+
+### Design Principles
+- Values are prioritized and visually prominent
+- Secondary information is de-emphasized
+- Clean, scannable layout that saves vertical space
+        `,
+      },
+    },
+  },
+};
+
+// Current Iteration with Options
+export const CurrentIterationWithOptions: Story = {
+  args: {
+    variant: 'balanced',
+    tradeEstimate: {
+      low: 13760,
+      mid: 15289,
+      high: 16818,
+      vehicle: {
+        year: 2024,
+        make: 'Honda',
+        model: 'Pilot Touring',
+        mileage: 40000,
+        condition: 'Average',
+      },
+    },
+    dealers: [
+      {
+        name: 'Serra Buick GMC Cadillac',
+        address: '12300 Thirty Mile Road',
+        city: 'Washington Township',
+        state: 'MI',
+        zip: '48095',
+        phone: '(586) 281-2800',
+        email: 'sales@serrabuickgmc.com',
+        rating: 4.8,
+        distance: 18,
+      },
+    ],
+    showSimilarVehicles: false,
+    showNextVehicle: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Current iteration with vehicle options displayed (Power Running Boards, Elevation Edition).',
+      },
+    },
+  },
+};
+
+// Current Iteration - Mobile View
+export const CurrentIterationMobile: Story = {
+  args: {
+    variant: 'balanced',
+    tradeEstimate: {
+      low: 13760,
+      mid: 15289,
+      high: 16818,
+      vehicle: {
+        year: 2024,
+        make: 'Honda',
+        model: 'Pilot',
+        mileage: 40000,
+        condition: 'Average',
+      },
+    },
+    dealers: [
+      {
+        name: 'Serra Buick GMC Cadillac',
+        address: '12300 Thirty Mile Road',
+        city: 'Washington Township',
+        state: 'MI',
+        zip: '48095',
+        phone: '(586) 281-2800',
+        email: 'sales@serrabuickgmc.com',
+        rating: 4.8,
+        distance: 18,
+      },
+    ],
+    showSimilarVehicles: false,
+    showNextVehicle: false,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+    docs: {
+      description: {
+        story: 'Current iteration optimized for mobile viewport.',
+      },
+    },
+  },
+};

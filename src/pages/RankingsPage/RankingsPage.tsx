@@ -512,13 +512,13 @@ const RankingsPage = () => {
                         <div className="rankings-page__hero-card-image-container">
                           <div className="rankings-page__hero-card-rank-container">
                             <div className="rankings-page__hero-card-rank rankings-page__hero-card-rank--first">1</div>
-                            <button
-                              className={`rankings-page__hero-card-save ${isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
+                              <button
+                                className={`rankings-page__hero-card-save ${isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
                               onClick={(e) => handleSaveClick(e, { name: `${sub.vehicles[0].year} ${sub.vehicles[0].name}`, slug: sub.vehicles[0].slug, image: sub.vehicles[0].image })}
-                              aria-label={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
-                            >
-                              <Bookmark size={18} fill={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'currentColor' : 'none'} />
-                            </button>
+                                aria-label={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
+                              >
+                                <Bookmark size={18} fill={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'currentColor' : 'none'} />
+                              </button>
                           </div>
                           <img 
                             src={sub.vehicles[0].image} 
@@ -637,13 +637,13 @@ const RankingsPage = () => {
                         <div className="rankings-page__hero-card-image-container">
                           <div className="rankings-page__hero-card-rank-container">
                             <div className="rankings-page__hero-card-rank rankings-page__hero-card-rank--first">1</div>
-                            <button
-                              className={`rankings-page__hero-card-save ${isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
+                              <button
+                                className={`rankings-page__hero-card-save ${isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
                               onClick={(e) => handleSaveClick(e, { name: `${formattedVehicles[0].year} ${formattedVehicles[0].name}`, slug: formattedVehicles[0].slug, image: formattedVehicles[0].image })}
-                              aria-label={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
-                            >
-                              <Bookmark size={18} fill={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'currentColor' : 'none'} />
-                            </button>
+                                aria-label={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
+                              >
+                                <Bookmark size={18} fill={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'currentColor' : 'none'} />
+                              </button>
                           </div>
                           <img 
                             src={formattedVehicles[0].image} 

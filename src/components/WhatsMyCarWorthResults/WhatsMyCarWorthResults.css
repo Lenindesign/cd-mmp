@@ -43,7 +43,7 @@
 .value-section__title {
   font-family: var(--font-heading);
   font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
   margin: 0;
   line-height: 1.2;
@@ -127,17 +127,17 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--font-condensed);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-gray-500);
+  letter-spacing: 0.04em;
+  color: var(--color-gray-700);
   margin-bottom: var(--spacing-1);
 }
 
 .value-section__value-card--primary .value-section__value-label {
-  color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt-dark);
 }
 
 .value-section__value-amount {
@@ -445,8 +445,8 @@
 
 /* Expert Tip */
 .value-section__tip {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid #bbf7d0;
+  background: rgba(38, 135, 13, 0.08);
+  border: none;
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-5);
 }
@@ -464,14 +464,14 @@
 
 .value-section__tip-title {
   font-family: var(--font-heading);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: #166534;
 }
 
 .value-section__tip-text {
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   color: var(--color-gray-700);
   margin: 0 0 var(--spacing-3);
   line-height: 1.5;
@@ -485,7 +485,7 @@
 
 .value-section__tip-list li {
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   color: var(--color-gray-700);
   margin-bottom: var(--spacing-1);
   line-height: 1.5;
@@ -500,7 +500,7 @@
   align-items: center;
   gap: var(--spacing-2);
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   color: var(--color-gray-700);
   margin: 0;
   padding-top: var(--spacing-3);
@@ -522,17 +522,17 @@
 
 .value-section__local-dealer-header {
   display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-3);
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
   margin-bottom: var(--spacing-4);
   text-align: center;
-  justify-content: center;
 }
 
 .value-section__local-dealer-check {
   width: 24px;
   height: 24px;
-  background: #166534;
+  background: var(--color-badge-certified);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -546,19 +546,21 @@
   height: 14px;
 }
 
-.value-section__local-dealer-header-text {
-  text-align: center;
-  flex: 1;
+.value-section__local-dealer-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
 }
 
 .value-section__local-dealer-title {
   font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--color-black);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-dark);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
 }
 
 .value-section__local-dealer-subtitle {
@@ -577,6 +579,8 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--spacing-6);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .value-section__local-dealer-info {
