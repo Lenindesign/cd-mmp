@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronRight, ChevronLeft, MapPin, Phone, Mail, Star, Bookmark, Check, Car, TrendingDown, DollarSign, Clock } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ChevronRight, ChevronLeft, MapPin, Phone, Mail, Star, Check, TrendingDown, DollarSign } from 'lucide-react';
 import { Button } from '../Button';
 import { VehicleCard } from '../VehicleCard/VehicleCard';
 import ForSaleNearYou from '../ForSaleNearYou';
@@ -95,63 +95,6 @@ const SealCheckIcon = ({ size = 18, className }: { size?: number; className?: st
   </svg>
 );
 
-// Rolling number animation component
-const RollingNumber = ({ value, duration = 2000 }: { value: number; duration?: number }) => {
-  const [displayValue, setDisplayValue] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(true);
-  const startTimeRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    setIsAnimating(true);
-    startTimeRef.current = null;
-    
-    const animate = (timestamp: number) => {
-      if (!startTimeRef.current) {
-        startTimeRef.current = timestamp;
-      }
-      
-      const elapsed = timestamp - startTimeRef.current;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      // Easing function for smooth deceleration
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      
-      // Start from a lower value and roll up
-      const startValue = value * 0.7;
-      const currentValue = Math.round(startValue + (value - startValue) * easeOutQuart);
-      
-      setDisplayValue(currentValue);
-      
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(animate);
-      } else {
-        setDisplayValue(value);
-        setIsAnimating(false);
-      }
-    };
-    
-    rafRef.current = requestAnimationFrame(animate);
-    
-    return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, [value, duration]);
-
-  const formattedValue = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(displayValue);
-
-  return (
-    <span className={`rolling-number ${isAnimating ? 'rolling-number--animating' : ''}`}>
-      {formattedValue}
-    </span>
-  );
-};
 
 interface TradeEstimate {
   low: number;
@@ -195,7 +138,6 @@ const WhatsMyCarWorthResults = ({
 }: WhatsMyCarWorthResultsProps) => {
   // Use first dealer as primary (the one who purchased the lead)
   const primaryDealer = dealers[0];
-  const [saved, setSaved] = useState(false);
   const [showDealersModal, setShowDealersModal] = useState(false);
 
   // Find vehicle image from database
@@ -216,23 +158,6 @@ const WhatsMyCarWorthResults = ({
       maximumFractionDigits: 0,
     }).format(price);
   };
-
-  // Calculate buying power metrics
-  const buyingPower = useMemo(() => {
-    const tradeValue = tradeEstimate.mid;
-    // Estimated monthly payment reduction (assuming 60-month loan at 6% APR)
-    const monthlyReduction = Math.round(tradeValue / 60);
-    // New car MSRP for same model
-    const newCarMsrp = 32825; // Example MSRP for new Accord
-    const afterTradeIn = newCarMsrp - tradeValue;
-    
-    return {
-      monthlyReduction,
-      newCarMsrp,
-      afterTradeIn,
-      coversDownPayment: tradeValue >= 5000,
-    };
-  }, [tradeEstimate.mid]);
 
   // Calculate condition-based values (Clean, Average, Rough)
   const conditionValues = useMemo(() => {
@@ -260,43 +185,6 @@ const WhatsMyCarWorthResults = ({
       { name: 'Elevation Edition', price: 30 },
     ];
   }, []);
-
-  // Calculate realistic depreciation forecast
-  const depreciationForecast = useMemo(() => {
-    const currentValue = tradeEstimate.mid;
-    const vehicleAge = new Date().getFullYear() - tradeEstimate.vehicle.year;
-    
-    // Depreciation rates vary by age:
-    // Years 1-3: ~15-20% per year (steeper)
-    // Years 4-6: ~10-12% per year (moderate)
-    // Years 7+: ~7-8% per year (slower)
-    let annualDepreciationRate: number;
-    if (vehicleAge <= 3) {
-      annualDepreciationRate = 0.17; // 17% per year
-    } else if (vehicleAge <= 6) {
-      annualDepreciationRate = 0.11; // 11% per year
-    } else {
-      annualDepreciationRate = 0.075; // 7.5% per year
-    }
-    
-    // Convert to daily rate
-    const dailyDepreciationRate = annualDepreciationRate / 365;
-    const dailyDepreciation = Math.round(currentValue * dailyDepreciationRate);
-    
-    // Calculate 30/60/90 day projections
-    const day30Loss = Math.round(currentValue * dailyDepreciationRate * 30);
-    const day60Loss = Math.round(currentValue * dailyDepreciationRate * 60);
-    const day90Loss = Math.round(currentValue * dailyDepreciationRate * 90);
-    
-    return {
-      dailyDepreciation,
-      day30Loss,
-      day60Loss,
-      day90Loss,
-      annualRate: Math.round(annualDepreciationRate * 100),
-      vehicleAge,
-    };
-  }, [tradeEstimate.mid, tradeEstimate.vehicle.year]);
 
   // VIN-specific inventory with trade-in adjusted pricing - Kia K5 options
   const inventoryWithTradeIn = useMemo(() => {
