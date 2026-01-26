@@ -166,15 +166,53 @@ export const BrandEnthusiast: Story = {
 };
 
 /**
- * User researching electric vehicles.
+ * User researching electric vehicles with new card layout.
  */
 export const EVShopper: Story = {
   args: {
     userName: 'Jordan',
     browsedVehicles: [
-      { year: 2025, make: 'Kia', model: 'EV9', viewCount: 6, link: '/2025/kia/ev9' },
-      { year: 2024, make: 'Hyundai', model: 'Ioniq 5', viewCount: 3, link: '/2024/hyundai/ioniq-5' },
-      { year: 2025, make: 'Chevrolet', model: 'Equinox EV', viewCount: 2, link: '/2025/chevrolet/equinox-ev' },
+      { 
+        year: 2023, 
+        make: 'Hyundai', 
+        model: 'Ioniq 5', 
+        viewCount: 6, 
+        link: '/2023/hyundai/ioniq-5',
+        priceRange: '$34,485–$42,785',
+        epaRange: '250–350',
+        isEV: true,
+      },
+      { 
+        year: 2025, 
+        make: 'Kia', 
+        model: 'EV9', 
+        viewCount: 3, 
+        link: '/2025/kia/ev9',
+        priceRange: '$56,395–$75,000',
+        epaRange: '280–304',
+        isEV: true,
+      },
+      { 
+        year: 2024, 
+        make: 'Chevrolet', 
+        model: 'Equinox EV', 
+        viewCount: 2, 
+        link: '/2024/chevrolet/equinox-ev',
+        priceRange: '$34,995–$48,995',
+        epaRange: '285–319',
+        isEV: true,
+      },
+      { 
+        year: 2024, 
+        make: 'Tesla', 
+        model: 'Model Y', 
+        viewCount: 4, 
+        link: '/2024/tesla/model-y',
+        priceRange: '$44,990–$54,990',
+        epaRange: '260–330',
+        isEV: true,
+        image: 'https://hips.hearstapps.com/hmg-prod/images/2024-tesla-model-y-juniper-front-three-quarters-672b89e7cd3b3.jpg?crop=0.668xw:0.502xh;0.140xw,0.276xh&resize=980:*',
+      },
     ],
   },
 };

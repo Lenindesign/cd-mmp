@@ -23,6 +23,8 @@ export interface BrowsedVehicle {
   viewCount?: number;
   /** Starting MSRP price */
   price?: number;
+  /** Price range string (e.g., "$34,485-$42,785") */
+  priceRange?: string;
   /** Dealer name */
   dealerName?: string;
   /** Dealer distance in miles */
@@ -39,6 +41,10 @@ export interface BrowsedVehicle {
   tenBest?: boolean;
   /** EV of the Year award */
   evOfTheYear?: boolean;
+  /** EPA Estimated Range for EVs (e.g., "250-350") */
+  epaRange?: string;
+  /** Is this an EV? */
+  isEV?: boolean;
 }
 
 export interface WelcomeEmailProps {
@@ -339,15 +345,20 @@ const WelcomeEmail = ({
                         href={vehicle.link || '#'} 
                         className="welcome-email__story-card welcome-email__vehicle-card"
                       >
-                        <div className="welcome-email__story-image-wrapper">
+                        {/* Vehicle Title */}
+                        <h4 className="welcome-email__vehicle-title">
+                          {vehicle.year} {vehicle.make} {vehicle.model}
+                        </h4>
+                        
+                        {/* Vehicle Image */}
+                        <div className="welcome-email__vehicle-image-wrapper">
                           <img 
                             src={getVehicleImage(vehicle)} 
                             alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                            className="welcome-email__story-image"
+                            className="welcome-email__vehicle-image"
                             onError={(e) => {
                               const imageUrl = getVehicleImage(vehicle);
                               console.error('[WelcomeEmail] Failed to load vehicle image:', imageUrl, vehicle);
-                              // Fallback to make-specific or default image on error
                               const target = e.target as HTMLImageElement;
                               const fallback = vehicleImageFallbacks[vehicle.make] || defaultStories[0].image;
                               if (target.src !== fallback) {
@@ -355,72 +366,32 @@ const WelcomeEmail = ({
                               }
                             }}
                           />
-                          {/* Accolades Badges */}
-                          {(vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear) && (
-                            <div className="welcome-email__card-accolades">
-                              {vehicle.editorsChoice && (
-                                <div className="welcome-email__card-accolade">
-                                  <img src={EDITORS_CHOICE_BADGE_URL} alt="Editor's Choice" />
-                                </div>
-                              )}
-                              {vehicle.tenBest && (
-                                <div className="welcome-email__card-accolade">
-                                  <img src={TEN_BEST_BADGE_URL} alt="10Best" />
-                                </div>
-                              )}
-                              {vehicle.evOfTheYear && (
-                                <div className="welcome-email__card-accolade">
-                                  <img src={EV_OF_THE_YEAR_BADGE_URL} alt="EV of the Year" />
-                                </div>
-                              )}
-                            </div>
-                          )}
                         </div>
-                        <div className="welcome-email__story-content">
-                          <div className="welcome-email__story-header">
-                            <h4 className="welcome-email__story-title">
-                              {vehicle.year} {vehicle.make} {vehicle.model}
-                            </h4>
-                            {/* C/D Rating */}
-                            {vehicle.staffRating && (
-                              <div className="welcome-email__card-rating">
-                                <div className="welcome-email__card-rating-row">
-                                  <span className="welcome-email__card-rating-score">{Math.round(vehicle.staffRating)}</span>
-                                  <span className="welcome-email__card-rating-max">/10</span>
-                                </div>
-                                <span className="welcome-email__card-rating-label">C/D RATING</span>
-                              </div>
-                            )}
+                        
+                        {/* Price Section */}
+                        <div className="welcome-email__vehicle-price-section">
+                          <span className="welcome-email__vehicle-price-label">Estimated Price</span>
+                          <div className="welcome-email__vehicle-price-row">
+                            <span className="welcome-email__vehicle-price">
+                              {vehicle.priceRange || (vehicle.price ? formatPrice(vehicle.price) : 'Contact for price')}
+                            </span>
+                            <span className="welcome-email__vehicle-cta">
+                              SHOP {vehicle.year} {vehicle.model.toUpperCase()}
+                            </span>
                           </div>
-                          {/* Price + Availability Row for vehicle cards */}
-                          {vehicle.price ? (
-                            <div className="welcome-email__card-price-availability">
-                              <div className="welcome-email__card-price-row">
-                                <span className="welcome-email__card-price">{formatPrice(vehicle.price)}</span>
-                                {vehicle.monthlyPayment && (
-                                  <span className="welcome-email__card-monthly">
-                                    {formatMonthly(vehicle.monthlyPayment)}/mo*
-                                  </span>
-                                )}
-                              </div>
-                              {/* Availability badge */}
-                              {vehicle.listingsCount && vehicle.listingsCount > 0 && (
-                                <span className="welcome-email__card-availability">
-                                  {vehicle.listingsCount} nearby
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <p className="welcome-email__story-description">
-                              {vehicle.viewCount && vehicle.viewCount > 1 
-                                ? `Viewed ${vehicle.viewCount} times` 
-                                : 'Recently viewed'}
-                            </p>
-                          )}
-                          <span className="welcome-email__read-more-btn">
-                            {vehicle.price ? 'See Deals' : 'View Details'}
-                          </span>
                         </div>
+                        
+                        {/* EPA Range for EVs */}
+                        {vehicle.epaRange && (
+                          <div className="welcome-email__vehicle-epa">
+                            <span className="welcome-email__vehicle-epa-label">
+                              EPA Est. Range <span className="welcome-email__vehicle-epa-icon">⚡</span>
+                            </span>
+                            <span className="welcome-email__vehicle-epa-value">
+                              {vehicle.epaRange} <span className="welcome-email__vehicle-epa-unit">miles</span>
+                            </span>
+                          </div>
+                        )}
                       </a>
                     ))
                   ) : (
