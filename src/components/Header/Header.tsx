@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Menu, X, User, LogOut, Bookmark, Car, GitCompare, Sparkles } from 'lucide-react';
+import { Search, Menu, X, User, LogOut, Bookmark, Car, GitCompare } from 'lucide-react';
 import { searchVehicles, getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
