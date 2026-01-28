@@ -177,7 +177,10 @@ const GoogleOneTap = ({
         // Store user in localStorage (demo mode)
         storeAuthUser(user);
         // Notify AuthContext so Header can show user and avatar
-        window.dispatchEvent(new CustomEvent('auth-google-signin', { detail: user }));
+        // Include skipOnboarding flag for high-intent page One Tap sign-ins
+        window.dispatchEvent(new CustomEvent('auth-google-signin', { 
+          detail: { ...user, skipOnboarding: true, source: 'one_tap' } 
+        }));
 
         // Track registration with CDP
         trackUserRegistration('google_one_tap', {

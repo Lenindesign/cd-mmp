@@ -97,7 +97,10 @@ const SignInToSaveModal = ({
       storeAuthUser(user);
       
       // Notify AuthContext so Header can show user and avatar
-      window.dispatchEvent(new CustomEvent('auth-google-signin', { detail: user }));
+      // Skip onboarding since user is saving a vehicle on a high-intent page
+      window.dispatchEvent(new CustomEvent('auth-google-signin', { 
+        detail: { ...user, skipOnboarding: true, source: 'save_modal' } 
+      }));
 
       // Track registration with CDP
       trackUserRegistration('google_one_tap', {

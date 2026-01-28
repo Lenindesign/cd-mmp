@@ -65,8 +65,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { user: newUser, isNewUser } = authService.setUserFromGoogle(gu);
         setUser(newUser);
         
-        // Redirect new users to onboarding
-        if (isNewUser && !newUser.onboardingCompleted) {
+        // Skip onboarding redirect for One Tap sign-ins from high-intent pages
+        // The skipOnboarding flag is set by GoogleOneTap component
+        const skipOnboarding = gu.skipOnboarding === true;
+        
+        // Only redirect to onboarding if:
+        // 1. It's a new user
+        // 2. Onboarding not completed
+        // 3. NOT a One Tap sign-in (which should keep user on current page)
+        if (isNewUser && !newUser.onboardingCompleted && !skipOnboarding) {
           // Use setTimeout to ensure state is updated before redirect
           setTimeout(() => {
             window.location.href = '/onboarding/step-1';
