@@ -22,7 +22,7 @@ const ExitIntentModal = ({
   enableExitIntent = false // Disabled by default - only Header should enable this
 }: ExitIntentModalProps) => {
   const navigate = useNavigate();
-  const { socialSignIn } = useAuth();
+  const { socialSignIn, isAuthenticated } = useAuth();
   // Use provided vehicle name or a generic fallback
   const displayVehicleName = vehicleName || 'Your favorite vehicle';
   const [isVisible, setIsVisible] = useState(false);
@@ -31,14 +31,22 @@ const ExitIntentModal = ({
   const [isClosing, setIsClosing] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
 
-  // Handle external isOpen prop
+  // Handle external isOpen prop (but never show if authenticated)
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isAuthenticated) {
       setIsVisible(true);
+    } else if (isAuthenticated) {
+      setIsVisible(false);
     }
-  }, [isOpen]);
+  }, [isOpen, isAuthenticated]);
 
   useEffect(() => {
+    // Don't show modal if user is authenticated
+    if (isAuthenticated) {
+      setHasShown(true);
+      return;
+    }
+
     // Only enable exit intent detection if explicitly enabled
     if (!enableExitIntent) return;
 
@@ -67,7 +75,7 @@ const ExitIntentModal = ({
       clearTimeout(timer);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [hasShown, enableExitIntent]);
+  }, [hasShown, enableExitIntent, isAuthenticated]);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -104,7 +112,8 @@ const ExitIntentModal = ({
     }
   };
 
-  if (!isVisible) return null;
+  // Never show modal if user is authenticated
+  if (isAuthenticated || !isVisible) return null;
 
   return (
     <div className={`exit-modal__overlay ${isClosing ? 'exit-modal__overlay--closing' : ''} ${animationStyle === 'elegant' ? 'exit-modal__overlay--elegant' : ''}`} onClick={handleClose}>
