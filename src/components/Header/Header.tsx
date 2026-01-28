@@ -50,6 +50,23 @@ const Header = () => {
     }
   }, [isAuthenticated, user?.onboardingCompleted]);
 
+  // Show welcome tooltip for One Tap sign-ins (even without onboarding)
+  useEffect(() => {
+    const handleOneTapSignIn = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      // Only show for One Tap sign-ins that skip onboarding
+      if (detail?.skipOnboarding && detail?.source === 'one_tap') {
+        // Small delay to let the auth state update
+        setTimeout(() => {
+          setShowWelcomeTooltip(true);
+        }, 300);
+      }
+    };
+
+    window.addEventListener('auth-google-signin', handleOneTapSignIn);
+    return () => window.removeEventListener('auth-google-signin', handleOneTapSignIn);
+  }, []);
+
   // Close welcome tooltip when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
