@@ -3,20 +3,42 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep4.css';
 
-// Speedometer Step Indicator Component - Now shows 2 steps total
-const StepIndicator: React.FC<{ step: number }> = ({ step }) => {
-  const stepImages: Record<number, string> = {
-    1: 'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/Group%201318348123.svg',
-    2: 'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/Group%201318348124.svg',
-  };
-
+// Numbered stepper progress indicator - industry standard
+const StepIndicator: React.FC<{ currentStep: number; totalSteps?: number }> = ({
+  currentStep,
+  totalSteps = 2,
+}) => {
+  const steps = Math.max(1, totalSteps);
   return (
-    <div className="step-indicator">
-      <img 
-        src={stepImages[step]} 
-        alt={`Step ${step} of 2`} 
-        className="step-indicator-img"
-      />
+    <div className="step-indicator step-indicator--stepper" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={steps} aria-label={`Step ${currentStep} of ${steps}`}>
+      <div className="step-indicator__stepper">
+        {Array.from({ length: steps }, (_, i) => {
+          const stepNumber = i + 1;
+          const isCompleted = stepNumber < currentStep;
+          const isCurrent = stepNumber === currentStep;
+          const isUpcoming = stepNumber > currentStep;
+          
+          return (
+            <React.Fragment key={i}>
+              <div className={`step-indicator__step ${isCompleted ? 'step-indicator__step--completed' : ''} ${isCurrent ? 'step-indicator__step--current' : ''} ${isUpcoming ? 'step-indicator__step--upcoming' : ''}`}>
+                <div className="step-indicator__step-circle">
+                  {isCompleted ? (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : (
+                    <span className="step-indicator__step-number">{stepNumber}</span>
+                  )}
+                </div>
+                <span className="step-indicator__step-label">Step</span>
+              </div>
+              {i < steps - 1 && (
+                <div className={`step-indicator__connector ${isCompleted ? 'step-indicator__connector--completed' : ''}`} />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
     </div>
   );
 };
@@ -140,7 +162,8 @@ const OnboardingStep4: React.FC = () => {
     <div className="onboarding-step4">
       <div className="step4-container">
         {/* Step Indicator - Speedometer Graphic - Now Step 2 of 2 */}
-        <StepIndicator step={2} />
+        {/* Step Indicator - Linear journey with car along track */}
+        <StepIndicator currentStep={2} totalSteps={2} />
 
         {/* Header Section */}
         <header className="step4-header">
@@ -168,12 +191,13 @@ const OnboardingStep4: React.FC = () => {
 
               {/* Content */}
               <div className="step4-newsletter-content">
-                {/* Checkbox */}
-                <div className={`step4-checkbox ${selectedNewsletters.includes(newsletter.id) ? 'step4-checkbox--checked' : ''}`}>
-                  {selectedNewsletters.includes(newsletter.id) && <CheckIcon />}
+                {/* Checkbox and Title Row */}
+                <div className="step4-newsletter-header">
+                  <div className={`step4-checkbox ${selectedNewsletters.includes(newsletter.id) ? 'step4-checkbox--checked' : ''}`}>
+                    {selectedNewsletters.includes(newsletter.id) && <CheckIcon />}
+                  </div>
+                  <h3 className="step4-newsletter-title">{newsletter.title}</h3>
                 </div>
-
-                <h3 className="step4-newsletter-title">{newsletter.title}</h3>
                 <p className="step4-newsletter-description">{newsletter.description}</p>
               </div>
             </button>

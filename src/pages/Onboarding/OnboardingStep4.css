@@ -21,16 +21,98 @@
   width: 100%;
   max-width: 600px;
   padding: var(--spacing-12);
-  background-color: var(--color-gray-100);
+  background-color: var(--color-white);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
 }
 
-/* Step Indicator - Speedometer Graphic (consistent with Steps 1-3) */
+/* Step Indicator - Numbered Stepper (industry standard) */
 .step-indicator {
   margin-bottom: var(--spacing-4);
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
+.step-indicator--stepper .step-indicator__stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.step-indicator__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-0-5);
+}
+
+.step-indicator__step-label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.step-indicator__step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+  border: 1.5px solid var(--color-gray-300);
+  background: var(--color-white);
+  color: var(--color-gray-600);
+}
+
+.step-indicator__step--current .step-indicator__step-circle {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.step-indicator__step--completed .step-indicator__step-circle {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.step-indicator__step--upcoming .step-indicator__step-circle {
+  background: var(--color-white);
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-600);
+}
+
+.step-indicator__step-number {
+  line-height: 1;
+}
+
+.step-indicator__step-circle svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+}
+
+.step-indicator__connector {
+  width: 40px;
+  height: 1.5px;
+  background: var(--color-gray-300);
+  transition: background var(--transition-fast);
+}
+
+.step-indicator__connector--completed {
+  background: var(--color-blue-cobalt);
+}
+
+/* Legacy speedometer img (if reused elsewhere) */
 .step-indicator-img {
   display: block;
   width: 162px;
@@ -123,16 +205,21 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  position: relative;
+}
+
+/* Checkbox and Title Header Row - Aligned horizontally */
+.step4-newsletter-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
 }
 
 /* Checkbox */
 .step4-checkbox {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: var(--spacing-6);
   height: var(--spacing-6);
+  min-width: var(--spacing-6);
+  min-height: var(--spacing-6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,6 +228,7 @@
   border-radius: var(--border-radius-sm);
   color: var(--color-blue-cobalt);
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .step4-checkbox--checked {
@@ -153,7 +241,6 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-white);
   margin: 0;
-  margin-top: var(--spacing-8);
   line-height: 1.3;
 }
 
@@ -230,13 +317,15 @@
     align-items: center;
   }
 
+  .step4-newsletter-header {
+    justify-content: center;
+  }
+
   .step4-checkbox {
-    position: static;
-    margin-bottom: var(--spacing-2);
+    margin-bottom: 0;
   }
 
   .step4-newsletter-title {
-    margin-top: 0;
     text-align: center;
   }
 
@@ -274,5 +363,20 @@
 
   .step-indicator-img {
     width: 120px;
+  }
+
+  .step-indicator__connector {
+    width: 30px;
+  }
+
+  .step-indicator__step-circle {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .step-indicator__step-circle svg {
+    width: 10px;
+    height: 10px;
   }
 }

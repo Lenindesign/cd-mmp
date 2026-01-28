@@ -3,24 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep2.css';
 
-// Speedometer Step Indicator Component - Now shows 2 steps total
-const StepIndicator: React.FC<{ step: number }> = ({ step }) => {
-  const stepImages: Record<number, string> = {
-    1: 'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/Group%201318348123.svg',
-    2: 'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/Group%201318348124.svg',
-  };
-
-  return (
-    <div className="step-indicator">
-      <img 
-        src={stepImages[step]} 
-        alt={`Step ${step} of 2`} 
-        className="step-indicator-img"
-      />
-    </div>
-  );
-};
-
 // Chevron Icons (same as Step 1)
 const ChevronLeftIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,11 +10,6 @@ const ChevronLeftIcon = () => (
   </svg>
 );
 
-const ChevronRightIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 // User type based on Figma design
 type UserType = 'buyer' | 'enthusiast' | 'both' | null;
@@ -70,7 +47,7 @@ const userTypeOptions: Omit<UserTypeOption, 'isSelected'>[] = [
 
 const OnboardingStep2: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, updateUser } = useAuth();
+  const { user, isAuthenticated, updateUser, completeOnboarding } = useAuth();
   const [selectedType, setSelectedType] = useState<UserType>(null);
 
   // Redirect if not authenticated
@@ -91,11 +68,12 @@ const OnboardingStep2: React.FC = () => {
     if (selectedType) {
       try {
         await updateUser({ userType: selectedType });
+        await completeOnboarding({});
       } catch (err) {
-        console.error('Failed to save user type:', err);
+        console.error('Failed to complete onboarding:', err);
       }
-      // Navigate to step 2 (newsletter) - this is now the final step
-      navigate('/onboarding/step-2');
+      // Navigate to home page - onboarding complete
+      navigate('/');
     }
   };
 
@@ -103,16 +81,19 @@ const OnboardingStep2: React.FC = () => {
     navigate('/sign-in');
   };
 
-  const handleSkip = () => {
-    navigate('/onboarding/step-2');
+  const handleSkip = async () => {
+    try {
+      await completeOnboarding({});
+    } catch (err) {
+      console.error('Failed to complete onboarding:', err);
+    }
+    // Navigate to home page - onboarding complete
+    navigate('/');
   };
 
   return (
     <div className="onboarding-step2">
       <div className="step2-container">
-        {/* Step Indicator - Speedometer Graphic - Now Step 1 of 2 */}
-        <StepIndicator step={1} />
-
         {/* Header Section */}
         <header className="step2-header">
           <h1 className="step2-title">What describes you best?</h1>
@@ -172,8 +153,7 @@ const OnboardingStep2: React.FC = () => {
             type="button"
             disabled={!selectedType}
           >
-            Next
-            <ChevronRightIcon />
+            Complete
           </button>
         </nav>
 
