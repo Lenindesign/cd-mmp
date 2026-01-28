@@ -371,6 +371,9 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
       throw new Error('Google Sign-In failed to initialize. Please refresh and try again.');
     }
     return new Promise((resolve, reject) => {
+      // Cancel any previous prompt state before initializing
+      window.google!.accounts!.id.cancel();
+      
       // Initialize and prompt for Google sign-in
       window.google!.accounts!.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
@@ -421,6 +424,10 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
           // If prompt can't be shown, reject with helpful message
           if (reason === 'opt_out_or_no_session') {
             reject(new Error('Please sign in to your Google account in this browser first, then try again.'));
+          } else if (reason === 'suppressed_by_user') {
+            // User previously dismissed - try to show the button-based flow instead
+            // For now, show a helpful message
+            reject(new Error('Google Sign-In is temporarily unavailable. Please try again in a few minutes or use email sign-in.'));
           } else if (reason === 'unregistered_origin' && window.location.hostname === 'localhost') {
             // Localhost fallback: use mock auth when Google OAuth isn't configured yet
             console.log('[SocialSignIn] Using localhost mock fallback for Google sign-in');
