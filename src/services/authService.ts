@@ -355,6 +355,19 @@ const loadGoogleScript = (): Promise<void> => {
   });
 };
 
+// Helper to decode Google JWT
+const decodeGoogleJWT = (token: string) => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  );
+  return JSON.parse(jsonPayload);
+};
+
 // Social login - Real Google OAuth, mock for Facebook/Apple
 export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): Promise<User> => {
   // For Google, use real Google Identity Services
@@ -370,25 +383,28 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
     if (!window.google?.accounts?.id) {
       throw new Error('Google Sign-In failed to initialize. Please refresh and try again.');
     }
+    
     return new Promise((resolve, reject) => {
-      // Cancel any previous prompt state before initializing
+      // Cancel any previous prompt state
       window.google!.accounts!.id.cancel();
       
-      // Initialize and prompt for Google sign-in
+      // Create a temporary container for the Google button
+      const buttonContainer = document.createElement('div');
+      buttonContainer.id = 'google-signin-button-temp';
+      buttonContainer.style.position = 'fixed';
+      buttonContainer.style.top = '-9999px';
+      buttonContainer.style.left = '-9999px';
+      document.body.appendChild(buttonContainer);
+      
+      // Initialize with callback
       window.google!.accounts!.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: (response: { credential: string }) => {
-          // Decode the JWT to get user info
+          // Clean up the temporary button
+          buttonContainer.remove();
+          
           try {
-            const base64Url = response.credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(
-              atob(base64)
-                .split('')
-                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                .join('')
-            );
-            const payload = JSON.parse(jsonPayload);
+            const payload = decodeGoogleJWT(response.credential);
             
             const googleUser = {
               id: payload.sub,
@@ -411,45 +427,72 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
         use_fedcm_for_prompt: false,
       });
       
-      // Show the Google sign-in prompt
-      window.google!.accounts!.id.prompt((notification: { 
-        isNotDisplayed: () => boolean; 
-        getNotDisplayedReason: () => string;
-        isSkippedMoment: () => boolean;
-        getSkippedReason: () => string;
-      }) => {
-        if (notification.isNotDisplayed()) {
-          const reason = notification.getNotDisplayedReason();
-          console.log('[SocialSignIn] Google prompt not displayed:', reason);
-          // If prompt can't be shown, reject with helpful message
-          if (reason === 'opt_out_or_no_session') {
-            // No Google session - common in incognito or when not signed into Google
-            reject(new Error('No Google session found. Please sign into Google in this browser, or use email/password to sign in.'));
-          } else if (reason === 'suppressed_by_user') {
-            // User previously dismissed - try to show the button-based flow instead
-            // For now, show a helpful message
-            reject(new Error('Google Sign-In is temporarily unavailable. Please try again in a few minutes or use email sign-in.'));
-          } else if (reason === 'unregistered_origin' && window.location.hostname === 'localhost') {
-            // Localhost fallback: use mock auth when Google OAuth isn't configured yet
-            console.log('[SocialSignIn] Using localhost mock fallback for Google sign-in');
-            const mockGoogleUser = {
-              id: `google_mock_${Date.now()}`,
-              email: 'testuser@gmail.com',
-              name: 'Test User (Dev)',
-              picture: 'https://ui-avatars.com/api/?name=Test+User&background=4285f4&color=fff',
-            };
-            const { user } = setUserFromGoogle(mockGoogleUser);
-            localStorage.setItem('cd_auth_user', JSON.stringify(mockGoogleUser));
-            resolve(user);
+      // Render a hidden Google button and programmatically click it
+      // This bypasses the prompt() suppression issues
+      window.google!.accounts!.id.renderButton(buttonContainer, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+      } as Parameters<typeof window.google.accounts.id.renderButton>[1]);
+      
+      // Small delay to ensure button is rendered, then click it
+      setTimeout(() => {
+        const googleButton = buttonContainer.querySelector('div[role="button"]') as HTMLElement;
+        if (googleButton) {
+          console.log('[SocialSignIn] Triggering Google sign-in popup');
+          googleButton.click();
+        } else {
+          // Fallback: try the iframe approach
+          const iframe = buttonContainer.querySelector('iframe');
+          if (iframe) {
+            // Can't click inside iframe, fall back to prompt
+            console.log('[SocialSignIn] Falling back to prompt()');
+            window.google!.accounts!.id.prompt((notification: { 
+              isNotDisplayed: () => boolean; 
+              getNotDisplayedReason: () => string;
+              isSkippedMoment: () => boolean;
+              getSkippedReason: () => string;
+            }) => {
+              if (notification.isNotDisplayed()) {
+                const reason = notification.getNotDisplayedReason();
+                console.log('[SocialSignIn] Google prompt not displayed:', reason);
+                buttonContainer.remove();
+                
+                if (reason === 'opt_out_or_no_session') {
+                  reject(new Error('No Google session found. Please sign into Google in this browser, or use email/password to sign in.'));
+                } else if (reason === 'unregistered_origin' && window.location.hostname === 'localhost') {
+                  // Localhost fallback
+                  console.log('[SocialSignIn] Using localhost mock fallback');
+                  const mockGoogleUser = {
+                    id: `google_mock_${Date.now()}`,
+                    email: 'testuser@gmail.com',
+                    name: 'Test User (Dev)',
+                    picture: 'https://ui-avatars.com/api/?name=Test+User&background=4285f4&color=fff',
+                  };
+                  const { user } = setUserFromGoogle(mockGoogleUser);
+                  localStorage.setItem('cd_auth_user', JSON.stringify(mockGoogleUser));
+                  resolve(user);
+                } else {
+                  reject(new Error(`Google Sign-In unavailable: ${reason}`));
+                }
+              } else if (notification.isSkippedMoment()) {
+                buttonContainer.remove();
+                reject(new Error('Google Sign-In was cancelled'));
+              }
+            });
           } else {
-            reject(new Error(`Google Sign-In unavailable: ${reason}`));
+            buttonContainer.remove();
+            reject(new Error('Failed to initialize Google Sign-In button'));
           }
-        } else if (notification.isSkippedMoment()) {
-          const reason = notification.getSkippedReason();
-          console.log('[SocialSignIn] Google prompt skipped:', reason);
-          reject(new Error('Google Sign-In was cancelled'));
         }
-      });
+      }, 100);
+      
+      // Timeout to clean up if nothing happens
+      setTimeout(() => {
+        if (document.body.contains(buttonContainer)) {
+          buttonContainer.remove();
+        }
+      }, 60000); // 1 minute timeout
     });
   }
 
