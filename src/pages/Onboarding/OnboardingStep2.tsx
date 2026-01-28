@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, Heart, Blend } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep2.css';
 
@@ -53,19 +52,19 @@ const userTypeOptions: Omit<UserTypeOption, 'isSelected'>[] = [
     id: 'buyer',
     title: 'Car Buyer',
     description: "I'm shopping for a new or used car.",
-    icon: <Car size={28} fill="currentColor" strokeWidth={0} />,
+    icon: <img src="https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/car%20buyer.svg" alt="" width={66} height={66} />,
   },
   {
     id: 'enthusiast',
     title: 'Car Enthusiast',
     description: 'I nerd out on all things car-related.',
-    icon: <Heart size={28} fill="currentColor" strokeWidth={0} />,
+    icon: <img src="https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/car%20enthusiast.svg" alt="" width={66} height={66} />,
   },
   {
     id: 'both',
     title: 'Both',
     description: "I'm a car lover on the lookout for my next ride.",
-    icon: <Blend size={28} strokeWidth={1.5} />,
+    icon: <img src="https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/Both.svg" alt="" width={66} height={66} />,
   },
 ];
 

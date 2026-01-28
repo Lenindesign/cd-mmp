@@ -360,9 +360,8 @@ const Header = () => {
                       </button>
                       
                       <div className="header__welcome-tooltip-header">
-                        <Sparkles size={24} className="header__welcome-tooltip-icon" />
                         <h3 id="welcome-tooltip-title" className="header__welcome-tooltip-title">
-                          Welcome, {user.name?.split(' ')[0] || 'Member'}! 🎉
+                          Welcome, {user.name?.split(' ')[0] || 'Member'}!
                         </h3>
                       </div>
                       
@@ -399,16 +398,6 @@ const Header = () => {
                           </div>
                         </li>
                       </ul>
-                      
-                      <button 
-                        className="header__welcome-tooltip-cta"
-                        onClick={() => {
-                          handleDismissWelcomeTooltip();
-                          navigate('/vehicles');
-                        }}
-                      >
-                        Start Exploring
-                      </button>
                     </div>
                   )}
                   

@@ -421,6 +421,18 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
           // If prompt can't be shown, reject with helpful message
           if (reason === 'opt_out_or_no_session') {
             reject(new Error('Please sign in to your Google account in this browser first, then try again.'));
+          } else if (reason === 'unregistered_origin' && window.location.hostname === 'localhost') {
+            // Localhost fallback: use mock auth when Google OAuth isn't configured yet
+            console.log('[SocialSignIn] Using localhost mock fallback for Google sign-in');
+            const mockGoogleUser = {
+              id: `google_mock_${Date.now()}`,
+              email: 'testuser@gmail.com',
+              name: 'Test User (Dev)',
+              picture: 'https://ui-avatars.com/api/?name=Test+User&background=4285f4&color=fff',
+            };
+            const { user } = setUserFromGoogle(mockGoogleUser);
+            localStorage.setItem('cd_auth_user', JSON.stringify(mockGoogleUser));
+            resolve(user);
           } else {
             reject(new Error(`Google Sign-In unavailable: ${reason}`));
           }
