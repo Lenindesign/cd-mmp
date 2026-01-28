@@ -423,7 +423,8 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
           console.log('[SocialSignIn] Google prompt not displayed:', reason);
           // If prompt can't be shown, reject with helpful message
           if (reason === 'opt_out_or_no_session') {
-            reject(new Error('Please sign in to your Google account in this browser first, then try again.'));
+            // No Google session - common in incognito or when not signed into Google
+            reject(new Error('No Google session found. Please sign into Google in this browser, or use email/password to sign in.'));
           } else if (reason === 'suppressed_by_user') {
             // User previously dismissed - try to show the button-based flow instead
             // For now, show a helpful message
