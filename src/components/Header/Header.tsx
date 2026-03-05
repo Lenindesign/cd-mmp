@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Menu, X, User, LogOut, Bookmark, Car, GitCompare } from 'lucide-react';
+import { Search, Menu, X, User, LogOut, Bookmark, Car, GitCompare, ChevronDown } from 'lucide-react';
 import { searchVehicles, getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -112,13 +112,26 @@ const Header = () => {
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
   };
 
-  const navItems = [
+  const navItems: {
+    label: string;
+    href: string;
+    isRoute?: boolean;
+    children?: { label: string; href: string; isRoute?: boolean }[];
+  }[] = [
     { label: 'Browse All Vehicles', href: '/vehicles', isRoute: true },
     { label: 'Shop New Cars', href: '/vehicles?type=new&sort=rating', isRoute: true },
     { label: 'Shop Used Cars', href: '/vehicles?type=used&sort=price-low', isRoute: true },
     { label: 'Research Cars', href: '#' },
     { label: 'Expert Reviews', href: '/rankings', isRoute: true },
-    { label: '0% APR Deals', href: '/deals/zero-apr', isRoute: true },
+    {
+      label: 'Deals',
+      href: '/deals/cash-finance',
+      isRoute: true,
+      children: [
+        { label: '0% APR Deals', href: '/deals/zero-apr', isRoute: true },
+        { label: 'Cash & Finance Deals', href: '/deals/cash-finance', isRoute: true },
+      ],
+    },
     { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },
     { label: 'News + Stories', href: '/news' },
   ];
@@ -473,8 +486,26 @@ const Header = () => {
         <nav className={`header__nav ${isMenuOpen ? 'header__nav--open' : ''}`}>
           <ul className="header__nav-list">
             {navItems.map((item, index) => (
-              <li key={index} className="header__nav-item">
-                {item.isRoute ? (
+              <li key={index} className={`header__nav-item ${item.children ? 'header__nav-item--has-dropdown' : ''}`}>
+                {item.children ? (
+                  <>
+                    <Link to={item.href} className="header__nav-link header__nav-link--dropdown">
+                      {item.label}
+                      <ChevronDown size={14} className="header__nav-dropdown-icon" />
+                    </Link>
+                    <div className="header__nav-dropdown">
+                      {item.children.map((child, childIndex) => (
+                        <Link
+                          key={childIndex}
+                          to={child.href}
+                          className="header__nav-dropdown-link"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : item.isRoute ? (
                   <Link to={item.href} className="header__nav-link">
                     {item.label}
                   </Link>

@@ -36,6 +36,7 @@ const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
 
 // Deals pages - lazy loaded
 const ZeroAprDealsPage = lazy(() => import('./pages/ZeroAprDealsPage/ZeroAprDealsPage'));
+const CashFinanceDealsPage = lazy(() => import('./pages/CashFinanceDealsPage/CashFinanceDealsPage'));
 
 // Audit pages - lazy loaded
 const CardAudit = lazy(() => import('./pages/CardAudit/CardAudit'));
@@ -121,6 +122,7 @@ function App() {
             
             {/* Deals Pages */}
             <Route path="/deals/zero-apr" element={<ZeroAprDealsPage />} />
+            <Route path="/deals/cash-finance" element={<CashFinanceDealsPage />} />
             
             {/* Audit Pages */}
             <Route path="/audit/cards" element={<CardAudit />} />
