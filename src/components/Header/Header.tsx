@@ -125,11 +125,15 @@ const Header = () => {
     { label: 'Expert Reviews', href: '/rankings', isRoute: true },
     {
       label: 'Deals',
-      href: '/deals/cash-finance',
+      href: '/deals',
       isRoute: true,
       children: [
+        { label: 'All Deals', href: '/deals', isRoute: true },
         { label: '0% APR Deals', href: '/deals/zero-apr', isRoute: true },
         { label: 'Cash & Finance Deals', href: '/deals/cash-finance', isRoute: true },
+        { label: 'Lease Deals', href: '/deals/lease', isRoute: true },
+        { label: 'SUV Deals', href: '/deals/suv', isRoute: true },
+        { label: 'Truck Deals', href: '/deals/truck', isRoute: true },
       ],
     },
     { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },

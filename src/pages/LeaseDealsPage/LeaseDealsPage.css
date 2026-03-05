@@ -1,0 +1,86 @@
+/* Lease Deals Page — reuses card pattern from Zero APR and Cash/Finance pages */
+.lease-deals-page { min-height: 100vh; background: var(--color-gray-50); }
+
+.lease-deals-page__hero { background: var(--gradient-dark); color: var(--color-white); padding: var(--spacing-12) 0; position: relative; overflow: hidden; }
+.lease-deals-page__hero::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); opacity: 0.5; pointer-events: none; }
+.lease-deals-page__hero-content { position: relative; z-index: 1; max-width: 800px; }
+.lease-deals-page__hero-badge { display: inline-flex; align-items: center; gap: var(--spacing-2); background: rgba(255,255,255,0.1); padding: var(--spacing-2) var(--spacing-4); border-radius: var(--border-radius-full); margin-bottom: var(--spacing-4); font-family: var(--font-heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); text-transform: uppercase; letter-spacing: 1px; }
+.lease-deals-page__title { font-family: var(--font-heading); font-size: clamp(32px,5vw,48px); font-weight: var(--font-weight-extrabold); line-height: 1.1; margin: 0 0 var(--spacing-4) 0; letter-spacing: -0.5px; }
+.lease-deals-page__description { font-family: var(--font-body); font-size: var(--font-size-lg); line-height: 1.6; color: var(--color-gray-300); margin: 0; max-width: 650px; }
+.lease-deals-page__hero-stats { display: flex; gap: var(--spacing-8); margin-top: var(--spacing-6); padding-top: var(--spacing-6); border-top: 1px solid rgba(255,255,255,0.1); }
+.lease-deals-page__hero-stat { display: flex; flex-direction: column; gap: var(--spacing-1); }
+.lease-deals-page__hero-stat-value { font-family: var(--font-heading); font-size: var(--font-size-3xl); font-weight: var(--font-weight-extrabold); line-height: 1; }
+.lease-deals-page__hero-stat-label { font-family: var(--font-body); font-size: var(--font-size-sm); color: var(--color-gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.lease-deals-page__content { padding: var(--spacing-8) 0; }
+.lease-deals-page__layout { display: flex; gap: var(--spacing-8); }
+.lease-deals-page__main { flex: 1; min-width: 0; }
+.lease-deals-page__sidebar { flex-shrink: 0; width: 300px; }
+.lease-deals-page__section { margin-bottom: var(--spacing-12); }
+.lease-deals-page__section-title { display: flex; align-items: center; gap: var(--spacing-3); font-family: var(--font-heading); font-size: var(--font-size-2xl); font-weight: var(--font-weight-extrabold); color: var(--color-black); margin: 0 0 var(--spacing-6) 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.lease-deals-page__section-title svg { color: var(--color-blue-cobalt); flex-shrink: 0; }
+.lease-deals-page__grid { display: grid; grid-template-columns: repeat(2,1fr); gap: var(--spacing-6); }
+
+/* Card */
+.lease-deals-page__card { background: var(--color-white); border-radius: var(--border-radius-lg); border: 1px solid var(--color-gray-200); overflow: hidden; transition: all var(--transition-fast); }
+.lease-deals-page__card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.12); border-color: var(--color-blue-cobalt); transform: translateY(-4px); }
+.lease-deals-page__card-image-link { display: block; text-decoration: none; }
+.lease-deals-page__card-image-container { position: relative; width: 100%; aspect-ratio: 16/10; overflow: hidden; background: var(--color-gray-100); }
+.lease-deals-page__card-image { width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-normal); }
+.lease-deals-page__card:hover .lease-deals-page__card-image { transform: scale(1.03); }
+.lease-deals-page__card-badge { position: absolute; top: var(--spacing-3); left: var(--spacing-3); background: #7c3aed; color: var(--color-white); font-family: var(--font-heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-extrabold); padding: var(--spacing-1-5) var(--spacing-3); border-radius: var(--border-radius-md); letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.lease-deals-page__card-save { position: absolute; top: var(--spacing-3); right: var(--spacing-3); width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-gray-500); transition: all var(--transition-fast); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.lease-deals-page__card-save:hover { color: var(--color-blue-cobalt); background: var(--color-white); }
+.lease-deals-page__card-save--saved { color: var(--color-blue-cobalt); }
+.lease-deals-page__card-body { padding: var(--spacing-4) var(--spacing-5) var(--spacing-5); }
+.lease-deals-page__card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--spacing-3); margin-bottom: var(--spacing-3); }
+.lease-deals-page__card-name-link { text-decoration: none; color: inherit; }
+.lease-deals-page__card-name { font-family: var(--font-heading); font-size: var(--font-size-xl); font-weight: var(--font-weight-extrabold); color: var(--color-black); margin: 0; line-height: 1.2; transition: color var(--transition-fast); }
+.lease-deals-page__card-name-link:hover .lease-deals-page__card-name { color: var(--color-blue-cobalt); }
+.lease-deals-page__card-rating { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px; flex-shrink: 0; text-align: right; }
+.lease-deals-page__card-rating-value { font-family: var(--font-heading); font-size: var(--font-size-2xl); font-weight: var(--font-weight-extrabold); color: var(--color-black); line-height: 1; }
+.lease-deals-page__card-rating-max { font-family: var(--font-heading); font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-gray-500); }
+.lease-deals-page__card-rating-label { display: block; width: 100%; font-family: var(--font-heading); font-size: var(--font-size-2xs); font-weight: var(--font-weight-bold); color: var(--color-gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
+.lease-deals-page__card-accolades { display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-3); padding-bottom: var(--spacing-3); border-bottom: 1px solid var(--color-gray-100); }
+.lease-deals-page__card-accolade { display: flex; align-items: center; gap: var(--spacing-1); font-family: var(--font-heading); font-size: var(--font-size-2xs); font-weight: var(--font-weight-bold); color: var(--color-gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
+.lease-deals-page__card-accolade-icon { width: 20px; height: 24px; }
+.lease-deals-page__card-details { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-3); margin-bottom: var(--spacing-4); padding: var(--spacing-3); background: var(--color-gray-50); border-radius: var(--border-radius-md); }
+.lease-deals-page__card-detail { display: flex; flex-direction: column; gap: 2px; }
+.lease-deals-page__card-detail-label { font-family: var(--font-heading); font-size: var(--font-size-2xs); font-weight: var(--font-weight-bold); color: var(--color-gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
+.lease-deals-page__card-detail-value { font-family: var(--font-heading); font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-black); }
+.lease-deals-page__card-detail-value--highlight { color: #7c3aed; font-size: var(--font-size-lg); font-weight: var(--font-weight-extrabold); }
+.lease-deals-page__card-cta { display: block; width: 100%; padding: var(--spacing-3) var(--spacing-4); background: var(--color-blue-cobalt); color: var(--color-white); font-family: var(--font-heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); text-transform: uppercase; text-align: center; text-decoration: none; letter-spacing: 0.5px; border-radius: var(--border-radius-md); transition: all var(--transition-fast); margin-bottom: var(--spacing-3); }
+.lease-deals-page__card-cta:hover { background: var(--color-blue-cobalt-dark, #155a8a); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(27,95,138,0.3); }
+.lease-deals-page__card-toggle { display: flex; align-items: center; justify-content: center; gap: var(--spacing-1); width: 100%; padding: var(--spacing-2); background: transparent; border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-md); font-family: var(--font-heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-gray-600); cursor: pointer; transition: all var(--transition-fast); }
+.lease-deals-page__card-toggle:hover { border-color: var(--color-blue-cobalt); color: var(--color-blue-cobalt); }
+.lease-deals-page__card-additional { margin-top: var(--spacing-3); padding-top: var(--spacing-3); border-top: 1px solid var(--color-gray-100); display: flex; flex-direction: column; gap: var(--spacing-3); }
+.lease-deals-page__card-additional-item { display: flex; gap: var(--spacing-2); align-items: flex-start; }
+.lease-deals-page__card-additional-item svg { flex-shrink: 0; color: var(--color-blue-cobalt); margin-top: 2px; }
+.lease-deals-page__card-additional-item strong { display: block; font-family: var(--font-heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-black); margin-bottom: 2px; }
+.lease-deals-page__card-additional-item p { font-family: var(--font-body); font-size: var(--font-size-sm); color: var(--color-gray-600); margin: 0; line-height: 1.5; }
+
+/* FAQ */
+.lease-deals-page__faq-section { margin-bottom: var(--spacing-12); }
+.lease-deals-page__faq-list { display: flex; flex-direction: column; gap: var(--spacing-2); }
+.lease-deals-page__faq-item { background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); overflow: hidden; transition: all var(--transition-fast); }
+.lease-deals-page__faq-item--expanded { border-color: var(--color-blue-cobalt); box-shadow: 0 2px 12px rgba(27,95,138,0.1); }
+.lease-deals-page__faq-question { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: var(--spacing-4) var(--spacing-5); background: transparent; border: none; cursor: pointer; font-family: var(--font-heading); font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-black); text-align: left; transition: color var(--transition-fast); }
+.lease-deals-page__faq-question:hover { color: var(--color-blue-cobalt); }
+.lease-deals-page__faq-question svg { flex-shrink: 0; color: var(--color-gray-500); }
+.lease-deals-page__faq-answer { padding: 0 var(--spacing-5) var(--spacing-4); }
+.lease-deals-page__faq-answer p { font-family: 'Lora', Georgia, serif; font-size: var(--font-size-base); color: var(--color-gray-700); line-height: 1.7; margin: 0; }
+
+/* Links */
+.lease-deals-page__links-section { margin-bottom: var(--spacing-10); }
+.lease-deals-page__links-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--spacing-4); }
+.lease-deals-page__link-card { background: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); padding: var(--spacing-5); text-decoration: none; transition: all var(--transition-fast); }
+.lease-deals-page__link-card:hover { border-color: var(--color-blue-cobalt); box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.lease-deals-page__link-card h3 { font-family: var(--font-heading); font-size: var(--font-size-base); font-weight: var(--font-weight-bold); color: var(--color-black); margin: 0 0 var(--spacing-1) 0; transition: color var(--transition-fast); }
+.lease-deals-page__link-card:hover h3 { color: var(--color-blue-cobalt); }
+.lease-deals-page__link-card p { font-family: var(--font-body); font-size: var(--font-size-sm); color: var(--color-gray-500); margin: 0; line-height: 1.4; }
+
+/* Responsive */
+@media (max-width: 1200px) { .lease-deals-page__sidebar { display: none; } }
+@media (max-width: 992px) { .lease-deals-page__grid { grid-template-columns: repeat(2,1fr); } .lease-deals-page__links-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 768px) { .lease-deals-page__hero { padding: var(--spacing-8) 0; } .lease-deals-page__title { font-size: var(--font-size-3xl); } .lease-deals-page__grid { grid-template-columns: 1fr; } .lease-deals-page__links-grid { grid-template-columns: 1fr; } .lease-deals-page__hero-stats { gap: var(--spacing-5); } }
+@media (max-width: 480px) { .lease-deals-page__title { font-size: var(--font-size-28, 28px); } .lease-deals-page__section-title { font-size: var(--font-size-xl); } .lease-deals-page__card-header { flex-direction: column; } }

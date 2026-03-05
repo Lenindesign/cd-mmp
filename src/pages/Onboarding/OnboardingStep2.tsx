@@ -3,14 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './OnboardingStep2.css';
 
-// Chevron Icons (same as Step 1)
-const ChevronLeftIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-
 // User type based on Figma design
 type UserType = 'buyer' | 'enthusiast' | 'both' | null;
 
@@ -77,10 +69,6 @@ const OnboardingStep2: React.FC = () => {
     }
   };
 
-  const handleBack = () => {
-    navigate('/sign-in');
-  };
-
   const handleSkip = async () => {
     try {
       await completeOnboarding({});
@@ -128,17 +116,8 @@ const OnboardingStep2: React.FC = () => {
           ))}
         </div>
 
-        {/* Navigation - Using CTA classes from design system (same as Step 1) */}
+        {/* Navigation - No Back button on step one */}
         <nav className="step2-navigation" aria-label="Onboarding navigation">
-          <button 
-            className="cta cta--md cta--secondary" 
-            onClick={handleBack}
-            type="button"
-          >
-            <ChevronLeftIcon />
-            Back
-          </button>
-
           <button 
             className="step2-skip" 
             onClick={handleSkip}

@@ -35,8 +35,12 @@ const VehicleRatingEditor = lazy(() => import('./pages/VehicleRatingEditor/Vehic
 const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
 
 // Deals pages - lazy loaded
+const DealsHubPage = lazy(() => import('./pages/DealsHubPage/DealsHubPage'));
 const ZeroAprDealsPage = lazy(() => import('./pages/ZeroAprDealsPage/ZeroAprDealsPage'));
 const CashFinanceDealsPage = lazy(() => import('./pages/CashFinanceDealsPage/CashFinanceDealsPage'));
+const LeaseDealsPage = lazy(() => import('./pages/LeaseDealsPage/LeaseDealsPage'));
+const SuvDealsPage = lazy(() => import('./pages/SuvDealsPage/SuvDealsPage'));
+const TruckDealsPage = lazy(() => import('./pages/TruckDealsPage/TruckDealsPage'));
 
 // Audit pages - lazy loaded
 const CardAudit = lazy(() => import('./pages/CardAudit/CardAudit'));
@@ -121,8 +125,12 @@ function App() {
             <Route path="/rankings/:bodyStyle/:subcategory" element={<RankingsPage />} />
             
             {/* Deals Pages */}
+            <Route path="/deals" element={<DealsHubPage />} />
             <Route path="/deals/zero-apr" element={<ZeroAprDealsPage />} />
             <Route path="/deals/cash-finance" element={<CashFinanceDealsPage />} />
+            <Route path="/deals/lease" element={<LeaseDealsPage />} />
+            <Route path="/deals/suv" element={<SuvDealsPage />} />
+            <Route path="/deals/truck" element={<TruckDealsPage />} />
             
             {/* Audit Pages */}
             <Route path="/audit/cards" element={<CardAudit />} />
