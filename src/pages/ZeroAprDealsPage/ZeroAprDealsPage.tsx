@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Bookmark, Info, Clock, Users, Tag } from 'lucide-react';
 import { getZeroAprDeals, getCurrentPeriod } from '../../services/zeroAprDealsService';
-import type { ZeroAprDeal } from '../../services/zeroAprDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO } from '../../components/SEO';
