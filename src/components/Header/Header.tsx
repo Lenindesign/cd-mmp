@@ -118,6 +118,7 @@ const Header = () => {
     { label: 'Shop Used Cars', href: '/vehicles?type=used&sort=price-low', isRoute: true },
     { label: 'Research Cars', href: '#' },
     { label: 'Expert Reviews', href: '/rankings', isRoute: true },
+    { label: '0% APR Deals', href: '/deals/zero-apr', isRoute: true },
     { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },
     { label: 'News + Stories', href: '/news' },
   ];

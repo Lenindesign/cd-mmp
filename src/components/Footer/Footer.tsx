@@ -11,6 +11,7 @@ const Footer = () => {
         { label: 'Car Rankings', path: '/rankings' },
         { label: 'SUV Rankings', path: '/rankings' },
         { label: 'Truck Rankings', path: '/rankings' },
+        { label: '0% APR Deals', path: '/deals/zero-apr' },
         { label: 'Electric Vehicles', path: '/vehicles' },
         { label: 'Compare Cars', path: '/vehicles' },
       ],

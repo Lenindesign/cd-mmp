@@ -34,6 +34,9 @@ const VehicleRatingEditor = lazy(() => import('./pages/VehicleRatingEditor/Vehic
 // Rankings pages - lazy loaded
 const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
 
+// Deals pages - lazy loaded
+const ZeroAprDealsPage = lazy(() => import('./pages/ZeroAprDealsPage/ZeroAprDealsPage'));
+
 // Audit pages - lazy loaded
 const CardAudit = lazy(() => import('./pages/CardAudit/CardAudit'));
 
@@ -115,6 +118,9 @@ function App() {
             <Route path="/rankings" element={<RankingsPage />} />
             <Route path="/rankings/:bodyStyle" element={<RankingsPage />} />
             <Route path="/rankings/:bodyStyle/:subcategory" element={<RankingsPage />} />
+            
+            {/* Deals Pages */}
+            <Route path="/deals/zero-apr" element={<ZeroAprDealsPage />} />
             
             {/* Audit Pages */}
             <Route path="/audit/cards" element={<CardAudit />} />
