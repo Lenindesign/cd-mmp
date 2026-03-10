@@ -1,74 +1,125 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { DollarSign, Tag, Car, ChevronRight } from 'lucide-react';
+import { ChevronRight, Percent, BadgeDollarSign, KeyRound, CarFront, Truck } from 'lucide-react';
 import { getZeroAprDeals, getCurrentPeriod } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
-import { getAllVehicles } from '../../services/vehicleService';
 import { SEO } from '../../components/SEO';
 import './DealsHubPage.css';
+
+interface MiniDeal {
+  vehicleName: string;
+  image: string;
+  slug: string;
+  dealText: string;
+  expirationDate: string;
+}
 
 const DealsHubPage = () => {
   const { month, year } = getCurrentPeriod();
 
-  const dealCounts = useMemo(() => {
-    const zeroApr = getZeroAprDeals().length;
-    const cash = getCashDeals().length;
-    const finance = getFinanceDeals().length;
-    const lease = getLeaseDeals().length;
-    const allVehicles = getAllVehicles();
-    const suvDeals = [...getCashDeals(), ...getFinanceDeals(), ...getZeroAprDeals()].filter(
-      (d) => d.vehicle.bodyStyle.toLowerCase() === 'suv'
-    ).length;
-    const truckDeals = [...getCashDeals(), ...getFinanceDeals(), ...getZeroAprDeals()].filter(
-      (d) => d.vehicle.bodyStyle.toLowerCase() === 'truck'
-    ).length;
-    const total = zeroApr + cash + finance + lease;
-    return { zeroApr, cash, finance, lease, suvDeals, truckDeals, total, vehicleCount: allVehicles.length };
-  }, []);
+  const categories = useMemo(() => {
+    const zeroAprDeals = getZeroAprDeals();
+    const cashDeals = getCashDeals();
+    const financeDeals = getFinanceDeals();
+    const leaseDeals = getLeaseDeals();
 
-  const dealPages = [
-    {
-      title: '0% APR Deals',
-      description: 'Zero-interest financing offers—every dollar of your payment goes toward the car, not interest.',
-      href: '/deals/zero-apr',
-      count: dealCounts.zeroApr,
-      icon: <Tag size={24} />,
-      color: 'green',
-    },
-    {
-      title: 'Cash & Finance Deals',
-      description: 'Cash-back rebates and special APR financing from manufacturers to reduce your purchase price.',
-      href: '/deals/cash-finance',
-      count: dealCounts.cash + dealCounts.finance,
-      icon: <DollarSign size={24} />,
-      color: 'blue',
-    },
-    {
-      title: 'Lease Deals',
-      description: 'Monthly lease offers with low due-at-signing costs. Drive a new car for less.',
-      href: '/deals/lease',
-      count: dealCounts.lease,
-      icon: <Car size={24} />,
-      color: 'purple',
-    },
-    {
-      title: 'Best SUV Deals',
-      description: 'Every current deal on SUVs and crossovers—cash back, financing, and 0% APR offers.',
-      href: '/deals/suv',
-      count: dealCounts.suvDeals,
-      icon: <Car size={24} />,
-      color: 'orange',
-    },
-    {
-      title: 'Best Truck Deals',
-      description: 'The best incentives on pickup trucks—cash allowances, low APR, and lease specials.',
-      href: '/deals/truck',
-      count: dealCounts.truckDeals,
-      icon: <Car size={24} />,
-      color: 'red',
-    },
-  ];
+    const allDeals = [...cashDeals.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })), ...financeDeals.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })), ...zeroAprDeals.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle }))];
+
+    const suvDeals = allDeals.filter(d => d.bodyStyle.toLowerCase() === 'suv');
+    const truckDeals = allDeals.filter(d => d.bodyStyle.toLowerCase() === 'truck');
+
+    const toMiniZeroApr = (deals: typeof zeroAprDeals): MiniDeal[] =>
+      deals.slice(0, 3).map(d => ({
+        vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
+        image: d.vehicle.image,
+        slug: d.vehicle.slug,
+        dealText: `0% APR for ${d.term}`,
+        expirationDate: d.expirationDate,
+      }));
+
+    const toMiniCashFinance = (cash: typeof cashDeals, finance: typeof financeDeals): MiniDeal[] => {
+      const combined: MiniDeal[] = [
+        ...cash.map(d => ({
+          vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
+          image: d.vehicle.image,
+          slug: d.vehicle.slug,
+          dealText: `${d.incentiveValue} cash off`,
+          expirationDate: d.expirationDate,
+        })),
+        ...finance.map(d => ({
+          vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
+          image: d.vehicle.image,
+          slug: d.vehicle.slug,
+          dealText: `${d.apr} APR for ${d.term}`,
+          expirationDate: d.expirationDate,
+        })),
+      ];
+      return combined.slice(0, 3);
+    };
+
+    const toMiniLease = (deals: typeof leaseDeals): MiniDeal[] =>
+      deals.slice(0, 3).map(d => ({
+        vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
+        image: d.vehicle.image,
+        slug: d.vehicle.slug,
+        dealText: `${d.monthlyPayment}/mo lease`,
+        expirationDate: d.expirationDate,
+      }));
+
+    const toMiniMixed = (deals: typeof allDeals): MiniDeal[] =>
+      deals.slice(0, 3).map(d => {
+        let dealText = '';
+        if ('apr' in d && typeof d.apr === 'number') dealText = `0% APR for ${(d as any).term}`;
+        else if ('incentiveValue' in d) dealText = `${(d as any).incentiveValue} cash off`;
+        else if ('apr' in d) dealText = `${(d as any).apr} APR`;
+        return {
+          vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
+          image: d.vehicle.image,
+          slug: d.vehicle.slug,
+          dealText,
+          expirationDate: d.expirationDate,
+        };
+      });
+
+    return [
+      {
+        title: '0% APR Deals',
+        href: '/deals/zero-apr',
+        count: zeroAprDeals.length,
+        icon: <Percent size={22} strokeWidth={2.2} />,
+        deals: toMiniZeroApr(zeroAprDeals),
+      },
+      {
+        title: 'Cash & Finance Deals',
+        href: '/deals/cash-finance',
+        count: cashDeals.length + financeDeals.length,
+        icon: <BadgeDollarSign size={22} strokeWidth={2.2} />,
+        deals: toMiniCashFinance(cashDeals, financeDeals),
+      },
+      {
+        title: 'Lease Deals',
+        href: '/deals/lease',
+        count: leaseDeals.length,
+        icon: <KeyRound size={22} strokeWidth={2.2} />,
+        deals: toMiniLease(leaseDeals),
+      },
+      {
+        title: 'Best SUV Deals',
+        href: '/deals/suv',
+        count: suvDeals.length,
+        icon: <CarFront size={22} strokeWidth={2.2} />,
+        deals: toMiniMixed(suvDeals),
+      },
+      {
+        title: 'Best Truck Deals',
+        href: '/deals/truck',
+        count: truckDeals.length,
+        icon: <Truck size={22} strokeWidth={2.2} />,
+        deals: toMiniMixed(truckDeals),
+      },
+    ];
+  }, []);
 
   return (
     <div className="deals-hub">
@@ -77,12 +128,11 @@ const DealsHubPage = () => {
         description={`Find the best new car deals, incentives, and offers for ${month} ${year}. Compare 0% APR financing, cash back, lease specials, and more from Car and Driver.`}
       />
 
-      {/* Hero */}
       <div className="deals-hub__hero">
         <div className="container">
           <div className="deals-hub__hero-content">
             <div className="deals-hub__hero-badge">
-              <DollarSign size={16} />
+              <BadgeDollarSign size={16} />
               <span>Car Deals</span>
             </div>
             <h1 className="deals-hub__title">Best New Car Deals for {month} {year}</h1>
@@ -91,47 +141,44 @@ const DealsHubPage = () => {
               rebates, special finance rates, and lease deals—all paired with Car and Driver's expert ratings
               to help you find a great car at a great price.
             </p>
-            <div className="deals-hub__hero-stats">
-              <div className="deals-hub__hero-stat">
-                <span className="deals-hub__hero-stat-value">{dealCounts.total}</span>
-                <span className="deals-hub__hero-stat-label">Active Deals</span>
-              </div>
-              <div className="deals-hub__hero-stat">
-                <span className="deals-hub__hero-stat-value">5</span>
-                <span className="deals-hub__hero-stat-label">Deal Categories</span>
-              </div>
-              <div className="deals-hub__hero-stat">
-                <span className="deals-hub__hero-stat-value">{month.slice(0, 3)}</span>
-                <span className="deals-hub__hero-stat-label">{year} Updated</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Deal Categories Grid */}
       <div className="deals-hub__content">
         <div className="container">
-          <h2 className="deals-hub__section-title">Browse Deals by Category</h2>
-          <div className="deals-hub__grid">
-            {dealPages.map((page) => (
-              <Link key={page.href} to={page.href} className={`deals-hub__card deals-hub__card--${page.color}`}>
-                <div className="deals-hub__card-icon">{page.icon}</div>
-                <div className="deals-hub__card-body">
-                  <h3 className="deals-hub__card-title">{page.title}</h3>
-                  <p className="deals-hub__card-description">{page.description}</p>
-                  <div className="deals-hub__card-footer">
-                    <span className="deals-hub__card-count">{page.count} deals available</span>
-                    <span className="deals-hub__card-cta">
-                      View Deals <ChevronRight size={16} />
-                    </span>
-                  </div>
+          <div className="deals-hub__categories">
+            {categories.map((cat) => (
+              <div key={cat.href} className="deals-hub__row">
+                <div className="deals-hub__row-left">
+                  <div className="deals-hub__row-icon">{cat.icon}</div>
+                  <h2 className="deals-hub__row-title">{cat.title}</h2>
+                  <span className="deals-hub__row-count">{cat.count} deals</span>
+                  <Link to={cat.href} className="deals-hub__row-cta">
+                    View All <ChevronRight size={16} />
+                  </Link>
                 </div>
-              </Link>
+                <div className="deals-hub__row-cards">
+                  {cat.deals.map((deal, i) => (
+                    <Link key={i} to={`/${deal.slug}`} className="deals-hub__mini-card">
+                      <div className="deals-hub__mini-card-image">
+                        <img src={deal.image} alt={deal.vehicleName} />
+                      </div>
+                      <h3 className="deals-hub__mini-card-name">{deal.vehicleName}</h3>
+                      <div className="deals-hub__mini-card-deal">
+                        <div className="deals-hub__mini-card-deal-icon">{cat.icon}</div>
+                        <div className="deals-hub__mini-card-deal-info">
+                          <span className="deals-hub__mini-card-deal-text">{deal.dealText}</span>
+                          <span className="deals-hub__mini-card-deal-expires">expires {deal.expirationDate}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
 
-          {/* Quick Links */}
           <div className="deals-hub__quick-links">
             <h2 className="deals-hub__section-title">More Resources</h2>
             <div className="deals-hub__links-grid">
