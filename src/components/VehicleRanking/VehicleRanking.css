@@ -71,8 +71,8 @@
     font-size: var(--font-size-base);
   }
   
-  .vehicle-ranking__card-price {
-    font-size: var(--font-size-2xs);
+  .vehicle-ranking__card-price-value {
+    font-size: var(--font-size-base);
   }
   
   .vehicle-ranking__card-info {
@@ -415,22 +415,66 @@
 }
 
 .vehicle-ranking__card-price {
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  color: var(--color-black);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--spacing-1);
   margin: 0;
-  letter-spacing: 0.05em;
   text-align: center;
-  text-transform: uppercase;
-  font-weight: var(--font-weight-semibold);
 }
 
 .vehicle-ranking__card-price-label {
-  text-transform: uppercase;
-  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  letter-spacing: 0.05em;
-  display: inline;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+}
+
+.vehicle-ranking__card-price-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  letter-spacing: -0.01em;
+}
+
+/* Incentive Line */
+.vehicle-ranking__card-incentive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1-5);
+  margin-top: var(--spacing-2);
+}
+
+.vehicle-ranking__card-incentive-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-success);
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+
+.vehicle-ranking__card-incentive-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+.vehicle-ranking__card-incentive-text {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success);
+}
+
+@media (max-width: 600px) {
+  .vehicle-ranking__card-incentive-text {
+    font-size: var(--font-size-xs);
+  }
 }
 
 /* CTA Button - Uses design system .cta classes */

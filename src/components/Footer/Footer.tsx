@@ -1,9 +1,11 @@
-import { Facebook, Twitter, Instagram, Youtube, Mail } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Mail, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../Button';
+import { useCarFinder } from '../../contexts/CarFinderContext';
 import './Footer.css';
 
 const Footer = () => {
+  const { carFinderEnabled, toggleCarFinder } = useCarFinder();
   const footerLinks = [
     {
       title: 'New Cars',
@@ -11,6 +13,7 @@ const Footer = () => {
         { label: 'Car Rankings', path: '/rankings' },
         { label: 'SUV Rankings', path: '/rankings' },
         { label: 'Truck Rankings', path: '/rankings' },
+        { label: 'All Deals', path: '/deals' },
         { label: '0% APR Deals', path: '/deals/zero-apr' },
         { label: 'Cash & Finance Deals', path: '/deals/cash-finance' },
         { label: 'Lease Deals', path: '/deals/lease' },
@@ -21,6 +24,7 @@ const Footer = () => {
     {
       title: 'Research',
       links: [
+        { label: 'Compare Vehicles', path: '/compare' },
         { label: 'Car Reviews', path: '/vehicles' },
         { label: 'Road Tests', path: '/vehicles' },
         { label: 'Buyer\'s Guide', path: '/vehicles' },
@@ -124,6 +128,15 @@ const Footer = () => {
               © {new Date().getFullYear()} Car and Driver. All rights reserved.
             </p>
             <div className="footer__legal">
+              <button
+                type="button"
+                className="footer__legal-link footer__legal-link--button"
+                onClick={toggleCarFinder}
+                aria-pressed={carFinderEnabled}
+              >
+                <Sparkles size={14} aria-hidden />
+                {carFinderEnabled ? 'Hide Find My Car' : 'Find My Car'}
+              </button>
               <a href="#" className="footer__legal-link">Privacy Policy</a>
               <a href="#" className="footer__legal-link">Terms of Use</a>
               <a href="#" className="footer__legal-link">Cookie Policy</a>

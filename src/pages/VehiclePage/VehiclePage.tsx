@@ -351,7 +351,8 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               mpg: vehicle.mpg ? parseInt(vehicle.mpg) : undefined,
               rating: supabaseRating,
             }}
-            cardVariant="compact"
+            showVehiclePreview={true}
+            defaultView="list"
             initialLocation={{ lat: 34.0522, lng: -118.2437 }}
             initialZipCode="Los Angeles, CA"
           />

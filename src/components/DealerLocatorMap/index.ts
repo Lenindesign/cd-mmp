@@ -8,9 +8,11 @@ export { default as DealerMarker } from './DealerMarker';
 export { default as MakeOfferModal } from './MakeOfferModal';
 export { default as OfferNegotiation } from './OfferNegotiation';
 export { default as DealerMapModal } from './DealerMapModal';
+export { default as ContactDealerModal } from './ContactDealerModal';
 export type { DealerLocatorMapProps } from './DealerLocatorMap';
 export type { VehicleInfo } from './VehicleContextHeader';
 export type { OfferData } from './MakeOfferModal';
 export type { NegotiationData, NegotiationMessage, OfferStatus } from './OfferNegotiation';
 export type { DealerMapModalProps } from './DealerMapModal';
+export type { ContactDealerModalProps, ContactDealerVariant, ContactDealerFormData, ContactDealerDealDetails } from './ContactDealerModal';
 

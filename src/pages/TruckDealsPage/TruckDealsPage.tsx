@@ -1,30 +1,33 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Users, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Users, Car, DollarSign, Percent, KeyRound } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
+import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import { getCurrentPeriod } from '../../utils/dateUtils';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers } from '../../utils/dealCalculations';
+import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import './TruckDealsPage.css';
-
-const EDITORS_CHOICE_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE';
-const TEN_BEST_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg';
-
-const CURRENT_MONTH = new Date().toLocaleString('default', { month: 'long' });
-const CURRENT_YEAR = new Date().getFullYear();
 
 interface UnifiedDeal {
   id: string;
-  dealType: string;
-  dealLabel: string;
-  badgeColor: string;
+  dealType: 'zero-apr' | 'cash' | 'finance' | 'lease';
   vehicleName: string;
   vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean };
-  details: { label: string; value: string; highlight?: boolean }[];
+  estimatedMonthly: number;
+  savingsVsAvg: string;
+  savingsTooltip: string;
+  dealText: string;
+  dealPillIcon: 'percent' | 'dollar' | 'key';
+  details: { label: string; value: string }[];
   expirationDate: string;
   programName: string;
   programDescription: string;
@@ -33,27 +36,88 @@ interface UnifiedDeal {
 }
 
 const TruckDealsPage = () => {
+  const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
+  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
+  const [activeDealId, setActiveDealId] = useState<string | null>(null);
+  const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
+
+  const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (offersPopup?.slug === slug) {
+      setOffersPopup(null);
+    } else {
+      setOffersPopup({ slug, offers: getVehicleOffers(make, model) });
+    }
+  }, [offersPopup]);
 
   const deals = useMemo((): UnifiedDeal[] => {
     const results: UnifiedDeal[] = [];
     const isTruck = (bodyStyle: string) => bodyStyle.toLowerCase() === 'truck';
 
     for (const d of getZeroAprDeals().filter((d) => isTruck(d.vehicle.bodyStyle))) {
-      results.push({ id: d.id, dealType: 'zero-apr', dealLabel: '0% APR', badgeColor: '#22c55e', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle, details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'APR', value: '0%', highlight: true }, { label: 'Term', value: d.term }, { label: 'Expires', value: d.expirationDate }], expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription, additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }], rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating) });
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const months = parseTermMonths(d.term);
+      const monthly = calcMonthly(msrp, 0, months);
+      const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
+      results.push({
+        id: d.id, dealType: 'zero-apr', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
+        dealText: `0% APR for ${d.term}`, dealPillIcon: 'percent',
+        details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Term', value: d.term }],
+        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
+        additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+      });
     }
     for (const d of getCashDeals().filter((d) => isTruck(d.vehicle.bodyStyle))) {
-      results.push({ id: d.id, dealType: 'cash', dealLabel: `${d.incentiveValue} Cash Back`, badgeColor: 'var(--color-blue-cobalt)', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle, details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: '% Off MSRP', value: d.percentOffMsrp, highlight: true }, { label: 'Incentive', value: d.incentiveValue }, { label: 'Expires', value: d.expirationDate }], expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription, additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }], rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating) });
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const cashAmount = parseInt(d.incentiveValue.replace(/[^0-9]/g, ''), 10) || 0;
+      const monthly = calcMonthly(msrp - cashAmount, AVG_MARKET_APR, AVG_LOAN_TERM);
+      const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
+      results.push({
+        id: d.id, dealType: 'cash', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
+        dealText: `${d.incentiveValue} Cash Back`, dealPillIcon: 'dollar',
+        details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: '% Off MSRP', value: d.percentOffMsrp }],
+        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
+        additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+      });
     }
     for (const d of getFinanceDeals().filter((d) => isTruck(d.vehicle.bodyStyle))) {
-      results.push({ id: d.id, dealType: 'finance', dealLabel: `${d.apr} APR`, badgeColor: '#7c3aed', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle, details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'APR', value: d.apr, highlight: true }, { label: 'Term', value: d.term }, { label: 'Expires', value: d.expirationDate }], expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription, additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }], rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating) });
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const aprNum = parseFloat(d.apr.replace('%', ''));
+      const months = parseTermMonths(d.term);
+      const monthly = calcMonthly(msrp, aprNum, months);
+      const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
+      results.push({
+        id: d.id, dealType: 'finance', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
+        dealText: `${d.apr} APR for ${d.term}`, dealPillIcon: 'percent',
+        details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Term', value: d.term }],
+        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
+        additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+      });
     }
     for (const d of getLeaseDeals().filter((d) => isTruck(d.vehicle.bodyStyle))) {
-      results.push({ id: d.id, dealType: 'lease', dealLabel: `${d.monthlyPayment}/mo Lease`, badgeColor: '#7c3aed', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle, details: [{ label: 'Payment', value: `${d.monthlyPayment}/mo`, highlight: true }, { label: 'Term', value: d.term }, { label: 'Due at Signing', value: d.dueAtSigning }, { label: 'Mileage', value: d.mileageAllowance }], expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription, additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }], rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating) });
+      const leaseNum = d.monthlyPaymentNum;
+      const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, d.vehicle.bodyStyle);
+      results.push({
+        id: d.id, dealType: 'lease', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        estimatedMonthly: leaseNum, savingsVsAvg, savingsTooltip,
+        dealText: `${d.monthlyPayment}/mo Lease`, dealPillIcon: 'key',
+        details: [{ label: 'Term', value: d.term }, { label: 'Due at Signing', value: d.dueAtSigning }],
+        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
+        additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+      });
     }
     return results;
   }, [getSupabaseRating]);
@@ -67,11 +131,39 @@ const TruckDealsPage = () => {
     else { addSavedVehicle({ id: vehicle.slug, name: vehicle.name, ownership: 'want' }); }
   };
 
+  const activeDealObj = activeDealId ? deals.find(d => d.id === activeDealId) : null;
+  const activeOffer: Partial<IncentiveOfferDetail> | undefined = activeDealObj
+    ? (() => {
+        const v = activeDealObj.vehicle;
+        const priceParts = v.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/);
+        return {
+          year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
+          msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
+          msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
+          offerHeadline: activeDealObj.dealText,
+          whatItMeans: `This ${activeDealObj.dealType} offer from the manufacturer could save you significantly on your next truck purchase.`,
+          yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
+          whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
+          eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
+          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          eventLabel: activeDealObj.programName,
+          expirationDate: activeDealObj.expirationDate,
+        };
+      })()
+    : undefined;
+
+  const pillIcon = (type: 'percent' | 'dollar' | 'key') => {
+    if (type === 'dollar') return <DollarSign size={12} />;
+    if (type === 'key') return <KeyRound size={12} />;
+    return <Percent size={12} />;
+  };
+
   const pageTitle = `Best Truck Deals & Incentives for ${CURRENT_MONTH} ${CURRENT_YEAR}`;
+  const BASE_URL = 'https://www.caranddriver.com';
 
   return (
     <div className="truck-deals-page">
-      <SEO title={`${pageTitle} | Car and Driver`} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on pickup trucks. Expert ratings from Car and Driver.`} />
+      <SEO title={`${pageTitle} | Car and Driver`} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on pickup trucks. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/truck`} keywords={['truck deals', 'pickup truck deals', `truck deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best truck incentives', 'truck lease deals', 'truck cash back']} structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Truck Deals', url: `${BASE_URL}/deals/truck` }])} />
       <div className="truck-deals-page__hero">
         <div className="container">
           <div className="truck-deals-page__hero-content">
@@ -90,44 +182,110 @@ const TruckDealsPage = () => {
           <div className="truck-deals-page__layout">
             <div className="truck-deals-page__main">
               <section className="truck-deals-page__section">
-                <h2 className="truck-deals-page__section-title"><Car size={22} /> All Truck Deals</h2>
+                <h2 className="truck-deals-page__section-title"><Car size={22} /> {deals.length} Available Deals</h2>
                 <div className="truck-deals-page__grid">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
                     const isExpanded = expandedDealId === deal.id;
                     return (
                       <div key={deal.id} className="truck-deals-page__card">
+                        <div className="truck-deals-page__card-header">
+                          <Link to={`/${deal.vehicle.slug}`} className="truck-deals-page__card-name-link">
+                            <h3 className="truck-deals-page__card-name">{deal.vehicleName}</h3>
+                          </Link>
+                          <div className="truck-deals-page__card-rating">
+                            <span className="truck-deals-page__card-rating-value">{deal.rating}</span>
+                            <span className="truck-deals-page__card-rating-max">/10</span>
+                            <span className="truck-deals-page__card-rating-label">C/D Rating</span>
+                          </div>
+                        </div>
+
                         <Link to={`/${deal.vehicle.slug}`} className="truck-deals-page__card-image-link">
                           <div className="truck-deals-page__card-image-container">
                             <img src={deal.vehicle.image} alt={deal.vehicleName} className="truck-deals-page__card-image" />
-                            <div className="truck-deals-page__card-badge" style={{ background: deal.badgeColor }}>{deal.dealLabel}</div>
-                            <button className={`truck-deals-page__card-save ${saved ? 'truck-deals-page__card-save--saved' : ''}`} onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })} aria-label={saved ? 'Remove from saved' : 'Save vehicle'}>
-                              <Bookmark size={18} fill={saved ? 'currentColor' : 'none'} />
+                            <button
+                              className={`truck-deals-page__card-save ${saved ? 'truck-deals-page__card-save--saved' : ''}`}
+                              onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
+                              aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
+                            >
+                              <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
                             </button>
+                            {(() => {
+                              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                              if (allOffers.length > 1) return (
+                                <button
+                                  type="button"
+                                  className="truck-deals-page__card-offers-tag"
+                                  onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                                >
+                                  {allOffers.length} Offers Available
+                                </button>
+                              );
+                              return null;
+                            })()}
+                            {offersPopup?.slug === deal.vehicle.slug && (
+                              <div className="truck-deals-page__card-offers-popup">
+                                <div className="truck-deals-page__card-offers-popup-header">
+                                  <strong>{offersPopup.offers.length} Available Offers</strong>
+                                  <button type="button" className="truck-deals-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
+                                </div>
+                                <ul className="truck-deals-page__card-offers-popup-list">
+                                  {offersPopup.offers.map((o, idx) => (
+                                    <li key={idx} className="truck-deals-page__card-offers-popup-item">
+                                      <span className={`truck-deals-page__card-offers-popup-type truck-deals-page__card-offers-popup-type--${o.type}`}>
+                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                      </span>
+                                      <span className="truck-deals-page__card-offers-popup-label">{o.label}</span>
+                                      <span className="truck-deals-page__card-offers-popup-exp">exp {o.expires}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
+                              <div className="truck-deals-page__card-badges">
+                                {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="truck-deals-page__card-badge-img" />}
+                                {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="truck-deals-page__card-badge-img" />}
+                              </div>
+                            )}
                           </div>
                         </Link>
+
                         <div className="truck-deals-page__card-body">
-                          <div className="truck-deals-page__card-header">
-                            <Link to={`/${deal.vehicle.slug}`} className="truck-deals-page__card-name-link"><h3 className="truck-deals-page__card-name">{deal.vehicleName}</h3></Link>
-                            <div className="truck-deals-page__card-rating"><span className="truck-deals-page__card-rating-value">{deal.rating}</span><span className="truck-deals-page__card-rating-max">/10</span><span className="truck-deals-page__card-rating-label">C/D Rating</span></div>
-                          </div>
-                          {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-                            <div className="truck-deals-page__card-accolades">
-                              {deal.vehicle.tenBest && <div className="truck-deals-page__card-accolade"><img src={TEN_BEST_BADGE_URL} alt="10Best" className="truck-deals-page__card-accolade-icon" /><span>10Best</span></div>}
-                              {deal.vehicle.editorsChoice && <div className="truck-deals-page__card-accolade"><img src={EDITORS_CHOICE_BADGE_URL} alt="Editor's Choice" className="truck-deals-page__card-accolade-icon" /><span>Editor's Choice</span></div>}
+                          <div className="truck-deals-page__card-payment-block">
+                            <div className="truck-deals-page__card-payment">
+                              <span className="truck-deals-page__card-payment-amount">${deal.estimatedMonthly}</span>
+                              <span className="truck-deals-page__card-payment-period">{deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
                             </div>
-                          )}
+                            <span className="truck-deals-page__card-payment-savings">
+                              {deal.savingsVsAvg}
+                              <span className="truck-deals-page__card-tooltip-wrap">
+                                <Info size={13} className="truck-deals-page__card-tooltip-icon" />
+                                <span className="truck-deals-page__card-tooltip">{deal.savingsTooltip}</span>
+                              </span>
+                            </span>
+                          </div>
+
+                          <button className="truck-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
+                            <div className="truck-deals-page__card-deal-pill-icon">{pillIcon(deal.dealPillIcon)}</div>
+                            <span className="truck-deals-page__card-deal-pill-text">{deal.dealText}</span>
+                            <span className="truck-deals-page__card-deal-pill-divider" />
+                            <span className="truck-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                          </button>
+
                           <div className="truck-deals-page__card-details">
                             {deal.details.map((d, i) => (
                               <div key={i} className="truck-deals-page__card-detail">
                                 <span className="truck-deals-page__card-detail-label">{d.label}</span>
-                                <span className={`truck-deals-page__card-detail-value ${d.highlight ? 'truck-deals-page__card-detail-value--highlight' : ''}`}>{d.value}</span>
+                                <span className="truck-deals-page__card-detail-value">{d.value}</span>
                               </div>
                             ))}
                           </div>
-                          <Link to={`/vehicles?make=${deal.vehicle.make}&model=${deal.vehicle.model}`} className="truck-deals-page__card-cta">Get This Deal</Link>
+
+                          <button type="button" className="truck-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
+
                           <button className="truck-deals-page__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
-                            <span>Additional Details</span>{isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                            <span>Additional Details</span>{isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                           </button>
                           {isExpanded && (
                             <div className="truck-deals-page__card-additional">
@@ -154,6 +312,25 @@ const TruckDealsPage = () => {
                   )}
                 </div>
               </section>
+              <section className="truck-deals-page__faq-section">
+                <h2 className="truck-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About Truck Deals</h2>
+                <div className="truck-deals-page__faq-list">
+                  {[
+                    { question: 'What types of truck deals are available?', answer: 'Truck deals include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers adjust these offers monthly based on inventory levels and sales targets.' },
+                    { question: 'Are truck deals as good as sedan or SUV deals?', answer: 'Trucks are in high demand, so incentives can be smaller than sedans. However, manufacturers still offer competitive deals—especially on outgoing model years or well-stocked trims. Monitoring deals monthly helps you catch the best offers.' },
+                    { question: 'Can I combine truck incentives?', answer: 'Some manufacturers allow stacking loyalty, military, or first-responder bonuses with a finance or lease offer. However, cash-back and special APR typically cannot be combined. Ask the dealer to compare both scenarios for your situation.' },
+                    { question: 'When is the best time to buy a truck?', answer: 'End of model year (August–October), holiday weekends, and the end of each quarter often bring the strongest deals. That said, great truck incentives can appear any month—check this page regularly.' },
+                    { question: 'Do these deals apply to heavy-duty trucks?', answer: 'Most deals listed here apply to light-duty pickups (1500 series). Heavy-duty trucks (2500/3500) sometimes have separate incentive programs with different terms. Check the "Eligible Trims" section of each deal for specifics.' },
+                  ].map((faq, i) => (
+                    <div key={i} className={`truck-deals-page__faq-item ${expandedFaqIndex === i ? 'truck-deals-page__faq-item--expanded' : ''}`}>
+                      <button className="truck-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
+                        <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                      </button>
+                      {expandedFaqIndex === i && <div className="truck-deals-page__faq-answer"><p>{faq.answer}</p></div>}
+                    </div>
+                  ))}
+                </div>
+              </section>
               <section className="truck-deals-page__links-section">
                 <h2 className="truck-deals-page__section-title">Explore More</h2>
                 <div className="truck-deals-page__links-grid">
@@ -170,6 +347,12 @@ const TruckDealsPage = () => {
           </div>
         </div>
       </div>
+      <IncentivesModal
+        isOpen={!!activeDealId}
+        onClose={() => setActiveDealId(null)}
+        variant="conversion-b"
+        offer={activeOffer}
+      />
       <SignInToSaveModal isOpen={showSignInModal} onClose={() => { setShowSignInModal(false); setPendingSaveVehicle(null); }} itemType="vehicle" itemName={pendingSaveVehicle?.name} itemImage={pendingSaveVehicle?.image} />
     </div>
   );

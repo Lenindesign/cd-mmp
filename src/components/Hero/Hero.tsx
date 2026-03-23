@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image } from 'lucide-react';
+import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image, DollarSign, Percent, Car } from 'lucide-react';
 import { getAvailableYears } from '../../services/vehicleService';
+import { getVehicleIncentives } from '../../services/incentivesService';
+import type { Incentive } from '../../services/incentivesService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../Button';
 import { OptimizedImage } from '../OptimizedImage';
@@ -22,6 +24,12 @@ interface HeroProps {
     editorsChoice?: boolean;
     tenBest?: boolean;
     evOfTheYear?: boolean;
+    mpg?: string;
+    horsepower?: string | number;
+    seatingCapacity?: number;
+    cargoSpace?: string | number;
+    fuelType?: string;
+    drivetrain?: string;
   };
   animateButtons?: boolean;
   showModelInButtons?: boolean;
@@ -110,6 +118,47 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
     }
   };
   
+  // Fetch incentives for this vehicle
+  const vehicleIncentives = useMemo(
+    () => getVehicleIncentives(vehicle.make, vehicle.model),
+    [vehicle.make, vehicle.model]
+  );
+
+  const incentiveIcon = (type: Incentive['type']) => {
+    switch (type) {
+      case 'cash': return <DollarSign size={16} />;
+      case 'finance': return <Percent size={16} />;
+      case 'lease': return <Car size={16} />;
+      default: return <DollarSign size={16} />;
+    }
+  };
+
+  const formatExpDate = (date: string) => {
+    const match = date.match(/^(\w+)\s+(\d+),?\s+(\d+)/);
+    if (!match) return `exp ${date}`;
+    const m = match[1].slice(0, 3);
+    return `exp ${m.charAt(0).toUpperCase() + m.slice(1).toLowerCase()} ${match[2]}/${match[3].slice(-2)}`;
+  };
+
+  // Pick the top 3 most relevant incentives (one per type if possible)
+  const topIncentives = useMemo(() => {
+    const { incentives } = vehicleIncentives;
+    const picked: Incentive[] = [];
+    const types: Incentive['type'][] = ['cash', 'finance', 'lease', 'special'];
+    for (const t of types) {
+      const match = incentives.find(i => i.type === t);
+      if (match) picked.push(match);
+      if (picked.length >= 3) break;
+    }
+    if (picked.length < 3) {
+      for (const inc of incentives) {
+        if (!picked.includes(inc)) picked.push(inc);
+        if (picked.length >= 3) break;
+      }
+    }
+    return picked;
+  }, [vehicleIncentives]);
+
   // Fallback placeholder image (Lamborghini Revuelto)
   const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
 
@@ -434,6 +483,23 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
               </div>
             )}
           </div>
+
+          {/* Special Offers and Incentives */}
+          {topIncentives.length > 0 && (
+            <div className="hero__offers">
+              <h3 className="hero__offers-title">SPECIAL OFFERS AND INCENTIVES</h3>
+              <div className="hero__offers-list">
+                {topIncentives.map((inc) => (
+                  <div key={inc.id} className="hero__offer">
+                    <span className="hero__offer-icon">{incentiveIcon(inc.type)}</span>
+                    <span className="hero__offer-text">{inc.title}</span>
+                    <span className="hero__offer-divider" />
+                    <span className="hero__offer-exp">{formatExpDate(inc.expirationDate)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

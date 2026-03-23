@@ -1,7 +1,8 @@
-import { useEffect, useRef, useMemo } from 'react';
-import { X, Check, Minus, Star, Fuel, Gauge, Settings, DollarSign } from 'lucide-react';
+import { useEffect, useRef, useMemo, useState } from 'react';
+import { X, Check, Minus, Star, Fuel, Gauge, Settings, DollarSign, Sparkles, ChevronUp, Search, Trash2 } from 'lucide-react';
 import { vehicleDatabase } from '../../data/vehicles';
 import { OptimizedImage } from '../OptimizedImage';
+import { useVehicleAIChat } from '../../hooks/useVehicleAIChat';
 import './VehicleComparisonModal.css';
 
 interface CompareVehicle {
@@ -219,6 +220,63 @@ const VehicleComparisonModal = ({ isOpen, onClose, vehicles }: VehicleComparison
     }
   };
 
+  const [aiExpanded, setAiExpanded] = useState(true);
+  const [aiQuery, setAiQuery] = useState('');
+  const vehicleDetails = useMemo(() => vehicleData.map(v => v.details ?? null), [vehicleData]);
+  const { messages: chatMessages, isTyping: aiTyping, sendMessage: sendAiMessage, clearChat } = useVehicleAIChat(vehicleDetails);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const aiSummary = useMemo(() => {
+    if (vehicleData.length < 2) return '';
+    const names = vehicleData.map(v => { const d = v.details; return d ? `${d.year} ${d.make} ${d.model}` : v.name; });
+    const parts: string[] = [];
+
+    const seats = vehicleData.map(v => v.details?.seatingCapacity || 0);
+    if (seats.some(s => s > 0) && new Set(seats.filter(s => s > 0)).size > 1) {
+      const maxI = seats.indexOf(Math.max(...seats));
+      const minI = seats.indexOf(Math.min(...seats.filter(s => s > 0)));
+      if (maxI !== minI) parts.push(`The most significant difference is seating capacity: the **${names[maxI]}** offers ${seats[maxI]} seats, while the **${names[minI]}** is a ${seats[minI]}-seat vehicle.`);
+    }
+
+    const prices = vehicleData.map(v => v.details?.priceMin || 0);
+    if (prices.filter(p => p > 0).length >= 2) {
+      const strs = vehicleData.map((_, i) => prices[i] > 0 ? `The **${names[i]}** starts at **$${prices[i].toLocaleString()}**` : null).filter(Boolean);
+      if (strs.length >= 2) parts.push(strs.join(', compared to ') + '.');
+    }
+
+    const hps = vehicleData.map(v => v.details?.horsepower || 0);
+    if (hps.filter(h => h > 0).length >= 2) {
+      const maxI = hps.indexOf(Math.max(...hps));
+      parts.push(`The **${names[maxI]}** leads in power with **${hps[maxI]} hp**.`);
+    }
+
+    const ratings = vehicleData.map(v => v.details?.staffRating || 0);
+    if (ratings.filter(r => r > 0).length >= 2) {
+      const topI = ratings.indexOf(Math.max(...ratings));
+      parts.push(`The **${names[topI]}** earns the highest C/D rating at **${ratings[topI].toFixed(1)}/10**.`);
+    }
+
+    const mpgs = vehicleData.map(v => { const m = v.details?.mpg?.match(/(\d+)\/(\d+)/); return m ? (parseInt(m[1]) + parseInt(m[2])) / 2 : 0; });
+    if (mpgs.filter(m => m > 0).length >= 2) {
+      const bestI = mpgs.indexOf(Math.max(...mpgs));
+      parts.push(`The **${names[bestI]}** offers the best fuel economy at **${vehicleData[bestI].details?.mpg} mpg**.`);
+    }
+
+    return parts.join(' ') || `Compare the ${names.join(' and ')} across pricing, performance, and features.`;
+  }, [vehicleData]);
+
+  const POPULAR_SUGGESTIONS = [
+    'Best for city commute',
+    'Best safety ratings',
+    'Most cargo space',
+    'Best for winter driving',
+    'Best for long highway commute',
+  ];
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages, aiTyping]);
+
   if (!isOpen || vehicles.length < 2) return null;
 
   const renderValue = (value: string | boolean | null, isBest: boolean = false) => {
@@ -325,48 +383,197 @@ const VehicleComparisonModal = ({ isOpen, onClose, vehicles }: VehicleComparison
             ))}
           </div>
 
-          {/* Comparison Table */}
-          <div className="vehicle-comparison-table-wrapper">
-            <table className="vehicle-comparison-table">
-              <thead className="vehicle-comparison-table__head">
-                <tr>
-                  <th className="vehicle-comparison-table__corner">Specification</th>
-                  {vehicleData.map((vehicle) => (
-                    <th key={vehicle.id} className="vehicle-comparison-table__vehicle-header">
-                      {vehicle.details?.make} {vehicle.details?.model}
-                    </th>
+          {/* Pricing Table */}
+          {comparisonData.filter(c => c.category === 'Pricing').length > 0 && (
+            <div className="vehicle-comparison-table-wrapper">
+              <table className="vehicle-comparison-table">
+                <thead className="vehicle-comparison-table__head">
+                  <tr>
+                    <th className="vehicle-comparison-table__corner">Specification</th>
+                    {vehicleData.map((vehicle) => (
+                      <th key={vehicle.id} className="vehicle-comparison-table__vehicle-header">
+                        {vehicle.details?.make} {vehicle.details?.model}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="vehicle-comparison-table__body">
+                  {comparisonData.filter(c => c.category === 'Pricing').map((category) => (
+                    <>
+                      <tr key={category.category} className="vehicle-comparison-table__category-row">
+                        <td colSpan={vehicleData.length + 1} className="vehicle-comparison-table__category">
+                          {category.category}
+                        </td>
+                      </tr>
+                      {category.specs.map((spec) => {
+                        const bestIndex = getBestValueIndex(spec.values, spec.highlight);
+                        return (
+                          <tr key={spec.name} className="vehicle-comparison-table__spec-row">
+                            <td className="vehicle-comparison-table__spec-name">{spec.name}</td>
+                            {spec.values.map((value, index) => (
+                              <td
+                                key={index}
+                                className={`vehicle-comparison-table__spec-value ${bestIndex === index ? 'vehicle-comparison-table__spec-value--best' : ''}`}
+                              >
+                                {renderValue(value, bestIndex === index)}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </>
                   ))}
-                </tr>
-              </thead>
-              <tbody className="vehicle-comparison-table__body">
-                {comparisonData.map((category) => (
-                  <>
-                    <tr key={category.category} className="vehicle-comparison-table__category-row">
-                      <td colSpan={vehicleData.length + 1} className="vehicle-comparison-table__category">
-                        {category.category}
-                      </td>
-                    </tr>
-                    {category.specs.map((spec) => {
-                      const bestIndex = getBestValueIndex(spec.values, spec.highlight);
-                      return (
-                        <tr key={spec.name} className="vehicle-comparison-table__spec-row">
-                          <td className="vehicle-comparison-table__spec-name">{spec.name}</td>
-                          {spec.values.map((value, index) => (
-                            <td
-                              key={index}
-                              className={`vehicle-comparison-table__spec-value ${bestIndex === index ? 'vehicle-comparison-table__spec-value--best' : ''}`}
-                            >
-                              {renderValue(value, bestIndex === index)}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    })}
-                  </>
-                ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* AI Module — between Pricing and Ratings */}
+          <div className="vehicle-compare-ai">
+            <button
+              type="button"
+              className="vehicle-compare-ai__header"
+              onClick={() => setAiExpanded(prev => !prev)}
+              aria-expanded={aiExpanded}
+            >
+              <div className="vehicle-compare-ai__header-left">
+                <span className="vehicle-compare-ai__header-title">Ask Car and Driver Assist</span>
+                <Sparkles size={16} className="vehicle-compare-ai__sparkle" />
+              </div>
+              <ChevronUp size={18} className={`vehicle-compare-ai__chevron ${!aiExpanded ? 'vehicle-compare-ai__chevron--collapsed' : ''}`} />
+            </button>
+
+            {aiExpanded && (
+              <div className="vehicle-compare-ai__body">
+                <div className="vehicle-compare-ai__response">
+                  <p className="vehicle-compare-ai__label">C/D Says:</p>
+                  <p className="vehicle-compare-ai__text" dangerouslySetInnerHTML={{ __html: aiSummary.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') }} />
+                </div>
+
+                {chatMessages.length > 0 && (
+                  <div className="vehicle-compare-ai__chat">
+                    <div className="vehicle-compare-ai__chat-header">
+                      <span className="vehicle-compare-ai__chat-title">Conversation</span>
+                      <button type="button" className="vehicle-compare-ai__chat-clear" onClick={clearChat} aria-label="Clear conversation">
+                        <Trash2 size={13} />
+                        <span>Clear</span>
+                      </button>
+                    </div>
+                    <div className="vehicle-compare-ai__chat-thread">
+                      {chatMessages.map(msg => (
+                        <div key={msg.id} className={`vehicle-compare-ai__chat-msg vehicle-compare-ai__chat-msg--${msg.role}`}>
+                          <div className="vehicle-compare-ai__chat-msg-header">
+                            {msg.role === 'assistant' && <Sparkles size={11} className="vehicle-compare-ai__chat-msg-icon" />}
+                            <span className="vehicle-compare-ai__chat-msg-role">{msg.role === 'user' ? 'You' : 'C/D Assist'}</span>
+                          </div>
+                          <div
+                            className="vehicle-compare-ai__chat-msg-content"
+                            dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') }}
+                          />
+                        </div>
+                      ))}
+                      {aiTyping && (
+                        <div className="vehicle-compare-ai__chat-msg vehicle-compare-ai__chat-msg--assistant">
+                          <div className="vehicle-compare-ai__chat-msg-header">
+                            <Sparkles size={11} className="vehicle-compare-ai__chat-msg-icon" />
+                            <span className="vehicle-compare-ai__chat-msg-role">C/D Assist</span>
+                          </div>
+                          <div className="vehicle-compare-ai__chat-typing">
+                            <span /><span /><span />
+                          </div>
+                        </div>
+                      )}
+                      <div ref={chatEndRef} />
+                    </div>
+                  </div>
+                )}
+
+                <form
+                  className="vehicle-compare-ai__prompt"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (aiQuery.trim() && !aiTyping) {
+                      sendAiMessage(aiQuery);
+                      setAiQuery('');
+                    }
+                  }}
+                >
+                  <Sparkles size={14} className="vehicle-compare-ai__prompt-icon" />
+                  <input
+                    type="text"
+                    className="vehicle-compare-ai__input"
+                    placeholder={chatMessages.length > 0 ? 'Ask a follow-up question...' : 'Which of these vehicles is best for a family of five that likes road trips?'}
+                    value={aiQuery}
+                    onChange={(e) => setAiQuery(e.target.value)}
+                    disabled={aiTyping}
+                  />
+                  <button type="submit" className="vehicle-compare-ai__search-btn" aria-label="Send" disabled={aiTyping || !aiQuery.trim()}>
+                    <Search size={16} />
+                  </button>
+                </form>
+
+                {chatMessages.length === 0 && (
+                  <div className="vehicle-compare-ai__suggestions">
+                    <span className="vehicle-compare-ai__suggestions-label">Popular suggestions:</span>
+                    <div className="vehicle-compare-ai__chips">
+                      {POPULAR_SUGGESTIONS.map(s => (
+                        <button key={s} type="button" className="vehicle-compare-ai__chip" onClick={() => { sendAiMessage(s); }}>{s}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <p className="vehicle-compare-ai__disclaimer">
+                  We are committed to transparency in our usage of artificial intelligence (AI). These vehicle summaries are generated using AI trained on content previously published on CarandDriver.com. In other words, the information you will read here is based on our editorial staff's rigorous testing, comprehensive reviews, and expertise.
+                </p>
+              </div>
+            )}
           </div>
+
+          {/* Remaining categories (Ratings, Performance, Details, Awards) */}
+          {comparisonData.filter(c => c.category !== 'Pricing').length > 0 && (
+            <div className="vehicle-comparison-table-wrapper">
+              <table className="vehicle-comparison-table">
+                <thead className="vehicle-comparison-table__head">
+                  <tr>
+                    <th className="vehicle-comparison-table__corner">Specification</th>
+                    {vehicleData.map((vehicle) => (
+                      <th key={vehicle.id} className="vehicle-comparison-table__vehicle-header">
+                        {vehicle.details?.make} {vehicle.details?.model}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="vehicle-comparison-table__body">
+                  {comparisonData.filter(c => c.category !== 'Pricing').map((category) => (
+                    <>
+                      <tr key={category.category} className="vehicle-comparison-table__category-row">
+                        <td colSpan={vehicleData.length + 1} className="vehicle-comparison-table__category">
+                          {category.category}
+                        </td>
+                      </tr>
+                      {category.specs.map((spec) => {
+                        const bestIndex = getBestValueIndex(spec.values, spec.highlight);
+                        return (
+                          <tr key={spec.name} className="vehicle-comparison-table__spec-row">
+                            <td className="vehicle-comparison-table__spec-name">{spec.name}</td>
+                            {spec.values.map((value, index) => (
+                              <td
+                                key={index}
+                                className={`vehicle-comparison-table__spec-value ${bestIndex === index ? 'vehicle-comparison-table__spec-value--best' : ''}`}
+                              >
+                                {renderValue(value, bestIndex === index)}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

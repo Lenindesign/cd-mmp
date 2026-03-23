@@ -1,9 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Footer from './Footer';
+import { CarFinderProvider } from '../../contexts/CarFinderContext';
 
 const meta: Meta<typeof Footer> = {
   title: 'Organisms/Footer',
   component: Footer,
+  decorators: [
+    (Story) => (
+      <CarFinderProvider>
+        <Story />
+      </CarFinderProvider>
+    ),
+  ],
   parameters: {
     layout: 'fullscreen',
     docs: {

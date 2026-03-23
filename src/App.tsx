@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { AuthProvider } from './contexts/AuthContext';
+import { CarFinderProvider, useCarFinder } from './contexts/CarFinderContext';
 import { CarFinderChat } from './components/CarFinderChat';
 import './App.css';
 
@@ -41,6 +42,10 @@ const CashFinanceDealsPage = lazy(() => import('./pages/CashFinanceDealsPage/Cas
 const LeaseDealsPage = lazy(() => import('./pages/LeaseDealsPage/LeaseDealsPage'));
 const SuvDealsPage = lazy(() => import('./pages/SuvDealsPage/SuvDealsPage'));
 const TruckDealsPage = lazy(() => import('./pages/TruckDealsPage/TruckDealsPage'));
+const AllDealsPage = lazy(() => import('./pages/AllDealsPage/AllDealsPage'));
+
+// Compare page - lazy loaded (no auth required)
+const ComparePage = lazy(() => import('./pages/ComparePage/ComparePage'));
 
 // Audit pages - lazy loaded
 const CardAudit = lazy(() => import('./pages/CardAudit/CardAudit'));
@@ -71,13 +76,33 @@ const PageLoader = () => (
   </div>
 );
 
+/** Renders CarFinderChat only when user has enabled it from the footer */
+const CarFinderChatGate = () => {
+  const { carFinderEnabled } = useCarFinder();
+  const location = useLocation();
+  const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
+
+  if (isOnboardingPage || !carFinderEnabled) return null;
+
+  return (
+    <CarFinderChat
+      floating
+      position="bottom-right"
+      onVehicleSelect={(vehicle) => {
+        window.location.href = `/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase().replace(/\s+/g, '-')}`;
+      }}
+    />
+  );
+};
+
 function App() {
   const location = useLocation();
   const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
 
   return (
     <AuthProvider>
-      <div className="app">
+      <CarFinderProvider>
+        <div className="app">
         {/* Skip Link for Accessibility */}
         <a href="#main-content" className="skip-link">
           Skip to main content
@@ -124,6 +149,9 @@ function App() {
             <Route path="/rankings/:bodyStyle" element={<RankingsPage />} />
             <Route path="/rankings/:bodyStyle/:subcategory" element={<RankingsPage />} />
             
+            {/* Compare Page - no auth required */}
+            <Route path="/compare" element={<ComparePage />} />
+
             {/* Deals Pages */}
             <Route path="/deals" element={<DealsHubPage />} />
             <Route path="/deals/zero-apr" element={<ZeroAprDealsPage />} />
@@ -131,6 +159,7 @@ function App() {
             <Route path="/deals/lease" element={<LeaseDealsPage />} />
             <Route path="/deals/suv" element={<SuvDealsPage />} />
             <Route path="/deals/truck" element={<TruckDealsPage />} />
+            <Route path="/deals/all" element={<AllDealsPage />} />
             
             {/* Audit Pages */}
             <Route path="/audit/cards" element={<CardAudit />} />
@@ -197,18 +226,10 @@ function App() {
         
         {!isOnboardingPage && <Footer />}
         
-        {/* AI Car Finder Chat - Floating Widget (visible on all non-onboarding pages) */}
-        {!isOnboardingPage && (
-          <CarFinderChat 
-            floating
-            position="bottom-right"
-            onVehicleSelect={(vehicle) => {
-              // Navigate to vehicle page when user selects a vehicle
-              window.location.href = `/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase().replace(/\s+/g, '-')}`;
-            }}
-          />
-        )}
+        {/* AI Car Finder Chat - only when user enables it from footer */}
+        <CarFinderChatGate />
       </div>
+    </CarFinderProvider>
     </AuthProvider>
   );
 }

@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, DollarSign } from 'lucide-react';
 import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
+import { getVehicleIncentives } from '../../services/incentivesService';
 import './VehicleRanking.css';
 
 // Hook to measure if names fit in available space
@@ -132,11 +133,16 @@ const VehicleCardInfo = ({
     useSmallFont ? 'vehicle-ranking__card-header--small-font' : ''
   ].filter(Boolean).join(' ');
 
+  const topIncentive = useMemo(() => {
+    const { incentives } = getVehicleIncentives(vehicle.make, vehicle.model);
+    const cash = incentives.find(i => i.type === 'cash');
+    return cash || incentives[0] || null;
+  }, [vehicle.make, vehicle.model]);
+
   return (
     <div className="vehicle-ranking__card-info">
       <div className={headerClasses}>
         <h3 className="vehicle-ranking__card-name">{displayName}</h3>
-        {/* C/D Rating - Only show when showScore is true */}
         {showScore && (
           <>
             {!isStacked && <div className="vehicle-ranking__card-divider" />}
@@ -148,8 +154,14 @@ const VehicleCardInfo = ({
         )}
       </div>
       <p className="vehicle-ranking__card-price">
-        <span className="vehicle-ranking__card-price-label">STARTING AT:</span> {vehicle.price}
+        <span className="vehicle-ranking__card-price-label">Starting at:</span> <span className="vehicle-ranking__card-price-value">{vehicle.price}</span>
       </p>
+      {topIncentive && (
+        <div className="vehicle-ranking__card-incentive">
+          <span className="vehicle-ranking__card-incentive-icon"><DollarSign size={14} /></span>
+          <span className="vehicle-ranking__card-incentive-text">{topIncentive.title}</span>
+        </div>
+      )}
       <div className={`cta cta--md cta--full vehicle-ranking__card-cta ${vehicle.isCurrentVehicle ? 'cta--primary' : 'cta--outline'}`}>
         <span className="vehicle-ranking__card-cta-full">SHOP {vehicle.name.toUpperCase()}</span>
         <span className="vehicle-ranking__card-cta-short">SHOP {vehicle.name.split(' ').slice(1).join(' ').toUpperCase()}</span>

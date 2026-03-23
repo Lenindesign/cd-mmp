@@ -263,6 +263,8 @@ export const getComparisonVehicles = (currentVehicle: { make: string; model: str
 export interface RankedVehicle {
   id: string;
   rank: number;
+  make: string;
+  model: string;
   name: string;
   price: string;
   image: string;
@@ -280,6 +282,8 @@ export const formatForRanking = (vehicle: Vehicle, rank: number, currentVehicleI
   return {
     id: vehicle.id,
     rank,
+    make: vehicle.make,
+    model: vehicle.model,
     name: `${vehicle.make} ${vehicle.model}`,
     price: `$${vehicle.priceMin.toLocaleString()}`,
     image: vehicle.image,

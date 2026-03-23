@@ -88,6 +88,10 @@
   --color-green: var(--color-success);
   --color-green-dark: var(--color-success-dark);
   
+  /* ---- PURPLE (for finance/lease badges) ---- */
+  --color-purple: #7c3aed;
+  --color-purple-dark: #6d28d9;
+  
   /* ---- DARK THEME ---- */
   --color-dark-bg: #0a1628;
   --color-dark-surface: #1a1a2e;

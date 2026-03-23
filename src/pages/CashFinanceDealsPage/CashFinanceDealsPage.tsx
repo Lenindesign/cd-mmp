@@ -1,16 +1,21 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Users, Clock, DollarSign, Percent } from 'lucide-react';
-import { getCashDeals, getFinanceDeals, getCurrentPeriod } from '../../services/cashFinanceDealsService';
+import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Users, Clock, DollarSign, Percent, SlidersHorizontal } from 'lucide-react';
+import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getCurrentPeriod } from '../../utils/dateUtils';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers } from '../../utils/dealCalculations';
+import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
+import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
+import { DealsFilterModal } from '../../components/DealsFilterModal';
+import type { DealsFilterState } from '../../components/DealsFilterModal';
 import './CashFinanceDealsPage.css';
-
-const EDITORS_CHOICE_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE';
-const TEN_BEST_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg';
 
 type DealFilter = 'all' | 'cash' | 'finance';
 
@@ -41,6 +46,22 @@ const FAQ_DATA = [
   },
 ];
 
+const DEFAULT_FILTERS: DealsFilterState = {
+  tab: 'best-deals',
+  zipCode: '90245',
+  bodyTypes: [],
+  monthlyPaymentMin: 0,
+  monthlyPaymentMax: 99999,
+  makes: [],
+  dueAtSigningMin: 0,
+  dueAtSigningMax: 99999,
+  fuelTypes: [],
+  accolades: [],
+  terms: [],
+  creditTier: null,
+  sortBy: 'recommended',
+};
+
 const CashFinanceDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
@@ -51,20 +72,67 @@ const CashFinanceDealsPage = () => {
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
+  const [activeDealId, setActiveDealId] = useState<string | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
+
+  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null;
+  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0);
+
+  const matchesFilters = useCallback((
+    vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    deal?: { term?: string; targetAudience?: string },
+  ) => {
+    if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
+    if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
+    if (filters.accolades.length > 0) {
+      const hasMatch = filters.accolades.some(a => {
+        if (a === 'editorsChoice') return vehicle.editorsChoice;
+        if (a === 'tenBest') return vehicle.tenBest;
+        if (a === 'evOfTheYear') return vehicle.evOfTheYear;
+        return false;
+      });
+      if (!hasMatch) return false;
+    }
+    if (filters.terms.length > 0 && deal?.term) {
+      if (!filters.terms.includes(parseTermMonths(deal.term))) return false;
+    }
+    if (filters.creditTier && deal?.targetAudience) {
+      const dealTier = inferCreditTier(deal.targetAudience);
+      if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
+    }
+    return true;
+  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+
+  const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (offersPopup?.slug === slug) {
+      setOffersPopup(null);
+    } else {
+      setOffersPopup({ slug, offers: getVehicleOffers(make, model) });
+    }
+  }, [offersPopup]);
 
   const cashDeals = useMemo(() => {
-    return getCashDeals().map((deal) => ({
-      ...deal,
-      rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
-    }));
-  }, [getSupabaseRating]);
+    return getCashDeals()
+      .filter(deal => matchesFilters(deal.vehicle))
+      .map((deal) => ({
+        ...deal,
+        rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
+      }));
+  }, [getSupabaseRating, matchesFilters]);
 
   const financeDeals = useMemo(() => {
-    return getFinanceDeals().map((deal) => ({
-      ...deal,
-      rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
-    }));
-  }, [getSupabaseRating]);
+    return getFinanceDeals()
+      .filter(deal => matchesFilters(deal.vehicle, { term: deal.term, targetAudience: deal.targetAudience }))
+      .map((deal) => ({
+        ...deal,
+        rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
+      }));
+  }, [getSupabaseRating, matchesFilters]);
 
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
@@ -95,13 +163,50 @@ const CashFinanceDealsPage = () => {
     setExpandedFaqIndex((prev) => (prev === index ? null : index));
   };
 
+  const allDeals = [...cashDeals.map(d => ({ ...d, type: 'cash' as const })), ...financeDeals.map(d => ({ ...d, type: 'finance' as const }))];
+  const activeDealObj = activeDealId ? allDeals.find(d => d.id === activeDealId) : null;
+  const activeOffer: Partial<IncentiveOfferDetail> | undefined = activeDealObj
+    ? (() => {
+        const v = activeDealObj.vehicle;
+        const priceParts = v.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/);
+        const headline = activeDealObj.type === 'cash'
+          ? `${'incentiveValue' in activeDealObj ? activeDealObj.incentiveValue : ''} Cash Back`
+          : `${'apr' in activeDealObj ? activeDealObj.apr : ''} APR Financing for ${'term' in activeDealObj ? activeDealObj.term : ''}`;
+        return {
+          year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
+          msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
+          msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
+          offerHeadline: headline,
+          whatItMeans: activeDealObj.type === 'cash'
+            ? `The manufacturer is offering a cash discount directly off the purchase price—an instant savings before negotiation.`
+            : `A below-market interest rate from the manufacturer that lowers your monthly payment and total cost.`,
+          yourSavings: activeDealObj.type === 'cash'
+            ? `${'incentiveValue' in activeDealObj ? activeDealObj.incentiveValue : ''} off the sticker price. Combinable with dealer discounts.`
+            : `Could save you $1,500–$3,000 in interest over the loan term.`,
+          whoQualifies: 'targetAudience' in activeDealObj ? activeDealObj.targetAudience : 'All buyers qualify.',
+          eligibleTrims: activeDealObj.trimsEligible,
+          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          eventLabel: activeDealObj.programName,
+          expirationDate: activeDealObj.expirationDate,
+        };
+      })()
+    : undefined;
+
   const pageTitle = `Best Car Deals & Incentives for ${month} ${year}`;
+  const BASE_URL = 'https://www.caranddriver.com';
 
   return (
     <div className="cf-deals-page">
       <SEO
         title={`${pageTitle}: Find the Best Car Deals Right Now | Car and Driver`}
         description={`Find the best new car deals, cash-back incentives, and special financing offers for ${month} ${year}. Expert ratings and reviews from Car and Driver help you get the best value.`}
+        canonical={`${BASE_URL}/deals/cash-finance`}
+        keywords={['cash back car deals', 'finance deals', `car deals ${month} ${year}`, 'new car incentives', 'cash rebates', 'special financing']}
+        structuredData={createBreadcrumbStructuredData([
+          { name: 'Home', url: BASE_URL },
+          { name: 'Deals', url: `${BASE_URL}/deals` },
+          { name: 'Cash & Finance Deals', url: `${BASE_URL}/deals/cash-finance` },
+        ])}
       />
 
       {/* Hero Section */}
@@ -136,7 +241,25 @@ const CashFinanceDealsPage = () => {
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* Filter toolbar */}
+      <div className="cf-deals-page__toolbar">
+        <div className="container cf-deals-page__toolbar-inner">
+          <span className="cf-deals-page__toolbar-count">{cashDeals.length + financeDeals.length} deals available</span>
+          <button
+            type="button"
+            className={`cf-deals-page__toolbar-filter-btn ${hasActiveFilters ? 'cf-deals-page__toolbar-filter-btn--active' : ''}`}
+            onClick={() => setFilterOpen(true)}
+          >
+            <SlidersHorizontal size={16} />
+            <span>Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="cf-deals-page__toolbar-filter-badge">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Deal Type Filter Bar */}
       <div className="cf-deals-page__filter-bar">
         <div className="container">
           <div className="cf-deals-page__filters">
@@ -185,48 +308,97 @@ const CashFinanceDealsPage = () => {
 
                       return (
                         <div key={deal.id} className="cf-deals-page__card">
+                          <div className="cf-deals-page__card-header">
+                            <Link to={`/${deal.vehicle.slug}`} className="cf-deals-page__card-name-link">
+                              <h3 className="cf-deals-page__card-name">{vehicleName}</h3>
+                            </Link>
+                            <div className="cf-deals-page__card-rating">
+                              <span className="cf-deals-page__card-rating-value">{deal.rating}</span>
+                              <span className="cf-deals-page__card-rating-max">/10</span>
+                              <span className="cf-deals-page__card-rating-label">C/D Rating</span>
+                            </div>
+                          </div>
+
                           <Link to={`/${deal.vehicle.slug}`} className="cf-deals-page__card-image-link">
                             <div className="cf-deals-page__card-image-container">
                               <img src={deal.vehicle.image} alt={vehicleName} className="cf-deals-page__card-image" />
-                              <div className="cf-deals-page__card-badge cf-deals-page__card-badge--cash">{deal.incentiveValue} Cash Back</div>
                               <button
                                 className={`cf-deals-page__card-save ${saved ? 'cf-deals-page__card-save--saved' : ''}`}
                                 onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
                                 aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
                               >
-                                <Bookmark size={18} fill={saved ? 'currentColor' : 'none'} />
+                                <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
                               </button>
+                              {(() => {
+                                const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                                if (allOffers.length > 1) return (
+                                  <button
+                                    type="button"
+                                    className="cf-deals-page__card-offers-tag"
+                                    onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                                  >
+                                    {allOffers.length} Offers Available
+                                  </button>
+                                );
+                                return null;
+                              })()}
+                              {offersPopup?.slug === deal.vehicle.slug && (
+                                <div className="cf-deals-page__card-offers-popup">
+                                  <div className="cf-deals-page__card-offers-popup-header">
+                                    <strong>{offersPopup.offers.length} Available Offers</strong>
+                                    <button type="button" className="cf-deals-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
+                                  </div>
+                                  <ul className="cf-deals-page__card-offers-popup-list">
+                                    {offersPopup.offers.map((o, idx) => (
+                                      <li key={idx} className="cf-deals-page__card-offers-popup-item">
+                                        <span className={`cf-deals-page__card-offers-popup-type cf-deals-page__card-offers-popup-type--${o.type}`}>
+                                          {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                        </span>
+                                        <span className="cf-deals-page__card-offers-popup-label">{o.label}</span>
+                                        <span className="cf-deals-page__card-offers-popup-exp">exp {o.expires}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
+                                <div className="cf-deals-page__card-badges">
+                                  {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="cf-deals-page__card-badge-img" />}
+                                  {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="cf-deals-page__card-badge-img" />}
+                                </div>
+                              )}
                             </div>
                           </Link>
 
                           <div className="cf-deals-page__card-body">
-                            <div className="cf-deals-page__card-header">
-                              <Link to={`/${deal.vehicle.slug}`} className="cf-deals-page__card-name-link">
-                                <h3 className="cf-deals-page__card-name">{vehicleName}</h3>
-                              </Link>
-                              <div className="cf-deals-page__card-rating">
-                                <span className="cf-deals-page__card-rating-value">{deal.rating}</span>
-                                <span className="cf-deals-page__card-rating-max">/10</span>
-                                <span className="cf-deals-page__card-rating-label">C/D Rating</span>
-                              </div>
-                            </div>
+                            {(() => {
+                              const msrp = parseMsrpMin(deal.vehicle.priceRange);
+                              const cashAmount = parseInt(deal.incentiveValue.replace(/[^0-9]/g, ''), 10) || 0;
+                              const monthly = calcMonthly(msrp - cashAmount, AVG_MARKET_APR, AVG_LOAN_TERM);
+                              const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
+                              return (
+                                <div className="cf-deals-page__card-payment-block">
+                                  <div className="cf-deals-page__card-payment">
+                                    <span className="cf-deals-page__card-payment-amount">${monthly}</span>
+                                    <span className="cf-deals-page__card-payment-period">/mo*</span>
+                                  </div>
+                                  <span className="cf-deals-page__card-payment-savings">
+                                    {savingsVsAvg}
+                                    <span className="cf-deals-page__card-tooltip-wrap">
+                                      <Info size={13} className="cf-deals-page__card-tooltip-icon" />
+                                      <span className="cf-deals-page__card-tooltip">{savingsTooltip}</span>
+                                    </span>
+                                  </span>
+                                </div>
+                              );
+                            })()}
 
-                            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-                              <div className="cf-deals-page__card-accolades">
-                                {deal.vehicle.tenBest && (
-                                  <div className="cf-deals-page__card-accolade">
-                                    <img src={TEN_BEST_BADGE_URL} alt="10Best" className="cf-deals-page__card-accolade-icon" />
-                                    <span>10Best</span>
-                                  </div>
-                                )}
-                                {deal.vehicle.editorsChoice && (
-                                  <div className="cf-deals-page__card-accolade">
-                                    <img src={EDITORS_CHOICE_BADGE_URL} alt="Editor's Choice" className="cf-deals-page__card-accolade-icon" />
-                                    <span>Editor's Choice</span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                            <button className="cf-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
+                              <div className="cf-deals-page__card-deal-pill-icon"><DollarSign size={12} /></div>
+                              <span className="cf-deals-page__card-deal-pill-text">{deal.incentiveValue} Cash Back</span>
+                              <span className="cf-deals-page__card-deal-pill-divider" />
+                              <span className="cf-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                            </button>
 
                             <div className="cf-deals-page__card-details">
                               <div className="cf-deals-page__card-detail">
@@ -235,32 +407,15 @@ const CashFinanceDealsPage = () => {
                               </div>
                               <div className="cf-deals-page__card-detail">
                                 <span className="cf-deals-page__card-detail-label">% Off MSRP</span>
-                                <span className="cf-deals-page__card-detail-value cf-deals-page__card-detail-value--highlight">{deal.percentOffMsrp}</span>
-                              </div>
-                              <div className="cf-deals-page__card-detail">
-                                <span className="cf-deals-page__card-detail-label">Incentive Value</span>
-                                <span className="cf-deals-page__card-detail-value cf-deals-page__card-detail-value--cash">{deal.incentiveValue}</span>
-                              </div>
-                              <div className="cf-deals-page__card-detail">
-                                <span className="cf-deals-page__card-detail-label">Expires</span>
-                                <span className="cf-deals-page__card-detail-value">{deal.expirationDate}</span>
+                                <span className="cf-deals-page__card-detail-value">{deal.percentOffMsrp}</span>
                               </div>
                             </div>
 
-                            <Link
-                              to={`/vehicles?make=${deal.vehicle.make}&model=${deal.vehicle.model}`}
-                              className="cf-deals-page__card-cta"
-                            >
-                              Get This Deal
-                            </Link>
+                            <button type="button" className="cf-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                            <button
-                              className="cf-deals-page__card-toggle"
-                              onClick={() => toggleDealDetails(deal.id)}
-                              aria-expanded={isExpanded}
-                            >
+                            <button className="cf-deals-page__card-toggle" onClick={() => toggleDealDetails(deal.id)} aria-expanded={isExpanded}>
                               <span>Additional Details</span>
-                              {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                             </button>
 
                             {isExpanded && (
@@ -293,6 +448,13 @@ const CashFinanceDealsPage = () => {
                       );
                     })}
                   </div>
+                  {cashDeals.length === 0 && (
+                    <div className="cf-deals-page__empty">
+                      <h3>No cash-back deals available</h3>
+                      <p>Check back soon for new cash incentives.</p>
+                      <Link to="/deals" className="cf-deals-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -311,48 +473,98 @@ const CashFinanceDealsPage = () => {
 
                       return (
                         <div key={deal.id} className="cf-deals-page__card">
+                          <div className="cf-deals-page__card-header">
+                            <Link to={`/${deal.vehicle.slug}`} className="cf-deals-page__card-name-link">
+                              <h3 className="cf-deals-page__card-name">{vehicleName}</h3>
+                            </Link>
+                            <div className="cf-deals-page__card-rating">
+                              <span className="cf-deals-page__card-rating-value">{deal.rating}</span>
+                              <span className="cf-deals-page__card-rating-max">/10</span>
+                              <span className="cf-deals-page__card-rating-label">C/D Rating</span>
+                            </div>
+                          </div>
+
                           <Link to={`/${deal.vehicle.slug}`} className="cf-deals-page__card-image-link">
                             <div className="cf-deals-page__card-image-container">
                               <img src={deal.vehicle.image} alt={vehicleName} className="cf-deals-page__card-image" />
-                              <div className="cf-deals-page__card-badge cf-deals-page__card-badge--finance">{deal.apr} APR</div>
                               <button
                                 className={`cf-deals-page__card-save ${saved ? 'cf-deals-page__card-save--saved' : ''}`}
                                 onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
                                 aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
                               >
-                                <Bookmark size={18} fill={saved ? 'currentColor' : 'none'} />
+                                <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
                               </button>
+                              {(() => {
+                                const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                                if (allOffers.length > 1) return (
+                                  <button
+                                    type="button"
+                                    className="cf-deals-page__card-offers-tag"
+                                    onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                                  >
+                                    {allOffers.length} Offers Available
+                                  </button>
+                                );
+                                return null;
+                              })()}
+                              {offersPopup?.slug === deal.vehicle.slug && (
+                                <div className="cf-deals-page__card-offers-popup">
+                                  <div className="cf-deals-page__card-offers-popup-header">
+                                    <strong>{offersPopup.offers.length} Available Offers</strong>
+                                    <button type="button" className="cf-deals-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
+                                  </div>
+                                  <ul className="cf-deals-page__card-offers-popup-list">
+                                    {offersPopup.offers.map((o, idx) => (
+                                      <li key={idx} className="cf-deals-page__card-offers-popup-item">
+                                        <span className={`cf-deals-page__card-offers-popup-type cf-deals-page__card-offers-popup-type--${o.type}`}>
+                                          {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                        </span>
+                                        <span className="cf-deals-page__card-offers-popup-label">{o.label}</span>
+                                        <span className="cf-deals-page__card-offers-popup-exp">exp {o.expires}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
+                                <div className="cf-deals-page__card-badges">
+                                  {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="cf-deals-page__card-badge-img" />}
+                                  {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="cf-deals-page__card-badge-img" />}
+                                </div>
+                              )}
                             </div>
                           </Link>
 
                           <div className="cf-deals-page__card-body">
-                            <div className="cf-deals-page__card-header">
-                              <Link to={`/${deal.vehicle.slug}`} className="cf-deals-page__card-name-link">
-                                <h3 className="cf-deals-page__card-name">{vehicleName}</h3>
-                              </Link>
-                              <div className="cf-deals-page__card-rating">
-                                <span className="cf-deals-page__card-rating-value">{deal.rating}</span>
-                                <span className="cf-deals-page__card-rating-max">/10</span>
-                                <span className="cf-deals-page__card-rating-label">C/D Rating</span>
-                              </div>
-                            </div>
+                            {(() => {
+                              const msrp = parseMsrpMin(deal.vehicle.priceRange);
+                              const aprNum = parseFloat(deal.apr.replace('%', ''));
+                              const months = parseTermMonths(deal.term);
+                              const monthly = calcMonthly(msrp, aprNum, months);
+                              const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
+                              return (
+                                <div className="cf-deals-page__card-payment-block">
+                                  <div className="cf-deals-page__card-payment">
+                                    <span className="cf-deals-page__card-payment-amount">${monthly}</span>
+                                    <span className="cf-deals-page__card-payment-period">/mo*</span>
+                                  </div>
+                                  <span className="cf-deals-page__card-payment-savings">
+                                    {savingsVsAvg}
+                                    <span className="cf-deals-page__card-tooltip-wrap">
+                                      <Info size={13} className="cf-deals-page__card-tooltip-icon" />
+                                      <span className="cf-deals-page__card-tooltip">{savingsTooltip}</span>
+                                    </span>
+                                  </span>
+                                </div>
+                              );
+                            })()}
 
-                            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-                              <div className="cf-deals-page__card-accolades">
-                                {deal.vehicle.tenBest && (
-                                  <div className="cf-deals-page__card-accolade">
-                                    <img src={TEN_BEST_BADGE_URL} alt="10Best" className="cf-deals-page__card-accolade-icon" />
-                                    <span>10Best</span>
-                                  </div>
-                                )}
-                                {deal.vehicle.editorsChoice && (
-                                  <div className="cf-deals-page__card-accolade">
-                                    <img src={EDITORS_CHOICE_BADGE_URL} alt="Editor's Choice" className="cf-deals-page__card-accolade-icon" />
-                                    <span>Editor's Choice</span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                            <button className="cf-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
+                              <div className="cf-deals-page__card-deal-pill-icon"><Percent size={12} /></div>
+                              <span className="cf-deals-page__card-deal-pill-text">{deal.apr} APR for {deal.term}</span>
+                              <span className="cf-deals-page__card-deal-pill-divider" />
+                              <span className="cf-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                            </button>
 
                             <div className="cf-deals-page__card-details">
                               <div className="cf-deals-page__card-detail">
@@ -360,33 +572,16 @@ const CashFinanceDealsPage = () => {
                                 <span className="cf-deals-page__card-detail-value">{deal.vehicle.priceRange}</span>
                               </div>
                               <div className="cf-deals-page__card-detail">
-                                <span className="cf-deals-page__card-detail-label">APR</span>
-                                <span className="cf-deals-page__card-detail-value cf-deals-page__card-detail-value--finance">{deal.apr}</span>
-                              </div>
-                              <div className="cf-deals-page__card-detail">
                                 <span className="cf-deals-page__card-detail-label">Term</span>
                                 <span className="cf-deals-page__card-detail-value">{deal.term}</span>
                               </div>
-                              <div className="cf-deals-page__card-detail">
-                                <span className="cf-deals-page__card-detail-label">Expires</span>
-                                <span className="cf-deals-page__card-detail-value">{deal.expirationDate}</span>
-                              </div>
                             </div>
 
-                            <Link
-                              to={`/vehicles?make=${deal.vehicle.make}&model=${deal.vehicle.model}`}
-                              className="cf-deals-page__card-cta"
-                            >
-                              Get This Deal
-                            </Link>
+                            <button type="button" className="cf-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                            <button
-                              className="cf-deals-page__card-toggle"
-                              onClick={() => toggleDealDetails(deal.id)}
-                              aria-expanded={isExpanded}
-                            >
+                            <button className="cf-deals-page__card-toggle" onClick={() => toggleDealDetails(deal.id)} aria-expanded={isExpanded}>
                               <span>Additional Details</span>
-                              {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                             </button>
 
                             {isExpanded && (
@@ -426,6 +621,13 @@ const CashFinanceDealsPage = () => {
                       );
                     })}
                   </div>
+                  {financeDeals.length === 0 && (
+                    <div className="cf-deals-page__empty">
+                      <h3>No finance deals available</h3>
+                      <p>Check back soon for new special financing offers.</p>
+                      <Link to="/deals" className="cf-deals-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -463,29 +665,29 @@ const CashFinanceDealsPage = () => {
               <section className="cf-deals-page__links-section">
                 <h2 className="cf-deals-page__section-title">Explore More Deals & Resources</h2>
                 <div className="cf-deals-page__links-grid">
+                  <Link to="/deals" className="cf-deals-page__link-card">
+                    <h3>All Deals</h3>
+                    <p>Browse every current deal and incentive</p>
+                  </Link>
                   <Link to="/deals/zero-apr" className="cf-deals-page__link-card">
                     <h3>0% APR Deals</h3>
                     <p>Find vehicles with zero-interest financing offers</p>
                   </Link>
+                  <Link to="/deals/lease" className="cf-deals-page__link-card">
+                    <h3>Lease Deals</h3>
+                    <p>Monthly lease specials on new cars</p>
+                  </Link>
+                  <Link to="/deals/suv" className="cf-deals-page__link-card">
+                    <h3>SUV Deals</h3>
+                    <p>Best deals on SUVs and crossovers</p>
+                  </Link>
+                  <Link to="/deals/truck" className="cf-deals-page__link-card">
+                    <h3>Truck Deals</h3>
+                    <p>Best deals on pickup trucks</p>
+                  </Link>
                   <Link to="/rankings" className="cf-deals-page__link-card">
                     <h3>Car Rankings</h3>
-                    <p>See our expert rankings across every vehicle category</p>
-                  </Link>
-                  <Link to="/rankings/suv" className="cf-deals-page__link-card">
-                    <h3>Best SUVs</h3>
-                    <p>Find the highest-rated SUVs tested by our editors</p>
-                  </Link>
-                  <Link to="/rankings/truck" className="cf-deals-page__link-card">
-                    <h3>Best Trucks</h3>
-                    <p>Expert-ranked pickup trucks for every need</p>
-                  </Link>
-                  <Link to="/whats-my-car-worth" className="cf-deals-page__link-card">
-                    <h3>What's My Car Worth?</h3>
-                    <p>Get an instant trade-in value estimate</p>
-                  </Link>
-                  <Link to="/vehicles" className="cf-deals-page__link-card">
-                    <h3>Browse All Vehicles</h3>
-                    <p>Search our complete database of new and used cars</p>
+                    <p>Expert rankings across every category</p>
                   </Link>
                 </div>
               </section>
@@ -498,6 +700,12 @@ const CashFinanceDealsPage = () => {
         </div>
       </div>
 
+      <IncentivesModal
+        isOpen={!!activeDealId}
+        onClose={() => setActiveDealId(null)}
+        variant="conversion-b"
+        offer={activeOffer}
+      />
       <SignInToSaveModal
         isOpen={showSignInModal}
         onClose={() => {
@@ -507,6 +715,14 @@ const CashFinanceDealsPage = () => {
         itemType="vehicle"
         itemName={pendingSaveVehicle?.name}
         itemImage={pendingSaveVehicle?.image}
+      />
+
+      <DealsFilterModal
+        isOpen={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        filters={filters}
+        onApply={setFilters}
+        totalResults={cashDeals.length + financeDeals.length}
       />
     </div>
   );
