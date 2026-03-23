@@ -28,7 +28,7 @@ const ComparePage = () => {
   const [aiExpanded, setAiExpanded] = useState(true);
   const [aiQuery, setAiQuery] = useState('');
   const { messages: chatMessages, isTyping: aiTyping, sendMessage: sendAiMessage, clearChat } = useVehicleAIChat(selectedVehicles);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatThreadRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +39,10 @@ const ComparePage = () => {
   }, [activeSlot]);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = chatThreadRef.current;
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }
   }, [chatMessages, aiTyping]);
 
   useEffect(() => {
@@ -485,7 +488,7 @@ const ComparePage = () => {
                     />
                   </div>
 
-                  {chatMessages.length > 0 && (
+                  {chatMessages.length > 0 ? (
                     <div className="compare-page__chat">
                       <div className="compare-page__chat-header">
                         <span className="compare-page__chat-title">Conversation</span>
@@ -494,7 +497,7 @@ const ComparePage = () => {
                           <span>Clear</span>
                         </button>
                       </div>
-                      <div className="compare-page__chat-thread">
+                      <div className="compare-page__chat-thread" ref={chatThreadRef}>
                         {chatMessages.map(msg => (
                           <div key={msg.id} className={`compare-page__chat-msg compare-page__chat-msg--${msg.role}`}>
                             <div className="compare-page__chat-msg-header">
@@ -518,34 +521,56 @@ const ComparePage = () => {
                             </div>
                           </div>
                         )}
-                        <div ref={chatEndRef} />
                       </div>
+                      <form
+                        className="compare-page__ai-prompt compare-page__ai-prompt--chat"
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (aiQuery.trim() && !aiTyping) {
+                            sendAiMessage(aiQuery);
+                            setAiQuery('');
+                          }
+                        }}
+                      >
+                        <Sparkles size={14} className="compare-page__ai-prompt-icon" />
+                        <input
+                          type="text"
+                          className="compare-page__ai-input"
+                          placeholder="Ask a follow-up question..."
+                          value={aiQuery}
+                          onChange={(e) => setAiQuery(e.target.value)}
+                          disabled={aiTyping}
+                        />
+                        <button type="submit" className="compare-page__ai-search-btn" aria-label="Send" disabled={aiTyping || !aiQuery.trim()}>
+                          <Search size={18} />
+                        </button>
+                      </form>
                     </div>
+                  ) : (
+                    <form
+                      className="compare-page__ai-prompt"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (aiQuery.trim() && !aiTyping) {
+                          sendAiMessage(aiQuery);
+                          setAiQuery('');
+                        }
+                      }}
+                    >
+                      <Sparkles size={14} className="compare-page__ai-prompt-icon" />
+                      <input
+                        type="text"
+                        className="compare-page__ai-input"
+                        placeholder="Which of these vehicles is best for a family of five that likes road trips?"
+                        value={aiQuery}
+                        onChange={(e) => setAiQuery(e.target.value)}
+                        disabled={aiTyping}
+                      />
+                      <button type="submit" className="compare-page__ai-search-btn" aria-label="Send" disabled={aiTyping || !aiQuery.trim()}>
+                        <Search size={18} />
+                      </button>
+                    </form>
                   )}
-
-                  <form
-                    className="compare-page__ai-prompt"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      if (aiQuery.trim() && !aiTyping) {
-                        sendAiMessage(aiQuery);
-                        setAiQuery('');
-                      }
-                    }}
-                  >
-                    <Sparkles size={14} className="compare-page__ai-prompt-icon" />
-                    <input
-                      type="text"
-                      className="compare-page__ai-input"
-                      placeholder={chatMessages.length > 0 ? 'Ask a follow-up question...' : 'Which of these vehicles is best for a family of five that likes road trips?'}
-                      value={aiQuery}
-                      onChange={(e) => setAiQuery(e.target.value)}
-                      disabled={aiTyping}
-                    />
-                    <button type="submit" className="compare-page__ai-search-btn" aria-label="Send" disabled={aiTyping || !aiQuery.trim()}>
-                      <Search size={18} />
-                    </button>
-                  </form>
 
                   {chatMessages.length === 0 && (
                     <div className="compare-page__ai-suggestions">
