@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRound, CarFront, Truck, SlidersHorizontal, Bookmark, Info } from 'lucide-react';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
@@ -614,6 +614,8 @@ const DealsHubPage = () => {
         onClose={closeDealModal}
         variant="conversion-b"
         offer={activeOffer}
+        allIncentives={activeDeal ? offersToIncentives(activeDeal.make, activeDeal.model) : undefined}
+        selectedIncentiveId={undefined}
       />
 
       <DealsFilterModal

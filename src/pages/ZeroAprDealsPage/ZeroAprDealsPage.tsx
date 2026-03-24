@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Bookmark, Info, Clock, Users, Tag, Percent, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -496,6 +496,8 @@ const ZeroAprDealsPage = () => {
         onClose={() => setActiveDeal(null)}
         variant="conversion-b"
         offer={activeOffer}
+        allIncentives={activeDealData ? offersToIncentives(activeDealData.vehicle.make, activeDealData.vehicle.model) : undefined}
+        selectedIncentiveId={undefined}
       />
       {/* Sign In Modal */}
       <SignInToSaveModal

@@ -133,3 +133,23 @@ export function getVehicleOffers(make: string, model: string): VehicleOfferSumma
   offerCache.set(key, offers);
   return offers;
 }
+
+/**
+ * Convert VehicleOfferSummary[] into the Incentive shape used by IncentivesModal's
+ * allIncentives prop, so deals pages and the Hero modal show the same offers.
+ */
+export function offersToIncentives(make: string, model: string): {
+  id: string; type: 'cash' | 'finance' | 'lease' | 'special';
+  title: string; description: string; value: string; expirationDate: string;
+  terms?: string; eligibility?: string;
+}[] {
+  const offers = getVehicleOffers(make, model);
+  return offers.map((o, i) => ({
+    id: `${make}-${model}-offer-${i}`,
+    type: o.type === 'zero-apr' ? 'finance' as const : o.type,
+    title: o.label,
+    description: o.label,
+    value: o.label.split(' ')[0] || o.label,
+    expirationDate: o.expires,
+  }));
+}
