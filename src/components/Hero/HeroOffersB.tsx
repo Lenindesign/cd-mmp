@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { DollarSign, Percent, Car } from 'lucide-react';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 
 interface HeroOffersBProps {
@@ -25,12 +24,12 @@ const getTermSuffix = (inc: Incentive) => {
   return m ? ` through ${m[1]} months` : '';
 };
 
-const getIcon = (type: Incentive['type']) => {
+const getChipLabel = (type: Incentive['type']) => {
   switch (type) {
-    case 'cash': return <DollarSign size={14} />;
-    case 'finance': return <Percent size={14} />;
-    case 'lease': return <Car size={14} />;
-    default: return <DollarSign size={14} />;
+    case 'cash': return 'Cash';
+    case 'finance': return 'Buy';
+    case 'lease': return 'Lease';
+    default: return 'Cash';
   }
 };
 
@@ -62,7 +61,7 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
               className="hero__offers-b-pill"
               onClick={() => onOfferClick(inc)}
             >
-              <span className="hero__offers-b-pill-icon">{getIcon(inc.type)}</span>
+              <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
               <span className="hero__offers-b-pill-text">{label}</span>
               <span className="hero__offers-b-pill-exp">{formatExp(inc.expirationDate)}</span>
             </button>

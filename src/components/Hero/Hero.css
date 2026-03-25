@@ -987,16 +987,21 @@
   box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.2);
 }
 
-.hero__offers-b-pill-icon {
-  display: flex;
+.hero__offers-b-pill-chip {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  padding: 4px 10px;
+  border-radius: 4px;
   background: #166534;
   color: #fff;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .hero__offers-b-pill-text {
