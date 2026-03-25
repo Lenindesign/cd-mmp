@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image, DollarSign, Percent, Car, Users, ShieldCheck, Award } from 'lucide-react';
+import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image } from 'lucide-react';
 import HeroOffersA from './HeroOffersA';
 import HeroOffersB from './HeroOffersB';
 import { getAvailableYears } from '../../services/vehicleService';
@@ -50,7 +50,6 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   const [showIncentiveModal, setShowIncentiveModal] = useState(false);
   const [selectedIncentive, setSelectedIncentive] = useState<Incentive | null>(null);
   const [openDropdownOnModal, setOpenDropdownOnModal] = useState(false);
-  const [offersTab, setOffersTab] = useState<'finance' | 'lease' | 'cash'>('finance');
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
@@ -133,81 +132,6 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
     [vehicle.make, vehicle.model]
   );
 
-  const incentiveIcon = (type: Incentive['type']) => {
-    switch (type) {
-      case 'cash': return <DollarSign size={16} />;
-      case 'finance': return <Percent size={16} />;
-      case 'lease': return <Car size={16} />;
-      default: return <DollarSign size={16} />;
-    }
-  };
-
-  const stripQualifier = (v: string) =>
-    v.replace(/^(as low as|up to|starting at)\s+/i, '');
-
-  const formatExpDate = (date: string) => {
-    const match = date.match(/^(\w+)\s+(\d+),?\s+(\d+)/);
-    if (!match) return `exp ${date}`;
-    const m = match[1].slice(0, 3);
-    return `exp ${m.charAt(0).toUpperCase() + m.slice(1).toLowerCase()} ${match[2]}/${match[3].slice(-2)}`;
-  };
-
-  const financeIncentives = useMemo(() =>
-    vehicleIncentives.incentives.filter(i => i.type === 'finance'),
-    [vehicleIncentives]
-  );
-
-  const leaseIncentives = useMemo(() =>
-    vehicleIncentives.incentives.filter(i => i.type === 'lease'),
-    [vehicleIncentives]
-  );
-
-  const cashIncentives = useMemo(() =>
-    vehicleIncentives.incentives.filter(i => i.type === 'cash' || i.type === 'special'),
-    [vehicleIncentives]
-  );
-
-  const topIncentives = useMemo(() => {
-    const pool = offersTab === 'finance' ? financeIncentives
-      : offersTab === 'lease' ? leaseIncentives
-      : cashIncentives;
-    return pool.slice(0, 3);
-  }, [offersTab, financeIncentives, leaseIncentives, cashIncentives]);
-
-  const msrpBase = useMemo(() => {
-    return parseInt((vehicle.priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0;
-  }, [vehicle.priceRange]);
-
-  const tabPaymentLabel = useMemo(() => {
-    const financeMonthly = msrpBase > 0 ? Math.round((msrpBase * 0.9) / 60) : 0;
-    const leaseMonthly = msrpBase > 0 ? Math.round(msrpBase * 0.014) : 0;
-    const fmt = (n: number) => '$' + n.toLocaleString();
-    return {
-      finance: financeMonthly > 0 ? `${fmt(financeMonthly)}/mo.` : '',
-      lease: leaseMonthly > 0 ? `${fmt(leaseMonthly)}/mo.` : '',
-      cash: msrpBase > 0 ? fmt(msrpBase) : '',
-    };
-  }, [msrpBase]);
-
-  const getEligibility = (inc: Incentive): { label: string; open: boolean } => {
-    const e = (inc.eligibility || '').toLowerCase();
-    if (e.includes('military') || e.includes('veteran')) return { label: 'Military / Veterans', open: false };
-    if (e.includes('first responder') || e.includes('firefighter') || e.includes('police')) return { label: 'First Responders', open: false };
-    if (e.includes('current lessee') || e.includes('loyalty')) return { label: 'Current Owners', open: false };
-    if (e.includes('credit') || inc.type === 'finance') return { label: 'Credit Approval Req.', open: true };
-    return { label: 'Everyone', open: true };
-  };
-
-  const bestOfferIndex = useMemo(() => {
-    if (topIncentives.length === 0) return -1;
-    let bestIdx = 0;
-    let bestVal = 0;
-    topIncentives.forEach((inc, i) => {
-      const num = parseInt(inc.value.replace(/[^0-9]/g, ''), 10) || 0;
-      if (num > bestVal) { bestVal = num; bestIdx = i; }
-    });
-    return bestVal > 0 ? bestIdx : 0;
-  }, [topIncentives]);
 
   const handleOfferClick = useCallback((inc: Incentive) => {
     setSelectedIncentive(inc);
@@ -564,7 +488,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
               vehicleIncentives={vehicleIncentives}
               priceRange={vehicle.priceRange}
               onOfferClick={handleOfferClick}
-              onViewAllClick={() => { setSelectedIncentive(topIncentives[0] || vehicleIncentives.incentives[0]); setOpenDropdownOnModal(true); setShowIncentiveModal(true); }}
+              onViewAllClick={() => { setSelectedIncentive(vehicleIncentives.incentives[0]); setOpenDropdownOnModal(true); setShowIncentiveModal(true); }}
             />
           ) : (
             <HeroOffersB

@@ -14,7 +14,6 @@ import {
   Car,
   Sparkles,
   ShieldCheck,
-  Users,
   ChevronDown,
 } from 'lucide-react';
 import type { Incentive } from '../../services/incentivesService';
@@ -122,15 +121,6 @@ const getTypeIcon = (type: Incentive['type']) => {
   }
 };
 
-const getTypeLabel = (type: Incentive['type']) => {
-  switch (type) {
-    case 'cash': return 'Cash Back';
-    case 'finance': return 'Financing';
-    case 'lease': return 'Lease';
-    case 'special': return 'Special';
-    default: return 'Offer';
-  }
-};
 
 const APR_RATE_TABLE = [
   { term: 36, rates: [{ credit: 'Excellent', apr: 2.9 }, { credit: 'Good', apr: 3.9 }, { credit: 'Fair', apr: 5.9 }] },

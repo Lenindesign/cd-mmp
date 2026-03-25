@@ -1,7 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
-import { Award } from 'lucide-react';
-import type { Incentive } from '../../services/incentivesService';
-import type { VehicleIncentives } from '../../services/incentivesService';
+import { useState, useMemo } from 'react';
+import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 
 interface HeroOffersAProps {
   vehicleIncentives: VehicleIncentives;
