@@ -1,0 +1,88 @@
+/* Trade-In Prompt */
+.trade-in-prompt {
+  background: var(--color-white);
+}
+
+.trade-in-prompt__wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+}
+
+.trade-in-prompt__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: #166534;
+  color: #fff;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.trade-in-prompt__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.trade-in-prompt__title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-black);
+  margin: 0 0 4px;
+}
+
+.trade-in-prompt__text {
+  font-size: 13px;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.trade-in-prompt__text strong {
+  color: var(--color-black);
+}
+
+.trade-in-prompt__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #fff;
+  background: #166534;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.trade-in-prompt__cta:hover {
+  background: #14532d;
+}
+
+@media (max-width: 768px) {
+  .trade-in-prompt__wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .trade-in-prompt__cta {
+    width: 100%;
+    justify-content: center;
+  }
+}

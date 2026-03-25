@@ -25,6 +25,8 @@ import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
+import PaymentCalculator from '../../components/PaymentCalculator';
+import TradeInPrompt from '../../components/TradeInPrompt';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import './VehiclePage.css';
@@ -190,6 +192,14 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               highs={vehicle.features?.slice(0, 5) || undefined}
               year={parseInt(vehicle.year)}
               verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${supabaseRating}/10, it delivers good value for its class.`}
+            />
+            <PaymentCalculator
+              msrp={vehicle.priceMin}
+              vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+            />
+            <TradeInPrompt
+              vehicleName={`${vehicle.make} ${vehicle.model}`}
+              msrp={vehicle.priceMin}
             />
             <FuelEconomy
               year={parseInt(vehicle.year)}

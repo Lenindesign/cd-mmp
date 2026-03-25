@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   X,
@@ -15,6 +15,7 @@ import {
   Sparkles,
   ShieldCheck,
   Users,
+  ChevronDown,
 } from 'lucide-react';
 import type { Incentive } from '../../services/incentivesService';
 import './IncentivesModal.css';
@@ -55,6 +56,7 @@ export interface IncentivesModalProps {
   offer?: Partial<IncentiveOfferDetail>;
   allIncentives?: Incentive[];
   selectedIncentiveId?: string;
+  initialDropdownOpen?: boolean;
   onCtaClick?: () => void;
   onSubmitForm?: (data: IncentivesModalFormData) => void;
 }
@@ -130,6 +132,13 @@ const getTypeLabel = (type: Incentive['type']) => {
   }
 };
 
+const APR_RATE_TABLE = [
+  { term: 36, rates: [{ credit: 'Excellent', apr: 2.9 }, { credit: 'Good', apr: 3.9 }, { credit: 'Fair', apr: 5.9 }] },
+  { term: 48, rates: [{ credit: 'Excellent', apr: 3.9 }, { credit: 'Good', apr: 4.9 }, { credit: 'Fair', apr: 6.4 }] },
+  { term: 60, rates: [{ credit: 'Excellent', apr: 4.9 }, { credit: 'Good', apr: 5.9 }, { credit: 'Fair', apr: 6.9 }] },
+  { term: 72, rates: [{ credit: 'Excellent', apr: 5.9 }, { credit: 'Good', apr: 6.4 }, { credit: 'Fair', apr: 6.9 }] },
+];
+
 const IncentivesModal = ({
   isOpen,
   onClose,
@@ -137,6 +146,7 @@ const IncentivesModal = ({
   offer: offerProp,
   allIncentives,
   selectedIncentiveId,
+  initialDropdownOpen = false,
   onCtaClick,
   onSubmitForm,
 }: IncentivesModalProps) => {
@@ -152,12 +162,32 @@ const IncentivesModal = ({
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [activeIncentiveId, setActiveIncentiveId] = useState<string | null>(null);
+  const [offerDropdownOpen, setOfferDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen && selectedIncentiveId) {
-      setActiveIncentiveId(selectedIncentiveId);
+    if (isOpen) {
+      if (selectedIncentiveId) {
+        setActiveIncentiveId(selectedIncentiveId);
+      }
+      if (initialDropdownOpen) {
+        setOfferDropdownOpen(true);
+      }
+    } else {
+      setOfferDropdownOpen(false);
     }
-  }, [isOpen, selectedIncentiveId]);
+  }, [isOpen, selectedIncentiveId, initialDropdownOpen]);
+
+  useEffect(() => {
+    if (!offerDropdownOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOfferDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [offerDropdownOpen]);
 
   const activeIncentive = allIncentives?.find(i => i.id === activeIncentiveId) || null;
 
@@ -450,43 +480,47 @@ const IncentivesModal = ({
                     </a>
                   </div>
 
-                  {/* All Offers List */}
-                  {allIncentives && allIncentives.length > 0 && (
-                    <div className="incentives-modal__offer-list">
-                      <h3 className="incentives-modal__offer-list-heading">
-                        Available Offers
-                        <span className="incentives-modal__offer-list-count">{allIncentives.length}</span>
-                      </h3>
-                      <div className="incentives-modal__offer-list-items">
-                        {allIncentives.map((inc) => {
-                          const eligibility = getEligibilityInfo(inc);
-                          const isActive = inc.id === activeIncentiveId;
-                          return (
-                            <button
-                              key={inc.id}
-                              type="button"
-                              className={`incentives-modal__offer-card ${isActive ? 'incentives-modal__offer-card--active' : ''}`}
-                              onClick={() => setActiveIncentiveId(inc.id)}
-                            >
-                              <div className="incentives-modal__offer-card-top">
-                                <span className={`incentives-modal__offer-card-type incentives-modal__offer-card-type--${inc.type}`}>
-                                  {getTypeIcon(inc.type)}
-                                  {getTypeLabel(inc.type)}
-                                </span>
-                                <span className={`incentives-modal__offer-card-eligibility ${eligibility.restricted ? 'incentives-modal__offer-card-eligibility--restricted' : ''}`}>
-                                  {eligibility.restricted ? <ShieldCheck size={12} /> : <Users size={12} />}
+                  {/* Offer Dropdown Selector */}
+                  {allIncentives && allIncentives.length > 1 && (
+                    <div className="incentives-modal__offer-dropdown" ref={dropdownRef}>
+                      <button
+                        type="button"
+                        className={`incentives-modal__offer-dropdown-trigger ${offerDropdownOpen ? 'incentives-modal__offer-dropdown-trigger--open' : ''}`}
+                        onClick={() => setOfferDropdownOpen(prev => !prev)}
+                        aria-expanded={offerDropdownOpen}
+                      >
+                        <span className="incentives-modal__offer-dropdown-label">
+                          {activeIncentive ? activeIncentive.title : 'Select an offer'}
+                        </span>
+                        <span className="incentives-modal__offer-dropdown-meta">
+                          {allIncentives.length} offers available
+                        </span>
+                        <ChevronDown size={16} className={`incentives-modal__offer-dropdown-chevron ${offerDropdownOpen ? 'incentives-modal__offer-dropdown-chevron--open' : ''}`} />
+                      </button>
+                      {offerDropdownOpen && (
+                        <div className="incentives-modal__offer-dropdown-menu">
+                          {allIncentives.map((inc) => {
+                            const eligibility = getEligibilityInfo(inc);
+                            const isActive = inc.id === activeIncentiveId;
+                            return (
+                              <button
+                                key={inc.id}
+                                type="button"
+                                className={`incentives-modal__offer-dropdown-item ${isActive ? 'incentives-modal__offer-dropdown-item--active' : ''}`}
+                                onClick={() => { setActiveIncentiveId(inc.id); setOfferDropdownOpen(false); }}
+                              >
+                                <div className="incentives-modal__offer-dropdown-item-left">
+                                  <span className="incentives-modal__offer-dropdown-item-title">{inc.title}</span>
+                                  <span className="incentives-modal__offer-dropdown-item-exp">exp {formatExpirationShort(inc.expirationDate)}</span>
+                                </div>
+                                <span className={`incentives-modal__offer-dropdown-item-elig ${eligibility.restricted ? 'incentives-modal__offer-dropdown-item-elig--restricted' : ''}`}>
                                   {eligibility.label}
                                 </span>
-                              </div>
-                              <div className="incentives-modal__offer-card-title">{inc.title}</div>
-                              <div className="incentives-modal__offer-card-meta">
-                                <span className="incentives-modal__offer-card-value">{inc.value}</span>
-                                <span className="incentives-modal__offer-card-exp">exp {formatExpirationShort(inc.expirationDate)}</span>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -534,6 +568,38 @@ const IncentivesModal = ({
                           </div>
                         );
                       })()}
+
+                      {/* APR Rate Table for finance offers */}
+                      {activeIncentive.type === 'finance' && (
+                        <div className="incentives-modal__rate-table">
+                          <h4 className="incentives-modal__rate-table-title">Available APR Options</h4>
+                          <table className="incentives-modal__rate-grid">
+                            <thead>
+                              <tr>
+                                <th>Term</th>
+                                <th>Excellent Credit</th>
+                                <th>Good Credit</th>
+                                <th>Fair Credit</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {APR_RATE_TABLE.map(row => (
+                                <tr key={row.term}>
+                                  <td className="incentives-modal__rate-term">{row.term} mo</td>
+                                  {row.rates.map(r => (
+                                    <td key={r.credit} className="incentives-modal__rate-cell">
+                                      {r.apr}%
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <p className="incentives-modal__rate-note">
+                            Rates shown are for illustration. Actual rate depends on credit approval through manufacturer financing.
+                          </p>
+                        </div>
+                      )}
 
                       <div className="incentives-modal__v5-key-details">
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
@@ -676,7 +742,14 @@ const IncentivesModal = ({
                       By clicking the button, you agree to the Autotrader <a href="#">Visitor Agreement</a> and Privacy Statement and that your contact and/or My Wallet information will be shared with the dealer and/or Car and Driver, including for their own advertising purposes. Each party's use of your information is subject to their privacy policy.
                     </p>
                     <button type="submit" className="incentives-modal__v5-submit">
-                      REQUEST INFO
+                      CONTACT DEALER
+                    </button>
+                    <button
+                      type="button"
+                      className="incentives-modal__v5-marketplace-btn"
+                      onClick={() => { onClose(); navigate(vehicleUrl); }}
+                    >
+                      SHOP ON MARKETPLACE
                     </button>
                   </form>
                 </div>

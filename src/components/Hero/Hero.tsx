@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image, DollarSign, Percent, Car, Users, ShieldCheck, Award } from 'lucide-react';
+import HeroOffersA from './HeroOffersA';
+import HeroOffersB from './HeroOffersB';
 import { getAvailableYears } from '../../services/vehicleService';
 import { getVehicleIncentives } from '../../services/incentivesService';
 import type { Incentive } from '../../services/incentivesService';
@@ -37,6 +39,8 @@ interface HeroProps {
 }
 
 const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: HeroProps) => {
+  const [searchParams] = useSearchParams();
+  const offersVersion = searchParams.get('offersVersion');
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -45,7 +49,8 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showIncentiveModal, setShowIncentiveModal] = useState(false);
   const [selectedIncentive, setSelectedIncentive] = useState<Incentive | null>(null);
-  const [offersTab, setOffersTab] = useState<'buy' | 'lease'>('buy');
+  const [openDropdownOnModal, setOpenDropdownOnModal] = useState(false);
+  const [offersTab, setOffersTab] = useState<'finance' | 'lease' | 'cash'>('finance');
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
@@ -137,6 +142,9 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
     }
   };
 
+  const stripQualifier = (v: string) =>
+    v.replace(/^(as low as|up to|starting at)\s+/i, '');
+
   const formatExpDate = (date: string) => {
     const match = date.match(/^(\w+)\s+(\d+),?\s+(\d+)/);
     if (!match) return `exp ${date}`;
@@ -144,8 +152,8 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
     return `exp ${m.charAt(0).toUpperCase() + m.slice(1).toLowerCase()} ${match[2]}/${match[3].slice(-2)}`;
   };
 
-  const buyIncentives = useMemo(() =>
-    vehicleIncentives.incentives.filter(i => i.type === 'cash' || i.type === 'finance' || i.type === 'special'),
+  const financeIncentives = useMemo(() =>
+    vehicleIncentives.incentives.filter(i => i.type === 'finance'),
     [vehicleIncentives]
   );
 
@@ -154,10 +162,32 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
     [vehicleIncentives]
   );
 
+  const cashIncentives = useMemo(() =>
+    vehicleIncentives.incentives.filter(i => i.type === 'cash' || i.type === 'special'),
+    [vehicleIncentives]
+  );
+
   const topIncentives = useMemo(() => {
-    const pool = offersTab === 'lease' ? leaseIncentives : buyIncentives;
+    const pool = offersTab === 'finance' ? financeIncentives
+      : offersTab === 'lease' ? leaseIncentives
+      : cashIncentives;
     return pool.slice(0, 3);
-  }, [offersTab, buyIncentives, leaseIncentives]);
+  }, [offersTab, financeIncentives, leaseIncentives, cashIncentives]);
+
+  const msrpBase = useMemo(() => {
+    return parseInt((vehicle.priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0;
+  }, [vehicle.priceRange]);
+
+  const tabPaymentLabel = useMemo(() => {
+    const financeMonthly = msrpBase > 0 ? Math.round((msrpBase * 0.9) / 60) : 0;
+    const leaseMonthly = msrpBase > 0 ? Math.round(msrpBase * 0.014) : 0;
+    const fmt = (n: number) => '$' + n.toLocaleString();
+    return {
+      finance: financeMonthly > 0 ? `${fmt(financeMonthly)}/mo.` : '',
+      lease: leaseMonthly > 0 ? `${fmt(leaseMonthly)}/mo.` : '',
+      cash: msrpBase > 0 ? fmt(msrpBase) : '',
+    };
+  }, [msrpBase]);
 
   const getEligibility = (inc: Incentive): { label: string; open: boolean } => {
     const e = (inc.eligibility || '').toLowerCase();
@@ -191,8 +221,8 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
       make: vehicle.make,
       model: vehicle.model,
       imageUrl: vehicle.image,
-      msrpMin: parseInt(vehicle.priceRange?.replace(/[^0-9]/g, '') || '0') || 0,
-      msrpMax: parseInt(vehicle.priceRange?.split('–')[1]?.replace(/[^0-9]/g, '') || vehicle.priceRange?.split('-')[1]?.replace(/[^0-9]/g, '') || '0') || 0,
+      msrpMin: parseInt((vehicle.priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0,
+      msrpMax: parseInt((vehicle.priceRange?.split(/[–\-]/)[1] || vehicle.priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0,
       offerHeadline: selectedIncentive.title,
       whatItMeans: selectedIncentive.description,
       yourSavings: selectedIncentive.terms || selectedIncentive.description,
@@ -529,83 +559,18 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
           </div>
 
           {/* Special Offers and Incentives */}
-          {vehicleIncentives.incentives.length > 0 && (
-            <div className="hero__offers">
-              <div className="hero__offers-header">
-                <div className="hero__offers-header-left">
-                  <h3 className="hero__offers-title">DEALS &amp; INCENTIVES</h3>
-                  <span className="hero__offers-savings">
-                    Up to <strong>${vehicleIncentives.totalSavings.toLocaleString()}</strong> in savings
-                  </span>
-                </div>
-                <div className="hero__offers-tabs" role="tablist">
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={offersTab === 'buy'}
-                    className={`hero__offers-tab ${offersTab === 'buy' ? 'hero__offers-tab--active' : ''}`}
-                    onClick={() => setOffersTab('buy')}
-                  >
-                    Buy
-                    <span className="hero__offers-tab-count">{buyIncentives.length}</span>
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={offersTab === 'lease'}
-                    className={`hero__offers-tab ${offersTab === 'lease' ? 'hero__offers-tab--active' : ''}`}
-                    onClick={() => setOffersTab('lease')}
-                  >
-                    Lease
-                    <span className="hero__offers-tab-count">{leaseIncentives.length}</span>
-                  </button>
-                </div>
-              </div>
-
-              {topIncentives.length > 0 ? (
-                <div className="hero__offers-list">
-                  {topIncentives.map((inc, idx) => {
-                    const elig = getEligibility(inc);
-                    const isBest = idx === bestOfferIndex;
-                    return (
-                      <button
-                        key={inc.id}
-                        type="button"
-                        className={`hero__offer ${isBest ? 'hero__offer--best' : ''}`}
-                        onClick={() => handleOfferClick(inc)}
-                      >
-                        {isBest && (
-                          <span className="hero__offer-badge">
-                            <Award size={10} /> Best Value
-                          </span>
-                        )}
-                        <span className="hero__offer-value">{inc.value}</span>
-                        <span className="hero__offer-label">{inc.title.replace(inc.value, '').trim()}</span>
-                        <span className="hero__offer-exp">{formatExpDate(inc.expirationDate)}</span>
-                        <span className={`hero__offer-elig ${elig.open ? '' : 'hero__offer-elig--restricted'}`}>
-                          {elig.open ? <Users size={10} /> : <ShieldCheck size={10} />}
-                          {elig.label}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="hero__offers-empty">
-                  No {offersTab === 'lease' ? 'lease' : 'buy'} deals available for this vehicle right now.
-                </p>
-              )}
-
-              {vehicleIncentives.incentives.length > 3 && (
-                <button
-                  type="button"
-                  className="hero__offers-view-all"
-                  onClick={() => { setSelectedIncentive(topIncentives[0] || vehicleIncentives.incentives[0]); setShowIncentiveModal(true); }}
-                >
-                  View all {vehicleIncentives.incentives.length} offers →
-                </button>
-              )}
-            </div>
+          {offersVersion === 'a' ? (
+            <HeroOffersA
+              vehicleIncentives={vehicleIncentives}
+              priceRange={vehicle.priceRange}
+              onOfferClick={handleOfferClick}
+              onViewAllClick={() => { setSelectedIncentive(topIncentives[0] || vehicleIncentives.incentives[0]); setOpenDropdownOnModal(true); setShowIncentiveModal(true); }}
+            />
+          ) : (
+            <HeroOffersB
+              vehicleIncentives={vehicleIncentives}
+              onOfferClick={handleOfferClick}
+            />
           )}
         </div>
       </div>
@@ -622,11 +587,12 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
       {/* Incentive Offer Modal */}
       <IncentivesModal
         isOpen={showIncentiveModal}
-        onClose={() => { setShowIncentiveModal(false); setSelectedIncentive(null); }}
+        onClose={() => { setShowIncentiveModal(false); setSelectedIncentive(null); setOpenDropdownOnModal(false); }}
         variant="conversion-b"
         offer={incentiveOfferDetail}
         allIncentives={vehicleIncentives.incentives}
         selectedIncentiveId={selectedIncentive?.id}
+        initialDropdownOpen={openDropdownOnModal}
       />
     </section>
   );
