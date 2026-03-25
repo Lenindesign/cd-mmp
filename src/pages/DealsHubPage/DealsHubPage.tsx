@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRound, CarFront, Truck, SlidersHorizontal, Bookmark, Info } from 'lucide-react';
+import { ChevronRight, ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRound, CarFront, Truck, Fuel, Car, SlidersHorizontal, Bookmark, Info } from 'lucide-react';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -147,6 +147,21 @@ const DealsHubPage = () => {
     ];
     const suvDeals = allDealsRaw.filter(d => d.bodyStyle.toLowerCase() === 'suv');
     const truckDeals = allDealsRaw.filter(d => d.bodyStyle.toLowerCase() === 'truck');
+
+    const fuelTypeNonGasPurchase = [
+      ...filteredCash.filter(d => d.vehicle.fuelType !== 'Gas').map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
+      ...filteredFinance.filter(d => d.vehicle.fuelType !== 'Gas').map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
+      ...filteredZeroApr.filter(d => d.vehicle.fuelType !== 'Gas').map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
+    ];
+    const fuelTypeNonGasLease = filteredLease.filter(d => d.vehicle.fuelType !== 'Gas');
+    const fuelTypePurchaseDeals = fuelTypeNonGasPurchase.length > 0 ? fuelTypeNonGasPurchase : allDealsRaw;
+    const fuelTypeLeaseDeals = fuelTypeNonGasLease.length > 0 ? fuelTypeNonGasLease : filteredLease;
+    const allFuelTypeCount = [
+      ...filteredCash,
+      ...filteredFinance,
+      ...filteredZeroApr,
+      ...filteredLease,
+    ].length;
 
     const toMiniZeroApr = (deals: typeof zeroAprDeals): MiniDeal[] =>
       deals.slice(0, 3).map(d => {
@@ -328,11 +343,13 @@ const DealsHubPage = () => {
       });
 
     return [
-      { title: '0% APR Deals', description: 'Zero-interest financing — every dollar goes toward the car, not the bank.', href: '/deals/zero-apr', count: filteredZeroApr.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: toMiniZeroApr(filteredZeroApr) },
+      { title: 'APR & Financing Deals', description: '0% APR and special low-rate financing — save thousands in interest over the life of your loan.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniCashFinance([], filteredFinance)].slice(0, 3) },
       { title: 'Cash & Finance Deals', description: 'Manufacturer rebates and below-market rates that lower your out-of-pocket cost.', href: '/deals/cash-finance', count: filteredCash.length + filteredFinance.length, icon: <BadgeDollarSign size={22} strokeWidth={2.2} />, deals: toMiniCashFinance(filteredCash, filteredFinance) },
       { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, icon: <KeyRound size={22} strokeWidth={2.2} />, deals: toMiniLease(filteredLease) },
       { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, icon: <CarFront size={22} strokeWidth={2.2} />, deals: toMiniMixed(suvDeals) },
       { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, icon: <Truck size={22} strokeWidth={2.2} />, deals: toMiniMixed(truckDeals) },
+      { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, icon: <Fuel size={22} strokeWidth={2.2} />, deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
+      { title: 'Cash & Finance by Body Style', description: 'Cash-back and special finance deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredCash.length + filteredFinance.length, icon: <Car size={22} strokeWidth={2.2} />, deals: toMiniCashFinance(filteredCash, filteredFinance) },
     ];
   }, [rawData, matchesFilters]);
 

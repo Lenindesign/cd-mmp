@@ -104,7 +104,7 @@ const DealsFilterModal = ({
 
     const uniqueBodyTypes = [...new Set(allVehicles.map(v => v.bodyStyle))].sort();
     const uniqueMakes = getUniqueMakes();
-    const uniqueFuelTypes = [...new Set(allVehicles.map(v => v.fuelType))].sort();
+    const uniqueFuelTypes = ['Gas', 'Hybrid', 'Plug-In Hybrid', 'Electric', 'Diesel'];
 
     const rawTerms = new Set<number>();
     for (const d of zeroAprDeals) rawTerms.add(parseTermMonths(d.term));

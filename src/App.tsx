@@ -43,6 +43,8 @@ const LeaseDealsPage = lazy(() => import('./pages/LeaseDealsPage/LeaseDealsPage'
 const SuvDealsPage = lazy(() => import('./pages/SuvDealsPage/SuvDealsPage'));
 const TruckDealsPage = lazy(() => import('./pages/TruckDealsPage/TruckDealsPage'));
 const AllDealsPage = lazy(() => import('./pages/AllDealsPage/AllDealsPage'));
+const FuelTypeDealsPage = lazy(() => import('./pages/FuelTypeDealsPage/FuelTypeDealsPage'));
+const CashFinanceBodyStylePage = lazy(() => import('./pages/CashFinanceBodyStylePage/CashFinanceBodyStylePage'));
 
 // Compare page - lazy loaded (no auth required)
 const ComparePage = lazy(() => import('./pages/ComparePage/ComparePage'));
@@ -160,6 +162,8 @@ function App() {
             <Route path="/deals/suv" element={<SuvDealsPage />} />
             <Route path="/deals/truck" element={<TruckDealsPage />} />
             <Route path="/deals/all" element={<AllDealsPage />} />
+            <Route path="/deals/fuel-type" element={<FuelTypeDealsPage />} />
+            <Route path="/deals/cash-finance-body-style" element={<CashFinanceBodyStylePage />} />
             
             {/* Audit Pages */}
             <Route path="/audit/cards" element={<CardAudit />} />

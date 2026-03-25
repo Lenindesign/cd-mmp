@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Bookmark, Info, Clock, Users, Tag, Percent, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
+import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
@@ -17,30 +18,52 @@ import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import './ZeroAprDealsPage.css';
 
+type AprTab = 'all' | 'zero-apr' | 'special-apr';
+
+interface UnifiedAprDeal {
+  id: string;
+  aprType: 'zero-apr' | 'special-apr';
+  vehicleName: string;
+  vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; fuelType: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean };
+  apr: number;
+  aprDisplay: string;
+  term: string;
+  estimatedMonthly: number;
+  savingsVsAvg: string;
+  savingsTooltip: string;
+  dealText: string;
+  expirationDate: string;
+  programName: string;
+  programDescription: string;
+  targetAudience: string;
+  trimsEligible: string[];
+  rating: number;
+}
+
 const FAQ_DATA = [
   {
     question: 'What does 0% APR financing mean?',
     answer: 'A 0% APR (Annual Percentage Rate) financing offer means you pay no interest on your auto loan. You only pay the principal balance divided equally across your loan term, saving you thousands compared to a standard auto loan. For example, a $35,000 car financed at 0% for 60 months costs $583/month with zero dollars going toward interest.',
   },
   {
-    question: 'Who qualifies for 0% APR car deals?',
-    answer: 'Qualifying for 0% APR typically requires excellent credit—usually a FICO score of 720 or higher. Lenders also consider your debt-to-income ratio, employment history, and the amount you\'re financing. These offers are provided through the manufacturer\'s captive finance company (e.g., GM Financial, Toyota Financial Services), not third-party banks.',
+    question: 'What are special APR financing deals?',
+    answer: 'Special APR deals are below-market interest rates offered through the manufacturer\'s captive finance company. While not 0%, rates like 1.9%, 2.9%, or 3.9% are significantly lower than the national average of ~6.5%. These can save you $1,500–$4,000 in interest over the life of the loan.',
   },
   {
-    question: 'Can I combine 0% APR with other incentives?',
-    answer: 'In most cases, 0% APR financing cannot be combined with cash-back rebates or other promotional offers. Manufacturers typically require you to choose between low-rate financing and cash incentives. However, some special programs like military, first responder, or college graduate discounts can sometimes be stacked. Always ask the dealer about combining offers.',
+    question: 'Who qualifies for low APR car deals?',
+    answer: 'Qualifying for 0% APR typically requires excellent credit—usually a FICO score of 720 or higher. Special APR rates (1.9%–3.9%) may be available with good credit (680+). Lenders also consider your debt-to-income ratio, employment history, and the amount you\'re financing.',
+  },
+  {
+    question: 'Can I combine APR deals with other incentives?',
+    answer: 'In most cases, special financing cannot be combined with cash-back rebates. Manufacturers typically require you to choose between low-rate financing and cash incentives. However, some programs like military, first responder, or college graduate discounts can sometimes be stacked. Always ask the dealer about combining offers.',
   },
   {
     question: 'How are C/D ratings determined?',
-    answer: 'Car and Driver ratings are based on comprehensive real-world testing by our expert editorial team. Each vehicle is evaluated on driving dynamics, comfort, interior quality, technology, value, and more. Our 10-point scale reflects how a vehicle compares to its direct competitors, ensuring you get an objective assessment backed by decades of automotive expertise.',
+    answer: 'Car and Driver ratings are based on comprehensive real-world testing by our expert editorial team. Each vehicle is evaluated on driving dynamics, comfort, interior quality, technology, value, and more. Our 10-point scale reflects how a vehicle compares to its direct competitors.',
   },
   {
-    question: 'Are these deals available at all dealers?',
-    answer: 'Most 0% APR offers are national programs available at any authorized franchised dealer for that brand. However, availability may vary by region, and specific inventory at your local dealer determines which trims you can finance at 0%. Contact your nearest dealer to confirm current availability and eligible inventory.',
-  },
-  {
-    question: 'What happens if my credit score isn\'t high enough for 0% APR?',
-    answer: 'If you don\'t qualify for 0% APR, manufacturers often have tiered rates—for example, 1.9% or 2.9% APR for buyers with good (but not excellent) credit. You might also consider a larger down payment to improve your approval odds, or explore cash-back offers that don\'t depend on credit tier as heavily.',
+    question: 'Should I choose 0% APR or a cash rebate?',
+    answer: 'It depends on the loan amount, term, and rates. For shorter loan terms or smaller amounts, the cash-back rebate often saves more. For longer terms or larger amounts, a low APR can result in greater overall savings. Calculate the total interest you\'d pay at the standard rate minus the rebate, and compare it to the total interest at the special rate.',
   },
 ];
 
@@ -60,16 +83,23 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'recommended',
 };
 
+const APR_TABS: { key: AprTab; label: string }[] = [
+  { key: 'all', label: 'All APR Deals' },
+  { key: 'zero-apr', label: '0% APR' },
+  { key: 'special-apr', label: 'Special APR' },
+];
+
 const ZeroAprDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
 
+  const [activeTab, setActiveTab] = useState<AprTab>('all');
   const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
-  const [activeDeal, setActiveDeal] = useState<string | null>(null);
+  const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
@@ -113,110 +143,137 @@ const ZeroAprDealsPage = () => {
     }
   }, [offersPopup]);
 
-  const deals = useMemo(() => {
-    const rawDeals = getZeroAprDeals();
-    return rawDeals
-      .filter(deal => matchesFilters(deal.vehicle, { term: deal.term, targetAudience: deal.targetAudience }))
-      .map((deal) => ({
-        ...deal,
-        rating: getSupabaseRating(
-          deal.vehicle.id,
-          getCategory(deal.vehicle.bodyStyle),
-          deal.vehicle.staffRating
-        ),
-      }));
+  const allDeals = useMemo((): UnifiedAprDeal[] => {
+    const results: UnifiedAprDeal[] = [];
+
+    for (const d of getZeroAprDeals().filter(deal => matchesFilters(deal.vehicle, { term: deal.term, targetAudience: deal.targetAudience }))) {
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const months = parseTermMonths(d.term);
+      const monthly = calcMonthly(msrp, 0, months);
+      const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
+      results.push({
+        id: d.id, aprType: 'zero-apr', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        apr: 0, aprDisplay: '0%', term: d.term, estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
+        dealText: `0% APR for ${d.term}`, expirationDate: d.expirationDate,
+        programName: d.programName, programDescription: d.programDescription,
+        targetAudience: d.targetAudience, trimsEligible: d.trimsEligible,
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+      });
+    }
+
+    for (const d of getFinanceDeals().filter(deal => matchesFilters(deal.vehicle, { term: deal.term, targetAudience: deal.targetAudience }))) {
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const aprNum = parseFloat(d.apr.replace('%', ''));
+      const months = parseTermMonths(d.term);
+      const monthly = calcMonthly(msrp, aprNum, months);
+      const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
+      results.push({
+        id: d.id, aprType: 'special-apr', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        apr: aprNum, aprDisplay: d.apr, term: d.term, estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
+        dealText: `${d.apr} APR for ${d.term}`, expirationDate: d.expirationDate,
+        programName: d.programName, programDescription: d.programDescription,
+        targetAudience: d.targetAudience, trimsEligible: d.trimsEligible,
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+      });
+    }
+
+    return results.sort((a, b) => a.apr - b.apr);
   }, [getSupabaseRating, matchesFilters]);
 
-  const isVehicleSaved = (vehicleName: string) => {
-    return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
-  };
+  const deals = useMemo(() => {
+    if (activeTab === 'all') return allDeals;
+    return allDeals.filter(d => d.aprType === activeTab);
+  }, [allDeals, activeTab]);
+
+  const tabCounts = useMemo(() => ({
+    all: allDeals.length,
+    'zero-apr': allDeals.filter(d => d.aprType === 'zero-apr').length,
+    'special-apr': allDeals.filter(d => d.aprType === 'special-apr').length,
+  }), [allDeals]);
+
+  const isVehicleSaved = (vehicleName: string) => user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
 
   const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isAuthenticated) {
-      setPendingSaveVehicle(vehicle);
-      setShowSignInModal(true);
-      return;
-    }
+    e.preventDefault(); e.stopPropagation();
+    if (!isAuthenticated) { setPendingSaveVehicle(vehicle); setShowSignInModal(true); return; }
     const isSaved = isVehicleSaved(vehicle.name);
-    if (isSaved) {
-      const savedVehicle = user?.savedVehicles?.find((v) => v.name === vehicle.name);
-      if (savedVehicle) removeSavedVehicle(savedVehicle.id);
-    } else {
-      addSavedVehicle({ id: vehicle.slug, name: vehicle.name, ownership: 'want' });
-    }
+    if (isSaved) { const sv = user?.savedVehicles?.find((v) => v.name === vehicle.name); if (sv) removeSavedVehicle(sv.id); }
+    else { addSavedVehicle({ id: vehicle.slug, name: vehicle.name, ownership: 'want' }); }
   };
 
-  const toggleDealDetails = (dealId: string) => {
-    setExpandedDealId((prev) => (prev === dealId ? null : dealId));
-  };
-
-  const toggleFaq = (index: number) => {
-    setExpandedFaqIndex((prev) => (prev === index ? null : index));
-  };
-
-  const activeDealData = activeDeal ? deals.find(d => d.id === activeDeal) : null;
-  const activeOffer: Partial<IncentiveOfferDetail> | undefined = activeDealData
+  const activeDealObj = activeDealId ? deals.find(d => d.id === activeDealId) : null;
+  const activeOffer: Partial<IncentiveOfferDetail> | undefined = activeDealObj
     ? {
-        year: parseInt(activeDealData.vehicle.year, 10),
-        make: activeDealData.vehicle.make,
-        model: activeDealData.vehicle.model,
-        slug: activeDealData.vehicle.slug,
-        imageUrl: activeDealData.vehicle.image,
-        msrpMin: parseInt(activeDealData.vehicle.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/)[0]?.replace(/,/g, '') || '0', 10),
-        msrpMax: parseInt(activeDealData.vehicle.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/)[1]?.replace(/,/g, '') || '0', 10),
-        offerHeadline: `0% Interest Financing for ${activeDealData.term}`,
-        whatItMeans: 'You pay absolutely zero interest on your auto loan. Every dollar of your monthly payment goes directly toward the price of the car—not to the bank.',
-        yourSavings: `On a $35,000 loan over ${activeDealData.term}, you'd save thousands in interest vs. the average 6.5% rate.`,
-        whoQualifies: activeDealData.targetAudience,
-        eligibleTrims: activeDealData.trimsEligible,
-        dontWaitText: `This offer expires ${activeDealData.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
-        eventLabel: activeDealData.programName,
-        expirationDate: activeDealData.expirationDate,
+        year: parseInt(activeDealObj.vehicle.year, 10),
+        make: activeDealObj.vehicle.make,
+        model: activeDealObj.vehicle.model,
+        slug: activeDealObj.vehicle.slug,
+        imageUrl: activeDealObj.vehicle.image,
+        msrpMin: parseInt(activeDealObj.vehicle.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/)[0]?.replace(/,/g, '') || '0', 10),
+        msrpMax: parseInt(activeDealObj.vehicle.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/)[1]?.replace(/,/g, '') || '0', 10),
+        offerHeadline: activeDealObj.aprType === 'zero-apr'
+          ? `0% Interest Financing for ${activeDealObj.term}`
+          : `${activeDealObj.aprDisplay} APR Financing for ${activeDealObj.term}`,
+        whatItMeans: activeDealObj.aprType === 'zero-apr'
+          ? 'You pay absolutely zero interest on your auto loan. Every dollar of your monthly payment goes directly toward the price of the car—not to the bank.'
+          : `A below-market ${activeDealObj.aprDisplay} interest rate from the manufacturer that lowers your monthly payment and total cost vs. the average ~6.5% rate.`,
+        yourSavings: activeDealObj.aprType === 'zero-apr'
+          ? `On a $35,000 loan over ${activeDealObj.term}, you'd save thousands in interest vs. the average 6.5% rate.`
+          : `At ${activeDealObj.aprDisplay} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term.`,
+        whoQualifies: activeDealObj.targetAudience,
+        eligibleTrims: activeDealObj.trimsEligible,
+        dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+        eventLabel: activeDealObj.programName,
+        expirationDate: activeDealObj.expirationDate,
       }
     : undefined;
 
-  const pageTitle = `Best Interest Free & 0% APR Deals for ${month} ${year}`;
+  const pageTitle = activeTab === 'zero-apr'
+    ? `Best 0% APR Deals for ${month} ${year}`
+    : activeTab === 'special-apr'
+    ? `Best Special APR Financing Deals for ${month} ${year}`
+    : `Best APR & Financing Deals for ${month} ${year}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
     <div className="zero-apr-page">
       <SEO
         title={`${pageTitle} | Car and Driver`}
-        description={`Find the best 0% APR and interest-free car deals for ${month} ${year}. Compare zero-interest financing offers on new cars, SUVs, and trucks. Expert ratings and reviews from Car and Driver.`}
+        description={`Find the best APR financing deals for ${month} ${year}. Compare 0% APR, low-rate financing, and special APR offers on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`}
         canonical={`${BASE_URL}/deals/zero-apr`}
-        keywords={['0% APR deals', 'zero interest car deals', `0% APR ${month} ${year}`, 'interest free financing', 'new car financing deals']}
+        keywords={['APR deals', '0% APR deals', 'low APR financing', `car financing ${month} ${year}`, 'special APR rates', 'new car financing deals']}
         structuredData={createBreadcrumbStructuredData([
           { name: 'Home', url: BASE_URL },
           { name: 'Deals', url: `${BASE_URL}/deals` },
-          { name: '0% APR Deals', url: `${BASE_URL}/deals/zero-apr` },
+          { name: 'APR Deals', url: `${BASE_URL}/deals/zero-apr` },
         ])}
       />
 
-      {/* Hero Section */}
       <div className="zero-apr-page__hero">
         <div className="container">
           <div className="zero-apr-page__hero-content">
             <div className="zero-apr-page__hero-badge">
-              <span className="zero-apr-page__hero-badge-text">0% APR</span>
-              <span>Finance Deals</span>
+              <span className="zero-apr-page__hero-badge-text">APR</span>
+              <span>Financing Deals</span>
             </div>
             <h1 className="zero-apr-page__title">{pageTitle}</h1>
             <p className="zero-apr-page__description">
-              Zero percent financing is one of the best deals a car shopper can find. With 0% APR,
-              every dollar of your monthly payment goes toward the vehicle—none is wasted on interest.
-              These offers typically require excellent credit (FICO 720+) and are available through the
-              manufacturer's finance arm for a limited time.
+              Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR
+              where every dollar goes toward the vehicle, to special low rates well below the national average—these
+              offers can save you thousands over the life of your loan.
             </p>
             <div className="zero-apr-page__hero-stats">
               <div className="zero-apr-page__hero-stat">
-                <span className="zero-apr-page__hero-stat-value">{deals.length}</span>
-                <span className="zero-apr-page__hero-stat-label">Active Deals</span>
+                <span className="zero-apr-page__hero-stat-value">{allDeals.length}</span>
+                <span className="zero-apr-page__hero-stat-label">APR Deals</span>
               </div>
               <div className="zero-apr-page__hero-stat">
-                <span className="zero-apr-page__hero-stat-value">0%</span>
-                <span className="zero-apr-page__hero-stat-label">Interest Rate</span>
+                <span className="zero-apr-page__hero-stat-value">{tabCounts['zero-apr']}</span>
+                <span className="zero-apr-page__hero-stat-label">0% APR</span>
+              </div>
+              <div className="zero-apr-page__hero-stat">
+                <span className="zero-apr-page__hero-stat-value">{tabCounts['special-apr']}</span>
+                <span className="zero-apr-page__hero-stat-label">Special Rates</span>
               </div>
               <div className="zero-apr-page__hero-stat">
                 <span className="zero-apr-page__hero-stat-value">{month}</span>
@@ -227,7 +284,6 @@ const ZeroAprDealsPage = () => {
         </div>
       </div>
 
-      {/* Filter toolbar */}
       <div className="zero-apr-page__toolbar">
         <div className="container zero-apr-page__toolbar-inner">
           <span className="zero-apr-page__toolbar-count">{deals.length} deals available</span>
@@ -245,29 +301,44 @@ const ZeroAprDealsPage = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="zero-apr-page__content">
         <div className="container">
           <div className="zero-apr-page__layout">
             <div className="zero-apr-page__main">
 
-              {/* Deals Grid */}
+              {/* APR Tabs */}
+              <div className="zero-apr-page__apr-tabs" role="tablist">
+                {APR_TABS.map(t => (
+                  <button
+                    key={t.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === t.key}
+                    className={`zero-apr-page__apr-tab ${activeTab === t.key ? 'zero-apr-page__apr-tab--active' : ''} ${tabCounts[t.key] === 0 ? 'zero-apr-page__apr-tab--empty' : ''}`}
+                    onClick={() => setActiveTab(t.key)}
+                  >
+                    <Percent size={14} />
+                    <span>{t.label}</span>
+                    <span className="zero-apr-page__apr-tab-count">{tabCounts[t.key]}</span>
+                  </button>
+                ))}
+              </div>
+
               <section className="zero-apr-page__deals-section">
                 <h2 className="zero-apr-page__section-title">
                   <Tag size={22} />
-                  {deals.length} Available Deals
+                  {deals.length} Available Deal{deals.length !== 1 ? 's' : ''}
                 </h2>
                 <div className="zero-apr-page__grid">
                   {deals.map((deal) => {
-                    const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
-                    const saved = isVehicleSaved(vehicleName);
+                    const saved = isVehicleSaved(deal.vehicleName);
                     const isExpanded = expandedDealId === deal.id;
 
                     return (
                       <div key={deal.id} className="zero-apr-page__card">
                         <div className="zero-apr-page__card-header">
                           <Link to={`/${deal.vehicle.slug}`} className="zero-apr-page__card-name-link">
-                            <h3 className="zero-apr-page__card-name">{vehicleName}</h3>
+                            <h3 className="zero-apr-page__card-name">{deal.vehicleName}</h3>
                           </Link>
                           <div className="zero-apr-page__card-rating">
                             <span className="zero-apr-page__card-rating-value">{deal.rating}</span>
@@ -278,10 +349,13 @@ const ZeroAprDealsPage = () => {
 
                         <Link to={`/${deal.vehicle.slug}`} className="zero-apr-page__card-image-link">
                           <div className="zero-apr-page__card-image-container">
-                            <img src={deal.vehicle.image} alt={vehicleName} className="zero-apr-page__card-image" />
+                            <img src={deal.vehicle.image} alt={deal.vehicleName} className="zero-apr-page__card-image" />
+                            <span className={`zero-apr-page__card-apr-badge ${deal.aprType === 'zero-apr' ? 'zero-apr-page__card-apr-badge--zero' : ''}`}>
+                              {deal.aprDisplay} APR
+                            </span>
                             <button
                               className={`zero-apr-page__card-save ${saved ? 'zero-apr-page__card-save--saved' : ''}`}
-                              onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
+                              onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
                               aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
                             >
                               <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
@@ -289,11 +363,7 @@ const ZeroAprDealsPage = () => {
                             {(() => {
                               const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
                               if (allOffers.length > 1) return (
-                                <button
-                                  type="button"
-                                  className="zero-apr-page__card-offers-tag"
-                                  onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
-                                >
+                                <button type="button" className="zero-apr-page__card-offers-tag" onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}>
                                   {allOffers.length} Offers Available
                                 </button>
                               );
@@ -328,31 +398,23 @@ const ZeroAprDealsPage = () => {
                         </Link>
 
                         <div className="zero-apr-page__card-body">
-                          {(() => {
-                            const msrp = parseMsrpMin(deal.vehicle.priceRange);
-                            const months = parseTermMonths(deal.term);
-                            const monthly = calcMonthly(msrp, 0, months);
-                            const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
-                            return (
-                              <div className="zero-apr-page__card-payment-block">
-                                <div className="zero-apr-page__card-payment">
-                                  <span className="zero-apr-page__card-payment-amount">${monthly}</span>
-                                  <span className="zero-apr-page__card-payment-period">/mo*</span>
-                                </div>
-                                <span className="zero-apr-page__card-payment-savings">
-                                  {savingsVsAvg}
-                                  <span className="zero-apr-page__card-tooltip-wrap">
-                                    <Info size={13} className="zero-apr-page__card-tooltip-icon" />
-                                    <span className="zero-apr-page__card-tooltip">{savingsTooltip}</span>
-                                  </span>
-                                </span>
-                              </div>
-                            );
-                          })()}
+                          <div className="zero-apr-page__card-payment-block">
+                            <div className="zero-apr-page__card-payment">
+                              <span className="zero-apr-page__card-payment-amount">${deal.estimatedMonthly}</span>
+                              <span className="zero-apr-page__card-payment-period">/mo*</span>
+                            </div>
+                            <span className="zero-apr-page__card-payment-savings">
+                              {deal.savingsVsAvg}
+                              <span className="zero-apr-page__card-tooltip-wrap">
+                                <Info size={13} className="zero-apr-page__card-tooltip-icon" />
+                                <span className="zero-apr-page__card-tooltip">{deal.savingsTooltip}</span>
+                              </span>
+                            </span>
+                          </div>
 
-                          <button className="zero-apr-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDeal(deal.id); }}>
+                          <button className="zero-apr-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
                             <div className="zero-apr-page__card-deal-pill-icon"><Percent size={12} /></div>
-                            <span className="zero-apr-page__card-deal-pill-text">0% APR for {deal.term}</span>
+                            <span className="zero-apr-page__card-deal-pill-text">{deal.dealText}</span>
                             <span className="zero-apr-page__card-deal-pill-divider" />
                             <span className="zero-apr-page__card-deal-pill-expires">expires {deal.expirationDate}</span>
                           </button>
@@ -368,43 +430,19 @@ const ZeroAprDealsPage = () => {
                             </div>
                           </div>
 
-                          <button type="button" className="zero-apr-page__card-cta" onClick={() => setActiveDeal(deal.id)}>Get This Deal</button>
+                          <button type="button" className="zero-apr-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                          <button className="zero-apr-page__card-toggle" onClick={() => toggleDealDetails(deal.id)} aria-expanded={isExpanded}>
+                          <button className="zero-apr-page__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
                             <span>Additional Details</span>
                             {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                           </button>
 
                           {isExpanded && (
                             <div className="zero-apr-page__card-additional">
-                              <div className="zero-apr-page__card-additional-item">
-                                <Info size={16} />
-                                <div>
-                                  <strong>{deal.programName}</strong>
-                                  <p>{deal.programDescription}</p>
-                                </div>
-                              </div>
-                              <div className="zero-apr-page__card-additional-item">
-                                <Users size={16} />
-                                <div>
-                                  <strong>Target Audience</strong>
-                                  <p>{deal.targetAudience}</p>
-                                </div>
-                              </div>
-                              <div className="zero-apr-page__card-additional-item">
-                                <Tag size={16} />
-                                <div>
-                                  <strong>Eligible Trims</strong>
-                                  <p>{deal.trimsEligible.join(', ')}</p>
-                                </div>
-                              </div>
-                              <div className="zero-apr-page__card-additional-item">
-                                <Clock size={16} />
-                                <div>
-                                  <strong>Offer Expires</strong>
-                                  <p>{deal.expirationDate}</p>
-                                </div>
-                              </div>
+                              <div className="zero-apr-page__card-additional-item"><Info size={16} /><div><strong>{deal.programName}</strong><p>{deal.programDescription}</p></div></div>
+                              <div className="zero-apr-page__card-additional-item"><Users size={16} /><div><strong>Target Audience</strong><p>{deal.targetAudience}</p></div></div>
+                              <div className="zero-apr-page__card-additional-item"><Tag size={16} /><div><strong>Eligible Trims</strong><p>{deal.trimsEligible.join(', ')}</p></div></div>
+                              <div className="zero-apr-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{deal.expirationDate}</p></div></div>
                             </div>
                           )}
                         </div>
@@ -414,110 +452,55 @@ const ZeroAprDealsPage = () => {
                 </div>
                 {deals.length === 0 && (
                   <div className="zero-apr-page__empty">
-                    <h3>No 0% APR deals available</h3>
-                    <p>Check back soon for new zero-interest financing offers.</p>
+                    <h3>No {activeTab === 'zero-apr' ? '0% APR' : activeTab === 'special-apr' ? 'special APR' : 'APR'} deals available</h3>
+                    <p>Check back soon for new financing offers, or try another tab above.</p>
                     <Link to="/deals" className="zero-apr-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
                   </div>
                 )}
               </section>
 
-              {/* FAQ Section */}
               <section className="zero-apr-page__faq-section">
-                <h2 className="zero-apr-page__section-title">
-                  <Info size={22} />
-                  Frequently Asked Questions About 0% APR Deals
-                </h2>
+                <h2 className="zero-apr-page__section-title"><Info size={22} /> Frequently Asked Questions About APR Deals</h2>
                 <div className="zero-apr-page__faq-list">
                   {FAQ_DATA.map((faq, index) => (
-                    <div
-                      key={index}
-                      className={`zero-apr-page__faq-item ${expandedFaqIndex === index ? 'zero-apr-page__faq-item--expanded' : ''}`}
-                    >
-                      <button
-                        className="zero-apr-page__faq-question"
-                        onClick={() => toggleFaq(index)}
-                        aria-expanded={expandedFaqIndex === index}
-                      >
-                        <span>{faq.question}</span>
-                        {expandedFaqIndex === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    <div key={index} className={`zero-apr-page__faq-item ${expandedFaqIndex === index ? 'zero-apr-page__faq-item--expanded' : ''}`}>
+                      <button className="zero-apr-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === index ? null : index)} aria-expanded={expandedFaqIndex === index}>
+                        <span>{faq.question}</span>{expandedFaqIndex === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                       </button>
-                      {expandedFaqIndex === index && (
-                        <div className="zero-apr-page__faq-answer">
-                          <p>{faq.answer}</p>
-                        </div>
-                      )}
+                      {expandedFaqIndex === index && <div className="zero-apr-page__faq-answer"><p>{faq.answer}</p></div>}
                     </div>
                   ))}
                 </div>
               </section>
 
-              {/* Internal Linking Module */}
               <section className="zero-apr-page__links-section">
                 <h2 className="zero-apr-page__section-title">Explore More</h2>
                 <div className="zero-apr-page__links-grid">
-                  <Link to="/deals" className="zero-apr-page__link-card">
-                    <h3>All Deals</h3>
-                    <p>Browse every current deal and incentive</p>
-                  </Link>
-                  <Link to="/deals/cash-finance" className="zero-apr-page__link-card">
-                    <h3>Cash & Finance Deals</h3>
-                    <p>Cash-back rebates and special APR rates</p>
-                  </Link>
-                  <Link to="/deals/lease" className="zero-apr-page__link-card">
-                    <h3>Lease Deals</h3>
-                    <p>Monthly lease specials on new cars</p>
-                  </Link>
-                  <Link to="/deals/suv" className="zero-apr-page__link-card">
-                    <h3>SUV Deals</h3>
-                    <p>Best deals on SUVs and crossovers</p>
-                  </Link>
-                  <Link to="/deals/truck" className="zero-apr-page__link-card">
-                    <h3>Truck Deals</h3>
-                    <p>Best deals on pickup trucks</p>
-                  </Link>
-                  <Link to="/rankings" className="zero-apr-page__link-card">
-                    <h3>Car Rankings</h3>
-                    <p>Expert rankings across every category</p>
-                  </Link>
+                  <Link to="/deals" className="zero-apr-page__link-card"><h3>All Deals</h3><p>Browse every current deal and incentive</p></Link>
+                  <Link to="/deals/cash-finance" className="zero-apr-page__link-card"><h3>Cash & Finance Deals</h3><p>Cash-back rebates and special APR rates</p></Link>
+                  <Link to="/deals/lease" className="zero-apr-page__link-card"><h3>Lease Deals</h3><p>Monthly lease specials on new cars</p></Link>
+                  <Link to="/deals/suv" className="zero-apr-page__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs and crossovers</p></Link>
+                  <Link to="/deals/truck" className="zero-apr-page__link-card"><h3>Truck Deals</h3><p>Best deals on pickup trucks</p></Link>
+                  <Link to="/deals/fuel-type" className="zero-apr-page__link-card"><h3>Fuel Type Deals</h3><p>Deals by powertrain</p></Link>
                 </div>
               </section>
             </div>
 
-            {/* Sidebar */}
-            <aside className="zero-apr-page__sidebar">
-              <AdSidebar />
-            </aside>
+            <aside className="zero-apr-page__sidebar"><AdSidebar /></aside>
           </div>
         </div>
       </div>
 
       <IncentivesModal
-        isOpen={!!activeDeal}
-        onClose={() => setActiveDeal(null)}
+        isOpen={!!activeDealId}
+        onClose={() => setActiveDealId(null)}
         variant="conversion-b"
         offer={activeOffer}
-        allIncentives={activeDealData ? offersToIncentives(activeDealData.vehicle.make, activeDealData.vehicle.model) : undefined}
+        allIncentives={activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined}
         selectedIncentiveId={undefined}
       />
-      {/* Sign In Modal */}
-      <SignInToSaveModal
-        isOpen={showSignInModal}
-        onClose={() => {
-          setShowSignInModal(false);
-          setPendingSaveVehicle(null);
-        }}
-        itemType="vehicle"
-        itemName={pendingSaveVehicle?.name}
-        itemImage={pendingSaveVehicle?.image}
-      />
-
-      <DealsFilterModal
-        isOpen={filterOpen}
-        onClose={() => setFilterOpen(false)}
-        filters={filters}
-        onApply={setFilters}
-        totalResults={deals.length}
-      />
+      <SignInToSaveModal isOpen={showSignInModal} onClose={() => { setShowSignInModal(false); setPendingSaveVehicle(null); }} itemType="vehicle" itemName={pendingSaveVehicle?.name} itemImage={pendingSaveVehicle?.image} />
+      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={setFilters} totalResults={deals.length} />
     </div>
   );
 };
