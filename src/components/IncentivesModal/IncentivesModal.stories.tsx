@@ -8,6 +8,7 @@ const VARIANTS: IncentivesModalVariant[] = [
   'edmunds',
   'conversion-a',
   'conversion-b',
+  'conversion-b-no-form',
 ];
 
 const VARIANT_NAMES: Record<IncentivesModalVariant, string> = {
@@ -15,7 +16,8 @@ const VARIANT_NAMES: Record<IncentivesModalVariant, string> = {
   'complete-with-form': 'Incentives Modal 2 – Complete + contact form',
   edmunds: 'Incentives Modal 3 – Edmunds-style',
   'conversion-a': 'Incentives Modal 4 – Conversion (urgency + benefits)',
-  'conversion-b': 'Incentives Modal 5 – Conversion (minimal)',
+  'conversion-b': 'Incentives Modal 5 – Conversion (two-column + form)',
+  'conversion-b-no-form': 'Incentives Modal 6 – Conversion (no form)',
 };
 
 function ReviewAllVariants() {
