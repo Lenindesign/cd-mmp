@@ -4,7 +4,7 @@ import { ChevronRight, ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRoun
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -22,7 +22,7 @@ interface MiniDeal {
   image: string;
   slug: string;
   priceRange: string;
-  dealType: 'zero-apr' | 'cash' | 'finance' | 'lease';
+  dealType: 'zero-apr' | 'finance' | 'lease';
   dealText: string;
   dealHeadline: string;
   whatItMeans: string;
@@ -100,10 +100,9 @@ const DealsHubPage = () => {
 
   const rawData = useMemo(() => {
     const zeroAprDeals = getZeroAprDeals();
-    const cashDeals = getCashDeals();
-    const financeDeals = getFinanceDeals();
+        const financeDeals = getFinanceDeals();
     const leaseDeals = getLeaseDeals();
-    return { zeroAprDeals, cashDeals, financeDeals, leaseDeals };
+    return { zeroAprDeals, financeDeals, leaseDeals };
   }, []);
 
   const matchesFilters = useCallback((
@@ -133,15 +132,13 @@ const DealsHubPage = () => {
   }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
 
   const categories = useMemo(() => {
-    const { zeroAprDeals, cashDeals, financeDeals, leaseDeals } = rawData;
+    const { zeroAprDeals, financeDeals, leaseDeals } = rawData;
 
     const filteredZeroApr = zeroAprDeals.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }));
-    const filteredCash = cashDeals.filter(d => matchesFilters(d.vehicle));
     const filteredFinance = financeDeals.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }));
     const filteredLease = leaseDeals.filter(d => matchesFilters(d.vehicle, { term: d.term }));
 
     const allDealsRaw = [
-      ...filteredCash.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
       ...filteredFinance.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
       ...filteredZeroApr.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
     ];
@@ -149,7 +146,6 @@ const DealsHubPage = () => {
     const truckDeals = allDealsRaw.filter(d => d.bodyStyle.toLowerCase() === 'truck');
 
     const fuelTypeNonGasPurchase = [
-      ...filteredCash.filter(d => d.vehicle.fuelType !== 'Gas').map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
       ...filteredFinance.filter(d => d.vehicle.fuelType !== 'Gas').map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
       ...filteredZeroApr.filter(d => d.vehicle.fuelType !== 'Gas').map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
     ];
@@ -157,7 +153,6 @@ const DealsHubPage = () => {
     const fuelTypePurchaseDeals = fuelTypeNonGasPurchase.length > 0 ? fuelTypeNonGasPurchase : allDealsRaw;
     const fuelTypeLeaseDeals = fuelTypeNonGasLease.length > 0 ? fuelTypeNonGasLease : filteredLease;
     const allFuelTypeCount = [
-      ...filteredCash,
       ...filteredFinance,
       ...filteredZeroApr,
       ...filteredLease,
@@ -195,71 +190,30 @@ const DealsHubPage = () => {
         };
       });
 
-    const toMiniCashFinance = (cash: typeof cashDeals, finance: typeof financeDeals): MiniDeal[] => {
-      const combined: MiniDeal[] = [
-        ...cash.map(d => {
-          const msrp = parseMsrpMin(d.vehicle.priceRange);
-          const afterCash = msrp - d.incentiveAmount;
-          const monthly = calcMonthly(afterCash, 6.5, 60);
-          const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle, 'cash');
-          return {
-            vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
-            make: d.vehicle.make,
-            model: d.vehicle.model,
-            image: d.vehicle.image,
-            slug: d.vehicle.slug,
-            priceRange: d.vehicle.priceRange,
-            dealType: 'cash' as const,
-            dealText: `${d.incentiveValue} cash off`,
-            dealHeadline: `${d.incentiveValue} Cash Back`,
-            whatItMeans: `The manufacturer is offering ${d.incentiveValue} off the price of the car. This is real money taken directly off the purchase price—think of it as an instant discount before you even start negotiating with the dealer. That's ${d.percentOffMsrp} off MSRP.`,
-            savingsNote: `${d.incentiveValue} off the sticker price, which represents ${d.percentOffMsrp} of MSRP. You can combine this with dealer discounts for even bigger savings.`,
-            whoQualifies: 'All buyers qualify for this manufacturer cash-back offer. No special credit requirements.',
-            programName: d.programName,
-            programDescription: d.programDescription,
-            trimsEligible: d.trimsEligible,
-            expirationDate: d.expirationDate,
-            editorsChoice: d.vehicle.editorsChoice,
-            tenBest: d.vehicle.tenBest,
-            staffRating: d.vehicle.staffRating,
-            estimatedMonthly: `$${monthly.toLocaleString()}`,
-            savingsVsAvg, savingsTooltip,
-          };
-        }),
-        ...finance.map(d => {
-          const msrp = parseMsrpMin(d.vehicle.priceRange);
-          const aprNum = parseFloat(d.apr.replace('%', ''));
-          const months = parseTermMonths(d.term);
-          const monthly = calcMonthly(msrp, aprNum, months);
-          const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle, 'finance');
-          return {
-            vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
-            make: d.vehicle.make,
-            model: d.vehicle.model,
-            image: d.vehicle.image,
-            slug: d.vehicle.slug,
-            priceRange: d.vehicle.priceRange,
-            dealType: 'finance' as const,
-            dealText: `${d.apr} APR for ${d.term}`,
-            dealHeadline: `${d.apr} APR Financing for ${d.term}`,
-            whatItMeans: `The manufacturer is subsidizing your loan rate to ${d.apr}, which is well below the national average of ~6.5%. This means lower monthly payments and thousands saved over the life of the loan. The lower the APR, the less you pay the bank in interest.`,
-            savingsNote: `At ${d.apr} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term depending on the amount financed.`,
-            whoQualifies: d.targetAudience,
-            programName: d.programName,
-            programDescription: d.programDescription,
-            trimsEligible: d.trimsEligible,
-            expirationDate: d.expirationDate,
-            editorsChoice: d.vehicle.editorsChoice,
-            tenBest: d.vehicle.tenBest,
-            staffRating: d.vehicle.staffRating,
-            term: d.term,
-            estimatedMonthly: `$${monthly.toLocaleString()}`,
-            savingsVsAvg, savingsTooltip,
-          };
-        }),
-      ];
-      return combined.slice(0, 3);
-    };
+    const toMiniFinance = (finance: typeof financeDeals): MiniDeal[] =>
+      finance.slice(0, 3).map(d => {
+        const msrp = parseMsrpMin(d.vehicle.priceRange);
+        const aprNum = parseFloat(d.apr.replace('%', ''));
+        const months = parseTermMonths(d.term);
+        const monthly = calcMonthly(msrp, aprNum, months);
+        const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle, 'finance');
+        return {
+          vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
+          make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
+          slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
+          dealType: 'finance' as const,
+          dealText: `${d.apr} APR for ${d.term}`,
+          dealHeadline: `${d.apr} APR Financing for ${d.term}`,
+          whatItMeans: `The manufacturer is subsidizing your loan rate to ${d.apr}, which is well below the national average of ~6.5%. This means lower monthly payments and thousands saved over the life of the loan.`,
+          savingsNote: `At ${d.apr} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term.`,
+          whoQualifies: d.targetAudience,
+          programName: d.programName, programDescription: d.programDescription,
+          trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
+          editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
+          staffRating: d.vehicle.staffRating, term: d.term,
+          estimatedMonthly: `$${monthly.toLocaleString()}`, savingsVsAvg, savingsTooltip,
+        };
+      });
 
     const toMiniLease = (deals: typeof leaseDeals): MiniDeal[] =>
       deals.slice(0, 3).map(d => {
@@ -318,15 +272,6 @@ const DealsHubPage = () => {
             whatItMeans: 'Zero interest on your auto loan—every payment dollar goes toward the car. This could save you thousands compared to a typical rate.',
             savingsNote: "On a $35,000 loan, you'd save approximately $3,000–$5,000 in interest.", whoQualifies: audience,
             estimatedMonthly: `$${monthly.toLocaleString()}`, savingsVsAvg, savingsTooltip };
-        } else if ('incentiveValue' in d) {
-          const val = d.incentiveValue;
-          const cashAmount = 'incentiveAmount' in d ? (d as { incentiveAmount: number }).incentiveAmount : 0;
-          const monthly = calcMonthly(msrp - cashAmount, 6.5, 60);
-          const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, bs, 'cash');
-          return { ...base, dealType: 'cash' as const, dealText: `${val} cash off`, dealHeadline: `${val} Cash Back`,
-            whatItMeans: `${val} taken directly off the purchase price by the manufacturer—an instant discount before negotiation.`,
-            savingsNote: `${val} off MSRP. Combinable with dealer discounts.`, whoQualifies: 'All buyers qualify. No special credit requirements.',
-            estimatedMonthly: `$${monthly.toLocaleString()}`, savingsVsAvg, savingsTooltip };
         } else {
           const apr = 'apr' in d ? d.apr : '';
           const aprNum = parseFloat(String(apr).replace('%', '')) || 6.5;
@@ -343,13 +288,13 @@ const DealsHubPage = () => {
       });
 
     return [
-      { title: 'APR & Financing Deals', description: '0% APR and special low-rate financing — save thousands in interest over the life of your loan.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniCashFinance([], filteredFinance)].slice(0, 3) },
-      { title: 'Cash & Finance Deals', description: 'Manufacturer rebates and below-market rates that lower your out-of-pocket cost.', href: '/deals/cash-finance', count: filteredCash.length + filteredFinance.length, icon: <BadgeDollarSign size={22} strokeWidth={2.2} />, deals: toMiniCashFinance(filteredCash, filteredFinance) },
+      { title: 'APR & Financing Deals', description: '0% APR and special low-rate financing — save thousands in interest over the life of your loan.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance)].slice(0, 3) },
+      { title: 'Finance Deals', description: 'Below-market rates that lower your out-of-pocket cost.', href: '/deals/cash-finance', count: filteredFinance.length, icon: <BadgeDollarSign size={22} strokeWidth={2.2} />, deals: toMiniFinance(filteredFinance) },
       { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, icon: <KeyRound size={22} strokeWidth={2.2} />, deals: toMiniLease(filteredLease) },
       { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, icon: <CarFront size={22} strokeWidth={2.2} />, deals: toMiniMixed(suvDeals) },
       { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, icon: <Truck size={22} strokeWidth={2.2} />, deals: toMiniMixed(truckDeals) },
       { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, icon: <Fuel size={22} strokeWidth={2.2} />, deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
-      { title: 'Cash & Finance by Body Style', description: 'Cash-back and special finance deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredCash.length + filteredFinance.length, icon: <Car size={22} strokeWidth={2.2} />, deals: toMiniCashFinance(filteredCash, filteredFinance) },
+      { title: 'Finance by Body Style', description: 'Special finance deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length, icon: <Car size={22} strokeWidth={2.2} />, deals: toMiniFinance(filteredFinance) },
     ];
   }, [rawData, matchesFilters]);
 
@@ -554,7 +499,7 @@ const DealsHubPage = () => {
 
                         {/* Deal pill */}
                         <button className="deals-hub__card-deal-pill" onClick={(e) => handleDealClick(e, deal)}>
-                          <div className="deals-hub__card-deal-pill-icon">{cat.icon}</div>
+                          <span className="deals-hub__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
                           <span className="deals-hub__card-deal-pill-text">{deal.dealText}</span>
                           <span className="deals-hub__card-deal-pill-divider" />
                           <span className="deals-hub__card-deal-pill-expires">expires {deal.expirationDate.replace(/April/, '4/1/').replace(/, /, '').replace(/20(\d{2})/, '$1')}</span>

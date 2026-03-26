@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Car, KeyRound, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -308,7 +308,7 @@ const LeaseDealsPage = () => {
                           })()}
 
                           <button className="lease-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <div className="lease-deals-page__card-deal-pill-icon"><KeyRound size={12} /></div>
+                            <span className="lease-deals-page__card-deal-pill-chip">Lease</span>
                             <span className="lease-deals-page__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
                             <span className="lease-deals-page__card-deal-pill-divider" />
                             <span className="lease-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>

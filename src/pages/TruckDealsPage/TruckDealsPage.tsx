@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Users, Car, DollarSign, Percent, KeyRound } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Users, Car } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -152,12 +152,6 @@ const TruckDealsPage = () => {
       })()
     : undefined;
 
-  const pillIcon = (type: 'percent' | 'dollar' | 'key') => {
-    if (type === 'dollar') return <DollarSign size={12} />;
-    if (type === 'key') return <KeyRound size={12} />;
-    return <Percent size={12} />;
-  };
-
   const pageTitle = `Best Truck Deals & Incentives for ${CURRENT_MONTH} ${CURRENT_YEAR}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
@@ -267,7 +261,7 @@ const TruckDealsPage = () => {
                           </div>
 
                           <button className="truck-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <div className="truck-deals-page__card-deal-pill-icon">{pillIcon(deal.dealPillIcon)}</div>
+                            <span className="truck-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
                             <span className="truck-deals-page__card-deal-pill-text">{deal.dealText}</span>
                             <span className="truck-deals-page__card-deal-pill-divider" />
                             <span className="truck-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>

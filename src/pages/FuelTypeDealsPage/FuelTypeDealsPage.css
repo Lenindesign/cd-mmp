@@ -625,6 +625,21 @@
   flex-shrink: 0;
 }
 
+.fuel-deals__card-deal-pill-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--color-success);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
 .fuel-deals__card-deal-pill-text {
   font-family: var(--font-heading);
   font-size: var(--font-size-xs);

@@ -1,8 +1,8 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRound, SlidersHorizontal, Bookmark, Info } from 'lucide-react';
+import { ChevronUp, ChevronDown, SlidersHorizontal, Bookmark, Info } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -22,7 +22,7 @@ interface MiniDeal {
   image: string;
   slug: string;
   priceRange: string;
-  dealType: 'zero-apr' | 'cash' | 'finance' | 'lease';
+  dealType: 'zero-apr' | 'finance' | 'lease';
   dealText: string;
   dealHeadline: string;
   whatItMeans: string;
@@ -42,12 +42,11 @@ interface MiniDeal {
   term?: string;
 }
 
-type DealTypeFilter = 'all' | 'zero-apr' | 'cash' | 'finance' | 'lease';
+type DealTypeFilter = 'all' | 'zero-apr' | 'finance' | 'lease';
 
 const DEAL_TYPE_LABELS: Record<DealTypeFilter, string> = {
   all: 'All Deals',
   'zero-apr': '0% APR',
-  cash: 'Cash Back',
   finance: 'Finance',
   lease: 'Lease',
 };
@@ -164,32 +163,6 @@ const AllDealsPage = () => {
         });
       });
 
-    getCashDeals()
-      .filter(d => matchesFilters(d.vehicle))
-      .forEach(d => {
-        const msrp = parseMsrpMin(d.vehicle.priceRange);
-        const afterCash = msrp - d.incentiveAmount;
-        const monthly = calcMonthly(afterCash, 6.5, 60);
-        const savings = buildSavingsText(monthly, d.vehicle.bodyStyle, 'cash');
-        deals.push({
-          vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
-          make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
-          slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
-          dealType: 'cash',
-          dealText: `${d.incentiveValue} cash off`,
-          dealHeadline: `${d.incentiveValue} Cash Back`,
-          whatItMeans: `${d.incentiveValue} taken directly off the purchase price—an instant discount.`,
-          savingsNote: `${d.incentiveValue} off MSRP (${d.percentOffMsrp}). Combinable with dealer discounts.`,
-          whoQualifies: 'All buyers qualify. No special credit requirements.',
-          programName: d.programName, programDescription: d.programDescription,
-          trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
-          editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
-          staffRating: d.vehicle.staffRating,
-          estimatedMonthly: `$${monthly.toLocaleString()}`,
-          savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
-        });
-      });
-
     getFinanceDeals()
       .filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }))
       .forEach(d => {
@@ -279,22 +252,13 @@ const AllDealsPage = () => {
       })()
     : undefined;
 
-  const dealTypeIcon = (type: MiniDeal['dealType']) => {
-    switch (type) {
-      case 'zero-apr': return <Percent size={12} />;
-      case 'cash': return <BadgeDollarSign size={12} />;
-      case 'finance': return <Percent size={12} />;
-      case 'lease': return <KeyRound size={12} />;
-    }
-  };
-
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
     <div className="all-deals">
       <SEO
         title={`All Car Deals & Incentives for ${month} ${year} | Car and Driver`}
-        description={`Browse every current car deal, incentive, and offer for ${month} ${year}. 0% APR, cash back, finance rates, and lease specials — all in one place.`}
+        description={`Browse every current car deal, incentive, and offer for ${month} ${year}. 0% APR, finance rates, and lease specials — all in one place.`}
         canonical={`${BASE_URL}/deals/all`}
         keywords={['all car deals', 'car incentives', `car deals ${month} ${year}`, 'new car offers']}
         structuredData={createBreadcrumbStructuredData([
@@ -310,7 +274,7 @@ const AllDealsPage = () => {
             <Link to="/deals" className="all-deals__breadcrumb">Deals</Link>
             <h1 className="all-deals__title">All Deals for {month} {year}</h1>
             <p className="all-deals__description">
-              Every current manufacturer incentive in one place — 0% APR financing, cash-back rebates,
+              Every current manufacturer incentive in one place — 0% APR financing,
               special finance rates, and lease specials, all paired with Car and Driver expert ratings.
             </p>
           </div>
@@ -405,7 +369,7 @@ const AllDealsPage = () => {
                               {offersPopup.offers.map((o, idx) => (
                                 <li key={idx} className="all-deals__card-offers-popup-item">
                                   <span className={`all-deals__card-offers-popup-type all-deals__card-offers-popup-type--${o.type}`}>
-                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Buy' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                   </span>
                                   <span className="all-deals__card-offers-popup-label">{o.label}</span>
                                   <span className="all-deals__card-offers-popup-exp">exp {o.expires}</span>
@@ -415,7 +379,7 @@ const AllDealsPage = () => {
                           </div>
                         )}
                         <span className={`all-deals__card-type-tag all-deals__card-type-tag--${deal.dealType}`}>
-                          {deal.dealType === 'zero-apr' ? '0% APR' : deal.dealType === 'cash' ? 'Cash Back' : deal.dealType === 'finance' ? 'Finance' : 'Lease'}
+                          {deal.dealType === 'zero-apr' ? '0% APR' : deal.dealType === 'finance' ? 'Finance' : 'Lease'}
                         </span>
                         {(deal.editorsChoice || deal.tenBest) && (
                           <div className="all-deals__card-badges">
@@ -442,7 +406,7 @@ const AllDealsPage = () => {
                       </div>
 
                       <button className="all-deals__card-deal-pill" onClick={(e) => handleDealClick(e, deal)}>
-                        <div className="all-deals__card-deal-pill-icon">{dealTypeIcon(deal.dealType)}</div>
+                        <span className="all-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
                         <span className="all-deals__card-deal-pill-text">{deal.dealText}</span>
                         <span className="all-deals__card-deal-pill-divider" />
                         <span className="all-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>

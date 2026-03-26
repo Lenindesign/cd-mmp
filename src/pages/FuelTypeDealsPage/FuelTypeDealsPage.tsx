@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Users, Fuel, DollarSign, Percent, KeyRound, Zap, Leaf, Droplets } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Users, Fuel, Zap, Leaf, Droplets } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -11,7 +11,7 @@ import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
@@ -21,7 +21,7 @@ type FuelTab = 'all' | 'gas' | 'hybrid' | 'electric' | 'diesel';
 
 interface UnifiedDeal {
   id: string;
-  dealType: 'zero-apr' | 'cash' | 'finance' | 'lease';
+  dealType: 'zero-apr' | 'finance' | 'lease';
   fuelType: string;
   vehicleName: string;
   vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; fuelType: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean };
@@ -29,7 +29,7 @@ interface UnifiedDeal {
   savingsVsAvg: string;
   savingsTooltip: string;
   dealText: string;
-  dealPillIcon: 'percent' | 'dollar' | 'key';
+  dealPillIcon: 'percent' | 'key';
   details: { label: string; value: string }[];
   expirationDate: string;
   programName: string;
@@ -83,21 +83,6 @@ const FuelTypeDealsPage = () => {
         details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Term', value: d.term }, { label: 'Fuel Type', value: d.vehicle.fuelType }],
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
-        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
-      });
-    }
-    for (const d of getCashDeals()) {
-      const msrp = parseMsrpMin(d.vehicle.priceRange);
-      const cashAmount = parseInt(d.incentiveValue.replace(/[^0-9]/g, ''), 10) || 0;
-      const monthly = calcMonthly(msrp - cashAmount, AVG_MARKET_APR, AVG_LOAN_TERM);
-      const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
-      results.push({
-        id: d.id, dealType: 'cash', fuelType: d.vehicle.fuelType, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
-        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
-        dealText: `${d.incentiveValue} Cash Back`, dealPillIcon: 'dollar',
-        details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: '% Off MSRP', value: d.percentOffMsrp }, { label: 'Fuel Type', value: d.vehicle.fuelType }],
-        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
-        additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
       });
     }
@@ -176,12 +161,6 @@ const FuelTypeDealsPage = () => {
       })()
     : undefined;
 
-  const pillIcon = (type: 'percent' | 'dollar' | 'key') => {
-    if (type === 'dollar') return <DollarSign size={12} />;
-    if (type === 'key') return <KeyRound size={12} />;
-    return <Percent size={12} />;
-  };
-
   const tabLabel = activeTab === 'all' ? '' : FUEL_TABS.find(t => t.key === activeTab)?.label || '';
   const pageTitle = tabLabel
     ? `Best ${tabLabel} Vehicle Deals – ${CURRENT_MONTH} ${CURRENT_YEAR}`
@@ -192,7 +171,7 @@ const FuelTypeDealsPage = () => {
     <div className="fuel-deals">
       <SEO
         title={`${pageTitle} | Car and Driver`}
-        description={`Find the best deals on gas, hybrid, electric, and diesel vehicles for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers by fuel type.`}
+        description={`Find the best deals on gas, hybrid, electric, and diesel vehicles for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, finance, and lease offers by fuel type.`}
         canonical={`${BASE_URL}/deals/fuel-type`}
         keywords={['fuel type deals', 'electric vehicle deals', 'hybrid deals', 'EV incentives', `vehicle deals ${CURRENT_MONTH} ${CURRENT_YEAR}`]}
         structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Fuel Type Deals', url: `${BASE_URL}/deals/fuel-type` }])}
@@ -289,7 +268,7 @@ const FuelTypeDealsPage = () => {
                                   {offersPopup.offers.map((o, idx) => (
                                     <li key={idx} className="fuel-deals__card-offers-popup-item">
                                       <span className={`fuel-deals__card-offers-popup-type fuel-deals__card-offers-popup-type--${o.type}`}>
-                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Buy' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                       </span>
                                       <span className="fuel-deals__card-offers-popup-label">{o.label}</span>
                                       <span className="fuel-deals__card-offers-popup-exp">exp {o.expires}</span>
@@ -323,7 +302,7 @@ const FuelTypeDealsPage = () => {
                           </div>
 
                           <button className="fuel-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <div className="fuel-deals__card-deal-pill-icon">{pillIcon(deal.dealPillIcon)}</div>
+                            <span className="fuel-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
                             <span className="fuel-deals__card-deal-pill-text">{deal.dealText}</span>
                             <span className="fuel-deals__card-deal-pill-divider" />
                             <span className="fuel-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>
@@ -375,7 +354,7 @@ const FuelTypeDealsPage = () => {
                   {[
                     { question: 'Are there special deals on electric vehicles?', answer: 'Yes. Many manufacturers offer special incentives on EVs including reduced APR financing, lease specials, and cash rebates. Additionally, federal tax credits of up to $7,500 and various state incentives may apply on top of manufacturer deals.' },
                     { question: 'Do hybrid vehicles get the same deals as gas models?', answer: 'Hybrid trims sometimes qualify for the same manufacturer incentives as their gas counterparts, but they may also have separate hybrid-specific offers. Check the "Eligible Trims" section of each deal to confirm.' },
-                    { question: 'Can I combine fuel-type incentives with other deals?', answer: 'It depends on the manufacturer. Some allow stacking EV tax credits with manufacturer financing, while others require choosing between cash-back and special APR. Always ask the dealer to run both scenarios.' },
+                    { question: 'Can I combine fuel-type incentives with other deals?', answer: 'It depends on the manufacturer. Some allow stacking EV tax credits with manufacturer financing, while others require choosing between different incentives and special APR. Always ask the dealer to run both scenarios.' },
                     { question: 'When do EV and hybrid deals change?', answer: 'Manufacturer incentives typically rotate monthly. Federal tax credits are set by legislation and change less frequently. We update this page as new deals become available.' },
                     { question: 'Are diesel vehicle deals common?', answer: 'Diesel deals are less common than gas or hybrid offers since fewer manufacturers sell diesel passenger vehicles in the US. When available, they tend to appear on trucks and SUVs.' },
                   ].map((faq, i) => (
@@ -397,7 +376,7 @@ const FuelTypeDealsPage = () => {
                   <Link to="/deals/suv" className="fuel-deals__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs</p></Link>
                   <Link to="/deals/truck" className="fuel-deals__link-card"><h3>Truck Deals</h3><p>Pickup truck specials</p></Link>
                   <Link to="/deals/lease" className="fuel-deals__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
-                  <Link to="/deals/cash-finance" className="fuel-deals__link-card"><h3>Cash & Finance</h3><p>Cash-back and APR offers</p></Link>
+                  <Link to="/deals/cash-finance" className="fuel-deals__link-card"><h3>Finance Deals</h3><p>Cash-back and APR offers</p></Link>
                 </div>
               </section>
             </div>

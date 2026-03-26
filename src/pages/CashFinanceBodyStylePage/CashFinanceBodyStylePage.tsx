@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Users, Clock, DollarSign, Percent, CarFront, Truck, Car } from 'lucide-react';
-import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Users, Clock, Percent, CarFront, Truck, Car } from 'lucide-react';
+import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
@@ -9,7 +9,7 @@ import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
@@ -70,21 +70,6 @@ const CashFinanceBodyStylePage = () => {
   const allDeals = useMemo((): UnifiedDeal[] => {
     const results: UnifiedDeal[] = [];
 
-    for (const d of getCashDeals()) {
-      const msrp = parseMsrpMin(d.vehicle.priceRange);
-      const cashAmount = parseInt(d.incentiveValue.replace(/[^0-9]/g, ''), 10) || 0;
-      const monthly = calcMonthly(msrp - cashAmount, AVG_MARKET_APR, AVG_LOAN_TERM);
-      const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
-      results.push({
-        id: d.id, dealType: 'cash', bodyStyle: d.vehicle.bodyStyle, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
-        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
-        dealText: `${d.incentiveValue} Cash Back`, dealPillIcon: 'dollar',
-        details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: '% Off MSRP', value: d.percentOffMsrp }, { label: 'Body Style', value: d.vehicle.bodyStyle }],
-        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
-        additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
-        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
-      });
-    }
     for (const d of getFinanceDeals()) {
       const msrp = parseMsrpMin(d.vehicle.priceRange);
       const aprNum = parseFloat(d.apr.replace('%', ''));
@@ -136,9 +121,7 @@ const CashFinanceBodyStylePage = () => {
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
           offerHeadline: activeDealObj.dealText,
-          whatItMeans: activeDealObj.dealType === 'cash'
-            ? 'The manufacturer is offering a cash discount directly off the purchase price—an instant savings before negotiation.'
-            : 'A below-market interest rate from the manufacturer that lowers your monthly payment and total cost.',
+          whatItMeans: 'A below-market interest rate from the manufacturer that lowers your monthly payment and total cost.',
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'All buyers qualify with approved credit.',
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
@@ -149,32 +132,27 @@ const CashFinanceBodyStylePage = () => {
       })()
     : undefined;
 
-  const pillIcon = (type: 'dollar' | 'percent') => {
-    if (type === 'dollar') return <DollarSign size={12} />;
-    return <Percent size={12} />;
-  };
-
   const tabLabel = activeTab === 'all' ? '' : BODY_TABS.find(t => t.key === activeTab)?.label || '';
-  const pageTitle = `Cash & Finance Deals by Body Style – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
+  const pageTitle = `Finance Deals by Body Style – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
     <div className="cfbs-deals">
       <SEO
         title={`${pageTitle} | Car and Driver`}
-        description={`Browse cash-back and finance deals by body style for ${CURRENT_MONTH} ${CURRENT_YEAR}. Filter by SUV, sedan, truck, coupe, and more. Expert ratings from Car and Driver.`}
+        description={`Browse manufacturer finance deals by body style for ${CURRENT_MONTH} ${CURRENT_YEAR}. Filter by SUV, sedan, truck, coupe, and more. Expert ratings from Car and Driver.`}
         canonical={`${BASE_URL}/deals/cash-finance-body-style`}
-        keywords={['cash back deals by body style', 'finance deals SUV', 'sedan cash deals', 'truck finance deals', `car deals ${CURRENT_MONTH} ${CURRENT_YEAR}`]}
-        structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Cash & Finance by Body Style', url: `${BASE_URL}/deals/cash-finance-body-style` }])}
+        keywords={['finance deals by body style', 'finance deals SUV', 'sedan finance deals', 'truck finance deals', `car deals ${CURRENT_MONTH} ${CURRENT_YEAR}`]}
+        structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Finance by Body Style', url: `${BASE_URL}/deals/cash-finance-body-style` }])}
       />
 
       <div className="cfbs-deals__hero">
         <div className="container">
           <div className="cfbs-deals__hero-content">
-            <div className="cfbs-deals__hero-badge"><DollarSign size={16} /><span>Cash & Finance by Body Style</span></div>
+            <div className="cfbs-deals__hero-badge"><Percent size={16} /><span>Finance Deals by Body Style</span></div>
             <h1 className="cfbs-deals__title">{pageTitle}</h1>
             <p className="cfbs-deals__description">
-              Cash-back rebates and special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
+              Special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
             </p>
             <div className="cfbs-deals__hero-stats">
               <div className="cfbs-deals__hero-stat"><span className="cfbs-deals__hero-stat-value">{allDeals.length}</span><span className="cfbs-deals__hero-stat-label">Total Deals</span></div>
@@ -209,7 +187,7 @@ const CashFinanceBodyStylePage = () => {
 
               <section className="cfbs-deals__section">
                 <h2 className="cfbs-deals__section-title">
-                  <DollarSign size={22} /> {deals.length} {tabLabel || 'Available'} Deal{deals.length !== 1 ? 's' : ''}
+                  <Percent size={22} /> {deals.length} {tabLabel || 'Available'} Deal{deals.length !== 1 ? 's' : ''}
                 </h2>
                 <div className="cfbs-deals__grid">
                   {deals.map((deal) => {
@@ -292,7 +270,7 @@ const CashFinanceBodyStylePage = () => {
                           </div>
 
                           <button className="cfbs-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <div className="cfbs-deals__card-deal-pill-icon">{pillIcon(deal.dealPillIcon)}</div>
+                            <span className="cfbs-deals__card-deal-pill-chip">Buy</span>
                             <span className="cfbs-deals__card-deal-pill-text">{deal.dealText}</span>
                             <span className="cfbs-deals__card-deal-pill-divider" />
                             <span className="cfbs-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>
@@ -331,7 +309,7 @@ const CashFinanceBodyStylePage = () => {
                   {deals.length === 0 && (
                     <div className="cfbs-deals__empty">
                       <h3>No {tabLabel || ''} deals available</h3>
-                      <p>Check back soon for new {tabLabel?.toLowerCase() || 'cash & finance'} incentives, or browse another body style above.</p>
+                      <p>Check back soon for new {tabLabel?.toLowerCase() || 'finance'} incentives, or browse another body style above.</p>
                       <Link to="/deals" className="cfbs-deals__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
                     </div>
                   )}
@@ -342,11 +320,11 @@ const CashFinanceBodyStylePage = () => {
                 <h2 className="cfbs-deals__section-title"><Info size={22} /> Frequently Asked Questions</h2>
                 <div className="cfbs-deals__faq-list">
                   {[
-                    { question: 'What types of cash & finance deals are available by body style?', answer: 'Manufacturers offer cash-back rebates and special finance rates across all body styles—SUVs, sedans, trucks, coupes, and hatchbacks. The specific amounts and terms vary by model and often by trim level.' },
-                    { question: 'Do SUVs get better cash-back deals than sedans?', answer: 'It depends on market demand. Slower-selling models tend to have larger incentives regardless of body style. Popular SUVs may have smaller rebates due to high demand, while sedans competing in a crowded segment may offer more aggressive deals.' },
-                    { question: 'Can I combine cash back with special financing?', answer: 'Typically you must choose one or the other. However, some manufacturers allow stacking loyalty bonuses or military discounts with a finance offer. Always ask the dealer to calculate both scenarios to see which saves you more.' },
+                    { question: 'What types of finance deals are available by body style?', answer: 'Manufacturers offer special APR and financing terms across all body styles—SUVs, sedans, trucks, coupes, and hatchbacks. Rates and terms vary by model and often by trim level.' },
+                    { question: 'Do SUVs get better finance offers than sedans?', answer: 'It depends on market demand and manufacturer strategy. Popular models may have less aggressive APR promotions, while slower-selling vehicles sometimes get stronger financing incentives regardless of body style.' },
+                    { question: 'Can I stack other discounts with a finance offer?', answer: 'Some manufacturers allow loyalty, conquest, or military incentives alongside a promotional APR. Terms vary by brand—ask the dealer which programs you qualify for and how they affect your payment.' },
                     { question: 'How often do these deals change?', answer: 'Manufacturer incentives typically rotate monthly. We update this page as new deals become available, so check back at the start of each month for the latest offers.' },
-                    { question: 'Are truck deals different from car deals?', answer: 'The types of incentives are similar, but trucks often have different dollar amounts. Full-size trucks may have larger cash-back offers due to higher MSRPs, while the APR rates tend to be comparable across body styles.' },
+                    { question: 'Are truck finance deals different from car deals?', answer: 'Promotional APRs and terms follow similar patterns, but loan amounts and monthly payments often differ because trucks can carry higher MSRPs. Compare the rate, term, and payment on the specific vehicle you are considering.' },
                   ].map((faq, i) => (
                     <div key={i} className={`cfbs-deals__faq-item ${expandedFaqIndex === i ? 'cfbs-deals__faq-item--expanded' : ''}`}>
                       <button className="cfbs-deals__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
@@ -362,7 +340,7 @@ const CashFinanceBodyStylePage = () => {
                 <h2 className="cfbs-deals__section-title">Explore More</h2>
                 <div className="cfbs-deals__links-grid">
                   <Link to="/deals" className="cfbs-deals__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
-                  <Link to="/deals/cash-finance" className="cfbs-deals__link-card"><h3>Cash & Finance</h3><p>All cash-back and APR offers</p></Link>
+                  <Link to="/deals/cash-finance" className="cfbs-deals__link-card"><h3>Finance Deals</h3><p>APR and special finance offers</p></Link>
                   <Link to="/deals/zero-apr" className="cfbs-deals__link-card"><h3>0% APR Deals</h3><p>Zero-interest financing</p></Link>
                   <Link to="/deals/lease" className="cfbs-deals__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
                   <Link to="/deals/fuel-type" className="cfbs-deals__link-card"><h3>Fuel Type Deals</h3><p>Deals by powertrain</p></Link>

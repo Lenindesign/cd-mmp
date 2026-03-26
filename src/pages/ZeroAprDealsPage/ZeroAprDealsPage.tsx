@@ -413,7 +413,7 @@ const ZeroAprDealsPage = () => {
                           </div>
 
                           <button className="zero-apr-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <div className="zero-apr-page__card-deal-pill-icon"><Percent size={12} /></div>
+                            <span className="zero-apr-page__card-deal-pill-chip">Buy</span>
                             <span className="zero-apr-page__card-deal-pill-text">{deal.dealText}</span>
                             <span className="zero-apr-page__card-deal-pill-divider" />
                             <span className="zero-apr-page__card-deal-pill-expires">expires {deal.expirationDate}</span>

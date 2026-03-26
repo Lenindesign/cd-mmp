@@ -9,7 +9,7 @@ interface HeroOffersAProps {
 }
 
 const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllClick }: HeroOffersAProps) => {
-  const [offersTab, setOffersTab] = useState<'finance' | 'lease' | 'cash'>('finance');
+  const [offersTab, setOffersTab] = useState<'finance' | 'lease'>('finance');
 
   const stripQualifier = (v: string) =>
     v.replace(/^(as low as|up to|starting at)\s+/i, '');
@@ -31,17 +31,10 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
     [vehicleIncentives]
   );
 
-  const cashIncentives = useMemo(() =>
-    vehicleIncentives.incentives.filter(i => i.type === 'cash' || i.type === 'special'),
-    [vehicleIncentives]
-  );
-
   const topIncentives = useMemo(() => {
-    const pool = offersTab === 'finance' ? financeIncentives
-      : offersTab === 'lease' ? leaseIncentives
-      : cashIncentives;
+    const pool = offersTab === 'finance' ? financeIncentives : leaseIncentives;
     return pool.slice(0, 3);
-  }, [offersTab, financeIncentives, leaseIncentives, cashIncentives]);
+  }, [offersTab, financeIncentives, leaseIncentives]);
 
   const msrpBase = useMemo(() => {
     return parseInt((priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0;
@@ -54,7 +47,6 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
     return {
       finance: financeMonthly > 0 ? `${fmt(financeMonthly)}/mo.` : '',
       lease: leaseMonthly > 0 ? `${fmt(leaseMonthly)}/mo.` : '',
-      cash: msrpBase > 0 ? fmt(msrpBase) : '',
     };
   }, [msrpBase]);
 
@@ -91,17 +83,6 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
             Lease
             {tabPaymentLabel.lease && <span className="hero__offers-tab-price">{tabPaymentLabel.lease}</span>}
             <span className="hero__offers-tab-count">{leaseIncentives.length}</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={offersTab === 'cash'}
-            className={`hero__offers-tab ${offersTab === 'cash' ? 'hero__offers-tab--active' : ''}`}
-            onClick={() => setOffersTab('cash')}
-          >
-            Cash
-            {tabPaymentLabel.cash && <span className="hero__offers-tab-price">{tabPaymentLabel.cash}</span>}
-            <span className="hero__offers-tab-count">{cashIncentives.length}</span>
           </button>
         </div>
       </div>

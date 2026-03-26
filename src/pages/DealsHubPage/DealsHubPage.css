@@ -737,21 +737,19 @@
   background: #f0fdf4;
 }
 
-.deals-hub__card-deal-pill-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
+.deals-hub__card-deal-pill-chip {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 4px;
   background: var(--color-success);
   color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   flex-shrink: 0;
-}
-
-.deals-hub__card-deal-pill-icon svg {
-  width: 12px;
-  height: 12px;
 }
 
 .deals-hub__card-deal-pill-text {
@@ -1025,13 +1023,9 @@
     white-space: normal;
     line-height: 1.2;
   }
-  .deals-hub__card-deal-pill-icon {
-    width: 18px;
-    height: 18px;
-  }
-  .deals-hub__card-deal-pill-icon svg {
-    width: 10px;
-    height: 10px;
+  .deals-hub__card-deal-pill-chip {
+    font-size: 9px;
+    padding: 1px 6px;
   }
   .deals-hub__card-deal-pill-divider {
     display: none;

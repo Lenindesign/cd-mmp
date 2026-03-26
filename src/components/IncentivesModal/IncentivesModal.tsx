@@ -8,11 +8,7 @@ import {
   Gem,
   Clock,
   Lightbulb,
-  Percent,
   BadgeCheck,
-  DollarSign,
-  Car,
-  Sparkles,
   ShieldCheck,
   ChevronDown,
 } from 'lucide-react';
@@ -111,22 +107,13 @@ const getEligibilityInfo = (inc: Incentive): { label: string; restricted: boolea
   return { label: 'Everyone', restricted: false };
 };
 
-const getTypeIcon = (type: Incentive['type']) => {
-  switch (type) {
-    case 'cash': return <DollarSign size={14} />;
-    case 'finance': return <Percent size={14} />;
-    case 'lease': return <Car size={14} />;
-    case 'special': return <Sparkles size={14} />;
-    default: return <DollarSign size={14} />;
-  }
-};
 
 
 const APR_RATE_TABLE = [
-  { term: 36, rates: [{ credit: 'Excellent', apr: 2.9 }, { credit: 'Good', apr: 3.9 }, { credit: 'Fair', apr: 5.9 }] },
-  { term: 48, rates: [{ credit: 'Excellent', apr: 3.9 }, { credit: 'Good', apr: 4.9 }, { credit: 'Fair', apr: 6.4 }] },
-  { term: 60, rates: [{ credit: 'Excellent', apr: 4.9 }, { credit: 'Good', apr: 5.9 }, { credit: 'Fair', apr: 6.9 }] },
-  { term: 72, rates: [{ credit: 'Excellent', apr: 5.9 }, { credit: 'Good', apr: 6.4 }, { credit: 'Fair', apr: 6.9 }] },
+  { term: 36, apr: 2.9 },
+  { term: 48, apr: 3.9 },
+  { term: 60, apr: 4.9 },
+  { term: 72, apr: 5.9 },
 ];
 
 const IncentivesModal = ({
@@ -159,6 +146,8 @@ const IncentivesModal = ({
     if (isOpen) {
       if (selectedIncentiveId) {
         setActiveIncentiveId(selectedIncentiveId);
+      } else if (allIncentives && allIncentives.length > 0) {
+        setActiveIncentiveId(allIncentives[0].id);
       }
       if (initialDropdownOpen) {
         setOfferDropdownOpen(true);
@@ -166,7 +155,7 @@ const IncentivesModal = ({
     } else {
       setOfferDropdownOpen(false);
     }
-  }, [isOpen, selectedIncentiveId, initialDropdownOpen]);
+  }, [isOpen, selectedIncentiveId, initialDropdownOpen, allIncentives]);
 
   useEffect(() => {
     if (!offerDropdownOpen) return;
@@ -518,8 +507,8 @@ const IncentivesModal = ({
                   {activeIncentive && (
                     <div className="incentives-modal__v5-detail">
                       <div className="incentives-modal__v5-offer-row">
-                        <span className={`incentives-modal__v5-offer-pill incentives-modal__v5-offer-pill--${activeIncentive.type}`} aria-hidden>
-                          {getTypeIcon(activeIncentive.type)}
+                        <span className="incentives-modal__v5-offer-chip">
+                          {activeIncentive.type === 'lease' ? 'Lease' : 'Buy'}
                         </span>
                         <span className="incentives-modal__v5-offer-apr">
                           {activeIncentive.value}
@@ -529,7 +518,6 @@ const IncentivesModal = ({
                           expires {formatExpirationShort(activeIncentive.expirationDate)}
                         </span>
                       </div>
-                      <p className="incentives-modal__v5-offer-subline">{activeIncentive.title}</p>
 
                       <div className="incentives-modal__v5-expert-tip">
                         <div className="incentives-modal__v5-expert-tip-left">
@@ -567,20 +555,14 @@ const IncentivesModal = ({
                             <thead>
                               <tr>
                                 <th>Term</th>
-                                <th>Excellent Credit</th>
-                                <th>Good Credit</th>
-                                <th>Fair Credit</th>
+                                <th>Rate</th>
                               </tr>
                             </thead>
                             <tbody>
                               {APR_RATE_TABLE.map(row => (
                                 <tr key={row.term}>
                                   <td className="incentives-modal__rate-term">{row.term} mo</td>
-                                  {row.rates.map(r => (
-                                    <td key={r.credit} className="incentives-modal__rate-cell">
-                                      {r.apr}%
-                                    </td>
-                                  ))}
+                                  <td className="incentives-modal__rate-cell">{row.apr}%</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -620,9 +602,7 @@ const IncentivesModal = ({
                   {(!allIncentives || allIncentives.length === 0) && (
                     <>
                       <div className="incentives-modal__v5-offer-row">
-                        <span className="incentives-modal__v5-offer-pill" aria-hidden>
-                          <Percent size={14} />
-                        </span>
+                        <span className="incentives-modal__v5-offer-chip">Buy</span>
                         <span className="incentives-modal__v5-offer-apr">
                           {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
                         </span>
@@ -631,9 +611,6 @@ const IncentivesModal = ({
                           expires {offer.expirationDate ? formatExpirationShort(offer.expirationDate) : 'soon'}
                         </span>
                       </div>
-                      <p className="incentives-modal__v5-offer-subline">
-                        {offer.offerHeadline.match(/^[\d.]+%\s*APR/i) ? offer.offerHeadline.replace(/^[\d.]+%\s*APR\s*/i, '') : offer.offerHeadline}
-                      </p>
 
                       <div className="incentives-modal__v5-expert-tip">
                         <div className="incentives-modal__v5-expert-tip-left">

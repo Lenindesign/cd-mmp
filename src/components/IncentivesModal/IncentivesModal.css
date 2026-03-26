@@ -321,14 +321,29 @@
   background: #26870D;
 }
 
+.incentives-modal__v5-offer-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: var(--color-success, #26870D);
+  color: var(--color-white, #fff);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
 /* Eligibility callout box */
 .incentives-modal__v5-eligibility-box {
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding: 12px 14px;
-  background: rgba(38, 135, 13, 0.06);
-  border: 1px solid rgba(38, 135, 13, 0.15);
+  background: #ffffff;
+  border: 1px solid var(--color-gray-200, #e5e7eb);
   border-radius: 6px;
   margin-bottom: 20px;
 }
@@ -342,11 +357,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #26870D;
+  color: #000000;
 }
 
 .incentives-modal__v5-eligibility-box--restricted .incentives-modal__v5-eligibility-header {
-  color: #92400e;
+  color: #000000;
 }
 
 .incentives-modal__v5-eligibility-title {
@@ -1006,7 +1021,7 @@
 .incentives-modal__rate-table {
   margin: 20px 0;
   padding: 16px;
-  background: #f8faf8;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
 }
