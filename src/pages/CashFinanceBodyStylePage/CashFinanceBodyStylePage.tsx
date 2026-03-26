@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Users, Clock, Percent, Car
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -43,6 +43,14 @@ const BODY_TABS: { key: BodyTab; label: string; icon: React.ReactNode; match: (b
   { key: 'truck', label: 'Truck', icon: <Truck size={16} />, match: (bs) => bs.toLowerCase() === 'truck' },
   { key: 'coupe', label: 'Coupe', icon: <Car size={16} />, match: (bs) => bs.toLowerCase() === 'coupe' },
   { key: 'hatchback', label: 'Hatchback', icon: <Car size={16} />, match: (bs) => bs.toLowerCase() === 'hatchback' },
+];
+
+const FAQ_DATA = [
+  { question: 'What types of finance deals are available by body style?', answer: 'Manufacturers offer special APR and financing terms across all body styles—SUVs, sedans, trucks, coupes, and hatchbacks. Rates and terms vary by model and often by trim level.' },
+  { question: 'Do SUVs get better finance offers than sedans?', answer: 'It depends on market demand and manufacturer strategy. Popular models may have less aggressive APR promotions, while slower-selling vehicles sometimes get stronger financing incentives regardless of body style.' },
+  { question: 'Can I stack other discounts with a finance offer?', answer: 'Some manufacturers allow loyalty, conquest, or military incentives alongside a promotional APR. Terms vary by brand—ask the dealer which programs you qualify for and how they affect your payment.' },
+  { question: 'How often do these deals change?', answer: 'Manufacturer incentives typically rotate monthly. We update this page as new deals become available, so check back at the start of each month for the latest offers.' },
+  { question: 'Are truck finance deals different from car deals?', answer: 'Promotional APRs and terms follow similar patterns, but loan amounts and monthly payments often differ because trucks can carry higher MSRPs. Compare the rate, term, and payment on the specific vehicle you are considering.' },
 ];
 
 const CashFinanceBodyStylePage = () => {
@@ -133,23 +141,36 @@ const CashFinanceBodyStylePage = () => {
     : undefined;
 
   const tabLabel = activeTab === 'all' ? '' : BODY_TABS.find(t => t.key === activeTab)?.label || '';
+  const emptyBodyCategory =
+    activeTab === 'all' ? 'body style' : BODY_TABS.find(t => t.key === activeTab)?.label.toLowerCase() || 'body style';
   const pageTitle = `Finance Deals by Body Style – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
     <div className="cfbs-deals">
       <SEO
-        title={`${pageTitle} | Car and Driver`}
+        title={pageTitle}
         description={`Browse manufacturer finance deals by body style for ${CURRENT_MONTH} ${CURRENT_YEAR}. Filter by SUV, sedan, truck, coupe, and more. Expert ratings from Car and Driver.`}
         canonical={`${BASE_URL}/deals/cash-finance-body-style`}
         keywords={['finance deals by body style', 'finance deals SUV', 'sedan finance deals', 'truck finance deals', `car deals ${CURRENT_MONTH} ${CURRENT_YEAR}`]}
-        structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Finance by Body Style', url: `${BASE_URL}/deals/cash-finance-body-style` }])}
+        structuredData={[
+          createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Finance by Body Style', url: `${BASE_URL}/deals/cash-finance-body-style` }]),
+          createFAQStructuredData(FAQ_DATA),
+        ]}
+        noIndex={allDeals.length === 0}
       />
 
       <div className="cfbs-deals__hero">
         <div className="container">
           <div className="cfbs-deals__hero-content">
             <div className="cfbs-deals__hero-badge"><Percent size={16} /><span>Finance Deals by Body Style</span></div>
+            <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="cfbs-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="cfbs-deals__breadcrumb-sep">/</span>
+              <span>Finance by Body Style</span>
+            </nav>
             <h1 className="cfbs-deals__title">{pageTitle}</h1>
             <p className="cfbs-deals__description">
               Special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
@@ -307,10 +328,13 @@ const CashFinanceBodyStylePage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="cfbs-deals__empty">
-                      <h3>No {tabLabel || ''} deals available</h3>
-                      <p>Check back soon for new {tabLabel?.toLowerCase() || 'finance'} incentives, or browse another body style above.</p>
-                      <Link to="/deals" className="cfbs-deals__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    <div className="cfbs-deals__empty-state">
+                      <p className="cfbs-deals__empty-state-text">
+                        There are currently no active {emptyBodyCategory} offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="cfbs-deals__empty-state-link">
+                        Browse All Deals
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -319,13 +343,7 @@ const CashFinanceBodyStylePage = () => {
               <section className="cfbs-deals__faq-section">
                 <h2 className="cfbs-deals__section-title"><Info size={22} /> Frequently Asked Questions</h2>
                 <div className="cfbs-deals__faq-list">
-                  {[
-                    { question: 'What types of finance deals are available by body style?', answer: 'Manufacturers offer special APR and financing terms across all body styles—SUVs, sedans, trucks, coupes, and hatchbacks. Rates and terms vary by model and often by trim level.' },
-                    { question: 'Do SUVs get better finance offers than sedans?', answer: 'It depends on market demand and manufacturer strategy. Popular models may have less aggressive APR promotions, while slower-selling vehicles sometimes get stronger financing incentives regardless of body style.' },
-                    { question: 'Can I stack other discounts with a finance offer?', answer: 'Some manufacturers allow loyalty, conquest, or military incentives alongside a promotional APR. Terms vary by brand—ask the dealer which programs you qualify for and how they affect your payment.' },
-                    { question: 'How often do these deals change?', answer: 'Manufacturer incentives typically rotate monthly. We update this page as new deals become available, so check back at the start of each month for the latest offers.' },
-                    { question: 'Are truck finance deals different from car deals?', answer: 'Promotional APRs and terms follow similar patterns, but loan amounts and monthly payments often differ because trucks can carry higher MSRPs. Compare the rate, term, and payment on the specific vehicle you are considering.' },
-                  ].map((faq, i) => (
+                  {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`cfbs-deals__faq-item ${expandedFaqIndex === i ? 'cfbs-deals__faq-item--expanded' : ''}`}>
                       <button className="cfbs-deals__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
                         <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}

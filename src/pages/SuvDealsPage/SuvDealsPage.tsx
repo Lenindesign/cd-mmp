@@ -6,7 +6,7 @@ import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsSe
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -34,6 +34,14 @@ interface UnifiedDeal {
   additionalInfo: { icon: string; label: string; value: string }[];
   rating: number;
 }
+
+const FAQ_DATA = [
+  { question: 'What types of SUV deals are available?', answer: 'SUV deals typically include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers rotate these offers monthly, so the best deal depends on your purchase timeline and financial situation.' },
+  { question: 'Are SUV deals different from sedan or truck deals?', answer: 'The types of incentives are similar, but SUVs often have different dollar amounts and terms. Popular SUVs may have smaller incentives due to high demand, while slower-selling models may offer more aggressive deals to move inventory.' },
+  { question: 'Can I combine multiple SUV incentives?', answer: 'It depends on the manufacturer. Some allow stacking loyalty bonuses or military discounts with a finance or lease offer, but you typically cannot combine cash-back with special APR financing. Always ask the dealer to calculate both scenarios.' },
+  { question: 'When is the best time to buy an SUV?', answer: 'End of model year (August–October) and holiday weekends often bring the best deals. However, manufacturers can offer strong incentives any month. Monitoring deals monthly—like on this page—ensures you catch the best offers.' },
+  { question: 'Do these deals apply to hybrid and electric SUVs?', answer: 'Some deals apply to hybrid and plug-in hybrid trims, but electric SUVs often have separate incentive programs. Check the "Eligible Trims" section of each deal for specifics, and remember that federal and state EV tax credits may also apply.' },
+];
 
 const SuvDealsPage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
@@ -157,11 +165,18 @@ const SuvDealsPage = () => {
 
   return (
     <div className="suv-deals-page">
-      <SEO title={`${pageTitle} | Car and Driver`} description={`Find the best SUV deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on SUVs and crossovers. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/suv`} keywords={['SUV deals', 'crossover deals', `SUV deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best SUV incentives', 'SUV lease deals', 'SUV cash back']} structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'SUV Deals', url: `${BASE_URL}/deals/suv` }])} />
+      <SEO title={pageTitle} description={`Find the best SUV deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on SUVs and crossovers. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/suv`} keywords={['SUV deals', 'crossover deals', `SUV deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best SUV incentives', 'SUV lease deals', 'SUV cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'SUV Deals', url: `${BASE_URL}/deals/suv` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
       <div className="suv-deals-page__hero">
         <div className="container">
           <div className="suv-deals-page__hero-content">
             <div className="suv-deals-page__hero-badge"><Car size={16} /><span>SUV Deals</span></div>
+            <nav className="suv-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="suv-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="suv-deals-page__breadcrumb-sep">/</span>
+              <span>SUV Deals</span>
+            </nav>
             <h1 className="suv-deals-page__title">{pageTitle}</h1>
             <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place—0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
             <div className="suv-deals-page__hero-stats">
@@ -294,10 +309,13 @@ const SuvDealsPage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="suv-deals-page__empty">
-                      <h3>No SUV deals available</h3>
-                      <p>Check back soon for new SUV incentives.</p>
-                      <Link to="/deals" className="suv-deals-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    <div className="suv-deals-page__empty-state">
+                      <p className="suv-deals-page__empty-state-text">
+                        There are currently no active SUV offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="suv-deals-page__empty-state-link">
+                        Browse All Deals
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -305,13 +323,7 @@ const SuvDealsPage = () => {
               <section className="suv-deals-page__faq-section">
                 <h2 className="suv-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About SUV Deals</h2>
                 <div className="suv-deals-page__faq-list">
-                  {[
-                    { question: 'What types of SUV deals are available?', answer: 'SUV deals typically include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers rotate these offers monthly, so the best deal depends on your purchase timeline and financial situation.' },
-                    { question: 'Are SUV deals different from sedan or truck deals?', answer: 'The types of incentives are similar, but SUVs often have different dollar amounts and terms. Popular SUVs may have smaller incentives due to high demand, while slower-selling models may offer more aggressive deals to move inventory.' },
-                    { question: 'Can I combine multiple SUV incentives?', answer: 'It depends on the manufacturer. Some allow stacking loyalty bonuses or military discounts with a finance or lease offer, but you typically cannot combine cash-back with special APR financing. Always ask the dealer to calculate both scenarios.' },
-                    { question: 'When is the best time to buy an SUV?', answer: 'End of model year (August–October) and holiday weekends often bring the best deals. However, manufacturers can offer strong incentives any month. Monitoring deals monthly—like on this page—ensures you catch the best offers.' },
-                    { question: 'Do these deals apply to hybrid and electric SUVs?', answer: 'Some deals apply to hybrid and plug-in hybrid trims, but electric SUVs often have separate incentive programs. Check the "Eligible Trims" section of each deal for specifics, and remember that federal and state EV tax credits may also apply.' },
-                  ].map((faq, i) => (
+                  {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`suv-deals-page__faq-item ${expandedFaqIndex === i ? 'suv-deals-page__faq-item--expanded' : ''}`}>
                       <button className="suv-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
                         <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}

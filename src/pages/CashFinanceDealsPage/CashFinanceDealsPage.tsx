@@ -7,7 +7,7 @@ import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCred
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -168,15 +168,19 @@ const CashFinanceDealsPage = () => {
   return (
     <div className="cf-deals-page">
       <SEO
-        title={`${pageTitle}: Find the Best Car Deals Right Now | Car and Driver`}
+        title={`${pageTitle}: Find the Best Car Deals Right Now`}
         description={`Find the best new car finance deals and special financing offers for ${month} ${year}. Expert ratings and reviews from Car and Driver help you get the best value.`}
         canonical={`${BASE_URL}/deals/cash-finance`}
         keywords={['finance deals', `car deals ${month} ${year}`, 'new car incentives', 'special financing', 'low APR car deals']}
-        structuredData={createBreadcrumbStructuredData([
-          { name: 'Home', url: BASE_URL },
-          { name: 'Deals', url: `${BASE_URL}/deals` },
-          { name: 'Finance Deals', url: `${BASE_URL}/deals/cash-finance` },
-        ])}
+        structuredData={[
+          createBreadcrumbStructuredData([
+            { name: 'Home', url: BASE_URL },
+            { name: 'Deals', url: `${BASE_URL}/deals` },
+            { name: 'Finance Deals', url: `${BASE_URL}/deals/cash-finance` },
+          ]),
+          createFAQStructuredData(FAQ_DATA),
+        ]}
+        noIndex={financeDeals.length === 0}
       />
 
       {/* Hero Section */}
@@ -187,6 +191,13 @@ const CashFinanceDealsPage = () => {
               <Percent size={16} />
               <span>Finance Deals</span>
             </div>
+            <nav className="cf-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="cf-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="cf-deals-page__breadcrumb-sep">/</span>
+              <span>Finance Deals</span>
+            </nav>
             <h1 className="cf-deals-page__title">{pageTitle}</h1>
             <p className="cf-deals-page__description">
               Manufacturers offer special finance rates to move inventory—and those savings go directly to you.
@@ -394,10 +405,13 @@ const CashFinanceDealsPage = () => {
                     })}
                   </div>
                   {financeDeals.length === 0 && (
-                    <div className="cf-deals-page__empty">
-                      <h3>No finance deals available</h3>
-                      <p>Check back soon for new special financing offers.</p>
-                      <Link to="/deals" className="cf-deals-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    <div className="cf-deals-page__empty-state">
+                      <p className="cf-deals-page__empty-state-text">
+                        There are currently no active finance offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="cf-deals-page__empty-state-link">
+                        Browse All Deals
+                      </Link>
                     </div>
                   )}
                 </section>

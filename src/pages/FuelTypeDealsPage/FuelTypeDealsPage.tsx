@@ -6,7 +6,7 @@ import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -44,6 +44,14 @@ const FUEL_TABS: { key: FuelTab; label: string; icon: React.ReactNode; match: (f
   { key: 'hybrid', label: 'Hybrid', icon: <Leaf size={16} />, match: (ft) => ft === 'Hybrid' || ft === 'Plug-in Hybrid' || ft === 'Plug-In Hybrid' },
   { key: 'electric', label: 'Electric', icon: <Zap size={16} />, match: (ft) => ft === 'Electric' },
   { key: 'diesel', label: 'Diesel', icon: <Droplets size={16} />, match: (ft) => ft === 'Diesel' },
+];
+
+const FAQ_DATA = [
+  { question: 'Are there special deals on electric vehicles?', answer: 'Yes. Many manufacturers offer special incentives on EVs including reduced APR financing, lease specials, and cash rebates. Additionally, federal tax credits of up to $7,500 and various state incentives may apply on top of manufacturer deals.' },
+  { question: 'Do hybrid vehicles get the same deals as gas models?', answer: 'Hybrid trims sometimes qualify for the same manufacturer incentives as their gas counterparts, but they may also have separate hybrid-specific offers. Check the "Eligible Trims" section of each deal to confirm.' },
+  { question: 'Can I combine fuel-type incentives with other deals?', answer: 'It depends on the manufacturer. Some allow stacking EV tax credits with manufacturer financing, while others require choosing between different incentives and special APR. Always ask the dealer to run both scenarios.' },
+  { question: 'When do EV and hybrid deals change?', answer: 'Manufacturer incentives typically rotate monthly. Federal tax credits are set by legislation and change less frequently. We update this page as new deals become available.' },
+  { question: 'Are diesel vehicle deals common?', answer: 'Diesel deals are less common than gas or hybrid offers since fewer manufacturers sell diesel passenger vehicles in the US. When available, they tend to appear on trucks and SUVs.' },
 ];
 
 const FuelTypeDealsPage = () => {
@@ -162,6 +170,8 @@ const FuelTypeDealsPage = () => {
     : undefined;
 
   const tabLabel = activeTab === 'all' ? '' : FUEL_TABS.find(t => t.key === activeTab)?.label || '';
+  const emptyFuelCategory =
+    activeTab === 'all' ? 'fuel type' : FUEL_TABS.find(t => t.key === activeTab)?.label.toLowerCase() || 'fuel type';
   const pageTitle = tabLabel
     ? `Best ${tabLabel} Vehicle Deals – ${CURRENT_MONTH} ${CURRENT_YEAR}`
     : `Best Vehicle Deals by Fuel Type – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
@@ -170,17 +180,28 @@ const FuelTypeDealsPage = () => {
   return (
     <div className="fuel-deals">
       <SEO
-        title={`${pageTitle} | Car and Driver`}
+        title={pageTitle}
         description={`Find the best deals on gas, hybrid, electric, and diesel vehicles for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, finance, and lease offers by fuel type.`}
         canonical={`${BASE_URL}/deals/fuel-type`}
         keywords={['fuel type deals', 'electric vehicle deals', 'hybrid deals', 'EV incentives', `vehicle deals ${CURRENT_MONTH} ${CURRENT_YEAR}`]}
-        structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Fuel Type Deals', url: `${BASE_URL}/deals/fuel-type` }])}
+        structuredData={[
+          createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Fuel Type Deals', url: `${BASE_URL}/deals/fuel-type` }]),
+          createFAQStructuredData(FAQ_DATA),
+        ]}
+        noIndex={allDeals.length === 0}
       />
 
       <div className="fuel-deals__hero">
         <div className="container">
           <div className="fuel-deals__hero-content">
             <div className="fuel-deals__hero-badge"><Fuel size={16} /><span>Fuel Type Deals</span></div>
+            <nav className="fuel-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="fuel-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="fuel-deals__breadcrumb-sep">/</span>
+              <span>Fuel Type Deals</span>
+            </nav>
             <h1 className="fuel-deals__title">{pageTitle}</h1>
             <p className="fuel-deals__description">
               Shop deals by powertrain—whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
@@ -339,10 +360,13 @@ const FuelTypeDealsPage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="fuel-deals__empty">
-                      <h3>No {tabLabel || ''} deals available</h3>
-                      <p>Check back soon for new {tabLabel?.toLowerCase() || 'vehicle'} incentives, or browse another fuel type above.</p>
-                      <Link to="/deals" className="fuel-deals__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    <div className="fuel-deals__empty-state">
+                      <p className="fuel-deals__empty-state-text">
+                        There are currently no active {emptyFuelCategory} offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="fuel-deals__empty-state-link">
+                        Browse All Deals
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -351,13 +375,7 @@ const FuelTypeDealsPage = () => {
               <section className="fuel-deals__faq-section">
                 <h2 className="fuel-deals__section-title"><Info size={22} /> Frequently Asked Questions</h2>
                 <div className="fuel-deals__faq-list">
-                  {[
-                    { question: 'Are there special deals on electric vehicles?', answer: 'Yes. Many manufacturers offer special incentives on EVs including reduced APR financing, lease specials, and cash rebates. Additionally, federal tax credits of up to $7,500 and various state incentives may apply on top of manufacturer deals.' },
-                    { question: 'Do hybrid vehicles get the same deals as gas models?', answer: 'Hybrid trims sometimes qualify for the same manufacturer incentives as their gas counterparts, but they may also have separate hybrid-specific offers. Check the "Eligible Trims" section of each deal to confirm.' },
-                    { question: 'Can I combine fuel-type incentives with other deals?', answer: 'It depends on the manufacturer. Some allow stacking EV tax credits with manufacturer financing, while others require choosing between different incentives and special APR. Always ask the dealer to run both scenarios.' },
-                    { question: 'When do EV and hybrid deals change?', answer: 'Manufacturer incentives typically rotate monthly. Federal tax credits are set by legislation and change less frequently. We update this page as new deals become available.' },
-                    { question: 'Are diesel vehicle deals common?', answer: 'Diesel deals are less common than gas or hybrid offers since fewer manufacturers sell diesel passenger vehicles in the US. When available, they tend to appear on trucks and SUVs.' },
-                  ].map((faq, i) => (
+                  {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`fuel-deals__faq-item ${expandedFaqIndex === i ? 'fuel-deals__faq-item--expanded' : ''}`}>
                       <button className="fuel-deals__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
                         <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}

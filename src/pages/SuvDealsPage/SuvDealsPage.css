@@ -31,6 +31,31 @@
   max-width: 800px;
 }
 
+.suv-deals-page__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.suv-deals-page__breadcrumb a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.suv-deals-page__breadcrumb a:hover {
+  color: #ffffff;
+}
+
+.suv-deals-page__breadcrumb-sep {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+}
+
 .suv-deals-page__hero-badge {
   display: inline-flex;
   align-items: center;
@@ -721,26 +746,38 @@
 }
 
 /* Empty state */
-.suv-deals-page__empty {
+.suv-deals-page__empty-state {
   grid-column: 1 / -1;
   text-align: center;
-  padding: var(--spacing-10);
-  background: var(--color-white);
-  border-radius: var(--border-radius-lg);
-  border: 2px dashed var(--color-gray-300);
+  padding: 48px 24px;
+  background: var(--color-gray-50, #f9fafb);
+  border-radius: 12px;
+  margin: 24px 0;
 }
 
-.suv-deals-page__empty h3 {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
-  color: var(--color-black);
-  margin: 0 0 var(--spacing-2) 0;
-}
-
-.suv-deals-page__empty p {
+.suv-deals-page__empty-state-text {
   font-family: var(--font-body);
+  font-size: 16px;
   color: var(--color-gray-600);
-  margin: 0 0 var(--spacing-4) 0;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.suv-deals-page__empty-state-link {
+  display: inline-block;
+  padding: 10px 24px;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.suv-deals-page__empty-state-link:hover {
+  background: var(--color-blue-dark, #1a3a5c);
 }
 
 /* FAQ */

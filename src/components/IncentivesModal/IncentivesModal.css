@@ -1116,6 +1116,67 @@
   color: var(--color-white);
 }
 
+/* ── Variant 6: conversion-b-no-form (single column, no lead form) ── */
+
+.incentives-modal--conversion-b-no-form {
+  max-width: 620px;
+}
+
+.incentives-modal__v5-layout--single {
+  display: block;
+}
+
+.incentives-modal__v5-left--full {
+  max-width: 100%;
+  padding-right: 0;
+  border-right: none;
+}
+
+.incentives-modal__v6-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.incentives-modal__v6-header .incentives-modal__vehicle-thumb {
+  width: 100px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.incentives-modal__v6-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.incentives-modal__v6-cta-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-gray-200, #e5e7eb);
+}
+
+.incentives-modal__v6-cta-primary {
+  flex: 1;
+  padding: 14px 24px;
+  background: var(--color-blue-cobalt, #2563eb);
+  color: var(--color-white, #fff);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.incentives-modal__v6-cta-primary:hover {
+  background: var(--color-blue-dark, #1a3a5c);
+}
+
 @media (max-width: 480px) {
   .incentives-modal__overlay {
     padding: 0;
@@ -1140,5 +1201,14 @@
 
   .incentives-modal__rate-cell {
     font-size: 13px !important;
+  }
+
+  .incentives-modal__v6-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .incentives-modal__v6-cta-row {
+    flex-direction: column;
   }
 }

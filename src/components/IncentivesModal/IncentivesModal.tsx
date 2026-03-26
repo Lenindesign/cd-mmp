@@ -15,7 +15,7 @@ import {
 import type { Incentive } from '../../services/incentivesService';
 import './IncentivesModal.css';
 
-export type IncentivesModalVariant = 'simple' | 'complete-with-form' | 'edmunds' | 'conversion-a' | 'conversion-b';
+export type IncentivesModalVariant = 'simple' | 'complete-with-form' | 'edmunds' | 'conversion-a' | 'conversion-b' | 'conversion-b-no-form';
 
 /** Offer detail for the reference-style modal (like the Chevrolet Trax 0% financing example) */
 export interface IncentiveOfferDetail {
@@ -719,6 +719,229 @@ const IncentivesModal = ({
                       SHOP ON MARKETPLACE
                     </button>
                   </form>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Variant 6: Modal B – single-column offer browser, no lead form */}
+          {variant === 'conversion-b-no-form' && (
+            <>
+              <div className="incentives-modal__v5-layout incentives-modal__v5-layout--single">
+                <div className="incentives-modal__v5-left incentives-modal__v5-left--full">
+                  <div className="incentives-modal__v6-header">
+                    <div className="incentives-modal__vehicle-thumb">
+                      {offer.imageUrl ? (
+                        <img src={offer.imageUrl} alt={vehicleLabel} />
+                      ) : (
+                        <div className="incentives-modal__vehicle-thumb-placeholder">
+                          {offer.make} {offer.model}
+                        </div>
+                      )}
+                    </div>
+                    <div className="incentives-modal__v6-header-text">
+                      <h2 id="incentives-modal-title" className="incentives-modal__v5-title">
+                        {vehicleLabel}
+                      </h2>
+                      <div className="incentives-modal__v5-msrp-row">
+                        <span className="incentives-modal__v5-msrp">{formatMsrp(offer.msrpMin, offer.msrpMax)}</span>
+                        <a href={vehicleUrl} className="incentives-modal__v5-read-review" onClick={(e) => { e.preventDefault(); navigate(vehicleUrl); onClose(); }}>
+                          Read Review
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {allIncentives && allIncentives.length > 1 && (
+                    <div className="incentives-modal__offer-dropdown" ref={dropdownRef}>
+                      <button
+                        type="button"
+                        className={`incentives-modal__offer-dropdown-trigger ${offerDropdownOpen ? 'incentives-modal__offer-dropdown-trigger--open' : ''}`}
+                        onClick={() => setOfferDropdownOpen(prev => !prev)}
+                        aria-expanded={offerDropdownOpen}
+                      >
+                        <span className="incentives-modal__offer-dropdown-label">
+                          {activeIncentive ? activeIncentive.title : 'Select an offer'}
+                        </span>
+                        <span className="incentives-modal__offer-dropdown-meta">
+                          {allIncentives.length} offers available
+                        </span>
+                        <ChevronDown size={16} className={`incentives-modal__offer-dropdown-chevron ${offerDropdownOpen ? 'incentives-modal__offer-dropdown-chevron--open' : ''}`} />
+                      </button>
+                      {offerDropdownOpen && (
+                        <div className="incentives-modal__offer-dropdown-menu">
+                          {allIncentives.map((inc) => {
+                            const eligibility = getEligibilityInfo(inc);
+                            const isActive = inc.id === activeIncentiveId;
+                            return (
+                              <button
+                                key={inc.id}
+                                type="button"
+                                className={`incentives-modal__offer-dropdown-item ${isActive ? 'incentives-modal__offer-dropdown-item--active' : ''}`}
+                                onClick={() => { setActiveIncentiveId(inc.id); setOfferDropdownOpen(false); }}
+                              >
+                                <div className="incentives-modal__offer-dropdown-item-left">
+                                  <span className="incentives-modal__offer-dropdown-item-title">{inc.title}</span>
+                                  <span className="incentives-modal__offer-dropdown-item-exp">exp {formatExpirationShort(inc.expirationDate)}</span>
+                                </div>
+                                <span className={`incentives-modal__offer-dropdown-item-elig ${eligibility.restricted ? 'incentives-modal__offer-dropdown-item-elig--restricted' : ''}`}>
+                                  {eligibility.label}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {activeIncentive && (
+                    <div className="incentives-modal__v5-detail">
+                      <div className="incentives-modal__v5-offer-row">
+                        <span className="incentives-modal__v5-offer-chip">
+                          {activeIncentive.type === 'lease' ? 'Lease' : 'Buy'}
+                        </span>
+                        <span className="incentives-modal__v5-offer-apr">
+                          {activeIncentive.value}
+                        </span>
+                        <span className="incentives-modal__v5-offer-divider" aria-hidden />
+                        <span className="incentives-modal__v5-offer-expires">
+                          expires {formatExpirationShort(activeIncentive.expirationDate)}
+                        </span>
+                      </div>
+
+                      <div className="incentives-modal__v5-expert-tip">
+                        <div className="incentives-modal__v5-expert-tip-left">
+                          <BadgeCheck size={21} className="incentives-modal__v5-expert-tip-icon" aria-hidden />
+                          <span className="incentives-modal__v5-expert-tip-label">C/D Expert Tip:</span>
+                        </div>
+                        <p className="incentives-modal__v5-expert-tip-text">
+                          {activeIncentive.terms || activeIncentive.description}
+                        </p>
+                      </div>
+
+                      {(() => {
+                        const elig = getEligibilityInfo(activeIncentive);
+                        return (
+                          <div className={`incentives-modal__v5-eligibility-box ${elig.restricted ? 'incentives-modal__v5-eligibility-box--restricted' : ''}`}>
+                            <div className="incentives-modal__v5-eligibility-header">
+                              {elig.restricted ? <ShieldCheck size={16} /> : <CheckCircle size={16} />}
+                              <span className="incentives-modal__v5-eligibility-title">
+                                {elig.restricted ? 'Restricted Eligibility' : 'Open to All Buyers'}
+                              </span>
+                            </div>
+                            <p className="incentives-modal__v5-eligibility-text">
+                              {activeIncentive.eligibility || 'All qualified buyers. See dealer for complete details.'}
+                            </p>
+                          </div>
+                        );
+                      })()}
+
+                      {activeIncentive.type === 'finance' && (
+                        <div className="incentives-modal__rate-table">
+                          <h4 className="incentives-modal__rate-table-title">Available APR Options</h4>
+                          <table className="incentives-modal__rate-grid">
+                            <thead>
+                              <tr>
+                                <th>Term</th>
+                                <th>Rate</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {APR_RATE_TABLE.map(row => (
+                                <tr key={row.term}>
+                                  <td className="incentives-modal__rate-term">{row.term} mo</td>
+                                  <td className="incentives-modal__rate-cell">{row.apr}%</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <p className="incentives-modal__rate-note">
+                            Rates shown are for illustration. Actual rate depends on credit approval through manufacturer financing.
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="incentives-modal__v5-key-details">
+                        <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
+                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.description}</p>
+                        </div>
+                        {activeIncentive.terms && (
+                          <div className="incentives-modal__v5-key-section">
+                            <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms}</p>
+                          </div>
+                        )}
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
+                          <p className="incentives-modal__v5-key-section-text">
+                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="incentives-modal__v6-cta-row">
+                        <button type="button" className="incentives-modal__v6-cta-primary" onClick={handleCta}>
+                          SHOP ON MARKETPLACE
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {(!allIncentives || allIncentives.length === 0) && (
+                    <>
+                      <div className="incentives-modal__v5-offer-row">
+                        <span className="incentives-modal__v5-offer-chip">Buy</span>
+                        <span className="incentives-modal__v5-offer-apr">
+                          {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
+                        </span>
+                        <span className="incentives-modal__v5-offer-divider" aria-hidden />
+                        <span className="incentives-modal__v5-offer-expires">
+                          expires {offer.expirationDate ? formatExpirationShort(offer.expirationDate) : 'soon'}
+                        </span>
+                      </div>
+
+                      <div className="incentives-modal__v5-expert-tip">
+                        <div className="incentives-modal__v5-expert-tip-left">
+                          <BadgeCheck size={21} className="incentives-modal__v5-expert-tip-icon" aria-hidden />
+                          <span className="incentives-modal__v5-expert-tip-label">C/D Expert Tip:</span>
+                        </div>
+                        <p className="incentives-modal__v5-expert-tip-text">{offer.yourSavings}</p>
+                      </div>
+
+                      <div className="incentives-modal__v5-key-details">
+                        <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">WHAT DOES THIS MEAN?</h4>
+                          <p className="incentives-modal__v5-key-section-text">{offer.whatItMeans}</p>
+                        </div>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">YOUR SAVINGS</h4>
+                          <p className="incentives-modal__v5-key-section-text">{offer.yourSavings}</p>
+                        </div>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">WHO QUALIFIES</h4>
+                          <p className="incentives-modal__v5-key-section-text">{offer.whoQualifies}</p>
+                        </div>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
+                          <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
+                        </div>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
+                          <p className="incentives-modal__v5-key-section-text">{offer.dontWaitText}</p>
+                        </div>
+                      </div>
+
+                      <div className="incentives-modal__v6-cta-row">
+                        <button type="button" className="incentives-modal__v6-cta-primary" onClick={handleCta}>
+                          SHOP ON MARKETPLACE
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </>

@@ -145,6 +145,7 @@ const Footer = () => {
               <Link to="/rankings" className="footer__legal-link">Vehicle Ranking</Link>
               <Link to="/admin/vehicle-ratings" className="footer__legal-link">Editor Portal</Link>
               <Link to="/2025/Chevrolet/Trax?offersVersion=a" className="footer__legal-link">Incentives Version A</Link>
+              <Link to="/2025/Chevrolet/Trax?modalVersion=b" className="footer__legal-link">Modal Version B</Link>
             </div>
           </div>
         </div>

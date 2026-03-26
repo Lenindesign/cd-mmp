@@ -9,23 +9,29 @@
 }
 
 .all-deals__breadcrumb {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
   font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-400);
-  text-decoration: none;
-  margin-bottom: var(--spacing-3);
-  transition: color var(--transition-fast);
-}
-
-.all-deals__breadcrumb:hover {
-  color: var(--color-white);
-}
-
-.all-deals__breadcrumb::after {
-  content: ' / All Deals';
+  font-size: 13px;
   color: var(--color-gray-500);
+}
+
+.all-deals__breadcrumb a {
+  color: var(--color-gray-500);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.all-deals__breadcrumb a:hover {
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+}
+
+.all-deals__breadcrumb-sep {
+  color: var(--color-gray-300);
+  font-size: 11px;
 }
 
 .all-deals__title {
@@ -671,23 +677,37 @@
 }
 
 /* Empty state */
-.all-deals__empty {
+.all-deals__empty-state {
   text-align: center;
-  padding: var(--spacing-16) var(--spacing-8);
+  padding: 48px 24px;
+  background: var(--color-gray-50, #f9fafb);
+  border-radius: 12px;
+  margin: 24px 0;
 }
 
-.all-deals__empty h3 {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
-  color: var(--color-dark);
-  margin: 0 0 var(--spacing-2);
-}
-
-.all-deals__empty p {
+.all-deals__empty-state-text {
   font-family: var(--font-body);
-  font-size: var(--font-size-base);
-  color: var(--color-gray-500);
-  margin: 0;
+  font-size: 16px;
+  color: var(--color-gray-600);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.all-deals__empty-state-link {
+  display: inline-block;
+  padding: 10px 24px;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.all-deals__empty-state-link:hover {
+  background: var(--color-blue-dark, #1a3a5c);
 }
 
 /* Responsive */

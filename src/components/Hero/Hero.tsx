@@ -41,6 +41,7 @@ interface HeroProps {
 const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: HeroProps) => {
   const [searchParams] = useSearchParams();
   const offersVersion = searchParams.get('offersVersion');
+  const modalVersion = searchParams.get('modalVersion');
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -512,7 +513,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
       <IncentivesModal
         isOpen={showIncentiveModal}
         onClose={() => { setShowIncentiveModal(false); setSelectedIncentive(null); setOpenDropdownOnModal(false); }}
-        variant="conversion-b"
+        variant={modalVersion === 'b' ? 'conversion-b-no-form' : 'conversion-b'}
         offer={incentiveOfferDetail}
         allIncentives={vehicleIncentives.incentives}
         selectedIncentiveId={selectedIncentive?.id}

@@ -8,7 +8,7 @@ import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCred
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -238,15 +238,19 @@ const ZeroAprDealsPage = () => {
   return (
     <div className="zero-apr-page">
       <SEO
-        title={`${pageTitle} | Car and Driver`}
+        title={pageTitle}
         description={`Find the best APR financing deals for ${month} ${year}. Compare 0% APR, low-rate financing, and special APR offers on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`}
         canonical={`${BASE_URL}/deals/zero-apr`}
         keywords={['APR deals', '0% APR deals', 'low APR financing', `car financing ${month} ${year}`, 'special APR rates', 'new car financing deals']}
-        structuredData={createBreadcrumbStructuredData([
-          { name: 'Home', url: BASE_URL },
-          { name: 'Deals', url: `${BASE_URL}/deals` },
-          { name: 'APR Deals', url: `${BASE_URL}/deals/zero-apr` },
-        ])}
+        structuredData={[
+          createBreadcrumbStructuredData([
+            { name: 'Home', url: BASE_URL },
+            { name: 'Deals', url: `${BASE_URL}/deals` },
+            { name: 'APR Deals', url: `${BASE_URL}/deals/zero-apr` },
+          ]),
+          createFAQStructuredData(FAQ_DATA),
+        ]}
+        noIndex={allDeals.length === 0}
       />
 
       <div className="zero-apr-page__hero">
@@ -256,6 +260,13 @@ const ZeroAprDealsPage = () => {
               <span className="zero-apr-page__hero-badge-text">APR</span>
               <span>Financing Deals</span>
             </div>
+            <nav className="zero-apr-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="zero-apr-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="zero-apr-page__breadcrumb-sep">/</span>
+              <span>APR Deals</span>
+            </nav>
             <h1 className="zero-apr-page__title">{pageTitle}</h1>
             <p className="zero-apr-page__description">
               Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR
@@ -451,10 +462,13 @@ const ZeroAprDealsPage = () => {
                   })}
                 </div>
                 {deals.length === 0 && (
-                  <div className="zero-apr-page__empty">
-                    <h3>No {activeTab === 'zero-apr' ? '0% APR' : activeTab === 'special-apr' ? 'special APR' : 'APR'} deals available</h3>
-                    <p>Check back soon for new financing offers, or try another tab above.</p>
-                    <Link to="/deals" className="zero-apr-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                  <div className="zero-apr-page__empty-state">
+                    <p className="zero-apr-page__empty-state-text">
+                      There are currently no active APR financing offers. Check back soon or explore other available deals.
+                    </p>
+                    <Link to="/deals" className="zero-apr-page__empty-state-link">
+                      Browse All Deals
+                    </Link>
                   </div>
                 )}
               </section>

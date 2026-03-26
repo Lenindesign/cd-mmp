@@ -82,6 +82,32 @@
   max-width: 800px;
 }
 
+.deals-hub__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.deals-hub__breadcrumb a {
+  color: var(--color-gray-500);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.deals-hub__breadcrumb a:hover {
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+}
+
+.deals-hub__breadcrumb-sep {
+  color: var(--color-gray-300);
+  font-size: 11px;
+}
+
 .deals-hub__hero-badge {
   display: inline-flex;
   align-items: center;

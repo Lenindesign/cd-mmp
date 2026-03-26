@@ -8,7 +8,7 @@ import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -157,15 +157,19 @@ const LeaseDealsPage = () => {
   return (
     <div className="lease-deals-page">
       <SEO
-        title={`${pageTitle} | Car and Driver`}
+        title={pageTitle}
         description={`Find the best car lease deals for ${month} ${year}. Compare monthly payments, due-at-signing costs, and terms on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`}
         canonical={`${BASE_URL}/deals/lease`}
         keywords={['lease deals', 'car lease specials', `lease deals ${month} ${year}`, 'best lease offers', 'new car lease', 'monthly lease payments']}
-        structuredData={createBreadcrumbStructuredData([
-          { name: 'Home', url: BASE_URL },
-          { name: 'Deals', url: `${BASE_URL}/deals` },
-          { name: 'Lease Deals', url: `${BASE_URL}/deals/lease` },
-        ])}
+        structuredData={[
+          createBreadcrumbStructuredData([
+            { name: 'Home', url: BASE_URL },
+            { name: 'Deals', url: `${BASE_URL}/deals` },
+            { name: 'Lease Deals', url: `${BASE_URL}/deals/lease` },
+          ]),
+          createFAQStructuredData(FAQ_DATA),
+        ]}
+        noIndex={deals.length === 0}
       />
 
       <div className="lease-deals-page__hero">
@@ -175,6 +179,13 @@ const LeaseDealsPage = () => {
               <Car size={16} />
               <span>Lease Deals</span>
             </div>
+            <nav className="lease-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="lease-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="lease-deals-page__breadcrumb-sep">/</span>
+              <span>Lease Deals</span>
+            </nav>
             <h1 className="lease-deals-page__title">{pageTitle}</h1>
             <p className="lease-deals-page__description">
               Leasing lets you drive a brand-new car with lower monthly payments than buying. We've compiled
@@ -342,10 +353,13 @@ const LeaseDealsPage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="lease-deals-page__empty">
-                      <h3>No lease deals available</h3>
-                      <p>Check back soon for new lease specials.</p>
-                      <Link to="/deals" className="lease-deals-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    <div className="lease-deals-page__empty-state">
+                      <p className="lease-deals-page__empty-state-text">
+                        There are currently no active lease offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="lease-deals-page__empty-state-link">
+                        Browse All Deals
+                      </Link>
                     </div>
                   )}
                 </div>

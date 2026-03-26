@@ -6,7 +6,7 @@ import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsSe
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
-import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -34,6 +34,14 @@ interface UnifiedDeal {
   additionalInfo: { icon: string; label: string; value: string }[];
   rating: number;
 }
+
+const FAQ_DATA = [
+  { question: 'What types of truck deals are available?', answer: 'Truck deals include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers adjust these offers monthly based on inventory levels and sales targets.' },
+  { question: 'Are truck deals as good as sedan or SUV deals?', answer: 'Trucks are in high demand, so incentives can be smaller than sedans. However, manufacturers still offer competitive deals—especially on outgoing model years or well-stocked trims. Monitoring deals monthly helps you catch the best offers.' },
+  { question: 'Can I combine truck incentives?', answer: 'Some manufacturers allow stacking loyalty, military, or first-responder bonuses with a finance or lease offer. However, cash-back and special APR typically cannot be combined. Ask the dealer to compare both scenarios for your situation.' },
+  { question: 'When is the best time to buy a truck?', answer: 'End of model year (August–October), holiday weekends, and the end of each quarter often bring the strongest deals. That said, great truck incentives can appear any month—check this page regularly.' },
+  { question: 'Do these deals apply to heavy-duty trucks?', answer: 'Most deals listed here apply to light-duty pickups (1500 series). Heavy-duty trucks (2500/3500) sometimes have separate incentive programs with different terms. Check the "Eligible Trims" section of each deal for specifics.' },
+];
 
 const TruckDealsPage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
@@ -157,11 +165,18 @@ const TruckDealsPage = () => {
 
   return (
     <div className="truck-deals-page">
-      <SEO title={`${pageTitle} | Car and Driver`} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on pickup trucks. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/truck`} keywords={['truck deals', 'pickup truck deals', `truck deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best truck incentives', 'truck lease deals', 'truck cash back']} structuredData={createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Truck Deals', url: `${BASE_URL}/deals/truck` }])} />
+      <SEO title={pageTitle} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on pickup trucks. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/truck`} keywords={['truck deals', 'pickup truck deals', `truck deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best truck incentives', 'truck lease deals', 'truck cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Truck Deals', url: `${BASE_URL}/deals/truck` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
       <div className="truck-deals-page__hero">
         <div className="container">
           <div className="truck-deals-page__hero-content">
             <div className="truck-deals-page__hero-badge"><Car size={16} /><span>Truck Deals</span></div>
+            <nav className="truck-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="truck-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="truck-deals-page__breadcrumb-sep">/</span>
+              <span>Truck Deals</span>
+            </nav>
             <h1 className="truck-deals-page__title">{pageTitle}</h1>
             <p className="truck-deals-page__description">Every current incentive on pickup trucks—0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
             <div className="truck-deals-page__hero-stats">
@@ -298,10 +313,13 @@ const TruckDealsPage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="truck-deals-page__empty">
-                      <h3>No truck deals available</h3>
-                      <p>Check back soon for new truck incentives.</p>
-                      <Link to="/deals" className="truck-deals-page__card-cta" style={{ display: 'inline-block', width: 'auto' }}>Browse All Deals</Link>
+                    <div className="truck-deals-page__empty-state">
+                      <p className="truck-deals-page__empty-state-text">
+                        There are currently no active truck offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="truck-deals-page__empty-state-link">
+                        Browse All Deals
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -309,13 +327,7 @@ const TruckDealsPage = () => {
               <section className="truck-deals-page__faq-section">
                 <h2 className="truck-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About Truck Deals</h2>
                 <div className="truck-deals-page__faq-list">
-                  {[
-                    { question: 'What types of truck deals are available?', answer: 'Truck deals include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers adjust these offers monthly based on inventory levels and sales targets.' },
-                    { question: 'Are truck deals as good as sedan or SUV deals?', answer: 'Trucks are in high demand, so incentives can be smaller than sedans. However, manufacturers still offer competitive deals—especially on outgoing model years or well-stocked trims. Monitoring deals monthly helps you catch the best offers.' },
-                    { question: 'Can I combine truck incentives?', answer: 'Some manufacturers allow stacking loyalty, military, or first-responder bonuses with a finance or lease offer. However, cash-back and special APR typically cannot be combined. Ask the dealer to compare both scenarios for your situation.' },
-                    { question: 'When is the best time to buy a truck?', answer: 'End of model year (August–October), holiday weekends, and the end of each quarter often bring the strongest deals. That said, great truck incentives can appear any month—check this page regularly.' },
-                    { question: 'Do these deals apply to heavy-duty trucks?', answer: 'Most deals listed here apply to light-duty pickups (1500 series). Heavy-duty trucks (2500/3500) sometimes have separate incentive programs with different terms. Check the "Eligible Trims" section of each deal for specifics.' },
-                  ].map((faq, i) => (
+                  {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`truck-deals-page__faq-item ${expandedFaqIndex === i ? 'truck-deals-page__faq-item--expanded' : ''}`}>
                       <button className="truck-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
                         <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}

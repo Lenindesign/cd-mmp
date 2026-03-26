@@ -15,13 +15,16 @@ export interface SEOProps {
   titleTemplate?: boolean;
   /** Additional keywords */
   keywords?: string[];
-  /** Structured data (JSON-LD) */
-  structuredData?: object;
+  /** Structured data (JSON-LD) — single object or multiple script blocks */
+  structuredData?: object | object[];
   /** No index directive */
   noIndex?: boolean;
 }
 
 const SITE_NAME = 'Car and Driver';
+
+/** Marks JSON-LD script tags injected by SEO so they can be removed on update/unmount */
+const SEO_LD_JSON_ATTR = 'data-seo-structured-data';
 const DEFAULT_DESCRIPTION = 'Expert car reviews, ratings, and news. Find your next vehicle with Car and Driver\'s comprehensive research tools.';
 const DEFAULT_IMAGE = 'https://www.caranddriver.com/og-image.jpg';
 
@@ -116,23 +119,28 @@ export const SEO: React.FC<SEOProps> = ({
     setMeta('twitter:description', description);
     setMeta('twitter:image', image);
 
-    // Structured data (JSON-LD)
+    // Structured data (JSON-LD): remove previous SEO-injected blocks, then add one or many
+    const removeSeoLdJsonScripts = () => {
+      document
+        .querySelectorAll(`script[type="application/ld+json"][${SEO_LD_JSON_ATTR}]`)
+        .forEach((node) => node.remove());
+    };
+
+    removeSeoLdJsonScripts();
+
     if (structuredData) {
-      let script = document.querySelector('script[type="application/ld+json"]') as HTMLScriptElement;
-      if (!script) {
-        script = document.createElement('script');
+      const payloads = Array.isArray(structuredData) ? structuredData : [structuredData];
+      for (const payload of payloads) {
+        const script = document.createElement('script');
         script.type = 'application/ld+json';
+        script.setAttribute(SEO_LD_JSON_ATTR, '');
+        script.textContent = JSON.stringify(payload);
         document.head.appendChild(script);
       }
-      script.textContent = JSON.stringify(structuredData);
     }
 
-    // Cleanup function to remove structured data on unmount
     return () => {
-      const script = document.querySelector('script[type="application/ld+json"]');
-      if (script && structuredData) {
-        script.remove();
-      }
+      removeSeoLdJsonScripts();
     };
   }, [title, description, canonical, image, type, titleTemplate, keywords, structuredData, noIndex]);
 
@@ -195,6 +203,19 @@ export const createBreadcrumbStructuredData = (items: Array<{ name: string; url:
     position: index + 1,
     name: item.name,
     item: item.url,
+  })),
+});
+
+export const createFAQStructuredData = (faqs: Array<{ question: string; answer: string }>) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
   })),
 });
 

@@ -343,7 +343,7 @@ const DealsHubPage = () => {
   return (
     <div className="deals-hub">
       <SEO
-        title={`Best New Car Deals for ${month} ${year} | Car and Driver`}
+        title={`Best New Car Deals for ${month} ${year}`}
         description={`Find the best new car deals, incentives, and offers for ${month} ${year}. Compare 0% APR financing, cash back, lease specials, and more from Car and Driver.`}
         canonical={`${BASE_URL}/deals`}
         keywords={['new car deals', 'car incentives', `car deals ${month} ${year}`, '0% APR', 'cash back', 'lease specials', 'best car deals']}
@@ -360,6 +360,11 @@ const DealsHubPage = () => {
               <BadgeDollarSign size={16} />
               <span>Car Deals</span>
             </div>
+            <nav className="deals-hub__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="deals-hub__breadcrumb-sep">/</span>
+              <span>Deals</span>
+            </nav>
             <h1 className="deals-hub__title">Best New Car Deals for {month} {year}</h1>
             <p className="deals-hub__description">
               We track every manufacturer incentive so you don't have to. Browse 0% APR financing, cash-back
