@@ -276,7 +276,7 @@ const TruckDealsPage = () => {
                           </div>
 
                           <button className="truck-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="truck-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
+                            <span className="truck-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
                             <span className="truck-deals-page__card-deal-pill-text">{deal.dealText}</span>
                             <span className="truck-deals-page__card-deal-pill-divider" />
                             <span className="truck-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>

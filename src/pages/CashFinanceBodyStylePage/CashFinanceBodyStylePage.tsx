@@ -291,7 +291,7 @@ const CashFinanceBodyStylePage = () => {
                           </div>
 
                           <button className="cfbs-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="cfbs-deals__card-deal-pill-chip">Buy</span>
+                            <span className="cfbs-deals__card-deal-pill-chip">Finance</span>
                             <span className="cfbs-deals__card-deal-pill-text">{deal.dealText}</span>
                             <span className="cfbs-deals__card-deal-pill-divider" />
                             <span className="cfbs-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>

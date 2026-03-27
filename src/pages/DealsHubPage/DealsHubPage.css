@@ -235,6 +235,19 @@
   height: 14px;
 }
 
+.deals-hub__anchor-img {
+  height: 18px;
+  width: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0.4);
+  transition: filter 0.15s;
+}
+
+.deals-hub__anchor-btn--active .deals-hub__anchor-img {
+  filter: grayscale(0) brightness(1) invert(1);
+}
+
 .deals-hub__anchor-label {
   line-height: 1;
 }
@@ -422,6 +435,13 @@
   background: var(--color-success);
   color: var(--color-white);
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.deals-hub__row-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .deals-hub__row-title {

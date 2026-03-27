@@ -289,7 +289,7 @@ const FuelTypeDealsPage = () => {
                                   {offersPopup.offers.map((o, idx) => (
                                     <li key={idx} className="fuel-deals__card-offers-popup-item">
                                       <span className={`fuel-deals__card-offers-popup-type fuel-deals__card-offers-popup-type--${o.type}`}>
-                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Buy' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'lease' ? 'Lease' : 'Finance'}
                                       </span>
                                       <span className="fuel-deals__card-offers-popup-label">{o.label}</span>
                                       <span className="fuel-deals__card-offers-popup-exp">exp {o.expires}</span>
@@ -323,7 +323,7 @@ const FuelTypeDealsPage = () => {
                           </div>
 
                           <button className="fuel-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="fuel-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
+                            <span className="fuel-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
                             <span className="fuel-deals__card-deal-pill-text">{deal.dealText}</span>
                             <span className="fuel-deals__card-deal-pill-divider" />
                             <span className="fuel-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>

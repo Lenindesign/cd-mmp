@@ -378,7 +378,7 @@ const AllDealsPage = () => {
                               {offersPopup.offers.map((o, idx) => (
                                 <li key={idx} className="all-deals__card-offers-popup-item">
                                   <span className={`all-deals__card-offers-popup-type all-deals__card-offers-popup-type--${o.type}`}>
-                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Buy' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                   </span>
                                   <span className="all-deals__card-offers-popup-label">{o.label}</span>
                                   <span className="all-deals__card-offers-popup-exp">exp {o.expires}</span>
@@ -415,7 +415,7 @@ const AllDealsPage = () => {
                       </div>
 
                       <button className="all-deals__card-deal-pill" onClick={(e) => handleDealClick(e, deal)}>
-                        <span className="all-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
+                        <span className="all-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
                         <span className="all-deals__card-deal-pill-text">{deal.dealText}</span>
                         <span className="all-deals__card-deal-pill-divider" />
                         <span className="all-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>

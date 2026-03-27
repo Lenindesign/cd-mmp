@@ -272,7 +272,7 @@ const SuvDealsPage = () => {
                           </div>
 
                           <button className="suv-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="suv-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
+                            <span className="suv-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
                             <span className="suv-deals-page__card-deal-pill-text">{deal.dealText}</span>
                             <span className="suv-deals-page__card-deal-pill-divider" />
                             <span className="suv-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>

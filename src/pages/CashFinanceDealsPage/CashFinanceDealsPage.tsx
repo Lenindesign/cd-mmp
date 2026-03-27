@@ -343,7 +343,7 @@ const CashFinanceDealsPage = () => {
                             })()}
 
                             <button className="cf-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                              <span className="cf-deals-page__card-deal-pill-chip">Buy</span>
+                              <span className="cf-deals-page__card-deal-pill-chip">Finance</span>
                               <span className="cf-deals-page__card-deal-pill-text">{deal.apr} APR for {deal.term}</span>
                               <span className="cf-deals-page__card-deal-pill-divider" />
                               <span className="cf-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>

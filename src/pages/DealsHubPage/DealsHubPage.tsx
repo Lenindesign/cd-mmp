@@ -294,10 +294,10 @@ const DealsHubPage = () => {
       { title: 'APR & Financing Deals', description: '0% APR and special low-rate financing — save thousands in interest over the life of your loan.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance)].slice(0, 3) },
       { title: 'Finance Deals', description: 'Below-market rates that lower your out-of-pocket cost.', href: '/deals/cash-finance', count: filteredFinance.length, icon: <BadgeDollarSign size={22} strokeWidth={2.2} />, deals: toMiniFinance(filteredFinance) },
       { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, icon: <KeyRound size={22} strokeWidth={2.2} />, deals: toMiniLease(filteredLease) },
-      { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, icon: <CarFront size={22} strokeWidth={2.2} />, deals: toMiniMixed(suvDeals) },
-      { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, icon: <Truck size={22} strokeWidth={2.2} />, deals: toMiniMixed(truckDeals) },
-      { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, icon: <Fuel size={22} strokeWidth={2.2} />, deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
-      { title: 'Finance by Body Style', description: 'Special finance deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length, icon: <Car size={22} strokeWidth={2.2} />, deals: toMiniFinance(filteredFinance) },
+      { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, icon: <CarFront size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', deals: toMiniMixed(suvDeals) },
+      { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, icon: <Truck size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*', deals: toMiniMixed(truckDeals) },
+      { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, icon: <Fuel size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybrids-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*', deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
+      { title: 'Finance by Body Style', description: 'Special finance deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length, icon: <Car size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', deals: toMiniFinance(filteredFinance) },
     ];
   }, [rawData, matchesFilters]);
 
@@ -450,7 +450,9 @@ const DealsHubPage = () => {
                     className={`deals-hub__anchor-btn ${activeSection === sectionId ? 'deals-hub__anchor-btn--active' : ''}`}
                     onClick={() => scrollToSection(sectionId)}
                   >
-                    {cat.icon}
+                    {cat.imageIcon
+                      ? <img src={cat.imageIcon} alt="" className="deals-hub__anchor-img" />
+                      : cat.icon}
                     <span className="deals-hub__anchor-label">{cat.title}</span>
                     <span className="deals-hub__anchor-count">{cat.count}</span>
                   </button>
@@ -489,7 +491,11 @@ const DealsHubPage = () => {
             {categories.map((cat, catIdx) => (
               <div key={cat.href} id={sectionIds[catIdx]} className="deals-hub__row">
                 <div className="deals-hub__row-left">
-                  <div className="deals-hub__row-icon">{cat.icon}</div>
+                  <div className="deals-hub__row-icon">
+                    {cat.imageIcon
+                      ? <img src={cat.imageIcon} alt="" className="deals-hub__row-icon-img" />
+                      : cat.icon}
+                  </div>
                   <h2 className="deals-hub__row-title">{cat.title}</h2>
                   <p className="deals-hub__row-description">{cat.description}</p>
                   <span className="deals-hub__row-count">{cat.count} deals</span>
@@ -589,7 +595,7 @@ const DealsHubPage = () => {
 
                         {/* Deal pill */}
                         <button className="deals-hub__card-deal-pill" onClick={(e) => handleDealClick(e, deal)}>
-                          <span className="deals-hub__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
+                          <span className="deals-hub__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
                           <span className="deals-hub__card-deal-pill-text">{deal.dealText}</span>
                           <span className="deals-hub__card-deal-pill-divider" />
                           <span className="deals-hub__card-deal-pill-expires">expires {deal.expirationDate.replace(/April/, '4/1/').replace(/, /, '').replace(/20(\d{2})/, '$1')}</span>

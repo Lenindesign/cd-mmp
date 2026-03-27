@@ -554,6 +554,15 @@
   text-decoration: none;
 }
 
+.incentives-modal__v5-cta-sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: var(--color-white, #fff);
+  padding: 12px 0 16px;
+  margin-top: auto;
+}
+
 .incentives-modal__v5-submit {
   width: 100%;
   padding: 12px;
@@ -1160,9 +1169,13 @@
 .incentives-modal__v6-cta-row {
   display: flex;
   gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
+  padding: 16px 0 16px;
   border-top: 1px solid var(--color-gray-200, #e5e7eb);
+  position: sticky;
+  bottom: 0;
+  background: var(--color-white, #fff);
+  margin-top: 24px;
+  z-index: 2;
 }
 
 .incentives-modal__v6-cta-primary {

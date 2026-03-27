@@ -508,7 +508,7 @@ const IncentivesModal = ({
                     <div className="incentives-modal__v5-detail">
                       <div className="incentives-modal__v5-offer-row">
                         <span className="incentives-modal__v5-offer-chip">
-                          {activeIncentive.type === 'lease' ? 'Lease' : 'Buy'}
+                          {activeIncentive.type === 'lease' ? 'Lease' : 'Finance'}
                         </span>
                         <span className="incentives-modal__v5-offer-apr">
                           {activeIncentive.value}
@@ -602,7 +602,7 @@ const IncentivesModal = ({
                   {(!allIncentives || allIncentives.length === 0) && (
                     <>
                       <div className="incentives-modal__v5-offer-row">
-                        <span className="incentives-modal__v5-offer-chip">Buy</span>
+                        <span className="incentives-modal__v5-offer-chip">Finance</span>
                         <span className="incentives-modal__v5-offer-apr">
                           {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
                         </span>
@@ -708,7 +708,9 @@ const IncentivesModal = ({
                     <p className="incentives-modal__v5-disclaimer">
                       By clicking the button, you agree to the Autotrader <a href="#">Visitor Agreement</a> and Privacy Statement and that your contact and/or My Wallet information will be shared with the dealer and/or Car and Driver, including for their own advertising purposes. Each party's use of your information is subject to their privacy policy.
                     </p>
-                    <button type="submit" className="incentives-modal__v5-submit">
+                  </form>
+                  <div className="incentives-modal__v5-cta-sticky">
+                    <button type="submit" form="incentives-modal-form" className="incentives-modal__v5-submit">
                       CONTACT DEALER
                     </button>
                     <button
@@ -718,7 +720,7 @@ const IncentivesModal = ({
                     >
                       SHOP ON MARKETPLACE
                     </button>
-                  </form>
+                  </div>
                 </div>
               </div>
             </>
@@ -799,7 +801,7 @@ const IncentivesModal = ({
                     <div className="incentives-modal__v5-detail">
                       <div className="incentives-modal__v5-offer-row">
                         <span className="incentives-modal__v5-offer-chip">
-                          {activeIncentive.type === 'lease' ? 'Lease' : 'Buy'}
+                          {activeIncentive.type === 'lease' ? 'Lease' : 'Finance'}
                         </span>
                         <span className="incentives-modal__v5-offer-apr">
                           {activeIncentive.value}
@@ -893,7 +895,7 @@ const IncentivesModal = ({
                   {(!allIncentives || allIncentives.length === 0) && (
                     <>
                       <div className="incentives-modal__v5-offer-row">
-                        <span className="incentives-modal__v5-offer-chip">Buy</span>
+                        <span className="incentives-modal__v5-offer-chip">Finance</span>
                         <span className="incentives-modal__v5-offer-apr">
                           {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
                         </span>
