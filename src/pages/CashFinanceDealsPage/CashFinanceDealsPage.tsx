@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -273,9 +273,9 @@ const CashFinanceDealsPage = () => {
                               <button
                                 className={`cf-deals-page__card-save ${saved ? 'cf-deals-page__card-save--saved' : ''}`}
                                 onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-                                aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
+                                aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
                               >
-                                <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
+                                <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
                               </button>
                               {(() => {
                                 const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);

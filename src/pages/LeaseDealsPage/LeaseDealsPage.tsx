@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -253,8 +253,8 @@ const LeaseDealsPage = () => {
                         <Link to={`/${deal.vehicle.slug}`} className="lease-deals-page__card-image-link">
                           <div className="lease-deals-page__card-image-container">
                             <img src={deal.vehicle.image} alt={vehicleName} className="lease-deals-page__card-image" />
-                            <button className={`lease-deals-page__card-save ${saved ? 'lease-deals-page__card-save--saved' : ''}`} onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })} aria-label={saved ? 'Remove from saved' : 'Save vehicle'}>
-                              <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
+                            <button className={`lease-deals-page__card-save ${saved ? 'lease-deals-page__card-save--saved' : ''}`} onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })} aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}>
+                              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
                             </button>
                             {(() => {
                               const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);

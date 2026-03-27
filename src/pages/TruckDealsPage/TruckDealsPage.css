@@ -113,7 +113,7 @@
 .truck-deals-page__hero-stat-label {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-400);
+  color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }

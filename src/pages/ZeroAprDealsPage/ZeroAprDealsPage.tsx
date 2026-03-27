@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Clock, Users, Tag, Percent, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Clock, Users, Tag, Percent, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
@@ -367,9 +367,9 @@ const ZeroAprDealsPage = () => {
                             <button
                               className={`zero-apr-page__card-save ${saved ? 'zero-apr-page__card-save--saved' : ''}`}
                               onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-                              aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
+                              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
                             >
-                              <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
+                              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
                             </button>
                             {(() => {
                               const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);

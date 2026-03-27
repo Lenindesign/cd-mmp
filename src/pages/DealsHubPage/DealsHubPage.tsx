@@ -1,6 +1,6 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRound, CarFront, Truck, Fuel, Car, SlidersHorizontal, Bookmark, Info } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRound, CarFront, Truck, Fuel, Car, SlidersHorizontal, Heart, Info } from 'lucide-react';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -66,6 +66,9 @@ const DealsHubPage = () => {
   const [savedDeals, setSavedDeals] = useState<Set<string>>(new Set());
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const navScrollRef = useRef<HTMLDivElement>(null);
+  const [navCanScroll, setNavCanScroll] = useState({ left: false, right: false });
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -298,6 +301,57 @@ const DealsHubPage = () => {
     ];
   }, [rawData, matchesFilters]);
 
+  const sectionIds = useMemo(() => categories.map(cat => cat.href.replace('/deals/', 'section-')), [categories]);
+
+  useEffect(() => {
+    const els = sectionIds.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    if (els.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: '-120px 0px -60% 0px', threshold: 0 },
+    );
+    els.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [sectionIds]);
+
+  const checkNavScroll = useCallback(() => {
+    const el = navScrollRef.current;
+    if (!el) return;
+    setNavCanScroll({
+      left: el.scrollLeft > 2,
+      right: el.scrollLeft + el.clientWidth < el.scrollWidth - 2,
+    });
+  }, []);
+
+  useEffect(() => {
+    checkNavScroll();
+    const el = navScrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', checkNavScroll, { passive: true });
+    window.addEventListener('resize', checkNavScroll);
+    return () => { el.removeEventListener('scroll', checkNavScroll); window.removeEventListener('resize', checkNavScroll); };
+  }, [checkNavScroll, categories]);
+
+  const scrollNav = useCallback((dir: 'left' | 'right') => {
+    const el = navScrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' });
+  }, []);
+
+  const scrollToSection = useCallback((sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    const offset = 130;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }, []);
+
   const handleDealClick = (e: React.MouseEvent, deal: MiniDeal) => {
     e.preventDefault();
     e.stopPropagation();
@@ -379,6 +433,37 @@ const DealsHubPage = () => {
       <div className="deals-hub__toolbar">
         <div className="container deals-hub__toolbar-inner">
           <span className="deals-hub__toolbar-count">{totalResults} deals available</span>
+
+          <div className="deals-hub__anchor-nav-wrap">
+            {navCanScroll.left && (
+              <button type="button" className="deals-hub__anchor-nav-arrow deals-hub__anchor-nav-arrow--left" onClick={() => scrollNav('left')} aria-label="Scroll left">
+                <ChevronLeft size={16} />
+              </button>
+            )}
+            <div className="deals-hub__anchor-nav" ref={navScrollRef}>
+              {categories.map((cat, i) => {
+                const sectionId = sectionIds[i];
+                return (
+                  <button
+                    key={cat.href}
+                    type="button"
+                    className={`deals-hub__anchor-btn ${activeSection === sectionId ? 'deals-hub__anchor-btn--active' : ''}`}
+                    onClick={() => scrollToSection(sectionId)}
+                  >
+                    {cat.icon}
+                    <span className="deals-hub__anchor-label">{cat.title}</span>
+                    <span className="deals-hub__anchor-count">{cat.count}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {navCanScroll.right && (
+              <button type="button" className="deals-hub__anchor-nav-arrow deals-hub__anchor-nav-arrow--right" onClick={() => scrollNav('right')} aria-label="Scroll right">
+                <ChevronRight size={16} />
+              </button>
+            )}
+          </div>
+
           <div className="deals-hub__toolbar-actions">
             <Link to="/deals/all" className="deals-hub__view-all-link">
               View All <ChevronRight size={14} />
@@ -401,8 +486,8 @@ const DealsHubPage = () => {
       <div className="deals-hub__content">
         <div className="container">
           <div className="deals-hub__categories">
-            {categories.map((cat) => (
-              <div key={cat.href} className="deals-hub__row">
+            {categories.map((cat, catIdx) => (
+              <div key={cat.href} id={sectionIds[catIdx]} className="deals-hub__row">
                 <div className="deals-hub__row-left">
                   <div className="deals-hub__row-icon">{cat.icon}</div>
                   <h2 className="deals-hub__row-title">{cat.title}</h2>
@@ -440,9 +525,9 @@ const DealsHubPage = () => {
                             type="button"
                             className={`deals-hub__card-save ${savedDeals.has(deal.slug) ? 'deals-hub__card-save--active' : ''}`}
                             onClick={(e) => toggleSave(e, deal.slug)}
-                            aria-label={savedDeals.has(deal.slug) ? 'Unsave deal' : 'Save deal'}
+                            aria-label={savedDeals.has(deal.slug) ? 'Remove from favorites' : 'Add to favorites'}
                           >
-                            <Bookmark size={16} fill={savedDeals.has(deal.slug) ? 'currentColor' : 'none'} />
+                            <Heart size={16} fill={savedDeals.has(deal.slug) ? 'currentColor' : 'none'} />
                           </button>
                           {(() => {
                             const allOffers = getVehicleOffers(deal.make, deal.model);

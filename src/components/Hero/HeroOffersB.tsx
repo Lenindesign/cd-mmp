@@ -53,7 +53,7 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
                 const termMatch = (inc.terms || '').match(/(\d+)[\s-]*month/i)
                   || (inc.description || '').match(/(\d+)[\s-]*month/i)
                   || (inc.title || '').match(/(\d+)[\s-]*month/i);
-                return termMatch ? `${value} | ${termMatch[1]} mo.` : value;
+                return termMatch ? `${value} for ${termMatch[1]} mo.` : value;
               })();
           return (
             <button

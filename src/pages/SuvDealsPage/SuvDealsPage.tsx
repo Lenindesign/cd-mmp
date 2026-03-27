@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Clock, Users, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, Car } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -215,9 +215,9 @@ const SuvDealsPage = () => {
                             <button
                               className={`suv-deals-page__card-save ${saved ? 'suv-deals-page__card-save--saved' : ''}`}
                               onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-                              aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
+                              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
                             >
-                              <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
+                              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
                             </button>
                             {(() => {
                               const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);

@@ -144,12 +144,34 @@ export function offersToIncentives(make: string, model: string): {
   terms?: string; eligibility?: string;
 }[] {
   const offers = getVehicleOffers(make, model);
-  return offers.map((o, i) => ({
-    id: `${make}-${model}-offer-${i}`,
-    type: o.type === 'zero-apr' ? 'finance' as const : o.type,
-    title: o.label,
-    description: o.label,
-    value: o.label.split(' ')[0] || o.label,
-    expirationDate: o.expires,
-  }));
+  return offers.map((o, i) => {
+    const type = o.type === 'zero-apr' ? 'finance' as const : o.type;
+    let description: string;
+    let terms: string | undefined;
+
+    if (o.type === 'zero-apr') {
+      description = `Zero-interest financing means every dollar of your payment goes toward the vehicle — not the bank. This could save you thousands over the life of the loan.`;
+      terms = `For well-qualified buyers. ${o.label.replace('0% APR for ', '')} term available through manufacturer financing.`;
+    } else if (o.type === 'finance') {
+      const aprMatch = o.label.match(/([\d.]+%)/);
+      const apr = aprMatch ? aprMatch[1] : '';
+      description = `A below-market ${apr} rate from the manufacturer lowers your monthly payment and total cost compared to standard financing.`;
+      terms = `For well-qualified buyers. ${o.label.replace(/[\d.]+% APR for /, '')} term available through manufacturer financing.`;
+    } else if (o.type === 'lease') {
+      description = `Leasing lets you drive a new ${make} ${model} with lower monthly payments than buying. Return it at the end or buy it out.`;
+      terms = `Well-qualified lessees with approved credit. See dealer for mileage allowance and due-at-signing details.`;
+    } else {
+      description = o.label;
+    }
+
+    return {
+      id: `${make}-${model}-offer-${i}`,
+      type,
+      title: o.label,
+      description,
+      value: o.label,
+      expirationDate: o.expires,
+      terms,
+    };
+  });
 }

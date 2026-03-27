@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Bookmark, Info, Tag, Users, Clock, Percent, CarFront, Truck, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, CarFront, Truck, Car } from 'lucide-react';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -234,9 +234,9 @@ const CashFinanceBodyStylePage = () => {
                             <button
                               className={`cfbs-deals__card-save ${saved ? 'cfbs-deals__card-save--saved' : ''}`}
                               onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-                              aria-label={saved ? 'Remove from saved' : 'Save vehicle'}
+                              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
                             >
-                              <Bookmark size={16} fill={saved ? 'currentColor' : 'none'} />
+                              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
                             </button>
                             {(() => {
                               const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
