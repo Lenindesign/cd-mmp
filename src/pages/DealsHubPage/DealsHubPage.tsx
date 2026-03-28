@@ -141,7 +141,22 @@ const DealsHubPage = () => {
     const filteredFinance = financeDeals.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }));
     const filteredLease = leaseDeals.filter(d => matchesFilters(d.vehicle, { term: d.term }));
 
-    const allDealsRaw = [
+    type PurchaseDealRow =
+      | ({ bodyStyle: string } & (typeof zeroAprDeals)[number])
+      | ({ bodyStyle: string } & (typeof financeDeals)[number]);
+
+    const hubPurchaseMonthly = (d: PurchaseDealRow): number => {
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const months = parseTermMonths(d.term);
+      if (typeof d.apr === 'number') return calcMonthly(msrp, d.apr, months);
+      const aprNum = parseFloat(String(d.apr).replace('%', ''));
+      return calcMonthly(msrp, aprNum, months);
+    };
+
+    const monthlyFromMiniDeal = (m: MiniDeal): number =>
+      parseInt(m.estimatedMonthly.replace(/[$,\s]/g, '').split('/')[0] || '0', 10) || 0;
+
+    const allDealsRaw: PurchaseDealRow[] = [
       ...filteredFinance.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
       ...filteredZeroApr.map(d => ({ ...d, bodyStyle: d.vehicle.bodyStyle })),
     ];
@@ -162,7 +177,7 @@ const DealsHubPage = () => {
     ].length;
 
     const toMiniZeroApr = (deals: typeof zeroAprDeals): MiniDeal[] =>
-      deals.slice(0, 3).map(d => {
+      deals.map(d => {
         const msrp = parseMsrpMin(d.vehicle.priceRange);
         const months = parseTermMonths(d.term);
         const monthly = calcMonthly(msrp, 0, months);
@@ -194,7 +209,7 @@ const DealsHubPage = () => {
       });
 
     const toMiniFinance = (finance: typeof financeDeals): MiniDeal[] =>
-      finance.slice(0, 3).map(d => {
+      finance.map(d => {
         const msrp = parseMsrpMin(d.vehicle.priceRange);
         const aprNum = parseFloat(d.apr.replace('%', ''));
         const months = parseTermMonths(d.term);
@@ -219,7 +234,7 @@ const DealsHubPage = () => {
       });
 
     const toMiniLease = (deals: typeof leaseDeals): MiniDeal[] =>
-      deals.slice(0, 3).map(d => {
+      deals.map(d => {
         const leaseNum = d.monthlyPaymentNum;
         const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, d.vehicle.bodyStyle, 'lease');
         return {
@@ -249,8 +264,8 @@ const DealsHubPage = () => {
         };
       });
 
-    const toMiniMixed = (deals: typeof allDealsRaw): MiniDeal[] =>
-      deals.slice(0, 3).map(d => {
+    const toMiniMixed = (deals: PurchaseDealRow[]): MiniDeal[] =>
+      [...deals].sort((a, b) => hubPurchaseMonthly(a) - hubPurchaseMonthly(b)).slice(0, 3).map(d => {
         const msrp = parseMsrpMin(d.vehicle.priceRange);
         const bs = d.vehicle.bodyStyle;
         const base = {
@@ -290,14 +305,18 @@ const DealsHubPage = () => {
         }
       });
 
+    const aprAndFinanceMinis = [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance)].sort(
+      (a, b) => monthlyFromMiniDeal(a) - monthlyFromMiniDeal(b),
+    );
+
     return [
-      { title: 'APR & Financing Deals', description: '0% APR and special low-rate financing — save thousands in interest over the life of your loan.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance)].slice(0, 3) },
-      { title: 'Finance Deals', description: 'Below-market rates that lower your out-of-pocket cost.', href: '/deals/cash-finance', count: filteredFinance.length, icon: <BadgeDollarSign size={22} strokeWidth={2.2} />, deals: toMiniFinance(filteredFinance) },
-      { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, icon: <KeyRound size={22} strokeWidth={2.2} />, deals: toMiniLease(filteredLease) },
+      { title: 'APR & Financing Deals', description: '0% APR and special low-rate financing — save thousands in interest over the life of your loan.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: aprAndFinanceMinis.slice(0, 3) },
+      { title: 'Finance Deals', description: 'Below-market rates that lower your out-of-pocket cost.', href: '/deals/cash-finance', count: filteredFinance.length, icon: <BadgeDollarSign size={22} strokeWidth={2.2} />, deals: toMiniFinance(filteredFinance).slice(0, 3) },
+      { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, icon: <KeyRound size={22} strokeWidth={2.2} />, deals: toMiniLease(filteredLease).slice(0, 3) },
       { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, icon: <CarFront size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', deals: toMiniMixed(suvDeals) },
       { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, icon: <Truck size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*', deals: toMiniMixed(truckDeals) },
       { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, icon: <Fuel size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybrids-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*', deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
-      { title: 'Finance by Body Style', description: 'Special finance deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length, icon: <Car size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', deals: toMiniFinance(filteredFinance) },
+      { title: 'Finance by Body Style', description: 'Special finance deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length, icon: <Car size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', deals: toMiniFinance(filteredFinance).slice(0, 3) },
     ];
   }, [rawData, matchesFilters]);
 

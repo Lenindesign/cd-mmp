@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronRight, Heart, Info, Tag, Clock, Users, Car } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -12,9 +12,11 @@ import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { dedupeDealsByVehicleNameAndDealType, sortDealsByEstimatedMonthlyAsc } from '../../utils/dealListOrdering';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
+import '../../styles/dealsSubpageHubShell.css';
 import './SuvDealsPage.css';
 
 interface UnifiedDeal {
@@ -127,7 +129,7 @@ const SuvDealsPage = () => {
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
       });
     }
-    return results;
+    return sortDealsByEstimatedMonthlyAsc(dedupeDealsByVehicleNameAndDealType(results));
   }, [getSupabaseRating]);
 
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
@@ -186,13 +188,23 @@ const SuvDealsPage = () => {
           </div>
         </div>
       </div>
-      <div className="suv-deals-page__content">
+      <div className="suv-deals-page__content deals-subpage-shell__content">
         <div className="container">
-          <div className="suv-deals-page__layout">
-            <div className="suv-deals-page__main">
-              <section className="suv-deals-page__section">
-                <h2 className="suv-deals-page__section-title"><Car size={22} /> {deals.length} Available Deals</h2>
-                <div className="suv-deals-page__grid">
+          <div className="deals-subpage-shell__row">
+            <div className="deals-subpage-shell__row-left">
+              <div className="deals-subpage-shell__row-icon">
+                <Car size={22} strokeWidth={2.2} />
+              </div>
+              <h2 className="deals-subpage-shell__row-title">SUV deals</h2>
+              <p className="deals-subpage-shell__row-description">
+                0% APR, cash-back, finance, and lease offers on SUVs and crossovers—with expert C/D ratings.
+              </p>
+              <span className="deals-subpage-shell__row-count">{deals.length} deals</span>
+              <Link to="/deals" className="deals-subpage-shell__row-cta">
+                View All <ChevronRight size={16} />
+              </Link>
+            </div>
+            <div className="deals-subpage-shell__row-cards">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
                     const isExpanded = expandedDealId === deal.id;
@@ -309,7 +321,7 @@ const SuvDealsPage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="suv-deals-page__empty-state">
+                    <div className="suv-deals-page__empty-state deals-subpage-shell__empty-slot">
                       <p className="suv-deals-page__empty-state-text">
                         There are currently no active SUV offers. Check back soon or explore other available deals.
                       </p>
@@ -318,8 +330,11 @@ const SuvDealsPage = () => {
                       </Link>
                     </div>
                   )}
-                </div>
-              </section>
+            </div>
+          </div>
+          <div className="deals-subpage-shell__ad-below">
+            <AdSidebar />
+          </div>
               <section className="suv-deals-page__faq-section">
                 <h2 className="suv-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About SUV Deals</h2>
                 <div className="suv-deals-page__faq-list">
@@ -344,9 +359,6 @@ const SuvDealsPage = () => {
                   <Link to="/deals/cash-finance" className="suv-deals-page__link-card"><h3>Cash & Finance</h3><p>Cash-back and APR offers</p></Link>
                 </div>
               </section>
-            </div>
-            <aside className="suv-deals-page__sidebar"><AdSidebar /></aside>
-          </div>
         </div>
       </div>
       <IncentivesModal

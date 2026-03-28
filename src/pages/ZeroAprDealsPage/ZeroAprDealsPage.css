@@ -230,22 +230,7 @@
 
 /* Main Content */
 .zero-apr-page__content {
-  padding: var(--spacing-8) 0;
-}
-
-.zero-apr-page__layout {
-  display: flex;
-  gap: var(--spacing-8);
-}
-
-.zero-apr-page__main {
-  flex: 1;
-  min-width: 0;
-}
-
-.zero-apr-page__sidebar {
-  flex-shrink: 0;
-  width: 300px;
+  padding: 0;
 }
 
 /* Section Title */
@@ -267,19 +252,7 @@
   flex-shrink: 0;
 }
 
-/* Deals Grid */
-.zero-apr-page__deals-section {
-  margin-bottom: var(--spacing-12);
-}
-
-.zero-apr-page__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-6);
-}
-
 .zero-apr-page__empty-state {
-  grid-column: 1 / -1;
   text-align: center;
   padding: 48px 24px;
   background: var(--color-gray-50, #f9fafb);
@@ -954,17 +927,7 @@
 }
 
 /* Responsive */
-@media (max-width: 1200px) {
-  .zero-apr-page__sidebar {
-    display: none;
-  }
-}
-
 @media (max-width: 992px) {
-  .zero-apr-page__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .zero-apr-page__links-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -977,10 +940,6 @@
 
   .zero-apr-page__title {
     font-size: var(--font-size-3xl);
-  }
-
-  .zero-apr-page__grid {
-    grid-template-columns: 1fr;
   }
 
   .zero-apr-page__links-grid {
