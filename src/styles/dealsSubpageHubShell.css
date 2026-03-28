@@ -1,0 +1,183 @@
+/* Matches Deals Hub category rows: white shell, left rail, 3-up card grid */
+
+.deals-subpage-shell__content {
+  padding: var(--spacing-10) 0;
+}
+
+.deals-subpage-shell__row {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-5) var(--spacing-6);
+  transition: box-shadow var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+}
+
+.deals-subpage-shell__row:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.deals-subpage-shell__row-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+  width: 200px;
+}
+
+.deals-subpage-shell__row-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-success);
+  color: var(--color-white);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.deals-subpage-shell__row-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  margin: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.deals-subpage-shell__row-description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.deals-subpage-shell__row-count {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-500);
+}
+
+.deals-subpage-shell__row-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border: 1.5px solid var(--color-success);
+  border-radius: 4px;
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.deals-subpage-shell__row-cta:hover {
+  color: #fff;
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.deals-subpage-shell__row-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  flex: 1;
+  min-width: 0;
+}
+
+.deals-subpage-shell__empty-slot {
+  grid-column: 1 / -1;
+}
+
+.deals-subpage-shell__ad-below {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-10);
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .deals-subpage-shell__row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .deals-subpage-shell__row-left {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--color-gray-100);
+    margin-bottom: var(--spacing-1);
+  }
+
+  .deals-subpage-shell__row-description {
+    display: none;
+  }
+
+  .deals-subpage-shell__row-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .deals-subpage-shell__row {
+    padding: var(--spacing-3);
+    gap: var(--spacing-3);
+  }
+
+  .deals-subpage-shell__row-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-3);
+  }
+}
+
+@media (max-width: 520px) {
+  .deals-subpage-shell__row-left {
+    gap: var(--spacing-2);
+    padding-bottom: var(--spacing-3);
+  }
+
+  .deals-subpage-shell__row-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .deals-subpage-shell__row-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .deals-subpage-shell__row-title {
+    font-size: var(--font-size-sm);
+  }
+
+  .deals-subpage-shell__row-count {
+    font-size: 11px;
+  }
+
+  .deals-subpage-shell__row-cta {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .deals-subpage-shell__row-cards {
+    gap: var(--spacing-2);
+  }
+}

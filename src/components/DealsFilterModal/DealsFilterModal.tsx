@@ -3,7 +3,6 @@ import { X, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
-import { getUniqueMakes } from '../../services/vehicleService';
 import { TERM_OPTIONS, CREDIT_TIERS, parseTermMonths } from '../../utils/dealCalculations';
 import type { CreditTier } from '../../utils/dealCalculations';
 import './DealsFilterModal.css';
@@ -103,8 +102,8 @@ const DealsFilterModal = ({
     ];
 
     const uniqueBodyTypes = [...new Set(allVehicles.map(v => v.bodyStyle))].sort();
-    const uniqueMakes = getUniqueMakes();
-    const uniqueFuelTypes = ['Gas', 'Hybrid', 'Plug-In Hybrid', 'Electric', 'Diesel'];
+    const uniqueMakes = [...new Set(allVehicles.map(v => v.make))].sort();
+    const uniqueFuelTypes = [...new Set(allVehicles.map(v => v.fuelType))].sort();
 
     const rawTerms = new Set<number>();
     for (const d of zeroAprDeals) rawTerms.add(parseTermMonths(d.term));

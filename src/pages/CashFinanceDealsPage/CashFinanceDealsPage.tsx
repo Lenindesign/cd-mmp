@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronRight, Heart, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -15,6 +15,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import '../../styles/dealsSubpageHubShell.css';
 import './CashFinanceDealsPage.css';
 
 const FAQ_DATA = [
@@ -237,18 +238,23 @@ const CashFinanceDealsPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="cf-deals-page__content">
+      <div className="cf-deals-page__content deals-subpage-shell__content">
         <div className="container">
-          <div className="cf-deals-page__layout">
-            <div className="cf-deals-page__main">
-
-              {/* Finance Deals Section */}
-              <section className="cf-deals-page__section">
-                  <h2 className="cf-deals-page__section-title">
-                    <Percent size={22} />
-                    Finance Deals
-                  </h2>
-                  <div className="cf-deals-page__grid">
+          <div className="deals-subpage-shell__row">
+            <div className="deals-subpage-shell__row-left">
+              <div className="deals-subpage-shell__row-icon">
+                <Percent size={22} strokeWidth={2.2} />
+              </div>
+              <h2 className="deals-subpage-shell__row-title">Finance deals</h2>
+              <p className="deals-subpage-shell__row-description">
+                Below-market APR programs from captive lenders—sorted by estimated monthly payment with C/D ratings.
+              </p>
+              <span className="deals-subpage-shell__row-count">{financeDeals.length} deals</span>
+              <Link to="/deals" className="deals-subpage-shell__row-cta">
+                View All <ChevronRight size={16} />
+              </Link>
+            </div>
+            <div className="deals-subpage-shell__row-cards">
                     {financeDeals.map((deal) => {
                       const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                       const saved = isVehicleSaved(vehicleName);
@@ -403,9 +409,8 @@ const CashFinanceDealsPage = () => {
                         </div>
                       );
                     })}
-                  </div>
                   {financeDeals.length === 0 && (
-                    <div className="cf-deals-page__empty-state">
+                    <div className="cf-deals-page__empty-state deals-subpage-shell__empty-slot">
                       <p className="cf-deals-page__empty-state-text">
                         There are currently no active finance offers. Check back soon or explore other available deals.
                       </p>
@@ -414,7 +419,11 @@ const CashFinanceDealsPage = () => {
                       </Link>
                     </div>
                   )}
-                </section>
+            </div>
+          </div>
+          <div className="deals-subpage-shell__ad-below">
+            <AdSidebar />
+          </div>
 
               {/* FAQ Section */}
               <section className="cf-deals-page__faq-section">
@@ -476,12 +485,6 @@ const CashFinanceDealsPage = () => {
                   </Link>
                 </div>
               </section>
-            </div>
-
-            <aside className="cf-deals-page__sidebar">
-              <AdSidebar />
-            </aside>
-          </div>
         </div>
       </div>
 
