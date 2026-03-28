@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, Fuel, Zap, Leaf, Droplets } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronRight, Heart, Info, Tag, Clock, Users, Fuel, Zap, Leaf, Droplets } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -12,9 +12,11 @@ import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { dedupeDealsByVehicleNameAndDealType, sortDealsByEstimatedMonthlyAsc } from '../../utils/dealListOrdering';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
+import '../../styles/dealsSubpageHubShell.css';
 import './FuelTypeDealsPage.css';
 
 type FuelTab = 'all' | 'gas' | 'hybrid' | 'electric' | 'diesel';
@@ -123,7 +125,7 @@ const FuelTypeDealsPage = () => {
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
       });
     }
-    return results;
+    return sortDealsByEstimatedMonthlyAsc(dedupeDealsByVehicleNameAndDealType(results));
   }, [getSupabaseRating]);
 
   const tabMatcher = FUEL_TABS.find(t => t.key === activeTab)?.match || (() => true);
@@ -138,6 +140,37 @@ const FuelTypeDealsPage = () => {
     }
     return counts;
   }, [allDeals]);
+
+  const fuelShell = useMemo((): { title: string; description: string; icon: React.ReactNode } => {
+    const byTab: Record<FuelTab, { title: string; description: string; icon: React.ReactNode }> = {
+      all: {
+        title: 'Deals by fuel type',
+        description: 'Finance, 0% APR, and lease offers across gas, hybrid, electric, and diesel—with C/D ratings.',
+        icon: <Fuel size={22} strokeWidth={2.2} />,
+      },
+      gas: {
+        title: 'Gas vehicle deals',
+        description: 'Current incentives on gasoline-powered cars, SUVs, and trucks.',
+        icon: <Fuel size={22} strokeWidth={2.2} />,
+      },
+      hybrid: {
+        title: 'Hybrid & PHEV deals',
+        description: 'Specials on hybrids and plug-in hybrids from every major brand.',
+        icon: <Leaf size={22} strokeWidth={2.2} />,
+      },
+      electric: {
+        title: 'Electric vehicle deals',
+        description: 'EV lease and finance programs—stack with federal and state credits where eligible.',
+        icon: <Zap size={22} strokeWidth={2.2} />,
+      },
+      diesel: {
+        title: 'Diesel vehicle deals',
+        description: 'Torque-rich diesel offers, often on trucks and SUVs.',
+        icon: <Droplets size={22} strokeWidth={2.2} />,
+      },
+    };
+    return byTab[activeTab];
+  }, [activeTab]);
 
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
   const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
@@ -216,11 +249,8 @@ const FuelTypeDealsPage = () => {
         </div>
       </div>
 
-      <div className="fuel-deals__content">
+      <div className="fuel-deals__content deals-subpage-shell__content">
         <div className="container">
-          <div className="fuel-deals__layout">
-            <div className="fuel-deals__main">
-              {/* Fuel Type Tabs */}
               <div className="fuel-deals__tabs" role="tablist">
                 {FUEL_TABS.map(t => (
                   <button
@@ -238,11 +268,17 @@ const FuelTypeDealsPage = () => {
                 ))}
               </div>
 
-              <section className="fuel-deals__section">
-                <h2 className="fuel-deals__section-title">
-                  <Fuel size={22} /> {deals.length} {tabLabel || 'Available'} Deal{deals.length !== 1 ? 's' : ''}
-                </h2>
-                <div className="fuel-deals__grid">
+          <div className="deals-subpage-shell__row">
+            <div className="deals-subpage-shell__row-left">
+              <div className="deals-subpage-shell__row-icon">{fuelShell.icon}</div>
+              <h2 className="deals-subpage-shell__row-title">{fuelShell.title}</h2>
+              <p className="deals-subpage-shell__row-description">{fuelShell.description}</p>
+              <span className="deals-subpage-shell__row-count">{deals.length} deals</span>
+              <Link to="/deals" className="deals-subpage-shell__row-cta">
+                View All <ChevronRight size={16} />
+              </Link>
+            </div>
+            <div className="deals-subpage-shell__row-cards">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
                     const isExpanded = expandedDealId === deal.id;
@@ -360,7 +396,7 @@ const FuelTypeDealsPage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="fuel-deals__empty-state">
+                    <div className="fuel-deals__empty-state deals-subpage-shell__empty-slot">
                       <p className="fuel-deals__empty-state-text">
                         There are currently no active {emptyFuelCategory} offers. Check back soon or explore other available deals.
                       </p>
@@ -369,8 +405,11 @@ const FuelTypeDealsPage = () => {
                       </Link>
                     </div>
                   )}
-                </div>
-              </section>
+            </div>
+          </div>
+          <div className="deals-subpage-shell__ad-below">
+            <AdSidebar />
+          </div>
 
               <section className="fuel-deals__faq-section">
                 <h2 className="fuel-deals__section-title"><Info size={22} /> Frequently Asked Questions</h2>
@@ -397,9 +436,6 @@ const FuelTypeDealsPage = () => {
                   <Link to="/deals/cash-finance" className="fuel-deals__link-card"><h3>Finance Deals</h3><p>Cash-back and APR offers</p></Link>
                 </div>
               </section>
-            </div>
-            <aside className="fuel-deals__sidebar"><AdSidebar /></aside>
-          </div>
         </div>
       </div>
 

@@ -119,26 +119,7 @@
 }
 
 .truck-deals-page__content {
-  padding: var(--spacing-8) 0;
-}
-
-.truck-deals-page__layout {
-  display: flex;
-  gap: var(--spacing-8);
-}
-
-.truck-deals-page__main {
-  flex: 1;
-  min-width: 0;
-}
-
-.truck-deals-page__sidebar {
-  flex-shrink: 0;
-  width: 300px;
-}
-
-.truck-deals-page__section {
-  margin-bottom: var(--spacing-12);
+  padding: 0;
 }
 
 .truck-deals-page__section-title {
@@ -149,7 +130,7 @@
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-black);
-  margin: 0 0 var(--spacing-6) 0;
+  margin: 0 0 var(--spacing-4) 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -157,12 +138,6 @@
 .truck-deals-page__section-title svg {
   color: var(--color-blue-cobalt);
   flex-shrink: 0;
-}
-
-.truck-deals-page__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-6);
 }
 
 /* Card */
@@ -889,17 +864,7 @@
   line-height: 1.4;
 }
 
-@media (max-width: 1200px) {
-  .truck-deals-page__sidebar {
-    display: none;
-  }
-}
-
 @media (max-width: 992px) {
-  .truck-deals-page__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .truck-deals-page__links-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -912,10 +877,6 @@
 
   .truck-deals-page__title {
     font-size: var(--font-size-3xl);
-  }
-
-  .truck-deals-page__grid {
-    grid-template-columns: 1fr;
   }
 
   .truck-deals-page__links-grid {

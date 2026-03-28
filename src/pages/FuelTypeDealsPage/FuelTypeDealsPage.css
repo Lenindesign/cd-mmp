@@ -120,22 +120,7 @@
 
 /* Content layout */
 .fuel-deals__content {
-  padding: var(--spacing-8) 0;
-}
-
-.fuel-deals__layout {
-  display: flex;
-  gap: var(--spacing-8);
-}
-
-.fuel-deals__main {
-  flex: 1;
-  min-width: 0;
-}
-
-.fuel-deals__sidebar {
-  flex-shrink: 0;
-  width: 300px;
+  padding: 0;
 }
 
 /* Fuel type tabs */
@@ -205,11 +190,6 @@
   color: var(--color-white);
 }
 
-/* Section */
-.fuel-deals__section {
-  margin-bottom: var(--spacing-12);
-}
-
 .fuel-deals__section-title {
   display: flex;
   align-items: center;
@@ -226,12 +206,6 @@
 .fuel-deals__section-title svg {
   color: var(--color-blue-cobalt);
   flex-shrink: 0;
-}
-
-.fuel-deals__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-6);
 }
 
 /* Card */
@@ -813,7 +787,6 @@
 
 /* Empty state */
 .fuel-deals__empty-state {
-  grid-column: 1 / -1;
   text-align: center;
   padding: 48px 24px;
   background: var(--color-gray-50, #f9fafb);
@@ -956,17 +929,7 @@
 }
 
 /* Responsive */
-@media (max-width: 1200px) {
-  .fuel-deals__sidebar {
-    display: none;
-  }
-}
-
 @media (max-width: 992px) {
-  .fuel-deals__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .fuel-deals__links-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -994,10 +957,6 @@
   .fuel-deals__tab {
     padding: var(--spacing-2) var(--spacing-3);
     font-size: var(--font-size-xs);
-  }
-
-  .fuel-deals__grid {
-    grid-template-columns: 1fr;
   }
 
   .fuel-deals__card-details {

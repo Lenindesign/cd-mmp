@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronRight, Heart, Info, Tag, Clock, Car, KeyRound, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -15,6 +15,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import '../../styles/dealsSubpageHubShell.css';
 import './LeaseDealsPage.css';
 
 const FAQ_DATA = [
@@ -228,13 +229,23 @@ const LeaseDealsPage = () => {
         </div>
       </div>
 
-      <div className="lease-deals-page__content">
+      <div className="lease-deals-page__content deals-subpage-shell__content">
         <div className="container">
-          <div className="lease-deals-page__layout">
-            <div className="lease-deals-page__main">
-              <section className="lease-deals-page__section">
-                <h2 className="lease-deals-page__section-title"><Car size={22} /> {deals.length} Available Deals</h2>
-                <div className="lease-deals-page__grid">
+          <div className="deals-subpage-shell__row">
+            <div className="deals-subpage-shell__row-left">
+              <div className="deals-subpage-shell__row-icon">
+                <KeyRound size={22} strokeWidth={2.2} />
+              </div>
+              <h2 className="deals-subpage-shell__row-title">Lease deals</h2>
+              <p className="deals-subpage-shell__row-description">
+                Manufacturer lease specials with monthly payments, terms, and due-at-signing—sorted by payment with C/D ratings.
+              </p>
+              <span className="deals-subpage-shell__row-count">{deals.length} deals</span>
+              <Link to="/deals" className="deals-subpage-shell__row-cta">
+                View All <ChevronRight size={16} />
+              </Link>
+            </div>
+            <div className="deals-subpage-shell__row-cards">
                   {deals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                     const saved = isVehicleSaved(vehicleName);
@@ -353,7 +364,7 @@ const LeaseDealsPage = () => {
                     );
                   })}
                   {deals.length === 0 && (
-                    <div className="lease-deals-page__empty-state">
+                    <div className="lease-deals-page__empty-state deals-subpage-shell__empty-slot">
                       <p className="lease-deals-page__empty-state-text">
                         There are currently no active lease offers. Check back soon or explore other available deals.
                       </p>
@@ -362,8 +373,11 @@ const LeaseDealsPage = () => {
                       </Link>
                     </div>
                   )}
-                </div>
-              </section>
+            </div>
+          </div>
+          <div className="deals-subpage-shell__ad-below">
+            <AdSidebar />
+          </div>
 
               <section className="lease-deals-page__faq-section">
                 <h2 className="lease-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About Leasing</h2>
@@ -390,9 +404,6 @@ const LeaseDealsPage = () => {
                   <Link to="/rankings" className="lease-deals-page__link-card"><h3>Car Rankings</h3><p>Expert rankings across every category</p></Link>
                 </div>
               </section>
-            </div>
-            <aside className="lease-deals-page__sidebar"><AdSidebar /></aside>
-          </div>
         </div>
       </div>
 
