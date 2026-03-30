@@ -9,7 +9,7 @@ interface HeroOffersAProps {
 }
 
 const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllClick }: HeroOffersAProps) => {
-  const [offersTab, setOffersTab] = useState<'finance' | 'lease'>('finance');
+  const [offersTab, setOffersTab] = useState<'finance' | 'lease' | 'cash'>('finance');
 
   const stripQualifier = (v: string) =>
     v.replace(/^(as low as|up to|starting at)\s+/i, '');
@@ -31,10 +31,20 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
     [vehicleIncentives]
   );
 
+  const cashIncentives = useMemo(() =>
+    vehicleIncentives.incentives.filter(i => i.type === 'cash'),
+    [vehicleIncentives]
+  );
+
   const topIncentives = useMemo(() => {
-    const pool = offersTab === 'finance' ? financeIncentives : leaseIncentives;
+    const pool =
+      offersTab === 'finance'
+        ? financeIncentives
+        : offersTab === 'lease'
+          ? leaseIncentives
+          : cashIncentives;
     return pool.slice(0, 3);
-  }, [offersTab, financeIncentives, leaseIncentives]);
+  }, [offersTab, financeIncentives, leaseIncentives, cashIncentives]);
 
   const msrpBase = useMemo(() => {
     return parseInt((priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0;
@@ -44,11 +54,14 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
     const financeMonthly = msrpBase > 0 ? Math.round((msrpBase * 0.9) / 60) : 0;
     const leaseMonthly = msrpBase > 0 ? Math.round(msrpBase * 0.014) : 0;
     const fmt = (n: number) => '$' + n.toLocaleString();
+    const cashHeadline =
+      cashIncentives.length > 0 ? stripQualifier(cashIncentives[0].value) : '';
     return {
       finance: financeMonthly > 0 ? `${fmt(financeMonthly)}/mo.` : '',
       lease: leaseMonthly > 0 ? `${fmt(leaseMonthly)}/mo.` : '',
+      cash: cashHeadline,
     };
-  }, [msrpBase]);
+  }, [msrpBase, cashIncentives]);
 
   if (vehicleIncentives.incentives.length === 0) return null;
 
@@ -83,6 +96,17 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
             Lease
             {tabPaymentLabel.lease && <span className="hero__offers-tab-price">{tabPaymentLabel.lease}</span>}
             <span className="hero__offers-tab-count">{leaseIncentives.length}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={offersTab === 'cash'}
+            className={`hero__offers-tab ${offersTab === 'cash' ? 'hero__offers-tab--active' : ''}`}
+            onClick={() => setOffersTab('cash')}
+          >
+            Cash
+            {tabPaymentLabel.cash && <span className="hero__offers-tab-price">{tabPaymentLabel.cash}</span>}
+            <span className="hero__offers-tab-count">{cashIncentives.length}</span>
           </button>
         </div>
       </div>

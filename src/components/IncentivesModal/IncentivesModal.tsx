@@ -96,6 +96,9 @@ function formatExpirationShort(dateStr: string): string {
   }
 }
 
+const getOfferRowChipLabel = (type: Incentive['type']): string =>
+  type === 'lease' ? 'Lease' : type === 'cash' ? 'Cash' : 'Finance';
+
 const getEligibilityInfo = (inc: Incentive): { label: string; restricted: boolean } => {
   const e = (inc.eligibility || '').toLowerCase();
   if (e.includes('military') || e.includes('veteran')) return { label: 'Military / Veterans', restricted: true };
@@ -461,7 +464,7 @@ const IncentivesModal = ({
                     <div className="incentives-modal__v5-detail">
                       <div className="incentives-modal__v5-offer-row">
                         <span className="incentives-modal__v5-offer-chip">
-                          {activeIncentive.type === 'lease' ? 'Lease' : 'Finance'}
+                          {getOfferRowChipLabel(activeIncentive.type)}
                         </span>
                         <span className="incentives-modal__v5-offer-apr">
                           {activeIncentive.value}
@@ -708,7 +711,7 @@ const IncentivesModal = ({
                     <div className="incentives-modal__v5-detail">
                       <div className="incentives-modal__v5-offer-row">
                         <span className="incentives-modal__v5-offer-chip">
-                          {activeIncentive.type === 'lease' ? 'Lease' : 'Finance'}
+                          {getOfferRowChipLabel(activeIncentive.type)}
                         </span>
                         <span className="incentives-modal__v5-offer-apr">
                           {activeIncentive.value}

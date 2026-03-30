@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronUp, ChevronDown, SlidersHorizontal, Heart, Info } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -22,7 +22,7 @@ interface MiniDeal {
   image: string;
   slug: string;
   priceRange: string;
-  dealType: 'zero-apr' | 'finance' | 'lease';
+  dealType: 'zero-apr' | 'finance' | 'lease' | 'cash';
   dealText: string;
   dealHeadline: string;
   whatItMeans: string;
@@ -42,13 +42,14 @@ interface MiniDeal {
   term?: string;
 }
 
-type DealTypeFilter = 'all' | 'zero-apr' | 'finance' | 'lease';
+type DealTypeFilter = 'all' | 'zero-apr' | 'finance' | 'lease' | 'cash';
 
 const DEAL_TYPE_LABELS: Record<DealTypeFilter, string> = {
   all: 'All Deals',
   'zero-apr': '0% APR',
   finance: 'Finance',
   lease: 'Lease',
+  cash: 'Cash',
 };
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -187,6 +188,33 @@ const AllDealsPage = () => {
           staffRating: d.vehicle.staffRating, term: d.term,
           estimatedMonthly: `$${monthly.toLocaleString()}`,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
+        });
+      });
+
+    getCashDeals()
+      .filter(d => matchesFilters(d.vehicle))
+      .forEach(d => {
+        const msrp = parseMsrpMin(d.vehicle.priceRange);
+        const principal = Math.max(msrp - d.incentiveAmount, 1);
+        const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
+        const savings = buildSavingsText(monthlyAfterCash, d.vehicle.bodyStyle, 'cash');
+        deals.push({
+          vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
+          make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
+          slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
+          dealType: 'cash',
+          dealText: `${d.incentiveValue} cash back`,
+          dealHeadline: 'Cash Back',
+          whatItMeans: 'Manufacturer customer cash reduces the amount you finance or pay at signing—often instead of a promotional APR.',
+          savingsNote: `${d.incentiveValue} in customer cash on eligible trims. Eligibility and stacking rules vary by dealer.`,
+          whoQualifies: 'Retail buyers on select new vehicles; see program details for restrictions.',
+          programName: d.programName, programDescription: d.programDescription,
+          trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
+          editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
+          staffRating: d.vehicle.staffRating,
+          estimatedMonthly: d.incentiveValue,
+          savingsVsAvg: `${d.percentOffMsrp} off MSRP`,
+          savingsTooltip: savings.savingsTooltip,
         });
       });
 
@@ -378,7 +406,7 @@ const AllDealsPage = () => {
                               {offersPopup.offers.map((o, idx) => (
                                 <li key={idx} className="all-deals__card-offers-popup-item">
                                   <span className={`all-deals__card-offers-popup-type all-deals__card-offers-popup-type--${o.type}`}>
-                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                   </span>
                                   <span className="all-deals__card-offers-popup-label">{o.label}</span>
                                   <span className="all-deals__card-offers-popup-exp">exp {o.expires}</span>
@@ -388,7 +416,7 @@ const AllDealsPage = () => {
                           </div>
                         )}
                         <span className={`all-deals__card-type-tag all-deals__card-type-tag--${deal.dealType}`}>
-                          {deal.dealType === 'zero-apr' ? '0% APR' : deal.dealType === 'finance' ? 'Finance' : 'Lease'}
+                          {deal.dealType === 'zero-apr' ? '0% APR' : deal.dealType === 'finance' ? 'Finance' : deal.dealType === 'cash' ? 'Cash' : 'Lease'}
                         </span>
                         {(deal.editorsChoice || deal.tenBest) && (
                           <div className="all-deals__card-badges">
@@ -403,7 +431,9 @@ const AllDealsPage = () => {
                       <div className="all-deals__card-payment-block">
                         <div className="all-deals__card-payment">
                           <span className="all-deals__card-payment-amount">{deal.estimatedMonthly}</span>
-                          <span className="all-deals__card-payment-period">/mo{deal.dealType !== 'lease' ? '*' : ''}</span>
+                          <span className="all-deals__card-payment-period">
+                            {deal.dealType === 'cash' ? 'Cash Back' : `/mo${deal.dealType !== 'lease' ? '*' : ''}`}
+                          </span>
                         </div>
                         <span className="all-deals__card-payment-savings">
                           {deal.savingsVsAvg}
@@ -415,7 +445,9 @@ const AllDealsPage = () => {
                       </div>
 
                       <button className="all-deals__card-deal-pill" onClick={(e) => handleDealClick(e, deal)}>
-                        <span className="all-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
+                        <span className="all-deals__card-deal-pill-chip">
+                          {deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}
+                        </span>
                         <span className="all-deals__card-deal-pill-text">{deal.dealText}</span>
                         <span className="all-deals__card-deal-pill-divider" />
                         <span className="all-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>

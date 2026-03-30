@@ -28,6 +28,7 @@ const getChipLabel = (type: Incentive['type']) => {
   switch (type) {
     case 'finance': return 'Buy';
     case 'lease': return 'Lease';
+    case 'cash': return 'Cash';
     default: return type;
   }
 };
@@ -36,7 +37,8 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
   const topOffers = useMemo(() => {
     const finance = vehicleIncentives.incentives.find(i => i.type === 'finance');
     const lease = vehicleIncentives.incentives.find(i => i.type === 'lease');
-    return [finance, lease].filter(Boolean) as Incentive[];
+    const cash = vehicleIncentives.incentives.find(i => i.type === 'cash');
+    return [finance, lease, cash].filter(Boolean) as Incentive[];
   }, [vehicleIncentives]);
 
   if (topOffers.length === 0) return null;
@@ -49,12 +51,14 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
           const value = stripQualifier(inc.value);
           const label = inc.type === 'finance'
             ? `${value}${getTermSuffix(inc)}`
-            : (() => {
-                const termMatch = (inc.terms || '').match(/(\d+)[\s-]*month/i)
-                  || (inc.description || '').match(/(\d+)[\s-]*month/i)
-                  || (inc.title || '').match(/(\d+)[\s-]*month/i);
-                return termMatch ? `${value} for ${termMatch[1]} mo.` : value;
-              })();
+            : inc.type === 'cash'
+              ? (/\bcash\s*back\b/i.test(value) ? value : `${value} cash back`)
+              : (() => {
+                  const termMatch = (inc.terms || '').match(/(\d+)[\s-]*month/i)
+                    || (inc.description || '').match(/(\d+)[\s-]*month/i)
+                    || (inc.title || '').match(/(\d+)[\s-]*month/i);
+                  return termMatch ? `${value} for ${termMatch[1]} mo.` : value;
+                })();
           return (
             <button
               key={inc.id}

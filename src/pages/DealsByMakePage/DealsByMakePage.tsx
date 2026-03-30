@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod } from '../../utils/dateUtils';
 import {
@@ -29,12 +29,12 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import './DealsByMakePage.css';
 
-type DealKind = 'zero-apr' | 'finance' | 'lease';
+type DealKind = 'zero-apr' | 'finance' | 'lease' | 'cash';
 
 interface UnifiedMakeDeal {
   id: string;
   dealType: DealKind;
-  chipLabel: 'Finance' | 'Lease';
+  chipLabel: 'Finance' | 'Lease' | 'Cash';
   vehicle: Vehicle;
   rating: number;
   sortMonthly: number;
@@ -49,6 +49,9 @@ interface UnifiedMakeDeal {
   monthlyPaymentNum?: number;
   dueAtSigning?: string;
   mileageAllowance?: string;
+  incentiveValue?: string;
+  incentiveAmount?: number;
+  percentOffMsrp?: string;
 }
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -92,6 +95,16 @@ function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferD
       whatItMeans: `Instead of buying, you're renting the car for ${deal.term}. Your monthly payment is just ${deal.monthlyPayment} with ${deal.dueAtSigning} due at signing.`,
       yourSavings: `${deal.monthlyPayment}/mo is significantly lower than a typical purchase payment. ${deal.dueAtSigning} due at signing. Includes ${deal.mileageAllowance} mileage allowance.`,
       whoQualifies: "Well-qualified lessees with approved credit through the manufacturer's financial arm.",
+    };
+  }
+
+  if (deal.dealType === 'cash') {
+    return {
+      ...base,
+      offerHeadline: 'Cash Back',
+      whatItMeans: deal.programDescription,
+      yourSavings: `${deal.incentiveValue} customer cash. Approximately ${deal.percentOffMsrp} off MSRP.`,
+      whoQualifies: 'Retail buyers on eligible new vehicles; see program details for restrictions.',
     };
   }
 
@@ -246,6 +259,29 @@ const DealsByMakePage = () => {
         term: d.term,
         targetAudience: d.targetAudience,
         aprDisplay: d.apr,
+      });
+    }
+
+    for (const d of getCashDeals()) {
+      if (!matchesMake(d.vehicle)) continue;
+      if (!matchesFilters(d.vehicle)) continue;
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const principal = Math.max(msrp - d.incentiveAmount, 1);
+      const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
+      out.push({
+        id: d.id,
+        dealType: 'cash',
+        chipLabel: 'Cash',
+        vehicle: d.vehicle,
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        sortMonthly: monthlyAfterCash,
+        expirationDate: d.expirationDate,
+        programName: d.programName,
+        programDescription: d.programDescription,
+        trimsEligible: d.trimsEligible,
+        incentiveValue: d.incentiveValue,
+        incentiveAmount: d.incentiveAmount,
+        percentOffMsrp: d.percentOffMsrp,
       });
     }
 
@@ -420,6 +456,7 @@ const DealsByMakePage = () => {
                     const saved = isVehicleSaved(vehicleName);
                     const isExpanded = expandedDealId === deal.id;
                     const isLease = deal.dealType === 'lease';
+                    const isCash = deal.dealType === 'cash';
 
                     return (
                       <div key={deal.id} className="make-deals__card">
@@ -573,6 +610,61 @@ const DealsByMakePage = () => {
                                 </div>
                               </div>
                             </>
+                          ) : isCash ? (
+                            <>
+                              {(() => {
+                                const msrp = parseMsrpMin(deal.vehicle.priceRange);
+                                const principal = Math.max(msrp - (deal.incentiveAmount ?? 0), 1);
+                                const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
+                                const { savingsTooltip } = buildSavingsText(
+                                  monthlyAfterCash,
+                                  deal.vehicle.bodyStyle,
+                                  'cash',
+                                );
+                                return (
+                                  <div className="make-deals__card-payment-block">
+                                    <div className="make-deals__card-payment">
+                                      <span className="make-deals__card-payment-amount">{deal.incentiveValue}</span>
+                                      <span className="make-deals__card-payment-period">Cash Back</span>
+                                    </div>
+                                    <span className="make-deals__card-payment-savings">
+                                      {deal.percentOffMsrp} off MSRP
+                                      <span className="make-deals__card-tooltip-wrap">
+                                        <Info size={13} className="make-deals__card-tooltip-icon" />
+                                        <span className="make-deals__card-tooltip">{savingsTooltip}</span>
+                                      </span>
+                                    </span>
+                                  </div>
+                                );
+                              })()}
+                              <button
+                                className="make-deals__card-deal-pill"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setActiveDealId(deal.id);
+                                }}
+                              >
+                                <span className="make-deals__card-deal-pill-chip">{deal.chipLabel}</span>
+                                <span className="make-deals__card-deal-pill-text">
+                                  {deal.incentiveValue} cash back
+                                </span>
+                                <span className="make-deals__card-deal-pill-divider" />
+                                <span className="make-deals__card-deal-pill-expires">
+                                  expires {deal.expirationDate}
+                                </span>
+                              </button>
+                              <div className="make-deals__card-details">
+                                <div className="make-deals__card-detail">
+                                  <span className="make-deals__card-detail-label">MSRP Range</span>
+                                  <span className="make-deals__card-detail-value">{deal.vehicle.priceRange}</span>
+                                </div>
+                                <div className="make-deals__card-detail">
+                                  <span className="make-deals__card-detail-label">Est. off MSRP</span>
+                                  <span className="make-deals__card-detail-value">{deal.percentOffMsrp}</span>
+                                </div>
+                              </div>
+                            </>
                           ) : (
                             <>
                               {(() => {
@@ -653,7 +745,7 @@ const DealsByMakePage = () => {
                                   <p>{deal.programDescription}</p>
                                 </div>
                               </div>
-                              {!isLease && deal.targetAudience && (
+                              {!isLease && !isCash && deal.targetAudience && (
                                 <div className="make-deals__card-additional-item">
                                   <Users size={16} />
                                   <div>

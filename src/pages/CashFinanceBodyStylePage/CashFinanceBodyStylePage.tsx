@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, CarFront, Truck, Car } from 'lucide-react';
-import { getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
@@ -34,6 +34,8 @@ interface UnifiedDeal {
   programDescription: string;
   additionalInfo: { icon: string; label: string; value: string }[];
   rating: number;
+  incentiveValue?: string;
+  percentOffMsrp?: string;
 }
 
 const BODY_TABS: { key: BodyTab; label: string; icon: React.ReactNode; match: (bs: string) => boolean }[] = [
@@ -94,6 +96,22 @@ const CashFinanceBodyStylePage = () => {
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
       });
     }
+    for (const d of getCashDeals()) {
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const principal = Math.max(msrp - d.incentiveAmount, 1);
+      const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
+      const { savingsTooltip } = buildSavingsText(monthlyAfterCash, d.vehicle.bodyStyle, 'cash');
+      results.push({
+        id: d.id, dealType: 'cash', bodyStyle: d.vehicle.bodyStyle, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        estimatedMonthly: d.incentiveAmount, savingsVsAvg: `${d.percentOffMsrp} off MSRP`, savingsTooltip,
+        dealText: `${d.incentiveValue} cash back`, dealPillIcon: 'dollar',
+        details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Est. off MSRP', value: d.percentOffMsrp }, { label: 'Body Style', value: d.vehicle.bodyStyle }],
+        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
+        additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        incentiveValue: d.incentiveValue, percentOffMsrp: d.percentOffMsrp,
+      });
+    }
     return results;
   }, [getSupabaseRating]);
 
@@ -124,18 +142,30 @@ const CashFinanceBodyStylePage = () => {
     ? (() => {
         const v = activeDealObj.vehicle;
         const priceParts = v.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/);
-        return {
+        const base = {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
+          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          eventLabel: activeDealObj.programName,
+          expirationDate: activeDealObj.expirationDate,
+          eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
+        };
+        if (activeDealObj.dealType === 'cash') {
+          return {
+            ...base,
+            offerHeadline: 'Cash Back',
+            whatItMeans: activeDealObj.programDescription,
+            yourSavings: `${activeDealObj.incentiveValue} customer cash. Approximately ${activeDealObj.percentOffMsrp} off MSRP.`,
+            whoQualifies: 'Retail buyers on eligible new vehicles; see program details for restrictions.',
+          };
+        }
+        return {
+          ...base,
           offerHeadline: activeDealObj.dealText,
           whatItMeans: 'A below-market interest rate from the manufacturer that lowers your monthly payment and total cost.',
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'All buyers qualify with approved credit.',
-          eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
-          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
-          eventLabel: activeDealObj.programName,
-          expirationDate: activeDealObj.expirationDate,
         };
       })()
     : undefined;
@@ -278,8 +308,17 @@ const CashFinanceBodyStylePage = () => {
                         <div className="cfbs-deals__card-body">
                           <div className="cfbs-deals__card-payment-block">
                             <div className="cfbs-deals__card-payment">
-                              <span className="cfbs-deals__card-payment-amount">${deal.estimatedMonthly}</span>
-                              <span className="cfbs-deals__card-payment-period">/mo*</span>
+                              {deal.dealType === 'cash' ? (
+                                <>
+                                  <span className="cfbs-deals__card-payment-amount">{deal.incentiveValue}</span>
+                                  <span className="cfbs-deals__card-payment-period">Cash Back</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="cfbs-deals__card-payment-amount">${deal.estimatedMonthly}</span>
+                                  <span className="cfbs-deals__card-payment-period">/mo*</span>
+                                </>
+                              )}
                             </div>
                             <span className="cfbs-deals__card-payment-savings">
                               {deal.savingsVsAvg}
@@ -291,7 +330,7 @@ const CashFinanceBodyStylePage = () => {
                           </div>
 
                           <button className="cfbs-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="cfbs-deals__card-deal-pill-chip">Finance</span>
+                            <span className="cfbs-deals__card-deal-pill-chip">{deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
                             <span className="cfbs-deals__card-deal-pill-text">{deal.dealText}</span>
                             <span className="cfbs-deals__card-deal-pill-divider" />
                             <span className="cfbs-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>

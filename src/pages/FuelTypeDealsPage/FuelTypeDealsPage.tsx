@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, Fuel, Zap, Leaf, Droplets } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -21,7 +21,7 @@ type FuelTab = 'all' | 'gas' | 'hybrid' | 'electric' | 'diesel';
 
 interface UnifiedDeal {
   id: string;
-  dealType: 'zero-apr' | 'finance' | 'lease';
+  dealType: 'zero-apr' | 'finance' | 'lease' | 'cash';
   fuelType: string;
   vehicleName: string;
   vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; fuelType: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean };
@@ -36,6 +36,8 @@ interface UnifiedDeal {
   programDescription: string;
   additionalInfo: { icon: string; label: string; value: string }[];
   rating: number;
+  incentiveValue?: string;
+  percentOffMsrp?: string;
 }
 
 const FUEL_TABS: { key: FuelTab; label: string; icon: React.ReactNode; match: (ft: string) => boolean }[] = [
@@ -123,6 +125,22 @@ const FuelTypeDealsPage = () => {
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
       });
     }
+    for (const d of getCashDeals()) {
+      const msrp = parseMsrpMin(d.vehicle.priceRange);
+      const principal = Math.max(msrp - d.incentiveAmount, 1);
+      const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
+      const { savingsTooltip } = buildSavingsText(monthlyAfterCash, d.vehicle.bodyStyle, 'cash');
+      results.push({
+        id: d.id, dealType: 'cash', fuelType: d.vehicle.fuelType, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
+        estimatedMonthly: d.incentiveAmount, savingsVsAvg: `${d.percentOffMsrp} off MSRP`, savingsTooltip,
+        dealText: `${d.incentiveValue} cash back`, dealPillIcon: 'percent',
+        details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Est. off MSRP', value: d.percentOffMsrp }, { label: 'Fuel Type', value: d.vehicle.fuelType }],
+        expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
+        additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
+        rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        incentiveValue: d.incentiveValue, percentOffMsrp: d.percentOffMsrp,
+      });
+    }
     return results;
   }, [getSupabaseRating]);
 
@@ -153,18 +171,30 @@ const FuelTypeDealsPage = () => {
     ? (() => {
         const v = activeDealObj.vehicle;
         const priceParts = v.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/);
-        return {
+        const base = {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
+          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          eventLabel: activeDealObj.programName,
+          expirationDate: activeDealObj.expirationDate,
+          eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
+        };
+        if (activeDealObj.dealType === 'cash') {
+          return {
+            ...base,
+            offerHeadline: 'Cash Back',
+            whatItMeans: activeDealObj.programDescription,
+            yourSavings: `${activeDealObj.incentiveValue} customer cash. Approximately ${activeDealObj.percentOffMsrp} off MSRP.`,
+            whoQualifies: 'Retail buyers on eligible new vehicles; see program details for restrictions.',
+          };
+        }
+        return {
+          ...base,
           offerHeadline: activeDealObj.dealText,
           whatItMeans: `This ${activeDealObj.dealType} offer could save you significantly on your next ${activeDealObj.fuelType.toLowerCase()} vehicle.`,
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
-          eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
-          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
-          eventLabel: activeDealObj.programName,
-          expirationDate: activeDealObj.expirationDate,
         };
       })()
     : undefined;
@@ -289,7 +319,7 @@ const FuelTypeDealsPage = () => {
                                   {offersPopup.offers.map((o, idx) => (
                                     <li key={idx} className="fuel-deals__card-offers-popup-item">
                                       <span className={`fuel-deals__card-offers-popup-type fuel-deals__card-offers-popup-type--${o.type}`}>
-                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'lease' ? 'Lease' : 'Finance'}
+                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'lease' ? 'Lease' : 'Finance'}
                                       </span>
                                       <span className="fuel-deals__card-offers-popup-label">{o.label}</span>
                                       <span className="fuel-deals__card-offers-popup-exp">exp {o.expires}</span>
@@ -310,8 +340,17 @@ const FuelTypeDealsPage = () => {
                         <div className="fuel-deals__card-body">
                           <div className="fuel-deals__card-payment-block">
                             <div className="fuel-deals__card-payment">
-                              <span className="fuel-deals__card-payment-amount">${deal.estimatedMonthly}</span>
-                              <span className="fuel-deals__card-payment-period">{deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
+                              {deal.dealType === 'cash' ? (
+                                <>
+                                  <span className="fuel-deals__card-payment-amount">{deal.incentiveValue}</span>
+                                  <span className="fuel-deals__card-payment-period">Cash Back</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="fuel-deals__card-payment-amount">${deal.estimatedMonthly}</span>
+                                  <span className="fuel-deals__card-payment-period">{deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
+                                </>
+                              )}
                             </div>
                             <span className="fuel-deals__card-payment-savings">
                               {deal.savingsVsAvg}
@@ -323,7 +362,9 @@ const FuelTypeDealsPage = () => {
                           </div>
 
                           <button className="fuel-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="fuel-deals__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
+                            <span className="fuel-deals__card-deal-pill-chip">
+                              {deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Finance'}
+                            </span>
                             <span className="fuel-deals__card-deal-pill-text">{deal.dealText}</span>
                             <span className="fuel-deals__card-deal-pill-divider" />
                             <span className="fuel-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>
