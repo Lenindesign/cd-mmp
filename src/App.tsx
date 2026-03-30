@@ -45,6 +45,11 @@ const TruckDealsPage = lazy(() => import('./pages/TruckDealsPage/TruckDealsPage'
 const AllDealsPage = lazy(() => import('./pages/AllDealsPage/AllDealsPage'));
 const FuelTypeDealsPage = lazy(() => import('./pages/FuelTypeDealsPage/FuelTypeDealsPage'));
 const CashFinanceBodyStylePage = lazy(() => import('./pages/CashFinanceBodyStylePage/CashFinanceBodyStylePage'));
+const DealsByMakePage = lazy(() => import('./pages/DealsByMakePage/DealsByMakePage'));
+const DealsByMakeModelPage = lazy(() => import('./pages/DealsByMakeModelPage/DealsByMakeModelPage'));
+const LeaseDealsHubPage = lazy(() => import('./pages/LeaseDealsHubPage/LeaseDealsHubPage'));
+const LeaseByMakePage = lazy(() => import('./pages/LeaseByMakePage/LeaseByMakePage'));
+const LeaseByMakeModelPage = lazy(() => import('./pages/LeaseByMakeModelPage/LeaseByMakeModelPage'));
 
 // Compare page - lazy loaded (no auth required)
 const ComparePage = lazy(() => import('./pages/ComparePage/ComparePage'));
@@ -164,6 +169,11 @@ function App() {
             <Route path="/deals/all" element={<AllDealsPage />} />
             <Route path="/deals/fuel-type" element={<FuelTypeDealsPage />} />
             <Route path="/deals/cash-finance-body-style" element={<CashFinanceBodyStylePage />} />
+            <Route path="/:make/deals-incentives" element={<DealsByMakePage />} />
+            <Route path="/:make/:model/deals-incentives" element={<DealsByMakeModelPage />} />
+            <Route path="/lease-deals" element={<LeaseDealsHubPage />} />
+            <Route path="/:make/lease-deals" element={<LeaseByMakePage />} />
+            <Route path="/:make/:model/lease-deals" element={<LeaseByMakeModelPage />} />
             
             {/* Audit Pages */}
             <Route path="/audit/cards" element={<CardAudit />} />

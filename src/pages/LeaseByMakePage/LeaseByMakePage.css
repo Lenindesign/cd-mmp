@@ -1,11 +1,11 @@
-/* Zero APR Deals Page */
-.zero-apr-page {
+/* Lease deals by make */
+.make-lease {
   min-height: 100vh;
   background: var(--color-gray-50);
 }
 
 /* Hero Section */
-.zero-apr-page__hero {
+.make-lease__hero {
   background: var(--gradient-dark);
   color: var(--color-white);
   padding: var(--spacing-12) 0;
@@ -13,33 +13,33 @@
   overflow: hidden;
 }
 
-.zero-apr-page__hero::before {
-  content: '0%';
+.make-lease__hero::before {
+  content: '$';
   position: absolute;
   top: 50%;
   right: 5%;
   transform: translateY(-50%);
   font-family: var(--font-heading);
-  font-size: 280px;
+  font-size: 320px;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.03);
   line-height: 1;
   pointer-events: none;
-  animation: zeroAprFloat 3s ease-in-out infinite;
+  animation: makeDealsFloat 3s ease-in-out infinite;
 }
 
-@keyframes zeroAprFloat {
+@keyframes makeDealsFloat {
   0%, 100% { transform: translateY(-50%); }
   50% { transform: translateY(calc(-50% - 12px)); }
 }
 
 @media (max-width: 900px) {
-  .zero-apr-page__hero::before {
+  .make-lease__hero::before {
     display: none;
   }
 }
 
-.zero-apr-page__hero::after {
+.make-lease__hero::after {
   content: '';
   position: absolute;
   top: 0;
@@ -51,13 +51,13 @@
   pointer-events: none;
 }
 
-.zero-apr-page__hero-content {
+.make-lease__hero-content {
   position: relative;
   z-index: 1;
   max-width: 800px;
 }
 
-.zero-apr-page__breadcrumb {
+.make-lease__breadcrumb {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -67,22 +67,22 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.zero-apr-page__breadcrumb a {
+.make-lease__breadcrumb a {
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: color 0.15s;
 }
 
-.zero-apr-page__breadcrumb a:hover {
+.make-lease__breadcrumb a:hover {
   color: #ffffff;
 }
 
-.zero-apr-page__breadcrumb-sep {
+.make-lease__breadcrumb-sep {
   color: rgba(255, 255, 255, 0.4);
   font-size: 11px;
 }
 
-.zero-apr-page__hero-badge {
+.make-lease__hero-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -97,17 +97,7 @@
   letter-spacing: 1px;
 }
 
-.zero-apr-page__hero-badge-text {
-  background: var(--color-success);
-  color: var(--color-white);
-  padding: 2px 8px;
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-extrabold);
-  letter-spacing: 0.5px;
-}
-
-.zero-apr-page__title {
+.make-lease__title {
   font-family: var(--font-heading);
   font-size: clamp(32px, 5vw, 48px);
   font-weight: var(--font-weight-extrabold);
@@ -116,7 +106,7 @@
   letter-spacing: -0.5px;
 }
 
-.zero-apr-page__description {
+.make-lease__description {
   font-family: var(--font-body);
   font-size: var(--font-size-lg);
   line-height: 1.6;
@@ -125,8 +115,7 @@
   max-width: 650px;
 }
 
-/* Hero Stats */
-.zero-apr-page__hero-stats {
+.make-lease__hero-stats {
   display: flex;
   gap: var(--spacing-8);
   margin-top: var(--spacing-6);
@@ -134,13 +123,13 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.zero-apr-page__hero-stat {
+.make-lease__hero-stat {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
 }
 
-.zero-apr-page__hero-stat-value {
+.make-lease__hero-stat-value {
   font-family: var(--font-heading);
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-extrabold);
@@ -148,7 +137,7 @@
   line-height: 1;
 }
 
-.zero-apr-page__hero-stat-label {
+.make-lease__hero-stat-label {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: rgba(255, 255, 255, 0.7);
@@ -157,7 +146,7 @@
 }
 
 /* Filter Toolbar */
-.zero-apr-page__toolbar {
+.make-lease__toolbar {
   background: var(--color-white);
   border-bottom: 1px solid var(--color-gray-200);
   position: sticky;
@@ -165,7 +154,7 @@
   z-index: 50;
 }
 
-.zero-apr-page__toolbar-inner {
+.make-lease__toolbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -173,14 +162,14 @@
   padding-bottom: var(--spacing-3);
 }
 
-.zero-apr-page__toolbar-count {
+.make-lease__toolbar-count {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: var(--color-gray-600);
   font-weight: var(--font-weight-medium);
 }
 
-.zero-apr-page__filter-btn {
+.make-lease__toolbar-filter-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -196,24 +185,24 @@
   transition: all var(--transition-fast);
 }
 
-.zero-apr-page__filter-btn:hover {
+.make-lease__toolbar-filter-btn:hover {
   border-color: var(--color-blue-cobalt);
   color: var(--color-blue-cobalt);
 }
 
-.zero-apr-page__filter-btn--active {
+.make-lease__toolbar-filter-btn--active {
   border-color: var(--color-blue-cobalt);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
-.zero-apr-page__filter-btn--active:hover {
+.make-lease__toolbar-filter-btn--active:hover {
   background: var(--color-blue-cobalt-dark);
   border-color: var(--color-blue-cobalt-dark);
   color: var(--color-white);
 }
 
-.zero-apr-page__filter-badge {
+.make-lease__toolbar-filter-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -228,28 +217,82 @@
   line-height: 1;
 }
 
+/* Deal Type Filter Bar */
+.make-lease__filter-bar {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding: var(--spacing-4) 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.make-lease__filters {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.make-lease__filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  height: 38px;
+  padding: 0 var(--spacing-4);
+  background: var(--color-gray-100);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-full);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.make-lease__filter-btn:hover {
+  background: var(--color-gray-200);
+  color: var(--color-black);
+}
+
+.make-lease__filter-btn--active {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  border-color: var(--color-blue-cobalt);
+}
+
+.make-lease__filter-btn--active:hover {
+  background: var(--color-blue-cobalt-dark, #155a8a);
+  color: var(--color-white);
+}
+
 /* Main Content */
-.zero-apr-page__content {
+.make-lease__content {
   padding: var(--spacing-8) 0;
 }
 
-.zero-apr-page__layout {
+.make-lease__layout {
   display: flex;
   gap: var(--spacing-8);
 }
 
-.zero-apr-page__main {
+.make-lease__main {
   flex: 1;
   min-width: 0;
 }
 
-.zero-apr-page__sidebar {
+.make-lease__sidebar {
   flex-shrink: 0;
   width: 300px;
 }
 
-/* Section Title */
-.zero-apr-page__section-title {
+/* Section */
+.make-lease__section {
+  margin-bottom: var(--spacing-12);
+}
+
+.make-lease__section-title {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
@@ -262,23 +305,19 @@
   letter-spacing: 0.5px;
 }
 
-.zero-apr-page__section-title svg {
+.make-lease__section-title svg {
   color: var(--color-blue-cobalt);
   flex-shrink: 0;
 }
 
 /* Deals Grid */
-.zero-apr-page__deals-section {
-  margin-bottom: var(--spacing-12);
-}
-
-.zero-apr-page__grid {
+.make-lease__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-6);
 }
 
-.zero-apr-page__empty-state {
+.make-lease__empty-state {
   grid-column: 1 / -1;
   text-align: center;
   padding: 48px 24px;
@@ -287,7 +326,7 @@
   margin: 24px 0;
 }
 
-.zero-apr-page__empty-state-text {
+.make-lease__empty-state-text {
   font-family: var(--font-body);
   font-size: 16px;
   color: var(--color-gray-600);
@@ -295,7 +334,7 @@
   line-height: 1.5;
 }
 
-.zero-apr-page__empty-state-link {
+.make-lease__empty-state-link {
   display: inline-block;
   padding: 10px 24px;
   background: var(--color-blue-cobalt);
@@ -308,12 +347,12 @@
   transition: background 0.15s;
 }
 
-.zero-apr-page__empty-state-link:hover {
+.make-lease__empty-state-link:hover {
   background: var(--color-blue-dark, #1a3a5c);
 }
 
 /* Deal Card */
-.zero-apr-page__card {
+.make-lease__card {
   background: var(--color-white);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--color-gray-200);
@@ -323,12 +362,10 @@
   transition: box-shadow var(--transition-fast);
 }
 
-.zero-apr-page__card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
+.make-lease__card:hover { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
 
-/* Card Header: name + rating */
-.zero-apr-page__card-header {
+/* Card Header */
+.make-lease__card-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -336,9 +373,9 @@
   padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
 }
 
-.zero-apr-page__card-name-link { text-decoration: none; color: inherit; }
+.make-lease__card-name-link { text-decoration: none; color: inherit; }
 
-.zero-apr-page__card-name {
+.make-lease__card-name {
   font-family: var(--font-heading);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-extrabold);
@@ -347,23 +384,23 @@
   line-height: 1.2;
 }
 
-.zero-apr-page__card-rating { text-align: right; flex-shrink: 0; line-height: 1; }
+.make-lease__card-rating { text-align: right; flex-shrink: 0; line-height: 1; }
 
-.zero-apr-page__card-rating-value {
+.make-lease__card-rating-value {
   font-family: var(--font-heading);
   font-size: 28px;
   font-weight: var(--font-weight-extrabold);
   color: var(--color-dark);
 }
 
-.zero-apr-page__card-rating-max {
+.make-lease__card-rating-max {
   font-family: var(--font-heading);
   font-size: 14px;
   font-weight: var(--font-weight-bold);
   color: var(--color-gray-500);
 }
 
-.zero-apr-page__card-rating-label {
+.make-lease__card-rating-label {
   display: block;
   font-family: var(--font-heading);
   font-size: 9px;
@@ -374,9 +411,9 @@
 }
 
 /* Card Image */
-.zero-apr-page__card-image-link { display: block; text-decoration: none; }
+.make-lease__card-image-link { display: block; text-decoration: none; }
 
-.zero-apr-page__card-image-container {
+.make-lease__card-image-container {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 10;
@@ -384,17 +421,17 @@
   background: var(--color-gray-100);
 }
 
-.zero-apr-page__card-image {
+.make-lease__card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-normal);
 }
 
-.zero-apr-page__card:hover .zero-apr-page__card-image { transform: scale(1.04); }
+.make-lease__card:hover .make-lease__card-image { transform: scale(1.04); }
 
 /* Save button */
-.zero-apr-page__card-save {
+.make-lease__card-save {
   position: absolute;
   top: 8px;
   left: 8px;
@@ -414,11 +451,11 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-.zero-apr-page__card-save:hover { background: var(--color-white); color: var(--color-blue-cobalt); transform: scale(1.1); }
-.zero-apr-page__card-save--saved { color: var(--color-blue-cobalt); background: var(--color-white); }
+.make-lease__card-save:hover { background: var(--color-white); color: var(--color-blue-cobalt); transform: scale(1.1); }
+.make-lease__card-save--saved { color: var(--color-blue-cobalt); background: var(--color-white); }
 
 /* "Offers Available" tag */
-.zero-apr-page__card-offers-tag {
+.make-lease__card-offers-tag {
   position: absolute;
   bottom: 8px;
   left: 8px;
@@ -437,11 +474,8 @@
   transition: background var(--transition-fast);
 }
 
-.zero-apr-page__card-offers-tag:hover {
-  background: #15803d;
-}
-
-.zero-apr-page__card-offers-popup {
+/* Offers popup */
+.make-lease__card-offers-popup {
   position: absolute;
   bottom: 40px;
   left: 8px;
@@ -451,13 +485,13 @@
   border-radius: var(--border-radius-md);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   overflow: hidden;
-  animation: offers-popup-in 0.15s ease-out;
+  animation: make-lease-offers-popup-in 0.15s ease-out;
 }
-@keyframes offers-popup-in {
+@keyframes make-lease-offers-popup-in {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.zero-apr-page__card-offers-popup-header {
+.make-lease__card-offers-popup-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -467,7 +501,7 @@
   font-size: 12px;
   color: var(--color-dark);
 }
-.zero-apr-page__card-offers-popup-close {
+.make-lease__card-offers-popup-close {
   background: none;
   border: none;
   font-size: 18px;
@@ -476,15 +510,15 @@
   cursor: pointer;
   padding: 0 2px;
 }
-.zero-apr-page__card-offers-popup-close:hover {
+.make-lease__card-offers-popup-close:hover {
   color: var(--color-dark);
 }
-.zero-apr-page__card-offers-popup-list {
+.make-lease__card-offers-popup-list {
   list-style: none;
   margin: 0;
   padding: 6px 0;
 }
-.zero-apr-page__card-offers-popup-item {
+.make-lease__card-offers-popup-item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -493,10 +527,10 @@
   font-size: 12px;
   color: var(--color-gray-700);
 }
-.zero-apr-page__card-offers-popup-item:hover {
+.make-lease__card-offers-popup-item:hover {
   background: var(--color-gray-50);
 }
-.zero-apr-page__card-offers-popup-type {
+.make-lease__card-offers-popup-type {
   display: inline-block;
   padding: 2px 6px;
   border-radius: 3px;
@@ -508,11 +542,23 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
-.zero-apr-page__card-offers-popup-type--zero-apr { background: #dcfce7; color: #166534; }
-.zero-apr-page__card-offers-popup-type--cash { background: #fef3c7; color: #92400e; }
-.zero-apr-page__card-offers-popup-type--finance { background: #e0e7ff; color: #3730a3; }
-.zero-apr-page__card-offers-popup-type--lease { background: #dbeafe; color: #1e40af; }
-.zero-apr-page__card-offers-popup-label {
+.make-lease__card-offers-popup-type--zero-apr {
+  background: #dcfce7;
+  color: #166534;
+}
+.make-lease__card-offers-popup-type--cash {
+  background: #fef3c7;
+  color: #92400e;
+}
+.make-lease__card-offers-popup-type--finance {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.make-lease__card-offers-popup-type--lease {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.make-lease__card-offers-popup-label {
   flex: 1;
   font-weight: var(--font-weight-medium);
   color: var(--color-dark);
@@ -520,7 +566,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.zero-apr-page__card-offers-popup-exp {
+.make-lease__card-offers-popup-exp {
   font-size: 10px;
   color: var(--color-gray-400);
   white-space: nowrap;
@@ -528,7 +574,7 @@
 }
 
 /* Accolade badges on image */
-.zero-apr-page__card-badges {
+.make-lease__card-badges {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -537,7 +583,7 @@
   z-index: 2;
 }
 
-.zero-apr-page__card-badge-img {
+.make-lease__card-badge-img {
   display: block;
   width: 28px;
   height: 28px;
@@ -552,7 +598,7 @@
 }
 
 /* Card Body */
-.zero-apr-page__card-body {
+.make-lease__card-body {
   padding: 0 var(--spacing-4) var(--spacing-4);
   display: flex;
   flex-direction: column;
@@ -560,7 +606,7 @@
 }
 
 /* Payment block */
-.zero-apr-page__card-payment-block {
+.make-lease__card-payment-block {
   background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-3) var(--spacing-4);
@@ -568,14 +614,14 @@
   text-align: center;
 }
 
-.zero-apr-page__card-payment {
+.make-lease__card-payment {
   display: flex;
   align-items: baseline;
   justify-content: center;
   gap: 2px;
 }
 
-.zero-apr-page__card-payment-amount {
+.make-lease__card-payment-amount {
   font-family: var(--font-heading);
   font-size: 32px;
   font-weight: var(--font-weight-extrabold);
@@ -583,14 +629,14 @@
   line-height: 1;
 }
 
-.zero-apr-page__card-payment-period {
+.make-lease__card-payment-period {
   font-family: var(--font-heading);
   font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-600);
 }
 
-.zero-apr-page__card-payment-savings {
+.make-lease__card-payment-savings {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -602,23 +648,23 @@
   margin-top: 2px;
 }
 
-.zero-apr-page__card-tooltip-wrap {
+.make-lease__card-tooltip-wrap {
   position: relative;
   display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
 
-.zero-apr-page__card-tooltip-icon {
+.make-lease__card-tooltip-icon {
   color: var(--color-gray-400);
   flex-shrink: 0;
 }
 
-.zero-apr-page__card-tooltip-wrap:hover .zero-apr-page__card-tooltip-icon {
+.make-lease__card-tooltip-wrap:hover .make-lease__card-tooltip-icon {
   color: var(--color-gray-600);
 }
 
-.zero-apr-page__card-tooltip {
+.make-lease__card-tooltip {
   display: none;
   position: absolute;
   bottom: calc(100% + 8px);
@@ -637,7 +683,7 @@
   pointer-events: none;
 }
 
-.zero-apr-page__card-tooltip::after {
+.make-lease__card-tooltip::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -647,21 +693,21 @@
   border-top-color: var(--color-white);
 }
 
-.zero-apr-page__card-tooltip-wrap:hover .zero-apr-page__card-tooltip {
+.make-lease__card-tooltip-wrap:hover .make-lease__card-tooltip {
   display: block;
 }
 
-.zero-apr-page__card-tooltip-wrap:hover {
+.make-lease__card-tooltip-wrap:hover {
   z-index: 100;
 }
 
-.zero-apr-page__card:has(.zero-apr-page__card-tooltip-wrap:hover) {
+.make-lease__card:has(.make-lease__card-tooltip-wrap:hover) {
   z-index: 100;
   overflow: visible;
 }
 
 /* Deal pill */
-.zero-apr-page__card-deal-pill {
+.make-lease__card-deal-pill {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -676,9 +722,9 @@
   width: 100%;
 }
 
-.zero-apr-page__card-deal-pill:hover { border-color: var(--color-success); background: #f0fdf4; }
+.make-lease__card-deal-pill:hover { border-color: var(--color-success); background: #f0fdf4; }
 
-.zero-apr-page__card-deal-pill-icon {
+.make-lease__card-deal-pill-icon {
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -690,7 +736,7 @@
   flex-shrink: 0;
 }
 
-.zero-apr-page__card-deal-pill-chip {
+.make-lease__card-deal-pill-chip {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
@@ -705,9 +751,9 @@
   flex-shrink: 0;
 }
 
-.zero-apr-page__card-deal-pill-icon svg { width: 12px; height: 12px; }
+.make-lease__card-deal-pill-icon svg { width: 12px; height: 12px; }
 
-.zero-apr-page__card-deal-pill-text {
+.make-lease__card-deal-pill-text {
   font-family: var(--font-heading);
   font-size: 12px;
   font-weight: var(--font-weight-bold);
@@ -715,14 +761,14 @@
   white-space: nowrap;
 }
 
-.zero-apr-page__card-deal-pill-divider {
+.make-lease__card-deal-pill-divider {
   width: 1px;
   height: 14px;
   background: var(--color-gray-300);
   flex-shrink: 0;
 }
 
-.zero-apr-page__card-deal-pill-expires {
+.make-lease__card-deal-pill-expires {
   font-family: var(--font-body);
   font-size: 11px;
   color: var(--color-gray-500);
@@ -730,19 +776,19 @@
 }
 
 /* Detail grid */
-.zero-apr-page__card-details {
+.make-lease__card-details {
   display: flex;
   gap: var(--spacing-4);
   margin-bottom: var(--spacing-3);
 }
 
-.zero-apr-page__card-detail {
+.make-lease__card-detail {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.zero-apr-page__card-detail-label {
+.make-lease__card-detail-label {
   font-family: var(--font-body);
   font-size: 11px;
   color: var(--color-gray-500);
@@ -750,7 +796,7 @@
   letter-spacing: 0.3px;
 }
 
-.zero-apr-page__card-detail-value {
+.make-lease__card-detail-value {
   font-family: var(--font-heading);
   font-size: 14px;
   font-weight: var(--font-weight-extrabold);
@@ -759,7 +805,7 @@
 }
 
 /* CTA */
-.zero-apr-page__card-cta {
+.make-lease__card-cta {
   display: block;
   width: 100%;
   padding: var(--spacing-3);
@@ -778,10 +824,10 @@
   transition: background var(--transition-fast);
 }
 
-.zero-apr-page__card-cta:hover { background: var(--color-blue-cobalt-dark); }
+.make-lease__card-cta:hover { background: var(--color-blue-cobalt-dark); }
 
 /* Expand toggle */
-.zero-apr-page__card-toggle {
+.make-lease__card-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -803,10 +849,10 @@
   transition: color var(--transition-fast);
 }
 
-.zero-apr-page__card-toggle:hover { color: var(--color-blue-cobalt); }
+.make-lease__card-toggle:hover { color: var(--color-blue-cobalt); }
 
-/* Additional Details Content */
-.zero-apr-page__card-additional {
+/* Additional Details */
+.make-lease__card-additional {
   margin-top: var(--spacing-3);
   padding-top: var(--spacing-3);
   border-top: 1px solid var(--color-gray-100);
@@ -815,19 +861,19 @@
   gap: var(--spacing-3);
 }
 
-.zero-apr-page__card-additional-item {
+.make-lease__card-additional-item {
   display: flex;
   gap: var(--spacing-2);
   align-items: flex-start;
 }
 
-.zero-apr-page__card-additional-item svg {
+.make-lease__card-additional-item svg {
   flex-shrink: 0;
   color: var(--color-blue-cobalt);
   margin-top: 2px;
 }
 
-.zero-apr-page__card-additional-item strong {
+.make-lease__card-additional-item strong {
   display: block;
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
@@ -836,7 +882,7 @@
   margin-bottom: 2px;
 }
 
-.zero-apr-page__card-additional-item p {
+.make-lease__card-additional-item p {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: var(--color-gray-600);
@@ -844,80 +890,18 @@
   line-height: 1.5;
 }
 
-/* FAQ Section */
-.zero-apr-page__faq-section {
-  margin-bottom: var(--spacing-12);
-}
-
-.zero-apr-page__faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-}
-
-.zero-apr-page__faq-item {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  transition: all var(--transition-fast);
-}
-
-.zero-apr-page__faq-item--expanded {
-  border-color: var(--color-blue-cobalt);
-  box-shadow: 0 2px 12px rgba(27, 95, 138, 0.1);
-}
-
-.zero-apr-page__faq-question {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: var(--spacing-4) var(--spacing-5);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-black);
-  text-align: left;
-  transition: color var(--transition-fast);
-}
-
-.zero-apr-page__faq-question:hover {
-  color: var(--color-blue-cobalt);
-}
-
-.zero-apr-page__faq-question svg {
-  flex-shrink: 0;
-  color: var(--color-gray-500);
-}
-
-.zero-apr-page__faq-answer {
-  padding: 0 var(--spacing-5) var(--spacing-4);
-}
-
-.zero-apr-page__faq-answer p {
-  font-family: 'Lora', Georgia, serif;
-  font-size: var(--font-size-base);
-  color: var(--color-gray-700);
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* Internal Links Section */
-.zero-apr-page__links-section {
+/* Internal Links */
+.make-lease__links-section {
   margin-bottom: var(--spacing-10);
 }
 
-.zero-apr-page__links-grid {
+.make-lease__links-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-4);
 }
 
-.zero-apr-page__link-card {
+.make-lease__link-card {
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
@@ -926,13 +910,13 @@
   transition: all var(--transition-fast);
 }
 
-.zero-apr-page__link-card:hover {
+.make-lease__link-card:hover {
   border-color: var(--color-blue-cobalt);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
-.zero-apr-page__link-card h3 {
+.make-lease__link-card h3 {
   font-family: var(--font-heading);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
@@ -941,11 +925,11 @@
   transition: color var(--transition-fast);
 }
 
-.zero-apr-page__link-card:hover h3 {
+.make-lease__link-card:hover h3 {
   color: var(--color-blue-cobalt);
 }
 
-.zero-apr-page__link-card p {
+.make-lease__link-card p {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: var(--color-gray-500);
@@ -955,181 +939,82 @@
 
 /* Responsive */
 @media (max-width: 1200px) {
-  .zero-apr-page__sidebar {
+  .make-lease__sidebar {
     display: none;
   }
 }
 
 @media (max-width: 992px) {
-  .zero-apr-page__grid {
+  .make-lease__grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .zero-apr-page__links-grid {
+  .make-lease__links-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .zero-apr-page__hero {
+  .make-lease__hero {
     padding: var(--spacing-8) 0;
   }
 
-  .zero-apr-page__title {
+  .make-lease__title {
     font-size: var(--font-size-3xl);
   }
 
-  .zero-apr-page__grid {
+  .make-lease__grid {
     grid-template-columns: 1fr;
   }
 
-  .zero-apr-page__links-grid {
+  .make-lease__links-grid {
     grid-template-columns: 1fr;
   }
 
-  .zero-apr-page__hero-stats {
+  .make-lease__hero-stats {
     gap: var(--spacing-5);
   }
 
-  .zero-apr-page__hero-stat-value {
+  .make-lease__hero-stat-value {
     font-size: var(--font-size-2xl);
   }
-}
 
-@media (max-width: 480px) {
-  .zero-apr-page__title {
-    font-size: var(--font-size-28, 28px);
+  .make-lease__filters {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
-  .zero-apr-page__description {
-    font-size: var(--font-size-base);
-  }
-
-  .zero-apr-page__section-title {
-    font-size: var(--font-size-xl);
-  }
-
-  .zero-apr-page__card-header {
-    flex-direction: column;
-  }
-
-  .zero-apr-page__card-rating {
-    flex-direction: row;
-    text-align: left;
-  }
-
-  .zero-apr-page__card-rating-label {
-    width: auto;
-    margin-left: var(--spacing-2);
-  }
-
-  .zero-apr-page__card-details {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .zero-apr-page__apr-tab-count {
+  .make-lease__filters::-webkit-scrollbar {
     display: none;
   }
 }
 
-/* APR Tabs */
-.zero-apr-page__apr-tabs {
-  display: flex;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-6);
-  padding-bottom: var(--spacing-4);
-  border-bottom: 2px solid var(--color-gray-200);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.zero-apr-page__apr-tab {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-4);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-full);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-600);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.zero-apr-page__apr-tab:hover {
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-blue-cobalt);
-}
-
-.zero-apr-page__apr-tab--active {
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-white);
-}
-
-.zero-apr-page__apr-tab--active svg {
-  color: var(--color-white);
-}
-
-.zero-apr-page__apr-tab--empty {
-  opacity: 0.5;
-}
-
-.zero-apr-page__apr-tab-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 10px;
-  background: var(--color-gray-100);
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-600);
-}
-
-.zero-apr-page__apr-tab--active .zero-apr-page__apr-tab-count {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--color-white);
-}
-
-/* APR badge on card image */
-.zero-apr-page__card-apr-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 3;
-  padding: 3px 10px;
-  border-radius: var(--border-radius-full);
-  font-family: var(--font-heading);
-  font-size: 10px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: rgba(0, 0, 0, 0.7);
-  color: var(--color-white);
-  backdrop-filter: blur(4px);
-}
-
-.zero-apr-page__card-apr-badge--zero {
-  background: var(--color-success);
-  color: var(--color-white);
-}
-
-@media (max-width: 768px) {
-  .zero-apr-page__apr-tabs {
-    gap: var(--spacing-1);
-    padding-bottom: var(--spacing-3);
+@media (max-width: 480px) {
+  .make-lease__title {
+    font-size: var(--font-size-28, 28px);
   }
 
-  .zero-apr-page__apr-tab {
-    padding: var(--spacing-2) var(--spacing-3);
-    font-size: var(--font-size-xs);
+  .make-lease__description {
+    font-size: var(--font-size-base);
+  }
+
+  .make-lease__section-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .make-lease__card-header {
+    flex-direction: column;
+  }
+
+  .make-lease__card-rating {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .make-lease__card-rating-label {
+    width: auto;
+    margin-left: var(--spacing-2);
   }
 }

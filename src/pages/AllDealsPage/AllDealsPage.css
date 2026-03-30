@@ -124,6 +124,7 @@
 .all-deals__type-btn--active:hover {
   background: var(--color-blue-cobalt-dark);
   border-color: var(--color-blue-cobalt-dark);
+  color: var(--color-white);
 }
 
 .all-deals__type-count {
