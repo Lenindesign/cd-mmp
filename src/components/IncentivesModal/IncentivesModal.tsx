@@ -84,7 +84,7 @@ const formatCurrency = (n: number) =>
 const formatMsrp = (min: number, max: number) => `MSRP ${formatCurrency(min)} - ${formatCurrency(max)}`;
 
 const getOfferRowChipLabel = (type: Incentive['type']): string =>
-  type === 'lease' ? 'Lease' : type === 'cash' ? 'Cash' : 'Finance';
+  type === 'lease' ? 'Lease' : type === 'cash' ? 'Buy' : 'Finance';
 
 const EXPERT_TIPS: Record<Incentive['type'], string> = {
   finance: "Low-rate financing deals can beat cash rebates if you qualify\u2014always compare the total interest saved vs. the rebate you\u2019re giving up before deciding.",
@@ -513,10 +513,11 @@ const IncentivesModal = ({
 
                       {(() => {
                         const elig = getEligibilityInfo(activeIncentive);
+                        if (!elig.restricted) return null;
                         return (
-                          <div className={`incentives-modal__v5-eligibility-box ${elig.restricted ? 'incentives-modal__v5-eligibility-box--restricted' : ''}`}>
+                          <div className="incentives-modal__v5-eligibility-box incentives-modal__v5-eligibility-box--restricted">
                             <div className="incentives-modal__v5-eligibility-header">
-                              {elig.restricted ? <ShieldCheck size={16} /> : <img src="https://app.blackbookinformation.com/app/assets/img/Verified.svg" alt="" width={16} height={16} aria-hidden="true" />}
+                              <ShieldCheck size={16} />
                               <span className="incentives-modal__v5-eligibility-title">
                                 {elig.label}
                               </span>
@@ -561,8 +562,15 @@ const IncentivesModal = ({
 
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.description}</p>
+                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                         </div>
+
+                        {activeIncentive.programRules && (
+                          <div className="incentives-modal__v5-key-section">
+                            <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
+                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules}</p>
+                          </div>
+                        )}
 
                         {activeIncentive.terms && (
                           <div className="incentives-modal__v5-key-section">
@@ -771,10 +779,11 @@ const IncentivesModal = ({
 
                       {(() => {
                         const elig = getEligibilityInfo(activeIncentive);
+                        if (!elig.restricted) return null;
                         return (
-                          <div className={`incentives-modal__v5-eligibility-box ${elig.restricted ? 'incentives-modal__v5-eligibility-box--restricted' : ''}`}>
+                          <div className="incentives-modal__v5-eligibility-box incentives-modal__v5-eligibility-box--restricted">
                             <div className="incentives-modal__v5-eligibility-header">
-                              {elig.restricted ? <ShieldCheck size={16} /> : <img src="https://app.blackbookinformation.com/app/assets/img/Verified.svg" alt="" width={16} height={16} aria-hidden="true" />}
+                              <ShieldCheck size={16} />
                               <span className="incentives-modal__v5-eligibility-title">
                                 {elig.label}
                               </span>
@@ -817,8 +826,16 @@ const IncentivesModal = ({
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.description}</p>
+                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                         </div>
+
+                        {activeIncentive.programRules && (
+                          <div className="incentives-modal__v5-key-section">
+                            <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
+                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules}</p>
+                          </div>
+                        )}
+
                         {activeIncentive.terms && (
                           <div className="incentives-modal__v5-key-section">
                             <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>

@@ -24,6 +24,7 @@ export interface Incentive {
   eligibility?: string;
   programName?: string;
   programDescription?: string;
+  programRules?: string;
   groupAffiliation?: GroupAffiliation;
 }
 
@@ -50,7 +51,8 @@ const incentivesData: Record<string, VehicleIncentives> = {
         expirationDate: 'January 2, 2026',
         terms: 'Cannot be combined with special financing. Take delivery by expiration date.',
         programName: 'Customer Cash',
-        programDescription: 'GM Customer Cash Allowance',
+        programDescription: 'Acura US 2026 ADX Sales Credit',
+        programRules: '[Eligibility] Offer will apply towards Cap Cost Reduction or Down Payment Assistance with the lease or purchase of a new and not previously reported sold Acura vehicle. Cannot be combined with special APR financing or special lease incentives, zero-due down, certified pre-owned financing or certain American Acura Finance Corporation lease/finance cash offers. Not redeemable for cash. Not all customers will qualify. Incentive paid by American Acura Motor Co., Inc. See participating dealers for details.',
         groupAffiliation: 'everyone',
       },
       {
@@ -86,10 +88,10 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$299/month',
         expirationDate: 'January 2, 2026',
         terms: '24-month lease, 10,000 miles/year. $0.25/mile over. No security deposit.',
-        eligibility: 'For eligible current lessees.',
         programName: 'GM Lease Program',
-        programDescription: 'GM Ultra Low-Mileage Lease',
-        groupAffiliation: 'loyalty',
+        programDescription: 'Acura US Special Lease Rates',
+        programRules: '[Eligibility] Residents residing in qualifying regions of the United States.; [Qualification] O.A.C. New and unregistered vehicles only are eligible.',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'chevy-trax-military',

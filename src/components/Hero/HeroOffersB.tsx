@@ -20,7 +20,7 @@ const getChipLabel = (type: Incentive['type']) => {
   switch (type) {
     case 'finance': return 'Buy';
     case 'lease': return 'Lease';
-    case 'cash': return 'Cash';
+    case 'cash': return 'Buy';
     default: return type;
   }
 };
