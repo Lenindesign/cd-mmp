@@ -90,6 +90,7 @@ const EXPERT_TIPS: Record<Incentive['type'], string> = {
   finance: "Low-rate financing deals can beat cash rebates if you qualify\u2014always compare the total interest saved vs. the rebate you\u2019re giving up before deciding.",
   cash: "Cash incentives can lower the purchase price significantly\u2014especially valuable if you\u2019re paying upfront or securing financing outside the dealership.",
   lease: "Lease incentives work best if you prefer lower monthly payments and driving a new car every few years, but pay close attention to mileage limits and end-of-lease fees to avoid surprises.",
+  special: "Special incentives like military, college grad, or loyalty bonuses can stack with other offers\u2014ask the dealer which programs you qualify for to maximize your savings.",
 };
 
 const getExpertTip = (inc: Incentive): string => EXPERT_TIPS[inc.type] ?? (inc.terms || inc.description);
