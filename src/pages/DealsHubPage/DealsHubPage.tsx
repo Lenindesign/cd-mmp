@@ -6,7 +6,7 @@ import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
@@ -437,7 +437,7 @@ const DealsHubPage = () => {
           yourSavings: activeDeal.savingsNote,
           whoQualifies: activeDeal.whoQualifies,
           eligibleTrims: activeDeal.trimsEligible,
-          dontWaitText: `This offer expires ${activeDeal.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDeal.programName,
           expirationDate: activeDeal.expirationDate,
         };
@@ -615,7 +615,7 @@ const DealsHubPage = () => {
                                       {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                     </span>
                                     <span className="deals-hub__card-offers-popup-label">{o.label}</span>
-                                    <span className="deals-hub__card-offers-popup-exp">exp {o.expires}</span>
+                                    <span className="deals-hub__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                   </li>
                                 ))}
                               </ul>
@@ -654,7 +654,7 @@ const DealsHubPage = () => {
                           <span className="deals-hub__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
                           <span className="deals-hub__card-deal-pill-text">{deal.dealText}</span>
                           <span className="deals-hub__card-deal-pill-divider" />
-                          <span className="deals-hub__card-deal-pill-expires">expires {deal.expirationDate.replace(/April/, '4/1/').replace(/, /, '').replace(/20(\d{2})/, '$1')}</span>
+                          <span className="deals-hub__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                         </button>
 
                         {/* Detail grid */}

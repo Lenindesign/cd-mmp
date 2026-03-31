@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -169,7 +169,7 @@ const CashFinanceDealsPage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: activeDealObj.trimsEligible,
@@ -337,7 +337,7 @@ const CashFinanceDealsPage = () => {
                                           {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                         </span>
                                         <span className="cf-deals-page__card-offers-popup-label">{o.label}</span>
-                                        <span className="cf-deals-page__card-offers-popup-exp">exp {o.expires}</span>
+                                        <span className="cf-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                       </li>
                                     ))}
                                   </ul>
@@ -404,7 +404,7 @@ const CashFinanceDealsPage = () => {
                                 {isCash ? `${deal.incentiveValue} cash back` : `${deal.apr} APR for ${deal.term}`}
                               </span>
                               <span className="cf-deals-page__card-deal-pill-divider" />
-                              <span className="cf-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                              <span className="cf-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                             </button>
 
                             <div className="cf-deals-page__card-details">
@@ -461,7 +461,7 @@ const CashFinanceDealsPage = () => {
                                   <Clock size={16} />
                                   <div>
                                     <strong>Offer Expires</strong>
-                                    <p>{deal.expirationDate}</p>
+                                    <p>{formatExpiration(deal.expirationDate)}</p>
                                   </div>
                                 </div>
                               </div>

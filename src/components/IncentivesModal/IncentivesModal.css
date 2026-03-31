@@ -379,6 +379,14 @@
   letter-spacing: 0.3px;
 }
 
+.incentives-modal__v5-eligibility-program {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gray-600);
+  margin: 4px 0 2px;
+  letter-spacing: 0.2px;
+}
+
 .incentives-modal__v5-eligibility-text {
   font-size: 13px;
   line-height: 1.5;

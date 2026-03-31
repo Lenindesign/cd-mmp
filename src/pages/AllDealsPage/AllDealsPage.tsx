@@ -4,7 +4,7 @@ import { ChevronUp, ChevronDown, SlidersHorizontal, Heart, Info } from 'lucide-r
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
@@ -275,7 +275,7 @@ const AllDealsPage = () => {
           yourSavings: activeDeal.savingsNote,
           whoQualifies: activeDeal.whoQualifies,
           eligibleTrims: activeDeal.trimsEligible,
-          dontWaitText: `This offer expires ${activeDeal.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDeal.programName,
           expirationDate: activeDeal.expirationDate,
         };
@@ -409,7 +409,7 @@ const AllDealsPage = () => {
                                     {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                   </span>
                                   <span className="all-deals__card-offers-popup-label">{o.label}</span>
-                                  <span className="all-deals__card-offers-popup-exp">exp {o.expires}</span>
+                                  <span className="all-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                 </li>
                               ))}
                             </ul>
@@ -450,7 +450,7 @@ const AllDealsPage = () => {
                         </span>
                         <span className="all-deals__card-deal-pill-text">{deal.dealText}</span>
                         <span className="all-deals__card-deal-pill-divider" />
-                        <span className="all-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                        <span className="all-deals__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                       </button>
 
                       <div className="all-deals__card-details">

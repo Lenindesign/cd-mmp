@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
+import { formatExpiration } from '../../utils/dateUtils';
 
 interface HeroOffersBProps {
   vehicleIncentives: VehicleIncentives;
@@ -8,15 +9,6 @@ interface HeroOffersBProps {
 
 const stripQualifier = (v: string) =>
   v.replace(/^(as low as|up to|starting at)\s+/i, '');
-
-const formatExp = (date: string) => {
-  const match = date.match(/^(\w+)\s+(\d+),?\s+(\d+)/);
-  if (!match) return `expires ${date}`;
-  const m = match[1].slice(0, 3);
-  const d = match[2];
-  const y = match[3].slice(-2);
-  return `expires ${m.charAt(0).toUpperCase() + m.slice(1).toLowerCase()} ${d}/${y}`;
-};
 
 const getTermSuffix = (inc: Incentive) => {
   if (!inc.terms) return '';
@@ -68,7 +60,7 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
             >
               <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
               <span className="hero__offers-b-pill-text">{label}</span>
-              <span className="hero__offers-b-pill-exp">{formatExp(inc.expirationDate)}</span>
+              <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
             </button>
           );
         })}

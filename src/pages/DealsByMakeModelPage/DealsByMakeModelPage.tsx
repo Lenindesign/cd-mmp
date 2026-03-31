@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, Slider
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import {
   parseMsrpMin,
   calcMonthly,
@@ -85,7 +85,7 @@ function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferD
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${deal.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
   };
 
   if (deal.dealType === 'lease') {
@@ -542,7 +542,7 @@ const DealsByMakeModelPage = () => {
                                               : 'Lease'}
                                       </span>
                                       <span className="mm-deals__card-offers-popup-label">{o.label}</span>
-                                      <span className="mm-deals__card-offers-popup-exp">exp {o.expires}</span>
+                                      <span className="mm-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -604,7 +604,7 @@ const DealsByMakeModelPage = () => {
                                 </span>
                                 <span className="mm-deals__card-deal-pill-divider" />
                                 <span className="mm-deals__card-deal-pill-expires">
-                                  expires {deal.expirationDate}
+                                  expires {formatExpiration(deal.expirationDate)}
                                 </span>
                               </button>
                               <div className="mm-deals__card-details">
@@ -659,7 +659,7 @@ const DealsByMakeModelPage = () => {
                                 </span>
                                 <span className="mm-deals__card-deal-pill-divider" />
                                 <span className="mm-deals__card-deal-pill-expires">
-                                  expires {deal.expirationDate}
+                                  expires {formatExpiration(deal.expirationDate)}
                                 </span>
                               </button>
                               <div className="mm-deals__card-details">
@@ -714,7 +714,7 @@ const DealsByMakeModelPage = () => {
                                 </span>
                                 <span className="mm-deals__card-deal-pill-divider" />
                                 <span className="mm-deals__card-deal-pill-expires">
-                                  expires {deal.expirationDate}
+                                  expires {formatExpiration(deal.expirationDate)}
                                 </span>
                               </button>
                               <div className="mm-deals__card-details">
@@ -773,7 +773,7 @@ const DealsByMakeModelPage = () => {
                                 <Clock size={16} />
                                 <div>
                                   <strong>Offer Expires</strong>
-                                  <p>{deal.expirationDate}</p>
+                                  <p>{formatExpiration(deal.expirationDate)}</p>
                                 </div>
                               </div>
                             </div>

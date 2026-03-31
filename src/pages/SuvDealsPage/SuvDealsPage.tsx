@@ -10,7 +10,7 @@ import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '..
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -153,7 +153,7 @@ const SuvDealsPage = () => {
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
-          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };
@@ -241,7 +241,7 @@ const SuvDealsPage = () => {
                                         {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                       </span>
                                       <span className="suv-deals-page__card-offers-popup-label">{o.label}</span>
-                                      <span className="suv-deals-page__card-offers-popup-exp">exp {o.expires}</span>
+                                      <span className="suv-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -275,7 +275,7 @@ const SuvDealsPage = () => {
                             <span className="suv-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
                             <span className="suv-deals-page__card-deal-pill-text">{deal.dealText}</span>
                             <span className="suv-deals-page__card-deal-pill-divider" />
-                            <span className="suv-deals-page__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                            <span className="suv-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                           </button>
 
                           <div className="suv-deals-page__card-details">
@@ -301,7 +301,7 @@ const SuvDealsPage = () => {
                                   <div><strong>{info.label}</strong><p>{info.value}</p></div>
                                 </div>
                               ))}
-                              <div className="suv-deals-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{deal.expirationDate}</p></div></div>
+                              <div className="suv-deals-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
                             </div>
                           )}
                         </div>

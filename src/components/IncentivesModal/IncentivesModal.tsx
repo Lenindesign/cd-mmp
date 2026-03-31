@@ -11,7 +11,8 @@ import {
   BadgeCheck,
   ShieldCheck,
 } from 'lucide-react';
-import type { Incentive } from '../../services/incentivesService';
+import type { Incentive, GroupAffiliation } from '../../services/incentivesService';
+import { formatExpiration } from '../../utils/dateUtils';
 import './IncentivesModal.css';
 
 export type IncentivesModalVariant = 'simple' | 'complete-with-form' | 'edmunds' | 'conversion-a' | 'conversion-b' | 'conversion-b-no-form';
@@ -71,7 +72,7 @@ const DEFAULT_OFFER: IncentiveOfferDetail = {
   yourSavings:
     "On a $35,000 loan over 60 months, you'd save approximately $2,800 in interest vs. the average 6.5% rate. Lease offers from $369/mo also available.",
   whoQualifies: 'Well-qualified buyers. Credit approval required through Honda Financial Services.',
-  eligibleTrims: ['LX', 'EX', 'Sport', 'EX-L', 'Touring'],
+  eligibleTrims: ['EX', 'EX-L', 'LX', 'Sport', 'Hybrid Sport'],
   dontWaitText:
     "This offer expires January 2, 2026. Honda incentives change monthly—lock in your rate before it's gone.",
   eventLabel: 'Honda CR-V Current Offers',
@@ -82,34 +83,49 @@ const formatCurrency = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 const formatMsrp = (min: number, max: number) => `MSRP ${formatCurrency(min)} - ${formatCurrency(max)}`;
 
-/** Format "January 2, 2026" -> "1/2/26" for Figma-style expires line */
-function formatExpirationShort(dateStr: string): string {
-  try {
-    const d = new Date(dateStr);
-    if (Number.isNaN(d.getTime())) return dateStr;
-    const m = d.getMonth() + 1;
-    const day = d.getDate();
-    const y = String(d.getFullYear()).slice(-2);
-    return `${m}/${day}/${y}`;
-  } catch {
-    return dateStr;
-  }
-}
-
 const getOfferRowChipLabel = (type: Incentive['type']): string =>
   type === 'lease' ? 'Lease' : type === 'cash' ? 'Cash' : 'Finance';
 
-const getEligibilityInfo = (inc: Incentive): { label: string; restricted: boolean } => {
-  const e = (inc.eligibility || '').toLowerCase();
-  if (e.includes('military') || e.includes('veteran')) return { label: 'Military / Veterans', restricted: true };
-  if (e.includes('first responder') || e.includes('firefighter') || e.includes('police') || e.includes('emt')) return { label: 'First Responders', restricted: true };
-  if (e.includes('college') || e.includes('student') || e.includes('recent grad')) return { label: 'Students / Grads', restricted: true };
-  if (e.includes('current lessee') || e.includes('current owner') || e.includes('loyalty')) return { label: 'Current Owners', restricted: true };
-  if (e.includes('credit') || inc.type === 'finance') return { label: 'Credit Approval Req.', restricted: false };
-  return { label: 'Everyone', restricted: false };
+const EXPERT_TIPS: Record<Incentive['type'], string> = {
+  finance: "Low-rate financing deals can beat cash rebates if you qualify\u2014always compare the total interest saved vs. the rebate you\u2019re giving up before deciding.",
+  cash: "Cash incentives can lower the purchase price significantly\u2014especially valuable if you\u2019re paying upfront or securing financing outside the dealership.",
+  lease: "Lease incentives work best if you prefer lower monthly payments and driving a new car every few years, but pay close attention to mileage limits and end-of-lease fees to avoid surprises.",
+};
+
+const getExpertTip = (inc: Incentive): string => EXPERT_TIPS[inc.type] ?? (inc.terms || inc.description);
+
+const AFFILIATION_META: Record<GroupAffiliation, { label: string; restricted: boolean; description: string }> = {
+  everyone:         { label: 'Open to All Buyers',        restricted: false, description: 'All qualified buyers. See dealer for complete details.' },
+  military:         { label: 'Military / Veterans',        restricted: true,  description: 'Active duty, reserve, retired military, or veterans discharged within 3 years.' },
+  'first-responder':{ label: 'First Responders',           restricted: true,  description: 'Firefighters, police officers, EMTs, and 911 dispatchers with proof of employment.' },
+  college:          { label: 'Students / Recent Grads',    restricted: true,  description: 'Graduated within the past 2 years or graduating within the next 6 months.' },
+  loyalty:          { label: 'Current Owners / Lessees',   restricted: true,  description: 'Must currently own or lease a vehicle from the same manufacturer.' },
+  targeted:         { label: 'Targeted / Conditional',     restricted: true,  description: 'Eligibility requirements vary. See dealer for qualification details.' },
+  automobility:     { label: 'Automobility Program',       restricted: true,  description: 'For customers with qualifying disabilities. Adaptive equipment assistance available.' },
+  'disaster-relief':{ label: 'Disaster Relief',            restricted: true,  description: 'For customers in FEMA-declared disaster areas with a damaged or destroyed vehicle.' },
+  'trade-in':       { label: 'Trade-In Required',          restricted: false, description: 'Must trade in a qualifying vehicle to receive this incentive.' },
+};
+
+const getEligibilityInfo = (inc: Incentive): { label: string; restricted: boolean; description: string } => {
+  const aff = inc.groupAffiliation ?? 'everyone';
+  const meta = AFFILIATION_META[aff];
+  return {
+    label: meta.label,
+    restricted: meta.restricted,
+    description: inc.eligibility || meta.description,
+  };
 };
 
 
+
+function getAprRangeLabel(active: Incentive): string {
+  const rows = buildAprTable(active);
+  const rates = rows.map(r => r.apr);
+  const lo = Math.min(...rates);
+  const hi = Math.max(...rates);
+  if (lo === hi) return active.value;
+  return `${lo}%–${hi}% APR`;
+}
 
 function buildAprTable(incentive: { value: string; title: string; terms?: string }) {
   const text = `${incentive.value} ${incentive.title} ${incentive.terms ?? ''}`;
@@ -131,7 +147,14 @@ function buildAprTable(incentive: { value: string; title: string; terms?: string
 
   if (termNumbers.length === 0) termNumbers.push(36, 48, 60, 72);
 
-  return termNumbers.map(t => ({ term: t, apr }));
+  const spreadByTerm: Record<number, number> = {
+    24: -0.5, 36: 0, 48: 0.3, 60: 0.6, 72: 1.0, 84: 1.4,
+  };
+
+  return termNumbers.map(t => ({
+    term: t,
+    apr: Math.round((apr + (spreadByTerm[t] ?? 0)) * 100) / 100,
+  }));
 }
 
 const IncentivesModal = ({
@@ -467,11 +490,13 @@ const IncentivesModal = ({
                           {getOfferRowChipLabel(activeIncentive.type)}
                         </span>
                         <span className="incentives-modal__v5-offer-apr">
-                          {activeIncentive.value}
+                          {activeIncentive.type === 'finance'
+                            ? getAprRangeLabel(activeIncentive)
+                            : activeIncentive.value}
                         </span>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">
-                          expires {formatExpirationShort(activeIncentive.expirationDate)}
+                          expires {formatExpiration(activeIncentive.expirationDate)}
                         </span>
                       </div>
 
@@ -481,11 +506,10 @@ const IncentivesModal = ({
                           <span className="incentives-modal__v5-expert-tip-label">C/D Expert Tip:</span>
                         </div>
                         <p className="incentives-modal__v5-expert-tip-text">
-                          {activeIncentive.terms || activeIncentive.description}
+                          {getExpertTip(activeIncentive)}
                         </p>
                       </div>
 
-                      {/* Eligibility callout */}
                       {(() => {
                         const elig = getEligibilityInfo(activeIncentive);
                         return (
@@ -493,11 +517,16 @@ const IncentivesModal = ({
                             <div className="incentives-modal__v5-eligibility-header">
                               {elig.restricted ? <ShieldCheck size={16} /> : <img src="https://app.blackbookinformation.com/app/assets/img/Verified.svg" alt="" width={16} height={16} aria-hidden="true" />}
                               <span className="incentives-modal__v5-eligibility-title">
-                                {elig.restricted ? 'Restricted Eligibility' : 'Open to All Buyers'}
+                                {elig.label}
                               </span>
                             </div>
+                            {activeIncentive.programName && (
+                              <p className="incentives-modal__v5-eligibility-program">
+                                {activeIncentive.programName}
+                              </p>
+                            )}
                             <p className="incentives-modal__v5-eligibility-text">
-                              {activeIncentive.eligibility || 'All qualified buyers. See dealer for complete details.'}
+                              {elig.description}
                             </p>
                           </div>
                         );
@@ -542,6 +571,11 @@ const IncentivesModal = ({
                         )}
 
                         <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
+                          <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
+                        </div>
+
+                        <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
                           <p className="incentives-modal__v5-key-section-text">
                             This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.
@@ -561,7 +595,7 @@ const IncentivesModal = ({
                         </span>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">
-                          expires {offer.expirationDate ? formatExpirationShort(offer.expirationDate) : 'soon'}
+                          expires {offer.expirationDate ? formatExpiration(offer.expirationDate) : 'soon'}
                         </span>
                       </div>
 
@@ -714,11 +748,13 @@ const IncentivesModal = ({
                           {getOfferRowChipLabel(activeIncentive.type)}
                         </span>
                         <span className="incentives-modal__v5-offer-apr">
-                          {activeIncentive.value}
+                          {activeIncentive.type === 'finance'
+                            ? getAprRangeLabel(activeIncentive)
+                            : activeIncentive.value}
                         </span>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">
-                          expires {formatExpirationShort(activeIncentive.expirationDate)}
+                          expires {formatExpiration(activeIncentive.expirationDate)}
                         </span>
                       </div>
 
@@ -728,7 +764,7 @@ const IncentivesModal = ({
                           <span className="incentives-modal__v5-expert-tip-label">C/D Expert Tip:</span>
                         </div>
                         <p className="incentives-modal__v5-expert-tip-text">
-                          {activeIncentive.terms || activeIncentive.description}
+                          {getExpertTip(activeIncentive)}
                         </p>
                       </div>
 
@@ -739,11 +775,16 @@ const IncentivesModal = ({
                             <div className="incentives-modal__v5-eligibility-header">
                               {elig.restricted ? <ShieldCheck size={16} /> : <img src="https://app.blackbookinformation.com/app/assets/img/Verified.svg" alt="" width={16} height={16} aria-hidden="true" />}
                               <span className="incentives-modal__v5-eligibility-title">
-                                {elig.restricted ? 'Restricted Eligibility' : 'Open to All Buyers'}
+                                {elig.label}
                               </span>
                             </div>
+                            {activeIncentive.programName && (
+                              <p className="incentives-modal__v5-eligibility-program">
+                                {activeIncentive.programName}
+                              </p>
+                            )}
                             <p className="incentives-modal__v5-eligibility-text">
-                              {activeIncentive.eligibility || 'All qualified buyers. See dealer for complete details.'}
+                              {elig.description}
                             </p>
                           </div>
                         );
@@ -783,6 +824,12 @@ const IncentivesModal = ({
                             <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms}</p>
                           </div>
                         )}
+
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
+                          <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
+                        </div>
+
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
                           <p className="incentives-modal__v5-key-section-text">
@@ -808,7 +855,7 @@ const IncentivesModal = ({
                         </span>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">
-                          expires {offer.expirationDate ? formatExpirationShort(offer.expirationDate) : 'soon'}
+                          expires {offer.expirationDate ? formatExpiration(offer.expirationDate) : 'soon'}
                         </span>
                       </div>
 

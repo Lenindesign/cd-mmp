@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
+import { formatExpiration } from '../../utils/dateUtils';
 
 interface HeroOffersAProps {
   vehicleIncentives: VehicleIncentives;
@@ -13,13 +14,6 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
 
   const stripQualifier = (v: string) =>
     v.replace(/^(as low as|up to|starting at)\s+/i, '');
-
-  const formatExpDate = (date: string) => {
-    const match = date.match(/^(\w+)\s+(\d+),?\s+(\d+)/);
-    if (!match) return `exp ${date}`;
-    const m = match[1].slice(0, 3);
-    return `exp ${m.charAt(0).toUpperCase() + m.slice(1).toLowerCase()} ${match[2]}/${match[3].slice(-2)}`;
-  };
 
   const financeIncentives = useMemo(() =>
     vehicleIncentives.incentives.filter(i => i.type === 'finance'),
@@ -128,7 +122,7 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
                   return m ? ` for ${m[1]} mo.` : '';
                 })()}
               </span>
-              <span className="hero__offer-exp">{formatExpDate(inc.expirationDate)}</span>
+              <span className="hero__offer-exp">expires {formatExpiration(inc.expirationDate)}</span>
             </button>
           ))}
         </div>

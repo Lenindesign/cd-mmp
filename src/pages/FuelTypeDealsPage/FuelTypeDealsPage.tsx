@@ -10,7 +10,7 @@ import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '..
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -175,7 +175,7 @@ const FuelTypeDealsPage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
@@ -322,7 +322,7 @@ const FuelTypeDealsPage = () => {
                                         {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'lease' ? 'Lease' : 'Finance'}
                                       </span>
                                       <span className="fuel-deals__card-offers-popup-label">{o.label}</span>
-                                      <span className="fuel-deals__card-offers-popup-exp">exp {o.expires}</span>
+                                      <span className="fuel-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -367,7 +367,7 @@ const FuelTypeDealsPage = () => {
                             </span>
                             <span className="fuel-deals__card-deal-pill-text">{deal.dealText}</span>
                             <span className="fuel-deals__card-deal-pill-divider" />
-                            <span className="fuel-deals__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                            <span className="fuel-deals__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                           </button>
 
                           <div className="fuel-deals__card-details">
@@ -393,7 +393,7 @@ const FuelTypeDealsPage = () => {
                                   <div><strong>{info.label}</strong><p>{info.value}</p></div>
                                 </div>
                               ))}
-                              <div className="fuel-deals__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{deal.expirationDate}</p></div></div>
+                              <div className="fuel-deals__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
                             </div>
                           )}
                         </div>

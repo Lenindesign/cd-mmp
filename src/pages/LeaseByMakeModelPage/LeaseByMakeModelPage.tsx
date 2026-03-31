@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback, type MouseEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal, Car } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import {
   parseTermMonths,
   buildSavingsText,
@@ -74,7 +74,7 @@ function buildActiveOffer(deal: LeaseByMakeModelDeal | null): Partial<IncentiveO
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${deal.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
   };
 
   return {
@@ -426,7 +426,7 @@ const LeaseByMakeModelPage = () => {
                                               : 'Lease'}
                                       </span>
                                       <span className="mm-lease__card-offers-popup-label">{o.label}</span>
-                                      <span className="mm-lease__card-offers-popup-exp">exp {o.expires}</span>
+                                      <span className="mm-lease__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -474,7 +474,7 @@ const LeaseByMakeModelPage = () => {
                             <span className="mm-lease__card-deal-pill-chip">{deal.chipLabel}</span>
                             <span className="mm-lease__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
                             <span className="mm-lease__card-deal-pill-divider" />
-                            <span className="mm-lease__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                            <span className="mm-lease__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                           </button>
                           <div className="mm-lease__card-details">
                             <div className="mm-lease__card-detail">
@@ -521,7 +521,7 @@ const LeaseByMakeModelPage = () => {
                                 <Clock size={16} />
                                 <div>
                                   <strong>Offer Expires</strong>
-                                  <p>{deal.expirationDate}</p>
+                                  <p>{formatExpiration(deal.expirationDate)}</p>
                                 </div>
                               </div>
                             </div>

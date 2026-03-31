@@ -2,6 +2,17 @@
 // Sources: Edmunds, KBB, manufacturer websites
 // Last updated: December 2025
 
+export type GroupAffiliation =
+  | 'everyone'
+  | 'military'
+  | 'first-responder'
+  | 'college'
+  | 'loyalty'
+  | 'targeted'
+  | 'automobility'
+  | 'disaster-relief'
+  | 'trade-in';
+
 export interface Incentive {
   id: string;
   type: 'cash' | 'finance' | 'lease' | 'special';
@@ -11,6 +22,9 @@ export interface Incentive {
   expirationDate: string;
   terms?: string;
   eligibility?: string;
+  programName?: string;
+  programDescription?: string;
+  groupAffiliation?: GroupAffiliation;
 }
 
 export interface VehicleIncentives {
@@ -35,6 +49,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$1,500',
         expirationDate: 'January 2, 2026',
         terms: 'Cannot be combined with special financing. Take delivery by expiration date.',
+        programName: 'Customer Cash',
+        programDescription: 'GM Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'chevy-trax-cash-2',
@@ -44,6 +61,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$500',
         expirationDate: 'January 2, 2026',
         terms: 'Can be combined with other offers.',
+        programName: 'Bonus Cash',
+        programDescription: 'GM Bonus Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'chevy-trax-finance',
@@ -54,6 +74,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         expirationDate: 'January 2, 2026',
         terms: 'For well-qualified buyers. 36, 48, 60, or 72 month terms available.',
         eligibility: 'Credit approval required through GM Financial.',
+        programName: 'GM Financial APR Program',
+        programDescription: 'GM Financial Low APR Financing Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'chevy-trax-lease',
@@ -64,6 +87,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         expirationDate: 'January 2, 2026',
         terms: '24-month lease, 10,000 miles/year. $0.25/mile over. No security deposit.',
         eligibility: 'For eligible current lessees.',
+        programName: 'GM Lease Program',
+        programDescription: 'GM Ultra Low-Mileage Lease',
+        groupAffiliation: 'loyalty',
       },
       {
         id: 'chevy-trax-military',
@@ -73,6 +99,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$500',
         expirationDate: 'January 3, 2026',
         eligibility: 'Active, reserve, retired military, or veterans discharged within 3 years.',
+        programName: 'Military Appreciation Program',
+        programDescription: 'GM Military Appreciation Cash Allowance',
+        groupAffiliation: 'military',
       },
       {
         id: 'chevy-trax-first-responder',
@@ -82,6 +111,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$500',
         expirationDate: 'January 3, 2026',
         eligibility: 'Proof of employment required.',
+        programName: 'First Responder Appreciation Program',
+        programDescription: 'GM First Responder Cash Allowance',
+        groupAffiliation: 'first-responder',
       },
     ],
   },
@@ -97,6 +129,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Customer cash allowance on 2025 Chevrolet Equinox.',
         value: '$2,500',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'GM Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'chevy-equinox-finance',
@@ -106,6 +141,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '5.9% APR',
         expirationDate: 'January 2, 2026',
         terms: 'For well-qualified buyers. 36-72 month terms.',
+        programName: 'GM Financial APR Program',
+        programDescription: 'GM Financial Low APR Financing Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'chevy-equinox-lease',
@@ -114,6 +152,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Lease for 36 months with competitive due at signing.',
         value: '$329/month',
         expirationDate: 'January 2, 2026',
+        programName: 'GM Lease Program',
+        programDescription: 'GM Competitive Lease Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -129,6 +170,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Customer cash on select 2025 Silverado 1500 models.',
         value: '$3,500',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'GM Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'chevy-silverado-finance',
@@ -137,6 +181,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Low APR financing plus bonus cash.',
         value: '4.9% APR + $1,500',
         expirationDate: 'January 2, 2026',
+        programName: 'GM Financial APR + Bonus Cash',
+        programDescription: 'GM Financial Low APR with Bonus Cash',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -153,6 +200,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '4.99% APR',
         expirationDate: 'January 6, 2026',
         terms: 'For well-qualified buyers through Toyota Financial Services.',
+        programName: 'TFS APR Program',
+        programDescription: 'Toyota Financial Services Special APR Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'toyota-camry-lease',
@@ -162,6 +212,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$329/month',
         expirationDate: 'January 6, 2026',
         terms: '$2,999 due at signing. 10,000 miles/year.',
+        programName: 'Toyota Lease Program',
+        programDescription: 'Toyota Motor Credit Lease Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'toyota-camry-college',
@@ -171,6 +224,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$500',
         expirationDate: 'January 6, 2026',
         eligibility: 'Graduated within past 2 years or graduating within 6 months.',
+        programName: 'College Graduate Program',
+        programDescription: 'Toyota College Graduate Rebate',
+        groupAffiliation: 'college',
       },
     ],
   },
@@ -186,6 +242,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special APR for 60 months on 2025 RAV4.',
         value: '5.49% APR',
         expirationDate: 'January 6, 2026',
+        programName: 'TFS APR Program',
+        programDescription: 'Toyota Financial Services Special APR Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'toyota-rav4-lease',
@@ -194,6 +253,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Lease a new RAV4 LE for 36 months.',
         value: '$359/month',
         expirationDate: 'January 6, 2026',
+        programName: 'Toyota Lease Program',
+        programDescription: 'Toyota Motor Credit Lease Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -209,6 +271,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special APR for 48-60 months through Honda Financial.',
         value: '5.9% APR',
         expirationDate: 'January 2, 2026',
+        programName: 'Honda Financial APR Program',
+        programDescription: 'Honda Financial Services Special APR Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'honda-crv-lease',
@@ -218,6 +283,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$369/month',
         expirationDate: 'January 2, 2026',
         terms: '$3,499 due at signing.',
+        programName: 'Honda Lease Program',
+        programDescription: 'Honda Financial Services Lease Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'honda-crv-loyalty',
@@ -227,6 +295,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$500',
         expirationDate: 'January 2, 2026',
         eligibility: 'Must currently own or lease a Honda vehicle.',
+        programName: 'Honda Loyalty Program',
+        programDescription: 'Honda Owner Loyalty Bonus Cash',
+        groupAffiliation: 'loyalty',
       },
     ],
   },
@@ -242,6 +313,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special APR for 48-60 months.',
         value: '4.9% APR',
         expirationDate: 'January 2, 2026',
+        programName: 'Honda Financial APR Program',
+        programDescription: 'Honda Financial Services Special APR Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'honda-civic-lease',
@@ -250,6 +324,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Lease a 2025 Civic LX for 36 months.',
         value: '$289/month',
         expirationDate: 'January 2, 2026',
+        programName: 'Honda Lease Program',
+        programDescription: 'Honda Financial Services Lease Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -265,6 +342,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Cash back on select 2025 F-150 models.',
         value: '$4,000',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'Ford Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'ford-f150-finance',
@@ -274,6 +354,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '3.9% APR + $2,000',
         expirationDate: 'January 2, 2026',
         terms: 'For well-qualified buyers through Ford Credit.',
+        programName: 'Ford Credit APR + Bonus Cash',
+        programDescription: 'Ford Credit Low APR with Bonus Cash',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'ford-f150-trade',
@@ -282,6 +365,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Bonus cash when trading in any vehicle.',
         value: '$1,000',
         expirationDate: 'January 2, 2026',
+        programName: 'Trade-In Assistance Program',
+        programDescription: 'Ford Trade-In Assistance Bonus Cash',
+        groupAffiliation: 'trade-in',
       },
     ],
   },
@@ -297,6 +383,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Cash back on 2025 Mustang models.',
         value: '$2,000',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'Ford Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'ford-mustang-finance',
@@ -305,6 +394,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special financing through Ford Credit.',
         value: '5.9% APR',
         expirationDate: 'January 2, 2026',
+        programName: 'Ford Credit APR Program',
+        programDescription: 'Ford Credit Special APR Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -320,6 +412,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Cash back on 2025 Tucson.',
         value: '$1,500',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'Hyundai Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'hyundai-tucson-finance',
@@ -328,6 +423,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special APR through Hyundai Motor Finance.',
         value: '4.9% APR',
         expirationDate: 'January 2, 2026',
+        programName: 'HMF APR Program',
+        programDescription: 'Hyundai Motor Finance Special APR Offer',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'hyundai-tucson-lease',
@@ -336,6 +434,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Lease for 36 months.',
         value: '$339/month',
         expirationDate: 'January 2, 2026',
+        programName: 'Hyundai Lease Program',
+        programDescription: 'Hyundai Motor Finance Lease Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -351,6 +452,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Cash back on 2025 Kona.',
         value: '$1,000',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'Hyundai Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'hyundai-kona-finance',
@@ -359,6 +463,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special APR through Hyundai Motor Finance.',
         value: '5.49% APR',
         expirationDate: 'January 2, 2026',
+        programName: 'HMF APR Program',
+        programDescription: 'Hyundai Motor Finance Special APR Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -376,6 +483,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         expirationDate: 'December 31, 2026',
         eligibility: 'Income limits apply. Must meet IRS requirements.',
         terms: 'Can be taken as point-of-sale discount at participating dealers.',
+        programName: 'Federal EV Tax Credit',
+        programDescription: 'IRS Clean Vehicle Tax Credit (Section 30D)',
+        groupAffiliation: 'targeted',
       },
     ],
   },
@@ -392,6 +502,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$7,500',
         expirationDate: 'December 31, 2026',
         eligibility: 'Income limits apply. Must meet IRS requirements.',
+        programName: 'Federal EV Tax Credit',
+        programDescription: 'IRS Clean Vehicle Tax Credit (Section 30D)',
+        groupAffiliation: 'targeted',
       },
     ],
   },
@@ -408,6 +521,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$2,500',
         expirationDate: 'January 2, 2026',
         eligibility: 'Must currently own a BMW vehicle.',
+        programName: 'BMW Loyalty Program',
+        programDescription: 'BMW Owner Loyalty Credit',
+        groupAffiliation: 'loyalty',
       },
       {
         id: 'bmw-3series-finance',
@@ -416,6 +532,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special APR through BMW Financial Services.',
         value: '4.99% APR',
         expirationDate: 'January 2, 2026',
+        programName: 'BMW Financial APR Program',
+        programDescription: 'BMW Financial Services Special APR Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -432,6 +551,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         value: '$3,000',
         expirationDate: 'January 2, 2026',
         eligibility: 'Must currently own a Mercedes-Benz vehicle.',
+        programName: 'Mercedes-Benz Loyalty Program',
+        programDescription: 'Mercedes-Benz Owner Loyalty Credit',
+        groupAffiliation: 'loyalty',
       },
     ],
   },
@@ -447,6 +569,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Cash back on 2025 Seltos.',
         value: '$1,500',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'Kia Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'kia-seltos-finance',
@@ -455,6 +580,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Special APR through Kia Finance.',
         value: '4.9% APR',
         expirationDate: 'January 2, 2026',
+        programName: 'Kia Finance APR Program',
+        programDescription: 'Kia Finance Special APR Offer',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -470,6 +598,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Cash back on 2025 Rogue.',
         value: '$2,000',
         expirationDate: 'January 2, 2026',
+        programName: 'Customer Cash',
+        programDescription: 'Nissan Customer Cash Allowance',
+        groupAffiliation: 'everyone',
       },
       {
         id: 'nissan-rogue-finance',
@@ -478,6 +609,9 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Low APR plus bonus cash.',
         value: '4.9% APR + $1,000',
         expirationDate: 'January 2, 2026',
+        programName: 'NMAC APR + Bonus Cash',
+        programDescription: 'Nissan Motor Acceptance APR with Bonus Cash',
+        groupAffiliation: 'everyone',
       },
     ],
   },
@@ -493,6 +627,9 @@ const defaultIncentives: Incentive[] = [
     value: 'As low as 5.9% APR',
     expirationDate: 'Limited time offer',
     terms: 'For well-qualified buyers. Terms vary by model.',
+    programName: 'Manufacturer APR Program',
+    programDescription: 'Manufacturer Special APR Financing Offer',
+    groupAffiliation: 'everyone',
   },
   {
     id: 'default-military',
@@ -502,6 +639,9 @@ const defaultIncentives: Incentive[] = [
     value: 'Up to $500',
     expirationDate: 'Ongoing',
     eligibility: 'Valid military ID required.',
+    programName: 'Military Appreciation Program',
+    programDescription: 'Manufacturer Military Appreciation Cash Allowance',
+    groupAffiliation: 'military',
   },
 ];
 

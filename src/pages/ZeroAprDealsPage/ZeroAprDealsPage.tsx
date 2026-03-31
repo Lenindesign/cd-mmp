@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Clock, Users, Tag, Percent, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -222,7 +222,7 @@ const ZeroAprDealsPage = () => {
           : `At ${activeDealObj.aprDisplay} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term.`,
         whoQualifies: activeDealObj.targetAudience,
         eligibleTrims: activeDealObj.trimsEligible,
-        dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+        dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
         eventLabel: activeDealObj.programName,
         expirationDate: activeDealObj.expirationDate,
       }
@@ -393,7 +393,7 @@ const ZeroAprDealsPage = () => {
                                         {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                       </span>
                                       <span className="zero-apr-page__card-offers-popup-label">{o.label}</span>
-                                      <span className="zero-apr-page__card-offers-popup-exp">exp {o.expires}</span>
+                                      <span className="zero-apr-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -427,7 +427,7 @@ const ZeroAprDealsPage = () => {
                             <span className="zero-apr-page__card-deal-pill-chip">Finance</span>
                             <span className="zero-apr-page__card-deal-pill-text">{deal.dealText}</span>
                             <span className="zero-apr-page__card-deal-pill-divider" />
-                            <span className="zero-apr-page__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                            <span className="zero-apr-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                           </button>
 
                           <div className="zero-apr-page__card-details">
@@ -453,7 +453,7 @@ const ZeroAprDealsPage = () => {
                               <div className="zero-apr-page__card-additional-item"><Info size={16} /><div><strong>{deal.programName}</strong><p>{deal.programDescription}</p></div></div>
                               <div className="zero-apr-page__card-additional-item"><Users size={16} /><div><strong>Target Audience</strong><p>{deal.targetAudience}</p></div></div>
                               <div className="zero-apr-page__card-additional-item"><Tag size={16} /><div><strong>Eligible Trims</strong><p>{deal.trimsEligible.join(', ')}</p></div></div>
-                              <div className="zero-apr-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{deal.expirationDate}</p></div></div>
+                              <div className="zero-apr-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
                             </div>
                           )}
                         </div>

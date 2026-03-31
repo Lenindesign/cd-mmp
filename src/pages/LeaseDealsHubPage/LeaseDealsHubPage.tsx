@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
-import { getCurrentPeriod } from '../../utils/dateUtils';
+import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -200,7 +200,7 @@ const LeaseDealsHubPage = () => {
           yourSavings: `${activeDealObj.monthlyPayment}/mo is significantly lower than a typical purchase payment. ${activeDealObj.dueAtSigning} due at signing. Includes ${activeDealObj.mileageAllowance} mileage allowance.`,
           whoQualifies: "Well-qualified lessees with approved credit through the manufacturer's financial arm.",
           eligibleTrims: activeDealObj.trimsEligible,
-          dontWaitText: `This offer expires ${activeDealObj.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };
@@ -361,7 +361,7 @@ const LeaseDealsHubPage = () => {
                                         {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
                                       </span>
                                       <span className="lease-hub__card-offers-popup-label">{o.label}</span>
-                                      <span className="lease-hub__card-offers-popup-exp">exp {o.expires}</span>
+                                      <span className="lease-hub__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -410,7 +410,7 @@ const LeaseDealsHubPage = () => {
                             <span className="lease-hub__card-deal-pill-chip">Lease</span>
                             <span className="lease-hub__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
                             <span className="lease-hub__card-deal-pill-divider" />
-                            <span className="lease-hub__card-deal-pill-expires">expires {deal.expirationDate}</span>
+                            <span className="lease-hub__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
                           </button>
 
                           <div className="lease-hub__card-details">
@@ -457,7 +457,7 @@ const LeaseDealsHubPage = () => {
                                 <Clock size={16} />
                                 <div>
                                   <strong>Offer Expires</strong>
-                                  <p>{deal.expirationDate}</p>
+                                  <p>{formatExpiration(deal.expirationDate)}</p>
                                 </div>
                               </div>
                             </div>
