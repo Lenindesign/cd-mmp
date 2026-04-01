@@ -374,6 +374,25 @@ const DealsHubPage = () => {
     return () => observer.disconnect();
   }, [sectionIds]);
 
+  useEffect(() => {
+    if (!activeSection || !navScrollRef.current) return;
+    const idx = sectionIds.indexOf(activeSection);
+    if (idx < 0) return;
+    const btn = navScrollRef.current.children[idx] as HTMLElement | undefined;
+    if (!btn) return;
+    const nav = navScrollRef.current;
+    const btnLeft = btn.offsetLeft;
+    const btnRight = btnLeft + btn.offsetWidth;
+    const navLeft = nav.scrollLeft;
+    const navRight = navLeft + nav.clientWidth;
+    if (btnLeft < navLeft || btnRight > navRight) {
+      nav.scrollTo({
+        left: btnLeft - nav.clientWidth / 2 + btn.offsetWidth / 2,
+        behavior: 'smooth',
+      });
+    }
+  }, [activeSection, sectionIds]);
+
   const checkNavScroll = useCallback(() => {
     const el = navScrollRef.current;
     if (!el) return;
@@ -504,9 +523,6 @@ const DealsHubPage = () => {
                     className={`deals-hub__anchor-btn ${activeSection === sectionId ? 'deals-hub__anchor-btn--active' : ''}`}
                     onClick={() => scrollToSection(sectionId)}
                   >
-                    {cat.imageIcon
-                      ? <img src={cat.imageIcon} alt="" className="deals-hub__anchor-img" />
-                      : cat.icon}
                     <span className="deals-hub__anchor-label">{cat.title}</span>
                     <span className="deals-hub__anchor-count">{cat.count}</span>
                   </button>

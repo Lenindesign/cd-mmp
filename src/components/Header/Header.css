@@ -256,14 +256,14 @@
 
 /* Navigation */
 .header__nav {
-  border-top: 1px solid var(--color-gray-200);
-  padding: var(--spacing-4) 0;
-  overflow: hidden; /* Prevent nav from breaking layout */
+  border-bottom: 4px solid var(--color-gray-200);
+  padding: 0;
+  overflow: visible;
 }
 
 .header__nav-list {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   gap: var(--spacing-4);
   list-style: none;
@@ -274,8 +274,11 @@
 }
 
 .header__nav-item {
+  display: flex;
+  align-items: center;
   white-space: nowrap;
   flex-shrink: 0;
+  padding: var(--spacing-4) 0;
 }
 
 /* Hide less important items progressively on smaller screens */
@@ -315,19 +318,19 @@
   color: var(--color-blue-cobalt);
 }
 
-/* Active link indicator */
+/* Active link indicator — bold text + blue underline on gray baseline */
 .header__nav-link--active {
-  position: relative;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
 }
 
-.header__nav-link--active::after {
-  content: '';
-  position: absolute;
-  bottom: -16px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--color-blue-cobalt);
+.header__nav-link--active:hover {
+  color: var(--color-dark);
+}
+
+.header__nav-item:has(.header__nav-link--active) {
+  margin-bottom: -4px;
+  border-bottom: 4px solid var(--color-blue-cobalt);
 }
 
 /* Nav Dropdown */

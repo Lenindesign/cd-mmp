@@ -112,6 +112,16 @@ const Header = () => {
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
   };
 
+  const isNavActive = (href: string, children?: { href: string }[]): boolean => {
+    const path = location.pathname;
+    if (children) {
+      return children.some(c => path === c.href || path.startsWith(c.href + '/'));
+    }
+    const base = href.split('?')[0];
+    if (base === '/') return path === '/';
+    return path === base || path.startsWith(base + '/');
+  };
+
   const navItems: {
     label: string;
     href: string;
@@ -489,40 +499,43 @@ const Header = () => {
         {/* Navigation Row */}
         <nav className={`header__nav ${isMenuOpen ? 'header__nav--open' : ''}`}>
           <ul className="header__nav-list">
-            {navItems.map((item, index) => (
-              <li key={index} className={`header__nav-item ${item.children ? 'header__nav-item--has-dropdown' : ''}`}>
-                {item.children ? (
-                  <>
-                    <Link to={item.href} className="header__nav-link header__nav-link--dropdown">
+            {navItems.map((item, index) => {
+              const active = isNavActive(item.href, item.children);
+              return (
+                <li key={index} className={`header__nav-item ${item.children ? 'header__nav-item--has-dropdown' : ''}`}>
+                  {item.children ? (
+                    <>
+                      <Link to={item.href} className={`header__nav-link header__nav-link--dropdown ${active ? 'header__nav-link--active' : ''}`}>
+                        {item.label}
+                        <ChevronDown size={14} className="header__nav-dropdown-icon" />
+                      </Link>
+                      <div className="header__nav-dropdown">
+                        {item.children.map((child, childIndex) => (
+                          <Link
+                            key={childIndex}
+                            to={child.href}
+                            className="header__nav-dropdown-link"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  ) : item.isRoute ? (
+                    <Link to={item.href} className={`header__nav-link ${active ? 'header__nav-link--active' : ''}`}>
                       {item.label}
-                      <ChevronDown size={14} className="header__nav-dropdown-icon" />
                     </Link>
-                    <div className="header__nav-dropdown">
-                      {item.children.map((child, childIndex) => (
-                        <Link
-                          key={childIndex}
-                          to={child.href}
-                          className="header__nav-dropdown-link"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                ) : item.isRoute ? (
-                  <Link to={item.href} className="header__nav-link">
-                    {item.label}
-                  </Link>
-                ) : (
-                  <a 
-                    href={item.href} 
-                    className="header__nav-link"
-                  >
-                    {item.label}
-                  </a>
-                )}
-              </li>
-            ))}
+                  ) : (
+                    <a
+                      href={item.href}
+                      className={`header__nav-link ${active ? 'header__nav-link--active' : ''}`}
+                    >
+                      {item.label}
+                    </a>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
       </div>
