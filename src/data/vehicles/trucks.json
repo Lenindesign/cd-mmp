@@ -59,7 +59,15 @@
       "Teen Driver",
       "Wireless Charging"
     ],
-    "slug": "2024/Chevrolet/Silverado"
+    "slug": "2024/Chevrolet/Silverado",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-1500-high-country-102-642dbddbe725d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-1500-high-country-103-642dbd7a1d00b.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-1500-high-country-101-642dbdaf5403d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-chevrolet-silverado-crew-rst-4wd-317-1627582393.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/silverado-ev-vs-silverado-1500-1641401190.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-silverado-ppv-002-1648841276.jpeg"
+    ]
   },
   {
     "id": "9",
@@ -155,7 +163,15 @@
       "Hybrid Powertrain",
       "Panoramic View Monitor"
     ],
-    "slug": "2024/Toyota/Tundra"
+    "slug": "2024/Toyota/Tundra",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2022-toyota-tundra-limited-crewmax-288-1648649438.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-toyota-tundra-limited-crewmax-176-1648649431.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/toyota-tundra-trd-lift-kit-002-1-1666800609.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-toyota-tundra-hybrid-limited-crewmax-101-664c9fa6b1714.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-toyota-tundra-limited-crewmax-328-1648649440.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "11",
@@ -182,7 +198,15 @@
       "Fold-Down Windshield",
       "Trail Rated 4x4"
     ],
-    "slug": "2024/Jeep/Gladiator"
+    "slug": "2024/Jeep/Gladiator",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-jeep-gladiator-mojave-x-101-6500b274f172a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-jeep-gladiator-interior-102-6500b149ef3df.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-jeep-gladiator-mojave-x-105-6500b27524262.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-jeep-gladiator-mojave-x-113-6606dfdac98bb.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-jeep-gladiator-mojave-x-106-6500b2752c58b.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "11a",
@@ -209,7 +233,15 @@
       "MultiPro Tailgate",
       "CarbonPro Bed"
     ],
-    "slug": "2024/GMC/Sierra"
+    "slug": "2024/GMC/Sierra",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2022-gmc-sierra-1500-denali-ultimate-101-1652106391.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-gmc-sierra-1500-denali-ultimate-107-1652106440.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-gmc-sierra-1500-denali-ultimate-102-1652106397.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-gmc-sierra-1500-at4x-107-1652106261.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-gmc-sierra-1500-at4x-aev-edition-01-1657217192.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-gmc-sierra-1500-denali-ultimate-101-1667227028.jpg"
+    ]
   },
   {
     "id": "12",
@@ -236,7 +268,15 @@
       "Nissan Safety Shield",
       "Fender Audio"
     ],
-    "slug": "2024/Nissan/Titan"
+    "slug": "2024/Nissan/Titan",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-114-65031bc46fc48.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-118-65031bc4c164c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-107-65031bc2dcaf3.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-nissan-frontier-pro-4x-107-1634854827.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-nissan-frontier-pro-4x-107-1612384774.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "13",
@@ -263,7 +303,15 @@
       "Co-Pilot360",
       "FLEXBED System"
     ],
-    "slug": "2025/Ford/Maverick"
+    "slug": "2025/Ford/Maverick",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-maverick-lobo-123-68a33e53df8f9.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-maverick-lobo-118-68a33e4dba91d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-maverick-lobo-112-68a340794646d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-maverick-xlt-hybrid-531-667c4348dd788.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-maverick-tremor-21-jpg-1659361154.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-ford-maverick-hybrid-287-1648141860.jpg"
+    ]
   },
   {
     "id": "13a",
@@ -322,7 +370,15 @@
       "Trail Control",
       "Pro Trailer Backup Assist"
     ],
-    "slug": "2025/Ford/Ranger"
+    "slug": "2025/Ford/Ranger",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-lariat-355-66fd5b7bd0516.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-lariat-411-66fd5b7d3ab4f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-lariat-143-66f6e32b3483c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-lariat-205-66fd5b789dc1a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-v6-107-6733c89692dd5.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-lariat-300-66fd5b7bae612.jpg"
+    ]
   },
   {
     "id": "14",
@@ -349,7 +405,15 @@
       "Infotainment System",
       "Teen Driver"
     ],
-    "slug": "2024/Chevrolet/Colorado"
+    "slug": "2024/Chevrolet/Colorado",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-109-64400268b33af.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-145-644002981644f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-127-6440028233d91.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-tacoma-trd-off-road-vs-2023-chevrolet-colorado-zr2-103-65c536e7c2949.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-colorado-zr2-104-6581c1a9d4dd1.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-colorado-zr2-bison-365-651c3b469638f.jpg"
+    ]
   },
   {
     "id": "truck-elec1",
@@ -479,7 +543,15 @@
       "Multi-Flex Midgate",
       "PowerBase"
     ],
-    "slug": "2025/Chevrolet/Silverado-EV"
+    "slug": "2025/Chevrolet/Silverado-EV",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-ev-111-66509d2aa15ba.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-ev-104-66509d28df6de.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-ev-115-66509d2cc935b.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-ev-101-664e0b5832239.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/ev-range-composite-101-67a673831be82.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/screen-shot-2019-11-27-at-9-54-45-pm-1574909712.png"
+    ]
   },
   {
     "id": "truck-elec5",
@@ -507,7 +579,15 @@
       "RamBox",
       "PowerBox"
     ],
-    "slug": "2025/Ram/1500-REV"
+    "slug": "2025/Ram/1500-REV",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2026-ram-1500-ramcharger-1-front-three-quarter-67bdf77b08477.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-ram-1500-ramcharger-4-rear-three-quarter-67bdf448544d9.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ram-1500-ramcharger-116-6544effbc3e0c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/composite-ram-1-67bdf9184aba4.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ram-1500-ramcharger-109-6544effac7e8c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/fp023-005rm-1676205195.jpg"
+    ]
   },
   {
     "id": "truck-elec6",
@@ -570,7 +650,15 @@
       "SYNC 4A",
       "Pro Power Onboard"
     ],
-    "slug": "2025/Ford/F-150-Lightning-Pro"
+    "slug": "2025/Ford/F-150-Lightning-Pro",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-f-150-lightning-102-67042a178ef3c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-ford-f-150-lightning-tested-113-1656624448.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-f-150-lightning-101-67042a17c2cfb.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-rivian-r1t-tri-motor-286-685c20551a09b.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-silverado-ev-trail-boss-02-r1-682df8d982f0d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-gmc-sierra-ev-02-at4-exterior-67e465cdec970.jpg"
+    ]
   },
   {
     "id": "truck-elec8",
@@ -598,7 +686,15 @@
       "MultiPro Tailgate",
       "PowerBase"
     ],
-    "slug": "2025/GMC/Sierra-EV"
+    "slug": "2025/GMC/Sierra-EV",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-gmc-sierra-ev-denali-edition-1-299-66c3587d22813.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-gmc-sierra-ev-prototype-108-66c34514c78cf.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-gmc-sierra-ev-denali-edition-1-524-66c358851e912.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-gmc-sierra-ev-denali-edition-1-408-66c358809a867.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-gmc-sierra-ev-denali-edition-1-135-66c3587746cab.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/ev-range-composite-101-67a673831be82.jpg"
+    ]
   },
   {
     "id": "truck-elec9",
@@ -626,7 +722,15 @@
       "Chevrolet Infotainment 3",
       "Multi-Flex Tailgate"
     ],
-    "slug": "2025/Chevrolet/Colorado-EV"
+    "slug": "2025/Chevrolet/Colorado-EV",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-109-64400268b33af.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-145-644002981644f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-127-6440028233d91.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-tacoma-trd-off-road-vs-2023-chevrolet-colorado-zr2-103-65c536e7c2949.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-colorado-zr2-104-6581c1a9d4dd1.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-colorado-zr2-bison-365-651c3b469638f.jpg"
+    ]
   },
   {
     "id": "truck-elec10",
@@ -654,7 +758,15 @@
       "Multi-Terrain Select",
       "Crawl Control"
     ],
-    "slug": "2025/Toyota/Tacoma-EV"
+    "slug": "2025/Toyota/Tacoma-EV",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-tacoma-prerunner-101-681b80dd44cde.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-tacoma-prerunner-106-681b80dd3344e.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-tacoma-prerunner-126-681b82cbc6e59.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-tacoma-trd-off-road-194-657857fa6cd6f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-tacoma-trd-off-road-120-657857e55d174.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-tacoma-double-cab-4x4-manual-108-67054c3817715.jpg"
+    ]
   },
   {
     "id": "truck-elec11",
@@ -682,6 +794,14 @@
       "ProPILOT Assist",
       "Zero Gravity Seats"
     ],
-    "slug": "2025/Nissan/Titan-EV"
+    "slug": "2025/Nissan/Titan-EV",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-114-65031bc46fc48.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-118-65031bc4c164c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-107-65031bc2dcaf3.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-nissan-frontier-pro-4x-107-1634854827.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-nissan-frontier-pro-4x-107-1612384774.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   }
 ]

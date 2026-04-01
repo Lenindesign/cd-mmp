@@ -24,7 +24,15 @@
       "PASM",
       "Bose Surround Sound"
     ],
-    "slug": "2026/Porsche/911-Cabriolet"
+    "slug": "2026/Porsche/911-Cabriolet",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-porsche-911-carrera-t-103-69371b6c2a013.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-porsche-911-carrera-gts-111-68af3d5c0e92e.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-porsche-911-carrera-t-118-69371b7327034.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-corvette-e-ray-117-6529429279ae1.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-corvette-z06-106-1664801430.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-chevrolet-corvette-zr1x-139-699f17f542ec0.jpg"
+    ]
   },
   {
     "id": "15",
@@ -84,7 +92,15 @@
       "Virtual Cockpit",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/RS5"
+    "slug": "2024/Audi/RS5",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2023-audi-rs-5-coupe-101-1664913723.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-audi-rs-5-coupe-104-1664913726.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-audi-rs-5-coupe-110-1664913723.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-audi-rs5-coupe-1-1664917535.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/audi-rs5-competition-package-11-1652285182.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "17",
@@ -146,7 +162,15 @@
       "Performance Data Recorder",
       "Brembo Brakes"
     ],
-    "slug": "2024/Chevrolet/Camaro"
+    "slug": "2024/Chevrolet/Camaro",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-1-647e1933c6c20.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-111-1539790974.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-123-1539790979.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-647e05dd3008a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-1544717268.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-chevrolet-camaro-z28-6452f1ee4d5ee.jpg"
+    ]
   },
   {
     "id": "19",
@@ -239,7 +263,15 @@
       "Limited-Slip Differential",
       "Sport Seats"
     ],
-    "slug": "2024/Toyota/GR86"
+    "slug": "2024/Toyota/GR86",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-gr-86-trueno-103-648cac921d85c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-gr-86-trueno-113-648cac93ca03b.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-gr-86-trueno-106-648cac92ca863.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-gr86-hakone-edition-1052-67ead252d68a9.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-toyota-gr-86-premium-at-311-1651173605.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "22",
@@ -266,7 +298,15 @@
       "EyeSight Safety",
       "Performance Suspension"
     ],
-    "slug": "2024/Subaru/BRZ"
+    "slug": "2024/Subaru/BRZ",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-899-67ae42bf8b080.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-760-67ae42c0bb0e8.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-379-67ae42bf96418.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-136-658066dc62c05.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/cdb010124tenbest-cars-lo-656f33f352136.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-suabru-brz-2024-toyota-gr86-656dfaec19354.jpg"
+    ]
   },
   {
     "id": "coupe1",
@@ -293,7 +333,15 @@
       "SYNC 4",
       "MagneRide Suspension"
     ],
-    "slug": "2025/Ford/Mustang"
+    "slug": "2025/Ford/Mustang",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-mustang-60th-anniversary-exterior-66227932bb88e.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-mustang-interior-66227932ce258.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-mustang-60th-anniversary-package-04-661fd68a7eb78.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-mustang-gt-111-64e6608fce997.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-mustang-dark-horse-669ea11eb0969.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-mustang-gt-121-64e6609713999.jpg"
+    ]
   },
   {
     "id": "coupe2",
@@ -320,7 +368,15 @@
       "Performance Data Recorder",
       "Magnetic Ride Control"
     ],
-    "slug": "2024/Chevrolet/Camaro"
+    "slug": "2024/Chevrolet/Camaro",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-1-647e1933c6c20.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-111-1539790974.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-123-1539790979.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-647e05dd3008a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-1544717268.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-chevrolet-camaro-z28-6452f1ee4d5ee.jpg"
+    ]
   },
   {
     "id": "coupe4",
@@ -480,7 +536,15 @@
       "Supra Connect",
       "Active Differential"
     ],
-    "slug": "2025/Toyota/Supra"
+    "slug": "2025/Toyota/Supra",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-gr-supra-102-668c519da0fe1.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-gr-supra-101-668c53c74bd62.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-gr-supra-103-668c54fd24633.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-gr-supra-45th-anniversary-edition-106-648cadc57f6f0.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-toyota-gr-supra-3-0-manual-9843-1665758943.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-toyota-gr-supra-a91-cf-103-1622508874.jpg"
+    ]
   },
   {
     "id": "coupe10",
@@ -507,7 +571,15 @@
       "Subaru STARLINK",
       "Sport Mode"
     ],
-    "slug": "2025/Subaru/BRZ"
+    "slug": "2025/Subaru/BRZ",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-760-67ae42c0bb0e8.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-625-67ae42bf92fcd.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-137-658066dc8510c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-899-67ae42bf8b080.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-subaru-brz-limited-6mt-lt-intro-381-1669913828.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-subaru-brz-43-1630281608.jpg"
+    ]
   },
   {
     "id": "coupe11",

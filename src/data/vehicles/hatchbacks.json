@@ -57,7 +57,15 @@
       "Wireless Charging",
       "Bose Audio"
     ],
-    "slug": "2024/Honda/Civic-Hatchback"
+    "slug": "2024/Honda/Civic-Hatchback",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-287-1648742553.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-6533-1648742564.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-380-1648742556.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/cdb010124tenbest-cars-lo-656f33f352136.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-honda-civic-type-r-01-656e0b1ba2f52.jpeg",
+      "https://hips.hearstapps.com/hmg-prod/images/371331-2022-honda-civic-e-hev-1674587328.jpg"
+    ]
   },
   {
     "id": "63",
@@ -84,7 +92,15 @@
       "Digital Cockpit Pro",
       "Harman Kardon Audio"
     ],
-    "slug": "2024/Volkswagen/Golf-GTI"
+    "slug": "2024/Volkswagen/Golf-GTI",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2022-volkswagen-gti-s-lt-1909-edit-1661958354.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-volkswagen-gti-s-lt-1793-1661958352.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-volkswagen-gti-s-lt-2003-1661958358.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-volkswagen-gti-380-special-edition-381-67642b5748501.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/medium-17142-special-edition2024volkswagengolfgti380celebratesthemanualtransmissioninvwshothatch-64ef6c57a389b.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-volkswagen-gti-s-lt-428-edit-1661958345.jpg"
+    ]
   },
   {
     "id": "64",
@@ -177,7 +193,15 @@
       "Virtual Cockpit",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/A3"
+    "slug": "2024/Audi/A3",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a3-102-64b1ab64749a0.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a3-101-64b1ab6459a41.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a3-103-64b1ab6472ecb.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-audi-a3-quattro-305-1666116386.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-audi-a3-sedan-101-1595371067.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-audi-s3-03-1634312976.jpg"
+    ]
   },
   {
     "id": "70",
@@ -204,7 +228,15 @@
       "Burmester Audio",
       "AMG Line"
     ],
-    "slug": "2024/Mercedes-Benz/A-Class"
+    "slug": "2024/Mercedes-Benz/A-Class",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-benz-cla-coupe-101-1674062332.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-benz-cla-coupe-103-1674062332.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-benz-cla-coupe-102-1674062332.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/23c0032-003-1674055897.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/testingmatters-01-1614202289.jpg"
+    ]
   },
   {
     "id": "71",
@@ -263,7 +295,15 @@
       "Harman Kardon Audio",
       "Head-Up Display"
     ],
-    "slug": "2024/Mini/Cooper-Hardtop"
+    "slug": "2024/Mini/Cooper-Hardtop",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-mini-cooper-s-hardtop-2-door-131-66f2bf6aa5190.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-mini-cooper-s-hardtop-2-door-121-66f2bf649887f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-mini-cooper-s-hardtop-2-door-101-66f2c2a8e3546.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-a3-sedan-front-three-quarters-65ef2c5450bd0.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-acura-integra-a-spec-technology-exterior-pr-108-687f9f7357113.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-cadillac-ct4-350t-rwd-105-65bd26c3a97b9.jpg"
+    ]
   },
   {
     "id": "76",

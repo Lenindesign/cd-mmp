@@ -164,7 +164,15 @@
       "Harman Kardon Audio",
       "Adaptive M Suspension"
     ],
-    "slug": "2026/BMW/3-Series"
+    "slug": "2026/BMW/3-Series",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-3-series-102-66562dcd6a1c6.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-3-series-117-66562dd23a1b8.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-3-series-113-66562dd0d120a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-103-65bbd8cea62e0.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-m440i-xdrive-106-662804b5ee2cb.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-a5-123-684b0d5520fba.jpg"
+    ]
   },
   {
     "id": "23",
@@ -191,7 +199,15 @@
       "Zero Gravity Seats",
       "Bose Audio"
     ],
-    "slug": "2024/Nissan/Altima"
+    "slug": "2024/Nissan/Altima",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-163-6580987a4ce0f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-114-658098744e795.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-181-6580987ad3d54.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-267-6580987ccc6c2.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-106-1654783713.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "24",
@@ -218,7 +234,15 @@
       "Wireless Charging",
       "Digital Key"
     ],
-    "slug": "2024/Hyundai/Sonata"
+    "slug": "2024/Hyundai/Sonata",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-111-66c64b89296bf.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-112-66c64b89a99f6.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-120-66c64b8b9a8af.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-n-line-103-66c617902018c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-102-66c64b86e0218.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-camry-xle-awd-2025-honda-accord-touring-2025-hyundai-sonata-limited-hybrid-comparison-test-101-67acc59320728.jpg"
+    ]
   },
   {
     "id": "25",
@@ -245,7 +269,15 @@
       "Wireless Apple CarPlay",
       "Bose Premium Audio"
     ],
-    "slug": "2024/Kia/K5"
+    "slug": "2024/Kia/K5",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-line-102-1602778026.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-line-120-1602778033.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-line-110-1602778023.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/dsc01432-1677186780.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-111-66c64b89296bf.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-camry-102-64cbc4858e198.jpg"
+    ]
   },
   {
     "id": "26",
@@ -338,7 +370,15 @@
       "Symmetrical AWD",
       "Harman Kardon Audio"
     ],
-    "slug": "2024/Subaru/Legacy"
+    "slug": "2024/Subaru/Legacy",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2023-subaru-legacy-101-1652364061.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-subaru-legacy-109-1652364061.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-subaru-legacy-102-1652364058.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/dsc01432-1677186780.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-line-102-1602778026.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-111-66c64b89296bf.jpg"
+    ]
   },
   {
     "id": "30",
@@ -398,7 +438,15 @@
       "Lexicon Audio",
       "Nappa Leather"
     ],
-    "slug": "2024/Genesis/G70"
+    "slug": "2024/Genesis/G70",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-awd-2p5t-sport-prestige-493-66ba237b7aae8.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-awd-2p5t-sport-prestige-472-66ba2377e2c4d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-awd-2p5t-sport-prestige-521-66ba237da8f01.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-107-66ec30690c205.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-104-65bbd8cee3e0c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-front-653159e770f0c.jpg"
+    ]
   },
   {
     "id": "32",
@@ -425,7 +473,15 @@
       "Virtual Cockpit Plus",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/A4"
+    "slug": "2024/Audi/A4",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a4-103-64aefe768be8e.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a4-102-64aefe76ddcf6.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a4-101-64aefe771dadd.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-s5-130-66954d8a8b21c.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/testingmatters-01-1614202289.jpg"
+    ]
   },
   {
     "id": "33",
@@ -521,7 +577,15 @@
       "Bowers & Wilkins Audio",
       "Scandinavian Design"
     ],
-    "slug": "2024/Volvo/S60"
+    "slug": "2024/Volvo/S60",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/294035-s60-recharge-t8-thunder-grey-1647010632.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/294031-s60-recharge-google-built-in-1647010622.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/294038-s60-recharge-t8-thunder-grey-1647010628.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-volvo-xc60-black-edition-front-64db95e2dfb3e.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/sport-sedans-alfa-bmw-genesis-volvo-101-1579641821.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "36",
@@ -548,7 +612,15 @@
       "Bose Performance Audio",
       "Dynamic Digital Suspension"
     ],
-    "slug": "2024/Infiniti/Q50"
+    "slug": "2024/Infiniti/Q50",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-infiniti-q50-101-64e4bf38ee81e.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-infiniti-q50-103-64e4bf3819f5e.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-infiniti-q50-102-64e4bf38a66d5.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/190716-01-23-source-1563288182.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/testingmatters-01-1614202289.jpg"
+    ]
   },
   {
     "id": "38",
@@ -575,7 +647,15 @@
       "Performance Pages",
       "Brembo Brakes"
     ],
-    "slug": "2024/Dodge/Charger"
+    "slug": "2024/Dodge/Charger",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2026-dodge-charger-r-t-131-69aae70b7f4bf.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-dodge-charger-r-t-138-69aae7ee0d1cb.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-dodge-charger-r-t-147-69aae8f6aa6de.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-mustang-fx-package-21-6843458c131a9.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-dodge-charger-scat-pack-sixpack-109-69150433726a6.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/loving-car-driver-under-pressure-6761cc7dc7272.jpg"
+    ]
   },
   {
     "id": "39",
@@ -602,7 +682,15 @@
       "Harman Kardon Audio",
       "Carbon Fiber Trim"
     ],
-    "slug": "2024/Alfa-Romeo/Giulia"
+    "slug": "2024/Alfa-Romeo/Giulia",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2023-alfa-romeo-giulia-108-6400fe6bc909a.jpeg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-alfa-romeo-giulia-105-6400fe6b3cf4b.jpeg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-alfa-romeo-giulia-110-6400fe6ae4216.jpeg",
+      "https://hips.hearstapps.com/hmg-prod/images/dynamics2-635a6a9cb2c19-1667581595.jpeg",
+      "https://hips.hearstapps.com/hmg-prod/images/2020-alfa-romeo-stelvio-201-1574119948.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   },
   {
     "id": "69a",
@@ -630,7 +718,15 @@
       "Virtual Cockpit Plus",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2025/Audi/S3 / RS3"
+    "slug": "2025/Audi/S3 / RS3",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-rs3-745-688d081b2c49d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-rs3-245-688b908b0b244.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-rs3-410-688d08149a201.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-rs3-101-64a59d674e821.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-audi-rs3-sedan-122-1660158870.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-audi-rs3-sedan-105-1626371922.jpg"
+    ]
   },
   {
     "id": "cor1",
@@ -723,7 +819,15 @@
       "Wireless Charging",
       "Bose Audio"
     ],
-    "slug": "2023/Honda/Accord"
+    "slug": "2023/Honda/Accord",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/dsc00620-1677186777.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/dsc00514-1677186778.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/dsc02165-1677186783.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-2-5t-hedrick-005-1613770012.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-551-1635518371.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/c-005-1500x1000-1652713137.jpg"
+    ]
   },
   {
     "id": "acc2",
@@ -783,7 +887,15 @@
       "ProPILOT Assist",
       "Bose Audio"
     ],
-    "slug": "2023/Nissan/Altima"
+    "slug": "2023/Nissan/Altima",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-113-1654783718.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-110-1654783716.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-120-1654783721.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/dsc00620-1677186777.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-2-5t-hedrick-005-1613770012.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-551-1635518371.jpg"
+    ]
   },
   {
     "id": "alt2",
@@ -810,7 +922,15 @@
       "ProPILOT Assist 2.0",
       "Bose Premium Audio"
     ],
-    "slug": "2025/Nissan/Altima"
+    "slug": "2025/Nissan/Altima",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-369-6580987e7e807.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-217-6580987c1ea3f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-124-65809876ba013.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-163-6580987a4ce0f.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-113-1654783718.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-nissan-altima-3-1548450534.jpg"
+    ]
   },
   {
     "id": "son1",
@@ -837,7 +957,15 @@
       "Wireless CarPlay",
       "Harman Kardon Audio"
     ],
-    "slug": "2023/Hyundai/Sonata"
+    "slug": "2023/Hyundai/Sonata",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-551-1635518371.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-782-edit-1635518398.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-681-1635518380.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/dsc00620-1677186777.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-2-5t-hedrick-005-1613770012.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/c-005-1500x1000-1652713137.jpg"
+    ]
   },
   {
     "id": "son2",
@@ -864,7 +992,15 @@
       "Digital Key",
       "Bose Premium Audio"
     ],
-    "slug": "2025/Hyundai/Sonata"
+    "slug": "2025/Hyundai/Sonata",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-n-line-67575bf5529cc.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-n-line-rear-67575c7edb541.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-n-line-interior-67575ce229103.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-111-66c64b89296bf.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-551-1635518371.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/large-47294-2022sonata-1634158463.jpg"
+    ]
   },
   {
     "id": "sed-comp1",
@@ -1089,7 +1225,15 @@
       "MMI Touch",
       "Audi Pre Sense"
     ],
-    "slug": "2025/Audi/A3"
+    "slug": "2025/Audi/A3",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-a3-sedan-front-in-motion-65ef2c4d03100.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-a3-sedan-rear-three-quarters-in-motion-65ef2c4de9228.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-audi-a3-sedan-dashboard-65ef2c4fb6f22.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a3-102-64b1ab64749a0.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/new-audi-a3-sedan-101-1595373883.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/new-audi-a3-sedan-113-1595373890.jpg"
+    ]
   },
   {
     "id": "sed-comp10",
@@ -1214,7 +1358,15 @@
       "BMW Live Cockpit",
       "BMW Personal Assistant"
     ],
-    "slug": "2025/BMW/i4"
+    "slug": "2025/BMW/i4",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-i4-m50-xdrive-106-662805af1097d.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-i4-m50-xdrive-105-662805b1da691.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-i4-m50-xdrive-118-662805b48f539.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-bmw-i4-edrive40-104-1659059092.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-bmw-i4-m50-101-1657136321.jpeg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-bmw-i4-m50-114-1633973115.jpg"
+    ]
   },
   {
     "id": "sed-elec4",
@@ -1241,7 +1393,15 @@
       "MBUX Interior Assistant",
       "MBUX Augmented Reality"
     ],
-    "slug": "2025/Mercedes-Benz/EQE"
+    "slug": "2025/Mercedes-Benz/EQE",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-mercedes-benz-eqe-3-672e464f97079.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-mercedes-benz-eqe-1-672e464f9241a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-mercedes-benz-eqe-2-672e464f9f564.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-mercedes-benz-eqe-350-131-1649789876.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-mercedes-benz-eqe-500-105-1649857760.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/ev-range-composite-101-67a673831be82.jpg"
+    ]
   },
   {
     "id": "sed-elec5",
@@ -1373,7 +1533,15 @@
       "Pilot Pack",
       "Plus Pack"
     ],
-    "slug": "2025/Polestar/2"
+    "slug": "2025/Polestar/2",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-polestar-2-3-672d4eec1bc30.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-polestar-2-2-672d4eec1edeb.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-polestar-2-1-672d4eec1c50a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/ev-range-composite-101-67a673831be82.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/screen-shot-2019-11-27-at-9-54-45-pm-1574909712.png",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-lexus-rx450h-charging-port-64d1171ae5260.jpg"
+    ]
   },
   {
     "id": "sed-elec9",
@@ -1400,7 +1568,15 @@
       "Ultra-Fast Charging",
       "Vehicle-to-Load"
     ],
-    "slug": "2025/Hyundai/Ioniq-6"
+    "slug": "2025/Hyundai/Ioniq-6",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/hyundai-ioniq-6-141-64594931612f1.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/hyundai-ioniq-6-146-645949315a99a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/hyundai-ioniq-6-106-64592426c9b97.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-tesla-model-3-performance-103-68a6100d88660.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2026-hyundai-ioniq-6-n-158-690cb8343e2a0.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-fiat-500e-113-6660a1cd9340f.jpg"
+    ]
   },
   {
     "id": "sed-elec10",
@@ -1427,7 +1603,15 @@
       "e-Pedal",
       "ProPILOT Assist"
     ],
-    "slug": "2025/Nissan/Leaf"
+    "slug": "2025/Nissan/Leaf",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2025-nissan-leaf-121-6690462ff1899.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-nissan-leaf-122-66904631c3472.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-nissan-leaf-101-6690462acbcc4.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-leaf-9-1200x800-1649785072.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-leaf-13-1200x800-1649784914.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-nissan-leaf-mmp-1-1628019282.jpg"
+    ]
   },
   {
     "id": "sed-elec11",
@@ -1454,6 +1638,14 @@
       "One-Pedal Driving",
       "DC Fast Charging"
     ],
-    "slug": "2025/Chevrolet/Bolt-EV"
+    "slug": "2025/Chevrolet/Bolt-EV",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-bolt-euv-redline-edition-001-1654115619.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-bolt-euv-redline-edition-007-1654198838.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-bolt-euv-redline-edition-002-1654198898.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-chevy-bolt-euv-103-1654456447.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/bestelectricsuvs-1660569416.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
+    ]
   }
 ]
