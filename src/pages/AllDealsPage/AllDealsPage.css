@@ -282,7 +282,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--color-gray-100);
-  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  border-radius: 0;
 }
 
 .all-deals__card-image > img {
@@ -332,7 +332,7 @@
 .all-deals__card-offers-tag {
   position: absolute;
   bottom: 8px;
-  left: 8px;
+  right: 8px;
   z-index: 2;
   padding: 4px 10px;
   font-family: var(--font-heading);
@@ -340,13 +340,20 @@
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  color: var(--color-white);
-  background: var(--color-success);
+  color: var(--color-success);
+  background: var(--color-white);
   border-radius: var(--border-radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.all-deals__card-offers-tag:hover {
+  background: var(--color-gray-100);
 }
 
 /* Deal type tag */
 .all-deals__card-type-tag {
+  display: none;
   position: absolute;
   bottom: 8px;
   right: 8px;

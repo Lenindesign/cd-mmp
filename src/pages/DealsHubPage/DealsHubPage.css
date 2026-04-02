@@ -610,7 +610,7 @@
 .deals-hub__card-offers-tag {
   position: absolute;
   bottom: 8px;
-  left: 8px;
+  right: 8px;
   z-index: 2;
   padding: 4px 10px;
   font-family: var(--font-heading);
@@ -618,22 +618,22 @@
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  color: var(--color-white);
-  background: var(--color-success);
+  color: var(--color-success);
+  background: var(--color-white);
   border-radius: var(--border-radius-sm);
   border: none;
   cursor: pointer;
   transition: background var(--transition-fast);
 }
 .deals-hub__card-offers-tag:hover {
-  background: #15803d;
+  background: var(--color-gray-100);
 }
 
 /* Offers popup */
 .deals-hub__card-offers-popup {
   position: absolute;
   bottom: 40px;
-  left: 8px;
+  right: 8px;
   z-index: 20;
   width: 260px;
   background: var(--color-white);
