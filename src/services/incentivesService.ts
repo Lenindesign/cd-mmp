@@ -88,7 +88,7 @@ const incentivesData: Record<string, VehicleIncentives> = {
         description: 'Ultra low-mileage lease for 24 months with $1,879 due at signing.',
         value: '$299/month',
         expirationDate: 'January 2, 2026',
-        terms: '24-month lease, 10,000 miles/year. $0.25/mile over. No security deposit.',
+        terms: '24-month lease, 10,000 miles/year.',
         programName: 'GM Lease Program',
         programDescription: 'Acura US Special Lease Rates',
         programRules: '[Eligibility] Residents residing in qualifying regions of the United States.; [Qualification] O.A.C. New and unregistered vehicles only are eligible.',

@@ -11,7 +11,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
-import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
@@ -170,7 +170,7 @@ const ZeroAprDealsPage = () => {
       results.push({
         id: d.id, aprType: 'special-apr', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
         apr: aprNum, aprDisplay: d.apr, term: d.term, estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
-        dealText: `${d.apr} APR for ${d.term}`, expirationDate: d.expirationDate,
+        dealText: getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term }), expirationDate: d.expirationDate,
         programName: d.programName, programDescription: d.programDescription,
         targetAudience: d.targetAudience, trimsEligible: d.trimsEligible,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),

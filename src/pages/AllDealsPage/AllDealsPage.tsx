@@ -5,7 +5,7 @@ import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
@@ -177,7 +177,7 @@ const AllDealsPage = () => {
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
           dealType: 'finance',
-          dealText: `${d.apr} APR for ${d.term}`,
+          dealText: getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term }),
           dealHeadline: `${d.apr} APR Financing for ${d.term}`,
           whatItMeans: `A below-market interest rate from the manufacturer that lowers your monthly payment.`,
           savingsNote: `At ${d.apr} instead of 6.5%, you could save $1,500–$3,000 in interest.`,

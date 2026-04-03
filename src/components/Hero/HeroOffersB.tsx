@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
+import { getAprRangeLabel } from '../IncentivesModal/IncentivesModal';
 import { formatExpiration } from '../../utils/dateUtils';
 
 interface HeroOffersBProps {
@@ -42,7 +43,7 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
         {topOffers.map(inc => {
           const value = stripQualifier(inc.value);
           const label = inc.type === 'finance'
-            ? `${value}${getTermSuffix(inc)}`
+            ? getAprRangeLabel(inc)
             : inc.type === 'cash'
               ? (/\bcash\s*back\b/i.test(value) ? value : `${value} cash back`)
               : (() => {

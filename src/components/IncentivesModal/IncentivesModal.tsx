@@ -119,7 +119,7 @@ const getEligibilityInfo = (inc: Incentive): { label: string; restricted: boolea
 
 
 
-function getAprRangeLabel(active: Incentive): string {
+export function getAprRangeLabel(active: { value: string; title: string; terms?: string }): string {
   const rows = buildAprTable(active);
   const rates = rows.map(r => r.apr);
   const lo = Math.min(...rates);
@@ -128,7 +128,7 @@ function getAprRangeLabel(active: Incentive): string {
   return `${lo}%–${hi}% APR`;
 }
 
-function buildAprTable(incentive: { value: string; title: string; terms?: string }) {
+export function buildAprTable(incentive: { value: string; title: string; terms?: string }) {
   const text = `${incentive.value} ${incentive.title} ${incentive.terms ?? ''}`;
   const aprMatch = text.match(/([\d.]+)%/);
   const apr = aprMatch ? parseFloat(aprMatch[1]) : 0;
@@ -572,7 +572,7 @@ const IncentivesModal = ({
                           </div>
                         )}
 
-                        {activeIncentive.terms && (
+                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (
                           <div className="incentives-modal__v5-key-section">
                             <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
                             <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms}</p>
@@ -836,7 +836,7 @@ const IncentivesModal = ({
                           </div>
                         )}
 
-                        {activeIncentive.terms && (
+                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (
                           <div className="incentives-modal__v5-key-section">
                             <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
                             <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms}</p>

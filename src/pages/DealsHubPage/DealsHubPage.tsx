@@ -7,7 +7,7 @@ import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
@@ -210,7 +210,7 @@ const DealsHubPage = () => {
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
           dealType: 'finance' as const,
-          dealText: `${d.apr} APR for ${d.term}`,
+          dealText: getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term }),
           dealHeadline: `${d.apr} APR Financing for ${d.term}`,
           whatItMeans: `The manufacturer is subsidizing your loan rate to ${d.apr}, which is well below the national average of ~6.5%. This means lower monthly payments and thousands saved over the life of the loan.`,
           savingsNote: `At ${d.apr} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term.`,
