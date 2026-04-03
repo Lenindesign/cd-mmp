@@ -1,9 +1,44 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, CheckCircle, ArrowRight, MapPin } from 'lucide-react';
+import { ChevronDown, CheckCircle, ArrowRight, MapPin, Tag } from 'lucide-react';
 import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../services/vehicleService';
 import { getAllListings, type Listing } from '../../services/listingsService';
+import { getZeroAprDeals } from '../../services/zeroAprDealsService';
+import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getLeaseDeals } from '../../services/leaseDealsService';
 import './BuyingPotential.css';
+
+interface VehicleDeal {
+  type: 'zero-apr' | 'cash' | 'finance' | 'lease';
+  label: string;
+}
+
+function getBestDealForVehicle(make: string, model: string): VehicleDeal | null {
+  const mk = make.toLowerCase();
+  const md = model.toLowerCase();
+
+  const zeroApr = getZeroAprDeals().find(
+    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
+  );
+  if (zeroApr) return { type: 'zero-apr', label: `0% APR for ${zeroApr.term}` };
+
+  const cash = getCashDeals().find(
+    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
+  );
+  if (cash) return { type: 'cash', label: `${cash.incentiveValue} Cash Back` };
+
+  const lease = getLeaseDeals().find(
+    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
+  );
+  if (lease) return { type: 'lease', label: `${lease.monthlyPayment}/mo Lease` };
+
+  const finance = getFinanceDeals().find(
+    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
+  );
+  if (finance) return { type: 'finance', label: `${finance.apr} APR` };
+
+  return null;
+}
 
 interface BuyingPotentialProps {
   bodyStyle?: string;
@@ -435,20 +470,29 @@ const BuyingPotential = ({
                       ))
                     ) : (
                       // New vehicles
-                      vehicleMatches.map((vehicle, index) => (
-                        <Link key={index} to={`/${vehicle.slug}`} className="buying-potential__match">
-                          <img src={vehicle.image} alt={vehicle.name} className="buying-potential__match-image" />
-                          <div className="buying-potential__match-info">
-                            <span className="buying-potential__match-name">{vehicle.name}</span>
-                            <span className="buying-potential__match-trim">
-                              {vehicle.trim}
-                              <span className="buying-potential__match-rating"><span className="buying-potential__match-rating-score">{vehicle.rating}</span>/10</span>
-                            </span>
-                            <span className="buying-potential__match-price">{formatCurrency(vehicle.price)}</span>
-                          </div>
-                          <CheckCircle size={18} className="buying-potential__match-check" />
-                        </Link>
-                      ))
+                      vehicleMatches.map((vehicle, index) => {
+                        const deal = getBestDealForVehicle(vehicle.make, vehicle.model);
+                        return (
+                          <Link key={index} to={`/${vehicle.slug}`} className="buying-potential__match">
+                            <img src={vehicle.image} alt={vehicle.name} className="buying-potential__match-image" />
+                            <div className="buying-potential__match-info">
+                              <span className="buying-potential__match-name">{vehicle.name}</span>
+                              <span className="buying-potential__match-trim">
+                                {vehicle.trim}
+                                <span className="buying-potential__match-rating"><span className="buying-potential__match-rating-score">{vehicle.rating}</span>/10</span>
+                              </span>
+                              <span className="buying-potential__match-price">{formatCurrency(vehicle.price)}</span>
+                              {deal && (
+                                <span className={`buying-potential__match-deal buying-potential__match-deal--${deal.type}`}>
+                                  <Tag size={11} />
+                                  {deal.label}
+                                </span>
+                              )}
+                            </div>
+                            <CheckCircle size={18} className="buying-potential__match-check" />
+                          </Link>
+                        );
+                      })
                     )}
                   </div>
                 </div>

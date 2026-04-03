@@ -28,26 +28,6 @@ A personalized match score showing how well a vehicle fits the user's stated pre
 
 ---
 
-## Key Metrics
-
-- **Score Correlation** — High scores to higher conversion?
-- **Profile Completion** — Users filling out preferences
-- **Engagement Lift** — Personalized vs non-personalized
-- **Return Visits** — Do matched users come back?
-
----
-
-## Score Calculation
-
-| Factor | Weight | Description |
-|--------|--------|-------------|
-| Budget Match | 30% | Price vs stated budget |
-| Feature Match | 25% | Desired features present |
-| Lifestyle Fit | 25% | Family, commuter, adventure, etc. |
-| Segment Rating | 20% | C/D score in category |
-
----
-
 ## Score Ranges
 
 | Score | Label | Meaning |
@@ -56,30 +36,6 @@ A personalized match score showing how well a vehicle fits the user's stated pre
 | 75-89% | Good Match | Worth considering |
 | 60-74% | Fair Match | Some compromises |
 | <60% | Low Match | May not fit needs |
-
----
-
-## Product Considerations
-
-**Data Requirements**
-- User must complete onboarding
-- Budget, lifestyle, feature preferences
-- Falls back to generic if no profile
-
-**Personalization Strategy**
-- Encourages account creation
-- Improves with more user data
-- Can drive email personalization
-
-**A/B Testing Ideas**
-- Score visibility impact
-- Threshold for "Good Match" label
-- CTA variations based on score
-
-**Privacy Considerations**
-- Transparent about data usage
-- User control over preferences
-- GDPR/CCPA compliance
         `,
       },
     },

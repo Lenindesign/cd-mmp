@@ -329,6 +329,41 @@
   color: var(--color-blue-cobalt);
 }
 
+.buying-potential__match-deal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  padding: 2px 8px;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-radius: var(--border-radius-sm);
+  width: fit-content;
+}
+
+.buying-potential__match-deal--zero-apr {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.buying-potential__match-deal--cash {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.buying-potential__match-deal--finance {
+  background: #92620a;
+  color: var(--color-white);
+}
+
+.buying-potential__match-deal--lease {
+  background: #d97706;
+  color: var(--color-white);
+}
+
 .buying-potential__match-dealer {
   display: flex;
   align-items: center;
