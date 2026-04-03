@@ -11,11 +11,6 @@ interface HeroOffersBProps {
 const stripQualifier = (v: string) =>
   v.replace(/^(as low as|up to|starting at)\s+/i, '');
 
-const getTermSuffix = (inc: Incentive) => {
-  if (!inc.terms) return '';
-  const m = inc.terms.match(/(\d+[\-–]\d+|\d+)\s*month/i);
-  return m ? ` through ${m[1]} months` : '';
-};
 
 const getChipLabel = (type: Incentive['type']) => {
   switch (type) {
