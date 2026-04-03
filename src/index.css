@@ -87,11 +87,30 @@
   /* ---- GREEN (for success buttons/CTAs) ---- */
   --color-green: var(--color-success);
   --color-green-dark: var(--color-success-dark);
+  --color-green-light: var(--color-success-light);
+  --color-green-100: var(--color-success-50);
+  --color-green-600: var(--color-success);
+
+  /* ---- ALIASES (resolve undefined references) ---- */
+  --color-blue: var(--color-blue-cobalt);
+  --color-blue-light: var(--color-info-light);
+  --color-primary-1: var(--color-blue-cobalt);
+  --color-red-600: var(--color-error-dark);
   
   /* ---- PURPLE (for finance/lease badges) ---- */
   --color-purple: #7c3aed;
   --color-purple-dark: #6d28d9;
   
+  /* ---- APPLE PAGE (semantic aliases for Apple-style pages) ---- */
+  --color-apple-text-primary: var(--color-dark);
+  --color-apple-text-secondary: var(--color-gray-700);
+  --color-apple-text-tertiary: var(--color-gray-500);
+  --color-apple-bg-secondary: var(--color-gray-100);
+  --color-apple-bg-tertiary: var(--color-gray-200);
+  --color-apple-green: var(--color-success);
+  --color-apple-red: var(--color-error);
+  --color-apple-orange: var(--color-warning);
+
   /* ---- DARK THEME ---- */
   --color-dark-bg: #0a1628;
   --color-dark-surface: #1a1a2e;
@@ -139,11 +158,13 @@
   --font-label: var(--font-condensed);  /* For labels, badges, condition headers */
   
   --font-weight-regular: 400;
+  --font-weight-normal: 400;  /* Alias for --font-weight-regular */
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
   --font-weight-black: 900;
+  --font-mono: 'SF Mono', 'Fira Code', 'Courier New', monospace;
   
   /* Font Sizes - Complete Scale */
   --font-size-2xs: 0.5rem;      /* 8px - tiny labels */
@@ -236,6 +257,7 @@
   --border-radius-xl: 12px;     /* Extra large: hero cards */
   --border-radius-2xl: 16px;    /* 2X large: feature cards */
   --border-radius-full: 9999px; /* Circular: avatars, badges */
+  --border-radius-circle: var(--border-radius-full); /* Alias */
   
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.08);

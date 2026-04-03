@@ -1,0 +1,130 @@
+---
+description: Component architecture, naming conventions, and patterns. Loaded when creating or editing React components.
+globs: ["src/components/**/*", "src/pages/**/*"]
+---
+
+# Component Patterns — Car & Driver Marketplace
+
+## File Structure
+
+Every component follows this pattern:
+```
+ComponentName/
+  ComponentName.tsx      # Implementation
+  ComponentName.css      # Colocated styles (global classes, not CSS modules)
+  ComponentName.stories.tsx  # Storybook stories (when applicable)
+  index.ts               # Barrel re-export
+```
+
+### index.ts pattern
+```typescript
+export { ComponentName, type ComponentNameProps } from './ComponentName';
+export { default } from './ComponentName';
+```
+
+### CSS import pattern
+```typescript
+import './ComponentName.css';
+```
+CSS files are imported as side effects. We do NOT use CSS Modules, styled-components, or Emotion.
+
+## Naming Convention: BEM
+
+All CSS classes follow BEM (Block Element Modifier):
+- **Block**: `.component-name` (kebab-case)
+- **Element**: `.component-name__element` (double underscore)
+- **Modifier**: `.component-name--modifier` (double hyphen)
+- **Element + Modifier**: `.component-name__element--modifier`
+
+Examples:
+- `.hero`, `.hero__breadcrumb`, `.hero__breadcrumb-nav`
+- `.btn`, `.btn--small`, `.btn--primary`, `.btn--outline`
+- `.vehicle-card`, `.vehicle-card__image`, `.vehicle-card__price--sale`
+- `.all-deals__card`, `.all-deals__card-image`, `.all-deals__card-save--active`
+
+Rules:
+- Never use generic class names (`.container` is the only exception — it's a global utility)
+- Always prefix with the component/page block name
+- Modifiers go on the element they change, not a parent
+- Use CSS variables for all values — never hardcode colors, spacing, or fonts
+
+## Component Inventory (50 components)
+
+### Core UI
+- **Button** — `variant` (primary/secondary/outline/ghost/danger/success/link), `size` (small/medium/large), `loading`, `fullWidth`, icons
+- **TextField** — form input with label, error states, icons
+- **Toast** — notification system via `useToast()` context
+- **LoadingSpinner** — loading states with variants
+- **ErrorState** / **ErrorBoundary** — error handling UI
+
+### Navigation
+- **Header** — no props, uses hooks/context internally. Global nav with search, auth, saved vehicles
+- **Footer** — no props, uses `useCarFinder()`. Site footer with links and branding
+
+### Vehicle Display
+- **VehicleCard** — primary card component. Props: identity, pricing, ratings, badges, CTAs, `variant` (default/next-vehicle)
+- **Hero** — vehicle detail page hero. Large prop interface with vehicle data, media, ratings, specs
+- **VehicleOverview** — specs and overview section
+- **VehicleRanking** — ranking display with scores
+- **QuickSpecs** — specification grid
+- **OptimizedImage** — lazy-loaded images with blur-up
+
+### Deals & Incentives
+- **Incentives** — inline incentive display
+- **IncentivesModal** — full incentive detail modal. Variants: simple, complete-with-form, edmunds, conversion-a, conversion-b, conversion-b-no-form
+- **PricingCTA** — pricing call-to-action blocks
+- **TargetPriceRange** — price visualization
+
+### Data Visualization
+- **PriceHistory** — price trend charts
+- **FuelEconomy** — MPG comparisons
+- **MarketSpeed** — market demand indicators
+- **BuyingPotential** — deal quality scoring
+- **CostToOwn** — total cost of ownership breakdown
+- **Comparison** — side-by-side vehicle comparison
+
+### Engagement
+- **CarFinderChat** — AI car finder chat interface
+- **ExitIntentModal** — exit intent capture
+- **SignInToSaveModal** — auth prompt for saving
+- **EditProfileModal** — user profile editing
+- **GoogleOneTap** — Google sign-in
+- **VinScanner** — VIN scanning utility
+
+## State Management
+
+- **Local state**: `useState`, `useRef`, `useMemo`, `useCallback`
+- **Context providers** (wrapped in App/main):
+  - `AuthProvider` / `useAuth()` — authentication state
+  - `CarFinderProvider` / `useCarFinder()` — car finder chat state
+  - `ToastProvider` / `useToast()` — notification system
+- **No Redux/Zustand** — keep it React context + hooks + services
+- **Services** in `src/services/` for data fetching and business logic
+
+## Routing (React Router v6)
+
+Router is in `main.tsx` (BrowserRouter), routes defined in `App.tsx` with lazy imports.
+
+Key route groups:
+- `/` — Home
+- `/vehicles`, `/browse` — Vehicle listings
+- `/deals/*` — Deals hub and sub-pages
+- `/:year/:make/:model` — Vehicle detail (with A/B variant paths)
+- `/rankings/*` — Rankings
+- `/compare` — Comparison
+- `/whats-my-car-worth` — Trade-in valuation
+- `/onboarding/*` — Onboarding flow
+- `/sign-in`, `/sign-up` — Auth
+
+## Rules When Creating Components
+
+1. Always create all 4 files (tsx, css, stories, index.ts)
+2. Use BEM naming with the component name as the block
+3. Use design token CSS variables for ALL visual values
+4. Export both named and default from index.ts
+5. Props interface must be exported and named `ComponentNameProps`
+6. Use `font-family: var(--font-heading)` for headings, `var(--font-body)` for body text
+7. Use semantic color tokens (`--color-blue-cobalt` not `#1B5F8A`)
+8. Responsive: mobile-first, breakpoints at 480px, 768px, 1024px, 1200px
+9. Accessibility: semantic HTML, ARIA labels, keyboard support, focus states
+10. Animations: use `--transition-fast` for hovers, `--transition-normal` for interactions

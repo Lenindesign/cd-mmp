@@ -150,7 +150,7 @@ const AllDealsPage = () => {
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
           dealType: 'zero-apr',
-          dealText: `0% APR for ${d.term}`,
+          dealText: '0% APR Financing',
           dealHeadline: `0% Interest Financing for ${d.term}`,
           whatItMeans: 'You pay absolutely zero interest on your auto loan. Every dollar goes toward the price of the car.',
           savingsNote: `On a $35,000 loan over ${d.term}, you'd save thousands in interest vs. the average 6.5% rate.`,
@@ -320,37 +320,37 @@ const AllDealsPage = () => {
 
       <div className="all-deals__toolbar">
         <div className="container all-deals__toolbar-inner">
-          <div className="all-deals__toolbar-left">
+          <div className="all-deals__toolbar-top">
             <span className="all-deals__toolbar-count">{filteredDeals.length} deals available</span>
-            <div className="all-deals__type-filters">
-              {(Object.keys(DEAL_TYPE_LABELS) as DealTypeFilter[]).map(type => (
-                <button
-                  key={type}
-                  type="button"
-                  className={`all-deals__type-btn ${dealTypeFilter === type ? 'all-deals__type-btn--active' : ''}`}
-                  onClick={() => setDealTypeFilter(type)}
-                >
-                  {DEAL_TYPE_LABELS[type]}
-                  {type !== 'all' && (
-                    <span className="all-deals__type-count">
-                      {allDeals.filter(d => d.dealType === type).length}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              className={`all-deals__filter-btn ${hasActiveFilters ? 'all-deals__filter-btn--active' : ''}`}
+              onClick={() => setFilterOpen(true)}
+            >
+              <SlidersHorizontal size={16} />
+              <span>Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="all-deals__filter-badge">{activeFilterCount}</span>
+              )}
+            </button>
           </div>
-          <button
-            type="button"
-            className={`all-deals__filter-btn ${hasActiveFilters ? 'all-deals__filter-btn--active' : ''}`}
-            onClick={() => setFilterOpen(true)}
-          >
-            <SlidersHorizontal size={16} />
-            <span>Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="all-deals__filter-badge">{activeFilterCount}</span>
-            )}
-          </button>
+          <div className="all-deals__type-filters">
+            {(Object.keys(DEAL_TYPE_LABELS) as DealTypeFilter[]).map(type => (
+              <button
+                key={type}
+                type="button"
+                className={`all-deals__type-btn ${dealTypeFilter === type ? 'all-deals__type-btn--active' : ''}`}
+                onClick={() => setDealTypeFilter(type)}
+              >
+                {DEAL_TYPE_LABELS[type]}
+                {type !== 'all' && (
+                  <span className="all-deals__type-count">
+                    {allDeals.filter(d => d.dealType === type).length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

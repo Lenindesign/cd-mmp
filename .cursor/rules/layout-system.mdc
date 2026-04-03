@@ -1,0 +1,121 @@
+---
+description: Layout system — grid, containers, breakpoints, responsive patterns. Loaded when working on layout-related code.
+globs: ["**/*.css", "**/*.tsx"]
+---
+
+# Layout System — Car & Driver Marketplace
+
+## Container
+
+The global `.container` class is defined in `src/index.css`:
+- `max-width: var(--max-width-container)` (1280px)
+- `margin: 0 auto`
+- `padding: 0 var(--spacing-4)` (16px sides)
+- At 768px+: `padding: 0 var(--spacing-6)` (24px sides)
+
+Always wrap page content in `.container`. Never set max-width manually.
+
+## Page Structure
+
+```
+<div className="page-name">          {/* Full-width wrapper */}
+  <section className="page-name__hero">
+    <div className="container">       {/* Centered content */}
+      ...
+    </div>
+  </section>
+  <section className="page-name__content">
+    <div className="container">
+      ...
+    </div>
+  </section>
+</div>
+```
+
+- Full-width backgrounds go on the section
+- Content constraint goes on `.container` inside the section
+- Page-level padding: `var(--spacing-8)` (32px) top/bottom on sections
+
+## Grid Patterns
+
+### Card grids (deals, vehicles, rankings)
+```css
+.page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+}
+
+@media (max-width: 900px) {
+  .page__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .page__grid { grid-template-columns: 1fr; }
+}
+```
+
+### Two-column layout (detail pages)
+```css
+.page__layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: var(--spacing-6);
+}
+
+@media (max-width: 1024px) {
+  .page__layout { grid-template-columns: 1fr; }
+}
+```
+
+## Breakpoints
+
+No CSS variables for breakpoints. Use these consistent values:
+
+| Name | Value | Usage |
+|------|-------|-------|
+| Mobile small | max-width: 480px | Single column, compact spacing |
+| Mobile | max-width: 600px | Single column grids |
+| Tablet | max-width: 768px | 2-column grids, reduced padding |
+| Tablet landscape | max-width: 900px | Card grid 3→2 columns |
+| Desktop small | max-width: 1024px | Sidebar collapse |
+| Desktop | max-width: 1200px | Full layout |
+| Wide | min-width: 1401px | Extra spacing |
+
+## Sticky Elements
+
+- **Header**: `position: sticky; top: 0; z-index: 1000`
+- **Toolbar/filters**: `position: sticky; top: 0; z-index: 50` (below header)
+- **Sidebar**: `position: sticky; top: calc(var(--header-height) + var(--spacing-4))`
+
+## Z-Index Layers (informal scale — no tokens)
+
+| Range | Usage |
+|-------|-------|
+| 1–10 | Local stacking within components |
+| 20–50 | Overlapping elements, sticky toolbars |
+| 100 | Tooltips, popovers |
+| 200 | Dropdowns |
+| 1000 | Header |
+| 1001–1002 | Modals, overlays |
+| 1100 | Toast notifications |
+| 10000 | Skip link |
+
+## Spacing Patterns
+
+- **Section padding**: `var(--spacing-8)` (32px) top/bottom
+- **Card padding**: `var(--spacing-4)` (16px)
+- **Card gap**: `var(--spacing-4)` (16px) in grids
+- **Content gap**: `var(--spacing-6)` (24px) between major sections
+- **Inline spacing**: `var(--spacing-2)` (8px) between inline elements
+- **Tight spacing**: `var(--spacing-1)` (4px) for tight groups
+
+## Responsive Rules
+
+1. Mobile-first: base styles are mobile, add complexity with min-width
+2. Card grids: 1 column → 2 columns (768px) → 3 columns (900px+)
+3. Sidebars: collapse below 1024px
+4. Font sizes: scale down headings on mobile (e.g., 4xl → 3xl)
+5. Spacing: reduce section padding on mobile (`--spacing-6` instead of `--spacing-8`)
+6. Images: always `width: 100%; height: auto` or use `aspect-ratio`
+7. Touch targets: minimum 44px height for interactive elements on mobile

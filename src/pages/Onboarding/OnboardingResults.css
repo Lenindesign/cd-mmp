@@ -71,7 +71,7 @@
 }
 
 .onboarding-results__subtitle {
-  font-family: 'Lora', var(--font-article);
+  font-family: var(--font-article);
   font-size: var(--font-size-md);
   color: rgba(255, 255, 255, 0.85);
   max-width: 600px;
@@ -254,7 +254,7 @@
 }
 
 .results-card__year {
-  font-family: 'Barlow Condensed', var(--font-body);
+  font-family: var(--font-label);
   font-size: var(--font-size-sm);
   color: var(--color-dark);
   opacity: 0.6;
@@ -283,7 +283,7 @@
   padding: var(--spacing-0-5) var(--spacing-1-5);
   background: var(--color-gray-100);
   border-radius: var(--spacing-0-5);
-  font-family: 'Barlow Condensed', var(--font-body);
+  font-family: var(--font-label);
   font-size: var(--font-size-xs);
   color: var(--color-dark);
   opacity: 0.7;

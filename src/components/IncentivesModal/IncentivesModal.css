@@ -73,7 +73,7 @@
 }
 
 .incentives-modal__v5-title {
-  font-family: var(--font-heading), 'Inter', sans-serif;
+  font-family: var(--font-heading);
   font-size: 22px;
   font-weight: 800;
   color: rgba(0, 0, 0, 0.87);
@@ -139,7 +139,7 @@
 }
 
 .incentives-modal__v5-offer-apr {
-  font-family: var(--font-heading), 'Inter', sans-serif;
+  font-family: var(--font-heading);
   font-size: 18px;
   font-weight: 800;
   color: #26870D;
@@ -416,7 +416,7 @@
 }
 
 .incentives-modal__v5-expert-tip-label {
-  font-family: var(--font-heading), 'Inter', sans-serif;
+  font-family: var(--font-heading);
   font-size: 12px;
   font-weight: 800;
   color: #26870D;

@@ -154,7 +154,7 @@ const ZeroAprDealsPage = () => {
       results.push({
         id: d.id, aprType: 'zero-apr', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
         apr: 0, aprDisplay: '0%', term: d.term, estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
-        dealText: `0% APR for ${d.term}`, expirationDate: d.expirationDate,
+        dealText: '0% APR Financing', expirationDate: d.expirationDate,
         programName: d.programName, programDescription: d.programDescription,
         targetAudience: d.targetAudience, trimsEligible: d.trimsEligible,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),

@@ -142,7 +142,7 @@
   transform: translateX(-50%);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
@@ -170,7 +170,7 @@
 }
 
 .value-section__value-amount {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 32px;
   font-weight: 800;
   color: var(--color-black);
@@ -194,14 +194,14 @@
 }
 
 .value-section__private-party-text {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-black);
 }
 
 .value-section__private-party-link {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   color: var(--color-blue-cobalt);
   text-decoration: underline;
@@ -231,7 +231,7 @@
 }
 
 .value-section__detail-label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -240,7 +240,7 @@
 }
 
 .value-section__detail-value {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-black);
@@ -349,7 +349,7 @@
 }
 
 .value-section__condition-name {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
@@ -362,7 +362,7 @@
 }
 
 .value-section__condition-price {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--color-black);
@@ -379,7 +379,7 @@
   transform: translateX(-50%);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -583,7 +583,7 @@
 }
 
 .value-section__local-dealer-title {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-size-lg);
   font-weight: 800;
   color: var(--color-dark);
@@ -593,7 +593,7 @@
 }
 
 .value-section__local-dealer-subtitle {
-  font-family: 'Lora', serif;
+  font-family: var(--font-article);
   font-size: 16px;
   color: var(--color-gray-600);
   margin: var(--spacing-1) 0 0 0;
@@ -2020,7 +2020,7 @@
 }
 
 .elot-for-sale__title {
-  font-family: 'Inter', var(--font-body);
+  font-family: var(--font-body);
   font-size: 32px;
   font-weight: 700;
   font-style: normal;

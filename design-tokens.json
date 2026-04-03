@@ -1,0 +1,156 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "meta": {
+    "name": "Car & Driver Marketplace Design Tokens",
+    "source": "src/index.css :root",
+    "lastUpdated": "2026-04-02"
+  },
+  "color": {
+    "brand": {
+      "blue-cobalt": { "value": "#1B5F8A", "description": "Primary brand color — CTAs, links, active states" },
+      "blue-cobalt-dark": { "value": "#154d70", "description": "Hover/pressed state for primary" },
+      "blue-cobalt-light": { "value": "#60A5FA", "description": "Accents, highlights" },
+      "red": { "value": "#D2232A", "description": "Official C/D Red — alerts, destructive actions" },
+      "red-dark": { "value": "#b31f24" }
+    },
+    "neutral": {
+      "black": { "value": "#000000" },
+      "dark": { "value": "#222222", "description": "Headers, footers, primary text" },
+      "gray-700": { "value": "#4a4a4a" },
+      "gray-600": { "value": "#666666" },
+      "gray-500": { "value": "#6b6b6b", "description": "WCAG AA compliant on white" },
+      "gray-300": { "value": "#cdcdcd" },
+      "gray-200": { "value": "#e5e5e5", "description": "Borders" },
+      "gray-100": { "value": "#f5f5f5", "description": "Subtle backgrounds" },
+      "gray-50": { "value": "#fafafa" },
+      "white": { "value": "#ffffff" }
+    },
+    "semantic": {
+      "success": { "value": "#26870D" },
+      "success-dark": { "value": "#1a6b09" },
+      "success-light": { "value": "#f0fdf4" },
+      "warning": { "value": "#f59e0b" },
+      "warning-dark": { "value": "#d97706" },
+      "error": { "value": "#ef4444" },
+      "error-dark": { "value": "#dc2626" },
+      "info": { "value": "#0288d1" }
+    },
+    "special": {
+      "gold": { "value": "#DBCA8B" },
+      "gold-light": { "value": "#FEF3C7" },
+      "gold-dark": { "value": "#A59143" },
+      "purple": { "value": "#7c3aed" },
+      "purple-dark": { "value": "#6d28d9" },
+      "highlight": { "value": "#fef08a" },
+      "facebook": { "value": "#1877F2" }
+    },
+    "dark-theme": {
+      "bg": { "value": "#0a1628" },
+      "surface": { "value": "#1a1a2e" }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": { "value": "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" },
+      "serif": { "value": "'Lora', Georgia, serif" },
+      "condensed": { "value": "'Barlow Condensed', -apple-system, BlinkMacSystemFont, sans-serif" },
+      "heading": { "value": "{typography.fontFamily.sans}", "description": "All headings, labels, buttons" },
+      "body": { "value": "{typography.fontFamily.sans}", "description": "Body text, descriptions" },
+      "article": { "value": "{typography.fontFamily.serif}", "description": "Editorial/article content" },
+      "label": { "value": "{typography.fontFamily.condensed}", "description": "Labels, badges, tags" }
+    },
+    "fontWeight": {
+      "regular": { "value": 400 },
+      "medium": { "value": 500 },
+      "semibold": { "value": 600 },
+      "bold": { "value": 700 },
+      "extrabold": { "value": 800 },
+      "black": { "value": 900 }
+    },
+    "fontSize": {
+      "2xs": { "value": "10px" },
+      "xs": { "value": "12px" },
+      "sm": { "value": "14px" },
+      "base": { "value": "16px" },
+      "lg": { "value": "18px" },
+      "xl": { "value": "20px" },
+      "2xl": { "value": "24px" },
+      "3xl": { "value": "30px" },
+      "4xl": { "value": "36px" },
+      "5xl": { "value": "48px" },
+      "6xl": { "value": "60px" },
+      "7xl": { "value": "72px" }
+    },
+    "lineHeight": {
+      "none": { "value": 1 },
+      "tight": { "value": 1.15 },
+      "snug": { "value": 1.25 },
+      "normal": { "value": 1.5 },
+      "relaxed": { "value": 1.625 },
+      "loose": { "value": 2 }
+    }
+  },
+  "spacing": {
+    "0": { "value": "0" },
+    "px": { "value": "1px" },
+    "0-5": { "value": "0.125rem", "description": "2px" },
+    "1": { "value": "0.25rem", "description": "4px" },
+    "1-5": { "value": "0.375rem", "description": "6px" },
+    "2": { "value": "0.5rem", "description": "8px" },
+    "2-5": { "value": "0.625rem", "description": "10px" },
+    "3": { "value": "0.75rem", "description": "12px" },
+    "3-5": { "value": "0.875rem", "description": "14px" },
+    "4": { "value": "1rem", "description": "16px" },
+    "5": { "value": "1.25rem", "description": "20px" },
+    "6": { "value": "1.5rem", "description": "24px" },
+    "7": { "value": "1.75rem", "description": "28px" },
+    "8": { "value": "2rem", "description": "32px" },
+    "9": { "value": "2.25rem", "description": "36px" },
+    "10": { "value": "2.5rem", "description": "40px" },
+    "12": { "value": "3rem", "description": "48px" },
+    "14": { "value": "3.5rem", "description": "56px" },
+    "16": { "value": "4rem", "description": "64px" },
+    "20": { "value": "5rem", "description": "80px" },
+    "24": { "value": "6rem", "description": "96px" },
+    "28": { "value": "7rem", "description": "112px" },
+    "32": { "value": "8rem", "description": "128px" }
+  },
+  "layout": {
+    "maxWidth": {
+      "container": { "value": "1280px" },
+      "content": { "value": "1280px" },
+      "narrow": { "value": "960px" }
+    },
+    "contentPadding": { "value": "{spacing.8}" },
+    "headerHeight": { "value": "46px" },
+    "subnavHeight": { "value": "50px" }
+  },
+  "borderRadius": {
+    "sm": { "value": "4px", "description": "Inputs, small buttons" },
+    "md": { "value": "6px", "description": "Cards, dropdowns" },
+    "lg": { "value": "8px", "description": "Modals, large cards" },
+    "xl": { "value": "12px", "description": "Hero cards" },
+    "2xl": { "value": "16px", "description": "Feature cards" },
+    "full": { "value": "9999px", "description": "Avatars, badges, pills" }
+  },
+  "shadow": {
+    "sm": { "value": "0 1px 2px rgba(0,0,0,0.05)" },
+    "md": { "value": "0 3px 6px rgba(0,0,0,0.08)" },
+    "lg": { "value": "0 8px 24px rgba(0,0,0,0.12)" },
+    "xl": { "value": "0 16px 48px rgba(0,0,0,0.16)" }
+  },
+  "transition": {
+    "fast": { "value": "150ms ease", "description": "Hovers, toggles" },
+    "normal": { "value": "200ms ease", "description": "Default interactions" },
+    "slow": { "value": "300ms ease", "description": "Modals, complex animations" }
+  },
+  "breakpoints": {
+    "mobile-sm": { "value": "480px" },
+    "mobile": { "value": "600px" },
+    "tablet": { "value": "768px" },
+    "tablet-landscape": { "value": "900px" },
+    "desktop-sm": { "value": "1024px" },
+    "desktop": { "value": "1200px" },
+    "wide": { "value": "1401px" }
+  }
+}

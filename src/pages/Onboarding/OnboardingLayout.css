@@ -150,7 +150,7 @@
 }
 
 .onboarding-card__subtitle {
-  font-family: 'Lora', var(--font-article);
+  font-family: var(--font-article);
   font-size: var(--font-size-md);
   color: var(--color-dark);
   margin-bottom: var(--spacing-8);
@@ -267,7 +267,7 @@
 }
 
 .onboarding-selection-card__description {
-  font-family: 'Lora', var(--font-article);
+  font-family: var(--font-article);
   font-size: var(--font-size-sm);
   color: var(--color-dark);
   opacity: 0.7;
@@ -374,7 +374,7 @@
 }
 
 .onboarding-divider__text {
-  font-family: 'Barlow Condensed', var(--font-body);
+  font-family: var(--font-label);
   font-size: var(--font-size-sm);
   color: var(--color-dark);
   opacity: 0.5;
@@ -423,7 +423,7 @@
 /* Link text - C/D Design System */
 .onboarding-link {
   color: var(--color-blue-cobalt);
-  font-family: 'Lora', var(--font-article);
+  font-family: var(--font-article);
   font-weight: 700;
   text-decoration: underline;
   transition: color var(--transition-fast);
@@ -435,7 +435,7 @@
 
 /* Terms text */
 .onboarding-terms {
-  font-family: 'Lora', var(--font-article);
+  font-family: var(--font-article);
   font-size: var(--font-size-sm);
   color: var(--color-dark);
   opacity: 0.6;

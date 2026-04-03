@@ -4,7 +4,7 @@
    ========================================================================== */
 
 .text-block {
-  font-family: 'Lora', var(--font-serif);
+  font-family: var(--font-article);
   font-style: normal;
   color: var(--color-dark);
   line-height: var(--line-height-loose);
@@ -129,7 +129,7 @@
 .text-block--drop-cap > p:first-of-type::first-letter,
 .text-block--drop-cap > .text-block__paragraph:first-of-type::first-letter {
   float: left;
-  font-family: 'Lora', var(--font-serif);
+  font-family: var(--font-article);
   font-style: normal;
   font-size: 4em;
   font-weight: var(--font-weight-bold);

@@ -89,7 +89,7 @@ const FuelTypeDealsPage = () => {
       results.push({
         id: d.id, dealType: 'zero-apr', fuelType: d.vehicle.fuelType, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
         estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
-        dealText: `0% APR for ${d.term}`, dealPillIcon: 'percent',
+        dealText: '0% APR Financing', dealPillIcon: 'percent',
         details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Term', value: d.term }, { label: 'Fuel Type', value: d.vehicle.fuelType }],
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],

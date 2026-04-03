@@ -804,11 +804,11 @@
 }
 
 .rankings-page__hero-card-cdsays-text {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-article);
 }
 
 .rankings-page__hero-card-cdsays-link {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-article);
   color: var(--color-blue-cobalt);
   text-decoration: underline;
 }

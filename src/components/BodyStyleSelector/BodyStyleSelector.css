@@ -84,7 +84,7 @@
 }
 
 .body-style-selector__label {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-size-13);
   font-weight: 500;
   color: var(--color-text);

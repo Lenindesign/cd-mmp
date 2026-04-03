@@ -835,7 +835,7 @@
 }
 
 .truck-deals-page__faq-answer p {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-article);
   font-size: var(--font-size-base);
   color: var(--color-gray-700);
   line-height: 1.7;

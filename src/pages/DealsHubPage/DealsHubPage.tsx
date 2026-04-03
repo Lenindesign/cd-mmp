@@ -180,7 +180,7 @@ const DealsHubPage = () => {
           slug: d.vehicle.slug,
           priceRange: d.vehicle.priceRange,
           dealType: 'zero-apr',
-          dealText: `0% APR for ${d.term}`,
+          dealText: '0% APR Financing',
           dealHeadline: `0% Interest Financing for ${d.term}`,
           whatItMeans: `You pay absolutely zero interest on your auto loan. Every dollar of your monthly payment goes directly toward the price of the car—not to the bank. On a typical $35,000 loan, this could save you $3,000–$6,000 compared to the average new-car interest rate.`,
           savingsNote: `On a $35,000 loan over ${d.term}, you'd save approximately $${d.term.includes('72') ? '5,400' : d.term.includes('60') ? '4,500' : d.term.includes('48') ? '3,600' : '2,700'} in interest vs. the average 6.5% rate.`,
@@ -308,7 +308,7 @@ const DealsHubPage = () => {
           const monthly = calcMonthly(msrp, 0, months);
           const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, bs, 'zero-apr');
           const audience = 'targetAudience' in d ? d.targetAudience : 'Well-qualified buyers with approved credit.';
-          return { ...base, dealType: 'zero-apr' as const, dealText: `0% APR for ${term}`, dealHeadline: `0% Interest Financing for ${term}`,
+          return { ...base, dealType: 'zero-apr' as const, dealText: '0% APR Financing', dealHeadline: `0% Interest Financing for ${term}`,
             whatItMeans: 'Zero interest on your auto loan—every payment dollar goes toward the car. This could save you thousands compared to a typical rate.',
             savingsNote: "On a $35,000 loan, you'd save approximately $3,000–$5,000 in interest.", whoQualifies: audience,
             estimatedMonthly: `$${monthly.toLocaleString()}`, savingsVsAvg, savingsTooltip };

@@ -472,13 +472,13 @@
 
 /* Dynamic text - uses Lora serif font */
 .vehicle-card__cd-says-text {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-article);
   color: var(--color-neutrals-2);
 }
 
 /* Learn More link - Lora font to match C/D Says text */
 .vehicle-card__cd-says-link {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-article);
   color: var(--color-blue-cobalt);
   text-decoration: underline;
   text-underline-offset: var(--spacing-0-5);
@@ -714,7 +714,7 @@
 
 /* Header Title - Above the card */
 .vehicle-card-next__header-title {
-  font-family: 'Barlow Condensed', var(--font-condensed), sans-serif;
+  font-family: var(--font-label);
   font-size: 32px;
   font-weight: 700;
   font-style: normal;
@@ -805,7 +805,7 @@
 }
 
 .vehicle-card-next__cd-says-text {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-article);
   font-size: var(--font-size-sm);
   color: var(--color-neutrals-2);
   line-height: 1.5;
