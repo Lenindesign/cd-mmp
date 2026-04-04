@@ -54,7 +54,7 @@
 /* Toolbar */
 .all-deals__toolbar {
   background: var(--color-white);
-  border-bottom: 1px solid var(--color-gray-200);
+  border-bottom: 4px solid var(--color-gray-200);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -62,17 +62,19 @@
 
 .all-deals__toolbar-inner {
   display: flex;
-  flex-direction: column;
-  padding-top: var(--spacing-3);
-  padding-bottom: var(--spacing-3);
-  gap: var(--spacing-2);
+  align-items: center;
+  gap: 0;
+  height: 52px;
 }
 
 .all-deals__toolbar-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-4);
+  gap: var(--spacing-3);
+  flex-shrink: 0;
+  padding-right: 20px;
+  border-right: 1px solid var(--color-gray-200);
+  margin-right: 4px;
 }
 
 .all-deals__toolbar-count {
@@ -86,53 +88,63 @@
 /* Deal type filter tabs */
 .all-deals__type-filters {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.all-deals__type-filters::-webkit-scrollbar {
+  display: none;
 }
 
 .all-deals__type-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 12px;
+  gap: 6px;
+  padding: 0 16px;
+  height: 100%;
   font-family: var(--font-heading);
-  font-size: 12px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-600);
-  background: var(--color-white);
-  border: 1.5px solid var(--color-gray-200);
-  border-radius: var(--border-radius-full);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-500);
+  background: transparent;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast);
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 .all-deals__type-btn:hover {
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-blue-cobalt);
+  color: var(--color-dark);
 }
 
 .all-deals__type-btn--active {
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-white);
+  color: var(--color-dark);
+  box-shadow: inset 0 -4px 0 0 var(--color-blue-cobalt);
 }
 
 .all-deals__type-btn--active:hover {
-  background: var(--color-blue-cobalt-dark);
-  border-color: var(--color-blue-cobalt-dark);
-  color: var(--color-white);
+  color: var(--color-dark);
 }
 
 .all-deals__type-count {
   font-size: 11px;
   font-weight: var(--font-weight-bold);
-  opacity: 0.7;
+  color: var(--color-gray-400);
+  line-height: 1;
 }
 
 .all-deals__type-btn--active .all-deals__type-count {
-  opacity: 0.85;
+  color: var(--color-blue-cobalt);
 }
 
 /* Filter button */
@@ -147,6 +159,10 @@
   color: var(--color-dark);
   background: var(--color-white);
   border: 1.5px solid var(--color-gray-300);
+  flex-shrink: 0;
+  margin-left: 4px;
+  padding-left: 20px;
+  border-left: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-full);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -722,20 +738,34 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .all-deals__type-filters {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding-bottom: 2px;
+  .all-deals__toolbar-inner {
+    flex-wrap: wrap;
+    height: auto;
+    padding: var(--spacing-2) 0;
   }
 
-  .all-deals__type-filters::-webkit-scrollbar {
-    display: none;
+  .all-deals__toolbar-top {
+    border-right: none;
+    padding-right: 12px;
+    margin-right: 0;
+  }
+
+  .all-deals__filter-btn {
+    border-left: none;
+    padding-left: var(--spacing-4);
+    margin-left: auto;
+  }
+
+  .all-deals__type-filters {
+    order: 3;
+    flex-basis: 100%;
+    height: 44px;
+    margin-top: 4px;
   }
 
   .all-deals__type-btn {
+    font-size: 11px;
+    padding: 0 12px;
     flex-shrink: 0;
   }
 }
@@ -747,10 +777,5 @@
 
   .all-deals__title {
     font-size: var(--font-size-3xl);
-  }
-
-  .all-deals__type-btn {
-    padding: 6px 14px;
-    font-size: 11px;
   }
 }

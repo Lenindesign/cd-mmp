@@ -114,12 +114,16 @@ const Header = () => {
 
   const isNavActive = (href: string, children?: { href: string }[]): boolean => {
     const path = location.pathname;
+    const search = location.search;
     if (children) {
       return children.some(c => path === c.href || path.startsWith(c.href + '/'));
     }
-    const base = href.split('?')[0];
+    const [base, query] = href.split('?');
     if (base === '/') return path === '/';
-    return path === base || path.startsWith(base + '/');
+    const pathMatch = path === base || path.startsWith(base + '/');
+    if (!pathMatch) return false;
+    if (query) return search === `?${query}`;
+    return !search;
   };
 
   const navItems: {

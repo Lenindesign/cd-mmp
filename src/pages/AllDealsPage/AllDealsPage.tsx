@@ -322,17 +322,6 @@ const AllDealsPage = () => {
         <div className="container all-deals__toolbar-inner">
           <div className="all-deals__toolbar-top">
             <span className="all-deals__toolbar-count">{filteredDeals.length} deals available</span>
-            <button
-              type="button"
-              className={`all-deals__filter-btn ${hasActiveFilters ? 'all-deals__filter-btn--active' : ''}`}
-              onClick={() => setFilterOpen(true)}
-            >
-              <SlidersHorizontal size={16} />
-              <span>Filters</span>
-              {activeFilterCount > 0 && (
-                <span className="all-deals__filter-badge">{activeFilterCount}</span>
-              )}
-            </button>
           </div>
           <div className="all-deals__type-filters">
             {(Object.keys(DEAL_TYPE_LABELS) as DealTypeFilter[]).map(type => (
@@ -351,6 +340,17 @@ const AllDealsPage = () => {
               </button>
             ))}
           </div>
+          <button
+            type="button"
+            className={`all-deals__filter-btn ${hasActiveFilters ? 'all-deals__filter-btn--active' : ''}`}
+            onClick={() => setFilterOpen(true)}
+          >
+            <SlidersHorizontal size={16} />
+            <span>Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="all-deals__filter-badge">{activeFilterCount}</span>
+            )}
+          </button>
         </div>
       </div>
 

@@ -352,11 +352,48 @@ const RankingsPage = () => {
           </div>
         </div>
 
+        {/* Sticky anchor navigation for body-style sections */}
+        <div className="rankings-page__subnav rankings-page__subnav--sticky">
+          <div className="container">
+            <div className="rankings-page__subnav-pills">
+              {topByBodyStyle.map((row) => (
+                <a
+                  key={row.key}
+                  href={`#${row.key}`}
+                  className="rankings-page__subnav-pill"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById(row.key)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                >
+                  {row.icon && (
+                    <img src={row.icon} alt="" className="rankings-page__subnav-pill-icon" />
+                  )}
+                  {row.title}
+                </a>
+              ))}
+            </div>
+            <button
+              className="rankings-page__subnav-scroll-btn"
+              onClick={(e) => {
+                const container = e.currentTarget.parentElement;
+                const pills = container?.querySelector('.rankings-page__subnav-pills');
+                if (pills) {
+                  pills.scrollBy({ left: 200, behavior: 'smooth' });
+                }
+              }}
+              aria-label="Scroll right"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+
         {/* Body-style rows with top 3 vehicles each */}
         <div className="rankings-page__body-rows">
           <div className="container">
             {topByBodyStyle.map((row) => (
-              <section key={row.key} className="rankings-page__body-row">
+              <section key={row.key} id={row.key} className="rankings-page__body-row">
                 <div className="rankings-page__body-row-left">
                   {row.icon && (
                     <img src={row.icon} alt="" className="rankings-page__body-row-icon" />

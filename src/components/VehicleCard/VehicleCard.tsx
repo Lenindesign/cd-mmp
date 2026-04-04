@@ -569,16 +569,6 @@ export const VehicleCard = ({
           </div>
         )}
 
-        {/* Save Button (only show when no rank - ranked cards have save in rank container) */}
-        {showSaveButton && !rank && (
-          <button
-            className={`vehicle-card__save-btn ${isSaved ? 'vehicle-card__save-btn--saved' : ''}`}
-            onClick={handleSaveClick}
-            aria-label={isSaved ? 'Remove from saved' : 'Save vehicle'}
-          >
-            <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
-          </button>
-        )}
 
         <OptimizedImage 
           src={image} 
