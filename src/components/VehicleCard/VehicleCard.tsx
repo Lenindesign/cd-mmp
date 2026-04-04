@@ -507,22 +507,24 @@ export const VehicleCard = ({
 
       {/* Card Image */}
       <div className="vehicle-card__image">
-        {/* Rank Badge with Save Button (for Top 10) */}
+        {/* Rank Badge */}
         {rank && (
           <div className="vehicle-card__rank-container">
             <span className={`vehicle-card__rank ${rank === 1 ? 'vehicle-card__rank--first' : ''} ${isCurrentVehicle ? 'vehicle-card__rank--current' : ''}`}>
               {rank}
             </span>
-            {showSaveButton && (
-              <button
-                className={`vehicle-card__rank-save ${isSaved ? 'vehicle-card__rank-save--saved' : ''}`}
-                onClick={handleSaveClick}
-                aria-label={isSaved ? 'Remove from saved' : 'Save vehicle'}
-              >
-                <Bookmark size={18} fill={isSaved ? 'currentColor' : 'none'} />
-              </button>
-            )}
           </div>
+        )}
+
+        {/* Save Button — top right circle */}
+        {showSaveButton && (
+          <button
+            className={`vehicle-card__save-circle ${isSaved ? 'vehicle-card__save-circle--saved' : ''}`}
+            onClick={handleSaveClick}
+            aria-label={isSaved ? 'Remove from saved' : 'Save vehicle'}
+          >
+            <Bookmark size={16} fill={isSaved ? 'currentColor' : 'none'} />
+          </button>
         )}
 
         {/* Body Style Badge */}

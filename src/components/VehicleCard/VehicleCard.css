@@ -106,24 +106,31 @@
   box-shadow: none;
 }
 
-.vehicle-card__rank-save {
+.vehicle-card__save-circle {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--spacing-10);
-  height: var(--spacing-10);
-  background: transparent;
+  width: 34px;
+  height: 34px;
+  background: var(--color-white);
   border: none;
+  border-radius: var(--border-radius-full);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   color: var(--color-gray-500);
   transition: all var(--transition-fast);
 }
 
-.vehicle-card__rank-save:hover {
+.vehicle-card__save-circle:hover {
   color: var(--color-blue-cobalt);
+  box-shadow: var(--shadow-lg);
 }
 
-.vehicle-card__rank-save--saved {
+.vehicle-card__save-circle--saved {
   color: var(--color-blue-cobalt);
 }
 
@@ -170,7 +177,7 @@
 /* Accolades Badges (Editor's Choice, 10Best, EV of the Year) */
 .vehicle-card__accolades {
   position: absolute;
-  top: var(--spacing-2);
+  bottom: var(--spacing-2);
   right: var(--spacing-2);
   display: flex;
   gap: var(--spacing-1);

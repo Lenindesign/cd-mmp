@@ -1,0 +1,275 @@
+/* ============================================
+   FINANCING PAGE
+   ============================================ */
+
+.financing-page {
+  background: var(--color-white);
+}
+
+/* ---- Hero ---- */
+.financing__hero {
+  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-dark-surface) 60%, var(--color-blue-cobalt-dark) 100%);
+  padding: var(--spacing-14) 0 var(--spacing-10);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.financing__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(27, 95, 138, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.financing__hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.financing__hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-blue-cobalt-light);
+  margin-bottom: var(--spacing-4);
+}
+
+.financing__hero-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-white);
+  line-height: var(--line-height-tight);
+  margin: 0 0 var(--spacing-3);
+}
+
+.financing__hero-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-300);
+  line-height: var(--line-height-normal);
+  margin: 0;
+}
+
+/* ---- Calculator section ---- */
+.financing__calculator {
+  padding: var(--spacing-10) 0;
+  background: var(--color-gray-50);
+}
+
+/* ---- Value Props ---- */
+.financing__value-props {
+  padding: var(--spacing-10) 0;
+  background: var(--color-white);
+}
+
+.financing__value-props-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-dark);
+  text-align: center;
+  margin: 0 0 var(--spacing-8);
+}
+
+.financing__value-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-6);
+}
+
+.financing__value-card {
+  text-align: center;
+  padding: var(--spacing-4) var(--spacing-3);
+}
+
+.financing__value-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--spacing-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-full);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.financing__value-card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-2);
+}
+
+.financing__value-card-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* ---- Articles ---- */
+.financing__articles {
+  padding: var(--spacing-10) 0;
+  background: var(--color-gray-50);
+}
+
+.financing__articles-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-6);
+}
+
+.financing__articles-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-dark);
+  margin: 0;
+}
+
+.financing__articles-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: color var(--transition-fast);
+}
+
+.financing__articles-link:hover {
+  color: var(--color-blue-cobalt-dark);
+}
+
+.financing__articles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+}
+
+/* ---- FAQ ---- */
+.financing__faq {
+  padding: var(--spacing-10) 0 var(--spacing-12);
+  background: var(--color-white);
+}
+
+.financing__faq-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-dark);
+  text-align: center;
+  margin: 0 0 var(--spacing-8);
+}
+
+.financing__faq-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.financing__faq-item {
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.financing__faq-item:first-child {
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.financing__faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-5) 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-dark);
+  line-height: var(--line-height-normal);
+  transition: color var(--transition-fast);
+}
+
+.financing__faq-question:hover {
+  color: var(--color-blue-cobalt);
+}
+
+.financing__faq-chevron {
+  flex-shrink: 0;
+  color: var(--color-blue-cobalt);
+  transition: transform var(--transition-fast);
+}
+
+.financing__faq-chevron--open {
+  transform: rotate(180deg);
+}
+
+.financing__faq-answer {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.financing__faq-answer--open {
+  max-height: 500px;
+  padding-bottom: var(--spacing-5);
+}
+
+.financing__faq-answer p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .financing__hero {
+    padding: var(--spacing-10) 0 var(--spacing-8);
+  }
+
+  .financing__hero-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .financing__hero-subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .financing__value-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+
+  .financing__articles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .financing__articles-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+}

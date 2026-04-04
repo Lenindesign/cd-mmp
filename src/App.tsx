@@ -51,6 +51,9 @@ const LeaseDealsHubPage = lazy(() => import('./pages/LeaseDealsHubPage/LeaseDeal
 const LeaseByMakePage = lazy(() => import('./pages/LeaseByMakePage/LeaseByMakePage'));
 const LeaseByMakeModelPage = lazy(() => import('./pages/LeaseByMakeModelPage/LeaseByMakeModelPage'));
 
+// Financing page - lazy loaded
+const FinancingPage = lazy(() => import('./pages/FinancingPage/FinancingPage'));
+
 // Compare page - lazy loaded (no auth required)
 const ComparePage = lazy(() => import('./pages/ComparePage/ComparePage'));
 
@@ -158,6 +161,10 @@ function App() {
             
             {/* Compare Page - no auth required */}
             <Route path="/compare" element={<ComparePage />} />
+
+            {/* Financing / Payment Calculator Page */}
+            <Route path="/financing" element={<FinancingPage />} />
+            <Route path="/payment-calculator" element={<FinancingPage />} />
 
             {/* Deals Pages */}
             <Route path="/deals" element={<DealsHubPage />} />

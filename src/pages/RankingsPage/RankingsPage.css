@@ -1299,3 +1299,158 @@
   }
 }
 
+/* ============================================
+   LANDING PAGE — Body-style rows
+   ============================================ */
+
+.rankings-page__body-rows {
+  padding: var(--spacing-8) 0 var(--spacing-10);
+}
+
+.rankings-page__body-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-5) var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+  transition: box-shadow var(--transition-fast);
+}
+
+.rankings-page__body-row:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.rankings-page__body-row-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+  width: 180px;
+}
+
+.rankings-page__body-row-icon {
+  width: 80px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.rankings-page__body-row-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-dark);
+  margin: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.rankings-page__body-row-count {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-500);
+}
+
+.rankings-page__body-row-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 4px 12px;
+  border: 1.5px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  margin-top: var(--spacing-1);
+}
+
+.rankings-page__body-row-cta:hover {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.rankings-page__body-row-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .rankings-page__body-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rankings-page__body-row-left {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: var(--spacing-3);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--color-gray-100);
+    margin-bottom: var(--spacing-1);
+  }
+
+  .rankings-page__body-row-icon {
+    width: 60px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .rankings-page__body-row {
+    padding: var(--spacing-3);
+    gap: var(--spacing-3);
+  }
+
+  .rankings-page__body-row-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+  }
+
+  .rankings-page__body-row-cards > *:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .rankings-page__body-row-left {
+    gap: var(--spacing-2);
+    padding-bottom: var(--spacing-3);
+  }
+
+  .rankings-page__body-row-icon {
+    width: 48px;
+    height: 24px;
+  }
+
+  .rankings-page__body-row-title {
+    font-size: var(--font-size-base);
+  }
+
+  .rankings-page__body-row-count {
+    font-size: 11px;
+  }
+
+  .rankings-page__body-row-cta {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .rankings-page__body-row-cards {
+    gap: var(--spacing-2);
+  }
+}
+

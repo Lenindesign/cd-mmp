@@ -271,13 +271,47 @@ const RankingsPage = () => {
     }).filter(sub => sub.vehicles.length > 0);
   }, [allVehicles, config, subcategory, getSupabaseRating]);
 
-  // If no config found, show 404-like state
+  // Top 3 vehicles per body style for the landing page rows
+  const topByBodyStyle = useMemo(() => {
+    return Object.entries(BODY_STYLE_CONFIG).map(([key, cfg]) => {
+      const vehicles = getAllVehicles()
+        .filter(v => v.bodyStyle.toLowerCase() === key)
+        .filter(v => parseInt(v.year) >= 2024)
+        .sort((a, b) => getVehicleRating(b) - getVehicleRating(a))
+        .slice(0, 3)
+        .map((v, i) => ({
+          id: v.id,
+          rank: i + 1,
+          name: `${v.make} ${v.model}`,
+          year: v.year,
+          price: `$${v.priceMin.toLocaleString()}`,
+          image: v.image,
+          rating: getVehicleRating(v),
+          slug: v.slug,
+          editorsChoice: v.editorsChoice,
+          tenBest: v.tenBest,
+          epaMpg: getCombinedMpg(v.mpg),
+          cdSays: generateCdSays(v.year, v.make, v.model),
+          modelName: v.model,
+        }));
+
+      return {
+        key,
+        title: cfg.title,
+        description: cfg.description,
+        icon: BODY_STYLE_ICONS[key],
+        count: getAllVehicles().filter(v => v.bodyStyle.toLowerCase() === key).length,
+        vehicles,
+      };
+    }).filter(row => row.vehicles.length > 0);
+  }, [getSupabaseRating]);
+
+  // If no config found, show landing page with body-style rows
   if (!config) {
     return (
       <div className="rankings-page">
         <SEO title="Rankings | Car and Driver" />
         
-        {/* Google One Tap for non-authenticated users */}
         {shouldShowOneTap && (
           <GoogleOneTap
             pageType="rankings"
@@ -317,62 +351,61 @@ const RankingsPage = () => {
             </div>
           </div>
         </div>
-        <div className="container">
-          <div className="rankings-page__categories-header">
-            <h2 className="rankings-page__categories-title">Browse by Category</h2>
-            <p className="rankings-page__categories-subtitle">Select a category to see our complete rankings</p>
-          </div>
-          <div className="rankings-page__categories">
-            {Object.entries(BODY_STYLE_CONFIG).map(([key, value]) => {
-              const { topVehicle, count } = categoryData[key];
-              return (
-                <Link key={key} to={`/rankings/${key}`} className="rankings-page__category-card">
-                  <div className="rankings-page__category-card-inner">
-                    {topVehicle && (
-                      <div className="rankings-page__category-image-wrapper">
-                        <img 
-                          src={topVehicle.image}
-                          alt={topVehicle.name}
-                          className="rankings-page__category-image"
-                        />
-                        <span className="rankings-page__category-rank">1</span>
-                      </div>
-                    )}
-                    <div className="rankings-page__category-content">
-                      <div className="rankings-page__category-badge">
-                        <img 
-                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
-                          alt="10Best"
-                          className="rankings-page__category-icon"
-                        />
-                        <span>10BEST</span>
-                      </div>
-                      {BODY_STYLE_ICONS[key] && (
-                        <img 
-                          src={BODY_STYLE_ICONS[key]} 
-                          alt="" 
-                          className="rankings-page__category-title-icon"
-                        />
-                      )}
-                      <h3 className="rankings-page__category-title">{value.title}</h3>
-                      {topVehicle && (
-                        <p className="rankings-page__category-top">
-                          {topVehicle.year} {topVehicle.name}
-                        </p>
-                      )}
-                      <span className="rankings-page__category-count">{count} vehicles ranked</span>
-                    </div>
-                  </div>
-                  <div className="rankings-page__category-hover">
-                    <span>View Rankings</span>
-                    <ChevronRight size={18} />
-                  </div>
-                  <ChevronRight size={24} className="rankings-page__category-arrow" />
-                </Link>
-              );
-            })}
+
+        {/* Body-style rows with top 3 vehicles each */}
+        <div className="rankings-page__body-rows">
+          <div className="container">
+            {topByBodyStyle.map((row) => (
+              <section key={row.key} className="rankings-page__body-row">
+                <div className="rankings-page__body-row-left">
+                  {row.icon && (
+                    <img src={row.icon} alt="" className="rankings-page__body-row-icon" />
+                  )}
+                  <h2 className="rankings-page__body-row-title">{row.title}</h2>
+                  <span className="rankings-page__body-row-count">{row.count} vehicles ranked</span>
+                  <Link to={`/rankings/${row.key}`} className="rankings-page__body-row-cta">
+                    View All <ChevronRight size={14} />
+                  </Link>
+                </div>
+                <div className="rankings-page__body-row-cards">
+                  {row.vehicles.map((vehicle) => (
+                    <VehicleCard
+                      key={vehicle.id}
+                      id={vehicle.id}
+                      name={vehicle.name}
+                      slug={vehicle.slug}
+                      image={vehicle.image}
+                      price={vehicle.price}
+                      rating={vehicle.rating}
+                      rank={vehicle.rank}
+                      editorsChoice={vehicle.editorsChoice}
+                      tenBest={vehicle.tenBest}
+                      showShopButton={true}
+                      showSaveButton={true}
+                      shopButtonText={`${parseInt(vehicle.year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
+                      shopButtonVariant="outline"
+                      epaMpg={vehicle.epaMpg}
+                      cdSays={vehicle.cdSays}
+                      modelName={vehicle.modelName}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
+
+        {/* Sign In to Save Modal */}
+        <SignInToSaveModal
+          isOpen={showSignInModal}
+          onClose={() => {
+            setShowSignInModal(false);
+            setPendingSaveVehicle(null);
+          }}
+          itemType="vehicle"
+          itemName={pendingSaveVehicle?.name}
+          itemImage={pendingSaveVehicle?.image}
+        />
       </div>
     );
   }
