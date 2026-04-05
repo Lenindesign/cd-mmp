@@ -6,7 +6,7 @@ import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
 import { vehicleDatabase } from '../../data/vehicles';
 import { getAllVehicles } from '../../services/vehicleService';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import './NewsPage.css';
 

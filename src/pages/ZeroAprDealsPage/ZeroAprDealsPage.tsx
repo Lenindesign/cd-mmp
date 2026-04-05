@@ -164,7 +164,7 @@ const ZeroAprDealsPage = () => {
         const hasMatch = f.accolades.some(a => {
           if (a === 'editorsChoice') return v.editorsChoice;
           if (a === 'tenBest') return v.tenBest;
-          if (a === 'evOfTheYear') return v.evOfTheYear;
+          if (a === 'evOfTheYear') return (v as any).evOfTheYear;
           return false;
         });
         if (!hasMatch) return false;
