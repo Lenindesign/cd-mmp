@@ -144,9 +144,97 @@
 .rankings-page__hero-stat-label {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-400);
+  color: rgba(255, 255, 255, 0.75);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* Year Selector */
+.rankings-page__year-selector {
+  position: relative;
+}
+
+.rankings-page__year-value-wrap {
+  position: relative;
+}
+
+.rankings-page__year-ticker {
+  height: var(--year-h, 40px);
+  overflow: hidden;
+}
+
+.rankings-page__year-ticker-track {
+  display: flex;
+  flex-direction: column;
+  animation: yearTickUp 2.8s ease-in-out forwards;
+}
+
+.rankings-page__year-ticker-track .rankings-page__hero-stat-value {
+  flex-shrink: 0;
+  height: var(--year-h, 40px);
+  display: flex;
+  align-items: center;
+}
+
+@keyframes yearTickUp {
+  0%   { transform: translateY(0); }
+  15%  { transform: translateY(0); }
+  30%  { transform: translateY(calc(var(--year-h, 40px) * -1)); }
+  45%  { transform: translateY(calc(var(--year-h, 40px) * -1)); }
+  60%  { transform: translateY(calc(var(--year-h, 40px) * -2)); }
+  75%  { transform: translateY(calc(var(--year-h, 40px) * -2)); }
+  90%  { transform: translateY(calc(var(--year-h, 40px) * -3)); }
+  100% { transform: translateY(calc(var(--year-h, 40px) * -3)); }
+}
+
+.rankings-page__year-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.rankings-page__year-chevron {
+  color: rgba(255, 255, 255, 0.6);
+  transition: transform var(--transition-fast);
+}
+
+.rankings-page__year-chevron--open {
+  transform: rotate(180deg);
+}
+
+.rankings-page__year-dropdown {
+  position: fixed;
+  list-style: none;
+  margin: 0;
+  padding: var(--spacing-1) 0;
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  min-width: 100px;
+}
+
+.rankings-page__year-option {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.rankings-page__year-option:hover {
+  background: var(--color-gray-100);
+}
+
+.rankings-page__year-option--active {
+  color: var(--color-blue-cobalt);
 }
 
 /* Categories Header */

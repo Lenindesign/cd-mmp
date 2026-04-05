@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { BadgeCheck, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { ArticleCard } from '../../components/Resin/ArticleCard';
 import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
 import { vehicleDatabase } from '../../data/vehicles';
@@ -75,7 +75,9 @@ export const NewsPage: React.FC = () => {
             <h1 className="news-page__hero-headline">{heroStory.headline}</h1>
             <p className="news-page__hero-subheadline">{heroStory.subheadline}</p>
             <div className="news-page__hero-byline">
-              <BadgeCheck size={16} className="news-page__hero-verified" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="16" height="16" className="news-page__hero-verified">
+                <path d="m22.735 8.905-.955-.955V6.518a4.253 4.253 0 0 0-4.273-4.273h-1.432l-.955-.954C13.45-.38 10.61-.38 8.938 1.29l-.955.954H6.551a4.253 4.253 0 0 0-4.273 4.273V7.95l-.955.955c-1.67 1.671-1.67 4.512 0 6.183l.955.955v1.432a4.253 4.253 0 0 0 4.273 4.273h1.432l.955.954c1.67 1.671 4.511 1.671 6.182 0l.955-.954h1.432a4.253 4.253 0 0 0 4.273-4.273v-1.432l.955-.955c1.67-1.671 1.67-4.512 0-6.183zm-6.421 1.671-4.512 4.512c-.238.238-.477.477-.955.477-.477 0-.716-.239-.954-.477l-2.149-2.149c-.477-.477-.477-1.432 0-1.91.478-.477 1.432-.477 1.91 0l1.193 1.194 3.557-3.318c.477-.716 1.432-.716 1.91 0a1.154 1.154 0 0 1 0 1.671z" fill="currentColor"/>
+              </svg>
               <span>Reviewed By</span>
               <span className="news-page__hero-author">{heroStory.author}</span>
             </div>

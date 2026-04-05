@@ -69,6 +69,9 @@ const ArticlePage = lazy(() => import('./pages/ArticlePage/ArticlePage'));
 // News pages - lazy loaded
 const NewsPage = lazy(() => import('./pages/NewsPage/NewsPage'));
 
+// Expert Reviews index page
+const ExpertReviewsPage = lazy(() => import('./pages/ExpertReviewsPage/ExpertReviewsPage'));
+
 // Listicle pages - lazy loaded
 const ListiclePage = lazy(() => import('./pages/ListiclePage/ListiclePage'));
 
@@ -188,6 +191,9 @@ function App() {
             {/* Account Pages */}
             <Route path="/account" element={<MyAccount />} />
             
+            {/* Expert Reviews */}
+            <Route path="/expert-reviews" element={<ExpertReviewsPage />} />
+
             {/* News + Stories Pages */}
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news-stories" element={<NewsPage />} />

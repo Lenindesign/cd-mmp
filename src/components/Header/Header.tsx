@@ -135,8 +135,8 @@ const Header = () => {
     { label: 'Browse All Vehicles', href: '/vehicles', isRoute: true },
     { label: 'Shop New Cars', href: '/vehicles?type=new&sort=rating', isRoute: true },
     { label: 'Shop Used Cars', href: '/vehicles?type=used&sort=price-low', isRoute: true },
-    { label: 'Research Cars', href: '#' },
-    { label: 'Expert Reviews', href: '/rankings', isRoute: true },
+    { label: 'Research Cars', href: '/rankings', isRoute: true },
+    { label: 'Expert Reviews', href: '/expert-reviews', isRoute: true },
     {
       label: 'Deals',
       href: '/deals',

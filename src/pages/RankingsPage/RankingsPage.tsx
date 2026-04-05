@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, Bookmark } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronDown, Bookmark } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -107,6 +108,85 @@ const getCombinedMpg = (mpg?: string): number | undefined => {
 // Helper to generate C/D Says description
 const generateCdSays = (year: string, make: string, model: string): string => {
   return `Read our ${year} ${make} ${model} review for information on ratings, pricing, specs, and features.`;
+};
+
+const YEAR_OPTIONS = [2022, 2023, 2024, 2025];
+
+const YearSelector: React.FC = () => {
+  const [selectedYear, setSelectedYear] = useState(2025);
+  const [open, setOpen] = useState(false);
+  const [animDone, setAnimDone] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number } | null>(null);
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (tickerRef.current) {
+      const firstChild = tickerRef.current.querySelector('.rankings-page__hero-stat-value') as HTMLElement;
+      if (firstChild) {
+        const h = firstChild.offsetHeight;
+        tickerRef.current.style.setProperty('--year-h', `${h}px`);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (animDone) return;
+    const timer = setTimeout(() => setAnimDone(true), 2800);
+    return () => clearTimeout(timer);
+  }, [animDone]);
+
+  return (
+    <div className="rankings-page__hero-stat rankings-page__year-selector">
+      <div className="rankings-page__year-value-wrap">
+        {!animDone ? (
+          <div className="rankings-page__year-ticker" ref={tickerRef}>
+            <div className="rankings-page__year-ticker-track">
+              {YEAR_OPTIONS.map(y => (
+                <span key={y} className="rankings-page__hero-stat-value">{y}</span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <button
+            ref={btnRef}
+            type="button"
+            className="rankings-page__year-btn"
+            onClick={() => {
+              if (!open && btnRef.current) {
+                const rect = btnRef.current.getBoundingClientRect();
+                setDropdownPos({ top: rect.bottom + 8, left: rect.left });
+              }
+              setOpen(prev => !prev);
+            }}
+            aria-expanded={open}
+            aria-haspopup="listbox"
+          >
+            <span className="rankings-page__hero-stat-value">{selectedYear}</span>
+            <ChevronDown size={18} className={`rankings-page__year-chevron ${open ? 'rankings-page__year-chevron--open' : ''}`} />
+          </button>
+        )}
+
+        {open && dropdownPos && createPortal(
+          <ul className="rankings-page__year-dropdown" role="listbox" style={{ top: dropdownPos.top, left: dropdownPos.left }}>
+            {YEAR_OPTIONS.map(y => (
+              <li
+                key={y}
+                role="option"
+                aria-selected={y === selectedYear}
+                className={`rankings-page__year-option ${y === selectedYear ? 'rankings-page__year-option--active' : ''}`}
+                onClick={() => { setSelectedYear(y); setOpen(false); }}
+              >
+                {y}
+              </li>
+            ))}
+          </ul>,
+          document.body
+        )}
+      </div>
+      <span className="rankings-page__hero-stat-label">Model Year</span>
+    </div>
+  );
 };
 
 const RankingsPage = () => {
@@ -343,10 +423,7 @@ const RankingsPage = () => {
                   <span className="rankings-page__hero-stat-value">{Object.keys(BODY_STYLE_CONFIG).length}</span>
                   <span className="rankings-page__hero-stat-label">Categories</span>
                 </div>
-                <div className="rankings-page__hero-stat">
-                  <span className="rankings-page__hero-stat-value">2025</span>
-                  <span className="rankings-page__hero-stat-label">Model Year</span>
-                </div>
+                <YearSelector />
               </div>
             </div>
           </div>
