@@ -104,34 +104,8 @@ const ZeroAprDealsPage = () => {
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null;
-  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0);
-
-  const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
-    deal?: { term?: string; targetAudience?: string },
-  ) => {
-    if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
-    if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
-    if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
-    if (filters.accolades.length > 0) {
-      const hasMatch = filters.accolades.some(a => {
-        if (a === 'editorsChoice') return vehicle.editorsChoice;
-        if (a === 'tenBest') return vehicle.tenBest;
-        if (a === 'evOfTheYear') return vehicle.evOfTheYear;
-        return false;
-      });
-      if (!hasMatch) return false;
-    }
-    if (filters.terms.length > 0 && deal?.term) {
-      if (!filters.terms.includes(parseTermMonths(deal.term))) return false;
-    }
-    if (filters.creditTier && deal?.targetAudience) {
-      const dealTier = inferCreditTier(deal.targetAudience);
-      if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
-    }
-    return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null || filters.monthlyPaymentMin > 0 || filters.monthlyPaymentMax < 99999;
+  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0) + (filters.monthlyPaymentMin > 0 ? 1 : 0) + (filters.monthlyPaymentMax < 99999 ? 1 : 0);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -146,7 +120,7 @@ const ZeroAprDealsPage = () => {
   const allDeals = useMemo((): UnifiedAprDeal[] => {
     const results: UnifiedAprDeal[] = [];
 
-    for (const d of getZeroAprDeals().filter(deal => matchesFilters(deal.vehicle, { term: deal.term, targetAudience: deal.targetAudience }))) {
+    for (const d of getZeroAprDeals()) {
       const msrp = parseMsrpMin(d.vehicle.priceRange);
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, 0, months);
@@ -161,7 +135,7 @@ const ZeroAprDealsPage = () => {
       });
     }
 
-    for (const d of getFinanceDeals().filter(deal => matchesFilters(deal.vehicle, { term: deal.term, targetAudience: deal.targetAudience }))) {
+    for (const d of getFinanceDeals()) {
       const msrp = parseMsrpMin(d.vehicle.priceRange);
       const aprNum = parseFloat(d.apr.replace('%', ''));
       const months = parseTermMonths(d.term);
@@ -178,18 +152,53 @@ const ZeroAprDealsPage = () => {
     }
 
     return results.sort((a, b) => a.apr - b.apr);
-  }, [getSupabaseRating, matchesFilters]);
+  }, [getSupabaseRating]);
+
+  const applyFiltersToDeals = useCallback((dealList: UnifiedAprDeal[], f: DealsFilterState): UnifiedAprDeal[] => {
+    return dealList.filter(d => {
+      const v = d.vehicle;
+      if (f.bodyTypes.length > 0 && !f.bodyTypes.includes(v.bodyStyle)) return false;
+      if (f.makes.length > 0 && !f.makes.includes(v.make)) return false;
+      if (f.fuelTypes.length > 0 && !f.fuelTypes.includes(v.fuelType)) return false;
+      if (f.accolades.length > 0) {
+        const hasMatch = f.accolades.some(a => {
+          if (a === 'editorsChoice') return v.editorsChoice;
+          if (a === 'tenBest') return v.tenBest;
+          if (a === 'evOfTheYear') return v.evOfTheYear;
+          return false;
+        });
+        if (!hasMatch) return false;
+      }
+      if (f.terms.length > 0 && d.term) {
+        if (!f.terms.includes(parseTermMonths(d.term))) return false;
+      }
+      if (f.creditTier && d.targetAudience) {
+        const dealTier = inferCreditTier(d.targetAudience);
+        if (!creditTierQualifies(dealTier, f.creditTier)) return false;
+      }
+      if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 99999) {
+        if (d.estimatedMonthly < f.monthlyPaymentMin || d.estimatedMonthly > f.monthlyPaymentMax) return false;
+      }
+      return true;
+    });
+  }, []);
+
+  const filteredAll = useMemo(() => applyFiltersToDeals(allDeals, filters), [allDeals, filters, applyFiltersToDeals]);
 
   const deals = useMemo(() => {
-    if (activeTab === 'all') return allDeals;
-    return allDeals.filter(d => d.aprType === activeTab);
-  }, [allDeals, activeTab]);
+    if (activeTab === 'all') return filteredAll;
+    return filteredAll.filter(d => d.aprType === activeTab);
+  }, [filteredAll, activeTab]);
 
   const tabCounts = useMemo(() => ({
-    all: allDeals.length,
-    'zero-apr': allDeals.filter(d => d.aprType === 'zero-apr').length,
-    'special-apr': allDeals.filter(d => d.aprType === 'special-apr').length,
-  }), [allDeals]);
+    all: filteredAll.length,
+    'zero-apr': filteredAll.filter(d => d.aprType === 'zero-apr').length,
+    'special-apr': filteredAll.filter(d => d.aprType === 'special-apr').length,
+  }), [filteredAll]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    return applyFiltersToDeals(allDeals, draftFilters).length;
+  }, [allDeals, applyFiltersToDeals]);
 
   const isVehicleSaved = (vehicleName: string) => user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
 
@@ -514,7 +523,7 @@ const ZeroAprDealsPage = () => {
         selectedIncentiveId={undefined}
       />
       <SignInToSaveModal isOpen={showSignInModal} onClose={() => { setShowSignInModal(false); setPendingSaveVehicle(null); }} itemType="vehicle" itemName={pendingSaveVehicle?.name} itemImage={pendingSaveVehicle?.image} />
-      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={setFilters} totalResults={deals.length} />
+      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={setFilters} totalResults={deals.length} getResultCount={getResultCount} />
     </div>
   );
 };

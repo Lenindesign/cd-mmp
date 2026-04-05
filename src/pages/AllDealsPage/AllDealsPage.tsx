@@ -37,6 +37,7 @@ interface MiniDeal {
   staffRating?: number;
   monthlyPayment?: string;
   estimatedMonthly: string;
+  monthlyNum: number;
   savingsVsAvg: string;
   savingsTooltip: string;
   term?: string;
@@ -106,40 +107,13 @@ const AllDealsPage = () => {
     });
   }, []);
 
-  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null;
-  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0);
-
-  const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
-    deal?: { term?: string; targetAudience?: string },
-  ) => {
-    if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
-    if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
-    if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
-    if (filters.accolades.length > 0) {
-      const hasMatch = filters.accolades.some(a => {
-        if (a === 'editorsChoice') return vehicle.editorsChoice;
-        if (a === 'tenBest') return vehicle.tenBest;
-        if (a === 'evOfTheYear') return vehicle.evOfTheYear;
-        return false;
-      });
-      if (!hasMatch) return false;
-    }
-    if (filters.terms.length > 0 && deal?.term) {
-      if (!filters.terms.includes(parseTermMonths(deal.term))) return false;
-    }
-    if (filters.creditTier && deal?.targetAudience) {
-      const dealTier = inferCreditTier(deal.targetAudience);
-      if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
-    }
-    return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null || filters.monthlyPaymentMin > 0 || filters.monthlyPaymentMax < 99999;
+  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0) + (filters.monthlyPaymentMin > 0 ? 1 : 0) + (filters.monthlyPaymentMax < 99999 ? 1 : 0);
 
   const allDeals = useMemo(() => {
     const deals: MiniDeal[] = [];
 
     getZeroAprDeals()
-      .filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }))
       .forEach(d => {
         const msrp = parseMsrpMin(d.vehicle.priceRange);
         const months = parseTermMonths(d.term);
@@ -159,14 +133,12 @@ const AllDealsPage = () => {
           trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
           editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
           staffRating: d.vehicle.staffRating, term: d.term,
-          estimatedMonthly: `$${monthly.toLocaleString()}`,
+          estimatedMonthly: `$${monthly.toLocaleString()}`, monthlyNum: monthly,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
         });
       });
 
-    getFinanceDeals()
-      .filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }))
-      .forEach(d => {
+    getFinanceDeals().forEach(d => {
         const msrp = parseMsrpMin(d.vehicle.priceRange);
         const aprNum = parseFloat(d.apr.replace('%', ''));
         const months = parseTermMonths(d.term);
@@ -186,14 +158,12 @@ const AllDealsPage = () => {
           trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
           editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
           staffRating: d.vehicle.staffRating, term: d.term,
-          estimatedMonthly: `$${monthly.toLocaleString()}`,
+          estimatedMonthly: `$${monthly.toLocaleString()}`, monthlyNum: monthly,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
         });
       });
 
-    getCashDeals()
-      .filter(d => matchesFilters(d.vehicle))
-      .forEach(d => {
+    getCashDeals().forEach(d => {
         const msrp = parseMsrpMin(d.vehicle.priceRange);
         const principal = Math.max(msrp - d.incentiveAmount, 1);
         const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
@@ -212,15 +182,13 @@ const AllDealsPage = () => {
           trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
           editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
           staffRating: d.vehicle.staffRating,
-          estimatedMonthly: d.incentiveValue,
+          estimatedMonthly: d.incentiveValue, monthlyNum: monthlyAfterCash,
           savingsVsAvg: `${d.percentOffMsrp} off MSRP`,
           savingsTooltip: savings.savingsTooltip,
         });
       });
 
-    getLeaseDeals()
-      .filter(d => matchesFilters(d.vehicle, { term: d.term }))
-      .forEach(d => {
+    getLeaseDeals().forEach(d => {
         const leaseNum = d.monthlyPaymentNum;
         const savings = buildSavingsText(leaseNum, d.vehicle.bodyStyle, 'lease');
         deals.push({
@@ -237,17 +205,50 @@ const AllDealsPage = () => {
           trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
           editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
           staffRating: d.vehicle.staffRating, monthlyPayment: d.monthlyPayment, term: d.term,
-          estimatedMonthly: d.monthlyPayment,
+          estimatedMonthly: d.monthlyPayment, monthlyNum: leaseNum,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
         });
       });
 
     return deals;
-  }, [matchesFilters]);
+  }, []);
 
-  const filteredDeals = dealTypeFilter === 'all'
-    ? allDeals
-    : allDeals.filter(d => d.dealType === dealTypeFilter);
+  const applyFiltersToDeals = useCallback((dealList: MiniDeal[], f: DealsFilterState): MiniDeal[] => {
+    return dealList.filter(d => {
+      if (f.bodyTypes.length > 0 && !f.bodyTypes.includes(d.make)) {
+        const bodyStyle = d.slug.split('/')[0] || '';
+        if (!f.bodyTypes.some(bt => bt.toLowerCase() === bodyStyle)) return false;
+      }
+      if (f.makes.length > 0 && !f.makes.includes(d.make)) return false;
+      if (f.accolades.length > 0) {
+        const hasMatch = f.accolades.some(a => {
+          if (a === 'editorsChoice') return d.editorsChoice;
+          if (a === 'tenBest') return d.tenBest;
+          return false;
+        });
+        if (!hasMatch) return false;
+      }
+      if (f.terms.length > 0 && d.term) {
+        if (!f.terms.includes(parseTermMonths(d.term))) return false;
+      }
+      if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 99999) {
+        if (d.monthlyNum < f.monthlyPaymentMin || d.monthlyNum > f.monthlyPaymentMax) return false;
+      }
+      return true;
+    });
+  }, []);
+
+  const filteredDeals = useMemo(() => {
+    let filtered = applyFiltersToDeals(allDeals, filters);
+    if (dealTypeFilter !== 'all') {
+      filtered = filtered.filter(d => d.dealType === dealTypeFilter);
+    }
+    return filtered;
+  }, [allDeals, filters, dealTypeFilter, applyFiltersToDeals]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    return applyFiltersToDeals(allDeals, draftFilters).length;
+  }, [allDeals, applyFiltersToDeals]);
 
   const emptyDealsCategory = dealTypeFilter === 'all' ? 'deal' : DEAL_TYPE_LABELS[dealTypeFilter];
 
@@ -514,6 +515,7 @@ const AllDealsPage = () => {
         filters={filters}
         onApply={setFilters}
         totalResults={filteredDeals.length}
+        getResultCount={getResultCount}
       />
     </div>
   );

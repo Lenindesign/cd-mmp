@@ -25,8 +25,10 @@ export function inferCreditTier(targetAudience: string): CreditTier {
 }
 
 export function creditTierQualifies(dealTier: CreditTier, userTier: CreditTier): boolean {
-  const order: CreditTier[] = ['excellent', 'good', 'fair', 'all'];
-  return order.indexOf(dealTier) >= order.indexOf(userTier);
+  if (userTier === 'all') return true;
+  if (dealTier === 'all') return true;
+  const rank: Record<CreditTier, number> = { excellent: 3, good: 2, fair: 1, all: 0 };
+  return rank[userTier] >= rank[dealTier];
 }
 
 export function parseMsrpMin(priceRange: string): number {

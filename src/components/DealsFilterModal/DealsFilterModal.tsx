@@ -41,6 +41,7 @@ interface DealsFilterModalProps {
   filters: DealsFilterState;
   onApply: (filters: DealsFilterState) => void;
   totalResults: number;
+  getResultCount?: (filters: DealsFilterState) => number;
 }
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -57,6 +58,7 @@ const DealsFilterModal = ({
   filters: externalFilters,
   onApply,
   totalResults,
+  getResultCount,
 }: DealsFilterModalProps) => {
   const [draft, setDraft] = useState<DealsFilterState>(externalFilters);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -424,7 +426,7 @@ const DealsFilterModal = ({
             Clear All
           </button>
           <button type="button" className="deals-filter__apply" onClick={handleApply}>
-            Show {totalResults} Results
+            Show {getResultCount ? getResultCount(draft) : totalResults} Results
           </button>
         </footer>
       </div>
@@ -471,17 +473,36 @@ const RangeInputs = ({
   onMinChange: (v: number) => void;
   onMaxChange: (v: number) => void;
 }) => {
-  const formatDisplay = (n: number) => `${prefix} ${n.toLocaleString()}`;
+  const [minRaw, setMinRaw] = useState(String(minValue));
+  const [maxRaw, setMaxRaw] = useState(String(maxValue));
+  const [minFocused, setMinFocused] = useState(false);
+  const [maxFocused, setMaxFocused] = useState(false);
 
-  const handleMin = (raw: string) => {
-    const num = parseInt(raw.replace(/[^0-9]/g, ''), 10);
-    onMinChange(isNaN(num) ? absMin : Math.max(absMin, Math.min(num, maxValue)));
+  useEffect(() => {
+    if (!minFocused) setMinRaw(String(minValue));
+  }, [minValue, minFocused]);
+
+  useEffect(() => {
+    if (!maxFocused) setMaxRaw(String(maxValue));
+  }, [maxValue, maxFocused]);
+
+  const commitMin = () => {
+    const num = parseInt(minRaw.replace(/[^0-9]/g, ''), 10);
+    const value = isNaN(num) ? absMin : Math.max(0, num);
+    onMinChange(value);
+    setMinRaw(String(value));
+    setMinFocused(false);
   };
 
-  const handleMax = (raw: string) => {
-    const num = parseInt(raw.replace(/[^0-9]/g, ''), 10);
-    onMaxChange(isNaN(num) ? absMax : Math.min(absMax, Math.max(num, minValue)));
+  const commitMax = () => {
+    const num = parseInt(maxRaw.replace(/[^0-9]/g, ''), 10);
+    const value = isNaN(num) ? absMax : Math.max(0, num);
+    onMaxChange(value);
+    setMaxRaw(String(value));
+    setMaxFocused(false);
   };
+
+  const formatDisplay = (n: number) => `${prefix}${n.toLocaleString()}`;
 
   return (
     <div className="deals-filter__range">
@@ -489,9 +510,13 @@ const RangeInputs = ({
         <span className="deals-filter__range-label">Minimum</span>
         <input
           type="text"
+          inputMode="numeric"
           className="deals-filter__range-input"
-          value={formatDisplay(minValue)}
-          onChange={e => handleMin(e.target.value)}
+          value={minFocused ? minRaw : formatDisplay(minValue)}
+          onChange={e => setMinRaw(e.target.value.replace(/[^0-9]/g, ''))}
+          onFocus={() => { setMinFocused(true); setMinRaw(String(minValue)); }}
+          onBlur={commitMin}
+          onKeyDown={e => { if (e.key === 'Enter') { e.currentTarget.blur(); } }}
           aria-label="Minimum"
         />
       </div>
@@ -500,9 +525,13 @@ const RangeInputs = ({
         <span className="deals-filter__range-label">Maximum</span>
         <input
           type="text"
+          inputMode="numeric"
           className="deals-filter__range-input"
-          value={formatDisplay(maxValue)}
-          onChange={e => handleMax(e.target.value)}
+          value={maxFocused ? maxRaw : formatDisplay(maxValue)}
+          onChange={e => setMaxRaw(e.target.value.replace(/[^0-9]/g, ''))}
+          onFocus={() => { setMaxFocused(true); setMaxRaw(String(maxValue)); }}
+          onBlur={commitMax}
+          onKeyDown={e => { if (e.key === 'Enter') { e.currentTarget.blur(); } }}
           aria-label="Maximum"
         />
       </div>

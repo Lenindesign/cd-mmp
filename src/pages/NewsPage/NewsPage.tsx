@@ -1,37 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BadgeCheck, ChevronRight } from 'lucide-react';
 import { ArticleCard } from '../../components/Resin/ArticleCard';
-import { BigStoryCard } from '../../components/Resin/BigStoryCard';
+import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
 import { vehicleDatabase } from '../../data/vehicles';
+import { getAllVehicles } from '../../services/vehicleService';
+import { getZeroAprDeals } from '../../services/zeroAprDealsService';
+import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
+import { getLeaseDeals } from '../../services/leaseDealsService';
 import './NewsPage.css';
 
-// Vehicle database is used for images below
-
-// Hero story data (featured article)
-interface HeroStory {
-  id: string;
-  category: string;
-  categorySlug: string;
-  headline: string;
-  subheadline: string;
-  author: string;
-  image: string;
-  href: string;
-}
-
-// Standard story data
-interface Story {
-  id: string;
-  category?: string;
-  headline: string;
-  image: string;
-  href: string;
-  author?: string;
-  date?: string;
-}
-
-// Get specific vehicles from database
 const hyundaiSantaFe = vehicleDatabase.find(v => v.make === 'Hyundai' && v.model === 'Santa Fe');
 const hondaAccord = vehicleDatabase.find(v => v.make === 'Honda' && v.model === 'Accord');
 const toyotaCorolla = vehicleDatabase.find(v => v.make === 'Toyota' && v.model === 'Corolla');
@@ -40,101 +18,57 @@ const chevyTrailblazer = vehicleDatabase.find(v => v.make === 'Chevrolet' && v.m
 const kiaTelluride = vehicleDatabase.find(v => v.make === 'Kia' && v.model === 'Telluride');
 const porscheCayenne = vehicleDatabase.find(v => v.make === 'Porsche' && v.model === 'Cayenne');
 
-// Sample data using real vehicle images
-const heroStory: HeroStory = {
-  id: 'solterra-quickest-subaru',
+const heroStory = {
   category: 'INSTRUMENTED TEST',
-  categorySlug: 'testing-hub',
   headline: "The Refreshed Solterra EV SUV Is the Quickest Subaru We've Ever Tested",
   subheadline: "Everyone knows EVs are quick, but we're still shocked to see the Solterra's acceleration times compared with sportier Subies.",
   author: 'Jack Fitzgerald',
-  // Official 2026 Subaru Solterra image from Hearst/Car and Driver
   image: 'https://hips.hearstapps.com/mtg-prod/68acee0b9a8a250002dfbc03/2-2026-subaru-solterra-first-drive.jpg',
   href: '/news/solterra-quickest-subaru',
 };
 
-const featuredStories: Story[] = [
-  {
-    id: '1',
-    category: 'Testing Hub',
-    headline: 'The Ford F-150 Lightning Sets New Truck Standards',
-    image: fordF150?.image || '',
-    href: '/news/ford-f150-lightning-tested',
-    author: 'Dave VanderWerp',
-    date: 'Dec 23, 2025',
-  },
-  {
-    id: '2',
-    category: 'Testing Hub',
-    headline: 'Porsche Cayenne Turbo GT: The Ultimate SUV',
-    image: porscheCayenne?.image || '',
-    href: '/news/porsche-cayenne-turbo-gt-tested',
-    author: 'Eric Tingwall',
-    date: 'Dec 22, 2025',
-  },
-  {
-    id: '3',
-    category: 'Testing Hub',
-    headline: 'Chevrolet Trailblazer RS: Compact SUV Tested',
-    image: chevyTrailblazer?.image || '',
-    href: '/news/chevy-trailblazer-rs-tested',
-    author: 'K.C. Colwell',
-    date: 'Dec 21, 2025',
-  },
-  {
-    id: '4',
-    category: 'Testing Hub',
-    headline: 'Hyundai Santa Fe Hybrid: Family SUV Reimagined',
-    image: hyundaiSantaFe?.image || '',
-    href: '/news/hyundai-santa-fe-hybrid-tested',
-    author: 'Annie White',
-    date: 'Dec 20, 2025',
-  },
-];
-
-const latestNews: Story[] = [
-  {
-    id: '5',
-    category: 'Listicle',
-    headline: 'The 10 Most-Researched New Cars on Car and Driver in 2025',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/2025-lexus-gx-3-672b608154c3f.jpg?crop=0.563xw:0.562xh;0.201xw,0.178xh',
-    href: '/listicle/top-researched-cars-2025',
-  },
-  {
-    id: '6',
-    category: "Buyer's Guide",
-    headline: 'Best SUVs of 2025: Kia Telluride Leads the Pack',
-    image: kiaTelluride?.image || '',
-    href: '/news/best-suvs-2025',
-  },
-  {
-    id: '7',
-    category: 'Comparison',
-    headline: 'Toyota Corolla vs Honda Civic: Which Is Better?',
-    image: toyotaCorolla?.image || '',
-    href: '/news/camry-vs-accord-comparison',
-  },
-  {
-    id: '8',
-    category: 'Review',
-    headline: 'The 2025 Honda Accord Hybrid Gets Even Better MPG',
-    image: hondaAccord?.image || '',
-    href: '/news/honda-accord-hybrid-review',
-  },
+const articles = [
+  { id: '1', category: 'Testing Hub', headline: 'The Ford F-150 Lightning Sets New Truck Standards', image: fordF150?.image || '', href: '/news/ford-f150-lightning-tested' },
+  { id: '2', category: 'Testing Hub', headline: 'Porsche Cayenne Turbo GT: The Ultimate SUV', image: porscheCayenne?.image || '', href: '/news/porsche-cayenne-turbo-gt-tested' },
+  { id: '3', category: 'Testing Hub', headline: 'Chevrolet Trailblazer RS: Compact SUV Tested', image: chevyTrailblazer?.image || '', href: '/news/chevy-trailblazer-rs-tested' },
+  { id: '4', category: "Buyer's Guide", headline: 'Best SUVs of 2025: Kia Telluride Leads the Pack', image: kiaTelluride?.image || '', href: '/news/best-suvs-2025' },
+  { id: '5', category: 'Listicle', headline: 'The 10 Most-Researched New Cars on Car and Driver in 2025', image: 'https://hips.hearstapps.com/hmg-prod/images/2025-lexus-gx-3-672b608154c3f.jpg?crop=0.563xw:0.562xh;0.201xw,0.178xh', href: '/listicle/top-researched-cars-2025' },
+  { id: '6', category: 'Comparison', headline: 'Toyota Corolla vs Honda Civic: Which Is Better?', image: toyotaCorolla?.image || '', href: '/news/camry-vs-accord-comparison' },
+  { id: '7', category: 'Review', headline: 'The 2025 Honda Accord Hybrid Gets Even Better MPG', image: hondaAccord?.image || '', href: '/news/honda-accord-hybrid-review' },
+  { id: '8', category: 'Testing Hub', headline: 'Hyundai Santa Fe Hybrid: Family SUV Reimagined', image: hyundaiSantaFe?.image || '', href: '/news/hyundai-santa-fe-hybrid-tested' },
 ];
 
 export const NewsPage: React.FC = () => {
+  const topSuvs = useMemo(() => {
+    return getAllVehicles()
+      .filter(v => v.bodyStyle === 'SUV')
+      .sort((a, b) => (b.staffRating || 0) - (a.staffRating || 0))
+      .slice(0, 3);
+  }, []);
+
+  const bestDeals = useMemo(() => {
+    const deals: { id: string; type: string; label: string; vehicleName: string; image: string; slug: string; price: string; rating?: number }[] = [];
+
+    for (const d of getZeroAprDeals().slice(0, 1)) {
+      deals.push({ id: d.id, type: '0% APR', label: '0% APR Financing', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, image: d.vehicle.image, slug: d.vehicle.slug, price: d.vehicle.priceRange, rating: d.vehicle.staffRating });
+    }
+    for (const d of getCashDeals().slice(0, 1)) {
+      deals.push({ id: d.id, type: 'Cash Back', label: `${d.incentiveValue} Cash Back`, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, image: d.vehicle.image, slug: d.vehicle.slug, price: d.vehicle.priceRange, rating: d.vehicle.staffRating });
+    }
+    for (const d of getLeaseDeals().slice(0, 1)) {
+      deals.push({ id: d.id, type: 'Lease', label: `${d.monthlyPayment}/mo Lease`, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, image: d.vehicle.image, slug: d.vehicle.slug, price: d.vehicle.priceRange, rating: d.vehicle.staffRating });
+    }
+
+    return deals;
+  }, []);
+
   return (
     <div className="news-page">
-      {/* Hero Section - Full Width Featured Story */}
+      {/* Hero */}
       <section className="news-page__hero">
         <Link to={heroStory.href} className="news-page__hero-link">
           <div className="news-page__hero-image">
-            <img 
-              src={heroStory.image} 
-              alt={heroStory.headline}
-              loading="eager"
-            />
+            <img src={heroStory.image} alt={heroStory.headline} loading="eager" />
           </div>
           <div className="news-page__hero-content">
             <span className="news-page__hero-category">{heroStory.category}</span>
@@ -149,70 +83,92 @@ export const NewsPage: React.FC = () => {
         </Link>
       </section>
 
-      {/* Testing Hub Section */}
-      <section className="news-page__section">
-        <div className="news-page__section-header">
-          <h2 className="news-page__section-title">Testing Hub</h2>
-          <Link to="/testing-hub" className="news-page__section-link">
-            View All <ChevronRight size={16} />
-          </Link>
-        </div>
-        <div className="news-page__grid news-page__grid--4col">
-          {featuredStories.map((story) => (
-            <ArticleCard
-              key={story.id}
-              imageUrl={story.image}
-              imageAlt={story.headline}
-              headline={story.headline}
-              sponsor={story.category}
-              href={story.href}
-              variant="vertical"
-              aspectRatio="landscape"
-            />
-          ))}
-        </div>
-      </section>
+      {/* Row 1: Latest Articles */}
+      <div className="news-page__rows">
+        <div className="container">
+          <section className="news-page__row">
+            <div className="news-page__row-left">
+              <h2 className="news-page__row-title">Latest Articles</h2>
+              <span className="news-page__row-count">{articles.length} stories</span>
+              <Link to="/news/all" className="news-page__row-cta">
+                View All <ChevronRight size={14} />
+              </Link>
+            </div>
+            <div className="news-page__row-cards news-page__row-cards--articles">
+              {articles.slice(0, 4).map(story => (
+                <ArticleCard
+                  key={story.id}
+                  imageUrl={story.image}
+                  imageAlt={story.headline}
+                  headline={story.headline}
+                  sponsor={story.category}
+                  href={story.href}
+                  variant="vertical"
+                  aspectRatio="landscape"
+                />
+              ))}
+            </div>
+          </section>
 
-      {/* Latest News Section */}
-      <section className="news-page__section news-page__section--alt">
-        <div className="news-page__section-header">
-          <h2 className="news-page__section-title">Latest News</h2>
-          <Link to="/news/all" className="news-page__section-link">
-            View All <ChevronRight size={16} />
-          </Link>
-        </div>
-        <div className="news-page__grid news-page__grid--4col">
-          {latestNews.map((story) => (
-            <ArticleCard
-              key={story.id}
-              imageUrl={story.image}
-              imageAlt={story.headline}
-              headline={story.headline}
-              sponsor={story.category}
-              href={story.href}
-              variant="vertical"
-              aspectRatio="landscape"
-            />
-          ))}
-        </div>
-      </section>
+          {/* Row 2: Best SUVs */}
+          <section className="news-page__row">
+            <div className="news-page__row-left">
+              <h2 className="news-page__row-title">Best SUVs</h2>
+              <span className="news-page__row-count">{topSuvs.length} top rated</span>
+              <Link to="/rankings/suv" className="news-page__row-cta">
+                View All <ChevronRight size={14} />
+              </Link>
+            </div>
+            <div className="news-page__row-cards">
+              {topSuvs.map((v, i) => (
+                <VehicleCard
+                  key={v.id}
+                  id={v.id}
+                  name={`${v.year} ${v.make} ${v.model}`}
+                  slug={v.slug}
+                  image={v.image}
+                  price={v.priceRange}
+                  rating={v.staffRating}
+                  rank={i + 1}
+                  editorsChoice={v.editorsChoice}
+                  tenBest={v.tenBest}
+                  showSaveButton={true}
+                  showShopButton={true}
+                  shopButtonText={`SHOP NEW ${v.model.toUpperCase()}`}
+                  shopButtonVariant="outline"
+                  modelName={v.model}
+                />
+              ))}
+            </div>
+          </section>
 
-      {/* Featured Story - Big Card */}
-      <section className="news-page__section">
-        <div className="news-page__section-header">
-          <h2 className="news-page__section-title">Editor's Pick</h2>
+          {/* Row 3: Best Deals */}
+          <section className="news-page__row">
+            <div className="news-page__row-left">
+              <h2 className="news-page__row-title">Best Deals</h2>
+              <span className="news-page__row-count">{bestDeals.length} featured</span>
+              <Link to="/deals" className="news-page__row-cta">
+                View All <ChevronRight size={14} />
+              </Link>
+            </div>
+            <div className="news-page__row-cards">
+              {bestDeals.map(deal => (
+                <Link key={deal.id} to={`/vehicle/${deal.slug}`} className="news-page__deal-card">
+                  <div className="news-page__deal-card-image">
+                    <img src={deal.image} alt={deal.vehicleName} />
+                    <span className="news-page__deal-card-badge">{deal.type}</span>
+                  </div>
+                  <div className="news-page__deal-card-body">
+                    <h3 className="news-page__deal-card-name">{deal.vehicleName}</h3>
+                    <span className="news-page__deal-card-label">{deal.label}</span>
+                    <span className="news-page__deal-card-price">{deal.price}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
         </div>
-        <BigStoryCard
-          imageUrl="https://hips.hearstapps.com/mtg-prod/68acee2eb249ff000249afa0/17-2026-subaru-solterra-first-drive.jpg"
-          imageAlt="2026 Subaru Solterra"
-          label="INSTRUMENTED TEST"
-          headline="The Refreshed Solterra EV SUV Is the Quickest Subaru We've Ever Tested"
-          author="Jack Fitzgerald"
-          date="Dec 24, 2025"
-          href="/news/solterra-quickest-subaru"
-          imagePosition="left"
-        />
-      </section>
+      </div>
     </div>
   );
 };
