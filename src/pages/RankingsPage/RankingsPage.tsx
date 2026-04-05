@@ -120,25 +120,28 @@ const YearSelector: React.FC = () => {
   const tickerRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
+  const wrapRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (tickerRef.current) {
+    if (tickerRef.current && wrapRef.current) {
       const firstChild = tickerRef.current.querySelector('.rankings-page__hero-stat-value') as HTMLElement;
       if (firstChild) {
         const h = firstChild.offsetHeight;
         tickerRef.current.style.setProperty('--year-h', `${h}px`);
+        wrapRef.current.style.setProperty('--year-h', `${h}px`);
       }
     }
   }, []);
 
   useEffect(() => {
     if (animDone) return;
-    const timer = setTimeout(() => setAnimDone(true), 2800);
+    const timer = setTimeout(() => setAnimDone(true), 2000);
     return () => clearTimeout(timer);
   }, [animDone]);
 
   return (
     <div className="rankings-page__hero-stat rankings-page__year-selector">
-      <div className="rankings-page__year-value-wrap">
+      <div className="rankings-page__year-value-wrap" ref={wrapRef}>
         {!animDone ? (
           <div className="rankings-page__year-ticker" ref={tickerRef}>
             <div className="rankings-page__year-ticker-track">
