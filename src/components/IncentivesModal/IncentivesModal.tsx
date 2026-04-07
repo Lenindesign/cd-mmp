@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   X,
@@ -87,8 +87,8 @@ const getOfferRowChipLabel = (type: Incentive['type']): string =>
   type === 'lease' ? 'Lease' : type === 'cash' ? 'Buy' : 'Finance';
 
 const EXPERT_TIPS: Record<Incentive['type'], string> = {
-  finance: "Low-rate financing deals can beat cash rebates if you qualify\u2014always compare the total interest saved vs. the rebate you\u2019re giving up before deciding.",
-  cash: "Cash incentives can lower the purchase price significantly\u2014especially valuable if you\u2019re paying upfront or securing financing outside the dealership.",
+  finance: "Low-rate financing deals can beat cash rebates if you qualify. Always compare the total interest saved versus the rebate you\u2019re giving up before deciding.",
+  cash: "Cash incentives (loyalty discounts, cash-back offers) can lower the purchase price significantly. That\u2019s especially valuable if you\u2019re paying up front or securing financing outside the dealership.",
   lease: "Lease incentives work best if you prefer lower monthly payments and driving a new car every few years, but pay close attention to mileage limits and end-of-lease fees to avoid surprises.",
   special: "Special incentives like military, college grad, or loyalty bonuses can stack with other offers\u2014ask the dealer which programs you qualify for to maximize your savings.",
 };
@@ -208,6 +208,25 @@ const IncentivesModal = ({
     };
   }, [isOpen, onClose]);
 
+  /** When form is incomplete, scroll dealer panel into view then show validation (CTA sits below scroll on mobile). */
+  const handleContactDealerClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const form = document.getElementById('incentives-modal-form') as HTMLFormElement | null;
+    if (!form) return;
+
+    if (!form.checkValidity()) {
+      e.preventDefault();
+      const panel = document.getElementById('incentives-modal-dealer-panel');
+      (panel ?? form).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => {
+        form.reportValidity();
+        const firstInvalid = form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+          'input:invalid, textarea:invalid, select:invalid'
+        );
+        firstInvalid?.focus();
+      }, 400);
+    }
+  }, []);
+
   if (!isOpen) return null;
 
   const handleCta = () => {
@@ -277,7 +296,13 @@ const IncentivesModal = ({
           <X size={24} />
         </button>
 
-        <div className="incentives-modal__inner">
+        <div
+          className={
+            variant === 'conversion-b'
+              ? 'incentives-modal__inner incentives-modal__inner--conversion-b'
+              : 'incentives-modal__inner'
+          }
+        >
           {/* Variant 1: Simple – like reference but stripped down */}
           {variant === 'simple' && (
             <>
@@ -470,7 +495,8 @@ const IncentivesModal = ({
           {/* Variant 5: Modal A – two-column layout with dealer contact form */}
           {variant === 'conversion-b' && (
             <>
-              <div className="incentives-modal__v5-layout">
+              <div className="incentives-modal__v5-body-scroll">
+                <div className="incentives-modal__v5-layout">
                 {/* LEFT COLUMN: Offer browser + details */}
                 <div className="incentives-modal__v5-left">
                   <h2 id="incentives-modal-title" className="incentives-modal__v5-title">
@@ -493,7 +519,9 @@ const IncentivesModal = ({
                         <span className="incentives-modal__v5-offer-apr">
                           {activeIncentive.type === 'finance'
                             ? getAprRangeLabel(activeIncentive)
-                            : activeIncentive.value}
+                            : activeIncentive.type === 'cash'
+                              ? <>{activeIncentive.value} <span className="incentives-modal__v5-offer-apr-suffix">cash back</span></>
+                              : activeIncentive.value}
                         </span>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">
@@ -644,7 +672,7 @@ const IncentivesModal = ({
                 </div>
 
                 {/* RIGHT COLUMN: Dealer contact form */}
-                <div className="incentives-modal__v5-right">
+                <div className="incentives-modal__v5-right" id="incentives-modal-dealer-panel">
                   <h3 className="incentives-modal__v5-form-heading">Got Questions? Contact the Dealer</h3>
 
                   <div className="incentives-modal__v5-form-image-wrap">
@@ -705,19 +733,25 @@ const IncentivesModal = ({
                       By clicking the button, you agree to the Autotrader <a href="#">Visitor Agreement</a> and Privacy Statement and that your contact and/or My Wallet information will be shared with the dealer and/or Car and Driver, including for their own advertising purposes. Each party's use of your information is subject to their privacy policy.
                     </p>
                   </form>
-                  <div className="incentives-modal__v5-cta-sticky">
-                    <button type="submit" form="incentives-modal-form" className="incentives-modal__v5-submit">
-                      CONTACT DEALER
-                    </button>
-                    <button
-                      type="button"
-                      className="incentives-modal__v5-marketplace-btn"
-                      onClick={() => { onClose(); navigate(vehicleUrl); }}
-                    >
-                      SHOP ON MARKETPLACE
-                    </button>
-                  </div>
                 </div>
+                </div>
+              </div>
+              <div className="incentives-modal__v5-cta-sticky">
+                <button
+                  type="submit"
+                  form="incentives-modal-form"
+                  className="incentives-modal__v5-submit"
+                  onClick={handleContactDealerClick}
+                >
+                  CONTACT DEALER
+                </button>
+                <button
+                  type="button"
+                  className="incentives-modal__v5-marketplace-btn"
+                  onClick={() => { onClose(); navigate(vehicleUrl); }}
+                >
+                  SHOP ON MARKETPLACE
+                </button>
               </div>
             </>
           )}
@@ -759,7 +793,9 @@ const IncentivesModal = ({
                         <span className="incentives-modal__v5-offer-apr">
                           {activeIncentive.type === 'finance'
                             ? getAprRangeLabel(activeIncentive)
-                            : activeIncentive.value}
+                            : activeIncentive.type === 'cash'
+                              ? <>{activeIncentive.value} <span className="incentives-modal__v5-offer-apr-suffix">cash back</span></>
+                              : activeIncentive.value}
                         </span>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">

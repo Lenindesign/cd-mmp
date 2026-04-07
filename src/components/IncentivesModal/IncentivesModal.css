@@ -35,11 +35,41 @@
 .incentives-modal--complete-with-form { max-width: 520px; }
 .incentives-modal--edmunds { max-width: 500px; }
 .incentives-modal--conversion-a { max-width: 460px; }
-.incentives-modal--conversion-b { max-width: 900px; border-radius: 8px; }
+.incentives-modal--conversion-b {
+  max-width: 900px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  max-height: min(90vh, 100dvh);
+}
 
 /* ========== Modal A (conversion-b) – two-column layout ========== */
 .incentives-modal--conversion-b .incentives-modal__inner {
   padding: 32px 40px;
+}
+
+/* conversion-b: scroll middle, CTAs pinned below scroll (mobile + desktop) */
+.incentives-modal__inner--conversion-b {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  column-gap: 40px;
+  align-content: start;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: 0;
+}
+
+.incentives-modal__v5-body-scroll {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .incentives-modal__v5-layout {
@@ -70,6 +100,8 @@
   gap: 0;
   border-left: 1px solid var(--color-gray-200);
   padding-left: 32px;
+  scroll-margin-top: var(--spacing-3);
+  scroll-margin-bottom: var(--spacing-4);
 }
 
 .incentives-modal__v5-title {
@@ -144,6 +176,11 @@
   font-weight: 800;
   color: #26870D;
   line-height: 1.2;
+}
+
+.incentives-modal__v5-offer-apr-suffix {
+  font-weight: 800;
+  text-transform: lowercase;
 }
 
 .incentives-modal__v5-offer-divider {
@@ -563,12 +600,17 @@
 }
 
 .incentives-modal__v5-cta-sticky {
-  position: sticky;
-  bottom: 0;
+  grid-column: 2;
+  grid-row: 2;
+  position: static;
   z-index: 2;
+  flex-shrink: 0;
   background: var(--color-white, #fff);
   padding: 12px 0 16px;
-  margin-top: auto;
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  margin-top: 0;
+  border-top: 1px solid var(--color-gray-200);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .incentives-modal__v5-submit {
@@ -594,6 +636,17 @@
 /* Responsive: stack columns on small screens */
 @media (max-width: 720px) {
   .incentives-modal--conversion-b { max-width: 520px; }
+
+  .incentives-modal__inner--conversion-b {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    column-gap: 0;
+  }
+
+  .incentives-modal__v5-cta-sticky {
+    grid-column: 1;
+    grid-row: 2;
+  }
 
   .incentives-modal__v5-layout {
     grid-template-columns: 1fr;
@@ -1215,6 +1268,10 @@
     max-width: 100%;
     max-height: 92vh;
     border-radius: 4px 4px 0 0;
+  }
+
+  .incentives-modal--conversion-b {
+    max-height: min(92vh, 100dvh);
   }
 
   .incentives-modal__form-row {

@@ -233,7 +233,7 @@ const PaymentCalculator = ({ msrp, vehicleName, bestApr, onGetDeal }: PaymentCal
             </button>
             <button type="button" className="payment-calc__cta" onClick={onGetDeal}>
               <DollarSign size={16} />
-              Send Offer
+              Get This Deal
               <ArrowRight size={16} />
             </button>
           </div>
