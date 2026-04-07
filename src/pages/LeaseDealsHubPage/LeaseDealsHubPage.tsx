@@ -210,7 +210,6 @@ const LeaseDealsHubPage = () => {
   const seoTitle = `Best Car Lease Deals for ${month} ${year}: Find the Best Lease Deals Right Now`;
   const h1Title = `Best Car Lease Deals for ${month} ${year}`;
   const description = `Compare the best car lease deals for ${month} ${year}. Find low monthly payments, short terms, and manufacturer lease specials from Car and Driver.`;
-  const lowestPayment = deals.length > 0 ? Math.min(...deals.map((d) => d.monthlyPaymentNum)) : 0;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
@@ -241,7 +240,6 @@ const LeaseDealsHubPage = () => {
         <div className="container">
           <div className="lease-hub__hero-content">
             <div className="lease-hub__hero-badge">
-              <Car size={16} />
               <span>Lease Deals Hub</span>
             </div>
             <nav className="lease-hub__breadcrumb" aria-label="Breadcrumb">
@@ -255,20 +253,6 @@ const LeaseDealsHubPage = () => {
               available right now, updated monthly with the latest offers. Use our ratings and filters to compare payments and find a lease that fits your
               budget.
             </p>
-            <div className="lease-hub__hero-stats">
-              <div className="lease-hub__hero-stat">
-                <span className="lease-hub__hero-stat-value">{deals.length}</span>
-                <span className="lease-hub__hero-stat-label">Lease Deals</span>
-              </div>
-              <div className="lease-hub__hero-stat">
-                <span className="lease-hub__hero-stat-value">{lowestPayment > 0 ? `$${lowestPayment}` : 'N/A'}</span>
-                <span className="lease-hub__hero-stat-label">Lowest Payment</span>
-              </div>
-              <div className="lease-hub__hero-stat">
-                <span className="lease-hub__hero-stat-value">{month}</span>
-                <span className="lease-hub__hero-stat-label">{year} Deals</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

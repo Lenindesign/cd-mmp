@@ -169,7 +169,7 @@ const SuvDealsPage = () => {
       <div className="suv-deals-page__hero">
         <div className="container">
           <div className="suv-deals-page__hero-content">
-            <div className="suv-deals-page__hero-badge"><Car size={16} /><span>SUV Deals</span></div>
+            <div className="suv-deals-page__hero-badge"><span>SUV Deals</span></div>
             <nav className="suv-deals-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="suv-deals-page__breadcrumb-sep">/</span>
@@ -179,10 +179,6 @@ const SuvDealsPage = () => {
             </nav>
             <h1 className="suv-deals-page__title">{pageTitle}</h1>
             <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place—0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
-            <div className="suv-deals-page__hero-stats">
-              <div className="suv-deals-page__hero-stat"><span className="suv-deals-page__hero-stat-value">{deals.length}</span><span className="suv-deals-page__hero-stat-label">SUV Deals</span></div>
-              <div className="suv-deals-page__hero-stat"><span className="suv-deals-page__hero-stat-value">{CURRENT_MONTH}</span><span className="suv-deals-page__hero-stat-label">{CURRENT_YEAR} Deals</span></div>
-            </div>
           </div>
         </div>
       </div>

@@ -221,7 +221,6 @@ const CashFinanceDealsPage = () => {
         <div className="container">
           <div className="cf-deals-page__hero-content">
             <div className="cf-deals-page__hero-badge">
-              <Percent size={16} />
               <span>Finance Deals</span>
             </div>
             <nav className="cf-deals-page__breadcrumb" aria-label="Breadcrumb">
@@ -237,16 +236,6 @@ const CashFinanceDealsPage = () => {
               We've combined the best current offers with Car and Driver's expert ratings so you can find not just
               a good price, but a great car at a great price.
             </p>
-            <div className="cf-deals-page__hero-stats">
-              <div className="cf-deals-page__hero-stat">
-                <span className="cf-deals-page__hero-stat-value">{displayDeals.length}</span>
-                <span className="cf-deals-page__hero-stat-label">Deals</span>
-              </div>
-              <div className="cf-deals-page__hero-stat">
-                <span className="cf-deals-page__hero-stat-value">{month}</span>
-                <span className="cf-deals-page__hero-stat-label">{year} Deals</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

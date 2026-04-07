@@ -266,8 +266,8 @@ const ZeroAprDealsPage = () => {
         <div className="container">
           <div className="zero-apr-page__hero-content">
             <div className="zero-apr-page__hero-badge">
-              <span className="zero-apr-page__hero-badge-text">APR</span>
-              <span>Financing Deals</span>
+              <span className="zero-apr-page__hero-badge-text">0%</span>
+              <span>APR Deals</span>
             </div>
             <nav className="zero-apr-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
@@ -282,24 +282,6 @@ const ZeroAprDealsPage = () => {
               where every dollar goes toward the vehicle, to special low rates well below the national average—these
               offers can save you thousands over the life of your loan.
             </p>
-            <div className="zero-apr-page__hero-stats">
-              <div className="zero-apr-page__hero-stat">
-                <span className="zero-apr-page__hero-stat-value">{allDeals.length}</span>
-                <span className="zero-apr-page__hero-stat-label">APR Deals</span>
-              </div>
-              <div className="zero-apr-page__hero-stat">
-                <span className="zero-apr-page__hero-stat-value">{tabCounts['zero-apr']}</span>
-                <span className="zero-apr-page__hero-stat-label">0% APR</span>
-              </div>
-              <div className="zero-apr-page__hero-stat">
-                <span className="zero-apr-page__hero-stat-value">{tabCounts['special-apr']}</span>
-                <span className="zero-apr-page__hero-stat-label">Special Rates</span>
-              </div>
-              <div className="zero-apr-page__hero-stat">
-                <span className="zero-apr-page__hero-stat-value">{month}</span>
-                <span className="zero-apr-page__hero-stat-label">{year} Deals</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

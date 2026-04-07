@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Percent, BadgeDollarSign, KeyRound, CarFront, Truck, Fuel, Car, SlidersHorizontal, Heart, Info } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronUp, ChevronDown, BadgeDollarSign, SlidersHorizontal, Heart, Info } from 'lucide-react';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, AVG_MARKET_APR, AVG_LOAN_TERM } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -346,12 +346,12 @@ const DealsHubPage = () => {
       });
 
     return [
-      { title: 'Best Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates — save thousands when you buy.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, icon: <Percent size={22} strokeWidth={2.2} />, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
-      { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, icon: <KeyRound size={22} strokeWidth={2.2} />, deals: toMiniLease(filteredLease) },
-      { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, icon: <CarFront size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', deals: toMiniMixed(suvDeals) },
-      { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, icon: <Truck size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*', deals: toMiniMixed(truckDeals) },
-      { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, icon: <Fuel size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybrids-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*', deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
-      { title: 'Buying by Body Style', description: 'Purchase deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length + filteredCash.length, icon: <Car size={22} strokeWidth={2.2} />, imageIcon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*', deals: [...filteredFinance, ...filteredCash].slice(0, 3).map(d => (d.type === 'cash' ? toMiniCash([d])[0] : toMiniFinance([d])[0])) },
+      { title: 'Best Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates — save thousands when you buy.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
+      { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, deals: toMiniLease(filteredLease) },
+      { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, deals: toMiniMixed(suvDeals) },
+      { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, deals: toMiniMixed(truckDeals) },
+      { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
+      { title: 'Buying by Body Style', description: 'Purchase deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length + filteredCash.length, deals: [...filteredFinance, ...filteredCash].slice(0, 3).map(d => (d.type === 'cash' ? toMiniCash([d])[0] : toMiniFinance([d])[0])) },
     ];
   }, [rawData, matchesFilters]);
 
@@ -561,11 +561,6 @@ const DealsHubPage = () => {
             {categories.map((cat, catIdx) => (
               <div key={cat.href} id={sectionIds[catIdx]} className="deals-hub__row">
                 <div className="deals-hub__row-left">
-                  <div className="deals-hub__row-icon">
-                    {cat.imageIcon
-                      ? <img src={cat.imageIcon} alt="" className="deals-hub__row-icon-img" />
-                      : cat.icon}
-                  </div>
                   <h2 className="deals-hub__row-title">{cat.title}</h2>
                   <p className="deals-hub__row-description">{cat.description}</p>
                   <span className="deals-hub__row-count">{cat.count} deals</span>

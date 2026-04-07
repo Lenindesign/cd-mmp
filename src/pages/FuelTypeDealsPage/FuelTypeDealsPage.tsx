@@ -224,7 +224,7 @@ const FuelTypeDealsPage = () => {
       <div className="fuel-deals__hero">
         <div className="container">
           <div className="fuel-deals__hero-content">
-            <div className="fuel-deals__hero-badge"><Fuel size={16} /><span>Fuel Type Deals</span></div>
+            <div className="fuel-deals__hero-badge"><span>Fuel Type Deals</span></div>
             <nav className="fuel-deals__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="fuel-deals__breadcrumb-sep">/</span>
@@ -236,12 +236,6 @@ const FuelTypeDealsPage = () => {
             <p className="fuel-deals__description">
               Shop deals by powertrain—whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
             </p>
-            <div className="fuel-deals__hero-stats">
-              <div className="fuel-deals__hero-stat"><span className="fuel-deals__hero-stat-value">{allDeals.length}</span><span className="fuel-deals__hero-stat-label">Total Deals</span></div>
-              <div className="fuel-deals__hero-stat"><span className="fuel-deals__hero-stat-value">{tabCounts.electric}</span><span className="fuel-deals__hero-stat-label">EV Deals</span></div>
-              <div className="fuel-deals__hero-stat"><span className="fuel-deals__hero-stat-value">{tabCounts.hybrid}</span><span className="fuel-deals__hero-stat-label">Hybrid Deals</span></div>
-              <div className="fuel-deals__hero-stat"><span className="fuel-deals__hero-stat-value">{CURRENT_MONTH}</span><span className="fuel-deals__hero-stat-label">{CURRENT_YEAR} Deals</span></div>
-            </div>
           </div>
         </div>
       </div>

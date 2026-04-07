@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, type MouseEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import {
@@ -214,8 +214,6 @@ const LeaseByMakeModelPage = () => {
     return String(Math.max(...allDeals.map((d) => parseInt(d.vehicle.year, 10) || 0)));
   }, [allDeals, year]);
 
-  const lowestPayment = allDeals.length > 0 ? Math.min(...allDeals.map((d) => d.sortMonthly)) : 0;
-
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
   };
@@ -280,7 +278,6 @@ const LeaseByMakeModelPage = () => {
         <div className="container">
           <div className="mm-lease__hero-content">
             <div className="mm-lease__hero-badge">
-              <Car size={16} />
               <span>
                 {makeName} {modelName}
               </span>
@@ -300,20 +297,6 @@ const LeaseByMakeModelPage = () => {
             </nav>
             <h1 className="mm-lease__title">{pageTitle}</h1>
             <p className="mm-lease__description">{pageDescription}</p>
-            <div className="mm-lease__hero-stats">
-              <div className="mm-lease__hero-stat">
-                <span className="mm-lease__hero-stat-value">{allDeals.length}</span>
-                <span className="mm-lease__hero-stat-label">Lease Deals</span>
-              </div>
-              <div className="mm-lease__hero-stat">
-                <span className="mm-lease__hero-stat-value">{lowestPayment > 0 ? `$${lowestPayment}` : '—'}</span>
-                <span className="mm-lease__hero-stat-label">Lowest Payment</span>
-              </div>
-              <div className="mm-lease__hero-stat">
-                <span className="mm-lease__hero-stat-value">{month}</span>
-                <span className="mm-lease__hero-stat-label">{year} Deals</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

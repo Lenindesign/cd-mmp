@@ -169,7 +169,7 @@ const TruckDealsPage = () => {
       <div className="truck-deals-page__hero">
         <div className="container">
           <div className="truck-deals-page__hero-content">
-            <div className="truck-deals-page__hero-badge"><Car size={16} /><span>Truck Deals</span></div>
+            <div className="truck-deals-page__hero-badge"><span>Truck Deals</span></div>
             <nav className="truck-deals-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="truck-deals-page__breadcrumb-sep">/</span>
@@ -179,10 +179,6 @@ const TruckDealsPage = () => {
             </nav>
             <h1 className="truck-deals-page__title">{pageTitle}</h1>
             <p className="truck-deals-page__description">Every current incentive on pickup trucks—0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
-            <div className="truck-deals-page__hero-stats">
-              <div className="truck-deals-page__hero-stat"><span className="truck-deals-page__hero-stat-value">{deals.length}</span><span className="truck-deals-page__hero-stat-label">Truck Deals</span></div>
-              <div className="truck-deals-page__hero-stat"><span className="truck-deals-page__hero-stat-value">{CURRENT_MONTH}</span><span className="truck-deals-page__hero-stat-label">{CURRENT_YEAR} Deals</span></div>
-            </div>
           </div>
         </div>
       </div>

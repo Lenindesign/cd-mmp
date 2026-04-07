@@ -89,35 +89,6 @@
   max-width: 650px;
 }
 
-.fuel-deals__hero-stats {
-  display: flex;
-  gap: var(--spacing-8);
-  margin-top: var(--spacing-6);
-  padding-top: var(--spacing-6);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.fuel-deals__hero-stat {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-}
-
-.fuel-deals__hero-stat-value {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-extrabold);
-  line-height: 1;
-}
-
-.fuel-deals__hero-stat-label {
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 /* Content layout */
 .fuel-deals__content {
   padding: var(--spacing-8) 0;
@@ -979,11 +950,6 @@
 
   .fuel-deals__title {
     font-size: var(--font-size-3xl);
-  }
-
-  .fuel-deals__hero-stats {
-    flex-wrap: wrap;
-    gap: var(--spacing-4);
   }
 
   .fuel-deals__tabs {

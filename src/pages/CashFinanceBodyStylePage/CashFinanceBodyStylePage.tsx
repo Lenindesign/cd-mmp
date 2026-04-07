@@ -193,7 +193,7 @@ const CashFinanceBodyStylePage = () => {
       <div className="cfbs-deals__hero">
         <div className="container">
           <div className="cfbs-deals__hero-content">
-            <div className="cfbs-deals__hero-badge"><Percent size={16} /><span>Finance Deals by Body Style</span></div>
+            <div className="cfbs-deals__hero-badge"><span>Finance Deals by Body Style</span></div>
             <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="cfbs-deals__breadcrumb-sep">/</span>
@@ -205,12 +205,6 @@ const CashFinanceBodyStylePage = () => {
             <p className="cfbs-deals__description">
               Special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
             </p>
-            <div className="cfbs-deals__hero-stats">
-              <div className="cfbs-deals__hero-stat"><span className="cfbs-deals__hero-stat-value">{allDeals.length}</span><span className="cfbs-deals__hero-stat-label">Total Deals</span></div>
-              <div className="cfbs-deals__hero-stat"><span className="cfbs-deals__hero-stat-value">{tabCounts.suv}</span><span className="cfbs-deals__hero-stat-label">SUV Deals</span></div>
-              <div className="cfbs-deals__hero-stat"><span className="cfbs-deals__hero-stat-value">{tabCounts.truck}</span><span className="cfbs-deals__hero-stat-label">Truck Deals</span></div>
-              <div className="cfbs-deals__hero-stat"><span className="cfbs-deals__hero-stat-value">{CURRENT_MONTH}</span><span className="cfbs-deals__hero-stat-label">{CURRENT_YEAR} Deals</span></div>
-            </div>
           </div>
         </div>
       </div>

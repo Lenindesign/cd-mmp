@@ -221,8 +221,6 @@ const LeaseByMakePage = () => {
       .sort((a, b) => a.label.localeCompare(b.label));
   }, [allDeals, makeName, makeParam]);
 
-  const lowestPayment = allDeals.length > 0 ? Math.min(...allDeals.map((d) => d.sortMonthly)) : 0;
-
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
   };
@@ -283,7 +281,6 @@ const LeaseByMakePage = () => {
         <div className="container">
           <div className="make-lease__hero-content">
             <div className="make-lease__hero-badge">
-              <Car size={16} />
               <span>{makeName}</span>
             </div>
             <nav className="make-lease__breadcrumb" aria-label="Breadcrumb">
@@ -295,22 +292,6 @@ const LeaseByMakePage = () => {
             </nav>
             <h1 className="make-lease__title">{pageTitle}</h1>
             <p className="make-lease__description">{pageDescription}</p>
-            <div className="make-lease__hero-stats">
-              <div className="make-lease__hero-stat">
-                <span className="make-lease__hero-stat-value">{allDeals.length}</span>
-                <span className="make-lease__hero-stat-label">Lease Deals</span>
-              </div>
-              <div className="make-lease__hero-stat">
-                <span className="make-lease__hero-stat-value">
-                  {lowestPayment > 0 ? `$${lowestPayment}` : '—'}
-                </span>
-                <span className="make-lease__hero-stat-label">Lowest Payment</span>
-              </div>
-              <div className="make-lease__hero-stat">
-                <span className="make-lease__hero-stat-value">{month}</span>
-                <span className="make-lease__hero-stat-label">{year} Deals</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

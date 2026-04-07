@@ -151,7 +151,6 @@ const LeaseDealsPage = () => {
     : undefined;
 
   const pageTitle = `Best Lease Deals for ${month} ${year}`;
-  const lowestPayment = deals.length > 0 ? Math.min(...deals.map((d) => d.monthlyPaymentNum)) : 0;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
@@ -176,7 +175,6 @@ const LeaseDealsPage = () => {
         <div className="container">
           <div className="lease-deals-page__hero-content">
             <div className="lease-deals-page__hero-badge">
-              <Car size={16} />
               <span>Lease Deals</span>
             </div>
             <nav className="lease-deals-page__breadcrumb" aria-label="Breadcrumb">
@@ -192,20 +190,6 @@ const LeaseDealsPage = () => {
               the best manufacturer lease specials and paired them with our expert ratings so you can find the
               best value for your budget.
             </p>
-            <div className="lease-deals-page__hero-stats">
-              <div className="lease-deals-page__hero-stat">
-                <span className="lease-deals-page__hero-stat-value">{deals.length}</span>
-                <span className="lease-deals-page__hero-stat-label">Lease Deals</span>
-              </div>
-              <div className="lease-deals-page__hero-stat">
-                <span className="lease-deals-page__hero-stat-value">{lowestPayment > 0 ? `$${lowestPayment}` : 'N/A'}</span>
-                <span className="lease-deals-page__hero-stat-label">Lowest Payment</span>
-              </div>
-              <div className="lease-deals-page__hero-stat">
-                <span className="lease-deals-page__hero-stat-value">{month}</span>
-                <span className="lease-deals-page__hero-stat-label">{year} Deals</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

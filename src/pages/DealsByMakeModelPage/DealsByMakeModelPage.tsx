@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -323,8 +323,6 @@ const DealsByMakeModelPage = () => {
     return String(Math.max(...allDeals.map((d) => parseInt(d.vehicle.year, 10) || 0)));
   }, [allDeals, year]);
 
-  const lowestPayment = allDeals.length > 0 ? Math.min(...allDeals.map((d) => d.sortMonthly)) : 0;
-
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
   };
@@ -394,7 +392,6 @@ const DealsByMakeModelPage = () => {
         <div className="container">
           <div className="mm-deals__hero-content">
             <div className="mm-deals__hero-badge">
-              <Percent size={16} />
               <span>
                 {makeName} {modelName}
               </span>
@@ -412,22 +409,6 @@ const DealsByMakeModelPage = () => {
             </nav>
             <h1 className="mm-deals__title">{pageTitle}</h1>
             <p className="mm-deals__description">{pageDescription}</p>
-            <div className="mm-deals__hero-stats">
-              <div className="mm-deals__hero-stat">
-                <span className="mm-deals__hero-stat-value">{allDeals.length}</span>
-                <span className="mm-deals__hero-stat-label">Total Deals</span>
-              </div>
-              <div className="mm-deals__hero-stat">
-                <span className="mm-deals__hero-stat-value">
-                  {lowestPayment > 0 ? `$${lowestPayment}` : '—'}
-                </span>
-                <span className="mm-deals__hero-stat-label">Lowest Payment</span>
-              </div>
-              <div className="mm-deals__hero-stat">
-                <span className="mm-deals__hero-stat-value">{month}</span>
-                <span className="mm-deals__hero-stat-label">{year} Deals</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

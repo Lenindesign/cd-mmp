@@ -115,36 +115,6 @@
   max-width: 650px;
 }
 
-.make-deals__hero-stats {
-  display: flex;
-  gap: var(--spacing-8);
-  margin-top: var(--spacing-6);
-  padding-top: var(--spacing-6);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.make-deals__hero-stat {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-}
-
-.make-deals__hero-stat-value {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-extrabold);
-  color: var(--color-white);
-  line-height: 1;
-}
-
-.make-deals__hero-stat-label {
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 /* Filter Toolbar */
 .make-deals__toolbar {
   background: var(--color-white);
@@ -1043,14 +1013,6 @@
 
   .make-deals__links-grid {
     grid-template-columns: 1fr;
-  }
-
-  .make-deals__hero-stats {
-    gap: var(--spacing-5);
-  }
-
-  .make-deals__hero-stat-value {
-    font-size: var(--font-size-2xl);
   }
 
   .make-deals__filters {
