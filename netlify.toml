@@ -10,6 +10,11 @@
   node_bundler = "esbuild"
 
 [[redirects]]
+  from = "/deals/zero-apr"
+  to = "/deals/best-buying-deals"
+  status = 301
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

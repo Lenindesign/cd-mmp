@@ -410,7 +410,7 @@ const RankingsPage = () => {
                   alt="10Best"
                   className="rankings-page__hero-icon"
                 />
-                <span>Expert Rankings</span>
+                <span className="hero-pill__label">Expert Rankings</span>
               </div>
               <h1 className="rankings-page__title">Find Your Perfect Car</h1>
               <p className="rankings-page__description">
@@ -554,7 +554,7 @@ const RankingsPage = () => {
                 alt="10Best"
                 className="rankings-page__hero-icon"
               />
-              <span>Expert Rankings</span>
+              <span className="hero-pill__label">Expert Rankings</span>
             </div>
             <h1 className="rankings-page__title">{pageTitle}</h1>
             <p className="rankings-page__description">{config.description}</p>

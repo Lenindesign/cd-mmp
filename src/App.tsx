@@ -7,6 +7,7 @@ import { LoadingSpinner } from './components/LoadingSpinner';
 import { AuthProvider } from './contexts/AuthContext';
 import { CarFinderProvider, useCarFinder } from './contexts/CarFinderContext';
 import { CarFinderChat } from './components/CarFinderChat';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH } from './constants/dealRoutes';
 import './App.css';
 
 // Lazy load pages for code splitting
@@ -171,7 +172,9 @@ function App() {
 
             {/* Deals Pages */}
             <Route path="/deals" element={<DealsHubPage />} />
-            <Route path="/deals/zero-apr" element={<ZeroAprDealsPage />} />
+            <Route path={BEST_BUYING_DEALS_PATH} element={<ZeroAprDealsPage />} />
+            <Route path={ZERO_PERCENT_APR_DEALS_PATH} element={<ZeroAprDealsPage />} />
+            <Route path="/deals/zero-apr" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
             <Route path="/deals/cash-finance" element={<CashFinanceDealsPage />} />
             <Route path="/deals/lease" element={<LeaseDealsPage />} />
             <Route path="/deals/suv" element={<SuvDealsPage />} />

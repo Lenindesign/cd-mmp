@@ -224,7 +224,9 @@ const FuelTypeDealsPage = () => {
       <div className="fuel-deals__hero">
         <div className="container">
           <div className="fuel-deals__hero-content">
-            <div className="fuel-deals__hero-badge"><span>Fuel Type Deals</span></div>
+            <div className="fuel-deals__hero-badge">
+              <span className="hero-pill__label">Fuel Type Deals</span>
+            </div>
             <nav className="fuel-deals__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="fuel-deals__breadcrumb-sep">/</span>
@@ -263,9 +265,6 @@ const FuelTypeDealsPage = () => {
               </div>
 
               <section className="fuel-deals__section">
-                <h2 className="fuel-deals__section-title">
-                  <Fuel size={22} /> {deals.length} {tabLabel || 'Available'} Deal{deals.length !== 1 ? 's' : ''}
-                </h2>
                 <div className="fuel-deals__grid">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
@@ -408,7 +407,7 @@ const FuelTypeDealsPage = () => {
               </section>
 
               <section className="fuel-deals__faq-section">
-                <h2 className="fuel-deals__section-title"><Info size={22} /> Frequently Asked Questions</h2>
+                <h2 className="fuel-deals__section-title">Frequently Asked Questions</h2>
                 <div className="fuel-deals__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`fuel-deals__faq-item ${expandedFaqIndex === i ? 'fuel-deals__faq-item--expanded' : ''}`}>
@@ -425,7 +424,7 @@ const FuelTypeDealsPage = () => {
                 <h2 className="fuel-deals__section-title">Explore More</h2>
                 <div className="fuel-deals__links-grid">
                   <Link to="/deals" className="fuel-deals__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
-                  <Link to="/deals/zero-apr" className="fuel-deals__link-card"><h3>0% APR Deals</h3><p>Zero-interest financing</p></Link>
+                  <Link to="/deals/best-buying-deals" className="fuel-deals__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
                   <Link to="/deals/suv" className="fuel-deals__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs</p></Link>
                   <Link to="/deals/truck" className="fuel-deals__link-card"><h3>Truck Deals</h3><p>Pickup truck specials</p></Link>
                   <Link to="/deals/lease" className="fuel-deals__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>

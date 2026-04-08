@@ -59,6 +59,8 @@
 .cfbs-deals__hero-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   gap: var(--spacing-2);
   background: var(--color-success, #26870D);
   padding: var(--spacing-2) var(--spacing-4);
@@ -69,6 +71,8 @@
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 1px;
+  line-height: 1;
+  color: var(--color-white);
 }
 
 .cfbs-deals__title {
@@ -354,10 +358,11 @@
 .cfbs-deals__card-offers-tag {
   position: absolute;
   bottom: 8px;
-  left: 8px;
+  right: 8px;
+  left: auto;
   z-index: 2;
-  background: var(--color-success);
-  color: var(--color-white);
+  background: var(--color-white);
+  color: var(--color-success);
   font-family: var(--font-heading);
   font-size: 11px;
   font-weight: var(--font-weight-bold);
@@ -365,15 +370,23 @@
   letter-spacing: 0.3px;
   padding: 4px 10px;
   border-radius: var(--border-radius-sm);
-  border: none;
+  border: 1px solid var(--color-success-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.cfbs-deals__card-offers-tag:hover {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+  border-color: var(--color-success);
 }
 
 .cfbs-deals__card-offers-popup {
   position: absolute;
   bottom: 40px;
-  left: 8px;
+  right: 8px;
+  left: auto;
   z-index: 20;
   width: 260px;
   background: var(--color-white);

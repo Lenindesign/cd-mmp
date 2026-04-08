@@ -110,6 +110,8 @@
 .deals-hub__hero-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   gap: var(--spacing-2);
   background: var(--color-success);
   padding: var(--spacing-2) var(--spacing-4);
@@ -120,6 +122,12 @@
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 1px;
+  line-height: 1;
+  color: var(--color-white);
+}
+
+.deals-hub__hero-badge-icon {
+  flex-shrink: 0;
 }
 
 .deals-hub__title {
@@ -592,6 +600,7 @@
   position: absolute;
   bottom: 8px;
   right: 8px;
+  left: auto;
   z-index: 2;
   padding: 4px 10px;
   font-family: var(--font-heading);
@@ -602,12 +611,15 @@
   color: var(--color-success);
   background: var(--color-white);
   border-radius: var(--border-radius-sm);
-  border: none;
+  border: 1px solid var(--color-success-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 .deals-hub__card-offers-tag:hover {
-  background: var(--color-gray-100);
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+  border-color: var(--color-success);
 }
 
 /* Offers popup */
@@ -615,6 +627,7 @@
   position: absolute;
   bottom: 40px;
   right: 8px;
+  left: auto;
   z-index: 20;
   width: 260px;
   background: var(--color-white);

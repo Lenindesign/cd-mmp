@@ -13,6 +13,7 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import './DealsHubPage.css';
 
 interface MiniDeal {
@@ -346,7 +347,7 @@ const DealsHubPage = () => {
       });
 
     return [
-      { title: 'Best Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates — save thousands when you buy.', href: '/deals/zero-apr', count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
+      { title: 'Best Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates — save thousands when you buy.', href: BEST_BUYING_DEALS_PATH, count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
       { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, deals: toMiniLease(filteredLease) },
       { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, deals: toMiniMixed(suvDeals) },
       { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, deals: toMiniMixed(truckDeals) },
@@ -484,8 +485,8 @@ const DealsHubPage = () => {
         <div className="container">
           <div className="deals-hub__hero-content">
             <div className="deals-hub__hero-badge">
-              <BadgeDollarSign size={16} />
-              <span>Car Deals</span>
+              <BadgeDollarSign size={16} className="deals-hub__hero-badge-icon" aria-hidden />
+              <span className="hero-pill__label">Car Deals</span>
             </div>
             <nav className="deals-hub__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>

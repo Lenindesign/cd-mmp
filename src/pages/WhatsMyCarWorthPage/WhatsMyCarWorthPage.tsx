@@ -54,8 +54,8 @@ const WhatsMyCarWorthPage = () => {
         </div>
         <div className="whats-my-car-worth-page__hero-content">
           <div className="whats-my-car-worth-page__hero-badge">
-            <DollarSign size={20} />
-            <span>Trade-In Value</span>
+            <DollarSign size={20} aria-hidden />
+            <span className="hero-pill__label">Trade-In Value</span>
           </div>
           <h1 className="whats-my-car-worth-page__hero-title">
             What's My Car Worth?

@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -169,7 +169,9 @@ const TruckDealsPage = () => {
       <div className="truck-deals-page__hero">
         <div className="container">
           <div className="truck-deals-page__hero-content">
-            <div className="truck-deals-page__hero-badge"><span>Truck Deals</span></div>
+            <div className="truck-deals-page__hero-badge">
+              <span className="hero-pill__label">Truck Deals</span>
+            </div>
             <nav className="truck-deals-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="truck-deals-page__breadcrumb-sep">/</span>
@@ -187,7 +189,6 @@ const TruckDealsPage = () => {
           <div className="truck-deals-page__layout">
             <div className="truck-deals-page__main">
               <section className="truck-deals-page__section">
-                <h2 className="truck-deals-page__section-title"><Car size={22} /> {deals.length} Available Deals</h2>
                 <div className="truck-deals-page__grid">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
@@ -321,7 +322,7 @@ const TruckDealsPage = () => {
                 </div>
               </section>
               <section className="truck-deals-page__faq-section">
-                <h2 className="truck-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About Truck Deals</h2>
+                <h2 className="truck-deals-page__section-title">Frequently Asked Questions About Truck Deals</h2>
                 <div className="truck-deals-page__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`truck-deals-page__faq-item ${expandedFaqIndex === i ? 'truck-deals-page__faq-item--expanded' : ''}`}>
@@ -337,7 +338,7 @@ const TruckDealsPage = () => {
                 <h2 className="truck-deals-page__section-title">Explore More</h2>
                 <div className="truck-deals-page__links-grid">
                   <Link to="/deals" className="truck-deals-page__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
-                  <Link to="/deals/zero-apr" className="truck-deals-page__link-card"><h3>0% APR Deals</h3><p>Zero-interest financing offers</p></Link>
+                  <Link to="/deals/best-buying-deals" className="truck-deals-page__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
                   <Link to="/deals/suv" className="truck-deals-page__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs and crossovers</p></Link>
                   <Link to="/deals/lease" className="truck-deals-page__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
                   <Link to="/rankings/truck" className="truck-deals-page__link-card"><h3>Truck Rankings</h3><p>Expert-ranked pickup trucks</p></Link>

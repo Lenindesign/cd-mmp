@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, CarFront, Truck, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, CarFront, Truck, Car } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -170,7 +170,6 @@ const CashFinanceBodyStylePage = () => {
       })()
     : undefined;
 
-  const tabLabel = activeTab === 'all' ? '' : BODY_TABS.find(t => t.key === activeTab)?.label || '';
   const emptyBodyCategory =
     activeTab === 'all' ? 'body style' : BODY_TABS.find(t => t.key === activeTab)?.label.toLowerCase() || 'body style';
   const pageTitle = `Finance Deals by Body Style – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
@@ -193,7 +192,9 @@ const CashFinanceBodyStylePage = () => {
       <div className="cfbs-deals__hero">
         <div className="container">
           <div className="cfbs-deals__hero-content">
-            <div className="cfbs-deals__hero-badge"><span>Finance Deals by Body Style</span></div>
+            <div className="cfbs-deals__hero-badge">
+              <span className="hero-pill__label">Finance Deals by Body Style</span>
+            </div>
             <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="cfbs-deals__breadcrumb-sep">/</span>
@@ -231,9 +232,6 @@ const CashFinanceBodyStylePage = () => {
               </div>
 
               <section className="cfbs-deals__section">
-                <h2 className="cfbs-deals__section-title">
-                  <Percent size={22} /> {deals.length} {tabLabel || 'Available'} Deal{deals.length !== 1 ? 's' : ''}
-                </h2>
                 <div className="cfbs-deals__grid">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
@@ -374,7 +372,7 @@ const CashFinanceBodyStylePage = () => {
               </section>
 
               <section className="cfbs-deals__faq-section">
-                <h2 className="cfbs-deals__section-title"><Info size={22} /> Frequently Asked Questions</h2>
+                <h2 className="cfbs-deals__section-title">Frequently Asked Questions</h2>
                 <div className="cfbs-deals__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`cfbs-deals__faq-item ${expandedFaqIndex === i ? 'cfbs-deals__faq-item--expanded' : ''}`}>
@@ -392,7 +390,7 @@ const CashFinanceBodyStylePage = () => {
                 <div className="cfbs-deals__links-grid">
                   <Link to="/deals" className="cfbs-deals__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
                   <Link to="/deals/cash-finance" className="cfbs-deals__link-card"><h3>Finance Deals</h3><p>APR and special finance offers</p></Link>
-                  <Link to="/deals/zero-apr" className="cfbs-deals__link-card"><h3>0% APR Deals</h3><p>Zero-interest financing</p></Link>
+                  <Link to="/deals/best-buying-deals" className="cfbs-deals__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
                   <Link to="/deals/lease" className="cfbs-deals__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
                   <Link to="/deals/fuel-type" className="cfbs-deals__link-card"><h3>Fuel Type Deals</h3><p>Deals by powertrain</p></Link>
                   <Link to="/deals/suv" className="cfbs-deals__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs</p></Link>

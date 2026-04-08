@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -240,7 +240,7 @@ const LeaseDealsHubPage = () => {
         <div className="container">
           <div className="lease-hub__hero-content">
             <div className="lease-hub__hero-badge">
-              <span>Lease Deals Hub</span>
+              <span className="hero-pill__label">Lease Deals Hub</span>
             </div>
             <nav className="lease-hub__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
@@ -277,9 +277,6 @@ const LeaseDealsHubPage = () => {
           <div className="lease-hub__layout">
             <div className="lease-hub__main">
               <section className="lease-hub__section">
-                <h2 className="lease-hub__section-title">
-                  <Car size={22} /> {deals.length} Available Deals
-                </h2>
                 <div className="lease-hub__grid">
                   {deals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
@@ -464,9 +461,7 @@ const LeaseDealsHubPage = () => {
               </section>
 
               <section className="lease-hub__faq-section">
-                <h2 className="lease-hub__section-title">
-                  <Info size={22} /> Frequently Asked Questions About Leasing
-                </h2>
+                <h2 className="lease-hub__section-title">Frequently Asked Questions About Leasing</h2>
                 <div className="lease-hub__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`lease-hub__faq-item ${expandedFaqIndex === i ? 'lease-hub__faq-item--expanded' : ''}`}>

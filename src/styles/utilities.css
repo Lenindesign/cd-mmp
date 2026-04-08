@@ -531,3 +531,13 @@
   animation: u-spin 1s linear infinite;
 }
 
+/* ============================================
+   HERO PILL BADGE — optical vertical center for label text
+   Use on <span class="hero-pill__label"> inside * __hero-badge (not on icons/images).
+   ============================================ */
+.hero-pill__label {
+  line-height: 1;
+  display: block;
+  transform: translateY(0.22em);
+}
+

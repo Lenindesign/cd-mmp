@@ -182,7 +182,7 @@ async function main() {
 
   // ─── Scene 6: Zero APR Sub-page ───
   console.log('Scene 6: Zero APR Sub-page');
-  await page.goto(`${BASE}/deals/zero-apr`, { waitUntil: 'networkidle', timeout: 60000 });
+  await page.goto(`${BASE}/deals/best-buying-deals`, { waitUntil: 'networkidle', timeout: 60000 });
   await sleep(2500);
   await slowScroll(page, 1000);
   await sleep(2000);

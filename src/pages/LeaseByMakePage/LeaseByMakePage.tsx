@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import {
@@ -281,7 +281,7 @@ const LeaseByMakePage = () => {
         <div className="container">
           <div className="make-lease__hero-content">
             <div className="make-lease__hero-badge">
-              <span>{makeName}</span>
+              <span className="hero-pill__label">{makeName}</span>
             </div>
             <nav className="make-lease__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
@@ -318,10 +318,6 @@ const LeaseByMakePage = () => {
           <div className="make-lease__layout">
             <div className="make-lease__main">
               <section className="make-lease__section">
-                <h2 className="make-lease__section-title">
-                  <Car size={22} />
-                  {makeName} Lease Deals
-                </h2>
                 <div className="make-lease__grid">
                   {allDeals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;

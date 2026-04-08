@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, Percent, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, SlidersHorizontal } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -221,7 +221,7 @@ const CashFinanceDealsPage = () => {
         <div className="container">
           <div className="cf-deals-page__hero-content">
             <div className="cf-deals-page__hero-badge">
-              <span>Finance Deals</span>
+              <span className="hero-pill__label">Finance Deals</span>
             </div>
             <nav className="cf-deals-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
@@ -266,10 +266,6 @@ const CashFinanceDealsPage = () => {
 
               {/* Finance Deals Section */}
               <section className="cf-deals-page__section">
-                  <h2 className="cf-deals-page__section-title">
-                    <Percent size={22} />
-                    Finance &amp; Cash Deals
-                  </h2>
                   <div className="cf-deals-page__grid">
                     {displayDeals.map((deal) => {
                       const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
@@ -474,10 +470,7 @@ const CashFinanceDealsPage = () => {
 
               {/* FAQ Section */}
               <section className="cf-deals-page__faq-section">
-                <h2 className="cf-deals-page__section-title">
-                  <Info size={22} />
-                  Frequently Asked Questions About Car Deals
-                </h2>
+                <h2 className="cf-deals-page__section-title">Frequently Asked Questions About Car Deals</h2>
                 <div className="cf-deals-page__faq-list">
                   {FAQ_DATA.map((faq, index) => (
                     <div
@@ -510,9 +503,9 @@ const CashFinanceDealsPage = () => {
                     <h3>All Deals</h3>
                     <p>Browse every current deal and incentive</p>
                   </Link>
-                  <Link to="/deals/zero-apr" className="cf-deals-page__link-card">
-                    <h3>0% APR Deals</h3>
-                    <p>Find vehicles with zero-interest financing offers</p>
+                  <Link to="/deals/best-buying-deals" className="cf-deals-page__link-card">
+                    <h3>Best Buying Deals</h3>
+                    <p>0% APR, special financing, and more when you buy</p>
                   </Link>
                   <Link to="/deals/lease" className="cf-deals-page__link-card">
                     <h3>Lease Deals</h3>

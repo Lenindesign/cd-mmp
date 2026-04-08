@@ -240,7 +240,7 @@ const WhatsMyCarWorthResultsV2 = ({
       <section className="wmcw-v2__hero">
         <div className="wmcw-v2__hero-content">
           <div className="wmcw-v2__hero-badge">
-            <span>POWERED BY</span>
+            <span className="hero-pill__label">POWERED BY</span>
             <svg 
               viewBox="86 31 124 65" 
               fill="none" 

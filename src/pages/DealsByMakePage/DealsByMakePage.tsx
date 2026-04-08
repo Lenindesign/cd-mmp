@@ -390,7 +390,7 @@ const DealsByMakePage = () => {
         <div className="container">
           <div className="make-deals__hero-content">
             <div className="make-deals__hero-badge">
-              <span>{makeName}</span>
+              <span className="hero-pill__label">{makeName}</span>
             </div>
             <nav className="make-deals__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
@@ -427,10 +427,6 @@ const DealsByMakePage = () => {
           <div className="make-deals__layout">
             <div className="make-deals__main">
               <section className="make-deals__section">
-                <h2 className="make-deals__section-title">
-                  <Tag size={22} />
-                  {makeName} Deals &amp; Incentives
-                </h2>
                 <div className="make-deals__grid">
                   {allDeals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;

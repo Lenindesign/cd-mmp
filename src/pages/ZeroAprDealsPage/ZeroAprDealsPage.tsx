@@ -1,5 +1,5 @@
-import { useMemo, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, Clock, Users, Tag, Percent, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
@@ -16,6 +16,7 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH } from '../../constants/dealRoutes';
 import './ZeroAprDealsPage.css';
 
 type AprTab = 'all' | 'zero-apr' | 'special-apr';
@@ -90,11 +91,18 @@ const APR_TABS: { key: AprTab; label: string }[] = [
 ];
 
 const ZeroAprDealsPage = () => {
+  const location = useLocation();
+  const isZeroPercentOnlyRoute = location.pathname === ZERO_PERCENT_APR_DEALS_PATH;
+
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
 
-  const [activeTab, setActiveTab] = useState<AprTab>('all');
+  const [activeTab, setActiveTab] = useState<AprTab>(() => (isZeroPercentOnlyRoute ? 'zero-apr' : 'all'));
+
+  useEffect(() => {
+    setActiveTab(isZeroPercentOnlyRoute ? 'zero-apr' : 'all');
+  }, [isZeroPercentOnlyRoute]);
   const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -244,43 +252,65 @@ const ZeroAprDealsPage = () => {
     : `Best APR & Financing Deals for ${month} ${year}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
+  const seoDescription = isZeroPercentOnlyRoute
+    ? `Browse every current 0% APR financing offer for ${month} ${year}. Pay no interest on your auto loan—paired with Car and Driver expert ratings.`
+    : `Find the best APR financing deals for ${month} ${year}. Compare 0% APR, low-rate financing, and special APR offers on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`;
+
+  const seoCanonical = `${BASE_URL}${isZeroPercentOnlyRoute ? ZERO_PERCENT_APR_DEALS_PATH : BEST_BUYING_DEALS_PATH}`;
+
+  const breadcrumbItems = isZeroPercentOnlyRoute
+    ? [
+        { name: 'Home', url: BASE_URL },
+        { name: 'Deals', url: `${BASE_URL}/deals` },
+        { name: 'Best Buying Deals', url: `${BASE_URL}${BEST_BUYING_DEALS_PATH}` },
+        { name: '0% APR Deals', url: `${BASE_URL}${ZERO_PERCENT_APR_DEALS_PATH}` },
+      ]
+    : [
+        { name: 'Home', url: BASE_URL },
+        { name: 'Deals', url: `${BASE_URL}/deals` },
+        { name: 'Best Buying Deals', url: `${BASE_URL}${BEST_BUYING_DEALS_PATH}` },
+      ];
+
   return (
     <div className="zero-apr-page">
       <SEO
         title={pageTitle}
-        description={`Find the best APR financing deals for ${month} ${year}. Compare 0% APR, low-rate financing, and special APR offers on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`}
-        canonical={`${BASE_URL}/deals/zero-apr`}
+        description={seoDescription}
+        canonical={seoCanonical}
         keywords={['APR deals', '0% APR deals', 'low APR financing', `car financing ${month} ${year}`, 'special APR rates', 'new car financing deals']}
         structuredData={[
-          createBreadcrumbStructuredData([
-            { name: 'Home', url: BASE_URL },
-            { name: 'Deals', url: `${BASE_URL}/deals` },
-            { name: 'APR Deals', url: `${BASE_URL}/deals/zero-apr` },
-          ]),
+          createBreadcrumbStructuredData(breadcrumbItems),
           createFAQStructuredData(FAQ_DATA),
         ]}
-        noIndex={allDeals.length === 0}
+        noIndex={isZeroPercentOnlyRoute ? deals.length === 0 : allDeals.length === 0}
       />
 
       <div className="zero-apr-page__hero">
         <div className="container">
           <div className="zero-apr-page__hero-content">
             <div className="zero-apr-page__hero-badge">
-              <span className="zero-apr-page__hero-badge-text">0%</span>
-              <span>APR Deals</span>
+              <span className="hero-pill__label">{isZeroPercentOnlyRoute ? '0% APR financing' : 'Best buying deals'}</span>
             </div>
             <nav className="zero-apr-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="zero-apr-page__breadcrumb-sep">/</span>
               <Link to="/deals">Deals</Link>
               <span className="zero-apr-page__breadcrumb-sep">/</span>
-              <span>APR Deals</span>
+              {isZeroPercentOnlyRoute ? (
+                <>
+                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
+                  <span className="zero-apr-page__breadcrumb-sep">/</span>
+                  <span>0% APR Deals</span>
+                </>
+              ) : (
+                <span>Best Buying Deals</span>
+              )}
             </nav>
             <h1 className="zero-apr-page__title">{pageTitle}</h1>
             <p className="zero-apr-page__description">
-              Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR
-              where every dollar goes toward the vehicle, to special low rates well below the national average—these
-              offers can save you thousands over the life of your loan.
+              {isZeroPercentOnlyRoute
+                ? 'These manufacturer-backed offers charge no interest on your auto loan—every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
+                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average—these offers can save you thousands over the life of your loan.'}
             </p>
           </div>
         </div>
@@ -308,29 +338,27 @@ const ZeroAprDealsPage = () => {
           <div className="zero-apr-page__layout">
             <div className="zero-apr-page__main">
 
-              {/* APR Tabs */}
-              <div className="zero-apr-page__apr-tabs" role="tablist">
-                {APR_TABS.map(t => (
-                  <button
-                    key={t.key}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeTab === t.key}
-                    className={`zero-apr-page__apr-tab ${activeTab === t.key ? 'zero-apr-page__apr-tab--active' : ''} ${tabCounts[t.key] === 0 ? 'zero-apr-page__apr-tab--empty' : ''}`}
-                    onClick={() => setActiveTab(t.key)}
-                  >
-                    <Percent size={14} />
-                    <span>{t.label}</span>
-                    <span className="zero-apr-page__apr-tab-count">{tabCounts[t.key]}</span>
-                  </button>
-                ))}
-              </div>
+              {/* APR Tabs (hidden on /deals/0-percent-apr — that route is 0% only) */}
+              {!isZeroPercentOnlyRoute && (
+                <div className="zero-apr-page__apr-tabs" role="tablist">
+                  {APR_TABS.map(t => (
+                    <button
+                      key={t.key}
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === t.key}
+                      className={`zero-apr-page__apr-tab ${activeTab === t.key ? 'zero-apr-page__apr-tab--active' : ''} ${tabCounts[t.key] === 0 ? 'zero-apr-page__apr-tab--empty' : ''}`}
+                      onClick={() => setActiveTab(t.key)}
+                    >
+                      <Percent size={14} />
+                      <span>{t.label}</span>
+                      <span className="zero-apr-page__apr-tab-count">{tabCounts[t.key]}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <section className="zero-apr-page__deals-section">
-                <h2 className="zero-apr-page__section-title">
-                  <Tag size={22} />
-                  {deals.length} Available Deal{deals.length !== 1 ? 's' : ''}
-                </h2>
                 <div className="zero-apr-page__grid">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
@@ -455,17 +483,25 @@ const ZeroAprDealsPage = () => {
                 {deals.length === 0 && (
                   <div className="zero-apr-page__empty-state">
                     <p className="zero-apr-page__empty-state-text">
-                      There are currently no active APR financing offers. Check back soon or explore other available deals.
+                      {isZeroPercentOnlyRoute
+                        ? 'There are currently no active 0% APR offers. Browse all APR and financing deals or check back soon.'
+                        : 'There are currently no active APR financing offers. Check back soon or explore other available deals.'}
                     </p>
-                    <Link to="/deals" className="zero-apr-page__empty-state-link">
-                      Browse All Deals
-                    </Link>
+                    {isZeroPercentOnlyRoute ? (
+                      <Link to={BEST_BUYING_DEALS_PATH} className="zero-apr-page__empty-state-link">
+                        All APR & financing deals
+                      </Link>
+                    ) : (
+                      <Link to="/deals" className="zero-apr-page__empty-state-link">
+                        Browse All Deals
+                      </Link>
+                    )}
                   </div>
                 )}
               </section>
 
               <section className="zero-apr-page__faq-section">
-                <h2 className="zero-apr-page__section-title"><Info size={22} /> Frequently Asked Questions About APR Deals</h2>
+                <h2 className="zero-apr-page__section-title">Frequently Asked Questions About APR Deals</h2>
                 <div className="zero-apr-page__faq-list">
                   {FAQ_DATA.map((faq, index) => (
                     <div key={index} className={`zero-apr-page__faq-item ${expandedFaqIndex === index ? 'zero-apr-page__faq-item--expanded' : ''}`}>
@@ -481,6 +517,11 @@ const ZeroAprDealsPage = () => {
               <section className="zero-apr-page__links-section">
                 <h2 className="zero-apr-page__section-title">Explore More</h2>
                 <div className="zero-apr-page__links-grid">
+                  {isZeroPercentOnlyRoute ? (
+                    <Link to={BEST_BUYING_DEALS_PATH} className="zero-apr-page__link-card"><h3>All APR & financing deals</h3><p>0%, special APR, and the full buying-deals hub</p></Link>
+                  ) : (
+                    <Link to={ZERO_PERCENT_APR_DEALS_PATH} className="zero-apr-page__link-card"><h3>0% APR deals only</h3><p>Interest-free manufacturer financing in one list</p></Link>
+                  )}
                   <Link to="/deals" className="zero-apr-page__link-card"><h3>All Deals</h3><p>Browse every current deal and incentive</p></Link>
                   <Link to="/deals/cash-finance" className="zero-apr-page__link-card"><h3>Cash & Finance Deals</h3><p>Cash-back rebates and special APR rates</p></Link>
                   <Link to="/deals/lease" className="zero-apr-page__link-card"><h3>Lease Deals</h3><p>Monthly lease specials on new cars</p></Link>

@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Car, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -175,7 +175,7 @@ const LeaseDealsPage = () => {
         <div className="container">
           <div className="lease-deals-page__hero-content">
             <div className="lease-deals-page__hero-badge">
-              <span>Lease Deals</span>
+              <span className="hero-pill__label">Lease Deals</span>
             </div>
             <nav className="lease-deals-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
@@ -217,7 +217,6 @@ const LeaseDealsPage = () => {
           <div className="lease-deals-page__layout">
             <div className="lease-deals-page__main">
               <section className="lease-deals-page__section">
-                <h2 className="lease-deals-page__section-title"><Car size={22} /> {deals.length} Available Deals</h2>
                 <div className="lease-deals-page__grid">
                   {deals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
@@ -350,7 +349,7 @@ const LeaseDealsPage = () => {
               </section>
 
               <section className="lease-deals-page__faq-section">
-                <h2 className="lease-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About Leasing</h2>
+                <h2 className="lease-deals-page__section-title">Frequently Asked Questions About Leasing</h2>
                 <div className="lease-deals-page__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`lease-deals-page__faq-item ${expandedFaqIndex === i ? 'lease-deals-page__faq-item--expanded' : ''}`}>
@@ -367,7 +366,7 @@ const LeaseDealsPage = () => {
                 <h2 className="lease-deals-page__section-title">Explore More Deals</h2>
                 <div className="lease-deals-page__links-grid">
                   <Link to="/deals" className="lease-deals-page__link-card"><h3>All Deals</h3><p>Browse every current deal and incentive</p></Link>
-                  <Link to="/deals/zero-apr" className="lease-deals-page__link-card"><h3>0% APR Deals</h3><p>Zero-interest financing offers</p></Link>
+                  <Link to="/deals/best-buying-deals" className="lease-deals-page__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
                   <Link to="/deals/cash-finance" className="lease-deals-page__link-card"><h3>Cash & Finance Deals</h3><p>Cash-back rebates and special APR rates</p></Link>
                   <Link to="/deals/suv" className="lease-deals-page__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs and crossovers</p></Link>
                   <Link to="/deals/truck" className="lease-deals-page__link-card"><h3>Truck Deals</h3><p>Best deals on pickup trucks</p></Link>

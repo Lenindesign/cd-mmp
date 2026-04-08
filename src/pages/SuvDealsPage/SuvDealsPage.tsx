@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, Car } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -169,7 +169,9 @@ const SuvDealsPage = () => {
       <div className="suv-deals-page__hero">
         <div className="container">
           <div className="suv-deals-page__hero-content">
-            <div className="suv-deals-page__hero-badge"><span>SUV Deals</span></div>
+            <div className="suv-deals-page__hero-badge">
+              <span className="hero-pill__label">SUV Deals</span>
+            </div>
             <nav className="suv-deals-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="suv-deals-page__breadcrumb-sep">/</span>
@@ -187,7 +189,6 @@ const SuvDealsPage = () => {
           <div className="suv-deals-page__layout">
             <div className="suv-deals-page__main">
               <section className="suv-deals-page__section">
-                <h2 className="suv-deals-page__section-title"><Car size={22} /> {deals.length} Available Deals</h2>
                 <div className="suv-deals-page__grid">
                   {deals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
@@ -317,7 +318,7 @@ const SuvDealsPage = () => {
                 </div>
               </section>
               <section className="suv-deals-page__faq-section">
-                <h2 className="suv-deals-page__section-title"><Info size={22} /> Frequently Asked Questions About SUV Deals</h2>
+                <h2 className="suv-deals-page__section-title">Frequently Asked Questions About SUV Deals</h2>
                 <div className="suv-deals-page__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`suv-deals-page__faq-item ${expandedFaqIndex === i ? 'suv-deals-page__faq-item--expanded' : ''}`}>
@@ -333,7 +334,7 @@ const SuvDealsPage = () => {
                 <h2 className="suv-deals-page__section-title">Explore More</h2>
                 <div className="suv-deals-page__links-grid">
                   <Link to="/deals" className="suv-deals-page__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
-                  <Link to="/deals/zero-apr" className="suv-deals-page__link-card"><h3>0% APR Deals</h3><p>Zero-interest financing offers</p></Link>
+                  <Link to="/deals/best-buying-deals" className="suv-deals-page__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
                   <Link to="/deals/truck" className="suv-deals-page__link-card"><h3>Truck Deals</h3><p>Best deals on pickup trucks</p></Link>
                   <Link to="/deals/lease" className="suv-deals-page__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
                   <Link to="/rankings/suv" className="suv-deals-page__link-card"><h3>SUV Rankings</h3><p>Expert-ranked SUVs</p></Link>

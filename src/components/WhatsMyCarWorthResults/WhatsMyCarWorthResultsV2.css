@@ -22,12 +22,15 @@
 .wmcw-v2__hero-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   gap: var(--spacing-2);
   margin-bottom: var(--spacing-4);
   font-size: var(--font-size-xs);
   color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1;
 }
 
 .wmcw-v2__black-book-logo {

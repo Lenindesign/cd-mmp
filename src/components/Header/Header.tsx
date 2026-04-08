@@ -5,6 +5,7 @@ import { searchVehicles, getVehicleBySlug, type Vehicle } from '../../services/v
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAvatarImageUrl, getUserInitials } from '../../utils/avatarUtils';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH } from '../../constants/dealRoutes';
 import { Button } from '../Button';
 import ExitIntentModal from '../ExitIntentModal';
 import { SavedVehiclesSidebar } from '../SavedVehiclesSidebar';
@@ -143,7 +144,8 @@ const Header = () => {
       isRoute: true,
       children: [
         { label: 'All Deals', href: '/deals', isRoute: true },
-        { label: '0% APR Deals', href: '/deals/zero-apr', isRoute: true },
+        { label: 'Best Buying Deals', href: BEST_BUYING_DEALS_PATH, isRoute: true },
+        { label: '0% APR Deals', href: ZERO_PERCENT_APR_DEALS_PATH, isRoute: true },
         { label: 'Cash & Finance Deals', href: '/deals/cash-finance', isRoute: true },
         { label: 'Lease Deals', href: '/deals/lease', isRoute: true },
         { label: 'SUV Deals', href: '/deals/suv', isRoute: true },
