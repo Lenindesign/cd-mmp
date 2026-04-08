@@ -158,6 +158,7 @@
 
 /* ---- Main Dealer Locator ---- */
 .dealer-locator {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--color-white);

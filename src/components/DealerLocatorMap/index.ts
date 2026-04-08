@@ -14,5 +14,7 @@ export type { VehicleInfo } from './VehicleContextHeader';
 export type { OfferData } from './MakeOfferModal';
 export type { NegotiationData, NegotiationMessage, OfferStatus } from './OfferNegotiation';
 export type { DealerMapModalProps } from './DealerMapModal';
+export { default as PostLeadSubmissionOverlay } from './PostLeadSubmissionOverlay';
+export type { PostLeadSubmissionOverlayProps, PostLeadSubmissionVariant } from './PostLeadSubmissionOverlay';
 export type { ContactDealerModalProps, ContactDealerVariant, ContactDealerFormData, ContactDealerDealDetails } from './ContactDealerModal';
 

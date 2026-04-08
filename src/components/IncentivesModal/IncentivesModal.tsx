@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
   X,
@@ -10,6 +11,10 @@ import {
   Lightbulb,
   BadgeCheck,
   ShieldCheck,
+  Check,
+  Phone,
+  MapPin,
+  Navigation,
 } from 'lucide-react';
 import type { Incentive, GroupAffiliation } from '../../services/incentivesService';
 import { formatExpiration } from '../../utils/dateUtils';
@@ -82,6 +87,26 @@ const DEFAULT_OFFER: IncentiveOfferDetail = {
 const formatCurrency = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 const formatMsrp = (min: number, max: number) => `MSRP ${formatCurrency(min)} - ${formatCurrency(max)}`;
+
+/** Demo routing: 2024 Chevrolet Trax → matched dealer; 2024 Kia Seltos → none (replace with API later). */
+function getConversionBDealerMatch(offer: IncentiveOfferDetail): 'dealer' | 'no-dealer' {
+  const y = Number(offer.year);
+  const make = offer.make.trim().toLowerCase();
+  const model = offer.model.trim().toLowerCase();
+  if (y === 2024 && make === 'kia' && model === 'seltos') return 'no-dealer';
+  if (y === 2024 && (make === 'chevrolet' || make === 'chevy') && model === 'trax') return 'dealer';
+  return 'dealer';
+}
+
+const CONVERSION_B_SAMPLE_DEALER = {
+  name: 'Audi Pacific',
+  address: '20460 Hawthorne Blvd',
+  city: 'Torrance',
+  state: 'CA',
+  zip: '90503',
+  phone: '(424) 955-2736',
+  distanceMiles: 6,
+};
 
 const getOfferRowChipLabel = (type: Incentive['type']): string =>
   type === 'lease' ? 'Lease' : type === 'cash' ? 'Buy' : 'Finance';
@@ -181,6 +206,14 @@ const IncentivesModal = ({
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [activeIncentiveId, setActiveIncentiveId] = useState<string | null>(null);
+  const [conversionBPostSubmit, setConversionBPostSubmit] = useState<'dealer' | 'no-dealer' | null>(null);
+  const conversionBFormRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setConversionBPostSubmit(null);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -208,24 +241,111 @@ const IncentivesModal = ({
     };
   }, [isOpen, onClose]);
 
-  /** When form is incomplete, scroll dealer panel into view then show validation (CTA sits below scroll on mobile). */
-  const handleContactDealerClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    const form = document.getElementById('incentives-modal-form') as HTMLFormElement | null;
-    if (!form) return;
+  /** Shared lead handoff — conversion-b keeps modal open to show dealer / no-dealer result. */
+  const submitLead = useCallback(() => {
+    const resolvedMessage =
+      message.trim() ||
+      `I would like more information about available offers for the New ${vehicleLabel}.`;
+    onSubmitForm?.({ firstName, lastName, email, phone, message: resolvedMessage });
 
+    // #region agent log
+    fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
+      body: JSON.stringify({
+        sessionId: '5ae22c',
+        runId: 'pre-fix',
+        hypothesisId: 'H1',
+        location: 'IncentivesModal.tsx:submitLead',
+        message: 'submitLead entry',
+        data: { variant, isConversionB: variant === 'conversion-b' },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+
+    if (variant === 'conversion-b') {
+      const match = getConversionBDealerMatch(offer);
+      // #region agent log
+      fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
+        body: JSON.stringify({
+          sessionId: '5ae22c',
+          runId: 'pre-fix',
+          hypothesisId: 'H2',
+          location: 'IncentivesModal.tsx:submitLead',
+          message: 'conversion-b dealer match',
+          data: { match, year: offer.year, make: offer.make, model: offer.model },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
+      setConversionBPostSubmit(match);
+      return;
+    }
+    onClose();
+  }, [firstName, lastName, email, phone, message, vehicleLabel, onSubmitForm, onClose, variant, offer]);
+
+  /** Sticky CTA sits outside the <form>; validate the real form node then submit via React state (same as onSubmit). */
+  const handleConversionBContactClick = useCallback(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
+      body: JSON.stringify({
+        sessionId: '5ae22c',
+        runId: 'pre-fix',
+        hypothesisId: 'H5',
+        location: 'IncentivesModal.tsx:handleConversionBContactClick',
+        message: 'CONTACT DEALER click',
+        data: { postSubmit: conversionBPostSubmit },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+
+    if (conversionBPostSubmit !== null) return;
+
+    const form =
+      conversionBFormRef.current ??
+      (typeof document !== 'undefined'
+        ? (document.getElementById('incentives-modal-form-v5') as HTMLFormElement | null)
+        : null);
+    if (!form) {
+      submitLead();
+      return;
+    }
+    const panel = document.getElementById('incentives-modal-dealer-panel');
     if (!form.checkValidity()) {
-      e.preventDefault();
-      const panel = document.getElementById('incentives-modal-dealer-panel');
+      // #region agent log
+      fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
+        body: JSON.stringify({
+          sessionId: '5ae22c',
+          runId: 'pre-fix',
+          hypothesisId: 'H5',
+          location: 'IncentivesModal.tsx:handleConversionBContactClick',
+          message: 'form invalid',
+          data: {},
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
       (panel ?? form).scrollIntoView({ behavior: 'smooth', block: 'start' });
       window.setTimeout(() => {
         form.reportValidity();
-        const firstInvalid = form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
-          'input:invalid, textarea:invalid, select:invalid'
-        );
-        firstInvalid?.focus();
+        form
+          .querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+            'input:invalid, textarea:invalid, select:invalid'
+          )
+          ?.focus();
       }, 400);
+      return;
     }
-  }, []);
+    submitLead();
+  }, [submitLead, conversionBPostSubmit]);
 
   if (!isOpen) return null;
 
@@ -238,10 +358,9 @@ const IncentivesModal = ({
     onClose();
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmitForm?.({ firstName, lastName, email, phone, message });
-    onClose();
+    submitLead();
   };
 
   const renderHeader = () => (
@@ -283,10 +402,10 @@ const IncentivesModal = ({
     </div>
   );
 
-  return (
-    <div className="incentives-modal__overlay" onClick={onClose}>
+  const modalTree = (
+    <div className="incentives-modal__overlay cd-mobile-modal__overlay" onClick={onClose}>
       <div
-        className={`incentives-modal incentives-modal--${variant}`}
+        className={`incentives-modal incentives-modal--${variant} cd-mobile-modal__panel`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -358,7 +477,11 @@ const IncentivesModal = ({
 
               <div className="incentives-modal__form-block">
                 <h3 className="incentives-modal__form-title">Contact a dealer about this offer</h3>
-                <form id="incentives-modal-form" onSubmit={handleFormSubmit} className="incentives-modal__form">
+                <form
+                  id="incentives-modal-form-complete"
+                  onSubmit={handleFormSubmit}
+                  className="incentives-modal__form"
+                >
                   <div className="incentives-modal__form-row">
                     <input
                       type="text"
@@ -412,7 +535,7 @@ const IncentivesModal = ({
               )}
               <button
                 type="submit"
-                form="incentives-modal-form"
+                form="incentives-modal-form-complete"
                 className="incentives-modal__cta"
               >
                 REQUEST INFO FROM DEALER
@@ -671,84 +794,175 @@ const IncentivesModal = ({
                   )}
                 </div>
 
-                {/* RIGHT COLUMN: Dealer contact form */}
+                {/* RIGHT COLUMN: Dealer contact form or post-submit result */}
                 <div className="incentives-modal__v5-right" id="incentives-modal-dealer-panel">
-                  <h3 className="incentives-modal__v5-form-heading">Got Questions? Contact the Dealer</h3>
+                  {conversionBPostSubmit === null && (
+                    <>
+                      <h3 className="incentives-modal__v5-form-heading">Got Questions? Contact the Dealer</h3>
 
-                  <div className="incentives-modal__v5-form-image-wrap">
-                    {offer.imageUrl ? (
-                      <img src={offer.imageUrl} alt={vehicleLabel} className="incentives-modal__v5-form-image" />
-                    ) : (
-                      <div className="incentives-modal__v5-image-placeholder">
-                        {offer.make} {offer.model}
+                      <div className="incentives-modal__v5-form-image-wrap">
+                        {offer.imageUrl ? (
+                          <img src={offer.imageUrl} alt={vehicleLabel} className="incentives-modal__v5-form-image" />
+                        ) : (
+                          <div className="incentives-modal__v5-image-placeholder">
+                            {offer.make} {offer.model}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  <form id="incentives-modal-form" onSubmit={handleFormSubmit} className="incentives-modal__v5-form">
-                    <input
-                      type="text"
-                      placeholder="First Name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required
-                      aria-label="First name"
-                      className="incentives-modal__v5-input"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Last Name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required
-                      aria-label="Last name"
-                      className="incentives-modal__v5-input"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      aria-label="Email"
-                      className="incentives-modal__v5-input"
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Phone (optional)"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      aria-label="Phone"
-                      className="incentives-modal__v5-input"
-                    />
-                    <label className="incentives-modal__v5-message-label">MESSAGE</label>
-                    <textarea
-                      value={message || `I would like more information about available offers for the New ${vehicleLabel}.`}
-                      onChange={(e) => setMessage(e.target.value)}
-                      rows={3}
-                      aria-label="Message"
-                      className="incentives-modal__v5-textarea"
-                    />
-                    <p className="incentives-modal__v5-disclaimer">
-                      By clicking the button, you agree to the Autotrader <a href="#">Visitor Agreement</a> and Privacy Statement and that your contact and/or My Wallet information will be shared with the dealer and/or Car and Driver, including for their own advertising purposes. Each party's use of your information is subject to their privacy policy.
-                    </p>
-                  </form>
+                      <form
+                        ref={conversionBFormRef}
+                        id="incentives-modal-form-v5"
+                        onSubmit={handleFormSubmit}
+                        className="incentives-modal__v5-form"
+                      >
+                        <input
+                          type="text"
+                          placeholder="First Name"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                          aria-label="First name"
+                          className="incentives-modal__v5-input"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Last Name"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                          aria-label="Last name"
+                          className="incentives-modal__v5-input"
+                        />
+                        <input
+                          type="email"
+                          placeholder="Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          aria-label="Email"
+                          className="incentives-modal__v5-input"
+                        />
+                        <input
+                          type="tel"
+                          placeholder="Phone (optional)"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          aria-label="Phone"
+                          className="incentives-modal__v5-input"
+                        />
+                        <label className="incentives-modal__v5-message-label">MESSAGE</label>
+                        <textarea
+                          value={message || `I would like more information about available offers for the New ${vehicleLabel}.`}
+                          onChange={(e) => setMessage(e.target.value)}
+                          rows={3}
+                          aria-label="Message"
+                          className="incentives-modal__v5-textarea"
+                        />
+                        <p className="incentives-modal__v5-disclaimer">
+                          By clicking the button, you agree to the Autotrader <a href="#">Visitor Agreement</a> and Privacy Statement and that your contact and/or My Wallet information will be shared with the dealer and/or Car and Driver, including for their own advertising purposes. Each party's use of your information is subject to their privacy policy.
+                        </p>
+                      </form>
+                    </>
+                  )}
+
+                  {conversionBPostSubmit === 'dealer' && (
+                    <div className="incentives-modal__v5-post-result incentives-modal__v5-post-result--dealer">
+                      <div className="incentives-modal__v5-post-dealer-header">
+                        <span className="incentives-modal__v5-post-dealer-icon" aria-hidden>
+                          <Check size={18} strokeWidth={3} />
+                        </span>
+                        <h3 className="incentives-modal__v5-post-dealer-title">Your local dealer</h3>
+                        <p className="incentives-modal__v5-post-dealer-sub">
+                          They may contact you to discuss the next steps.
+                        </p>
+                      </div>
+                      <div className="incentives-modal__v5-post-dealer-card">
+                        <div className="incentives-modal__v5-post-dealer-card-main">
+                          <p className="incentives-modal__v5-post-dealer-name">{CONVERSION_B_SAMPLE_DEALER.name}</p>
+                          <p className="incentives-modal__v5-post-dealer-address">
+                            {CONVERSION_B_SAMPLE_DEALER.address}
+                            <br />
+                            {CONVERSION_B_SAMPLE_DEALER.city}, {CONVERSION_B_SAMPLE_DEALER.state}{' '}
+                            {CONVERSION_B_SAMPLE_DEALER.zip}
+                          </p>
+                        </div>
+                        <div className="incentives-modal__v5-post-dealer-card-aside">
+                          <a
+                            className="incentives-modal__v5-post-dealer-link-row"
+                            href="tel:+14249552736"
+                          >
+                            <Phone size={16} className="incentives-modal__v5-post-dealer-link-icon" aria-hidden />
+                            {CONVERSION_B_SAMPLE_DEALER.phone}
+                          </a>
+                          <p className="incentives-modal__v5-post-dealer-distance">
+                            <MapPin size={16} className="incentives-modal__v5-post-dealer-link-icon" aria-hidden />
+                            {CONVERSION_B_SAMPLE_DEALER.distanceMiles} miles away
+                          </p>
+                          <div className="incentives-modal__v5-post-dealer-actions">
+                            <a
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                `${CONVERSION_B_SAMPLE_DEALER.address}, ${CONVERSION_B_SAMPLE_DEALER.city}, ${CONVERSION_B_SAMPLE_DEALER.state} ${CONVERSION_B_SAMPLE_DEALER.zip}`
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="incentives-modal__v5-post-dealer-action-link"
+                            >
+                              Map
+                            </a>
+                            <a
+                              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                                `${CONVERSION_B_SAMPLE_DEALER.address}, ${CONVERSION_B_SAMPLE_DEALER.city}, ${CONVERSION_B_SAMPLE_DEALER.state} ${CONVERSION_B_SAMPLE_DEALER.zip}`
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="incentives-modal__v5-post-dealer-action-link"
+                            >
+                              <Navigation size={14} className="incentives-modal__v5-post-dealer-nav-icon" aria-hidden />
+                              Directions
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {conversionBPostSubmit === 'no-dealer' && (
+                    <div className="incentives-modal__v5-post-result incentives-modal__v5-post-result--no-dealer">
+                      <h3 className="incentives-modal__v5-post-no-dealer-title">No dealer matched nearby</h3>
+                      <p className="incentives-modal__v5-post-no-dealer-text">
+                        Sorry — we don&apos;t have a participating dealer for this vehicle in your area right now.
+                        Car &amp; Driver Marketplace has thousands of listings to explore.
+                      </p>
+                      <p className="incentives-modal__v5-post-no-dealer-cta-hint">
+                        Use <strong>Shop on Marketplace</strong> below to browse inventory.
+                      </p>
+                    </div>
+                  )}
                 </div>
                 </div>
               </div>
               <div className="incentives-modal__v5-cta-sticky">
-                <button
-                  type="submit"
-                  form="incentives-modal-form"
-                  className="incentives-modal__v5-submit"
-                  onClick={handleContactDealerClick}
-                >
-                  CONTACT DEALER
-                </button>
+                {conversionBPostSubmit === null ? (
+                  <button
+                    type="button"
+                    className="incentives-modal__v5-submit"
+                    onClick={handleConversionBContactClick}
+                  >
+                    CONTACT DEALER
+                  </button>
+                ) : (
+                  <button type="button" className="incentives-modal__v5-submit" onClick={onClose}>
+                    Done
+                  </button>
+                )}
                 <button
                   type="button"
                   className="incentives-modal__v5-marketplace-btn"
-                  onClick={() => { onClose(); navigate(vehicleUrl); }}
+                  onClick={() => {
+                    onClose();
+                    navigate(vehicleUrl);
+                  }}
                 >
                   SHOP ON MARKETPLACE
                 </button>
@@ -960,6 +1174,11 @@ const IncentivesModal = ({
       </div>
     </div>
   );
+
+  if (typeof document !== 'undefined' && document.body) {
+    return createPortal(modalTree, document.body);
+  }
+  return modalTree;
 };
 
 export default IncentivesModal;

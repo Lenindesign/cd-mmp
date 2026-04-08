@@ -52,7 +52,7 @@ The **MakeOfferModal** component allows users to submit price offers to dealers.
 - **Custom Offer Input**: Enter any amount
 - **Trade-In Support**: Add trade-in vehicle value
 - **Financing Options**: Indicate financing needs and down payment
-- **Two-Step Flow**: Offer details → Contact information → Success
+- **Two-Step Flow**: Offer details → Contact information (parent shows post-submit overlay)
 - **Savings Calculator**: Shows percentage and dollar savings from MSRP
 
 ## Usage

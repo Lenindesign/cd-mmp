@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, DollarSign, Car, User, Mail, Phone, MessageSquare, Send, CheckCircle } from 'lucide-react';
+import { X, DollarSign, Car, User, Mail, Phone, MessageSquare, Send } from 'lucide-react';
 import type { DealerWithScore } from '../../services/dealerService';
 import { formatPrice } from '../../services/dealerService';
 import './MakeOfferModal.css';
@@ -53,7 +53,7 @@ const MakeOfferModal = ({
   vehicle,
   onSubmitOffer,
 }: MakeOfferModalProps) => {
-  const [step, setStep] = useState<'offer' | 'contact' | 'success'>('offer');
+  const [step, setStep] = useState<'offer' | 'contact'>('offer');
   const [offerAmount, setOfferAmount] = useState(Math.round(vehicle.msrp * 0.95)); // Start at 5% below MSRP
   const [hasTradeIn, setHasTradeIn] = useState(false);
   const [tradeInValue, setTradeInValue] = useState(0);
@@ -146,7 +146,6 @@ const MakeOfferModal = ({
     };
 
     onSubmitOffer(offerData);
-    setStep('success');
   };
 
   const handleClose = () => {
@@ -164,20 +163,15 @@ const MakeOfferModal = ({
 
         {/* Header */}
         <header className="offer-modal__header">
-          <h2 className="offer-modal__title">
-            {step === 'success' ? 'Offer Submitted!' : 'Make an Offer'}
-          </h2>
+          <h2 className="offer-modal__title">Make an Offer</h2>
           <p className="offer-modal__subtitle">
-            {step === 'success' 
-              ? `Your offer has been sent to ${dealer.name}`
-              : `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.trim ? ` ${vehicle.trim}` : ''}`
-            }
+            {vehicle.year} {vehicle.make} {vehicle.model}
+            {vehicle.trim ? ` ${vehicle.trim}` : ''}
           </p>
         </header>
 
         {/* Progress Steps */}
-        {step !== 'success' && (
-          <div className="offer-modal__progress">
+        <div className="offer-modal__progress">
             <div className={`offer-modal__step ${step === 'offer' ? 'offer-modal__step--active' : ''}`}>
               <span className="offer-modal__step-number">1</span>
               <span className="offer-modal__step-label">Your Offer</span>
@@ -188,7 +182,6 @@ const MakeOfferModal = ({
               <span className="offer-modal__step-label">Contact Info</span>
             </div>
           </div>
-        )}
 
         {/* Step 1: Offer Details */}
         {step === 'offer' && (
@@ -420,32 +413,6 @@ const MakeOfferModal = ({
           </div>
         )}
 
-        {/* Success State */}
-        {step === 'success' && (
-          <div className="offer-modal__content offer-modal__content--success">
-            <div className="offer-modal__success-icon">
-              <CheckCircle size={64} />
-            </div>
-            <h3 className="offer-modal__success-title">Offer Sent Successfully!</h3>
-            <p className="offer-modal__success-text">
-              Your offer of <strong>{formatPrice(offerAmount)}</strong> has been sent to {dealer.name}.
-            </p>
-            <p className="offer-modal__success-text">
-              The dealer will review your offer and respond within 24-48 hours. 
-              Check your email at <strong>{email}</strong> for updates.
-            </p>
-            <div className="offer-modal__success-next">
-              <h4>What happens next?</h4>
-              <ol>
-                <li>Dealer reviews your offer</li>
-                <li>They may accept, counter, or ask questions</li>
-                <li>You'll receive updates via email</li>
-                <li>Finalize the deal at the dealership</li>
-              </ol>
-            </div>
-          </div>
-        )}
-
         {/* Footer */}
         <footer className="offer-modal__footer">
           {step === 'offer' && (
@@ -463,11 +430,6 @@ const MakeOfferModal = ({
                 Submit Offer
               </button>
             </>
-          )}
-          {step === 'success' && (
-            <button className="offer-modal__btn offer-modal__btn--primary" onClick={handleClose}>
-              Done
-            </button>
           )}
         </footer>
       </div>

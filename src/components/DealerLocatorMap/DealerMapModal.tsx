@@ -10,6 +10,8 @@ export interface DealerMapModalProps {
   vehicle: VehicleInfo;
   initialLocation?: { lat: number; lng: number };
   initialZipCode?: string;
+  /** Passed through to DealerLocatorMap — drives post–lead submission overlay variant. */
+  postSubmitOutcome?: 'matched' | 'unmatched';
 }
 
 const DealerMapModal: React.FC<DealerMapModalProps> = ({
@@ -18,6 +20,7 @@ const DealerMapModal: React.FC<DealerMapModalProps> = ({
   vehicle,
   initialLocation = { lat: 34.0522, lng: -118.2437 }, // LA default
   initialZipCode = 'Los Angeles, CA',
+  postSubmitOutcome = 'matched',
 }) => {
   // Handle escape key
   useEffect(() => {
@@ -77,6 +80,7 @@ const DealerMapModal: React.FC<DealerMapModalProps> = ({
             showVehiclePreview={false}
             defaultView="map"
             cardVariant="compact"
+            postSubmitOutcome={postSubmitOutcome}
           />
         </div>
       </div>

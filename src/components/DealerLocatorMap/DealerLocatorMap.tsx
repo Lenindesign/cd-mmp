@@ -6,6 +6,8 @@ import DealerBottomSheet, { DealerDetailContent } from './DealerBottomSheet';
 import GoogleMapView from './GoogleMapView';
 import MakeOfferModal from './MakeOfferModal';
 import type { OfferData } from './MakeOfferModal';
+import PostLeadSubmissionOverlay from './PostLeadSubmissionOverlay';
+import type { PostLeadSubmissionVariant } from './PostLeadSubmissionOverlay';
 import { getDealersForVehicle, sortDealers, type DealerWithScore, type SortOption, type VehicleInventoryItem } from '../../services/dealerService';
 import { useGooglePlacesAutocomplete, type PlacePrediction } from '../../hooks/useGooglePlacesAutocomplete';
 import './DealerLocatorMap.css';
@@ -23,6 +25,11 @@ export interface DealerLocatorMapProps {
   cardVariant?: 'full' | 'compact';
   onDealerSelect?: (dealer: DealerWithScore) => void;
   onClose?: () => void;
+  /**
+   * After a lead is submitted: `matched` shows the assigned dealer overlay (default).
+   * `unmatched` shows the “no dealer found” overlay (e.g. API could not assign a dealer).
+   */
+  postSubmitOutcome?: 'matched' | 'unmatched';
 }
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -42,6 +49,7 @@ const DealerLocatorMap = ({
   cardVariant = 'full',
   onDealerSelect,
   onClose,
+  postSubmitOutcome = 'matched',
 }: DealerLocatorMapProps) => {
   const [currentView, setCurrentView] = useState<'map' | 'list'>(defaultView);
   const [sortBy, setSortBy] = useState<SortOption>('bestDeal');
@@ -64,6 +72,10 @@ const DealerLocatorMap = ({
   const [selectedPredictionIndex, setSelectedPredictionIndex] = useState(-1);
   const autocompleteRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [postLeadOverlay, setPostLeadOverlay] = useState<{
+    variant: PostLeadSubmissionVariant;
+    dealer: DealerWithScore | null;
+  } | null>(null);
 
   // Google Places Autocomplete hook
   const {
@@ -308,16 +320,33 @@ const DealerLocatorMap = ({
     setIsOfferModalOpen(true);
   }, []);
 
-  const handleSubmitOffer = useCallback((offer: OfferData) => {
-    console.log('Offer submitted:', offer);
-    // In a real app, this would send the offer to a backend API
-    // For now, we just close the modal after the success state is shown
-  }, []);
+  const handleSubmitOffer = useCallback(
+    (offer: OfferData) => {
+      console.log('Offer submitted:', offer);
+      const assigned = offerDealer;
+      setIsOfferModalOpen(false);
+      setOfferVehicle(null);
+      setOfferDealer(null);
+      if (postSubmitOutcome === 'unmatched' || !assigned) {
+        setPostLeadOverlay({ variant: 'no-dealer', dealer: null });
+      } else {
+        setPostLeadOverlay({ variant: 'your-dealer', dealer: assigned });
+      }
+    },
+    [offerDealer, postSubmitOutcome]
+  );
 
   const totalInventory = dealers.reduce((sum, d) => sum + d.inventoryCount, 0);
 
   return (
     <div className="dealer-locator">
+      {postLeadOverlay && (
+        <PostLeadSubmissionOverlay
+          variant={postLeadOverlay.variant}
+          dealer={postLeadOverlay.dealer ?? undefined}
+          onDismiss={() => setPostLeadOverlay(null)}
+        />
+      )}
       {/* Vehicle Context Header */}
       {showVehiclePreview && (
         <VehicleContextHeader vehicle={vehicle} onClose={onClose} />

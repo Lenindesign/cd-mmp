@@ -8,6 +8,7 @@
 
 /* Import Utility Classes */
 @import './styles/utilities.css';
+@import './styles/mobile-modal-shell.css';
 
 :root {
   /* ============================================

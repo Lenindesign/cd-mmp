@@ -1,0 +1,40 @@
+/**
+ * Mobile bottom-sheet shell (opt-in).
+ * Add `cd-mobile-modal__overlay` to the fixed overlay and `cd-mobile-modal__panel` to the dialog root.
+ * Full width, flush bottom, rounded top; leaves a band of dimmed backdrop at the top (status bar + peek).
+ */
+@media (max-width: 768px) {
+  .cd-mobile-modal__overlay {
+    /* Tunable: vertical gap above the sheet (reference ~status bar + small content peek) */
+    --cd-mobile-modal-top-reveal: clamp(52px, 11dvh, 104px);
+    /*
+     * Block + absolute sheet: flex layout lets the panel keep min-width:auto (~desktop grid width),
+     * so the sheet stays ~640px+ wide, centered, and clipped in narrow viewports (Chrome device mode).
+     */
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .cd-mobile-modal__panel {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    height: calc(100dvh - var(--cd-mobile-modal-top-reveal)) !important;
+    max-height: calc(100dvh - var(--cd-mobile-modal-top-reveal)) !important;
+    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0 !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+    overflow-x: hidden !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

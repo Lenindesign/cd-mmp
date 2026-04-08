@@ -46,8 +46,10 @@
 }
 
 /* ========== Modal A (conversion-b) – two-column layout ========== */
-.incentives-modal--conversion-b .incentives-modal__inner {
-  padding: 32px 40px;
+@media (min-width: 769px) {
+  .incentives-modal--conversion-b .incentives-modal__inner {
+    padding: 32px 40px;
+  }
 }
 
 /* conversion-b: scroll middle, CTAs pinned below scroll (mobile + desktop) */
@@ -70,6 +72,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  z-index: 0;
 }
 
 .incentives-modal__v5-layout {
@@ -599,11 +602,202 @@
   text-decoration: none;
 }
 
+/* Conversion-b: post-submit right column (dealer matched / none) */
+.incentives-modal__v5-post-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50, #f8f9f9);
+  border-radius: var(--border-radius-md, 4px);
+  min-height: 120px;
+}
+
+.incentives-modal__v5-post-result--dealer {
+  padding: var(--spacing-5) var(--spacing-4);
+}
+
+.incentives-modal__v5-post-dealer-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.incentives-modal__v5-post-dealer-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-full);
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.incentives-modal__v5-post-dealer-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.incentives-modal__v5-post-dealer-sub {
+  font-family: var(--font-article, var(--font-body));
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-gray-600);
+  margin: 0;
+  max-width: 280px;
+}
+
+.incentives-modal__v5-post-dealer-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-4);
+  align-items: start;
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md, 4px);
+}
+
+@media (max-width: 480px) {
+  .incentives-modal__v5-post-dealer-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+.incentives-modal__v5-post-dealer-name {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-2);
+  line-height: 1.25;
+}
+
+.incentives-modal__v5-post-dealer-address {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+.incentives-modal__v5-post-dealer-card-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-2);
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .incentives-modal__v5-post-dealer-card-aside {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.incentives-modal__v5-post-dealer-link-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+}
+
+.incentives-modal__v5-post-dealer-link-row:hover {
+  text-decoration: none;
+}
+
+.incentives-modal__v5-post-dealer-link-icon {
+  flex-shrink: 0;
+  color: var(--color-blue-cobalt);
+}
+
+.incentives-modal__v5-post-dealer-distance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-dark);
+  margin: 0;
+}
+
+.incentives-modal__v5-post-dealer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  justify-content: flex-end;
+}
+
+@media (max-width: 480px) {
+  .incentives-modal__v5-post-dealer-actions {
+    justify-content: flex-start;
+  }
+}
+
+.incentives-modal__v5-post-dealer-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+}
+
+.incentives-modal__v5-post-dealer-action-link:hover {
+  text-decoration: none;
+}
+
+.incentives-modal__v5-post-dealer-nav-icon {
+  flex-shrink: 0;
+}
+
+.incentives-modal__v5-post-no-dealer-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.incentives-modal__v5-post-no-dealer-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-gray-700);
+  margin: 0;
+}
+
+.incentives-modal__v5-post-no-dealer-cta-hint {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
 .incentives-modal__v5-cta-sticky {
   grid-column: 2;
   grid-row: 2;
-  position: static;
-  z-index: 2;
+  position: relative;
+  z-index: 5;
+  isolation: isolate;
   flex-shrink: 0;
   background: var(--color-white, #fff);
   padding: 12px 0 16px;
@@ -611,9 +805,12 @@
   margin-top: 0;
   border-top: 1px solid var(--color-gray-200);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.06);
+  pointer-events: auto;
 }
 
 .incentives-modal__v5-submit {
+  position: relative;
+  z-index: 1;
   width: 100%;
   padding: 12px;
   font-family: var(--font-heading);
@@ -627,42 +824,133 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.2s ease;
+  pointer-events: auto;
 }
 
 .incentives-modal__v5-submit:hover {
   background: #1f7a0b;
 }
 
-/* Responsive: stack columns on small screens */
-@media (max-width: 720px) {
-  .incentives-modal--conversion-b { max-width: 520px; }
+/* Responsive: stack columns + full-bleed shell (see mobile-modal-shell.css) */
+@media (max-width: 768px) {
+  /* Block overlay + absolute panel — avoids flex min-width:auto “wide sheet” centering + crop */
+  .incentives-modal__overlay.cd-mobile-modal__overlay {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .incentives-modal.cd-mobile-modal__panel {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    animation: none !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Fill the fixed-height sheet; clip horizontal overflow from desktop grid mins */
+  .incentives-modal--conversion-b.cd-mobile-modal__panel {
+    min-height: 0;
+  }
 
   .incentives-modal__inner--conversion-b {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     grid-template-rows: minmax(0, 1fr) auto;
-    column-gap: 0;
+    column-gap: 0 !important;
+    padding: 0;
+    padding-top: max(var(--spacing-10), calc(var(--spacing-8) + env(safe-area-inset-top, 0px)));
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    align-content: stretch;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .incentives-modal__v5-body-scroll {
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+    padding-bottom: 0;
   }
 
   .incentives-modal__v5-cta-sticky {
     grid-column: 1;
     grid-row: 2;
+    padding: var(--spacing-3) 0;
+    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--color-gray-200);
   }
 
   .incentives-modal__v5-layout {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-6);
+    min-width: 0;
+  }
+
+  .incentives-modal__v5-left,
+  .incentives-modal__v5-right,
+  .incentives-modal__v5-body-scroll {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .incentives-modal__v5-msrp-row {
+    flex-wrap: wrap;
+    gap: var(--spacing-2) var(--spacing-4);
+  }
+
+  .incentives-modal__v5-msrp {
+    min-width: 0;
+  }
+
+  .incentives-modal__v5-detail,
+  .incentives-modal__v5-key-details {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .incentives-modal__rate-table {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .incentives-modal__v5-right {
     border-left: none;
     border-top: 1px solid var(--color-gray-200);
     padding-left: 0;
-    padding-top: 24px;
+    padding-top: var(--spacing-6);
   }
 
-  .incentives-modal--conversion-b .incentives-modal__inner {
-    padding: 24px;
+  .incentives-modal__close {
+    top: max(var(--spacing-3), env(safe-area-inset-top, 0px));
+    right: max(var(--spacing-3), env(safe-area-inset-right, 0px));
   }
+
+  /* Default inner (non–conversion-b variants): flush to panel edges; keep content inset */
+  .incentives-modal__inner:not(.incentives-modal__inner--conversion-b) {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
+    padding-top: max(var(--spacing-10), calc(var(--spacing-8) + env(safe-area-inset-top, 0px)));
+  }
+
+  .incentives-modal__inner:not(.incentives-modal__inner--conversion-b) > * {
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+  }
+
 }
 
 @keyframes incentivesModalSlide {
@@ -1259,21 +1547,6 @@
 }
 
 @media (max-width: 480px) {
-  .incentives-modal__overlay {
-    padding: 0;
-    align-items: flex-end;
-  }
-
-  .incentives-modal {
-    max-width: 100%;
-    max-height: 92vh;
-    border-radius: 4px 4px 0 0;
-  }
-
-  .incentives-modal--conversion-b {
-    max-height: min(92vh, 100dvh);
-  }
-
   .incentives-modal__form-row {
     grid-template-columns: 1fr;
   }
