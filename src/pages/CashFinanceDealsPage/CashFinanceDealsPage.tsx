@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
@@ -9,6 +9,7 @@ import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
+import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -50,6 +51,28 @@ const DEFAULT_FILTERS: DealsFilterState = {
   creditTier: null,
   sortBy: 'a-z',
 };
+
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 const CashFinanceDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
@@ -135,6 +158,8 @@ const CashFinanceDealsPage = () => {
       ),
     [cashDeals, financeDeals],
   );
+
+  const dealChunks = useMemo(() => chunkArray(displayDeals, GRID_BREAKER_AFTER_CARD_COUNT), [displayDeals]);
 
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
@@ -278,16 +303,42 @@ const CashFinanceDealsPage = () => {
         </div>
       </div>
 
+      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+
       {/* Main Content */}
       <div className="cf-deals-page__content">
-        <div className="container">
-          <div className="cf-deals-page__layout">
-            <div className="cf-deals-page__main">
-
-              {/* Finance Deals Section */}
-              <section className="cf-deals-page__section">
+        <div className={`container${displayDeals.length > 0 ? ' cf-deals-page__container--stacked' : ''}`}>
+          {displayDeals.length === 0 ? (
+            <div className="cf-deals-page__segment">
+              <div className="cf-deals-page__main">
+                <section className="cf-deals-page__section">
                   <div className="cf-deals-page__grid">
-                    {displayDeals.map((deal) => {
+                    <div className="cf-deals-page__empty-state">
+                      <p className="cf-deals-page__empty-state-text">
+                        There are currently no active finance or cash offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="cf-deals-page__empty-state-link">
+                        Browse All Deals
+                      </Link>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <aside className="cf-deals-page__sidebar" aria-label="Advertisement">
+                <div className="cf-deals-page__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
+          ) : (
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`cf-deals-segment-${chunkIndex}`}>
+                  <div className="cf-deals-page__segment">
+                    <div className="cf-deals-page__main">
+                      <section className="cf-deals-page__section">
+                        <div className="cf-deals-page__grid">
+                          {chunk.map((deal) => {
                       const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                       const saved = isVehicleSaved(vehicleName);
                       const isCash = deal.type === 'cash';
@@ -447,20 +498,28 @@ const CashFinanceDealsPage = () => {
                           </div>
                         </div>
                       );
-                    })}
+                          })}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="cf-deals-page__sidebar" aria-label="Advertisement">
+                      <div className="cf-deals-page__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                  {displayDeals.length === 0 && (
-                    <div className="cf-deals-page__empty-state">
-                      <p className="cf-deals-page__empty-state-text">
-                        There are currently no active finance or cash offers. Check back soon or explore other available deals.
-                      </p>
-                      <Link to="/deals" className="cf-deals-page__empty-state-link">
-                        Browse All Deals
-                      </Link>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="cf-deals-page__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
                     </div>
                   )}
-                </section>
+                </Fragment>
+              ))}
+            </>
+          )}
 
+          <div className="cf-deals-page__segment cf-deals-page__segment--tail">
+            <div className="cf-deals-page__main">
               {/* FAQ Section */}
               <section className="cf-deals-page__faq-section">
                 <h2 className="cf-deals-page__section-title">Frequently Asked Questions About Car Deals</h2>
@@ -520,8 +579,10 @@ const CashFinanceDealsPage = () => {
               </section>
             </div>
 
-            <aside className="cf-deals-page__sidebar">
-              <AdSidebar />
+            <aside className="cf-deals-page__sidebar" aria-label="Advertisement">
+              <div className="cf-deals-page__sidebar-sticky">
+                <AdSidebar {...(displayDeals.length > 0 && dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+              </div>
             </aside>
           </div>
         </div>

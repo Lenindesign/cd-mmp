@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -10,6 +10,7 @@ import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/ba
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
+import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -58,6 +59,28 @@ const DEFAULT_FILTERS: DealsFilterState = {
   creditTier: null,
   sortBy: 'a-z',
 };
+
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 const LeaseDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
@@ -124,6 +147,8 @@ const LeaseDealsPage = () => {
         rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
       }));
   }, [getSupabaseRating, matchesFilters]);
+
+  const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
 
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
 
@@ -236,128 +261,15 @@ const LeaseDealsPage = () => {
         </div>
       </div>
 
+      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+
       <div className="lease-deals-page__content">
-        <div className="container">
-          <div className="lease-deals-page__layout">
-            <div className="lease-deals-page__main">
-              <section className="lease-deals-page__section">
-                <div className="lease-deals-page__grid">
-                  {deals.map((deal) => {
-                    const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
-                    const saved = isVehicleSaved(vehicleName);
-                    return (
-                      <div key={deal.id} className="lease-deals-page__card">
-                        <div className="lease-deals-page__card-header">
-                          <Link to={`/${deal.vehicle.slug}`} className="lease-deals-page__card-name-link"><h3 className="lease-deals-page__card-name">{vehicleName}</h3></Link>
-                          <div className="lease-deals-page__card-rating">
-                            <span className="lease-deals-page__card-rating-value">{deal.rating}</span>
-                            <span className="lease-deals-page__card-rating-max">/10</span>
-                            <span className="lease-deals-page__card-rating-label">C/D Rating</span>
-                          </div>
-                        </div>
-
-                        <Link to={`/${deal.vehicle.slug}`} className="lease-deals-page__card-image-link">
-                          <div className="lease-deals-page__card-image-container">
-                            <img src={deal.vehicle.image} alt={vehicleName} className="lease-deals-page__card-image" />
-                            <span className="lease-deals-page__card-deal-type-tag">Lease</span>
-                            <button className={`lease-deals-page__card-save ${saved ? 'lease-deals-page__card-save--saved' : ''}`} onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })} aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}>
-                              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
-                            </button>
-                            {(() => {
-                              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-                              if (allOffers.length > 1) return (
-                                <button
-                                  type="button"
-                                  className="lease-deals-page__card-offers-tag"
-                                  onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
-                                >
-                                  {allOffers.length} Offers Available
-                                </button>
-                              );
-                              return null;
-                            })()}
-                            {offersPopup?.slug === deal.vehicle.slug && (
-                              <div className="lease-deals-page__card-offers-popup">
-                                <div className="lease-deals-page__card-offers-popup-header">
-                                  <strong>{offersPopup.offers.length} Available Offers</strong>
-                                  <button type="button" className="lease-deals-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
-                                </div>
-                                <ul className="lease-deals-page__card-offers-popup-list">
-                                  {offersPopup.offers.map((o, idx) => (
-                                    <li key={idx} className="lease-deals-page__card-offers-popup-item">
-                                      <span className={`lease-deals-page__card-offers-popup-type lease-deals-page__card-offers-popup-type--${o.type}`}>
-                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
-                                      </span>
-                                      <span className="lease-deals-page__card-offers-popup-label">{o.label}</span>
-                                      <span className="lease-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-                              <div className="lease-deals-page__card-badges">
-                                {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="lease-deals-page__card-badge-img" />}
-                                {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="lease-deals-page__card-badge-img" />}
-                              </div>
-                            )}
-                          </div>
-                        </Link>
-
-                        <div className="lease-deals-page__card-body">
-                          {(() => {
-                            const leaseNum = deal.monthlyPaymentNum;
-                            const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
-                            return (
-                              <div className="lease-deals-page__card-payment-block">
-                                <div className="lease-deals-page__card-payment">
-                                  <span className="lease-deals-page__card-payment-amount">{deal.monthlyPayment}</span>
-                                  <span className="lease-deals-page__card-payment-period">/mo</span>
-                                </div>
-                                <span className="lease-deals-page__card-payment-savings">
-                                  <SavingsText text={savingsVsAvg} />
-                                  <span className="lease-deals-page__card-tooltip-wrap">
-                                    <Info size={13} className="lease-deals-page__card-tooltip-icon" />
-                                    <span className="lease-deals-page__card-tooltip">{savingsTooltip}</span>
-                                  </span>
-                                </span>
-                                <span className="lease-deals-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-                              </div>
-                            );
-                          })()}
-
-                          <button className="lease-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="lease-deals-page__card-deal-pill-chip">Lease</span>
-                            <span className="lease-deals-page__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
-                            <span className="lease-deals-page__card-deal-pill-divider" />
-                            <span className="lease-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
-                          </button>
-
-                          <div className="lease-deals-page__card-details">
-                            <div className="lease-deals-page__card-detail">
-                              <span className="lease-deals-page__card-detail-label">Term</span>
-                              <span className="lease-deals-page__card-detail-value">{deal.term}</span>
-                            </div>
-                            <div className="lease-deals-page__card-detail">
-                              <span className="lease-deals-page__card-detail-label">Mileage Allowance</span>
-                              <span className="lease-deals-page__card-detail-value">{deal.mileageAllowance}</span>
-                            </div>
-                          </div>
-
-                          <button type="button" className="lease-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
-
-                          <Link
-                            to={`/${deal.vehicle.slug}`}
-                            className="lease-deals-page__card-toggle"
-                          >
-                            <span>Read More</span>
-                            <ChevronRight size={14} />
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {deals.length === 0 && (
+        <div className={`container${deals.length > 0 ? ' lease-deals-page__container--stacked' : ''}`}>
+          {deals.length === 0 ? (
+            <div className="lease-deals-page__segment">
+              <div className="lease-deals-page__main">
+                <section className="lease-deals-page__section">
+                  <div className="lease-deals-page__grid">
                     <div className="lease-deals-page__empty-state">
                       <p className="lease-deals-page__empty-state-text">
                         There are currently no active lease offers. Check back soon or explore other available deals.
@@ -366,10 +278,159 @@ const LeaseDealsPage = () => {
                         Browse All Deals
                       </Link>
                     </div>
-                  )}
+                  </div>
+                </section>
+              </div>
+              <aside className="lease-deals-page__sidebar" aria-label="Advertisement">
+                <div className="lease-deals-page__sidebar-sticky">
+                  <AdSidebar />
                 </div>
-              </section>
+              </aside>
+            </div>
+          ) : (
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`lease-segment-${chunkIndex}`}>
+                  <div className="lease-deals-page__segment">
+                    <div className="lease-deals-page__main">
+                      <section className="lease-deals-page__section">
+                        <div className="lease-deals-page__grid">
+                          {chunk.map((deal) => {
+                            const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
+                            const saved = isVehicleSaved(vehicleName);
+                            return (
+                              <div key={deal.id} className="lease-deals-page__card">
+                                <div className="lease-deals-page__card-header">
+                                  <Link to={`/${deal.vehicle.slug}`} className="lease-deals-page__card-name-link"><h3 className="lease-deals-page__card-name">{vehicleName}</h3></Link>
+                                  <div className="lease-deals-page__card-rating">
+                                    <span className="lease-deals-page__card-rating-value">{deal.rating}</span>
+                                    <span className="lease-deals-page__card-rating-max">/10</span>
+                                    <span className="lease-deals-page__card-rating-label">C/D Rating</span>
+                                  </div>
+                                </div>
 
+                                <Link to={`/${deal.vehicle.slug}`} className="lease-deals-page__card-image-link">
+                                  <div className="lease-deals-page__card-image-container">
+                                    <img src={deal.vehicle.image} alt={vehicleName} className="lease-deals-page__card-image" />
+                                    <span className="lease-deals-page__card-deal-type-tag">Lease</span>
+                                    <button className={`lease-deals-page__card-save ${saved ? 'lease-deals-page__card-save--saved' : ''}`} onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })} aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}>
+                                      <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
+                                    </button>
+                                    {(() => {
+                                      const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                                      if (allOffers.length > 1) return (
+                                        <button
+                                          type="button"
+                                          className="lease-deals-page__card-offers-tag"
+                                          onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                                        >
+                                          {allOffers.length} Offers Available
+                                        </button>
+                                      );
+                                      return null;
+                                    })()}
+                                    {offersPopup?.slug === deal.vehicle.slug && (
+                                      <div className="lease-deals-page__card-offers-popup">
+                                        <div className="lease-deals-page__card-offers-popup-header">
+                                          <strong>{offersPopup.offers.length} Available Offers</strong>
+                                          <button type="button" className="lease-deals-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
+                                        </div>
+                                        <ul className="lease-deals-page__card-offers-popup-list">
+                                          {offersPopup.offers.map((o, idx) => (
+                                            <li key={idx} className="lease-deals-page__card-offers-popup-item">
+                                              <span className={`lease-deals-page__card-offers-popup-type lease-deals-page__card-offers-popup-type--${o.type}`}>
+                                                {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                              </span>
+                                              <span className="lease-deals-page__card-offers-popup-label">{o.label}</span>
+                                              <span className="lease-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                    {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
+                                      <div className="lease-deals-page__card-badges">
+                                        {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="lease-deals-page__card-badge-img" />}
+                                        {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="lease-deals-page__card-badge-img" />}
+                                      </div>
+                                    )}
+                                  </div>
+                                </Link>
+
+                                <div className="lease-deals-page__card-body">
+                                  {(() => {
+                                    const leaseNum = deal.monthlyPaymentNum;
+                                    const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
+                                    return (
+                                      <div className="lease-deals-page__card-payment-block">
+                                        <div className="lease-deals-page__card-payment">
+                                          <span className="lease-deals-page__card-payment-amount">{deal.monthlyPayment}</span>
+                                          <span className="lease-deals-page__card-payment-period">/mo</span>
+                                        </div>
+                                        <span className="lease-deals-page__card-payment-savings">
+                                          <SavingsText text={savingsVsAvg} />
+                                          <span className="lease-deals-page__card-tooltip-wrap">
+                                            <Info size={13} className="lease-deals-page__card-tooltip-icon" />
+                                            <span className="lease-deals-page__card-tooltip">{savingsTooltip}</span>
+                                          </span>
+                                        </span>
+                                        <span className="lease-deals-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
+                                      </div>
+                                    );
+                                  })()}
+
+                                  <button className="lease-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
+                                    <span className="lease-deals-page__card-deal-pill-chip">Lease</span>
+                                    <span className="lease-deals-page__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
+                                    <span className="lease-deals-page__card-deal-pill-divider" />
+                                    <span className="lease-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
+                                  </button>
+
+                                  <div className="lease-deals-page__card-details">
+                                    <div className="lease-deals-page__card-detail">
+                                      <span className="lease-deals-page__card-detail-label">Term</span>
+                                      <span className="lease-deals-page__card-detail-value">{deal.term}</span>
+                                    </div>
+                                    <div className="lease-deals-page__card-detail">
+                                      <span className="lease-deals-page__card-detail-label">Mileage Allowance</span>
+                                      <span className="lease-deals-page__card-detail-value">{deal.mileageAllowance}</span>
+                                    </div>
+                                  </div>
+
+                                  <button type="button" className="lease-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
+
+                                  <Link
+                                    to={`/${deal.vehicle.slug}`}
+                                    className="lease-deals-page__card-toggle"
+                                  >
+                                    <span>Read More</span>
+                                    <ChevronRight size={14} />
+                                  </Link>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="lease-deals-page__sidebar" aria-label="Advertisement">
+                      <div className="lease-deals-page__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
+                  </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="lease-deals-page__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
+          )}
+
+          <div className="lease-deals-page__segment lease-deals-page__segment--tail">
+            <div className="lease-deals-page__main">
               <section className="lease-deals-page__faq-section">
                 <h2 className="lease-deals-page__section-title">Frequently Asked Questions About Leasing</h2>
                 <div className="lease-deals-page__faq-list">
@@ -396,7 +457,11 @@ const LeaseDealsPage = () => {
                 </div>
               </section>
             </div>
-            <aside className="lease-deals-page__sidebar"><AdSidebar /></aside>
+            <aside className="lease-deals-page__sidebar" aria-label="Advertisement">
+              <div className="lease-deals-page__sidebar-sticky">
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+              </div>
+            </aside>
           </div>
         </div>
       </div>

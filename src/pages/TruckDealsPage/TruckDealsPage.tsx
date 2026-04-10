@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -7,6 +7,7 @@ import { getLeaseDeals } from '../../services/leaseDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
+import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import SavingsText from '../../components/SavingsText';
@@ -66,6 +67,28 @@ const DEFAULT_FILTERS: DealsFilterState = {
   creditTier: null,
   sortBy: 'a-z',
 };
+
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 const TruckDealsPage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
@@ -198,6 +221,8 @@ const TruckDealsPage = () => {
     return result.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }));
   }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, matchesFilters]);
 
+  const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);
+
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
   const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
     e.preventDefault(); e.stopPropagation();
@@ -285,136 +310,184 @@ const TruckDealsPage = () => {
           </div>
         </div>
       </div>
+      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
       <div className="truck-deals-page__content">
-        <div className="container">
-          <div className="truck-deals-page__layout">
-            <div className="truck-deals-page__main">
-              <section className="truck-deals-page__section">
-                <div className="truck-deals-page__grid">
-                  {filteredDeals.map((deal) => {
-                    const saved = isVehicleSaved(deal.vehicleName);
-                    return (
-                      <div key={deal.id} className="truck-deals-page__card">
-                        <div className="truck-deals-page__card-header">
-                          <Link to={`/${deal.vehicle.slug}`} className="truck-deals-page__card-name-link">
-                            <h3 className="truck-deals-page__card-name">{deal.vehicleName}</h3>
-                          </Link>
-                          <div className="truck-deals-page__card-rating">
-                            <span className="truck-deals-page__card-rating-value">{deal.rating}</span>
-                            <span className="truck-deals-page__card-rating-max">/10</span>
-                            <span className="truck-deals-page__card-rating-label">C/D Rating</span>
-                          </div>
-                        </div>
-
-                        <Link to={`/${deal.vehicle.slug}`} className="truck-deals-page__card-image-link">
-                          <div className="truck-deals-page__card-image-container">
-                            <img src={deal.vehicle.image} alt={deal.vehicleName} className="truck-deals-page__card-image" />
-                            <span className="truck-deals-page__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
-                            <button
-                              className={`truck-deals-page__card-save ${saved ? 'truck-deals-page__card-save--saved' : ''}`}
-                              onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-                              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
-                            >
-                              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
-                            </button>
-                            {(() => {
-                              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-                              if (allOffers.length > 1) return (
-                                <button
-                                  type="button"
-                                  className="truck-deals-page__card-offers-tag"
-                                  onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
-                                >
-                                  {allOffers.length} Offers Available
-                                </button>
-                              );
-                              return null;
-                            })()}
-                            {offersPopup?.slug === deal.vehicle.slug && (
-                              <div className="truck-deals-page__card-offers-popup">
-                                <div className="truck-deals-page__card-offers-popup-header">
-                                  <strong>{offersPopup.offers.length} Available Offers</strong>
-                                  <button type="button" className="truck-deals-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
-                                </div>
-                                <ul className="truck-deals-page__card-offers-popup-list">
-                                  {offersPopup.offers.map((o, idx) => (
-                                    <li key={idx} className="truck-deals-page__card-offers-popup-item">
-                                      <span className={`truck-deals-page__card-offers-popup-type truck-deals-page__card-offers-popup-type--${o.type}`}>
-                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
-                                      </span>
-                                      <span className="truck-deals-page__card-offers-popup-label">{o.label}</span>
-                                      <span className="truck-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-                              <div className="truck-deals-page__card-badges">
-                                {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="truck-deals-page__card-badge-img" />}
-                                {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="truck-deals-page__card-badge-img" />}
-                              </div>
-                            )}
-                          </div>
+        <div className={`container${filteredDeals.length > 0 ? ' truck-deals-page__container--stacked' : ''}`}>
+          {filteredDeals.length === 0 ? (
+            <div className="truck-deals-page__segment">
+              <div className="truck-deals-page__main">
+                <section className="truck-deals-page__section">
+                  <div className="truck-deals-page__grid">
+                    {deals.length === 0 && (
+                      <div className="truck-deals-page__empty-state">
+                        <p className="truck-deals-page__empty-state-text">
+                          There are currently no active truck offers. Check back soon or explore other available deals.
+                        </p>
+                        <Link to="/deals" className="truck-deals-page__empty-state-link">
+                          Browse All Deals
                         </Link>
-
-                        <div className="truck-deals-page__card-body">
-                          <div className="truck-deals-page__card-payment-block">
-                            <div className="truck-deals-page__card-payment">
-                              <span className="truck-deals-page__card-payment-amount">{deal.aprDisplay || `$${deal.estimatedMonthly}`}</span>
-                              <span className="truck-deals-page__card-payment-period">{deal.aprDisplay ? ' APR' : deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
-                            </div>
-                            <span className="truck-deals-page__card-payment-savings">
-                              <SavingsText text={deal.savingsVsAvg} />
-                              <span className="truck-deals-page__card-tooltip-wrap">
-                                <Info size={13} className="truck-deals-page__card-tooltip-icon" />
-                                <span className="truck-deals-page__card-tooltip">{deal.savingsTooltip}</span>
-                              </span>
-                            </span>
-                            <span className="truck-deals-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-                          </div>
-
-                          <button className="truck-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                            <span className="truck-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
-                            <span className="truck-deals-page__card-deal-pill-text">{deal.dealText}</span>
-                            <span className="truck-deals-page__card-deal-pill-divider" />
-                            <span className="truck-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
-                          </button>
-
-                          <div className="truck-deals-page__card-details">
-                            {deal.details.map((d, i) => (
-                              <div key={i} className="truck-deals-page__card-detail">
-                                <span className="truck-deals-page__card-detail-label">{d.label}</span>
-                                <span className="truck-deals-page__card-detail-value">{d.value}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          <button type="button" className="truck-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
-
-                          <Link
-                            to={`/${deal.vehicle.slug}`}
-                            className="truck-deals-page__card-toggle"
-                          >
-                            <span>Read More</span>
-                            <ChevronRight size={14} />
-                          </Link>
-                        </div>
                       </div>
-                    );
-                  })}
-                  {filteredDeals.length === 0 && (
-                    <div className="truck-deals-page__empty-state">
-                      <p className="truck-deals-page__empty-state-text">
-                        There are currently no active truck offers. Check back soon or explore other available deals.
-                      </p>
-                      <Link to="/deals" className="truck-deals-page__empty-state-link">
-                        Browse All Deals
-                      </Link>
+                    )}
+                    {deals.length > 0 && filteredDeals.length === 0 && (
+                      <div className="truck-deals-page__empty-state">
+                        <p className="truck-deals-page__empty-state-text">
+                          No truck deals match your filters. Try adjusting filters or clear them to see all offers.
+                        </p>
+                        <button type="button" className="truck-deals-page__empty-state-link" onClick={clearAllFilters}>
+                          Clear all filters
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </div>
+              <aside className="truck-deals-page__sidebar" aria-label="Advertisement">
+                <div className="truck-deals-page__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
+          ) : (
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`truck-segment-${chunkIndex}`}>
+                  <div className="truck-deals-page__segment">
+                    <div className="truck-deals-page__main">
+                      <section className="truck-deals-page__section">
+                        <div className="truck-deals-page__grid">
+                          {chunk.map((deal) => {
+                            const saved = isVehicleSaved(deal.vehicleName);
+                            return (
+                              <div key={deal.id} className="truck-deals-page__card">
+                                <div className="truck-deals-page__card-header">
+                                  <Link to={`/${deal.vehicle.slug}`} className="truck-deals-page__card-name-link">
+                                    <h3 className="truck-deals-page__card-name">{deal.vehicleName}</h3>
+                                  </Link>
+                                  <div className="truck-deals-page__card-rating">
+                                    <span className="truck-deals-page__card-rating-value">{deal.rating}</span>
+                                    <span className="truck-deals-page__card-rating-max">/10</span>
+                                    <span className="truck-deals-page__card-rating-label">C/D Rating</span>
+                                  </div>
+                                </div>
+
+                                <Link to={`/${deal.vehicle.slug}`} className="truck-deals-page__card-image-link">
+                                  <div className="truck-deals-page__card-image-container">
+                                    <img src={deal.vehicle.image} alt={deal.vehicleName} className="truck-deals-page__card-image" />
+                                    <span className="truck-deals-page__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
+                                    <button
+                                      className={`truck-deals-page__card-save ${saved ? 'truck-deals-page__card-save--saved' : ''}`}
+                                      onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
+                                      aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
+                                    >
+                                      <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
+                                    </button>
+                                    {(() => {
+                                      const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                                      if (allOffers.length > 1) return (
+                                        <button
+                                          type="button"
+                                          className="truck-deals-page__card-offers-tag"
+                                          onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                                        >
+                                          {allOffers.length} Offers Available
+                                        </button>
+                                      );
+                                      return null;
+                                    })()}
+                                    {offersPopup?.slug === deal.vehicle.slug && (
+                                      <div className="truck-deals-page__card-offers-popup">
+                                        <div className="truck-deals-page__card-offers-popup-header">
+                                          <strong>{offersPopup.offers.length} Available Offers</strong>
+                                          <button type="button" className="truck-deals-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
+                                        </div>
+                                        <ul className="truck-deals-page__card-offers-popup-list">
+                                          {offersPopup.offers.map((o, idx) => (
+                                            <li key={idx} className="truck-deals-page__card-offers-popup-item">
+                                              <span className={`truck-deals-page__card-offers-popup-type truck-deals-page__card-offers-popup-type--${o.type}`}>
+                                                {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                              </span>
+                                              <span className="truck-deals-page__card-offers-popup-label">{o.label}</span>
+                                              <span className="truck-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                    {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
+                                      <div className="truck-deals-page__card-badges">
+                                        {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="truck-deals-page__card-badge-img" />}
+                                        {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="truck-deals-page__card-badge-img" />}
+                                      </div>
+                                    )}
+                                  </div>
+                                </Link>
+
+                                <div className="truck-deals-page__card-body">
+                                  <div className="truck-deals-page__card-payment-block">
+                                    <div className="truck-deals-page__card-payment">
+                                      <span className="truck-deals-page__card-payment-amount">{deal.aprDisplay || `$${deal.estimatedMonthly}`}</span>
+                                      <span className="truck-deals-page__card-payment-period">{deal.aprDisplay ? ' APR' : deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
+                                    </div>
+                                    <span className="truck-deals-page__card-payment-savings">
+                                      <SavingsText text={deal.savingsVsAvg} />
+                                      <span className="truck-deals-page__card-tooltip-wrap">
+                                        <Info size={13} className="truck-deals-page__card-tooltip-icon" />
+                                        <span className="truck-deals-page__card-tooltip">{deal.savingsTooltip}</span>
+                                      </span>
+                                    </span>
+                                    <span className="truck-deals-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
+                                  </div>
+
+                                  <button className="truck-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
+                                    <span className="truck-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
+                                    <span className="truck-deals-page__card-deal-pill-text">{deal.dealText}</span>
+                                    <span className="truck-deals-page__card-deal-pill-divider" />
+                                    <span className="truck-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
+                                  </button>
+
+                                  <div className="truck-deals-page__card-details">
+                                    {deal.details.map((d, i) => (
+                                      <div key={i} className="truck-deals-page__card-detail">
+                                        <span className="truck-deals-page__card-detail-label">{d.label}</span>
+                                        <span className="truck-deals-page__card-detail-value">{d.value}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  <button type="button" className="truck-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
+
+                                  <Link
+                                    to={`/${deal.vehicle.slug}`}
+                                    className="truck-deals-page__card-toggle"
+                                  >
+                                    <span>Read More</span>
+                                    <ChevronRight size={14} />
+                                  </Link>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="truck-deals-page__sidebar" aria-label="Advertisement">
+                      <div className="truck-deals-page__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
+                  </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="truck-deals-page__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
                     </div>
                   )}
-                </div>
-              </section>
+                </Fragment>
+              ))}
+            </>
+          )}
+
+          <div className="truck-deals-page__segment truck-deals-page__segment--tail">
+            <div className="truck-deals-page__main">
               <section className="truck-deals-page__faq-section">
                 <h2 className="truck-deals-page__section-title">Frequently Asked Questions About Truck Deals</h2>
                 <div className="truck-deals-page__faq-list">
@@ -440,7 +513,11 @@ const TruckDealsPage = () => {
                 </div>
               </section>
             </div>
-            <aside className="truck-deals-page__sidebar"><AdSidebar /></aside>
+            <aside className="truck-deals-page__sidebar" aria-label="Advertisement">
+              <div className="truck-deals-page__sidebar-sticky">
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+              </div>
+            </aside>
           </div>
         </div>
       </div>

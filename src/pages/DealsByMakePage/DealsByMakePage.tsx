@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ChevronRight, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -21,6 +21,7 @@ import type { Vehicle } from '../../types/vehicle';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -72,6 +73,30 @@ const DEFAULT_FILTERS: DealsFilterState = {
   creditTier: null,
   sortBy: 'a-z',
 };
+
+/** In-feed leaderboard after each batch of this many deal cards (e.g. 6 rows × 2 columns) */
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+/** Sidebar stack after the first full-bleed in-feed ad (distinct creatives from the initial column) */
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferDetail> | undefined {
   if (!deal) return undefined;
@@ -306,6 +331,9 @@ const DealsByMakePage = () => {
     return out.sort((a, b) => a.sortMonthly - b.sortMonthly);
   }, [getSupabaseRating, matchesFilters, matchesMake]);
 
+  const deals = allDeals;
+  const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
+
   const modelLinks = useMemo(() => {
     const byModel = new Map<string, { year: string; model: string }>();
     for (const d of allDeals) {
@@ -438,13 +466,41 @@ const DealsByMakePage = () => {
         </div>
       </div>
 
+      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+
       <div className="make-deals__content">
-        <div className="container">
-          <div className="make-deals__layout">
-            <div className="make-deals__main">
-              <section className="make-deals__section">
-                <div className="make-deals__grid">
-                  {allDeals.map((deal) => {
+        <div className={`container${allDeals.length > 0 ? ' make-deals__container--stacked' : ''}`}>
+          {allDeals.length === 0 ? (
+            <div className="make-deals__segment">
+              <div className="make-deals__main">
+                <section className="make-deals__section">
+                  <div className="make-deals__grid">
+                    <div className="make-deals__empty-state">
+                      <p className="make-deals__empty-state-text">
+                        There are currently no active {makeName} offers. Check back soon or explore other available deals.
+                      </p>
+                      <Link to="/deals" className="make-deals__empty-state-link">
+                        Browse All Deals
+                      </Link>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <aside className="make-deals__sidebar" aria-label="Advertisement">
+                <div className="make-deals__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
+          ) : (
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`make-deals-segment-${chunkIndex}`}>
+                  <div className="make-deals__segment">
+                    <div className="make-deals__main">
+                      <section className="make-deals__section">
+                        <div className="make-deals__grid">
+                  {chunk.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                     const saved = isVehicleSaved(vehicleName);
                     const isLease = deal.dealType === 'lease';
@@ -733,19 +789,27 @@ const DealsByMakePage = () => {
                       </div>
                     );
                   })}
-                </div>
-                {allDeals.length === 0 && (
-                  <div className="make-deals__empty-state">
-                    <p className="make-deals__empty-state-text">
-                      There are currently no active {makeName} offers. Check back soon or explore other available deals.
-                    </p>
-                    <Link to="/deals" className="make-deals__empty-state-link">
-                      Browse All Deals
-                    </Link>
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="make-deals__sidebar" aria-label="Advertisement">
+                      <div className="make-deals__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                )}
-              </section>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="make-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
+          )}
 
+          <div className="make-deals__segment make-deals__segment--tail">
+            <div className="make-deals__main">
               {modelLinks.length > 0 && (
                 <section className="make-deals__links-section">
                   <h2 className="make-deals__section-title">Deals by {makeName} Model</h2>
@@ -760,9 +824,10 @@ const DealsByMakePage = () => {
                 </section>
               )}
             </div>
-
-            <aside className="make-deals__sidebar">
-              <AdSidebar />
+            <aside className="make-deals__sidebar" aria-label="Advertisement">
+              <div className="make-deals__sidebar-sticky">
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+              </div>
             </aside>
           </div>
         </div>

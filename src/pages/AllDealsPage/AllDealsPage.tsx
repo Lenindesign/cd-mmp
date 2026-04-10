@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useCallback, useEffect, Fragment } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronRight, SlidersHorizontal, Heart, Info, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -14,6 +14,7 @@ import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/ba
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import SavingsText from '../../components/SavingsText';
 import './AllDealsPage.css';
@@ -72,6 +73,28 @@ function parseFiltersFromUrl(raw: string | null): DealsFilterState | null {
   } catch {
     return null;
   }
+}
+
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
 }
 
 const AllDealsPage = () => {
@@ -252,6 +275,8 @@ const AllDealsPage = () => {
     return filtered;
   }, [allDeals, filters, applyFiltersToDeals]);
 
+  const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);
+
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
     return applyFiltersToDeals(allDeals, draftFilters).length;
   }, [allDeals, applyFiltersToDeals]);
@@ -360,15 +385,20 @@ const AllDealsPage = () => {
         </div>
       </div>
 
+      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+
       <div className="all-deals__content">
         <div className="container">
-          <div className="all-deals__layout">
-          <div className="all-deals__main">
           {filteredDeals.length > 0 ? (
-            <div className="all-deals__grid">
-              {filteredDeals.map((deal, i) => {
-                const cardKey = `${deal.slug}-${deal.dealType}-${i}`;
-                return (
+            dealChunks.map((chunk, chunkIndex) => (
+              <Fragment key={`all-deals-segment-${chunkIndex}`}>
+                <div className="all-deals__segment">
+                  <div className="all-deals__main">
+                    <div className="all-deals__grid">
+                      {chunk.map((deal, i) => {
+                        const originalIndex = chunkIndex * GRID_BREAKER_AFTER_CARD_COUNT + i;
+                        const cardKey = `${deal.slug}-${deal.dealType}-${originalIndex}`;
+                        return (
                   <div key={cardKey} className="all-deals__card">
                     <div className="all-deals__card-header">
                       <Link to={`/${deal.slug}`} className="all-deals__card-name-link">
@@ -486,9 +516,23 @@ const AllDealsPage = () => {
                       </Link>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <aside className="all-deals__sidebar" aria-label="Advertisement">
+                    <div className="all-deals__sidebar-sticky">
+                      {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                    </div>
+                  </aside>
+                </div>
+                {chunkIndex < dealChunks.length - 1 && (
+                  <div className="all-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                    <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                  </div>
+                )}
+              </Fragment>
+            ))
           ) : (
             <div className="all-deals__empty-state">
               <p className="all-deals__empty-state-text">
@@ -499,9 +543,6 @@ const AllDealsPage = () => {
               </Link>
             </div>
           )}
-          </div>
-          <aside className="all-deals__sidebar"><AdSidebar /></aside>
-          </div>
         </div>
       </div>
 

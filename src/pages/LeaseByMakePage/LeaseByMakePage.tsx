@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ChevronRight, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -17,6 +17,7 @@ import type { Vehicle } from '../../types/vehicle';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -61,6 +62,28 @@ const DEFAULT_FILTERS: DealsFilterState = {
   creditTier: null,
   sortBy: 'a-z',
 };
+
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 function buildActiveOffer(deal: LeaseByMakeDeal | null): Partial<IncentiveOfferDetail> | undefined {
   if (!deal) return undefined;
@@ -197,6 +220,8 @@ const LeaseByMakePage = () => {
     return out.sort((a, b) => a.sortMonthly - b.sortMonthly);
   }, [getSupabaseRating, matchesFilters, matchesMake]);
 
+  const dealChunks = useMemo(() => chunkArray(allDeals, GRID_BREAKER_AFTER_CARD_COUNT), [allDeals]);
+
   const modelLinks = useMemo(() => {
     const byModel = new Map<string, { year: string; model: string }>();
     for (const d of allDeals) {
@@ -239,6 +264,162 @@ const LeaseByMakePage = () => {
 
   const activeDealObj = activeDealId ? allDeals.find((d) => d.id === activeDealId) : null;
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
+
+  const renderLeaseDealCard = (deal: LeaseByMakeDeal) => {
+    const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
+    const saved = isVehicleSaved(vehicleName);
+    const leaseNum = deal.monthlyPaymentNum;
+    const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
+
+    return (
+      <div key={deal.id} className="make-lease__card">
+        <div className="make-lease__card-header">
+          <Link to={`/${deal.vehicle.slug}`} className="make-lease__card-name-link">
+            <h3 className="make-lease__card-name">{vehicleName}</h3>
+          </Link>
+          <div className="make-lease__card-rating">
+            <span className="make-lease__card-rating-value">{deal.rating}</span>
+            <span className="make-lease__card-rating-max">/10</span>
+            <span className="make-lease__card-rating-label">C/D Rating</span>
+          </div>
+        </div>
+
+        <Link to={`/${deal.vehicle.slug}`} className="make-lease__card-image-link">
+          <div className="make-lease__card-image-container">
+            <img src={deal.vehicle.image} alt={vehicleName} className="make-lease__card-image" />
+            <span className="make-lease__card-deal-type-tag">{deal.chipLabel}</span>
+            <button
+              className={`make-lease__card-save ${saved ? 'make-lease__card-save--saved' : ''}`}
+              onClick={(e) =>
+                handleSaveClick(e, {
+                  name: vehicleName,
+                  slug: deal.vehicle.slug,
+                  image: deal.vehicle.image,
+                })
+              }
+              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
+            </button>
+            {(() => {
+              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+              if (allOffers.length > 1)
+                return (
+                  <button
+                    type="button"
+                    className="make-lease__card-offers-tag"
+                    onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                  >
+                    {allOffers.length} Offers Available
+                  </button>
+                );
+              return null;
+            })()}
+            {offersPopup?.slug === deal.vehicle.slug && (
+              <div className="make-lease__card-offers-popup">
+                <div className="make-lease__card-offers-popup-header">
+                  <strong>{offersPopup.offers.length} Available Offers</strong>
+                  <button
+                    type="button"
+                    className="make-lease__card-offers-popup-close"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setOffersPopup(null);
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+                <ul className="make-lease__card-offers-popup-list">
+                  {offersPopup.offers.map((o, idx) => (
+                    <li key={idx} className="make-lease__card-offers-popup-item">
+                      <span
+                        className={`make-lease__card-offers-popup-type make-lease__card-offers-popup-type--${o.type}`}
+                      >
+                        {o.type === 'zero-apr'
+                          ? '0% APR'
+                          : o.type === 'cash'
+                            ? 'Cash'
+                            : o.type === 'finance'
+                              ? 'Finance'
+                              : 'Lease'}
+                      </span>
+                      <span className="make-lease__card-offers-popup-label">{o.label}</span>
+                      <span className="make-lease__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
+              <div className="make-lease__card-badges">
+                {deal.vehicle.tenBest && (
+                  <img src={TEN_BEST_BADGE_URL} alt="10Best" className="make-lease__card-badge-img" />
+                )}
+                {deal.vehicle.editorsChoice && (
+                  <img
+                    src={EDITORS_CHOICE_BADGE_URL}
+                    alt="Editors' Choice"
+                    className="make-lease__card-badge-img"
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        </Link>
+
+        <div className="make-lease__card-body">
+          <div className="make-lease__card-payment-block">
+            <div className="make-lease__card-payment">
+              <span className="make-lease__card-payment-amount">{deal.monthlyPayment}</span>
+              <span className="make-lease__card-payment-period">/mo</span>
+            </div>
+            <span className="make-lease__card-payment-savings">
+              <SavingsText text={savingsVsAvg} />
+              <span className="make-lease__card-tooltip-wrap">
+                <Info size={13} className="make-lease__card-tooltip-icon" />
+                <span className="make-lease__card-tooltip">{savingsTooltip}</span>
+              </span>
+            </span>
+            <span className="make-lease__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
+          </div>
+          <button
+            className="make-lease__card-deal-pill"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setActiveDealId(deal.id);
+            }}
+          >
+            <span className="make-lease__card-deal-pill-chip">{deal.chipLabel}</span>
+            <span className="make-lease__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
+            <span className="make-lease__card-deal-pill-divider" />
+            <span className="make-lease__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
+          </button>
+          <div className="make-lease__card-details">
+            <div className="make-lease__card-detail">
+              <span className="make-lease__card-detail-label">Term</span>
+              <span className="make-lease__card-detail-value">{deal.term}</span>
+            </div>
+            <div className="make-lease__card-detail">
+              <span className="make-lease__card-detail-label">Due at Signing</span>
+              <span className="make-lease__card-detail-value">{deal.dueAtSigning}</span>
+            </div>
+          </div>
+
+          <button type="button" className="make-lease__card-cta" onClick={() => setActiveDealId(deal.id)}>
+            Get This Deal
+          </button>
+
+          <Link to={`/${deal.vehicle.slug}`} className="make-lease__card-toggle">
+            <span>Read More</span>
+            <ChevronRight size={14} />
+          </Link>
+        </div>
+      </div>
+    );
+  };
 
   const pageTitle = `Best ${makeName} Lease Deals for ${month} ${year}`;
   const pageDescription = `Find the best ${makeName} lease deals for ${month} ${year}. Compare monthly payments, terms, and manufacturer lease specials from Car and Driver.`;
@@ -328,186 +509,61 @@ const LeaseByMakePage = () => {
         </div>
       </div>
 
+      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+
       <div className="make-lease__content">
-        <div className="container">
-          <div className="make-lease__layout">
-            <div className="make-lease__main">
-              <section className="make-lease__section">
-                <div className="make-lease__grid">
-                  {allDeals.map((deal) => {
-                    const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
-                    const saved = isVehicleSaved(vehicleName);
-                    const leaseNum = deal.monthlyPaymentNum;
-                    const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
-
-                    return (
-                      <div key={deal.id} className="make-lease__card">
-                        <div className="make-lease__card-header">
-                          <Link to={`/${deal.vehicle.slug}`} className="make-lease__card-name-link">
-                            <h3 className="make-lease__card-name">{vehicleName}</h3>
-                          </Link>
-                          <div className="make-lease__card-rating">
-                            <span className="make-lease__card-rating-value">{deal.rating}</span>
-                            <span className="make-lease__card-rating-max">/10</span>
-                            <span className="make-lease__card-rating-label">C/D Rating</span>
-                          </div>
-                        </div>
-
-                        <Link to={`/${deal.vehicle.slug}`} className="make-lease__card-image-link">
-                          <div className="make-lease__card-image-container">
-                            <img src={deal.vehicle.image} alt={vehicleName} className="make-lease__card-image" />
-                            <span className="make-lease__card-deal-type-tag">{deal.chipLabel}</span>
-                            <button
-                              className={`make-lease__card-save ${saved ? 'make-lease__card-save--saved' : ''}`}
-                              onClick={(e) =>
-                                handleSaveClick(e, {
-                                  name: vehicleName,
-                                  slug: deal.vehicle.slug,
-                                  image: deal.vehicle.image,
-                                })
-                              }
-                              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
-                            >
-                              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
-                            </button>
-                            {(() => {
-                              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-                              if (allOffers.length > 1)
-                                return (
-                                  <button
-                                    type="button"
-                                    className="make-lease__card-offers-tag"
-                                    onClick={(e) =>
-                                      toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)
-                                    }
-                                  >
-                                    {allOffers.length} Offers Available
-                                  </button>
-                                );
-                              return null;
-                            })()}
-                            {offersPopup?.slug === deal.vehicle.slug && (
-                              <div className="make-lease__card-offers-popup">
-                                <div className="make-lease__card-offers-popup-header">
-                                  <strong>{offersPopup.offers.length} Available Offers</strong>
-                                  <button
-                                    type="button"
-                                    className="make-lease__card-offers-popup-close"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      setOffersPopup(null);
-                                    }}
-                                  >
-                                    &times;
-                                  </button>
-                                </div>
-                                <ul className="make-lease__card-offers-popup-list">
-                                  {offersPopup.offers.map((o, idx) => (
-                                    <li key={idx} className="make-lease__card-offers-popup-item">
-                                      <span
-                                        className={`make-lease__card-offers-popup-type make-lease__card-offers-popup-type--${o.type}`}
-                                      >
-                                        {o.type === 'zero-apr'
-                                          ? '0% APR'
-                                          : o.type === 'cash'
-                                            ? 'Cash'
-                                            : o.type === 'finance'
-                                              ? 'Finance'
-                                              : 'Lease'}
-                                      </span>
-                                      <span className="make-lease__card-offers-popup-label">{o.label}</span>
-                                      <span className="make-lease__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-                              <div className="make-lease__card-badges">
-                                {deal.vehicle.tenBest && (
-                                  <img src={TEN_BEST_BADGE_URL} alt="10Best" className="make-lease__card-badge-img" />
-                                )}
-                                {deal.vehicle.editorsChoice && (
-                                  <img
-                                    src={EDITORS_CHOICE_BADGE_URL}
-                                    alt="Editors' Choice"
-                                    className="make-lease__card-badge-img"
-                                  />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </Link>
-
-                        <div className="make-lease__card-body">
-                          <div className="make-lease__card-payment-block">
-                            <div className="make-lease__card-payment">
-                              <span className="make-lease__card-payment-amount">{deal.monthlyPayment}</span>
-                              <span className="make-lease__card-payment-period">/mo</span>
-                            </div>
-                            <span className="make-lease__card-payment-savings">
-                              <SavingsText text={savingsVsAvg} />
-                              <span className="make-lease__card-tooltip-wrap">
-                                <Info size={13} className="make-lease__card-tooltip-icon" />
-                                <span className="make-lease__card-tooltip">{savingsTooltip}</span>
-                              </span>
-                            </span>
-                            <span className="make-lease__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-                          </div>
-                          <button
-                            className="make-lease__card-deal-pill"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setActiveDealId(deal.id);
-                            }}
-                          >
-                            <span className="make-lease__card-deal-pill-chip">{deal.chipLabel}</span>
-                            <span className="make-lease__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
-                            <span className="make-lease__card-deal-pill-divider" />
-                            <span className="make-lease__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
-                          </button>
-                          <div className="make-lease__card-details">
-                            <div className="make-lease__card-detail">
-                              <span className="make-lease__card-detail-label">Term</span>
-                              <span className="make-lease__card-detail-value">{deal.term}</span>
-                            </div>
-                            <div className="make-lease__card-detail">
-                              <span className="make-lease__card-detail-label">Due at Signing</span>
-                              <span className="make-lease__card-detail-value">{deal.dueAtSigning}</span>
-                            </div>
-                          </div>
-
-                          <button type="button" className="make-lease__card-cta" onClick={() => setActiveDealId(deal.id)}>
-                            Get This Deal
-                          </button>
-
-                          <Link
-                            to={`/${deal.vehicle.slug}`}
-                            className="make-lease__card-toggle"
-                          >
-                            <span>Read More</span>
-                            <ChevronRight size={14} />
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                {allDeals.length === 0 && (
-                  <div className="make-lease__empty-state">
-                    <p className="make-lease__empty-state-text">
-                      There are currently no active {makeName} lease offers. Check back soon or browse all lease deals.
-                    </p>
-                    <Link to="/lease-deals" className="make-lease__empty-state-link">
-                      Browse Lease Deals
-                    </Link>
+        <div className={`container${allDeals.length > 0 ? ' make-lease__container--stacked' : ''}`}>
+          {allDeals.length === 0 ? (
+            <div className="make-lease__segment">
+              <div className="make-lease__main">
+                <section className="make-lease__section">
+                  <div className="make-lease__grid">
+                    <div className="make-lease__empty-state">
+                      <p className="make-lease__empty-state-text">
+                        There are currently no active {makeName} lease offers. Check back soon or browse all lease deals.
+                      </p>
+                      <Link to="/lease-deals" className="make-lease__empty-state-link">
+                        Browse Lease Deals
+                      </Link>
+                    </div>
                   </div>
-                )}
-              </section>
+                </section>
+              </div>
+              <aside className="make-lease__sidebar" aria-label="Advertisement">
+                <div className="make-lease__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
+          ) : (
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`make-lease-segment-${chunkIndex}`}>
+                  <div className="make-lease__segment">
+                    <div className="make-lease__main">
+                      <section className="make-lease__section">
+                        <div className="make-lease__grid">{chunk.map((deal) => renderLeaseDealCard(deal))}</div>
+                      </section>
+                    </div>
+                    <aside className="make-lease__sidebar" aria-label="Advertisement">
+                      <div className="make-lease__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
+                  </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="make-lease__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
+          )}
 
-              {modelLinks.length > 0 && (
+          {modelLinks.length > 0 && (
+            <div className="make-lease__segment make-lease__segment--tail">
+              <div className="make-lease__main">
                 <section className="make-lease__links-section">
                   <h2 className="make-lease__section-title">Lease Deals by {makeName} Model</h2>
                   <div className="make-lease__links-grid">
@@ -523,13 +579,14 @@ const LeaseByMakePage = () => {
                     ))}
                   </div>
                 </section>
-              )}
+              </div>
+              <aside className="make-lease__sidebar" aria-label="Advertisement">
+                <div className="make-lease__sidebar-sticky">
+                  <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+                </div>
+              </aside>
             </div>
-
-            <aside className="make-lease__sidebar">
-              <AdSidebar />
-            </aside>
-          </div>
+          )}
         </div>
       </div>
 
