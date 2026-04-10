@@ -3,6 +3,7 @@ import { ChevronRight, ChevronLeft, ChevronDown, MapPin, Bookmark, Heart } from 
 import { Button } from '../Button';
 import { DealerMapModal } from '../DealerLocatorMap';
 import { vehicleDatabase } from '../../data/vehicles';
+import Tabs from '../Tabs/Tabs';
 import './WhatsMyCarWorthResultsV2.css';
 
 interface TradeEstimate {
@@ -337,17 +338,15 @@ const WhatsMyCarWorthResultsV2 = ({
             <p className="wmcw-v2__next-vehicle-price">Starting at $28,585</p>
 
             {/* Year Tabs */}
-            <div className="wmcw-v2__year-tabs">
-              {nextVehicleYears.map(year => (
-                <button
-                  key={year}
-                  className={`wmcw-v2__year-tab ${selectedYear === year ? 'wmcw-v2__year-tab--active' : ''}`}
-                  onClick={() => setSelectedYear(year)}
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
+            <Tabs
+              variant="pills"
+              items={nextVehicleYears.map((year) => ({
+                value: String(year),
+                label: String(year),
+              }))}
+              value={String(selectedYear)}
+              onChange={(v) => setSelectedYear(Number(v))}
+            />
 
             {/* Vehicle Highlights */}
             <div className="wmcw-v2__highlights">

@@ -3,6 +3,7 @@ import { X, User, Image, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { vehicleDatabase, coupes, suvs, sedans } from '../../data/vehicles';
 import './EditProfileModal.css';
+import Tabs from '../Tabs/Tabs';
 
 interface Avatar {
   id: string;
@@ -134,22 +135,15 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
         </div>
 
         {/* Tabs */}
-        <div className="edit-profile-modal__tabs">
-          <button
-            className={`edit-profile-modal__tab ${activeTab === 'avatar' ? 'edit-profile-modal__tab--active' : ''}`}
-            onClick={() => setActiveTab('avatar')}
-          >
-            <User size={18} />
-            <span>Avatar</span>
-          </button>
-          <button
-            className={`edit-profile-modal__tab ${activeTab === 'banner' ? 'edit-profile-modal__tab--active' : ''}`}
-            onClick={() => setActiveTab('banner')}
-          >
-            <Image size={18} />
-            <span>Banner</span>
-          </button>
-        </div>
+        <Tabs
+          variant="pills"
+          items={[
+            { value: 'avatar', label: 'Avatar', icon: <User size={18} /> },
+            { value: 'banner', label: 'Banner', icon: <Image size={18} /> },
+          ]}
+          value={activeTab}
+          onChange={setActiveTab}
+        />
 
         {/* Content */}
         <div className="edit-profile-modal__content">

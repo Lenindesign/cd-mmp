@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { X, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import Tabs from '../Tabs/Tabs';
+import type { TabItem } from '../Tabs/Tabs';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -52,6 +54,13 @@ interface DealsFilterModalProps {
 const BASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'a-z', label: 'A–Z' },
   { value: 'expiring-soon', label: 'Expiring Soonest' },
+];
+
+const DEAL_TYPE_TABS: TabItem<DealTypeOption>[] = [
+  { value: 'all', label: 'All Deals' },
+  { value: 'lease', label: 'Lease' },
+  { value: 'finance', label: 'Finance' },
+  { value: 'cash', label: 'Cash Back' },
 ];
 
 const LEASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -224,29 +233,22 @@ const DealsFilterModal = ({
         <div className="deals-filter__body">
           {/* Deal Type */}
           <div className="deals-filter__deal-type-row">
-            {([
-              { value: 'all' as DealTypeOption, label: 'All Deals' },
-              { value: 'lease' as DealTypeOption, label: 'Lease' },
-              { value: 'finance' as DealTypeOption, label: 'Finance' },
-              { value: 'cash' as DealTypeOption, label: 'Cash Back' },
-            ]).map(opt => (
-              <button
-                key={opt.value}
-                type="button"
-                className={`deals-filter__deal-type-chip ${draft.dealType === opt.value ? 'deals-filter__deal-type-chip--active' : ''}`}
-                onClick={() => setDraft(prev => {
-                  const next = { ...prev, dealType: opt.value };
-                  const isLeaseSort = opt.value === 'lease' || dealPageType === 'lease';
-                  const leaseSortValues = LEASE_SORT_OPTIONS.map(o => o.value);
-                  if (!isLeaseSort && leaseSortValues.includes(prev.sortBy as typeof leaseSortValues[number])) {
-                    next.sortBy = 'a-z';
-                  }
-                  return next;
-                })}
-              >
-                {opt.label}
-              </button>
-            ))}
+            <Tabs<DealTypeOption>
+              items={DEAL_TYPE_TABS}
+              value={draft.dealType}
+              onChange={(val) => setDraft(prev => {
+                const next = { ...prev, dealType: val };
+                const isLeaseSort = val === 'lease' || dealPageType === 'lease';
+                const leaseSortValues = LEASE_SORT_OPTIONS.map(o => o.value);
+                if (!isLeaseSort && leaseSortValues.includes(prev.sortBy as typeof leaseSortValues[number])) {
+                  next.sortBy = 'a-z';
+                }
+                return next;
+              })}
+              variant="pills"
+              fullWidth
+              ariaLabel="Deal type"
+            />
           </div>
 
           {/* Location */}

@@ -27,42 +27,6 @@
   margin: 0 auto;
 }
 
-/* Tabs */
-.card-audit__tabs {
-  display: flex;
-  justify-content: center;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-8);
-  border-bottom: 2px solid var(--color-gray-200);
-  padding-bottom: var(--spacing-4);
-}
-
-.card-audit__tab {
-  padding: var(--spacing-3) var(--spacing-6);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-gray-500);
-  background: transparent;
-  border: 2px solid transparent;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.card-audit__tab:hover {
-  color: var(--color-blue-cobalt);
-  background: var(--color-blue-light);
-}
-
-.card-audit__tab--active {
-  color: var(--color-white);
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-}
-
 /* Content */
 .card-audit__content {
   animation: fadeIn 0.3s ease;
@@ -1192,15 +1156,6 @@
 
   .card-audit__title {
     font-size: var(--font-size-3xl);
-  }
-
-  .card-audit__tabs {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .card-audit__tab {
-    text-align: center;
   }
 
   .card-audit__variant-grid {

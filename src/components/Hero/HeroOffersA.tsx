@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 import { formatExpiration } from '../../utils/dateUtils';
+import Tabs from '../Tabs/Tabs';
 
 interface HeroOffersAProps {
   vehicleIncentives: VehicleIncentives;
@@ -68,41 +69,17 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
             Up to <strong>${vehicleIncentives.totalSavings.toLocaleString()}</strong> in savings
           </span>
         </div>
-        <div className="hero__offers-tabs" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={offersTab === 'finance'}
-            className={`hero__offers-tab ${offersTab === 'finance' ? 'hero__offers-tab--active' : ''}`}
-            onClick={() => setOffersTab('finance')}
-          >
-            Finance
-            {tabPaymentLabel.finance && <span className="hero__offers-tab-price">{tabPaymentLabel.finance}</span>}
-            <span className="hero__offers-tab-count">{financeIncentives.length}</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={offersTab === 'lease'}
-            className={`hero__offers-tab ${offersTab === 'lease' ? 'hero__offers-tab--active' : ''}`}
-            onClick={() => setOffersTab('lease')}
-          >
-            Lease
-            {tabPaymentLabel.lease && <span className="hero__offers-tab-price">{tabPaymentLabel.lease}</span>}
-            <span className="hero__offers-tab-count">{leaseIncentives.length}</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={offersTab === 'cash'}
-            className={`hero__offers-tab ${offersTab === 'cash' ? 'hero__offers-tab--active' : ''}`}
-            onClick={() => setOffersTab('cash')}
-          >
-            Cash
-            {tabPaymentLabel.cash && <span className="hero__offers-tab-price">{tabPaymentLabel.cash}</span>}
-            <span className="hero__offers-tab-count">{cashIncentives.length}</span>
-          </button>
-        </div>
+        <Tabs
+          items={[
+            { value: 'finance', label: 'Finance', count: financeIncentives.length, extra: tabPaymentLabel.finance ? <span className="hero__offers-tab-price">{tabPaymentLabel.finance}</span> : undefined },
+            { value: 'lease', label: 'Lease', count: leaseIncentives.length, extra: tabPaymentLabel.lease ? <span className="hero__offers-tab-price">{tabPaymentLabel.lease}</span> : undefined },
+            { value: 'cash', label: 'Cash', count: cashIncentives.length, extra: tabPaymentLabel.cash ? <span className="hero__offers-tab-price">{tabPaymentLabel.cash}</span> : undefined },
+          ]}
+          value={offersTab}
+          onChange={setOffersTab}
+          variant="segmented"
+          ariaLabel="Offer type"
+        />
       </div>
 
       {topIncentives.length > 0 ? (

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
 import { vehicleDatabase } from '../../data/vehicles';
 import './CardAudit.css';
+import Tabs from '../../components/Tabs/Tabs';
 
 // Helper to format vehicle data for VehicleCard props
 const formatVehicleForCard = (vehicle: typeof vehicleDatabase[0]) => ({
@@ -311,38 +312,18 @@ const CardAudit = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="card-audit__tabs">
-        <button
-          className={`card-audit__tab ${activeTab === 'audit' ? 'card-audit__tab--active' : ''}`}
-          onClick={() => setActiveTab('audit')}
-        >
-          Current Cards Audit
-        </button>
-        <button
-          className={`card-audit__tab ${activeTab === 'compare' ? 'card-audit__tab--active' : ''}`}
-          onClick={() => setActiveTab('compare')}
-        >
-          Before & After
-        </button>
-        <button
-          className={`card-audit__tab ${activeTab === 'proposal' ? 'card-audit__tab--active' : ''}`}
-          onClick={() => setActiveTab('proposal')}
-        >
-          Universal Card Proposal
-        </button>
-        <button
-          className={`card-audit__tab ${activeTab === 'preview' ? 'card-audit__tab--active' : ''}`}
-          onClick={() => setActiveTab('preview')}
-        >
-          Live Preview
-        </button>
-        <button
-          className={`card-audit__tab ${activeTab === 'updates' ? 'card-audit__tab--active' : ''}`}
-          onClick={() => setActiveTab('updates')}
-        >
-          Recent Updates
-        </button>
-      </div>
+      <Tabs
+        variant="pills"
+        items={[
+          { value: 'audit', label: 'Current Cards Audit' },
+          { value: 'compare', label: 'Before & After' },
+          { value: 'proposal', label: 'Universal Card Proposal' },
+          { value: 'preview', label: 'Live Preview' },
+          { value: 'updates', label: 'Recent Updates' },
+        ]}
+        value={activeTab}
+        onChange={setActiveTab}
+      />
 
       {/* Before & After Tab */}
       {activeTab === 'compare' && (

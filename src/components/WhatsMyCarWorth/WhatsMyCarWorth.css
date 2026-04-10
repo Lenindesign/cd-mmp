@@ -550,51 +550,6 @@
 }
 
 /* ============================================
-   TABS
-   ============================================ */
-
-.whats-my-car-worth__tabs {
-  display: flex;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-4);
-  background: var(--color-gray-100);
-  padding: var(--spacing-1);
-  border-radius: var(--border-radius-md);
-}
-
-.whats-my-car-worth__tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-3) var(--spacing-4);
-  background: transparent;
-  border: none;
-  border-radius: var(--border-radius-sm);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.whats-my-car-worth__tab:hover {
-  color: var(--color-gray-800);
-}
-
-.whats-my-car-worth__tab--active {
-  background: var(--color-white);
-  color: var(--color-blue-cobalt);
-  box-shadow: var(--shadow-sm);
-}
-
-.whats-my-car-worth__tab svg {
-  flex-shrink: 0;
-}
-
-/* ============================================
    VIN SCANNER
    ============================================ */
 
@@ -1197,11 +1152,7 @@
     flex-direction: column;
     gap: var(--spacing-3);
   }
-  
-  .whats-my-car-worth__tabs {
-    flex-direction: column;
-  }
-  
+
   .whats-my-car-worth__vin-option {
     padding: var(--spacing-3);
   }

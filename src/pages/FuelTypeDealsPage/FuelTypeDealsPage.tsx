@@ -19,6 +19,7 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import SavingsText from '../../components/SavingsText';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
+import Tabs from '../../components/Tabs/Tabs';
 import './FuelTypeDealsPage.css';
 
 type FuelTab = 'all' | 'gas' | 'hybrid' | 'electric' | 'diesel';
@@ -367,22 +368,19 @@ const FuelTypeDealsPage = () => {
           <div className="fuel-deals__layout">
             <div className="fuel-deals__main">
               {/* Fuel Type Tabs */}
-              <div className="fuel-deals__tabs" role="tablist">
-                {FUEL_TABS.map(t => (
-                  <button
-                    key={t.key}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeTab === t.key}
-                    className={`fuel-deals__tab ${activeTab === t.key ? 'fuel-deals__tab--active' : ''} ${tabCounts[t.key] === 0 && t.key !== 'all' ? 'fuel-deals__tab--empty' : ''}`}
-                    onClick={() => setActiveTab(t.key)}
-                  >
-                    {t.icon}
-                    <span>{t.label}</span>
-                    <span className="fuel-deals__tab-count">{tabCounts[t.key]}</span>
-                  </button>
-                ))}
-              </div>
+              <Tabs
+                items={FUEL_TABS.map(t => ({
+                  value: t.key,
+                  label: t.label,
+                  icon: t.icon,
+                  count: tabCounts[t.key],
+                  disabled: tabCounts[t.key] === 0 && t.key !== 'all',
+                }))}
+                value={activeTab}
+                onChange={setActiveTab}
+                variant="pills"
+                ariaLabel="Fuel type"
+              />
 
               <section className="fuel-deals__section">
                 <div className="fuel-deals__grid">

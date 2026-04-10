@@ -113,68 +113,6 @@
   margin: 0;
 }
 
-/* Tabs */
-.saved-sidebar__tabs {
-  display: flex;
-  border-bottom: 1px solid var(--color-gray-200);
-  background: var(--color-white);
-}
-
-.saved-sidebar__tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-3) var(--spacing-2);
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-600);
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.saved-sidebar__tab:hover {
-  color: var(--color-dark);
-  background: var(--color-gray-50);
-}
-
-.saved-sidebar__tab--active {
-  color: var(--color-blue-cobalt);
-  border-bottom-color: var(--color-blue-cobalt);
-}
-
-.saved-sidebar__tab svg {
-  color: var(--color-blue-cobalt);
-}
-
-/* Make the Cars I Want bookmark icon always blue */
-.saved-sidebar__tab:nth-child(2) svg {
-  color: var(--color-blue-cobalt);
-}
-
-.saved-sidebar__tab-count {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--spacing-5);
-  height: var(--spacing-5);
-  padding: 0 var(--spacing-2);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-white);
-  background: var(--color-blue-cobalt);
-  border-radius: var(--border-radius-full);
-}
-
-.saved-sidebar__tab--active .saved-sidebar__tab-count {
-  background: var(--color-blue-cobalt);
-}
-
 /* Content Area */
 .saved-sidebar__content {
   flex: 1;
@@ -903,19 +841,6 @@
 @media (max-width: 480px) {
   .saved-sidebar {
     max-width: 100%;
-  }
-
-  .saved-sidebar__tab {
-    flex-direction: column;
-    gap: var(--spacing-1);
-    padding: var(--spacing-3) var(--spacing-1);
-    font-size: var(--font-size-2xs);
-  }
-
-  .saved-sidebar__tab-count {
-    min-width: 18px;
-    height: 18px;
-    font-size: var(--font-size-2xs);
   }
 
   .saved-sidebar__vehicle-image {

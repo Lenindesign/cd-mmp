@@ -152,68 +152,6 @@
   white-space: nowrap;
 }
 
-/* Deal type filter tabs */
-.all-deals__type-filters {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.all-deals__type-filters::-webkit-scrollbar {
-  display: none;
-}
-
-.all-deals__type-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 16px;
-  height: 100%;
-  font-family: var(--font-heading);
-  font-size: 13px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-500);
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  cursor: pointer;
-  transition: color var(--transition-fast);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-}
-
-.all-deals__type-btn:hover {
-  color: var(--color-dark);
-}
-
-.all-deals__type-btn--active {
-  color: var(--color-dark);
-  box-shadow: inset 0 -4px 0 0 var(--color-blue-cobalt);
-}
-
-.all-deals__type-btn--active:hover {
-  color: var(--color-dark);
-}
-
-.all-deals__type-count {
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-400);
-  line-height: 1;
-}
-
-.all-deals__type-btn--active .all-deals__type-count {
-  color: var(--color-blue-cobalt);
-}
-
 /* Filter button */
 .all-deals__filter-btn {
   display: inline-flex;
@@ -989,19 +927,6 @@
     border-left: none;
     padding-left: var(--spacing-4);
     margin-left: auto;
-  }
-
-  .all-deals__type-filters {
-    order: 3;
-    flex-basis: 100%;
-    height: 44px;
-    margin-top: 4px;
-  }
-
-  .all-deals__type-btn {
-    font-size: 11px;
-    padding: 0 12px;
-    flex-shrink: 0;
   }
 }
 

@@ -171,73 +171,6 @@
   width: 300px;
 }
 
-/* Fuel type tabs */
-.cfbs-deals__tabs {
-  display: flex;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-6);
-  padding-bottom: var(--spacing-4);
-  border-bottom: 2px solid var(--color-gray-200);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.cfbs-deals__tab {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-4);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-full);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-600);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.cfbs-deals__tab:hover {
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-blue-cobalt);
-}
-
-.cfbs-deals__tab--active {
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-white);
-}
-
-.cfbs-deals__tab--active svg {
-  color: var(--color-white);
-}
-
-.cfbs-deals__tab--empty {
-  opacity: 0.5;
-}
-
-.cfbs-deals__tab-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 10px;
-  background: var(--color-gray-100);
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-600);
-}
-
-.cfbs-deals__tab--active .cfbs-deals__tab-count {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--color-white);
-}
-
 /* Section */
 .cfbs-deals__section {
   margin-bottom: var(--spacing-12);
@@ -969,16 +902,6 @@
     font-size: var(--font-size-3xl);
   }
 
-  .cfbs-deals__tabs {
-    gap: var(--spacing-1);
-    padding-bottom: var(--spacing-3);
-  }
-
-  .cfbs-deals__tab {
-    padding: var(--spacing-2) var(--spacing-3);
-    font-size: var(--font-size-xs);
-  }
-
   .cfbs-deals__grid {
     grid-template-columns: 1fr;
   }
@@ -1008,9 +931,5 @@
 
   .cfbs-deals__card-payment-amount {
     font-size: 26px;
-  }
-
-  .cfbs-deals__tab-count {
-    display: none;
   }
 }

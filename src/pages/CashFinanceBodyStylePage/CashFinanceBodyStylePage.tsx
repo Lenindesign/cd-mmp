@@ -17,6 +17,7 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import SavingsText from '../../components/SavingsText';
+import Tabs from '../../components/Tabs/Tabs';
 import './CashFinanceBodyStylePage.css';
 
 type BodyTab = 'all' | 'suv' | 'sedan' | 'truck' | 'coupe' | 'hatchback';
@@ -316,22 +317,19 @@ const CashFinanceBodyStylePage = () => {
         <div className="container">
           <div className="cfbs-deals__layout">
             <div className="cfbs-deals__main">
-              <div className="cfbs-deals__tabs" role="tablist">
-                {BODY_TABS.map(t => (
-                  <button
-                    key={t.key}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeTab === t.key}
-                    className={`cfbs-deals__tab ${activeTab === t.key ? 'cfbs-deals__tab--active' : ''} ${tabCounts[t.key] === 0 && t.key !== 'all' ? 'cfbs-deals__tab--empty' : ''}`}
-                    onClick={() => setActiveTab(t.key)}
-                  >
-                    {t.icon}
-                    <span>{t.label}</span>
-                    <span className="cfbs-deals__tab-count">{tabCounts[t.key]}</span>
-                  </button>
-                ))}
-              </div>
+              <Tabs
+                items={BODY_TABS.map(t => ({
+                  value: t.key,
+                  label: t.label,
+                  icon: t.icon,
+                  count: tabCounts[t.key],
+                  disabled: tabCounts[t.key] === 0 && t.key !== 'all',
+                }))}
+                value={activeTab}
+                onChange={setActiveTab}
+                variant="pills"
+                ariaLabel="Body style"
+              />
 
               <section className="cfbs-deals__section">
                 <div className="cfbs-deals__grid">

@@ -233,45 +233,6 @@
   color: var(--color-black);
 }
 
-/* Tabs */
-.price-history__tabs {
-  display: flex;
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.price-history__tab {
-  flex: 1;
-  padding: var(--spacing-3) var(--spacing-4);
-  background: transparent;
-  border: none;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-500);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  position: relative;
-}
-
-.price-history__tab:hover {
-  color: var(--color-gray-700);
-}
-
-.price-history__tab--active {
-  color: var(--color-black);
-  font-weight: var(--font-weight-bold);
-}
-
-.price-history__tab--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: var(--spacing-4);
-  right: var(--spacing-4);
-  height: var(--spacing-0-5);
-  background: var(--color-black);
-}
-
 /* Competitor Overlay Toggle */
 .price-history__overlay-toggle {
   padding: var(--spacing-3) var(--spacing-4);
@@ -947,19 +908,6 @@
 
   .price-history__powered-by {
     align-items: flex-start;
-  }
-
-  .price-history__tabs {
-    flex-direction: column;
-  }
-
-  .price-history__tab--active::after {
-    left: 0;
-    right: auto;
-    width: var(--spacing-1);
-    height: auto;
-    top: 0;
-    bottom: 0;
   }
 
   .price-history__ctas {

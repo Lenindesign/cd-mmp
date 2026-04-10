@@ -3,6 +3,7 @@ import { ChevronDown, Info, ArrowUpRight, Clock, AlertCircle } from 'lucide-reac
 import { getVehicleIncentives, getCurrentPeriod } from '../../services/incentivesService';
 import type { Incentive } from '../../services/incentivesService';
 import { Button } from '../Button';
+import Tabs from '../Tabs/Tabs';
 import './Incentives.css';
 
 interface IncentivesProps {
@@ -152,17 +153,12 @@ const Incentives = ({
 
           {/* Tabs and Location */}
           <div className="incentives__tabs-row">
-            <div className="incentives__tabs">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`incentives__tab ${activeTab === tab.id ? 'incentives__tab--active' : ''}`}
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            <Tabs
+              variant="pills"
+              items={tabs.map(tab => ({ value: tab.id, label: tab.label }))}
+              value={activeTab}
+              onChange={setActiveTab}
+            />
 
             <div className="incentives__location">
               <span className="incentives__zip">📍 {zipCode}</span>

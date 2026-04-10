@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { vehicleDatabase } from '../../data/vehicles';
 import type { Vehicle } from '../../types/vehicle';
 import './OnboardingResults.css';
+import Tabs from '../../components/Tabs/Tabs';
 
 type TabType = 'all' | 'new' | 'used';
 
@@ -97,33 +98,25 @@ const OnboardingResults: React.FC = () => {
 
       {/* Tabs */}
       <div className="onboarding-results__tabs-container">
-        <div className="onboarding-results__tabs">
-          <button
-            className={`onboarding-results__tab ${activeTab === 'all' ? 'onboarding-results__tab--active' : ''}`}
-            onClick={() => setActiveTab('all')}
-          >
-            All Results
-            <span className="onboarding-results__tab-count">{vehicles.length}</span>
-          </button>
-          <button
-            className={`onboarding-results__tab ${activeTab === 'new' ? 'onboarding-results__tab--active' : ''}`}
-            onClick={() => setActiveTab('new')}
-          >
-            New Vehicles
-            <span className="onboarding-results__tab-count">
-              {vehicles.filter(v => parseInt(v.year) >= 2024).length}
-            </span>
-          </button>
-          <button
-            className={`onboarding-results__tab ${activeTab === 'used' ? 'onboarding-results__tab--active' : ''}`}
-            onClick={() => setActiveTab('used')}
-          >
-            Used Vehicles
-            <span className="onboarding-results__tab-count">
-              {vehicles.filter(v => parseInt(v.year) < 2024).length}
-            </span>
-          </button>
-        </div>
+        <Tabs
+          items={[
+            { value: 'all', label: 'All Results', count: vehicles.length },
+            {
+              value: 'new',
+              label: 'New Vehicles',
+              count: vehicles.filter(v => parseInt(v.year) >= 2024).length,
+            },
+            {
+              value: 'used',
+              label: 'Used Vehicles',
+              count: vehicles.filter(v => parseInt(v.year) < 2024).length,
+            },
+          ]}
+          value={activeTab}
+          onChange={setActiveTab}
+          variant="underline"
+          ariaLabel="Vehicle results"
+        />
       </div>
 
       {/* Results Grid */}

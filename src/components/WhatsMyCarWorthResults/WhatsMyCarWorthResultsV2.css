@@ -282,35 +282,6 @@
   margin: 0;
 }
 
-.wmcw-v2__year-tabs {
-  display: flex;
-  gap: var(--spacing-1);
-  flex-wrap: wrap;
-}
-
-.wmcw-v2__year-tab {
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--color-gray-300);
-  background: var(--color-white);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-600);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.wmcw-v2__year-tab:hover {
-  border-color: var(--color-blue-cobalt);
-  color: var(--color-blue-cobalt);
-}
-
-.wmcw-v2__year-tab--active {
-  background: var(--color-black);
-  border-color: var(--color-black);
-  color: var(--color-white);
-}
-
 .wmcw-v2__highlights {
   display: flex;
   flex-direction: column;
@@ -851,12 +822,6 @@
 
   .wmcw-v2__table-col--value {
     font-size: var(--font-size-base);
-  }
-
-  .wmcw-v2__year-tabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
   }
 
   .wmcw-v2__next-vehicle-actions {

@@ -4,6 +4,7 @@ import { X, Trophy, TrendingUp, Fuel, Award, ExternalLink, Zap, Leaf, PlugZap } 
 import type { TopMPGVehicle, TopMPGByFuelType, FuelCategory } from '../../services/fuelEconomyService';
 import { vehicleDatabase } from '../../data/vehicles';
 import './MPGRankingsModal.css';
+import Tabs from '../Tabs/Tabs';
 
 /**
  * Generate URL slug for a vehicle
@@ -187,26 +188,21 @@ const MPGRankingsModal = ({
 
         {/* Fuel Type Tabs */}
         {vehiclesByFuelType && availableCategories.length > 1 && (
-          <div className="mpg-rankings-modal__tabs" role="tablist">
-            {availableCategories.map((category) => {
+          <Tabs
+            variant="pills"
+            items={availableCategories.map((category) => {
               const info = fuelCategoryLabels[category];
               const count = vehiclesByFuelType[category]?.length || 0;
-              return (
-                <button
-                  key={category}
-                  className={`mpg-rankings-modal__tab ${activeCategory === category ? 'mpg-rankings-modal__tab--active' : ''}`}
-                  onClick={() => setActiveCategory(category)}
-                  role="tab"
-                  aria-selected={activeCategory === category}
-                  aria-controls={`tabpanel-${category}`}
-                >
-                  {info.icon}
-                  <span className="mpg-rankings-modal__tab-label">{info.label}</span>
-                  <span className="mpg-rankings-modal__tab-count">{count}</span>
-                </button>
-              );
+              return {
+                value: category,
+                label: info.label,
+                icon: info.icon,
+                count,
+              };
             })}
-          </div>
+            value={activeCategory}
+            onChange={setActiveCategory}
+          />
         )}
 
         {/* Current Vehicle Status */}

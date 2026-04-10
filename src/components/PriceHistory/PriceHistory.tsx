@@ -1,10 +1,7 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { TrendingDown, TrendingUp, BadgeCheck, ChevronDown, ChevronUp } from 'lucide-react';
+import Tabs from '../Tabs/Tabs';
 import './PriceHistory.css';
-
-// Utility class helpers for common patterns
-const cn = (...classes: (string | false | undefined)[]) => 
-  classes.filter(Boolean).join(' ');
 
 interface PriceDataPoint {
   year: number;
@@ -458,32 +455,16 @@ const PriceHistory = ({
         </div>
 
         {/* Tab Toggle */}
-        <div className="price-history__tabs u-flex u-border-b" role="tablist">
-          <button 
-            className={cn(
-              'price-history__tab u-flex-1 u-cursor-pointer u-transition',
-              activeTab === 'history' && 'price-history__tab--active'
-            )}
-            onClick={() => setActiveTab('history')}
-            role="tab"
-            aria-selected={activeTab === 'history'}
-            aria-controls="price-history-chart"
-          >
-            Previous Two Years
-          </button>
-          <button 
-            className={cn(
-              'price-history__tab u-flex-1 u-cursor-pointer u-transition',
-              activeTab === 'forecast' && 'price-history__tab--active'
-            )}
-            onClick={() => setActiveTab('forecast')}
-            role="tab"
-            aria-selected={activeTab === 'forecast'}
-            aria-controls="price-history-chart"
-          >
-            Forecasted Value
-          </button>
-        </div>
+        <Tabs
+          items={[
+            { value: 'history', label: 'Previous Two Years' },
+            { value: 'forecast', label: 'Forecasted Value' },
+          ]}
+          value={activeTab}
+          onChange={setActiveTab}
+          variant="underline"
+          ariaLabel="Price history"
+        />
 
         {/* Competitor Overlay Toggle */}
         {competitors && competitors.length > 0 && (

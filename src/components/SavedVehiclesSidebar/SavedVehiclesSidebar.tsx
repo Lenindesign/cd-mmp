@@ -9,6 +9,7 @@ import { Button } from '../Button';
 import { DealerMapModal } from '../DealerLocatorMap';
 import type { VehicleInfo } from '../DealerLocatorMap';
 import VehicleComparisonModal from './VehicleComparisonModal';
+import Tabs from '../Tabs/Tabs';
 import './SavedVehiclesSidebar.css';
 
 interface SavedVehiclesSidebarProps {
@@ -323,21 +324,18 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
         </div>
 
         {/* Tabs */}
-        <div className="saved-sidebar__tabs">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              className={`saved-sidebar__tab ${activeTab === tab.id ? 'saved-sidebar__tab--active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.icon}
-              <span>{tab.label}</span>
-              {tab.count > 0 && (
-                <span className="saved-sidebar__tab-count">{tab.count}</span>
-              )}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          items={tabs.map(tab => ({
+            value: tab.id,
+            label: tab.label,
+            icon: tab.icon,
+            count: tab.count > 0 ? tab.count : undefined,
+          }))}
+          value={activeTab}
+          onChange={setActiveTab}
+          variant="underline"
+          ariaLabel="Saved vehicles"
+        />
 
         {/* Content */}
         <div className="saved-sidebar__content">

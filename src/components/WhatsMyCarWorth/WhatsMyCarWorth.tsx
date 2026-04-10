@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { vehicleDatabase } from '../../data/vehicles';
 import { Button } from '../Button';
+import Tabs from '../Tabs/Tabs';
 import './WhatsMyCarWorth.css';
 
 interface WhatsMyCarWorthProps {
@@ -410,24 +411,19 @@ const WhatsMyCarWorth = ({
         </div>
 
         {/* Input Method Tabs */}
-        <div className="whats-my-car-worth__tabs">
-          <button
-            type="button"
-            className={`whats-my-car-worth__tab ${inputMethod === 'select' ? 'whats-my-car-worth__tab--active' : ''}`}
-            onClick={() => { setInputMethod('select'); resetVinScanner(); }}
-          >
-            <Car size={18} />
-            <span>Select Vehicle</span>
-          </button>
-          <button
-            type="button"
-            className={`whats-my-car-worth__tab ${inputMethod === 'vin' ? 'whats-my-car-worth__tab--active' : ''}`}
-            onClick={() => setInputMethod('vin')}
-          >
-            <Scan size={18} />
-            <span>Scan VIN</span>
-          </button>
-        </div>
+        <Tabs
+          items={[
+            { value: 'select', label: 'Select Vehicle', icon: <Car size={18} /> },
+            { value: 'vin', label: 'Scan VIN', icon: <Scan size={18} /> },
+          ]}
+          value={inputMethod}
+          onChange={(method) => {
+            setInputMethod(method);
+            if (method === 'select') resetVinScanner();
+          }}
+          variant="segmented"
+          ariaLabel="Vehicle input method"
+        />
 
         {/* Form - Select Vehicle Tab */}
         {inputMethod === 'select' && (

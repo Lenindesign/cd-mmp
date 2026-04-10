@@ -22,6 +22,7 @@ import { vehicleDatabase } from '../../data/vehicles';
 import { getAvatarImageUrl, getUserInitials } from '../../utils/avatarUtils';
 import { getBannerImageUrl } from '../../utils/bannerUtils';
 import EditProfileModal from '../../components/EditProfileModal';
+import Tabs from '../../components/Tabs/Tabs';
 import './MyAccount.css';
 
 type TabType = 'profile' | 'saved' | 'subscriptions';
@@ -453,18 +454,12 @@ const MyAccount: React.FC = () => {
         <div className="my-account__layout">
           {/* Sidebar with Tabs */}
           <aside className="my-account__sidebar">
-            <nav className="my-account__tabs">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  className={`my-account__tab ${activeTab === tab.id ? 'my-account__tab--active' : ''}`}
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  {tab.icon}
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
+            <Tabs
+              variant="pills"
+              items={tabs.map((tab) => ({ value: tab.id, label: tab.label, icon: tab.icon }))}
+              value={activeTab}
+              onChange={setActiveTab}
+            />
           </aside>
 
           {/* Main Content Area */}
