@@ -282,9 +282,9 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  font-family: var(--font-heading);
+  font-family: var(--font-condensed);
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-extrabold);
+  font-weight: 600;
   color: var(--color-black);
   margin: 0 0 var(--spacing-6) 0;
   text-transform: uppercase;
@@ -770,9 +770,10 @@
   white-space: nowrap;
 }
 
-/* Detail grid */
+/* Detail grid — two equal columns (shared deals card pattern) */
 .mm-lease__card-details {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-4);
   margin-bottom: var(--spacing-3);
 }
@@ -781,6 +782,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .mm-lease__card-detail-label {
@@ -797,6 +799,7 @@
   font-weight: var(--font-weight-extrabold);
   color: var(--color-dark);
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 /* CTA */

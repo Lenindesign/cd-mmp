@@ -17,8 +17,44 @@ import {
   Navigation,
 } from 'lucide-react';
 import type { Incentive, GroupAffiliation } from '../../services/incentivesService';
+import { getVehicleTrims } from '../../services/trimService';
 import { formatExpiration } from '../../utils/dateUtils';
 import './IncentivesModal.css';
+
+function buildCashDownData(
+  make: string, model: string,
+  msrpMin: number, msrpMax: number,
+  eligibleTrims: string[],
+) {
+  const trims = getVehicleTrims(make, model, msrpMin, msrpMax);
+  const matched = trims.filter(t => eligibleTrims.some(
+    et => et.toLowerCase() === t.name.toLowerCase(),
+  ));
+
+  let rows: { name: string; msrp: number; down: number }[];
+
+  if (matched.length > 0) {
+    rows = matched.map(t => {
+      const msrp = parseInt(t.price.replace(/[^0-9]/g, ''), 10);
+      return { name: t.name, msrp, down: Math.round(msrp * 0.1) };
+    });
+  } else {
+    const count = eligibleTrims.length;
+    const step = count > 1 ? (msrpMax - msrpMin) / (count - 1) : 0;
+    rows = eligibleTrims.map((name, i) => {
+      const msrp = Math.round(msrpMin + step * i);
+      return { name, msrp, down: Math.round(msrp * 0.1) };
+    });
+  }
+
+  const downs = rows.map(r => r.down);
+  const lo = Math.min(...downs);
+  const hi = Math.max(...downs);
+  const rangeLabel = lo === hi
+    ? `$${lo.toLocaleString()}`
+    : `$${lo.toLocaleString()} – $${hi.toLocaleString()}`;
+  return { rows, rangeLabel };
+}
 
 export type IncentivesModalVariant = 'simple' | 'complete-with-form' | 'edmunds' | 'conversion-a' | 'conversion-b' | 'conversion-b-no-form';
 
@@ -150,7 +186,7 @@ export function getAprRangeLabel(active: { value: string; title: string; terms?:
   const lo = Math.min(...rates);
   const hi = Math.max(...rates);
   if (lo === hi) return active.value;
-  return `${lo}%–${hi}% APR`;
+  return `${lo}% - ${hi}% APR`;
 }
 
 export function buildAprTable(incentive: { value: string; title: string; terms?: string }) {
@@ -723,12 +759,31 @@ const IncentivesModal = ({
                           </div>
                         )}
 
-                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (
-                          <div className="incentives-modal__v5-key-section">
-                            <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms}</p>
-                          </div>
-                        )}
+                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (() => {
+                          const cd = buildCashDownData(offer.make, offer.model, offer.msrpMin, offer.msrpMax, offer.eligibleTrims);
+                          return (
+                            <div className="incentives-modal__v5-key-section">
+                              <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                              <p className="incentives-modal__v5-key-section-text">
+                                {activeIncentive.terms} Estimated cash down (10% of MSRP): {cd.rangeLabel}.
+                              </p>
+                              <table className="incentives-modal__v5-cashdown-table">
+                                <thead>
+                                  <tr><th>Trim</th><th>MSRP</th><th>Est. Cash Down</th></tr>
+                                </thead>
+                                <tbody>
+                                  {cd.rows.map(r => (
+                                    <tr key={r.name}>
+                                      <td>{r.name}</td>
+                                      <td>${r.msrp.toLocaleString()}</td>
+                                      <td>${r.down.toLocaleString()}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          );
+                        })()}
 
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
@@ -1086,12 +1141,31 @@ const IncentivesModal = ({
                           </div>
                         )}
 
-                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (
-                          <div className="incentives-modal__v5-key-section">
-                            <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms}</p>
-                          </div>
-                        )}
+                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (() => {
+                          const cd = buildCashDownData(offer.make, offer.model, offer.msrpMin, offer.msrpMax, offer.eligibleTrims);
+                          return (
+                            <div className="incentives-modal__v5-key-section">
+                              <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                              <p className="incentives-modal__v5-key-section-text">
+                                {activeIncentive.terms} Estimated cash down (10% of MSRP): {cd.rangeLabel}.
+                              </p>
+                              <table className="incentives-modal__v5-cashdown-table">
+                                <thead>
+                                  <tr><th>Trim</th><th>MSRP</th><th>Est. Cash Down</th></tr>
+                                </thead>
+                                <tbody>
+                                  {cd.rows.map(r => (
+                                    <tr key={r.name}>
+                                      <td>{r.name}</td>
+                                      <td>${r.msrp.toLocaleString()}</td>
+                                      <td>${r.down.toLocaleString()}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          );
+                        })()}
 
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>

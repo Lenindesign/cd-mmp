@@ -1,6 +1,6 @@
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, ChevronUp, ChevronDown, BadgeDollarSign, SlidersHorizontal, Heart, Info } from 'lucide-react';
+import { useMemo, useState, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronRight, ChevronUp, ChevronDown, SlidersHorizontal, Heart, Info } from 'lucide-react';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, AVG_MARKET_APR, AVG_LOAN_TERM } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -38,6 +38,7 @@ interface MiniDeal {
   staffRating?: number;
   monthlyPayment?: string;
   estimatedMonthly: string;
+  aprDisplay?: string;
   savingsVsAvg: string;
   savingsTooltip: string;
   term?: string;
@@ -61,15 +62,18 @@ const DEFAULT_FILTERS: DealsFilterState = {
 
 const DealsHubPage = () => {
   const { month, year } = getCurrentPeriod();
+  const navigate = useNavigate();
   const [activeDeal, setActiveDeal] = useState<MiniDeal | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const [filters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    const params = new URLSearchParams();
+    params.set('filters', JSON.stringify(applied));
+    navigate(`/deals/all?${params.toString()}`);
+  }, [navigate]);
   const [savedDeals, setSavedDeals] = useState<Set<string>>(new Set());
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
-  const navScrollRef = useRef<HTMLDivElement>(null);
-  const [navCanScroll, setNavCanScroll] = useState({ left: false, right: false });
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -195,6 +199,7 @@ const DealsHubPage = () => {
           staffRating: d.vehicle.staffRating,
           term: d.term,
           estimatedMonthly: `$${monthly.toLocaleString()}`,
+          aprDisplay: '0%',
           savingsVsAvg, savingsTooltip,
         };
       });
@@ -206,12 +211,13 @@ const DealsHubPage = () => {
         const months = parseTermMonths(d.term);
         const monthly = calcMonthly(msrp, aprNum, months);
         const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle, 'finance');
+        const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
         return {
           vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
           dealType: 'finance' as const,
-          dealText: getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term }),
+          dealText: rangeLabel,
           dealHeadline: `${d.apr} APR Financing for ${d.term}`,
           whatItMeans: `The manufacturer is subsidizing your loan rate to ${d.apr}, which is well below the national average of ~6.5%. This means lower monthly payments and thousands saved over the life of the loan.`,
           savingsNote: `At ${d.apr} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term.`,
@@ -220,7 +226,7 @@ const DealsHubPage = () => {
           trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
           editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
           staffRating: d.vehicle.staffRating, term: d.term,
-          estimatedMonthly: `$${monthly.toLocaleString()}`, savingsVsAvg, savingsTooltip,
+          estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: rangeLabel.replace(/\s*APR$/, ''), savingsVsAvg, savingsTooltip,
         };
       });
 
@@ -312,7 +318,7 @@ const DealsHubPage = () => {
           return { ...base, dealType: 'zero-apr' as const, dealText: '0% APR Financing', dealHeadline: `0% Interest Financing for ${term}`,
             whatItMeans: 'Zero interest on your auto loan—every payment dollar goes toward the car. This could save you thousands compared to a typical rate.',
             savingsNote: "On a $35,000 loan, you'd save approximately $3,000–$5,000 in interest.", whoQualifies: audience,
-            estimatedMonthly: `$${monthly.toLocaleString()}`, savingsVsAvg, savingsTooltip };
+            estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: '0%', savingsVsAvg, savingsTooltip };
         }
         if ('type' in d && d.type === 'cash') {
           const principal = Math.max(0, msrp - d.incentiveAmount);
@@ -339,10 +345,17 @@ const DealsHubPage = () => {
           const monthly = calcMonthly(msrp, aprNum, months);
           const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, bs, 'finance');
           const audience = 'targetAudience' in d ? d.targetAudience : 'Well-qualified buyers.';
+          const aprStr = typeof apr === 'string' ? apr : `${apr}%`;
+          const rangeLabel = getAprRangeLabel({
+            value: `${aprStr} APR`,
+            title: 'programName' in d ? d.programName : '',
+            terms: term,
+          });
+          const aprDisplay = rangeLabel.replace(/\s*APR$/, '');
           return { ...base, dealType: 'finance' as const, dealText: `${apr} APR`, dealHeadline: `${apr} APR Special Financing`,
             whatItMeans: 'A below-market interest rate from the manufacturer that lowers your monthly payment and total cost.',
             savingsNote: 'Could save you $1,500–$3,000 in interest over the loan term.', whoQualifies: audience,
-            estimatedMonthly: `$${monthly.toLocaleString()}`, savingsVsAvg, savingsTooltip };
+            estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay, savingsVsAvg, savingsTooltip };
         }
       });
 
@@ -357,74 +370,6 @@ const DealsHubPage = () => {
   }, [rawData, matchesFilters]);
 
   const sectionIds = useMemo(() => categories.map(cat => cat.href.replace('/deals/', 'section-')), [categories]);
-
-  useEffect(() => {
-    const els = sectionIds.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
-    if (els.length === 0) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        }
-      },
-      { rootMargin: '-120px 0px -60% 0px', threshold: 0 },
-    );
-    els.forEach(el => observer.observe(el));
-    return () => observer.disconnect();
-  }, [sectionIds]);
-
-  useEffect(() => {
-    if (!activeSection || !navScrollRef.current) return;
-    const idx = sectionIds.indexOf(activeSection);
-    if (idx < 0) return;
-    const btn = navScrollRef.current.children[idx] as HTMLElement | undefined;
-    if (!btn) return;
-    const nav = navScrollRef.current;
-    const btnLeft = btn.offsetLeft;
-    const btnRight = btnLeft + btn.offsetWidth;
-    const navLeft = nav.scrollLeft;
-    const navRight = navLeft + nav.clientWidth;
-    if (btnLeft < navLeft || btnRight > navRight) {
-      nav.scrollTo({
-        left: btnLeft - nav.clientWidth / 2 + btn.offsetWidth / 2,
-        behavior: 'smooth',
-      });
-    }
-  }, [activeSection, sectionIds]);
-
-  const checkNavScroll = useCallback(() => {
-    const el = navScrollRef.current;
-    if (!el) return;
-    setNavCanScroll({
-      left: el.scrollLeft > 2,
-      right: el.scrollLeft + el.clientWidth < el.scrollWidth - 2,
-    });
-  }, []);
-
-  useEffect(() => {
-    checkNavScroll();
-    const el = navScrollRef.current;
-    if (!el) return;
-    el.addEventListener('scroll', checkNavScroll, { passive: true });
-    window.addEventListener('resize', checkNavScroll);
-    return () => { el.removeEventListener('scroll', checkNavScroll); window.removeEventListener('resize', checkNavScroll); };
-  }, [checkNavScroll, categories]);
-
-  const scrollNav = useCallback((dir: 'left' | 'right') => {
-    const el = navScrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' });
-  }, []);
-
-  const scrollToSection = useCallback((sectionId: string) => {
-    const el = document.getElementById(sectionId);
-    if (!el) return;
-    const offset = 130;
-    const top = el.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
-  }, []);
 
   const handleDealClick = (e: React.MouseEvent, deal: MiniDeal) => {
     e.preventDefault();
@@ -484,10 +429,6 @@ const DealsHubPage = () => {
       <div className="deals-hub__hero">
         <div className="container">
           <div className="deals-hub__hero-content">
-            <div className="deals-hub__hero-badge">
-              <BadgeDollarSign size={16} className="deals-hub__hero-badge-icon" aria-hidden />
-              <span className="hero-pill__label">Car Deals</span>
-            </div>
             <nav className="deals-hub__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="deals-hub__breadcrumb-sep">/</span>
@@ -499,59 +440,22 @@ const DealsHubPage = () => {
               rebates, special finance rates, and lease deals—all paired with Car and Driver's expert ratings
               to help you find a great car at a great price.
             </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter toolbar */}
-      <div className="deals-hub__toolbar">
-        <div className="container deals-hub__toolbar-inner">
-          <span className="deals-hub__toolbar-count">{totalResults} deals available</span>
-
-          <div className="deals-hub__anchor-nav-wrap">
-            {navCanScroll.left && (
-              <button type="button" className="deals-hub__anchor-nav-arrow deals-hub__anchor-nav-arrow--left" onClick={() => scrollNav('left')} aria-label="Scroll left">
-                <ChevronLeft size={16} />
+            <div className="deals-hub__hero-actions">
+              <Link to="/deals/all" className="deals-hub__view-all-link">
+                View All <ChevronRight size={14} aria-hidden />
+              </Link>
+              <button
+                type="button"
+                className={`deals-hub__filter-btn ${hasActiveFilters ? 'deals-hub__filter-btn--active' : ''}`}
+                onClick={() => setFilterOpen(true)}
+              >
+                <SlidersHorizontal size={16} aria-hidden />
+                <span>Filters</span>
+                {activeFilterCount > 0 && (
+                  <span className="deals-hub__filter-badge">{activeFilterCount}</span>
+                )}
               </button>
-            )}
-            <div className="deals-hub__anchor-nav" ref={navScrollRef}>
-              {categories.map((cat, i) => {
-                const sectionId = sectionIds[i];
-                return (
-                  <button
-                    key={cat.href}
-                    type="button"
-                    className={`deals-hub__anchor-btn ${activeSection === sectionId ? 'deals-hub__anchor-btn--active' : ''}`}
-                    onClick={() => scrollToSection(sectionId)}
-                  >
-                    <span className="deals-hub__anchor-label">{cat.title}</span>
-                    <span className="deals-hub__anchor-count">{cat.count}</span>
-                  </button>
-                );
-              })}
             </div>
-            {navCanScroll.right && (
-              <button type="button" className="deals-hub__anchor-nav-arrow deals-hub__anchor-nav-arrow--right" onClick={() => scrollNav('right')} aria-label="Scroll right">
-                <ChevronRight size={16} />
-              </button>
-            )}
-          </div>
-
-          <div className="deals-hub__toolbar-actions">
-            <Link to="/deals/all" className="deals-hub__view-all-link">
-              View All <ChevronRight size={14} />
-            </Link>
-            <button
-              type="button"
-              className={`deals-hub__filter-btn ${hasActiveFilters ? 'deals-hub__filter-btn--active' : ''}`}
-              onClick={() => setFilterOpen(true)}
-            >
-              <SlidersHorizontal size={16} />
-              <span>Filters</span>
-              {activeFilterCount > 0 && (
-                <span className="deals-hub__filter-badge">{activeFilterCount}</span>
-              )}
-            </button>
           </div>
         </div>
       </div>
@@ -593,6 +497,9 @@ const DealsHubPage = () => {
                       <Link to={`/${deal.slug}`} className="deals-hub__card-image-link">
                         <div className="deals-hub__card-image">
                           <img src={deal.image} alt={deal.vehicleName} />
+                          <span className="deals-hub__card-deal-type-tag">
+                            {deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}
+                          </span>
                           <button
                             type="button"
                             className={`deals-hub__card-save ${savedDeals.has(deal.slug) ? 'deals-hub__card-save--active' : ''}`}
@@ -647,9 +554,9 @@ const DealsHubPage = () => {
                         {/* Prominent payment / headline */}
                         <div className="deals-hub__card-payment-block">
                           <div className="deals-hub__card-payment">
-                            <span className="deals-hub__card-payment-amount">{deal.estimatedMonthly}</span>
+                            <span className="deals-hub__card-payment-amount">{(deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? deal.aprDisplay : deal.estimatedMonthly}</span>
                             <span className="deals-hub__card-payment-period">
-                              {deal.dealType === 'lease' ? '/mo' : deal.dealType === 'cash' ? ' cash back' : '/mo*'}
+                              {deal.dealType === 'cash' ? 'Cash Back' : (deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? ' APR' : '/mo'}
                             </span>
                           </div>
                           <span className="deals-hub__card-payment-savings">
@@ -659,6 +566,7 @@ const DealsHubPage = () => {
                               <span className="deals-hub__card-tooltip">{deal.savingsTooltip}</span>
                             </span>
                           </span>
+                          <span className="deals-hub__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                         </div>
 
                         {/* Deal pill */}
@@ -748,7 +656,7 @@ const DealsHubPage = () => {
         isOpen={filterOpen}
         onClose={() => setFilterOpen(false)}
         filters={filters}
-        onApply={setFilters}
+        onApply={handleFilterApply}
         totalResults={totalResults}
       />
     </div>

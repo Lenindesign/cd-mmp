@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { Fragment, useState, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, ChevronDown, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
 import { getAllVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
@@ -139,6 +139,15 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
   );
 };
 
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
 const VehiclesListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
@@ -146,6 +155,10 @@ const VehiclesListPage = () => {
   const [hoveredListing, setHoveredListing] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 24; // Show 24 items per page (6 rows x 4 columns)
+  /** In-feed leaderboard after each batch of this many cards (e.g. 6 rows × 2 cols or 3 rows × 4 cols) */
+  const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+  const LISTINGS_BREAKER_AD_URL =
+    'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
   const resultsRef = useRef<HTMLDivElement>(null);
   
   // Get filter values from URL params
@@ -588,10 +601,7 @@ const VehiclesListPage = () => {
       />
       
       {/* Horizontal Ad */}
-      <AdBanner 
-        imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" 
-        altText="Nissan Advertisement"
-      />
+      <AdBanner imageUrl={LISTINGS_BREAKER_AD_URL} altText="Nissan Advertisement" />
       
       {/* Vehicle Grid/List */}
       <div className="vehicles-list-page__content" ref={resultsRef} id="results">
@@ -600,64 +610,86 @@ const VehiclesListPage = () => {
             <div className="vehicles-list-page__main">
               <div className="vehicles-list-page__grid">
             {/* New Vehicles */}
-            {inventoryType === 'new' && paginatedVehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                id={vehicle.id}
-                name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                slug={vehicle.slug}
-                image={vehicle.image}
-                bodyStyle={vehicle.bodyStyle}
-                price={formatCurrency(vehicle.priceMin)}
-                rating={getVehicleRatingForVehicle(vehicle)}
-                editorsChoice={vehicle.editorsChoice}
-                tenBest={vehicle.tenBest}
-                showShopButton={true}
-                shopButtonText={
-                  vehicle.model.length > 10
-                    ? (vehicle.year === '2024' ? 'SHOP USED' : 'SHOP NEW')
-                    : (vehicle.year === '2024' ? `SHOP USED ${vehicle.model.toUpperCase()}` : `SHOP NEW ${vehicle.model.toUpperCase()}`)
-                }
-                shopButtonVariant="outline"
-                showSaveButton={true}
-              />
-            ))}
+            {inventoryType === 'new' &&
+              chunkArray(paginatedVehicles, GRID_BREAKER_AFTER_CARD_COUNT).map((chunk, chunkIndex, allChunks) => (
+                <Fragment key={`vehicles-chunk-${chunkIndex}`}>
+                  {chunk.map((vehicle) => (
+                    <VehicleCard
+                      key={vehicle.id}
+                      id={vehicle.id}
+                      name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                      slug={vehicle.slug}
+                      image={vehicle.image}
+                      bodyStyle={vehicle.bodyStyle}
+                      price={formatCurrency(vehicle.priceMin)}
+                      rating={getVehicleRatingForVehicle(vehicle)}
+                      editorsChoice={vehicle.editorsChoice}
+                      tenBest={vehicle.tenBest}
+                      showShopButton={true}
+                      shopButtonText={
+                        vehicle.model.length > 10
+                          ? vehicle.year === '2024'
+                            ? 'SHOP USED'
+                            : 'SHOP NEW'
+                          : vehicle.year === '2024'
+                            ? `SHOP USED ${vehicle.model.toUpperCase()}`
+                            : `SHOP NEW ${vehicle.model.toUpperCase()}`
+                      }
+                      shopButtonVariant="outline"
+                      showSaveButton={true}
+                    />
+                  ))}
+                  {chunkIndex < allChunks.length - 1 && (
+                    <div className="vehicles-list-page__grid-breaker-ad">
+                      <AdBanner imageUrl={LISTINGS_BREAKER_AD_URL} altText="Nissan Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
 
             {/* Used Listings */}
-            {inventoryType === 'used' && paginatedListings.map((listing, index) => {
-              // Determine tooltip position based on column (4-column grid)
-              // Columns 0, 1 → right; Columns 2, 3 → left
-              const columnIndex = index % 4;
-              const tooltipPosition: 'left' | 'right' = columnIndex < 2 ? 'right' : 'left';
-              
-              return (
-                <div 
-                  key={listing.id}
-                  className={`vehicles-list-page__card-wrapper vehicles-list-page__card-wrapper--tooltip-${tooltipPosition}`}
-                  onMouseEnter={() => setHoveredListing(listing.id)}
-                  onMouseLeave={() => setHoveredListing(null)}
-                >
-                  <VehicleCard
-                    id={listing.id}
-                    name={`${listing.year} ${listing.make} ${listing.model}`}
-                    slug={listing.slug}
-                    image={listing.image}
-                    year={listing.year}
-                    trim={listing.trim}
-                    price={formatCurrency(listing.price)}
-                    priceLabel=""
-                    mileage={listing.mileage}
-                    dealerName={listing.dealerName}
-                    distance={listing.distance}
-                    showSaveButton={true}
-                  />
-                {/* Vehicle History Tooltip */}
-                {hoveredListing === listing.id && listing.history && (
-                  <VehicleHistoryTooltip listing={listing} position={tooltipPosition} />
-                )}
-                </div>
-              );
-            })}
+            {inventoryType === 'used' &&
+              chunkArray(paginatedListings, GRID_BREAKER_AFTER_CARD_COUNT).map((chunk, chunkIndex, allChunks) => (
+                <Fragment key={`listings-chunk-${chunkIndex}`}>
+                  {chunk.map((listing, index) => {
+                    const globalIndex = chunkIndex * GRID_BREAKER_AFTER_CARD_COUNT + index;
+                    const columnIndex = globalIndex % 4;
+                    const tooltipPosition: 'left' | 'right' = columnIndex < 2 ? 'right' : 'left';
+
+                    return (
+                      <div
+                        key={listing.id}
+                        className={`vehicles-list-page__card-wrapper vehicles-list-page__card-wrapper--tooltip-${tooltipPosition}`}
+                        onMouseEnter={() => setHoveredListing(listing.id)}
+                        onMouseLeave={() => setHoveredListing(null)}
+                      >
+                        <VehicleCard
+                          id={listing.id}
+                          name={`${listing.year} ${listing.make} ${listing.model}`}
+                          slug={listing.slug}
+                          image={listing.image}
+                          year={listing.year}
+                          trim={listing.trim}
+                          price={formatCurrency(listing.price)}
+                          priceLabel=""
+                          mileage={listing.mileage}
+                          dealerName={listing.dealerName}
+                          distance={listing.distance}
+                          showSaveButton={true}
+                        />
+                        {hoveredListing === listing.id && listing.history && (
+                          <VehicleHistoryTooltip listing={listing} position={tooltipPosition} />
+                        )}
+                      </div>
+                    );
+                  })}
+                  {chunkIndex < allChunks.length - 1 && (
+                    <div className="vehicles-list-page__grid-breaker-ad">
+                      <AdBanner imageUrl={LISTINGS_BREAKER_AD_URL} altText="Nissan Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
           </div>
           
           {totalCount === 0 && (

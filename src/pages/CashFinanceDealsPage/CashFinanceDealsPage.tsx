@@ -1,9 +1,10 @@
 import { useMemo, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, SlidersHorizontal } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -11,7 +12,7 @@ import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '..
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
-import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
@@ -60,10 +61,15 @@ const CashFinanceDealsPage = () => {
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const navigate = useNavigate();
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    const params = new URLSearchParams();
+    params.set('filters', JSON.stringify(applied));
+    navigate(`/deals/all?${params.toString()}`);
+  }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null;
-  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -243,16 +249,33 @@ const CashFinanceDealsPage = () => {
       {/* Filter toolbar */}
       <div className="cf-deals-page__toolbar">
         <div className="container cf-deals-page__toolbar-inner">
-          <span className="cf-deals-page__toolbar-count">{displayDeals.length} deals available</span>
+          <div className="active-filter-pills__toolbar-left">
+            <span className="active-filter-pills__count">{displayDeals.length} {displayDeals.length === 1 ? 'deal' : 'deals'}</span>
+            {activeFilterPills.length > 0 && (
+              <div className="active-filter-pills__row" aria-label="Active filters">
+                {activeFilterPills.map(pill => (
+                  <span key={pill.id} className="active-filter-pills__pill">
+                    <span className="active-filter-pills__pill-label">{pill.label}</span>
+                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                      <X size={12} strokeWidth={2.5} aria-hidden />
+                    </button>
+                  </span>
+                ))}
+                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
+          </div>
           <button
             type="button"
-            className={`cf-deals-page__toolbar-filter-btn ${hasActiveFilters ? 'cf-deals-page__toolbar-filter-btn--active' : ''}`}
+            className={`cf-deals-page__toolbar-filter-btn ${activeFilterPills.length > 0 ? 'cf-deals-page__toolbar-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
             <SlidersHorizontal size={16} />
             <span>Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="cf-deals-page__toolbar-filter-badge">{activeFilterCount}</span>
+            {activeFilterPills.length > 0 && (
+              <span className="cf-deals-page__toolbar-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -272,6 +295,9 @@ const CashFinanceDealsPage = () => {
                       const saved = isVehicleSaved(vehicleName);
                       const isExpanded = expandedDealId === deal.id;
                       const isCash = deal.type === 'cash';
+                      const financeDisplayRate = !isCash
+                        ? getAprRangeLabel({ value: `${deal.apr} APR`, title: deal.programName, terms: deal.term }).replace(/\s*APR$/, '')
+                        : '';
 
                       return (
                         <div key={deal.id} className="cf-deals-page__card">
@@ -289,6 +315,7 @@ const CashFinanceDealsPage = () => {
                           <Link to={`/${deal.vehicle.slug}`} className="cf-deals-page__card-image-link">
                             <div className="cf-deals-page__card-image-container">
                               <img src={deal.vehicle.image} alt={vehicleName} className="cf-deals-page__card-image" />
+                              <span className="cf-deals-page__card-deal-type-tag">{isCash ? 'Cash' : 'Buy'}</span>
                               <button
                                 className={`cf-deals-page__card-save ${saved ? 'cf-deals-page__card-save--saved' : ''}`}
                                 onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
@@ -357,6 +384,7 @@ const CashFinanceDealsPage = () => {
                                           <span className="cf-deals-page__card-tooltip">{savingsTooltip}</span>
                                         </span>
                                       </span>
+                                      <span className="cf-deals-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                                     </div>
                                   );
                                 })()
@@ -369,8 +397,8 @@ const CashFinanceDealsPage = () => {
                                   return (
                                     <div className="cf-deals-page__card-payment-block">
                                       <div className="cf-deals-page__card-payment">
-                                        <span className="cf-deals-page__card-payment-amount">${monthly}</span>
-                                        <span className="cf-deals-page__card-payment-period">/mo*</span>
+                                        <span className="cf-deals-page__card-payment-amount">{financeDisplayRate}</span>
+                                        <span className="cf-deals-page__card-payment-period"> APR</span>
                                       </div>
                                       <span className="cf-deals-page__card-payment-savings">
                                         {savingsVsAvg}
@@ -379,6 +407,7 @@ const CashFinanceDealsPage = () => {
                                           <span className="cf-deals-page__card-tooltip">{savingsTooltip}</span>
                                         </span>
                                       </span>
+                                      <span className="cf-deals-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                                     </div>
                                   );
                                 })()}
@@ -386,7 +415,7 @@ const CashFinanceDealsPage = () => {
                             <button className="cf-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
                               <span className="cf-deals-page__card-deal-pill-chip">{isCash ? 'Cash' : 'Buy'}</span>
                               <span className="cf-deals-page__card-deal-pill-text">
-                                {isCash ? `${deal.incentiveValue} cash back` : `${deal.apr} APR for ${deal.term}`}
+                                {isCash ? `${deal.incentiveValue} cash back` : `${financeDisplayRate} APR for ${deal.term}`}
                               </span>
                               <span className="cf-deals-page__card-deal-pill-divider" />
                               <span className="cf-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
@@ -557,7 +586,7 @@ const CashFinanceDealsPage = () => {
         isOpen={filterOpen}
         onClose={() => setFilterOpen(false)}
         filters={filters}
-        onApply={setFilters}
+        onApply={handleFilterApply}
         totalResults={displayDeals.length}
       />
     </div>

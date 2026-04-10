@@ -93,6 +93,65 @@
   max-width: 650px;
 }
 
+/* Toolbar */
+.suv-deals-page__toolbar {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.suv-deals-page__toolbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+}
+
+.suv-deals-page__filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-full);
+  border: 1.5px solid var(--color-gray-300);
+  background: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.suv-deals-page__filter-btn:hover {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+}
+
+.suv-deals-page__filter-btn--active {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+}
+
+.suv-deals-page__filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--border-radius-full);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
 .suv-deals-page__content {
   padding: var(--spacing-8) 0;
 }
@@ -120,9 +179,9 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  font-family: var(--font-heading);
+  font-family: var(--font-condensed);
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-extrabold);
+  font-weight: 600;
   color: var(--color-black);
   margin: 0 0 var(--spacing-6) 0;
   text-transform: uppercase;
@@ -609,11 +668,11 @@
   text-overflow: ellipsis;
 }
 
-/* Card details */
+/* Card details — two equal columns (shared deals card pattern) */
 .suv-deals-page__card-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-2);
+  gap: var(--spacing-4);
   margin-bottom: var(--spacing-3);
 }
 
@@ -621,6 +680,7 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
+  min-width: 0;
 }
 
 .suv-deals-page__card-detail-label {
@@ -637,6 +697,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   color: var(--color-black);
+  overflow-wrap: anywhere;
 }
 
 /* CTA */
@@ -764,67 +825,13 @@
   background: var(--color-blue-dark, #1a3a5c);
 }
 
-/* FAQ */
-.suv-deals-page__faq-section {
-  margin-bottom: var(--spacing-12);
-}
-
-.suv-deals-page__faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-}
-
-.suv-deals-page__faq-item {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  transition: all var(--transition-fast);
-}
-
-.suv-deals-page__faq-item--expanded {
-  border-color: var(--color-blue-cobalt);
-  box-shadow: 0 2px 12px rgba(27, 95, 138, 0.1);
-}
-
-.suv-deals-page__faq-question {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: var(--spacing-4) var(--spacing-5);
-  background: transparent;
+button.suv-deals-page__empty-state-link {
   border: none;
   cursor: pointer;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-black);
-  text-align: left;
-  transition: color var(--transition-fast);
+  font-family: inherit;
 }
 
-.suv-deals-page__faq-question:hover {
-  color: var(--color-blue-cobalt);
-}
-
-.suv-deals-page__faq-question svg {
-  flex-shrink: 0;
-  color: var(--color-gray-500);
-}
-
-.suv-deals-page__faq-answer {
-  padding: 0 var(--spacing-5) var(--spacing-4);
-}
-
-.suv-deals-page__faq-answer p {
-  font-family: var(--font-article);
-  font-size: var(--font-size-base);
-  color: var(--color-gray-700);
-  line-height: 1.7;
-  margin: 0;
-}
+/* FAQ styles handled by shared /styles/faq-section.css */
 
 /* Links */
 .suv-deals-page__links-section {

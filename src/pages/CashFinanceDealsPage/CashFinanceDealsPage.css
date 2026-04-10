@@ -256,9 +256,9 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  font-family: var(--font-heading);
+  font-family: var(--font-condensed);
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-extrabold);
+  font-weight: 600;
   color: var(--color-black);
   margin: 0 0 var(--spacing-6) 0;
   text-transform: uppercase;
@@ -744,9 +744,10 @@
   white-space: nowrap;
 }
 
-/* Detail grid */
+/* Detail grid — two equal columns (shared deals card pattern) */
 .cf-deals-page__card-details {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-4);
   margin-bottom: var(--spacing-3);
 }
@@ -755,6 +756,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .cf-deals-page__card-detail-label {
@@ -771,6 +773,7 @@
   font-weight: var(--font-weight-extrabold);
   color: var(--color-dark);
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 /* CTA */
@@ -859,67 +862,7 @@
   line-height: 1.5;
 }
 
-/* FAQ Section */
-.cf-deals-page__faq-section {
-  margin-bottom: var(--spacing-12);
-}
-
-.cf-deals-page__faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-}
-
-.cf-deals-page__faq-item {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  transition: all var(--transition-fast);
-}
-
-.cf-deals-page__faq-item--expanded {
-  border-color: var(--color-blue-cobalt);
-  box-shadow: 0 2px 12px rgba(27, 95, 138, 0.1);
-}
-
-.cf-deals-page__faq-question {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: var(--spacing-4) var(--spacing-5);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-black);
-  text-align: left;
-  transition: color var(--transition-fast);
-}
-
-.cf-deals-page__faq-question:hover {
-  color: var(--color-blue-cobalt);
-}
-
-.cf-deals-page__faq-question svg {
-  flex-shrink: 0;
-  color: var(--color-gray-500);
-}
-
-.cf-deals-page__faq-answer {
-  padding: 0 var(--spacing-5) var(--spacing-4);
-}
-
-.cf-deals-page__faq-answer p {
-  font-family: var(--font-article);
-  font-size: var(--font-size-base);
-  color: var(--color-gray-700);
-  line-height: 1.7;
-  margin: 0;
-}
+/* FAQ styles handled by shared /styles/faq-section.css */
 
 /* Internal Links */
 .cf-deals-page__links-section {

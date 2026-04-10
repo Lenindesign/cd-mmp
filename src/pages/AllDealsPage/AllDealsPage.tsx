@@ -1,6 +1,6 @@
-import { useMemo, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronUp, ChevronDown, SlidersHorizontal, Heart, Info } from 'lucide-react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ChevronUp, ChevronDown, SlidersHorizontal, Heart, Info, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -12,6 +12,7 @@ import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers } from '../../utils/dealCalculations';
+import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import './AllDealsPage.css';
 
@@ -37,6 +38,7 @@ interface MiniDeal {
   staffRating?: number;
   monthlyPayment?: string;
   estimatedMonthly: string;
+  aprDisplay?: string;
   monthlyNum: number;
   savingsVsAvg: string;
   savingsTooltip: string;
@@ -69,11 +71,31 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'recommended',
 };
 
+function parseFiltersFromUrl(raw: string | null): DealsFilterState | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT_FILTERS, ...parsed };
+  } catch {
+    return null;
+  }
+}
+
 const AllDealsPage = () => {
   const { month, year } = getCurrentPeriod();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeDeal, setActiveDeal] = useState<MiniDeal | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useState<DealsFilterState>(() => {
+    return parseFiltersFromUrl(searchParams.get('filters')) ?? DEFAULT_FILTERS;
+  });
+  useEffect(() => {
+    if (searchParams.has('filters')) {
+      searchParams.delete('filters');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, []);
+
   const [savedDeals, setSavedDeals] = useState<Set<string>>(new Set());
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
@@ -107,8 +129,19 @@ const AllDealsPage = () => {
     });
   }, []);
 
-  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null || filters.monthlyPaymentMin > 0 || filters.monthlyPaymentMax < 99999;
-  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0) + (filters.monthlyPaymentMin > 0 ? 1 : 0) + (filters.monthlyPaymentMax < 99999 ? 1 : 0);
+  const { pills: sharedPills, clearAllFilters: clearSharedFilters } = useActiveFilterPills(filters, setFilters);
+
+  const activeFilterPills = useMemo(() => {
+    const extra = dealTypeFilter !== 'all'
+      ? [{ id: `type-${dealTypeFilter}`, label: DEAL_TYPE_LABELS[dealTypeFilter], onRemove: () => setDealTypeFilter('all') }]
+      : [];
+    return [...extra, ...sharedPills];
+  }, [dealTypeFilter, sharedPills]);
+
+  const clearAllFilters = useCallback(() => {
+    setDealTypeFilter('all');
+    clearSharedFilters();
+  }, [clearSharedFilters]);
 
   const allDeals = useMemo(() => {
     const deals: MiniDeal[] = [];
@@ -133,7 +166,7 @@ const AllDealsPage = () => {
           trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
           editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
           staffRating: d.vehicle.staffRating, term: d.term,
-          estimatedMonthly: `$${monthly.toLocaleString()}`, monthlyNum: monthly,
+          estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: '0%', monthlyNum: monthly,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
         });
       });
@@ -144,12 +177,13 @@ const AllDealsPage = () => {
         const months = parseTermMonths(d.term);
         const monthly = calcMonthly(msrp, aprNum, months);
         const savings = buildSavingsText(monthly, d.vehicle.bodyStyle, 'finance');
+        const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
         deals.push({
           vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
           dealType: 'finance',
-          dealText: getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term }),
+          dealText: rangeLabel,
           dealHeadline: `${d.apr} APR Financing for ${d.term}`,
           whatItMeans: `A below-market interest rate from the manufacturer that lowers your monthly payment.`,
           savingsNote: `At ${d.apr} instead of 6.5%, you could save $1,500–$3,000 in interest.`,
@@ -158,7 +192,7 @@ const AllDealsPage = () => {
           trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
           editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
           staffRating: d.vehicle.staffRating, term: d.term,
-          estimatedMonthly: `$${monthly.toLocaleString()}`, monthlyNum: monthly,
+          estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: rangeLabel.replace(/\s*APR$/, ''), monthlyNum: monthly,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
         });
       });
@@ -321,35 +355,33 @@ const AllDealsPage = () => {
 
       <div className="all-deals__toolbar">
         <div className="container all-deals__toolbar-inner">
-          <div className="all-deals__toolbar-top">
-            <span className="all-deals__toolbar-count">{filteredDeals.length} deals available</span>
-          </div>
-          <div className="all-deals__type-filters">
-            {(Object.keys(DEAL_TYPE_LABELS) as DealTypeFilter[]).map(type => (
-              <button
-                key={type}
-                type="button"
-                className={`all-deals__type-btn ${dealTypeFilter === type ? 'all-deals__type-btn--active' : ''}`}
-                onClick={() => setDealTypeFilter(type)}
-              >
-                {DEAL_TYPE_LABELS[type]}
-                {type !== 'all' && (
-                  <span className="all-deals__type-count">
-                    {allDeals.filter(d => d.dealType === type).length}
+          <div className="active-filter-pills__toolbar-left">
+            <span className="active-filter-pills__count">{filteredDeals.length} {filteredDeals.length === 1 ? 'deal' : 'deals'}</span>
+            {activeFilterPills.length > 0 && (
+              <div className="active-filter-pills__row" aria-label="Active filters">
+                {activeFilterPills.map(pill => (
+                  <span key={pill.id} className="active-filter-pills__pill">
+                    <span className="active-filter-pills__pill-label">{pill.label}</span>
+                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                      <X size={12} strokeWidth={2.5} aria-hidden />
+                    </button>
                   </span>
-                )}
-              </button>
-            ))}
+                ))}
+                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
           </div>
           <button
             type="button"
-            className={`all-deals__filter-btn ${hasActiveFilters ? 'all-deals__filter-btn--active' : ''}`}
+            className={`all-deals__filter-btn ${activeFilterPills.length > 0 ? 'all-deals__filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
             <SlidersHorizontal size={16} />
             <span>Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="all-deals__filter-badge">{activeFilterCount}</span>
+            {activeFilterPills.length > 0 && (
+              <span className="all-deals__filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -380,6 +412,7 @@ const AllDealsPage = () => {
                     <Link to={`/${deal.slug}`} className="all-deals__card-image-link">
                       <div className="all-deals__card-image">
                         <img src={deal.image} alt={deal.vehicleName} />
+                        <span className="all-deals__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
                         <button
                           type="button"
                           className={`all-deals__card-save ${savedDeals.has(deal.slug) ? 'all-deals__card-save--active' : ''}`}
@@ -431,9 +464,9 @@ const AllDealsPage = () => {
                     <div className="all-deals__card-body">
                       <div className="all-deals__card-payment-block">
                         <div className="all-deals__card-payment">
-                          <span className="all-deals__card-payment-amount">{deal.estimatedMonthly}</span>
+                          <span className="all-deals__card-payment-amount">{(deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? deal.aprDisplay : deal.estimatedMonthly}</span>
                           <span className="all-deals__card-payment-period">
-                            {deal.dealType === 'cash' ? 'Cash Back' : `/mo${deal.dealType !== 'lease' ? '*' : ''}`}
+                            {deal.dealType === 'cash' ? 'Cash Back' : (deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? ' APR' : '/mo'}
                           </span>
                         </div>
                         <span className="all-deals__card-payment-savings">
@@ -443,6 +476,7 @@ const AllDealsPage = () => {
                             <span className="all-deals__card-tooltip">{deal.savingsTooltip}</span>
                           </span>
                         </span>
+                        <span className="all-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                       </div>
 
                       <button className="all-deals__card-deal-pill" onClick={(e) => handleDealClick(e, deal)}>

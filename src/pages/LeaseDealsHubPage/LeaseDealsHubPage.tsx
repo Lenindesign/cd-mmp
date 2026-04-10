@@ -1,9 +1,10 @@
 import { useMemo, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -63,6 +64,7 @@ const LeaseDealsHubPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
+  const navigate = useNavigate();
 
   const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
@@ -71,6 +73,11 @@ const LeaseDealsHubPage = () => {
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    const params = new URLSearchParams();
+    params.set('filters', JSON.stringify(applied));
+    navigate(`/deals/all?${params.toString()}`);
+  }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const allLeaseDeals = useMemo(() => getLeaseDeals(), []);
@@ -97,20 +104,7 @@ const LeaseDealsHubPage = () => {
       .map(([, label]) => ({ label, slug: slugForPath(label) }));
   }, [allLeaseDeals]);
 
-  const hasActiveFilters =
-    filters.bodyTypes.length > 0 ||
-    filters.makes.length > 0 ||
-    filters.fuelTypes.length > 0 ||
-    filters.accolades.length > 0 ||
-    filters.terms.length > 0 ||
-    filters.creditTier !== null;
-  const activeFilterCount =
-    filters.bodyTypes.length +
-    filters.makes.length +
-    filters.fuelTypes.length +
-    filters.accolades.length +
-    filters.terms.length +
-    (filters.creditTier ? 1 : 0);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
 
   const matchesFilters = useCallback(
     (
@@ -259,15 +253,41 @@ const LeaseDealsHubPage = () => {
 
       <div className="lease-hub__toolbar">
         <div className="container lease-hub__toolbar-inner">
-          <span className="lease-hub__toolbar-count">{deals.length} deals available</span>
+          <div className="active-filter-pills__toolbar-left">
+            <span className="active-filter-pills__count">
+              {deals.length} {deals.length === 1 ? 'deal' : 'deals'}
+            </span>
+            {activeFilterPills.length > 0 && (
+              <div className="active-filter-pills__row" aria-label="Active filters">
+                {activeFilterPills.map((pill) => (
+                  <span key={pill.id} className="active-filter-pills__pill">
+                    <span className="active-filter-pills__pill-label">{pill.label}</span>
+                    <button
+                      type="button"
+                      className="active-filter-pills__pill-x"
+                      aria-label={`Remove ${pill.label} filter`}
+                      onClick={pill.onRemove}
+                    >
+                      <X size={12} strokeWidth={2.5} aria-hidden />
+                    </button>
+                  </span>
+                ))}
+                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
+          </div>
           <button
             type="button"
-            className={`lease-hub__filter-btn ${hasActiveFilters ? 'lease-hub__filter-btn--active' : ''}`}
+            className={`lease-hub__filter-btn ${activeFilterPills.length > 0 ? 'lease-hub__filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
             <SlidersHorizontal size={16} />
             <span>Filters</span>
-            {activeFilterCount > 0 && <span className="lease-hub__filter-badge">{activeFilterCount}</span>}
+            {activeFilterPills.length > 0 && (
+              <span className="lease-hub__filter-badge">{activeFilterPills.length}</span>
+            )}
           </button>
         </div>
       </div>
@@ -298,6 +318,7 @@ const LeaseDealsHubPage = () => {
                         <Link to={`/${deal.vehicle.slug}`} className="lease-hub__card-image-link">
                           <div className="lease-hub__card-image-container">
                             <img src={deal.vehicle.image} alt={vehicleName} className="lease-hub__card-image" />
+                            <span className="lease-hub__card-deal-type-tag">Lease</span>
                             <button
                               className={`lease-hub__card-save ${saved ? 'lease-hub__card-save--saved' : ''}`}
                               onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
@@ -376,6 +397,7 @@ const LeaseDealsHubPage = () => {
                                     <span className="lease-hub__card-tooltip">{savingsTooltip}</span>
                                   </span>
                                 </span>
+                                <span className="lease-hub__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                               </div>
                             );
                           })()}
@@ -542,7 +564,7 @@ const LeaseDealsHubPage = () => {
         itemImage={pendingSaveVehicle?.image}
       />
 
-      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={setFilters} totalResults={deals.length} />
+      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} totalResults={deals.length} />
     </div>
   );
 };

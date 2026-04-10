@@ -62,15 +62,15 @@ const DealsFilterModal = ({
 }: DealsFilterModalProps) => {
   const [draft, setDraft] = useState<DealsFilterState>(externalFilters);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    bodyType: true,
-    monthlyPayment: true,
+    sortBy: true,
+    bodyType: false,
+    monthlyPayment: false,
     make: false,
-    term: true,
-    creditTier: true,
-    dueAtSigning: true,
-    fuelType: true,
-    accolades: true,
-    sortBy: false,
+    term: false,
+    creditTier: false,
+    dueAtSigning: false,
+    fuelType: false,
+    accolades: false,
   });
 
   useEffect(() => {
@@ -200,24 +200,6 @@ const DealsFilterModal = ({
 
         {/* Scrollable body */}
         <div className="deals-filter__body">
-          {/* Tab toggle */}
-          <div className="deals-filter__tabs">
-            <button
-              type="button"
-              className={`deals-filter__tab ${draft.tab === 'best-deals' ? 'deals-filter__tab--active' : ''}`}
-              onClick={() => setDraft(prev => ({ ...prev, tab: 'best-deals' }))}
-            >
-              <span className="deals-filter__tab-icon">💎</span> Best Deals
-            </button>
-            <button
-              type="button"
-              className={`deals-filter__tab ${draft.tab === 'all-specials' ? 'deals-filter__tab--active' : ''}`}
-              onClick={() => setDraft(prev => ({ ...prev, tab: 'all-specials' }))}
-            >
-              All Specials
-            </button>
-          </div>
-
           {/* Location */}
           <div className="deals-filter__section deals-filter__section--location">
             <h3 className="deals-filter__section-label">Location</h3>
@@ -237,6 +219,28 @@ const DealsFilterModal = ({
               </div>
             </div>
           </div>
+
+          {/* Sort By */}
+          <FilterSection
+            title="Sort by"
+            expanded={expandedSections.sortBy}
+            onToggle={() => toggleSection('sortBy')}
+          >
+            <div className="deals-filter__radio-list">
+              {SORT_OPTIONS.map(opt => (
+                <label key={opt.value} className="deals-filter__radio-row">
+                  <span className="deals-filter__radio-label">{opt.label}</span>
+                  <input
+                    type="radio"
+                    name="sort"
+                    className="deals-filter__radio"
+                    checked={draft.sortBy === opt.value}
+                    onChange={() => setDraft(prev => ({ ...prev, sortBy: opt.value }))}
+                  />
+                </label>
+              ))}
+            </div>
+          </FilterSection>
 
           {/* Body Type */}
           <FilterSection
@@ -397,27 +401,6 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Sort By */}
-          <FilterSection
-            title="Sort by"
-            expanded={expandedSections.sortBy}
-            onToggle={() => toggleSection('sortBy')}
-          >
-            <div className="deals-filter__radio-list">
-              {SORT_OPTIONS.map(opt => (
-                <label key={opt.value} className="deals-filter__radio-row">
-                  <span className="deals-filter__radio-label">{opt.label}</span>
-                  <input
-                    type="radio"
-                    name="sort"
-                    className="deals-filter__radio"
-                    checked={draft.sortBy === opt.value}
-                    onChange={() => setDraft(prev => ({ ...prev, sortBy: opt.value }))}
-                  />
-                </label>
-              ))}
-            </div>
-          </FilterSection>
         </div>
 
         {/* Footer */}

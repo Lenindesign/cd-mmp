@@ -9,6 +9,8 @@
 /* Import Utility Classes */
 @import './styles/utilities.css';
 @import './styles/mobile-modal-shell.css';
+@import './styles/active-filter-pills.css';
+@import './styles/faq-section.css';
 
 :root {
   /* ============================================
@@ -650,4 +652,86 @@ textarea:-moz-ui-invalid {
 ::selection {
   background: var(--color-blue-cobalt);
   color: var(--color-white);
+}
+
+/* Hide "N Offers Available" chip on deal cards globally (remove rule to show again) */
+button[class*='__card-offers-tag'] {
+  display: none !important;
+}
+
+/* Hide save/favorite heart button on all deal cards globally */
+button[class*='__card-save'] {
+  display: none !important;
+}
+
+/* Enforce 4px corners on deal-card payment block, deal pill, and CTA globally */
+[class*='__card-payment-block'] {
+  border-radius: var(--border-radius-sm) !important;
+}
+[class*='__card-deal-pill'] {
+  border-radius: var(--border-radius-sm) !important;
+}
+button[class*='__card-cta'],
+a[class*='__card-cta'] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* Deal-type tag overlay on card images (FINANCE / LEASE / CASH / BUY) */
+[class*='__card-deal-type-tag'] {
+  position: absolute;
+  bottom: var(--spacing-2);
+  right: var(--spacing-2);
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-white);
+  background: var(--color-success);
+  z-index: 2;
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* Keep APR range text on one line */
+[class*='__card-payment-amount'] {
+  font-size: clamp(20px, 5vw, 32px) !important;
+  white-space: nowrap !important;
+}
+
+/* Hide deal pill on all deal cards globally */
+button[class*='__card-deal-pill'],
+[class*='__card-deal-pill'] {
+  display: none !important;
+}
+
+/* Add top padding to card body now that deal pill is hidden */
+[class*='__card-body'] {
+  padding-top: var(--spacing-3) !important;
+}
+
+/* Align vehicle name to bottom of rating in card header */
+[class*='__card-header'] {
+  align-items: flex-end !important;
+}
+
+/* Standardize section headings and FAQ headings */
+[class*='__section-title'],
+[class*='__faq-heading'],
+[class*='__explore-heading'] {
+  font-family: var(--font-condensed) !important;
+  font-weight: 600 !important;
+}
+
+/* Expiration date below savings line */
+[class*='__card-payment-expires'] {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-top: var(--spacing-1);
 }

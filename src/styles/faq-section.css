@@ -1,0 +1,100 @@
+/* Shared FAQ Section — production Car & Driver accordion style
+   Uses attribute selectors to apply globally across all BEM-prefixed FAQ blocks. */
+
+[class*='__faq-section'] {
+  margin-bottom: var(--spacing-12);
+}
+
+[class*='__faq-heading'] {
+  font-family: var(--font-condensed) !important;
+  font-size: var(--font-size-36) !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+  line-height: var(--spacing-16) !important;
+  color: var(--color-black) !important;
+  margin: 0 0 var(--spacing-6) !important;
+}
+
+[class*='__faq-list'] {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+[class*='__faq-item'] {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  transition: background-color var(--transition-fast);
+}
+
+[class*='__faq-item']:hover:not([class*='--expanded']) {
+  background: var(--color-gray-100);
+}
+
+[class*='__faq-item'][class*='--expanded'],
+[class*='__faq-item'][class*='--expanded']:hover {
+  background: var(--color-white);
+}
+
+button[class*='__faq-question'] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  width: 100%;
+  padding: var(--spacing-5) 0 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  font-family: var(--font-article) !important;
+  font-size: 19px !important;
+  font-weight: var(--font-weight-bold) !important;
+  line-height: 30px !important;
+  color: var(--color-black) !important;
+  text-align: left;
+  transition: background-color var(--transition-fast);
+}
+
+button[class*='__faq-question']:hover {
+  color: var(--color-dark) !important;
+}
+
+[class*='__faq-question-text'] {
+  flex: 1;
+  min-width: 0;
+}
+
+button[class*='__faq-question'] svg {
+  flex-shrink: 0;
+  color: var(--color-gray-600) !important;
+  stroke-width: 1.5 !important;
+}
+
+[class*='__faq-answer'] {
+  padding: 0 0 var(--spacing-5) !important;
+}
+
+[class*='__faq-answer'] p {
+  font-family: var(--font-article) !important;
+  font-size: 19px !important;
+  font-weight: var(--font-weight-regular) !important;
+  color: var(--color-black) !important;
+  line-height: 22px !important;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  [class*='__faq-heading'] {
+    font-size: var(--font-size-2xl) !important;
+  }
+
+  button[class*='__faq-question'] {
+    font-size: 17px !important;
+    line-height: 26px !important;
+  }
+
+  [class*='__faq-answer'] p {
+    font-size: 17px !important;
+    line-height: 22px !important;
+  }
+}

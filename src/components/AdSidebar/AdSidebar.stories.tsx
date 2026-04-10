@@ -8,7 +8,7 @@ const meta: Meta<typeof AdSidebar> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Sidebar advertisement placeholder.',
+        component: 'Sidebar ads: 300×600 skyscraper and 300×250 medium rectangle stacked.',
       },
     },
   },
@@ -23,6 +23,10 @@ export const Default: Story = {
     imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
     altText: 'Advertisement',
     link: '#',
+    secondaryImageUrl:
+      'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x250.jpg',
+    secondaryAltText: 'Advertisement',
+    secondaryLink: '#',
   },
   decorators: [
     (Story) => (
@@ -38,6 +42,10 @@ export const NissanAd: Story = {
     imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
     altText: 'Nissan Advertisement',
     link: 'https://www.nissan.com',
+    secondaryImageUrl:
+      'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x250.jpg',
+    secondaryAltText: 'Nissan Advertisement',
+    secondaryLink: 'https://www.nissan.com',
   },
   decorators: [
     (Story) => (
@@ -56,9 +64,11 @@ export const InSidebarLayout: Story = {
         <p>This is the main content area.</p>
       </div>
       <div style={{ width: '300px' }}>
-        <AdSidebar 
+        <AdSidebar
           imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg"
           altText="Advertisement"
+          secondaryImageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x250.jpg"
+          secondaryAltText="Advertisement"
         />
       </div>
     </div>

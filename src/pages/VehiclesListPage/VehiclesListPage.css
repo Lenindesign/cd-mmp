@@ -286,6 +286,24 @@
   gap: var(--spacing-4);
 }
 
+/* In-feed leaderboard after each batch of 12 cards; full grid width (grid-column: 1 / -1); desktop+ */
+.vehicles-list-page__grid-breaker-ad {
+  display: none;
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .vehicles-list-page__grid-breaker-ad {
+    display: block;
+  }
+}
+
+.vehicles-list-page__grid-breaker-ad .ad-banner {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .vehicles-list-page__grid--list {
   grid-template-columns: 1fr;
 }

@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, SlidersHorizontal } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -15,6 +15,7 @@ import {
   getVehicleOffers,
   offersToIncentives,
 } from '../../utils/dealCalculations';
+import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import type { Vehicle } from '../../types/vehicle';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -23,7 +24,7 @@ import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
-import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
@@ -147,22 +148,15 @@ const DealsByMakeModelPage = () => {
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const navigate = useNavigate();
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    const params = new URLSearchParams();
+    params.set('filters', JSON.stringify(applied));
+    navigate(`/deals/all?${params.toString()}`);
+  }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const hasActiveFilters =
-    filters.bodyTypes.length > 0 ||
-    filters.makes.length > 0 ||
-    filters.fuelTypes.length > 0 ||
-    filters.accolades.length > 0 ||
-    filters.terms.length > 0 ||
-    filters.creditTier !== null;
-  const activeFilterCount =
-    filters.bodyTypes.length +
-    filters.makes.length +
-    filters.fuelTypes.length +
-    filters.accolades.length +
-    filters.terms.length +
-    (filters.creditTier ? 1 : 0);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
 
   const matchesMakeAndModel = useCallback(
     (vehicle: Vehicle) =>
@@ -253,6 +247,7 @@ const DealsByMakeModelPage = () => {
       const aprNum = parseFloat(d.apr.replace('%', ''));
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, aprNum, months);
+      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
       out.push({
         id: d.id,
         dealType: 'finance',
@@ -266,7 +261,7 @@ const DealsByMakeModelPage = () => {
         trimsEligible: d.trimsEligible,
         term: d.term,
         targetAudience: d.targetAudience,
-        aprDisplay: d.apr,
+        aprDisplay: rangeLabel.replace(/\s*APR$/, ''),
       });
     }
 
@@ -415,16 +410,40 @@ const DealsByMakeModelPage = () => {
 
       <div className="mm-deals__toolbar">
         <div className="container mm-deals__toolbar-inner">
-          <span className="mm-deals__toolbar-count">{allDeals.length} deals available</span>
+          <div className="active-filter-pills__toolbar-left">
+            <span className="active-filter-pills__count">
+              {allDeals.length} {allDeals.length === 1 ? 'deal' : 'deals'}
+            </span>
+            {activeFilterPills.length > 0 && (
+              <div className="active-filter-pills__row" aria-label="Active filters">
+                {activeFilterPills.map((pill) => (
+                  <span key={pill.id} className="active-filter-pills__pill">
+                    <span className="active-filter-pills__pill-label">{pill.label}</span>
+                    <button
+                      type="button"
+                      className="active-filter-pills__pill-x"
+                      aria-label={`Remove ${pill.label} filter`}
+                      onClick={pill.onRemove}
+                    >
+                      <X size={12} strokeWidth={2.5} aria-hidden />
+                    </button>
+                  </span>
+                ))}
+                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
+          </div>
           <button
             type="button"
-            className={`mm-deals__toolbar-filter-btn ${hasActiveFilters ? 'mm-deals__toolbar-filter-btn--active' : ''}`}
+            className={`mm-deals__toolbar-filter-btn ${activeFilterPills.length > 0 ? 'mm-deals__toolbar-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
             <SlidersHorizontal size={16} />
             <span>Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="mm-deals__toolbar-filter-badge">{activeFilterCount}</span>
+            {activeFilterPills.length > 0 && (
+              <span className="mm-deals__toolbar-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -459,6 +478,7 @@ const DealsByMakeModelPage = () => {
                         <Link to={`/${deal.vehicle.slug}`} className="mm-deals__card-image-link">
                           <div className="mm-deals__card-image-container">
                             <img src={deal.vehicle.image} alt={vehicleName} className="mm-deals__card-image" />
+                            <span className="mm-deals__card-deal-type-tag">{deal.chipLabel}</span>
                             <button
                               className={`mm-deals__card-save ${saved ? 'mm-deals__card-save--saved' : ''}`}
                               onClick={(e) =>
@@ -564,6 +584,7 @@ const DealsByMakeModelPage = () => {
                                         <span className="mm-deals__card-tooltip">{savingsTooltip}</span>
                                       </span>
                                     </span>
+                                    <span className="mm-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                                   </div>
                                 );
                               })()}
@@ -619,6 +640,7 @@ const DealsByMakeModelPage = () => {
                                         <span className="mm-deals__card-tooltip">{savingsTooltip}</span>
                                       </span>
                                     </span>
+                                    <span className="mm-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                                   </div>
                                 );
                               })()}
@@ -662,8 +684,8 @@ const DealsByMakeModelPage = () => {
                                 return (
                                   <div className="mm-deals__card-payment-block">
                                     <div className="mm-deals__card-payment">
-                                      <span className="mm-deals__card-payment-amount">${monthly}</span>
-                                      <span className="mm-deals__card-payment-period">/mo*</span>
+                                      <span className="mm-deals__card-payment-amount">{deal.aprDisplay}</span>
+                                      <span className="mm-deals__card-payment-period"> APR</span>
                                     </div>
                                     <span className="mm-deals__card-payment-savings">
                                       {savingsVsAvg}
@@ -672,6 +694,7 @@ const DealsByMakeModelPage = () => {
                                         <span className="mm-deals__card-tooltip">{savingsTooltip}</span>
                                       </span>
                                     </span>
+                                    <span className="mm-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                                   </div>
                                 );
                               })()}
@@ -824,7 +847,7 @@ const DealsByMakeModelPage = () => {
         isOpen={filterOpen}
         onClose={() => setFilterOpen(false)}
         filters={filters}
-        onApply={setFilters}
+        onApply={handleFilterApply}
         totalResults={allDeals.length}
       />
     </div>

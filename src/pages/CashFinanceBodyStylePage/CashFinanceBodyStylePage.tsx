@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, CarFront, Truck, Car } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, CarFront, Truck, Car, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,10 +9,13 @@ import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
+import { DealsFilterModal } from '../../components/DealsFilterModal';
+import type { DealsFilterState } from '../../components/DealsFilterModal';
+import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import './CashFinanceBodyStylePage.css';
 
 type BodyTab = 'all' | 'suv' | 'sedan' | 'truck' | 'coupe' | 'hatchback';
@@ -22,8 +25,9 @@ interface UnifiedDeal {
   dealType: 'cash' | 'finance';
   bodyStyle: string;
   vehicleName: string;
-  vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; fuelType: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean };
+  vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; fuelType: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean };
   estimatedMonthly: number;
+  aprDisplay?: string;
   savingsVsAvg: string;
   savingsTooltip: string;
   dealText: string;
@@ -55,10 +59,27 @@ const FAQ_DATA = [
   { question: 'Are truck finance deals different from car deals?', answer: 'Promotional APRs and terms follow similar patterns, but loan amounts and monthly payments often differ because trucks can carry higher MSRPs. Compare the rate, term, and payment on the specific vehicle you are considering.' },
 ];
 
+const DEFAULT_FILTERS: DealsFilterState = {
+  tab: 'best-deals',
+  zipCode: '90245',
+  bodyTypes: [],
+  monthlyPaymentMin: 0,
+  monthlyPaymentMax: 99999,
+  makes: [],
+  dueAtSigningMin: 0,
+  dueAtSigningMax: 99999,
+  fuelTypes: [],
+  accolades: [],
+  terms: [],
+  creditTier: null,
+  sortBy: 'recommended',
+};
+
 const CashFinanceBodyStylePage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<BodyTab>('all');
   const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
@@ -66,6 +87,40 @@ const CashFinanceBodyStylePage = () => {
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    const params = new URLSearchParams();
+    params.set('filters', JSON.stringify(applied));
+    navigate(`/deals/all?${params.toString()}`);
+  }, [navigate]);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+
+  const matchesFilters = useCallback((
+    vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    deal?: { term?: string; targetAudience?: string },
+  ) => {
+    if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
+    if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
+    if (filters.accolades.length > 0) {
+      const hasMatch = filters.accolades.some(a => {
+        if (a === 'editorsChoice') return vehicle.editorsChoice;
+        if (a === 'tenBest') return vehicle.tenBest;
+        if (a === 'evOfTheYear') return vehicle.evOfTheYear;
+        return false;
+      });
+      if (!hasMatch) return false;
+    }
+    if (filters.terms.length > 0 && deal?.term) {
+      if (!filters.terms.includes(parseTermMonths(deal.term))) return false;
+    }
+    if (filters.creditTier && deal?.targetAudience) {
+      const dealTier = inferCreditTier(deal.targetAudience);
+      if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
+    }
+    return true;
+  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -86,10 +141,11 @@ const CashFinanceBodyStylePage = () => {
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, aprNum, months);
       const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
+      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
       results.push({
         id: d.id, dealType: 'finance', bodyStyle: d.vehicle.bodyStyle, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
-        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
-        dealText: getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term }), dealPillIcon: 'percent',
+        estimatedMonthly: monthly, aprDisplay: rangeLabel.replace(/\s*APR$/, ''), savingsVsAvg, savingsTooltip,
+        dealText: rangeLabel, dealPillIcon: 'percent',
         details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Term', value: d.term }, { label: 'Body Style', value: d.vehicle.bodyStyle }],
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
@@ -118,6 +174,17 @@ const CashFinanceBodyStylePage = () => {
   const tabMatcher = BODY_TABS.find(t => t.key === activeTab)?.match || (() => true);
   const deals = useMemo(() => allDeals.filter(d => tabMatcher(d.bodyStyle)), [allDeals, activeTab]);
 
+  const displayDeals = useMemo(() => {
+    let result = deals;
+    if (filters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= filters.monthlyPaymentMin);
+    if (filters.monthlyPaymentMax < 99999) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
+    return result.filter(d => {
+      const term = d.details.find(x => x.label === 'Term')?.value;
+      const targetAudience = d.additionalInfo.find(x => x.label === 'Target Audience')?.value;
+      return matchesFilters(d.vehicle, { term, targetAudience });
+    });
+  }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, matchesFilters]);
+
   const tabCounts = useMemo(() => {
     const counts: Record<BodyTab, number> = { all: allDeals.length, suv: 0, sedan: 0, truck: 0, coupe: 0, hatchback: 0 };
     for (const d of allDeals) {
@@ -137,7 +204,7 @@ const CashFinanceBodyStylePage = () => {
     else { addSavedVehicle({ id: vehicle.slug, name: vehicle.name, ownership: 'want' }); }
   };
 
-  const activeDealObj = activeDealId ? deals.find(d => d.id === activeDealId) : null;
+  const activeDealObj = activeDealId ? displayDeals.find(d => d.id === activeDealId) : null;
   const activeOffer: Partial<IncentiveOfferDetail> | undefined = activeDealObj
     ? (() => {
         const v = activeDealObj.vehicle;
@@ -210,6 +277,40 @@ const CashFinanceBodyStylePage = () => {
         </div>
       </div>
 
+      <div className="cfbs-deals__toolbar">
+        <div className="container cfbs-deals__toolbar-inner">
+          <div className="active-filter-pills__toolbar-left">
+            <span className="active-filter-pills__count">{displayDeals.length} {displayDeals.length === 1 ? 'deal' : 'deals'}</span>
+            {activeFilterPills.length > 0 && (
+              <div className="active-filter-pills__row" aria-label="Active filters">
+                {activeFilterPills.map(pill => (
+                  <span key={pill.id} className="active-filter-pills__pill">
+                    <span className="active-filter-pills__pill-label">{pill.label}</span>
+                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                      <X size={12} strokeWidth={2.5} aria-hidden />
+                    </button>
+                  </span>
+                ))}
+                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            className={`cfbs-deals__filter-btn ${activeFilterPills.length > 0 ? 'cfbs-deals__filter-btn--active' : ''}`}
+            onClick={() => setFilterOpen(true)}
+          >
+            <SlidersHorizontal size={16} />
+            <span>Filters</span>
+            {activeFilterPills.length > 0 && (
+              <span className="cfbs-deals__filter-badge">{activeFilterPills.length}</span>
+            )}
+          </button>
+        </div>
+      </div>
+
       <div className="cfbs-deals__content">
         <div className="container">
           <div className="cfbs-deals__layout">
@@ -233,7 +334,7 @@ const CashFinanceBodyStylePage = () => {
 
               <section className="cfbs-deals__section">
                 <div className="cfbs-deals__grid">
-                  {deals.map((deal) => {
+                  {displayDeals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
                     const isExpanded = expandedDealId === deal.id;
                     return (
@@ -252,6 +353,7 @@ const CashFinanceBodyStylePage = () => {
                         <Link to={`/${deal.vehicle.slug}`} className="cfbs-deals__card-image-link">
                           <div className="cfbs-deals__card-image-container">
                             <img src={deal.vehicle.image} alt={deal.vehicleName} className="cfbs-deals__card-image" />
+                            <span className="cfbs-deals__card-deal-type-tag">{deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
                             <span className="cfbs-deals__card-body-badge">{deal.bodyStyle}</span>
                             <button
                               className={`cfbs-deals__card-save ${saved ? 'cfbs-deals__card-save--saved' : ''}`}
@@ -307,8 +409,8 @@ const CashFinanceBodyStylePage = () => {
                                 </>
                               ) : (
                                 <>
-                                  <span className="cfbs-deals__card-payment-amount">${deal.estimatedMonthly}</span>
-                                  <span className="cfbs-deals__card-payment-period">/mo*</span>
+                                  <span className="cfbs-deals__card-payment-amount">{deal.aprDisplay}</span>
+                                  <span className="cfbs-deals__card-payment-period"> APR</span>
                                 </>
                               )}
                             </div>
@@ -319,6 +421,7 @@ const CashFinanceBodyStylePage = () => {
                                 <span className="cfbs-deals__card-tooltip">{deal.savingsTooltip}</span>
                               </span>
                             </span>
+                            <span className="cfbs-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                           </div>
 
                           <button className="cfbs-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
@@ -358,7 +461,7 @@ const CashFinanceBodyStylePage = () => {
                       </div>
                     );
                   })}
-                  {deals.length === 0 && (
+                  {displayDeals.length === 0 && (
                     <div className="cfbs-deals__empty-state">
                       <p className="cfbs-deals__empty-state-text">
                         There are currently no active {emptyBodyCategory} offers. Check back soon or explore other available deals.
@@ -411,6 +514,13 @@ const CashFinanceBodyStylePage = () => {
         selectedIncentiveId={undefined}
       />
       <SignInToSaveModal isOpen={showSignInModal} onClose={() => { setShowSignInModal(false); setPendingSaveVehicle(null); }} itemType="vehicle" itemName={pendingSaveVehicle?.name} itemImage={pendingSaveVehicle?.image} />
+      <DealsFilterModal
+        isOpen={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        filters={filters}
+        onApply={handleFilterApply}
+        totalResults={displayDeals.length}
+      />
     </div>
   );
 };

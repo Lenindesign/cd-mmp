@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -11,18 +11,22 @@ import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
+import { DealsFilterModal } from '../../components/DealsFilterModal';
+import type { DealsFilterState } from '../../components/DealsFilterModal';
+import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import './SuvDealsPage.css';
 
 interface UnifiedDeal {
   id: string;
   dealType: 'zero-apr' | 'cash' | 'finance' | 'lease';
   vehicleName: string;
-  vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean };
+  vehicle: { id: string; year: string; make: string; model: string; image: string; slug: string; bodyStyle: string; priceRange: string; staffRating: number; editorsChoice?: boolean; tenBest?: boolean; fuelType?: string; evOfTheYear?: boolean };
   estimatedMonthly: number;
+  aprDisplay?: string;
   savingsVsAvg: string;
   savingsTooltip: string;
   dealText: string;
@@ -43,16 +47,66 @@ const FAQ_DATA = [
   { question: 'Do these deals apply to hybrid and electric SUVs?', answer: 'Some deals apply to hybrid and plug-in hybrid trims, but electric SUVs often have separate incentive programs. Check the "Eligible Trims" section of each deal for specifics, and remember that federal and state EV tax credits may also apply.' },
 ];
 
+const DEFAULT_FILTERS: DealsFilterState = {
+  tab: 'best-deals',
+  zipCode: '90245',
+  bodyTypes: [],
+  monthlyPaymentMin: 0,
+  monthlyPaymentMax: 99999,
+  makes: [],
+  dueAtSigningMin: 0,
+  dueAtSigningMax: 99999,
+  fuelTypes: [],
+  accolades: [],
+  terms: [],
+  creditTier: null,
+  sortBy: 'recommended',
+};
+
 const SuvDealsPage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
+  const navigate = useNavigate();
   const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    const params = new URLSearchParams();
+    params.set('filters', JSON.stringify(applied));
+    navigate(`/deals/all?${params.toString()}`);
+  }, [navigate]);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+
+  const matchesFilters = useCallback((
+    vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    deal?: { term?: string; targetAudience?: string },
+  ) => {
+    if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
+    if (filters.accolades.length > 0) {
+      const hasMatch = filters.accolades.some(a => {
+        if (a === 'editorsChoice') return vehicle.editorsChoice;
+        if (a === 'tenBest') return vehicle.tenBest;
+        if (a === 'evOfTheYear') return vehicle.evOfTheYear;
+        return false;
+      });
+      if (!hasMatch) return false;
+    }
+    if (filters.terms.length > 0 && deal?.term) {
+      if (!filters.terms.includes(parseTermMonths(deal.term))) return false;
+    }
+    if (filters.creditTier && deal?.targetAudience) {
+      const dealTier = inferCreditTier(deal.targetAudience);
+      if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
+    }
+    return true;
+  }, [filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -75,7 +129,7 @@ const SuvDealsPage = () => {
       const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
       results.push({
         id: d.id, dealType: 'zero-apr', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
-        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
+        estimatedMonthly: monthly, aprDisplay: '0%', savingsVsAvg, savingsTooltip,
         dealText: '0% APR Financing', dealPillIcon: 'percent',
         details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Term', value: d.term }],
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
@@ -104,10 +158,11 @@ const SuvDealsPage = () => {
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, aprNum, months);
       const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
+      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
       results.push({
         id: d.id, dealType: 'finance', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
-        estimatedMonthly: monthly, savingsVsAvg, savingsTooltip,
-        dealText: getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term }), dealPillIcon: 'percent',
+        estimatedMonthly: monthly, aprDisplay: rangeLabel.replace(/\s*APR$/, ''), savingsVsAvg, savingsTooltip,
+        dealText: rangeLabel, dealPillIcon: 'percent',
         details: [{ label: 'MSRP Range', value: d.vehicle.priceRange }, { label: 'Term', value: d.term }],
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
@@ -129,6 +184,17 @@ const SuvDealsPage = () => {
     }
     return results;
   }, [getSupabaseRating]);
+
+  const filteredDeals = useMemo(() => {
+    let result = deals;
+    if (filters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= filters.monthlyPaymentMin);
+    if (filters.monthlyPaymentMax < 99999) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
+    return result.filter(d => {
+      const term = d.details.find(x => x.label === 'Term')?.value;
+      const targetAudience = d.additionalInfo.find(x => x.label === 'Target Audience')?.value;
+      return matchesFilters(d.vehicle, { term, targetAudience });
+    });
+  }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, matchesFilters]);
 
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
   const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
@@ -184,13 +250,46 @@ const SuvDealsPage = () => {
           </div>
         </div>
       </div>
+      <div className="suv-deals-page__toolbar">
+        <div className="container suv-deals-page__toolbar-inner">
+          <div className="active-filter-pills__toolbar-left">
+            <span className="active-filter-pills__count">{filteredDeals.length} {filteredDeals.length === 1 ? 'deal' : 'deals'}</span>
+            {activeFilterPills.length > 0 && (
+              <div className="active-filter-pills__row" aria-label="Active filters">
+                {activeFilterPills.map(pill => (
+                  <span key={pill.id} className="active-filter-pills__pill">
+                    <span className="active-filter-pills__pill-label">{pill.label}</span>
+                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                      <X size={12} strokeWidth={2.5} aria-hidden />
+                    </button>
+                  </span>
+                ))}
+                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            className={`suv-deals-page__filter-btn ${activeFilterPills.length > 0 ? 'suv-deals-page__filter-btn--active' : ''}`}
+            onClick={() => setFilterOpen(true)}
+          >
+            <SlidersHorizontal size={16} />
+            <span>Filters</span>
+            {activeFilterPills.length > 0 && (
+              <span className="suv-deals-page__filter-badge">{activeFilterPills.length}</span>
+            )}
+          </button>
+        </div>
+      </div>
       <div className="suv-deals-page__content">
         <div className="container">
           <div className="suv-deals-page__layout">
             <div className="suv-deals-page__main">
               <section className="suv-deals-page__section">
                 <div className="suv-deals-page__grid">
-                  {deals.map((deal) => {
+                  {filteredDeals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
                     const isExpanded = expandedDealId === deal.id;
                     return (
@@ -209,6 +308,7 @@ const SuvDealsPage = () => {
                         <Link to={`/${deal.vehicle.slug}`} className="suv-deals-page__card-image-link">
                           <div className="suv-deals-page__card-image-container">
                             <img src={deal.vehicle.image} alt={deal.vehicleName} className="suv-deals-page__card-image" />
+                            <span className="suv-deals-page__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
                             <button
                               className={`suv-deals-page__card-save ${saved ? 'suv-deals-page__card-save--saved' : ''}`}
                               onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
@@ -256,8 +356,8 @@ const SuvDealsPage = () => {
                         <div className="suv-deals-page__card-body">
                           <div className="suv-deals-page__card-payment-block">
                             <div className="suv-deals-page__card-payment">
-                              <span className="suv-deals-page__card-payment-amount">${deal.estimatedMonthly}</span>
-                              <span className="suv-deals-page__card-payment-period">{deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
+                              <span className="suv-deals-page__card-payment-amount">{deal.aprDisplay || `$${deal.estimatedMonthly}`}</span>
+                              <span className="suv-deals-page__card-payment-period">{deal.aprDisplay ? ' APR' : deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
                             </div>
                             <span className="suv-deals-page__card-payment-savings">
                               {deal.savingsVsAvg}
@@ -266,6 +366,7 @@ const SuvDealsPage = () => {
                                 <span className="suv-deals-page__card-tooltip">{deal.savingsTooltip}</span>
                               </span>
                             </span>
+                            <span className="suv-deals-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
                           </div>
 
                           <button className="suv-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
@@ -315,6 +416,16 @@ const SuvDealsPage = () => {
                       </Link>
                     </div>
                   )}
+                  {deals.length > 0 && filteredDeals.length === 0 && (
+                    <div className="suv-deals-page__empty-state">
+                      <p className="suv-deals-page__empty-state-text">
+                        No SUV deals match your filters. Try adjusting filters or clear them to see all offers.
+                      </p>
+                      <button type="button" className="suv-deals-page__empty-state-link" onClick={clearAllFilters}>
+                        Clear all filters
+                      </button>
+                    </div>
+                  )}
                 </div>
               </section>
               <section className="suv-deals-page__faq-section">
@@ -355,6 +466,13 @@ const SuvDealsPage = () => {
         selectedIncentiveId={undefined}
       />
       <SignInToSaveModal isOpen={showSignInModal} onClose={() => { setShowSignInModal(false); setPendingSaveVehicle(null); }} itemType="vehicle" itemName={pendingSaveVehicle?.name} itemImage={pendingSaveVehicle?.image} />
+      <DealsFilterModal
+        isOpen={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        filters={filters}
+        onApply={handleFilterApply}
+        totalResults={filteredDeals.length}
+      />
     </div>
   );
 };
