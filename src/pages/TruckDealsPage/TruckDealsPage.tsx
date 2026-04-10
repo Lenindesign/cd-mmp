@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -9,6 +9,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
+import SavingsText from '../../components/SavingsText';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies } from '../../utils/dealCalculations';
@@ -51,6 +52,7 @@ const FAQ_DATA = [
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'all',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -62,7 +64,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 const TruckDealsPage = () => {
@@ -70,7 +72,6 @@ const TruckDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const navigate = useNavigate();
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -233,24 +234,6 @@ const TruckDealsPage = () => {
   return (
     <div className="truck-deals-page">
       <SEO title={pageTitle} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on pickup trucks. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/truck`} keywords={['truck deals', 'pickup truck deals', `truck deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best truck incentives', 'truck lease deals', 'truck cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Truck Deals', url: `${BASE_URL}/deals/truck` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
-      <div className="truck-deals-page__hero">
-        <div className="container">
-          <div className="truck-deals-page__hero-content">
-            <div className="truck-deals-page__hero-badge">
-              <span className="hero-pill__label">Truck Deals</span>
-            </div>
-            <nav className="truck-deals-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="truck-deals-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="truck-deals-page__breadcrumb-sep">/</span>
-              <span>Truck Deals</span>
-            </nav>
-            <h1 className="truck-deals-page__title">{pageTitle}</h1>
-            <p className="truck-deals-page__description">Every current incentive on pickup trucks—0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
-          </div>
-        </div>
-      </div>
       <div className="truck-deals-page__toolbar">
         <div className="container truck-deals-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -284,6 +267,24 @@ const TruckDealsPage = () => {
           </button>
         </div>
       </div>
+      <div className="truck-deals-page__hero">
+        <div className="container">
+          <div className="truck-deals-page__hero-content">
+            <div className="truck-deals-page__hero-badge">
+              <span className="hero-pill__label">Truck Deals</span>
+            </div>
+            <nav className="truck-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="truck-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="truck-deals-page__breadcrumb-sep">/</span>
+              <span>Truck Deals</span>
+            </nav>
+            <h1 className="truck-deals-page__title">{pageTitle}</h1>
+            <p className="truck-deals-page__description">Every current incentive on pickup trucks—0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
+          </div>
+        </div>
+      </div>
       <div className="truck-deals-page__content">
         <div className="container">
           <div className="truck-deals-page__layout">
@@ -292,7 +293,6 @@ const TruckDealsPage = () => {
                 <div className="truck-deals-page__grid">
                   {filteredDeals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
-                    const isExpanded = expandedDealId === deal.id;
                     return (
                       <div key={deal.id} className="truck-deals-page__card">
                         <div className="truck-deals-page__card-header">
@@ -365,7 +365,7 @@ const TruckDealsPage = () => {
                               <span className="truck-deals-page__card-payment-period">{deal.aprDisplay ? ' APR' : deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
                             </div>
                             <span className="truck-deals-page__card-payment-savings">
-                              {deal.savingsVsAvg}
+                              <SavingsText text={deal.savingsVsAvg} />
                               <span className="truck-deals-page__card-tooltip-wrap">
                                 <Info size={13} className="truck-deals-page__card-tooltip-icon" />
                                 <span className="truck-deals-page__card-tooltip">{deal.savingsTooltip}</span>
@@ -392,21 +392,13 @@ const TruckDealsPage = () => {
 
                           <button type="button" className="truck-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                          <button className="truck-deals-page__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
-                            <span>Additional Details</span>{isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </button>
-                          {isExpanded && (
-                            <div className="truck-deals-page__card-additional">
-                              <div className="truck-deals-page__card-additional-item"><Info size={16} /><div><strong>{deal.programName}</strong><p>{deal.programDescription}</p></div></div>
-                              {deal.additionalInfo.map((info, i) => (
-                                <div key={i} className="truck-deals-page__card-additional-item">
-                                  {info.icon === 'users' ? <Users size={16} /> : <Tag size={16} />}
-                                  <div><strong>{info.label}</strong><p>{info.value}</p></div>
-                                </div>
-                              ))}
-                              <div className="truck-deals-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
-                            </div>
-                          )}
+                          <Link
+                            to={`/${deal.vehicle.slug}`}
+                            className="truck-deals-page__card-toggle"
+                          >
+                            <span>Read More</span>
+                            <ChevronRight size={14} />
+                          </Link>
                         </div>
                       </div>
                     );

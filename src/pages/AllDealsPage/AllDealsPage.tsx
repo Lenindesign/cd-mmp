@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ChevronUp, ChevronDown, SlidersHorizontal, Heart, Info, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, SlidersHorizontal, Heart, Info, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -14,6 +14,8 @@ import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/ba
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import AdSidebar from '../../components/AdSidebar';
+import SavingsText from '../../components/SavingsText';
 import './AllDealsPage.css';
 
 interface MiniDeal {
@@ -45,18 +47,9 @@ interface MiniDeal {
   term?: string;
 }
 
-type DealTypeFilter = 'all' | 'zero-apr' | 'finance' | 'lease' | 'cash';
-
-const DEAL_TYPE_LABELS: Record<DealTypeFilter, string> = {
-  all: 'All Deals',
-  'zero-apr': '0% APR',
-  finance: 'Finance',
-  lease: 'Lease',
-  cash: 'Cash',
-};
-
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'all',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -68,7 +61,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 function parseFiltersFromUrl(raw: string | null): DealsFilterState | null {
@@ -97,7 +90,6 @@ const AllDealsPage = () => {
   }, []);
 
   const [savedDeals, setSavedDeals] = useState<Set<string>>(new Set());
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
@@ -109,8 +101,6 @@ const AllDealsPage = () => {
       setOffersPopup({ slug, offers: getVehicleOffers(make, model) });
     }
   }, [offersPopup]);
-  const [dealTypeFilter, setDealTypeFilter] = useState<DealTypeFilter>('all');
-
   const toggleSave = useCallback((e: React.MouseEvent, slug: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -121,27 +111,7 @@ const AllDealsPage = () => {
     });
   }, []);
 
-  const toggleExpand = useCallback((key: string) => {
-    setExpandedCards(prev => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key); else next.add(key);
-      return next;
-    });
-  }, []);
-
-  const { pills: sharedPills, clearAllFilters: clearSharedFilters } = useActiveFilterPills(filters, setFilters);
-
-  const activeFilterPills = useMemo(() => {
-    const extra = dealTypeFilter !== 'all'
-      ? [{ id: `type-${dealTypeFilter}`, label: DEAL_TYPE_LABELS[dealTypeFilter], onRemove: () => setDealTypeFilter('all') }]
-      : [];
-    return [...extra, ...sharedPills];
-  }, [dealTypeFilter, sharedPills]);
-
-  const clearAllFilters = useCallback(() => {
-    setDealTypeFilter('all');
-    clearSharedFilters();
-  }, [clearSharedFilters]);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
 
   const allDeals = useMemo(() => {
     const deals: MiniDeal[] = [];
@@ -274,17 +244,20 @@ const AllDealsPage = () => {
 
   const filteredDeals = useMemo(() => {
     let filtered = applyFiltersToDeals(allDeals, filters);
-    if (dealTypeFilter !== 'all') {
-      filtered = filtered.filter(d => d.dealType === dealTypeFilter);
+    if (filters.dealType !== 'all') {
+      const typeMap: Record<string, string> = { lease: 'lease', finance: 'finance', cash: 'cash' };
+      const mapped = typeMap[filters.dealType];
+      if (mapped) filtered = filtered.filter(d => d.dealType === mapped);
     }
     return filtered;
-  }, [allDeals, filters, dealTypeFilter, applyFiltersToDeals]);
+  }, [allDeals, filters, applyFiltersToDeals]);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
     return applyFiltersToDeals(allDeals, draftFilters).length;
   }, [allDeals, applyFiltersToDeals]);
 
-  const emptyDealsCategory = dealTypeFilter === 'all' ? 'deal' : DEAL_TYPE_LABELS[dealTypeFilter];
+  const DEAL_TYPE_EMPTY_LABELS: Record<string, string> = { lease: 'Lease', finance: 'Finance', cash: 'Cash Back' };
+  const emptyDealsCategory = filters.dealType === 'all' ? 'deal' : (DEAL_TYPE_EMPTY_LABELS[filters.dealType] || 'deal');
 
   const handleDealClick = (e: React.MouseEvent, deal: MiniDeal) => {
     e.preventDefault();
@@ -334,25 +307,6 @@ const AllDealsPage = () => {
         noIndex={allDeals.length === 0}
       />
 
-      <div className="all-deals__hero">
-        <div className="container">
-          <div className="all-deals__hero-content">
-            <nav className="all-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="all-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="all-deals__breadcrumb-sep">/</span>
-              <span>All Deals</span>
-            </nav>
-            <h1 className="all-deals__title">All Deals for {month} {year}</h1>
-            <p className="all-deals__description">
-              Every current manufacturer incentive in one place — 0% APR financing,
-              special finance rates, and lease specials, all paired with Car and Driver expert ratings.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="all-deals__toolbar">
         <div className="container all-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -387,13 +341,33 @@ const AllDealsPage = () => {
         </div>
       </div>
 
+      <div className="all-deals__hero">
+        <div className="container">
+          <div className="all-deals__hero-content">
+            <nav className="all-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="all-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="all-deals__breadcrumb-sep">/</span>
+              <span>All Deals</span>
+            </nav>
+            <h1 className="all-deals__title">All Deals for {month} {year}</h1>
+            <p className="all-deals__description">
+              Every current manufacturer incentive in one place — 0% APR financing,
+              special finance rates, and lease specials, all paired with Car and Driver expert ratings.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="all-deals__content">
         <div className="container">
+          <div className="all-deals__layout">
+          <div className="all-deals__main">
           {filteredDeals.length > 0 ? (
             <div className="all-deals__grid">
               {filteredDeals.map((deal, i) => {
                 const cardKey = `${deal.slug}-${deal.dealType}-${i}`;
-                const isExpanded = expandedCards.has(cardKey);
                 return (
                   <div key={cardKey} className="all-deals__card">
                     <div className="all-deals__card-header">
@@ -470,7 +444,7 @@ const AllDealsPage = () => {
                           </span>
                         </div>
                         <span className="all-deals__card-payment-savings">
-                          {deal.savingsVsAvg}
+                          <SavingsText text={deal.savingsVsAvg} />
                           <span className="all-deals__card-tooltip-wrap">
                             <Info size={13} className="all-deals__card-tooltip-icon" />
                             <span className="all-deals__card-tooltip">{deal.savingsTooltip}</span>
@@ -503,21 +477,13 @@ const AllDealsPage = () => {
 
                       <button type="button" className="all-deals__card-cta" onClick={(e) => handleDealClick(e, deal)}>Get This Deal</button>
 
-                      <button
-                        type="button"
-                        className="all-deals__card-expand"
-                        onClick={() => toggleExpand(cardKey)}
+                      <Link
+                        to={`/${deal.slug}`}
+                        className="all-deals__card-toggle"
                       >
-                        Additional Details {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                      </button>
-                      {isExpanded && (
-                        <div className="all-deals__card-expanded">
-                          <p className="all-deals__card-expanded-text">{deal.programDescription}</p>
-                          {deal.trimsEligible.length > 0 && (
-                            <p className="all-deals__card-expanded-trims"><strong>Eligible trims:</strong> {deal.trimsEligible.join(', ')}</p>
-                          )}
-                        </div>
-                      )}
+                        <span>Read More</span>
+                        <ChevronRight size={14} />
+                      </Link>
                     </div>
                   </div>
                 );
@@ -533,6 +499,9 @@ const AllDealsPage = () => {
               </Link>
             </div>
           )}
+          </div>
+          <aside className="all-deals__sidebar"><AdSidebar /></aside>
+          </div>
         </div>
       </div>
 

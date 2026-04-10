@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronUp, ChevronDown, SlidersHorizontal, Heart, Info } from 'lucide-react';
+import { ChevronRight, ChevronDown, SlidersHorizontal, Heart, Info } from 'lucide-react';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, AVG_MARKET_APR, AVG_LOAN_TERM } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -12,6 +12,7 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
+import SavingsText from '../../components/SavingsText';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import './DealsHubPage.css';
@@ -46,6 +47,7 @@ interface MiniDeal {
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'all',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -57,7 +59,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 const DealsHubPage = () => {
@@ -72,7 +74,6 @@ const DealsHubPage = () => {
     navigate(`/deals/all?${params.toString()}`);
   }, [navigate]);
   const [savedDeals, setSavedDeals] = useState<Set<string>>(new Set());
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
@@ -91,14 +92,6 @@ const DealsHubPage = () => {
     setSavedDeals(prev => {
       const next = new Set(prev);
       if (next.has(slug)) next.delete(slug); else next.add(slug);
-      return next;
-    });
-  }, []);
-
-  const toggleExpand = useCallback((key: string) => {
-    setExpandedCards(prev => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key); else next.add(key);
       return next;
     });
   }, []);
@@ -474,10 +467,7 @@ const DealsHubPage = () => {
                   </Link>
                 </div>
                 <div className="deals-hub__row-cards">
-                  {cat.deals.length > 0 ? cat.deals.map((deal, i) => {
-                    const cardKey = `${cat.href}-${i}`;
-                    const isExpanded = expandedCards.has(cardKey);
-                    return (
+                  {cat.deals.length > 0 ? cat.deals.map((deal, i) => (
                     <div key={i} className="deals-hub__mini-card">
                       {/* Header: name + rating */}
                       <div className="deals-hub__card-header">
@@ -560,7 +550,7 @@ const DealsHubPage = () => {
                             </span>
                           </div>
                           <span className="deals-hub__card-payment-savings">
-                            {deal.savingsVsAvg}
+                            <SavingsText text={deal.savingsVsAvg} />
                             <span className="deals-hub__card-tooltip-wrap">
                               <Info size={13} className="deals-hub__card-tooltip-icon" />
                               <span className="deals-hub__card-tooltip">{deal.savingsTooltip}</span>
@@ -594,26 +584,16 @@ const DealsHubPage = () => {
                         {/* CTA */}
                         <button type="button" className="deals-hub__card-cta" onClick={(e) => handleDealClick(e, deal)}>Get This Deal</button>
 
-                        {/* Expandable details */}
-                        <button
-                          type="button"
-                          className="deals-hub__card-expand"
-                          onClick={() => toggleExpand(cardKey)}
+                        <Link
+                          to={`/${deal.slug}`}
+                          className="deals-hub__card-toggle"
                         >
-                          Additional Details {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                        </button>
-                        {isExpanded && (
-                          <div className="deals-hub__card-expanded">
-                            <p className="deals-hub__card-expanded-text">{deal.programDescription}</p>
-                            {deal.trimsEligible.length > 0 && (
-                              <p className="deals-hub__card-expanded-trims"><strong>Eligible trims:</strong> {deal.trimsEligible.join(', ')}</p>
-                            )}
-                          </div>
-                        )}
+                          <span>Read More</span>
+                          <ChevronRight size={14} />
+                        </Link>
                       </div>
                     </div>
-                    );
-                  }) : (
+                  )) : (
                     <div className="deals-hub__empty">
                       <p>No deals available this month. Check back soon.</p>
                     </div>

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, Fuel, Zap, Leaf, Droplets, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, Fuel, Zap, Leaf, Droplets, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -17,6 +17,7 @@ import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesMo
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import SavingsText from '../../components/SavingsText';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import './FuelTypeDealsPage.css';
 
@@ -65,6 +66,7 @@ const FAQ_DATA = [
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'all',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -76,7 +78,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 const FuelTypeDealsPage = () => {
@@ -85,7 +87,6 @@ const FuelTypeDealsPage = () => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<FuelTab>('all');
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -306,27 +307,6 @@ const FuelTypeDealsPage = () => {
         noIndex={allDeals.length === 0}
       />
 
-      <div className="fuel-deals__hero">
-        <div className="container">
-          <div className="fuel-deals__hero-content">
-            <div className="fuel-deals__hero-badge">
-              <span className="hero-pill__label">Fuel Type Deals</span>
-            </div>
-            <nav className="fuel-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="fuel-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="fuel-deals__breadcrumb-sep">/</span>
-              <span>Fuel Type Deals</span>
-            </nav>
-            <h1 className="fuel-deals__title">{pageTitle}</h1>
-            <p className="fuel-deals__description">
-              Shop deals by powertrain—whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="fuel-deals__toolbar">
         <div className="container fuel-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -361,6 +341,27 @@ const FuelTypeDealsPage = () => {
         </div>
       </div>
 
+      <div className="fuel-deals__hero">
+        <div className="container">
+          <div className="fuel-deals__hero-content">
+            <div className="fuel-deals__hero-badge">
+              <span className="hero-pill__label">Fuel Type Deals</span>
+            </div>
+            <nav className="fuel-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="fuel-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="fuel-deals__breadcrumb-sep">/</span>
+              <span>Fuel Type Deals</span>
+            </nav>
+            <h1 className="fuel-deals__title">{pageTitle}</h1>
+            <p className="fuel-deals__description">
+              Shop deals by powertrain—whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="fuel-deals__content">
         <div className="container">
           <div className="fuel-deals__layout">
@@ -387,7 +388,6 @@ const FuelTypeDealsPage = () => {
                 <div className="fuel-deals__grid">
                   {displayDeals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
-                    const isExpanded = expandedDealId === deal.id;
                     return (
                       <div key={deal.id} className="fuel-deals__card">
                         <div className="fuel-deals__card-header">
@@ -471,7 +471,7 @@ const FuelTypeDealsPage = () => {
                               )}
                             </div>
                             <span className="fuel-deals__card-payment-savings">
-                              {deal.savingsVsAvg}
+                              <SavingsText text={deal.savingsVsAvg} />
                               <span className="fuel-deals__card-tooltip-wrap">
                                 <Info size={13} className="fuel-deals__card-tooltip-icon" />
                                 <span className="fuel-deals__card-tooltip">{deal.savingsTooltip}</span>
@@ -500,21 +500,13 @@ const FuelTypeDealsPage = () => {
 
                           <button type="button" className="fuel-deals__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                          <button className="fuel-deals__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
-                            <span>Additional Details</span>{isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </button>
-                          {isExpanded && (
-                            <div className="fuel-deals__card-additional">
-                              <div className="fuel-deals__card-additional-item"><Info size={16} /><div><strong>{deal.programName}</strong><p>{deal.programDescription}</p></div></div>
-                              {deal.additionalInfo.map((info, i) => (
-                                <div key={i} className="fuel-deals__card-additional-item">
-                                  {info.icon === 'users' ? <Users size={16} /> : info.icon === 'tag' ? <Tag size={16} /> : <Clock size={16} />}
-                                  <div><strong>{info.label}</strong><p>{info.value}</p></div>
-                                </div>
-                              ))}
-                              <div className="fuel-deals__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
-                            </div>
-                          )}
+                          <Link
+                            to={`/${deal.vehicle.slug}`}
+                            className="fuel-deals__card-toggle"
+                          >
+                            <span>Read More</span>
+                            <ChevronRight size={14} />
+                          </Link>
                         </div>
                       </div>
                     );

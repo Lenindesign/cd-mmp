@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, Users, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -9,6 +9,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
+import SavingsText from '../../components/SavingsText';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies } from '../../utils/dealCalculations';
@@ -49,6 +50,7 @@ const FAQ_DATA = [
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'all',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -60,7 +62,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 const SuvDealsPage = () => {
@@ -68,7 +70,6 @@ const SuvDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const navigate = useNavigate();
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -232,24 +233,6 @@ const SuvDealsPage = () => {
   return (
     <div className="suv-deals-page">
       <SEO title={pageTitle} description={`Find the best SUV deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on SUVs and crossovers. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/suv`} keywords={['SUV deals', 'crossover deals', `SUV deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best SUV incentives', 'SUV lease deals', 'SUV cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'SUV Deals', url: `${BASE_URL}/deals/suv` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
-      <div className="suv-deals-page__hero">
-        <div className="container">
-          <div className="suv-deals-page__hero-content">
-            <div className="suv-deals-page__hero-badge">
-              <span className="hero-pill__label">SUV Deals</span>
-            </div>
-            <nav className="suv-deals-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="suv-deals-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="suv-deals-page__breadcrumb-sep">/</span>
-              <span>SUV Deals</span>
-            </nav>
-            <h1 className="suv-deals-page__title">{pageTitle}</h1>
-            <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place—0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
-          </div>
-        </div>
-      </div>
       <div className="suv-deals-page__toolbar">
         <div className="container suv-deals-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -283,6 +266,24 @@ const SuvDealsPage = () => {
           </button>
         </div>
       </div>
+      <div className="suv-deals-page__hero">
+        <div className="container">
+          <div className="suv-deals-page__hero-content">
+            <div className="suv-deals-page__hero-badge">
+              <span className="hero-pill__label">SUV Deals</span>
+            </div>
+            <nav className="suv-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="suv-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="suv-deals-page__breadcrumb-sep">/</span>
+              <span>SUV Deals</span>
+            </nav>
+            <h1 className="suv-deals-page__title">{pageTitle}</h1>
+            <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place—0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
+          </div>
+        </div>
+      </div>
       <div className="suv-deals-page__content">
         <div className="container">
           <div className="suv-deals-page__layout">
@@ -291,7 +292,6 @@ const SuvDealsPage = () => {
                 <div className="suv-deals-page__grid">
                   {filteredDeals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
-                    const isExpanded = expandedDealId === deal.id;
                     return (
                       <div key={deal.id} className="suv-deals-page__card">
                         <div className="suv-deals-page__card-header">
@@ -360,7 +360,7 @@ const SuvDealsPage = () => {
                               <span className="suv-deals-page__card-payment-period">{deal.aprDisplay ? ' APR' : deal.dealType === 'lease' ? '/mo' : '/mo*'}</span>
                             </div>
                             <span className="suv-deals-page__card-payment-savings">
-                              {deal.savingsVsAvg}
+                              <SavingsText text={deal.savingsVsAvg} />
                               <span className="suv-deals-page__card-tooltip-wrap">
                                 <Info size={13} className="suv-deals-page__card-tooltip-icon" />
                                 <span className="suv-deals-page__card-tooltip">{deal.savingsTooltip}</span>
@@ -387,21 +387,13 @@ const SuvDealsPage = () => {
 
                           <button type="button" className="suv-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                          <button className="suv-deals-page__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
-                            <span>Additional Details</span>{isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </button>
-                          {isExpanded && (
-                            <div className="suv-deals-page__card-additional">
-                              <div className="suv-deals-page__card-additional-item"><Info size={16} /><div><strong>{deal.programName}</strong><p>{deal.programDescription}</p></div></div>
-                              {deal.additionalInfo.map((info, i) => (
-                                <div key={i} className="suv-deals-page__card-additional-item">
-                                  {info.icon === 'users' ? <Users size={16} /> : info.icon === 'tag' ? <Tag size={16} /> : <Clock size={16} />}
-                                  <div><strong>{info.label}</strong><p>{info.value}</p></div>
-                                </div>
-                              ))}
-                              <div className="suv-deals-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
-                            </div>
-                          )}
+                          <Link
+                            to={`/${deal.vehicle.slug}`}
+                            className="suv-deals-page__card-toggle"
+                          >
+                            <span>Read More</span>
+                            <ChevronRight size={14} />
+                          </Link>
                         </div>
                       </div>
                     );

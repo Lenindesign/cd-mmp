@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Clock, Users, Tag, X, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
@@ -17,6 +17,7 @@ import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesMo
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import SavingsText from '../../components/SavingsText';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH } from '../../constants/dealRoutes';
 import './ZeroAprDealsPage.css';
@@ -72,6 +73,7 @@ const FAQ_DATA = [
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'finance',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -83,7 +85,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 const CAR_AND_DRIVER = 'Car and Driver';
@@ -140,7 +142,6 @@ const ZeroAprDealsPage = () => {
   useEffect(() => {
     setActiveTab(isZeroPercentOnlyRoute ? 'zero-apr' : 'all');
   }, [isZeroPercentOnlyRoute]);
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -272,7 +273,6 @@ const ZeroAprDealsPage = () => {
 
   const renderAprDealCard = (deal: UnifiedAprDeal) => {
     const saved = isVehicleSaved(deal.vehicleName);
-    const isExpanded = expandedDealId === deal.id;
     return (
       <div key={deal.id} className="zero-apr-page__card">
         <div className="zero-apr-page__card-header">
@@ -351,7 +351,7 @@ const ZeroAprDealsPage = () => {
               <span className="zero-apr-page__card-payment-period"> APR</span>
             </div>
             <span className="zero-apr-page__card-payment-savings">
-              {deal.savingsVsAvg}
+              <SavingsText text={deal.savingsVsAvg} />
               <span className="zero-apr-page__card-tooltip-wrap">
                 <Info size={13} className="zero-apr-page__card-tooltip-icon" />
                 <span className="zero-apr-page__card-tooltip">{deal.savingsTooltip}</span>
@@ -373,19 +373,10 @@ const ZeroAprDealsPage = () => {
 
           <button type="button" className="zero-apr-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-          <button type="button" className="zero-apr-page__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
-            <span>Additional Details</span>
-            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </button>
-
-          {isExpanded && (
-            <div className="zero-apr-page__card-additional">
-              <div className="zero-apr-page__card-additional-item"><Info size={16} /><div><strong>{deal.programName}</strong><p>{deal.programDescription}</p></div></div>
-              <div className="zero-apr-page__card-additional-item"><Users size={16} /><div><strong>Target Audience</strong><p>{deal.targetAudience}</p></div></div>
-              <div className="zero-apr-page__card-additional-item"><Tag size={16} /><div><strong>Eligible Trims</strong><p>{deal.trimsEligible.join(', ')}</p></div></div>
-              <div className="zero-apr-page__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
-            </div>
-          )}
+          <Link to={`/${deal.vehicle.slug}`} className="zero-apr-page__card-toggle">
+            <span>Read More</span>
+            <ChevronRight size={14} />
+          </Link>
         </div>
       </div>
     );
@@ -458,34 +449,6 @@ const ZeroAprDealsPage = () => {
         noIndex={isZeroPercentOnlyRoute ? deals.length === 0 : allDeals.length === 0}
       />
 
-      <div className="zero-apr-page__hero">
-        <div className="container">
-          <div className="zero-apr-page__hero-content">
-            <nav className="zero-apr-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="zero-apr-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="zero-apr-page__breadcrumb-sep">/</span>
-              {isZeroPercentOnlyRoute ? (
-                <>
-                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
-                  <span className="zero-apr-page__breadcrumb-sep">/</span>
-                  <span>0% APR Deals</span>
-                </>
-              ) : (
-                <span>Best Buying Deals</span>
-              )}
-            </nav>
-            <h1 className="zero-apr-page__title">{pageTitle}</h1>
-            <p className="zero-apr-page__description">
-              {isZeroPercentOnlyRoute
-                ? 'These manufacturer-backed offers charge no interest on your auto loan—every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
-                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average—these offers can save you thousands over the life of your loan.'}
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="zero-apr-page__toolbar">
         <div className="container zero-apr-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -519,6 +482,34 @@ const ZeroAprDealsPage = () => {
               <span className="zero-apr-page__filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
+        </div>
+      </div>
+
+      <div className="zero-apr-page__hero">
+        <div className="container">
+          <div className="zero-apr-page__hero-content">
+            <nav className="zero-apr-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="zero-apr-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="zero-apr-page__breadcrumb-sep">/</span>
+              {isZeroPercentOnlyRoute ? (
+                <>
+                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
+                  <span className="zero-apr-page__breadcrumb-sep">/</span>
+                  <span>0% APR Deals</span>
+                </>
+              ) : (
+                <span>Best Buying Deals</span>
+              )}
+            </nav>
+            <h1 className="zero-apr-page__title">{pageTitle}</h1>
+            <p className="zero-apr-page__description">
+              {isZeroPercentOnlyRoute
+                ? 'These manufacturer-backed offers charge no interest on your auto loan—every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
+                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average—these offers can save you thousands over the life of your loan.'}
+            </p>
+          </div>
         </div>
       </div>
 

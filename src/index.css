@@ -654,6 +654,11 @@ textarea:-moz-ui-invalid {
   color: var(--color-white);
 }
 
+/* Hide hero badge pill on all pages globally */
+[class*='__hero-badge'] {
+  display: none !important;
+}
+
 /* Hide "N Offers Available" chip on deal cards globally (remove rule to show again) */
 button[class*='__card-offers-tag'] {
   display: none !important;
@@ -725,6 +730,18 @@ button[class*='__card-deal-pill'],
 [class*='__explore-heading'] {
   font-family: var(--font-condensed) !important;
   font-weight: 600 !important;
+}
+
+/* Keep MSRP range and detail values on one line */
+[class*='__card-detail-value'] {
+  white-space: nowrap !important;
+  font-size: clamp(10px, 2.5vw, 14px) !important;
+}
+
+/* Read More link on deal cards */
+a[class*='__card-toggle'] {
+  text-decoration: none !important;
+  cursor: pointer;
 }
 
 /* Expiration date below savings line */

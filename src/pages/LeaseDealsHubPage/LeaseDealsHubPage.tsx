@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -16,6 +16,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import SavingsText from '../../components/SavingsText';
 import './LeaseDealsHubPage.css';
 
 const FAQ_DATA = [
@@ -38,6 +39,7 @@ const FAQ_DATA = [
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'lease',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -49,7 +51,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 function slugForPath(value: string): string {
@@ -66,7 +68,6 @@ const LeaseDealsHubPage = () => {
   const { month, year } = getCurrentPeriod();
   const navigate = useNavigate();
 
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -230,27 +231,6 @@ const LeaseDealsHubPage = () => {
         noIndex={allLeaseDeals.length === 0}
       />
 
-      <div className="lease-hub__hero">
-        <div className="container">
-          <div className="lease-hub__hero-content">
-            <div className="lease-hub__hero-badge">
-              <span className="hero-pill__label">Lease Deals Hub</span>
-            </div>
-            <nav className="lease-hub__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="lease-hub__breadcrumb-sep">/</span>
-              <span aria-current="page">Lease Deals</span>
-            </nav>
-            <h1 className="lease-hub__title">{h1Title}</h1>
-            <p className="lease-hub__description">
-              Car and Driver&apos;s editors track every manufacturer lease special so you don&apos;t have to. Below you&apos;ll find the best lease deals
-              available right now, updated monthly with the latest offers. Use our ratings and filters to compare payments and find a lease that fits your
-              budget.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="lease-hub__toolbar">
         <div className="container lease-hub__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -292,6 +272,27 @@ const LeaseDealsHubPage = () => {
         </div>
       </div>
 
+      <div className="lease-hub__hero">
+        <div className="container">
+          <div className="lease-hub__hero-content">
+            <div className="lease-hub__hero-badge">
+              <span className="hero-pill__label">Lease Deals Hub</span>
+            </div>
+            <nav className="lease-hub__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="lease-hub__breadcrumb-sep">/</span>
+              <span aria-current="page">Lease Deals</span>
+            </nav>
+            <h1 className="lease-hub__title">{h1Title}</h1>
+            <p className="lease-hub__description">
+              Car and Driver&apos;s editors track every manufacturer lease special so you don&apos;t have to. Below you&apos;ll find the best lease deals
+              available right now, updated monthly with the latest offers. Use our ratings and filters to compare payments and find a lease that fits your
+              budget.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="lease-hub__content">
         <div className="container">
           <div className="lease-hub__layout">
@@ -301,7 +302,6 @@ const LeaseDealsHubPage = () => {
                   {deals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                     const saved = isVehicleSaved(vehicleName);
-                    const isExpanded = expandedDealId === deal.id;
                     return (
                       <div key={deal.id} className="lease-hub__card">
                         <div className="lease-hub__card-header">
@@ -391,7 +391,7 @@ const LeaseDealsHubPage = () => {
                                   <span className="lease-hub__card-payment-period">/mo</span>
                                 </div>
                                 <span className="lease-hub__card-payment-savings">
-                                  {savingsVsAvg}
+                                  <SavingsText text={savingsVsAvg} />
                                   <span className="lease-hub__card-tooltip-wrap">
                                     <Info size={13} className="lease-hub__card-tooltip-icon" />
                                     <span className="lease-hub__card-tooltip">{savingsTooltip}</span>
@@ -431,40 +431,13 @@ const LeaseDealsHubPage = () => {
                             Get This Deal
                           </button>
 
-                          <button
-                            type="button"
+                          <Link
+                            to={`/${deal.vehicle.slug}`}
                             className="lease-hub__card-toggle"
-                            onClick={() => setExpandedDealId(isExpanded ? null : deal.id)}
-                            aria-expanded={isExpanded}
                           >
-                            <span>Additional Details</span>
-                            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </button>
-                          {isExpanded && (
-                            <div className="lease-hub__card-additional">
-                              <div className="lease-hub__card-additional-item">
-                                <Info size={16} />
-                                <div>
-                                  <strong>{deal.programName}</strong>
-                                  <p>{deal.programDescription}</p>
-                                </div>
-                              </div>
-                              <div className="lease-hub__card-additional-item">
-                                <Tag size={16} />
-                                <div>
-                                  <strong>Eligible Trims</strong>
-                                  <p>{deal.trimsEligible.join(', ')}</p>
-                                </div>
-                              </div>
-                              <div className="lease-hub__card-additional-item">
-                                <Clock size={16} />
-                                <div>
-                                  <strong>Offer Expires</strong>
-                                  <p>{formatExpiration(deal.expirationDate)}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                            <span>Read More</span>
+                            <ChevronRight size={14} />
+                          </Link>
                         </div>
                       </div>
                     );
@@ -564,7 +537,7 @@ const LeaseDealsHubPage = () => {
         itemImage={pendingSaveVehicle?.image}
       />
 
-      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} totalResults={deals.length} />
+      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} totalResults={deals.length} dealPageType="lease" />
     </div>
   );
 };

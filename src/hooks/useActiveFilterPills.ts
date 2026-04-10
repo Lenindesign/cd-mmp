@@ -22,6 +22,7 @@ const CREDIT_LABELS: Record<string, string> = {
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'all',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -33,15 +34,29 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 export function useActiveFilterPills(
   filters: DealsFilterState,
   setFilters: React.Dispatch<React.SetStateAction<DealsFilterState>>,
 ) {
+  const DEAL_TYPE_LABELS: Record<string, string> = {
+    lease: 'Lease',
+    finance: 'Finance',
+    cash: 'Cash Back',
+  };
+
   const pills = useMemo((): FilterPill[] => {
     const result: FilterPill[] = [];
+
+    if (filters.dealType && filters.dealType !== 'all') {
+      result.push({
+        id: 'deal-type',
+        label: DEAL_TYPE_LABELS[filters.dealType] || filters.dealType,
+        onRemove: () => setFilters(f => ({ ...f, dealType: 'all' })),
+      });
+    }
 
     for (const bt of filters.bodyTypes) {
       result.push({ id: `body-${bt}`, label: bt, onRemove: () => setFilters(f => ({ ...f, bodyTypes: f.bodyTypes.filter(x => x !== bt) })) });

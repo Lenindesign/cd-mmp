@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, type MouseEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Clock, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import {
@@ -24,6 +24,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import SavingsText from '../../components/SavingsText';
 import './LeaseByMakeModelPage.css';
 
 interface LeaseByMakeModelDeal {
@@ -46,6 +47,7 @@ interface LeaseByMakeModelDeal {
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'lease',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -57,7 +59,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 function buildActiveOffer(deal: LeaseByMakeModelDeal | null): Partial<IncentiveOfferDetail> | undefined {
@@ -100,7 +102,6 @@ const LeaseByMakeModelPage = () => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
 
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(
     null,
@@ -229,10 +230,6 @@ const LeaseByMakeModelPage = () => {
     }
   };
 
-  const toggleDealDetails = (dealId: string) => {
-    setExpandedDealId((prev) => (prev === dealId ? null : dealId));
-  };
-
   const activeDealObj = activeDealId ? allDeals.find((d) => d.id === activeDealId) : null;
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
 
@@ -267,33 +264,6 @@ const LeaseByMakeModelPage = () => {
         ]}
         noIndex={allDeals.length === 0}
       />
-
-      <div className="mm-lease__hero">
-        <div className="container">
-          <div className="mm-lease__hero-content">
-            <div className="mm-lease__hero-badge">
-              <span className="hero-pill__label">
-                {makeName} {modelName}
-              </span>
-            </div>
-            <nav className="mm-lease__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="mm-lease__breadcrumb-sep">/</span>
-              <Link to="/lease-deals">Lease Deals</Link>
-              <span className="mm-lease__breadcrumb-sep">/</span>
-              <Link to={makeParam ? `/${makeParam}/lease-deals` : '/lease-deals'}>
-                {makeName} Lease Deals
-              </Link>
-              <span className="mm-lease__breadcrumb-sep">/</span>
-              <span>
-                {makeName} {modelName}
-              </span>
-            </nav>
-            <h1 className="mm-lease__title">{pageTitle}</h1>
-            <p className="mm-lease__description">{pageDescription}</p>
-          </div>
-        </div>
-      </div>
 
       <div className="mm-lease__toolbar">
         <div className="container mm-lease__toolbar-inner">
@@ -336,6 +306,33 @@ const LeaseByMakeModelPage = () => {
         </div>
       </div>
 
+      <div className="mm-lease__hero">
+        <div className="container">
+          <div className="mm-lease__hero-content">
+            <div className="mm-lease__hero-badge">
+              <span className="hero-pill__label">
+                {makeName} {modelName}
+              </span>
+            </div>
+            <nav className="mm-lease__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="mm-lease__breadcrumb-sep">/</span>
+              <Link to="/lease-deals">Lease Deals</Link>
+              <span className="mm-lease__breadcrumb-sep">/</span>
+              <Link to={makeParam ? `/${makeParam}/lease-deals` : '/lease-deals'}>
+                {makeName} Lease Deals
+              </Link>
+              <span className="mm-lease__breadcrumb-sep">/</span>
+              <span>
+                {makeName} {modelName}
+              </span>
+            </nav>
+            <h1 className="mm-lease__title">{pageTitle}</h1>
+            <p className="mm-lease__description">{pageDescription}</p>
+          </div>
+        </div>
+      </div>
+
       <div className="mm-lease__content">
         <div className="container">
           <div className="mm-lease__layout">
@@ -345,7 +342,6 @@ const LeaseByMakeModelPage = () => {
                   {allDeals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                     const saved = isVehicleSaved(vehicleName);
-                    const isExpanded = expandedDealId === deal.id;
                     const leaseNum = deal.monthlyPaymentNum;
                     const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
 
@@ -456,7 +452,7 @@ const LeaseByMakeModelPage = () => {
                               <span className="mm-lease__card-payment-period">/mo</span>
                             </div>
                             <span className="mm-lease__card-payment-savings">
-                              {savingsVsAvg}
+                              <SavingsText text={savingsVsAvg} />
                               <span className="mm-lease__card-tooltip-wrap">
                                 <Info size={13} className="mm-lease__card-tooltip-icon" />
                                 <span className="mm-lease__card-tooltip">{savingsTooltip}</span>
@@ -492,41 +488,13 @@ const LeaseByMakeModelPage = () => {
                             Get This Deal
                           </button>
 
-                          <button
-                            type="button"
+                          <Link
+                            to={`/${deal.vehicle.slug}`}
                             className="mm-lease__card-toggle"
-                            onClick={() => toggleDealDetails(deal.id)}
-                            aria-expanded={isExpanded}
                           >
-                            <span>Additional Details</span>
-                            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </button>
-
-                          {isExpanded && (
-                            <div className="mm-lease__card-additional">
-                              <div className="mm-lease__card-additional-item">
-                                <Info size={16} />
-                                <div>
-                                  <strong>{deal.programName}</strong>
-                                  <p>{deal.programDescription}</p>
-                                </div>
-                              </div>
-                              <div className="mm-lease__card-additional-item">
-                                <Tag size={16} />
-                                <div>
-                                  <strong>Eligible Trims</strong>
-                                  <p>{deal.trimsEligible.join(', ')}</p>
-                                </div>
-                              </div>
-                              <div className="mm-lease__card-additional-item">
-                                <Clock size={16} />
-                                <div>
-                                  <strong>Offer Expires</strong>
-                                  <p>{formatExpiration(deal.expirationDate)}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                            <span>Read More</span>
+                            <ChevronRight size={14} />
+                          </Link>
                         </div>
                       </div>
                     );
@@ -600,6 +568,7 @@ const LeaseByMakeModelPage = () => {
         filters={filters}
         onApply={handleFilterApply}
         totalResults={allDeals.length}
+        dealPageType="lease"
       />
     </div>
   );

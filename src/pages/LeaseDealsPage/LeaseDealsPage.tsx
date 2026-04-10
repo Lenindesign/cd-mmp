@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -16,6 +16,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import SavingsText from '../../components/SavingsText';
 import './LeaseDealsPage.css';
 
 const FAQ_DATA = [
@@ -43,6 +44,7 @@ const FAQ_DATA = [
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'lease',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -54,7 +56,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 const LeaseDealsPage = () => {
@@ -62,7 +64,6 @@ const LeaseDealsPage = () => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
 
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -177,29 +178,6 @@ const LeaseDealsPage = () => {
         noIndex={deals.length === 0}
       />
 
-      <div className="lease-deals-page__hero">
-        <div className="container">
-          <div className="lease-deals-page__hero-content">
-            <div className="lease-deals-page__hero-badge">
-              <span className="hero-pill__label">Lease Deals</span>
-            </div>
-            <nav className="lease-deals-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="lease-deals-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="lease-deals-page__breadcrumb-sep">/</span>
-              <span>Lease Deals</span>
-            </nav>
-            <h1 className="lease-deals-page__title">{pageTitle}</h1>
-            <p className="lease-deals-page__description">
-              Leasing lets you drive a brand-new car with lower monthly payments than buying. We've compiled
-              the best manufacturer lease specials and paired them with our expert ratings so you can find the
-              best value for your budget.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Filter toolbar */}
       <div className="lease-deals-page__toolbar">
         <div className="container lease-deals-page__toolbar-inner">
@@ -235,6 +213,29 @@ const LeaseDealsPage = () => {
         </div>
       </div>
 
+      <div className="lease-deals-page__hero">
+        <div className="container">
+          <div className="lease-deals-page__hero-content">
+            <div className="lease-deals-page__hero-badge">
+              <span className="hero-pill__label">Lease Deals</span>
+            </div>
+            <nav className="lease-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="lease-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="lease-deals-page__breadcrumb-sep">/</span>
+              <span>Lease Deals</span>
+            </nav>
+            <h1 className="lease-deals-page__title">{pageTitle}</h1>
+            <p className="lease-deals-page__description">
+              Leasing lets you drive a brand-new car with lower monthly payments than buying. We've compiled
+              the best manufacturer lease specials and paired them with our expert ratings so you can find the
+              best value for your budget.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="lease-deals-page__content">
         <div className="container">
           <div className="lease-deals-page__layout">
@@ -244,7 +245,6 @@ const LeaseDealsPage = () => {
                   {deals.map((deal) => {
                     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                     const saved = isVehicleSaved(vehicleName);
-                    const isExpanded = expandedDealId === deal.id;
                     return (
                       <div key={deal.id} className="lease-deals-page__card">
                         <div className="lease-deals-page__card-header">
@@ -315,7 +315,7 @@ const LeaseDealsPage = () => {
                                   <span className="lease-deals-page__card-payment-period">/mo</span>
                                 </div>
                                 <span className="lease-deals-page__card-payment-savings">
-                                  {savingsVsAvg}
+                                  <SavingsText text={savingsVsAvg} />
                                   <span className="lease-deals-page__card-tooltip-wrap">
                                     <Info size={13} className="lease-deals-page__card-tooltip-icon" />
                                     <span className="lease-deals-page__card-tooltip">{savingsTooltip}</span>
@@ -346,25 +346,13 @@ const LeaseDealsPage = () => {
 
                           <button type="button" className="lease-deals-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                          <button className="lease-deals-page__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
-                            <span>Additional Details</span>{isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </button>
-                          {isExpanded && (
-                            <div className="lease-deals-page__card-additional">
-                              <div className="lease-deals-page__card-additional-item">
-                                <strong>{deal.programName}</strong>
-                                <p>{deal.programDescription}</p>
-                              </div>
-                              <div className="lease-deals-page__card-additional-item">
-                                <strong>Eligible Trims</strong>
-                                <p>{deal.trimsEligible.join(', ')}</p>
-                              </div>
-                              <div className="lease-deals-page__card-additional-item">
-                                <strong>Offer Expires</strong>
-                                <p>{formatExpiration(deal.expirationDate)}</p>
-                              </div>
-                            </div>
-                          )}
+                          <Link
+                            to={`/${deal.vehicle.slug}`}
+                            className="lease-deals-page__card-toggle"
+                          >
+                            <span>Read More</span>
+                            <ChevronRight size={14} />
+                          </Link>
                         </div>
                       </div>
                     );
@@ -429,6 +417,7 @@ const LeaseDealsPage = () => {
         filters={filters}
         onApply={handleFilterApply}
         totalResults={deals.length}
+        dealPageType="lease"
       />
     </div>
   );

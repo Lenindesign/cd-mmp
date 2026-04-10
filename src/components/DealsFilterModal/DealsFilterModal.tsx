@@ -11,16 +11,18 @@ import './DealsFilterModal.css';
 export type DealFilterTab = 'best-deals' | 'all-specials';
 
 export type SortOption =
-  | 'recommended'
+  | 'a-z'
+  | 'expiring-soon'
   | 'payment-low'
-  | 'payment-high'
-  | 'savings-high'
-  | 'expiring-soon';
+  | 'cash-down-low';
 
 export type Accolade = 'editorsChoice' | 'tenBest' | 'evOfTheYear';
 
+export type DealTypeOption = 'all' | 'lease' | 'finance' | 'cash';
+
 export interface DealsFilterState {
   tab: DealFilterTab;
+  dealType: DealTypeOption;
   zipCode: string;
   bodyTypes: string[];
   monthlyPaymentMin: number;
@@ -35,6 +37,8 @@ export interface DealsFilterState {
   sortBy: SortOption;
 }
 
+export type DealPageType = 'lease' | 'finance' | 'all' | 'general';
+
 interface DealsFilterModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -42,14 +46,17 @@ interface DealsFilterModalProps {
   onApply: (filters: DealsFilterState) => void;
   totalResults: number;
   getResultCount?: (filters: DealsFilterState) => number;
+  dealPageType?: DealPageType;
 }
 
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: 'recommended', label: 'Recommended' },
-  { value: 'payment-low', label: 'Monthly Payment: Low to High' },
-  { value: 'payment-high', label: 'Monthly Payment: High to Low' },
-  { value: 'savings-high', label: 'Biggest Savings First' },
-  { value: 'expiring-soon', label: 'Expiring Soon' },
+const BASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'a-z', label: 'A–Z' },
+  { value: 'expiring-soon', label: 'Expiring Soonest' },
+];
+
+const LEASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'payment-low', label: 'Lowest Monthly Payment' },
+  { value: 'cash-down-low', label: 'Lowest Cash Down' },
 ];
 
 const DealsFilterModal = ({
@@ -59,6 +66,7 @@ const DealsFilterModal = ({
   onApply,
   totalResults,
   getResultCount,
+  dealPageType = 'general',
 }: DealsFilterModalProps) => {
   const [draft, setDraft] = useState<DealsFilterState>(externalFilters);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -160,6 +168,7 @@ const DealsFilterModal = ({
   const handleClearAll = useCallback(() => {
     setDraft(prev => ({
       ...prev,
+      dealType: 'all',
       bodyTypes: [],
       monthlyPaymentMin: paymentRange.min,
       monthlyPaymentMax: paymentRange.max,
@@ -170,7 +179,7 @@ const DealsFilterModal = ({
       accolades: [],
       terms: [],
       creditTier: null,
-      sortBy: 'recommended',
+      sortBy: 'a-z',
     }));
   }, [paymentRange, signingRange]);
 
@@ -178,6 +187,19 @@ const DealsFilterModal = ({
     onApply(draft);
     onClose();
   }, [draft, onApply, onClose]);
+
+  const activeDealType = draft.dealType;
+  const showMonthlyPayment = activeDealType === 'all' || activeDealType === 'lease';
+  const showTermLength = activeDealType === 'all' || activeDealType === 'lease' || activeDealType === 'finance';
+  const showCreditScore = activeDealType === 'all' || activeDealType === 'lease' || activeDealType === 'finance';
+  const showDueAtSigning = activeDealType === 'all' || activeDealType === 'lease';
+
+  const sortOptions = useMemo(() => {
+    if (activeDealType === 'lease' || dealPageType === 'lease') {
+      return [...BASE_SORT_OPTIONS, ...LEASE_SORT_OPTIONS];
+    }
+    return BASE_SORT_OPTIONS;
+  }, [activeDealType, dealPageType]);
 
   if (!isOpen) return null;
 
@@ -200,6 +222,33 @@ const DealsFilterModal = ({
 
         {/* Scrollable body */}
         <div className="deals-filter__body">
+          {/* Deal Type */}
+          <div className="deals-filter__deal-type-row">
+            {([
+              { value: 'all' as DealTypeOption, label: 'All Deals' },
+              { value: 'lease' as DealTypeOption, label: 'Lease' },
+              { value: 'finance' as DealTypeOption, label: 'Finance' },
+              { value: 'cash' as DealTypeOption, label: 'Cash Back' },
+            ]).map(opt => (
+              <button
+                key={opt.value}
+                type="button"
+                className={`deals-filter__deal-type-chip ${draft.dealType === opt.value ? 'deals-filter__deal-type-chip--active' : ''}`}
+                onClick={() => setDraft(prev => {
+                  const next = { ...prev, dealType: opt.value };
+                  const isLeaseSort = opt.value === 'lease' || dealPageType === 'lease';
+                  const leaseSortValues = LEASE_SORT_OPTIONS.map(o => o.value);
+                  if (!isLeaseSort && leaseSortValues.includes(prev.sortBy as typeof leaseSortValues[number])) {
+                    next.sortBy = 'a-z';
+                  }
+                  return next;
+                })}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
           {/* Location */}
           <div className="deals-filter__section deals-filter__section--location">
             <h3 className="deals-filter__section-label">Location</h3>
@@ -227,7 +276,7 @@ const DealsFilterModal = ({
             onToggle={() => toggleSection('sortBy')}
           >
             <div className="deals-filter__radio-list">
-              {SORT_OPTIONS.map(opt => (
+              {sortOptions.map(opt => (
                 <label key={opt.value} className="deals-filter__radio-row">
                   <span className="deals-filter__radio-label">{opt.label}</span>
                   <input
@@ -244,7 +293,7 @@ const DealsFilterModal = ({
 
           {/* Body Type */}
           <FilterSection
-            title="Body type"
+            title="Body Style"
             expanded={expandedSections.bodyType}
             onToggle={() => toggleSection('bodyType')}
           >
@@ -262,62 +311,68 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Monthly Payment */}
-          <FilterSection
-            title="Monthly payment"
-            expanded={expandedSections.monthlyPayment}
-            onToggle={() => toggleSection('monthlyPayment')}
-          >
-            <RangeInputs
-              minValue={draft.monthlyPaymentMin}
-              maxValue={draft.monthlyPaymentMax}
-              absMin={paymentRange.min}
-              absMax={paymentRange.max}
-              prefix="$"
-              onMinChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMin: v }))}
-              onMaxChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMax: v }))}
-            />
-          </FilterSection>
+          {/* Monthly Payment — lease & all */}
+          {showMonthlyPayment && (
+            <FilterSection
+              title="Monthly payment"
+              expanded={expandedSections.monthlyPayment}
+              onToggle={() => toggleSection('monthlyPayment')}
+            >
+              <RangeInputs
+                minValue={draft.monthlyPaymentMin}
+                maxValue={draft.monthlyPaymentMax}
+                absMin={paymentRange.min}
+                absMax={paymentRange.max}
+                prefix="$"
+                onMinChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMin: v }))}
+                onMaxChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMax: v }))}
+              />
+            </FilterSection>
+          )}
 
-          {/* Term Length */}
-          <FilterSection
-            title="Term length"
-            expanded={expandedSections.term}
-            onToggle={() => toggleSection('term')}
-          >
-            <div className="deals-filter__chips">
-              {availableTerms.map(t => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`deals-filter__chip ${draft.terms.includes(t) ? 'deals-filter__chip--active' : ''}`}
-                  onClick={() => toggleTerm(t)}
-                >
-                  {t} mo
-                </button>
-              ))}
-            </div>
-          </FilterSection>
+          {/* Term Length — lease, finance & all */}
+          {showTermLength && (
+            <FilterSection
+              title="Term length"
+              expanded={expandedSections.term}
+              onToggle={() => toggleSection('term')}
+            >
+              <div className="deals-filter__chips">
+                {availableTerms.map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`deals-filter__chip ${draft.terms.includes(t) ? 'deals-filter__chip--active' : ''}`}
+                    onClick={() => toggleTerm(t)}
+                  >
+                    {t} mo
+                  </button>
+                ))}
+              </div>
+            </FilterSection>
+          )}
 
-          {/* Credit Tier */}
-          <FilterSection
-            title="Credit score"
-            expanded={expandedSections.creditTier}
-            onToggle={() => toggleSection('creditTier')}
-          >
-            <div className="deals-filter__chips">
-              {CREDIT_TIERS.map(tier => (
-                <button
-                  key={tier.value}
-                  type="button"
-                  className={`deals-filter__chip ${draft.creditTier === tier.value ? 'deals-filter__chip--active' : ''}`}
-                  onClick={() => setDraft(prev => ({ ...prev, creditTier: prev.creditTier === tier.value ? null : tier.value }))}
-                >
-                  {tier.label}
-                </button>
-              ))}
-            </div>
-          </FilterSection>
+          {/* Credit Score — lease, finance & all */}
+          {showCreditScore && (
+            <FilterSection
+              title="Credit score"
+              expanded={expandedSections.creditTier}
+              onToggle={() => toggleSection('creditTier')}
+            >
+              <div className="deals-filter__chips">
+                {CREDIT_TIERS.map(tier => (
+                  <button
+                    key={tier.value}
+                    type="button"
+                    className={`deals-filter__chip ${draft.creditTier === tier.value ? 'deals-filter__chip--active' : ''}`}
+                    onClick={() => setDraft(prev => ({ ...prev, creditTier: prev.creditTier === tier.value ? null : tier.value }))}
+                  >
+                    {tier.label}
+                  </button>
+                ))}
+              </div>
+            </FilterSection>
+          )}
 
           {/* Make */}
           <FilterSection
@@ -340,22 +395,24 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Due at Signing */}
-          <FilterSection
-            title="Due at signing"
-            expanded={expandedSections.dueAtSigning}
-            onToggle={() => toggleSection('dueAtSigning')}
-          >
-            <RangeInputs
-              minValue={draft.dueAtSigningMin}
-              maxValue={draft.dueAtSigningMax}
-              absMin={signingRange.min}
-              absMax={signingRange.max}
-              prefix="$"
-              onMinChange={v => setDraft(prev => ({ ...prev, dueAtSigningMin: v }))}
-              onMaxChange={v => setDraft(prev => ({ ...prev, dueAtSigningMax: v }))}
-            />
-          </FilterSection>
+          {/* Due at Signing — lease & all */}
+          {showDueAtSigning && (
+            <FilterSection
+              title="Due at signing"
+              expanded={expandedSections.dueAtSigning}
+              onToggle={() => toggleSection('dueAtSigning')}
+            >
+              <RangeInputs
+                minValue={draft.dueAtSigningMin}
+                maxValue={draft.dueAtSigningMax}
+                absMin={signingRange.min}
+                absMax={signingRange.max}
+                prefix="$"
+                onMinChange={v => setDraft(prev => ({ ...prev, dueAtSigningMin: v }))}
+                onMaxChange={v => setDraft(prev => ({ ...prev, dueAtSigningMax: v }))}
+              />
+            </FilterSection>
+          )}
 
           {/* Fuel Type */}
           <FilterSection
@@ -377,29 +434,6 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Accolades */}
-          <FilterSection
-            title="Accolades"
-            expanded={expandedSections.accolades}
-            onToggle={() => toggleSection('accolades')}
-          >
-            <div className="deals-filter__chips">
-              {([
-                { value: 'editorsChoice' as Accolade, label: "Editors' Choice" },
-                { value: 'tenBest' as Accolade, label: '10Best' },
-                { value: 'evOfTheYear' as Accolade, label: 'EV of the Year' },
-              ]).map(acc => (
-                <button
-                  key={acc.value}
-                  type="button"
-                  className={`deals-filter__chip ${draft.accolades.includes(acc.value) ? 'deals-filter__chip--active' : ''}`}
-                  onClick={() => toggleArrayItem('accolades', acc.value)}
-                >
-                  {acc.label}
-                </button>
-              ))}
-            </div>
-          </FilterSection>
 
         </div>
 

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, Tag, Users, Clock, CarFront, Truck, Car, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, CarFront, Truck, Car, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -16,6 +16,7 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
+import SavingsText from '../../components/SavingsText';
 import './CashFinanceBodyStylePage.css';
 
 type BodyTab = 'all' | 'suv' | 'sedan' | 'truck' | 'coupe' | 'hatchback';
@@ -61,6 +62,7 @@ const FAQ_DATA = [
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
+  dealType: 'finance',
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
@@ -72,7 +74,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
-  sortBy: 'recommended',
+  sortBy: 'a-z',
 };
 
 const CashFinanceBodyStylePage = () => {
@@ -81,7 +83,6 @@ const CashFinanceBodyStylePage = () => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<BodyTab>('all');
-  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -256,27 +257,6 @@ const CashFinanceBodyStylePage = () => {
         noIndex={allDeals.length === 0}
       />
 
-      <div className="cfbs-deals__hero">
-        <div className="container">
-          <div className="cfbs-deals__hero-content">
-            <div className="cfbs-deals__hero-badge">
-              <span className="hero-pill__label">Finance Deals by Body Style</span>
-            </div>
-            <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="cfbs-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="cfbs-deals__breadcrumb-sep">/</span>
-              <span>Finance by Body Style</span>
-            </nav>
-            <h1 className="cfbs-deals__title">{pageTitle}</h1>
-            <p className="cfbs-deals__description">
-              Special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="cfbs-deals__toolbar">
         <div className="container cfbs-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -311,6 +291,27 @@ const CashFinanceBodyStylePage = () => {
         </div>
       </div>
 
+      <div className="cfbs-deals__hero">
+        <div className="container">
+          <div className="cfbs-deals__hero-content">
+            <div className="cfbs-deals__hero-badge">
+              <span className="hero-pill__label">Finance Deals by Body Style</span>
+            </div>
+            <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="cfbs-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="cfbs-deals__breadcrumb-sep">/</span>
+              <span>Finance by Body Style</span>
+            </nav>
+            <h1 className="cfbs-deals__title">{pageTitle}</h1>
+            <p className="cfbs-deals__description">
+              Special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="cfbs-deals__content">
         <div className="container">
           <div className="cfbs-deals__layout">
@@ -336,7 +337,6 @@ const CashFinanceBodyStylePage = () => {
                 <div className="cfbs-deals__grid">
                   {displayDeals.map((deal) => {
                     const saved = isVehicleSaved(deal.vehicleName);
-                    const isExpanded = expandedDealId === deal.id;
                     return (
                       <div key={deal.id} className="cfbs-deals__card">
                         <div className="cfbs-deals__card-header">
@@ -415,7 +415,7 @@ const CashFinanceBodyStylePage = () => {
                               )}
                             </div>
                             <span className="cfbs-deals__card-payment-savings">
-                              {deal.savingsVsAvg}
+                              <SavingsText text={deal.savingsVsAvg} />
                               <span className="cfbs-deals__card-tooltip-wrap">
                                 <Info size={13} className="cfbs-deals__card-tooltip-icon" />
                                 <span className="cfbs-deals__card-tooltip">{deal.savingsTooltip}</span>
@@ -442,21 +442,13 @@ const CashFinanceBodyStylePage = () => {
 
                           <button type="button" className="cfbs-deals__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-                          <button className="cfbs-deals__card-toggle" onClick={() => setExpandedDealId(isExpanded ? null : deal.id)} aria-expanded={isExpanded}>
-                            <span>Additional Details</span>{isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          </button>
-                          {isExpanded && (
-                            <div className="cfbs-deals__card-additional">
-                              <div className="cfbs-deals__card-additional-item"><Info size={16} /><div><strong>{deal.programName}</strong><p>{deal.programDescription}</p></div></div>
-                              {deal.additionalInfo.map((info, i) => (
-                                <div key={i} className="cfbs-deals__card-additional-item">
-                                  {info.icon === 'users' ? <Users size={16} /> : info.icon === 'tag' ? <Tag size={16} /> : <Clock size={16} />}
-                                  <div><strong>{info.label}</strong><p>{info.value}</p></div>
-                                </div>
-                              ))}
-                              <div className="cfbs-deals__card-additional-item"><Clock size={16} /><div><strong>Offer Expires</strong><p>{formatExpiration(deal.expirationDate)}</p></div></div>
-                            </div>
-                          )}
+                          <Link
+                            to={`/${deal.vehicle.slug}`}
+                            className="cfbs-deals__card-toggle"
+                          >
+                            <span>Read More</span>
+                            <ChevronRight size={14} />
+                          </Link>
                         </div>
                       </div>
                     );
