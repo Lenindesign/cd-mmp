@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ChevronRight, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
+import { Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import {
@@ -136,7 +136,7 @@ const LeaseByMakePage = () => {
   }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
   const matchesMake = useCallback(
     (vehicle: Vehicle) => vehicle.make.toLowerCase() === makeName.toLowerCase(),
@@ -342,7 +342,7 @@ const LeaseByMakePage = () => {
                           : o.type === 'cash'
                             ? 'Cash'
                             : o.type === 'finance'
-                              ? 'Finance'
+                              ? 'Buy'
                               : 'Lease'}
                       </span>
                       <span className="make-lease__card-offers-popup-label">{o.label}</span>
@@ -412,9 +412,11 @@ const LeaseByMakePage = () => {
             Get This Deal
           </button>
 
-          <Link to={`/${deal.vehicle.slug}`} className="make-lease__card-toggle">
-            <span>Read More</span>
-            <ChevronRight size={14} />
+          <Link
+            to={`/${deal.vehicle.slug}`}
+            className="make-lease__card-cta make-lease__card-cta--secondary"
+          >
+            Shop New {deal.vehicle.model}
           </Link>
         </div>
       </div>

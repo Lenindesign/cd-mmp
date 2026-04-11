@@ -1,7 +1,7 @@
 [
   {
     "id": "4",
-    "year": "2025",
+    "year": "2026",
     "make": "Ford",
     "model": "F-150",
     "bodyStyle": "Truck",
@@ -30,13 +30,13 @@
       "SYNC 4",
       "Co-Pilot360"
     ],
-    "slug": "2025/Ford/F-150",
+    "slug": "2026/Ford/F-150",
     "editorsChoice": true,
     "tenBest": true
   },
   {
     "id": "6",
-    "year": "2024",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Silverado",
     "bodyStyle": "Truck",
@@ -59,7 +59,7 @@
       "Teen Driver",
       "Wireless Charging"
     ],
-    "slug": "2024/Chevrolet/Silverado",
+    "slug": "2026/Chevrolet/Silverado",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-1500-high-country-102-642dbddbe725d.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-1500-high-country-103-642dbd7a1d00b.jpg",
@@ -70,41 +70,8 @@
     ]
   },
   {
-    "id": "9",
-    "year": "2024",
-    "make": "Ram",
-    "model": "1500",
-    "bodyStyle": "Truck",
-    "imageSource": "2024 Ram 1500",
-    "image": "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff4/8-2024-ram-1500-limited-front-view.jpg",
-    "galleryImages": [
-      "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff4/8-2024-ram-1500-limited-front-view.jpg",
-      "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff3/3-2024-ram-1500-laramie-side-view.jpg",
-      "https://hips.hearstapps.com/mtg-prod/65a470e6c6b1a20008951ff5/9-2024-ram-1500-limited-rear-view.jpg",
-      "https://hips.hearstapps.com/mtg-prod/65a470e6819c700008a4c3a1/7-2024-ram-1500-limited-interior.jpg"
-    ],
-    "priceRange": "$38,970 - $73,340",
-    "priceMin": 38970,
-    "priceMax": 73340,
-    "staffRating": 8.8,
-    "communityRating": 8.7,
-    "reviewCount": 245,
-    "fuelType": "Gas",
-    "drivetrain": "4WD",
-    "transmission": "Automatic",
-    "mpg": "17/23",
-    "horsepower": 395,
-    "seatingCapacity": 6,
-    "features": [
-      "Uconnect 5",
-      "RamBox Storage",
-      "Multifunction Tailgate"
-    ],
-    "slug": "2024/Ram/1500"
-  },
-  {
     "id": "67",
-    "year": "2025",
+    "year": "2026",
     "make": "Ram",
     "model": "1500",
     "bodyStyle": "Truck",
@@ -134,13 +101,13 @@
       "10.3-inch Passenger Screen",
       "2025 MotorTrend Truck of the Year"
     ],
-    "slug": "2025/Ram/1500",
+    "slug": "2026/Ram/1500",
     "editorsChoice": true,
     "tenBest": true
   },
   {
     "id": "10",
-    "year": "2024",
+    "year": "2026",
     "make": "Toyota",
     "model": "Tundra",
     "bodyStyle": "Truck",
@@ -163,7 +130,7 @@
       "Hybrid Powertrain",
       "Panoramic View Monitor"
     ],
-    "slug": "2024/Toyota/Tundra",
+    "slug": "2026/Toyota/Tundra",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2022-toyota-tundra-limited-crewmax-288-1648649438.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2022-toyota-tundra-limited-crewmax-176-1648649431.jpg",
@@ -175,7 +142,7 @@
   },
   {
     "id": "11",
-    "year": "2024",
+    "year": "2026",
     "make": "Jeep",
     "model": "Gladiator",
     "bodyStyle": "Truck",
@@ -198,7 +165,7 @@
       "Fold-Down Windshield",
       "Trail Rated 4x4"
     ],
-    "slug": "2024/Jeep/Gladiator",
+    "slug": "2026/Jeep/Gladiator",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-jeep-gladiator-mojave-x-101-6500b274f172a.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-jeep-gladiator-interior-102-6500b149ef3df.jpg",
@@ -210,7 +177,7 @@
   },
   {
     "id": "11a",
-    "year": "2024",
+    "year": "2026",
     "make": "GMC",
     "model": "Sierra",
     "bodyStyle": "Truck",
@@ -233,7 +200,7 @@
       "MultiPro Tailgate",
       "CarbonPro Bed"
     ],
-    "slug": "2024/GMC/Sierra",
+    "slug": "2026/GMC/Sierra",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2022-gmc-sierra-1500-denali-ultimate-101-1652106391.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2022-gmc-sierra-1500-denali-ultimate-107-1652106440.jpg",
@@ -245,7 +212,7 @@
   },
   {
     "id": "12",
-    "year": "2024",
+    "year": "2026",
     "make": "Nissan",
     "model": "Titan",
     "bodyStyle": "Truck",
@@ -268,7 +235,7 @@
       "Nissan Safety Shield",
       "Fender Audio"
     ],
-    "slug": "2024/Nissan/Titan",
+    "slug": "2026/Nissan/Titan",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-114-65031bc46fc48.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-118-65031bc4c164c.jpg",
@@ -280,7 +247,7 @@
   },
   {
     "id": "13",
-    "year": "2025",
+    "year": "2026",
     "make": "Ford",
     "model": "Maverick",
     "bodyStyle": "Truck",
@@ -303,7 +270,7 @@
       "Co-Pilot360",
       "FLEXBED System"
     ],
-    "slug": "2025/Ford/Maverick",
+    "slug": "2026/Ford/Maverick",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-ford-maverick-lobo-123-68a33e53df8f9.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-ford-maverick-lobo-118-68a33e4dba91d.jpg",
@@ -315,7 +282,7 @@
   },
   {
     "id": "13a",
-    "year": "2024",
+    "year": "2026",
     "make": "Hyundai",
     "model": "Santa Cruz",
     "bodyStyle": "Truck",
@@ -343,11 +310,11 @@
       "Digital Key",
       "Lockable In-Bed Trunk"
     ],
-    "slug": "2024/Hyundai/Santa-Cruz"
+    "slug": "2026/Hyundai/Santa-Cruz"
   },
   {
     "id": "13b",
-    "year": "2025",
+    "year": "2026",
     "make": "Ford",
     "model": "Ranger",
     "bodyStyle": "Truck",
@@ -370,7 +337,7 @@
       "Trail Control",
       "Pro Trailer Backup Assist"
     ],
-    "slug": "2025/Ford/Ranger",
+    "slug": "2026/Ford/Ranger",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-lariat-355-66fd5b7bd0516.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-ford-ranger-lariat-411-66fd5b7d3ab4f.jpg",
@@ -382,7 +349,7 @@
   },
   {
     "id": "14",
-    "year": "2024",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Colorado",
     "bodyStyle": "Truck",
@@ -405,7 +372,7 @@
       "Infotainment System",
       "Teen Driver"
     ],
-    "slug": "2024/Chevrolet/Colorado",
+    "slug": "2026/Chevrolet/Colorado",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-109-64400268b33af.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-145-644002981644f.jpg",
@@ -417,7 +384,7 @@
   },
   {
     "id": "truck-elec1",
-    "year": "2025",
+    "year": "2026",
     "make": "Ford",
     "model": "F-150 Lightning",
     "bodyStyle": "Truck",
@@ -447,11 +414,11 @@
       "SYNC 4A",
       "Pro Power Onboard"
     ],
-    "slug": "2025/Ford/F-150-Lightning"
+    "slug": "2026/Ford/F-150-Lightning"
   },
   {
     "id": "truck-elec2",
-    "year": "2025",
+    "year": "2026",
     "make": "Rivian",
     "model": "R1T",
     "bodyStyle": "Truck",
@@ -481,11 +448,11 @@
       "Adventure Network",
       "Gear Guard"
     ],
-    "slug": "2025/Rivian/R1T"
+    "slug": "2026/Rivian/R1T"
   },
   {
     "id": "truck-elec3",
-    "year": "2025",
+    "year": "2026",
     "make": "GMC",
     "model": "Hummer EV",
     "bodyStyle": "Truck",
@@ -515,11 +482,11 @@
       "UltraVision",
       "Watts to Freedom"
     ],
-    "slug": "2025/GMC/Hummer-EV"
+    "slug": "2026/GMC/Hummer-EV"
   },
   {
     "id": "truck-elec4",
-    "year": "2025",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Silverado EV",
     "bodyStyle": "Truck",
@@ -543,7 +510,7 @@
       "Multi-Flex Midgate",
       "PowerBase"
     ],
-    "slug": "2025/Chevrolet/Silverado-EV",
+    "slug": "2026/Chevrolet/Silverado-EV",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-ev-111-66509d2aa15ba.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-silverado-ev-104-66509d28df6de.jpg",
@@ -555,7 +522,7 @@
   },
   {
     "id": "truck-elec5",
-    "year": "2025",
+    "year": "2026",
     "make": "Ram",
     "model": "1500 REV",
     "bodyStyle": "Truck",
@@ -579,7 +546,7 @@
       "RamBox",
       "PowerBox"
     ],
-    "slug": "2025/Ram/1500-REV",
+    "slug": "2026/Ram/1500-REV",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2026-ram-1500-ramcharger-1-front-three-quarter-67bdf77b08477.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2026-ram-1500-ramcharger-4-rear-three-quarter-67bdf448544d9.jpg",
@@ -591,7 +558,7 @@
   },
   {
     "id": "truck-elec6",
-    "year": "2025",
+    "year": "2026",
     "make": "Tesla",
     "model": "Cybertruck",
     "bodyStyle": "Truck",
@@ -622,11 +589,11 @@
       "Armor Glass",
       "Adaptive Air Suspension"
     ],
-    "slug": "2025/Tesla/Cybertruck"
+    "slug": "2026/Tesla/Cybertruck"
   },
   {
     "id": "truck-elec7",
-    "year": "2025",
+    "year": "2026",
     "make": "Ford",
     "model": "F-150 Lightning Pro",
     "bodyStyle": "Truck",
@@ -650,7 +617,7 @@
       "SYNC 4A",
       "Pro Power Onboard"
     ],
-    "slug": "2025/Ford/F-150-Lightning-Pro",
+    "slug": "2026/Ford/F-150-Lightning-Pro",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-ford-f-150-lightning-102-67042a178ef3c.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2022-ford-f-150-lightning-tested-113-1656624448.jpg",
@@ -662,7 +629,7 @@
   },
   {
     "id": "truck-elec8",
-    "year": "2025",
+    "year": "2026",
     "make": "GMC",
     "model": "Sierra EV",
     "bodyStyle": "Truck",
@@ -686,7 +653,7 @@
       "MultiPro Tailgate",
       "PowerBase"
     ],
-    "slug": "2025/GMC/Sierra-EV",
+    "slug": "2026/GMC/Sierra-EV",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-gmc-sierra-ev-denali-edition-1-299-66c3587d22813.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-gmc-sierra-ev-prototype-108-66c34514c78cf.jpg",
@@ -698,7 +665,7 @@
   },
   {
     "id": "truck-elec9",
-    "year": "2025",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Colorado EV",
     "bodyStyle": "Truck",
@@ -722,7 +689,7 @@
       "Chevrolet Infotainment 3",
       "Multi-Flex Tailgate"
     ],
-    "slug": "2025/Chevrolet/Colorado-EV",
+    "slug": "2026/Chevrolet/Colorado-EV",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-109-64400268b33af.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/chevrolet-colorado-zr2-fd-145-644002981644f.jpg",
@@ -734,7 +701,7 @@
   },
   {
     "id": "truck-elec10",
-    "year": "2025",
+    "year": "2026",
     "make": "Toyota",
     "model": "Tacoma EV",
     "bodyStyle": "Truck",
@@ -758,7 +725,7 @@
       "Multi-Terrain Select",
       "Crawl Control"
     ],
-    "slug": "2025/Toyota/Tacoma-EV",
+    "slug": "2026/Toyota/Tacoma-EV",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-tacoma-prerunner-101-681b80dd44cde.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-tacoma-prerunner-106-681b80dd3344e.jpg",
@@ -770,7 +737,7 @@
   },
   {
     "id": "truck-elec11",
-    "year": "2025",
+    "year": "2026",
     "make": "Nissan",
     "model": "Titan EV",
     "bodyStyle": "Truck",
@@ -794,7 +761,7 @@
       "ProPILOT Assist",
       "Zero Gravity Seats"
     ],
-    "slug": "2025/Nissan/Titan-EV",
+    "slug": "2026/Nissan/Titan-EV",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-114-65031bc46fc48.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-frontier-118-65031bc4c164c.jpg",

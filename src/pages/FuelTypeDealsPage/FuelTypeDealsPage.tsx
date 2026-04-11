@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, Fuel, Zap, Leaf, Droplets, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -20,10 +20,8 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import SavingsText from '../../components/SavingsText';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
-import Tabs from '../../components/Tabs/Tabs';
 import './FuelTypeDealsPage.css';
 
-type FuelTab = 'all' | 'gas' | 'hybrid' | 'electric' | 'diesel';
 
 interface UnifiedDeal {
   id: string;
@@ -50,13 +48,6 @@ interface UnifiedDeal {
   percentOffMsrp?: string;
 }
 
-const FUEL_TABS: { key: FuelTab; label: string; icon: React.ReactNode; match: (ft: string) => boolean }[] = [
-  { key: 'all', label: 'All', icon: <Fuel size={16} />, match: () => true },
-  { key: 'gas', label: 'Gas', icon: <Fuel size={16} />, match: (ft) => ft === 'Gas' },
-  { key: 'hybrid', label: 'Hybrid', icon: <Leaf size={16} />, match: (ft) => ft === 'Hybrid' || ft === 'Plug-in Hybrid' || ft === 'Plug-In Hybrid' },
-  { key: 'electric', label: 'Electric', icon: <Zap size={16} />, match: (ft) => ft === 'Electric' },
-  { key: 'diesel', label: 'Diesel', icon: <Droplets size={16} />, match: (ft) => ft === 'Diesel' },
-];
 
 const FAQ_DATA = [
   { question: 'Are there special deals on electric vehicles?', answer: 'Yes. Many manufacturers offer special incentives on EVs including reduced APR financing, lease specials, and cash rebates. Additionally, federal tax credits of up to $7,500 and various state incentives may apply on top of manufacturer deals.' },
@@ -112,7 +103,6 @@ const FuelTypeDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<FuelTab>('all');
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -125,7 +115,8 @@ const FuelTypeDealsPage = () => {
     params.set('filters', JSON.stringify(applied));
     navigate(`/deals/all?${params.toString()}`);
   }, [navigate]);
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
+  const clearAllFilters = useCallback(() => navigate('/deals/all'), [navigate]);
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -239,8 +230,18 @@ const FuelTypeDealsPage = () => {
     return results;
   }, [getSupabaseRating]);
 
-  const tabMatcher = FUEL_TABS.find(t => t.key === activeTab)?.match || (() => true);
-  const deals = useMemo(() => allDeals.filter(d => tabMatcher(d.fuelType)), [allDeals, activeTab]);
+  const allFuelTypes = useMemo(() => {
+    const types = new Set<string>();
+    for (const d of allDeals) if (d.fuelType) types.add(d.fuelType);
+    return Array.from(types).sort();
+  }, [allDeals]);
+
+  const [excludedFuelTypes, setExcludedFuelTypes] = useState<Set<string>>(new Set());
+
+  const deals = useMemo(
+    () => excludedFuelTypes.size === 0 ? allDeals : allDeals.filter(d => !excludedFuelTypes.has(d.fuelType)),
+    [allDeals, excludedFuelTypes],
+  );
 
   const displayDeals = useMemo(() => {
     let result = deals;
@@ -261,15 +262,6 @@ const FuelTypeDealsPage = () => {
 
   const dealChunks = useMemo(() => chunkArray(displayDeals, GRID_BREAKER_AFTER_CARD_COUNT), [displayDeals]);
 
-  const tabCounts = useMemo(() => {
-    const counts: Record<FuelTab, number> = { all: allDeals.length, gas: 0, hybrid: 0, electric: 0, diesel: 0 };
-    for (const d of allDeals) {
-      for (const t of FUEL_TABS) {
-        if (t.key !== 'all' && t.match(d.fuelType)) counts[t.key]++;
-      }
-    }
-    return counts;
-  }, [allDeals]);
 
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
   const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
@@ -298,7 +290,7 @@ const FuelTypeDealsPage = () => {
         <Link to={`/${deal.vehicle.slug}`} className="fuel-deals__card-image-link">
           <div className="fuel-deals__card-image-container">
             <img src={deal.vehicle.image} alt={deal.vehicleName} className="fuel-deals__card-image" />
-            <span className="fuel-deals__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Finance'}</span>
+            <span className="fuel-deals__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
             <span className="fuel-deals__card-fuel-badge">{deal.fuelType}</span>
             <button
               type="button"
@@ -329,7 +321,7 @@ const FuelTypeDealsPage = () => {
                   {offersPopup.offers.map((o, idx) => (
                     <li key={idx} className="fuel-deals__card-offers-popup-item">
                       <span className={`fuel-deals__card-offers-popup-type fuel-deals__card-offers-popup-type--${o.type}`}>
-                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'lease' ? 'Lease' : 'Finance'}
+                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'lease' ? 'Lease' : 'Buy'}
                       </span>
                       <span className="fuel-deals__card-offers-popup-label">{o.label}</span>
                       <span className="fuel-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
@@ -379,7 +371,7 @@ const FuelTypeDealsPage = () => {
 
           <button type="button" className="fuel-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
             <span className="fuel-deals__card-deal-pill-chip">
-              {deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Finance'}
+              {deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}
             </span>
             <span className="fuel-deals__card-deal-pill-text">{deal.dealText}</span>
             <span className="fuel-deals__card-deal-pill-divider" />
@@ -397,9 +389,11 @@ const FuelTypeDealsPage = () => {
 
           <button type="button" className="fuel-deals__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-          <Link to={`/${deal.vehicle.slug}`} className="fuel-deals__card-toggle">
-            <span>Read More</span>
-            <ChevronRight size={14} />
+          <Link
+            to={`/${deal.vehicle.slug}`}
+            className="fuel-deals__card-cta fuel-deals__card-cta--secondary"
+          >
+            Shop New {deal.vehicle.model}
           </Link>
         </div>
       </div>
@@ -439,12 +433,7 @@ const FuelTypeDealsPage = () => {
       })()
     : undefined;
 
-  const tabLabel = activeTab === 'all' ? '' : FUEL_TABS.find(t => t.key === activeTab)?.label || '';
-  const emptyFuelCategory =
-    activeTab === 'all' ? 'fuel type' : FUEL_TABS.find(t => t.key === activeTab)?.label.toLowerCase() || 'fuel type';
-  const pageTitle = tabLabel
-    ? `Best ${tabLabel} Vehicle Deals – ${CURRENT_MONTH} ${CURRENT_YEAR}`
-    : `Best Vehicle Deals by Fuel Type – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
+  const pageTitle = `Best Vehicle Deals by Fuel Type – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
@@ -465,21 +454,29 @@ const FuelTypeDealsPage = () => {
         <div className="container fuel-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">{displayDeals.length} {displayDeals.length === 1 ? 'deal' : 'deals'}</span>
-            {activeFilterPills.length > 0 && (
-              <div className="active-filter-pills__row" aria-label="Active filters">
-                {activeFilterPills.map(pill => (
-                  <span key={pill.id} className="active-filter-pills__pill">
-                    <span className="active-filter-pills__pill-label">{pill.label}</span>
-                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
-                      <X size={12} strokeWidth={2.5} aria-hidden />
-                    </button>
-                  </span>
-                ))}
-                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
+            <div className="active-filter-pills__row" aria-label="Active filters">
+              {allFuelTypes.filter(ft => !excludedFuelTypes.has(ft)).map(ft => (
+                <span key={ft} className="active-filter-pills__pill">
+                  <span className="active-filter-pills__pill-label">{ft}</span>
+                  <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${ft} filter`} onClick={() => setExcludedFuelTypes(prev => new Set([...prev, ft]))}>
+                    <X size={12} strokeWidth={2.5} aria-hidden />
+                  </button>
+                </span>
+              ))}
+              {activeFilterPills.map(pill => (
+                <span key={pill.id} className="active-filter-pills__pill">
+                  <span className="active-filter-pills__pill-label">{pill.label}</span>
+                  <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                    <X size={12} strokeWidth={2.5} aria-hidden />
+                  </button>
+                </span>
+              ))}
+              {(excludedFuelTypes.size > 0 || activeFilterPills.length > 0) && (
+                <button type="button" className="active-filter-pills__clear-all" onClick={excludedFuelTypes.size > 0 && activeFilterPills.length === 0 ? () => setExcludedFuelTypes(new Set()) : clearAllFilters}>
                   Clear All
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <button
             type="button"
@@ -523,24 +520,11 @@ const FuelTypeDealsPage = () => {
           {displayDeals.length === 0 ? (
             <div className="fuel-deals__segment">
               <div className="fuel-deals__main">
-                <Tabs
-                  items={FUEL_TABS.map(t => ({
-                    value: t.key,
-                    label: t.label,
-                    icon: t.icon,
-                    count: tabCounts[t.key],
-                    disabled: tabCounts[t.key] === 0 && t.key !== 'all',
-                  }))}
-                  value={activeTab}
-                  onChange={setActiveTab}
-                  variant="pills"
-                  ariaLabel="Fuel type"
-                />
                 <section className="fuel-deals__section">
                   <div className="fuel-deals__grid">
                     <div className="fuel-deals__empty-state">
                       <p className="fuel-deals__empty-state-text">
-                        There are currently no active {emptyFuelCategory} offers. Check back soon or explore other available deals.
+                        There are currently no active fuel type offers. Check back soon or explore other available deals.
                       </p>
                       <Link to="/deals" className="fuel-deals__empty-state-link">
                         Browse All Deals
@@ -561,19 +545,6 @@ const FuelTypeDealsPage = () => {
                 <Fragment key={`fuel-segment-${chunkIndex}`}>
                   <div className="fuel-deals__segment">
                     <div className="fuel-deals__main">
-                      <Tabs
-                        items={FUEL_TABS.map(t => ({
-                          value: t.key,
-                          label: t.label,
-                          icon: t.icon,
-                          count: tabCounts[t.key],
-                          disabled: tabCounts[t.key] === 0 && t.key !== 'all',
-                        }))}
-                        value={activeTab}
-                        onChange={setActiveTab}
-                        variant="pills"
-                        ariaLabel="Fuel type"
-                      />
                       <section className="fuel-deals__section">
                         <div className="fuel-deals__grid">{chunk.map((deal) => renderFuelDealCard(deal))}</div>
                       </section>
@@ -614,11 +585,10 @@ const FuelTypeDealsPage = () => {
                 <h2 className="fuel-deals__section-title">Explore More</h2>
                 <div className="fuel-deals__links-grid">
                   <Link to="/deals" className="fuel-deals__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
-                  <Link to="/deals/best-buying-deals" className="fuel-deals__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
+                  <Link to="/deals/best-buying-deals" className="fuel-deals__link-card"><h3>Buying Deals</h3><p>0% APR, cash back, and special financing</p></Link>
                   <Link to="/deals/suv" className="fuel-deals__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs</p></Link>
                   <Link to="/deals/truck" className="fuel-deals__link-card"><h3>Truck Deals</h3><p>Pickup truck specials</p></Link>
                   <Link to="/deals/lease" className="fuel-deals__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
-                  <Link to="/deals/cash-finance" className="fuel-deals__link-card"><h3>Finance Deals</h3><p>Cash-back and APR offers</p></Link>
                 </div>
               </section>
             </div>

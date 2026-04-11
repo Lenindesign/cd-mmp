@@ -71,7 +71,7 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
         </div>
         <Tabs
           items={[
-            { value: 'finance', label: 'Finance', count: financeIncentives.length, extra: tabPaymentLabel.finance ? <span className="hero__offers-tab-price">{tabPaymentLabel.finance}</span> : undefined },
+            { value: 'finance', label: 'Buy', count: financeIncentives.length, extra: tabPaymentLabel.finance ? <span className="hero__offers-tab-price">{tabPaymentLabel.finance}</span> : undefined },
             { value: 'lease', label: 'Lease', count: leaseIncentives.length, extra: tabPaymentLabel.lease ? <span className="hero__offers-tab-price">{tabPaymentLabel.lease}</span> : undefined },
             { value: 'cash', label: 'Cash', count: cashIncentives.length, extra: tabPaymentLabel.cash ? <span className="hero__offers-tab-price">{tabPaymentLabel.cash}</span> : undefined },
           ]}

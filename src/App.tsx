@@ -39,7 +39,6 @@ const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
 // Deals pages - lazy loaded
 const DealsHubPage = lazy(() => import('./pages/DealsHubPage/DealsHubPage'));
 const ZeroAprDealsPage = lazy(() => import('./pages/ZeroAprDealsPage/ZeroAprDealsPage'));
-const CashFinanceDealsPage = lazy(() => import('./pages/CashFinanceDealsPage/CashFinanceDealsPage'));
 const LeaseDealsPage = lazy(() => import('./pages/LeaseDealsPage/LeaseDealsPage'));
 const SuvDealsPage = lazy(() => import('./pages/SuvDealsPage/SuvDealsPage'));
 const TruckDealsPage = lazy(() => import('./pages/TruckDealsPage/TruckDealsPage'));
@@ -175,7 +174,7 @@ function App() {
             <Route path={BEST_BUYING_DEALS_PATH} element={<ZeroAprDealsPage />} />
             <Route path={ZERO_PERCENT_APR_DEALS_PATH} element={<ZeroAprDealsPage />} />
             <Route path="/deals/zero-apr" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
-            <Route path="/deals/cash-finance" element={<CashFinanceDealsPage />} />
+            <Route path="/deals/cash-finance" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
             <Route path="/deals/lease" element={<LeaseDealsPage />} />
             <Route path="/deals/suv" element={<SuvDealsPage />} />
             <Route path="/deals/truck" element={<TruckDealsPage />} />

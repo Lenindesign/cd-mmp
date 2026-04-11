@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ChevronRight, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
+import { Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -37,7 +37,7 @@ type DealKind = 'zero-apr' | 'finance' | 'lease' | 'cash';
 interface UnifiedMakeDeal {
   id: string;
   dealType: DealKind;
-  chipLabel: 'Finance' | 'Lease' | 'Cash';
+  chipLabel: 'Buy' | 'Lease' | 'Cash';
   vehicle: Vehicle;
   rating: number;
   sortMonthly: number;
@@ -176,7 +176,7 @@ const DealsByMakePage = () => {
   }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
   const matchesMake = useCallback(
     (vehicle: Vehicle) => vehicle.make.toLowerCase() === makeName.toLowerCase(),
@@ -244,7 +244,7 @@ const DealsByMakePage = () => {
       out.push({
         id: d.id,
         dealType: 'zero-apr',
-        chipLabel: 'Finance',
+        chipLabel: 'Buy',
         vehicle: d.vehicle,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         sortMonthly: monthly,
@@ -269,7 +269,7 @@ const DealsByMakePage = () => {
       out.push({
         id: d.id,
         dealType: 'finance',
-        chipLabel: 'Finance',
+        chipLabel: 'Buy',
         vehicle: d.vehicle,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         sortMonthly: monthly,
@@ -579,7 +579,7 @@ const DealsByMakePage = () => {
                                           : o.type === 'cash'
                                             ? 'Cash'
                                             : o.type === 'finance'
-                                              ? 'Finance'
+                                              ? 'Buy'
                                               : 'Lease'}
                                       </span>
                                       <span className="make-deals__card-offers-popup-label">{o.label}</span>
@@ -780,10 +780,9 @@ const DealsByMakePage = () => {
 
                           <Link
                             to={`/${deal.vehicle.slug}`}
-                            className="make-deals__card-toggle"
+                            className="make-deals__card-cta make-deals__card-cta--secondary"
                           >
-                            <span>Read More</span>
-                            <ChevronRight size={14} />
+                            Shop New {deal.vehicle.model}
                           </Link>
                         </div>
                       </div>

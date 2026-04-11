@@ -77,7 +77,7 @@
   text-align: center;
 }
 
-.tabs--pills .tabs__item:hover:not(.tabs__item--disabled) {
+.tabs--pills .tabs__item:hover:not(.tabs__item--disabled):not(.tabs__item--active) {
   border-color: var(--color-gray-500);
   color: var(--color-dark);
 }

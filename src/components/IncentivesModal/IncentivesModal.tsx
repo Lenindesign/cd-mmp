@@ -145,7 +145,7 @@ const CONVERSION_B_SAMPLE_DEALER = {
 };
 
 const getOfferRowChipLabel = (type: Incentive['type']): string =>
-  type === 'lease' ? 'Lease' : type === 'cash' ? 'Buy' : 'Finance';
+  type === 'lease' ? 'Lease' : 'Buy';
 
 const EXPERT_TIPS: Record<Incentive['type'], string> = {
   finance: "Low-rate financing deals can beat cash rebates if you qualify. Always compare the total interest saved versus the rebate you\u2019re giving up before deciding.",
@@ -804,7 +804,7 @@ const IncentivesModal = ({
                   {(!allIncentives || allIncentives.length === 0) && (
                     <>
                       <div className="incentives-modal__v5-offer-row">
-                        <span className="incentives-modal__v5-offer-chip">Finance</span>
+                        <span className="incentives-modal__v5-offer-chip">Buy</span>
                         <span className="incentives-modal__v5-offer-apr">
                           {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
                         </span>
@@ -1191,7 +1191,7 @@ const IncentivesModal = ({
                   {(!allIncentives || allIncentives.length === 0) && (
                     <>
                       <div className="incentives-modal__v5-offer-row">
-                        <span className="incentives-modal__v5-offer-chip">Finance</span>
+                        <span className="incentives-modal__v5-offer-chip">Buy</span>
                         <span className="incentives-modal__v5-offer-apr">
                           {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
                         </span>

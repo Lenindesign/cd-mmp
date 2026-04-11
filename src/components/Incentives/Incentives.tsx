@@ -34,7 +34,7 @@ const Incentives = ({
   const tabs = [
     { id: 'all', label: 'All' },
     { id: 'cash', label: 'Cash' },
-    { id: 'finance', label: 'Finance' },
+    { id: 'finance', label: 'Buy' },
     { id: 'lease', label: 'Lease' },
     { id: 'special', label: 'Special' },
   ];
@@ -70,7 +70,7 @@ const Incentives = ({
   const getIncentiveTypeLabel = (type: Incentive['type']) => {
     const labels: Record<Incentive['type'], string> = {
       cash: 'Cash',
-      finance: 'Finance',
+      finance: 'Buy',
       lease: 'Lease',
       special: 'Special',
     };

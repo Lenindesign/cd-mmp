@@ -700,6 +700,18 @@
 
 .lease-deals-page__card-cta:hover { background: var(--color-blue-cobalt-dark); }
 
+.lease-deals-page__card-cta--secondary {
+  background: var(--color-white);
+  color: var(--color-dark);
+  border: 1px solid var(--color-gray-300);
+  margin-top: var(--spacing-2);
+}
+
+.lease-deals-page__card-cta--secondary:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-500);
+}
+
 /* Expand toggle */
 .lease-deals-page__card-toggle {
   display: flex;

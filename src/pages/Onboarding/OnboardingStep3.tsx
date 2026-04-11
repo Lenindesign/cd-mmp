@@ -46,16 +46,16 @@ const SearchIcon = () => (
 
 // Sample vehicle data for search suggestions
 const vehicleSuggestions = [
-  { id: '1', name: '2025 Toyota Camry', make: 'Toyota', model: 'Camry', year: '2025' },
-  { id: '2', name: '2025 Honda Accord', make: 'Honda', model: 'Accord', year: '2025' },
-  { id: '3', name: '2025 Ford Mustang', make: 'Ford', model: 'Mustang', year: '2025' },
-  { id: '4', name: '2025 Chevrolet Trax', make: 'Chevrolet', model: 'Trax', year: '2025' },
-  { id: '5', name: '2025 BMW 3 Series', make: 'BMW', model: '3 Series', year: '2025' },
-  { id: '6', name: '2025 Mercedes-Benz C-Class', make: 'Mercedes-Benz', model: 'C-Class', year: '2025' },
-  { id: '7', name: '2025 Audi A4', make: 'Audi', model: 'A4', year: '2025' },
-  { id: '8', name: '2025 Tesla Model 3', make: 'Tesla', model: 'Model 3', year: '2025' },
-  { id: '9', name: '2025 Hyundai Sonata', make: 'Hyundai', model: 'Sonata', year: '2025' },
-  { id: '10', name: '2025 Mazda CX-5', make: 'Mazda', model: 'CX-5', year: '2025' },
+  { id: '1', name: '2026 Toyota Camry', make: 'Toyota', model: 'Camry', year: '2026' },
+  { id: '2', name: '2026 Honda Accord', make: 'Honda', model: 'Accord', year: '2026' },
+  { id: '3', name: '2026 Ford Mustang', make: 'Ford', model: 'Mustang', year: '2026' },
+  { id: '4', name: '2026 Chevrolet Trax', make: 'Chevrolet', model: 'Trax', year: '2026' },
+  { id: '5', name: '2026 BMW 3 Series', make: 'BMW', model: '3 Series', year: '2026' },
+  { id: '6', name: '2026 Mercedes-Benz C-Class', make: 'Mercedes-Benz', model: 'C-Class', year: '2026' },
+  { id: '7', name: '2026 Audi A4', make: 'Audi', model: 'A4', year: '2026' },
+  { id: '8', name: '2026 Tesla Model 3', make: 'Tesla', model: 'Model 3', year: '2026' },
+  { id: '9', name: '2026 Hyundai Sonata', make: 'Hyundai', model: 'Sonata', year: '2026' },
+  { id: '10', name: '2026 Mazda CX-5', make: 'Mazda', model: 'CX-5', year: '2026' },
 ];
 
 interface SelectedVehicle {

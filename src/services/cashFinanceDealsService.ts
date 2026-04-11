@@ -31,7 +31,7 @@ export type Deal = CashDeal | FinanceDeal;
 
 const CURRENT_MONTH = new Date().toLocaleString('default', { month: 'long' });
 const CURRENT_YEAR = new Date().getFullYear();
-const EXPIRATION_DATE = `April 1, ${CURRENT_YEAR}`;
+const EXPIRATION_DATE = `May 1, ${CURRENT_YEAR}`;
 
 const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model: string }[] = [
   {
@@ -43,7 +43,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '8–10%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Chevrolet Customer Cash',
-    programDescription: '$1,500 customer cash plus $500 bonus cash on select 2025 Chevrolet Trax models. Cannot be combined with special financing.',
+    programDescription: '$1,500 customer cash plus $500 bonus cash on select 2026 Chevrolet Trax models. Cannot be combined with special financing.',
     trimsEligible: ['LS', '1RS', 'LT', 'ACTIV'],
   },
   {
@@ -55,7 +55,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '7–9%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Chevrolet Equinox Cash Allowance',
-    programDescription: 'Customer cash allowance of $2,500 on the 2025 Chevrolet Equinox. Take delivery by expiration date.',
+    programDescription: 'Customer cash allowance of $2,500 on the 2026 Chevrolet Equinox. Take delivery by expiration date.',
     trimsEligible: ['LS', 'LT', 'RS'],
   },
   {
@@ -67,7 +67,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '6–8%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Chevrolet Truck Month Cash Back',
-    programDescription: '$3,500 customer cash on select 2025 Silverado 1500 models during Chevy Truck Month.',
+    programDescription: '$3,500 customer cash on select 2026 Silverado 1500 models during Chevy Truck Month.',
     trimsEligible: ['WT', 'Custom', 'LT', 'RST', 'LT Trail Boss'],
   },
   {
@@ -79,7 +79,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '7–10%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Ford Customer Cash',
-    programDescription: '$4,000 customer cash back on select 2025 F-150 models. Additional trade-in assistance available.',
+    programDescription: '$4,000 customer cash back on select 2026 F-150 models. Additional trade-in assistance available.',
     trimsEligible: ['XL', 'XLT', 'Lariat'],
   },
   {
@@ -91,7 +91,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '5–6%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Ford Mustang Cash Offer',
-    programDescription: '$2,000 customer cash back on 2025 Ford Mustang models. Available at participating Ford dealers.',
+    programDescription: '$2,000 customer cash back on 2026 Ford Mustang models. Available at participating Ford dealers.',
     trimsEligible: ['EcoBoost', 'GT'],
   },
   {
@@ -103,7 +103,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '4–5%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Hyundai Spring Cash Event',
-    programDescription: '$1,500 customer cash on the 2025 Hyundai Tucson. Available through participating Hyundai dealers nationwide.',
+    programDescription: '$1,500 customer cash on the 2026 Hyundai Tucson. Available through participating Hyundai dealers nationwide.',
     trimsEligible: ['SE', 'SEL', 'N Line', 'Limited'],
   },
   {
@@ -115,7 +115,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '3–4%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Hyundai Kona Bonus Cash',
-    programDescription: '$1,000 customer cash on the 2025 Hyundai Kona. No trade-in required.',
+    programDescription: '$1,000 customer cash on the 2026 Hyundai Kona. No trade-in required.',
     trimsEligible: ['SE', 'SEL', 'Limited'],
   },
   {
@@ -127,7 +127,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '5–7%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Nissan Customer Cash',
-    programDescription: '$2,000 customer cash back on the 2025 Nissan Rogue. Plus $1,000 bonus when financing through NMAC.',
+    programDescription: '$2,000 customer cash back on the 2026 Nissan Rogue. Plus $1,000 bonus when financing through NMAC.',
     trimsEligible: ['S', 'SV', 'SL'],
   },
   {
@@ -139,7 +139,7 @@ const CASH_DEAL_DEFS: Omit<CashDeal, 'id' | 'vehicle'>[] & { make: string; model
     percentOffMsrp: '5–6%',
     expirationDate: EXPIRATION_DATE,
     programName: 'Kia Customer Cash',
-    programDescription: '$1,500 customer cash on the 2025 Kia Seltos. Available at participating Kia dealers.',
+    programDescription: '$1,500 customer cash on the 2026 Kia Seltos. Available at participating Kia dealers.',
     trimsEligible: ['LX', 'S', 'EX', 'SX'],
   },
   {
@@ -177,7 +177,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '36–72 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'GM Financial Special APR',
-    programDescription: '6.6% APR financing for 36–72 months through GM Financial on select 2025 Trax models.',
+    programDescription: '6.6% APR financing for 36–72 months through GM Financial on select 2026 Trax models.',
     targetAudience: 'Well-qualified buyers with credit approval through GM Financial',
     trimsEligible: ['LS', '1RS', 'LT', 'ACTIV'],
   },
@@ -201,7 +201,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '48–72 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Silverado Low APR + Bonus Cash',
-    programDescription: '4.9% APR plus $1,500 bonus cash on select 2025 Silverado 1500 models.',
+    programDescription: '4.9% APR plus $1,500 bonus cash on select 2026 Silverado 1500 models.',
     targetAudience: 'Well-qualified buyers financing through GM Financial',
     trimsEligible: ['WT', 'Custom', 'LT', 'RST'],
   },
@@ -213,7 +213,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '60 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Toyota Financial Services Special APR',
-    programDescription: '4.99% APR for 60 months on the 2025 Camry through Toyota Financial Services.',
+    programDescription: '4.99% APR for 60 months on the 2026 Camry through Toyota Financial Services.',
     targetAudience: 'Tier 1+ credit customers through Toyota Financial Services',
     trimsEligible: ['LE', 'SE', 'XLE', 'XSE'],
   },
@@ -225,7 +225,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '60 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Toyota RAV4 Finance Offer',
-    programDescription: '5.49% APR for 60 months on the 2025 RAV4. Available through Toyota Financial Services.',
+    programDescription: '5.49% APR for 60 months on the 2026 RAV4. Available through Toyota Financial Services.',
     targetAudience: 'Well-qualified buyers with approved credit',
     trimsEligible: ['LE', 'XLE', 'XLE Premium'],
   },
@@ -237,7 +237,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '48–60 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Honda Financial Special Rate',
-    programDescription: '5.9% APR for 48–60 months through Honda Financial on the 2025 CR-V.',
+    programDescription: '5.9% APR for 48–60 months through Honda Financial on the 2026 CR-V.',
     targetAudience: 'Well-qualified buyers with 700+ credit score',
     trimsEligible: ['LX', 'EX', 'EX-L'],
   },
@@ -249,7 +249,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '48–60 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Honda Civic Finance Special',
-    programDescription: '4.9% APR for 48–60 months on the 2025 Honda Civic through Honda Financial Services.',
+    programDescription: '4.9% APR for 48–60 months on the 2026 Honda Civic through Honda Financial Services.',
     targetAudience: 'Well-qualified buyers through Honda Financial Services',
     trimsEligible: ['LX', 'Sport', 'EX'],
   },
@@ -261,7 +261,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '60–72 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Ford Credit Low APR',
-    programDescription: '3.9% APR plus $2,000 bonus cash on select 2025 F-150 models through Ford Credit.',
+    programDescription: '3.9% APR plus $2,000 bonus cash on select 2026 F-150 models through Ford Credit.',
     targetAudience: 'Well-qualified buyers financing through Ford Credit',
     trimsEligible: ['XL', 'XLT', 'Lariat'],
   },
@@ -273,7 +273,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '48–60 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Ford Mustang Finance Offer',
-    programDescription: '5.9% APR through Ford Credit on the 2025 Mustang. For well-qualified buyers.',
+    programDescription: '5.9% APR through Ford Credit on the 2026 Mustang. For well-qualified buyers.',
     targetAudience: 'Well-qualified buyers financing through Ford Credit',
     trimsEligible: ['EcoBoost', 'GT'],
   },
@@ -297,7 +297,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '48–60 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Hyundai Kona Finance Rate',
-    programDescription: '5.49% APR through Hyundai Motor Finance on the 2025 Kona.',
+    programDescription: '5.49% APR through Hyundai Motor Finance on the 2026 Kona.',
     targetAudience: 'Well-qualified buyers with approved credit',
     trimsEligible: ['SE', 'SEL', 'Limited'],
   },
@@ -321,7 +321,7 @@ const FINANCE_DEAL_DEFS: Omit<FinanceDeal, 'id' | 'vehicle'>[] & { make: string;
     term: '60 months',
     expirationDate: EXPIRATION_DATE,
     programName: 'Nissan Now Finance Offer',
-    programDescription: '4.9% APR plus $1,000 bonus cash on the 2025 Rogue through NMAC.',
+    programDescription: '4.9% APR plus $1,000 bonus cash on the 2026 Rogue through NMAC.',
     targetAudience: 'Well-qualified buyers with Tier 1 credit',
     trimsEligible: ['S', 'SV', 'SL'],
   },
@@ -344,7 +344,7 @@ function matchVehicle(make: string, model: string): Vehicle | undefined {
     (v) =>
       v.make.toLowerCase() === make.toLowerCase() &&
       v.model.toLowerCase() === model.toLowerCase() &&
-      parseInt(v.year) >= 2024
+      parseInt(v.year) >= 2026
   );
 }
 

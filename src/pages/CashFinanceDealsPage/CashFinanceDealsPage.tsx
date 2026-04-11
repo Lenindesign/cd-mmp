@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -93,7 +93,7 @@ const CashFinanceDealsPage = () => {
   }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -223,7 +223,7 @@ const CashFinanceDealsPage = () => {
       })()
     : undefined;
 
-  const pageTitle = `Best Finance Deals for ${month} ${year}`;
+  const pageTitle = `Best Buying Deals for ${month} ${year}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
@@ -237,7 +237,7 @@ const CashFinanceDealsPage = () => {
           createBreadcrumbStructuredData([
             { name: 'Home', url: BASE_URL },
             { name: 'Deals', url: `${BASE_URL}/deals` },
-            { name: 'Finance Deals', url: `${BASE_URL}/deals/cash-finance` },
+            { name: 'Buying Deals', url: `${BASE_URL}/deals/cash-finance` },
           ]),
           createFAQStructuredData(FAQ_DATA),
         ]}
@@ -284,14 +284,14 @@ const CashFinanceDealsPage = () => {
         <div className="container">
           <div className="cf-deals-page__hero-content">
             <div className="cf-deals-page__hero-badge">
-              <span className="hero-pill__label">Finance Deals</span>
+              <span className="hero-pill__label">Buying Deals</span>
             </div>
             <nav className="cf-deals-page__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="cf-deals-page__breadcrumb-sep">/</span>
               <Link to="/deals">Deals</Link>
               <span className="cf-deals-page__breadcrumb-sep">/</span>
-              <span>Finance Deals</span>
+              <span>Buying Deals</span>
             </nav>
             <h1 className="cf-deals-page__title">{pageTitle}</h1>
             <p className="cf-deals-page__description">
@@ -393,7 +393,7 @@ const CashFinanceDealsPage = () => {
                                     {offersPopup.offers.map((o, idx) => (
                                       <li key={idx} className="cf-deals-page__card-offers-popup-item">
                                         <span className={`cf-deals-page__card-offers-popup-type cf-deals-page__card-offers-popup-type--${o.type}`}>
-                                          {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                          {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
                                         </span>
                                         <span className="cf-deals-page__card-offers-popup-label">{o.label}</span>
                                         <span className="cf-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
@@ -490,10 +490,9 @@ const CashFinanceDealsPage = () => {
 
                             <Link
                               to={`/${deal.vehicle.slug}`}
-                              className="cf-deals-page__card-toggle"
+                              className="cf-deals-page__card-cta cf-deals-page__card-cta--secondary"
                             >
-                              <span>Read More</span>
-                              <ChevronRight size={14} />
+                              Shop New {deal.vehicle.model}
                             </Link>
                           </div>
                         </div>

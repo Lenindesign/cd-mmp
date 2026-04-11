@@ -1,7 +1,7 @@
 [
   {
     "id": "1a",
-    "year": "2025",
+    "year": "2026",
     "make": "Toyota",
     "model": "Prius",
     "bodyStyle": "Hatchback",
@@ -30,11 +30,11 @@
       "Bi-Tone Roof",
       "Solar Roof Panel"
     ],
-    "slug": "2025/Toyota/Prius"
+    "slug": "2026/Toyota/Prius"
   },
   {
     "id": "61",
-    "year": "2024",
+    "year": "2026",
     "make": "Honda",
     "model": "Civic Hatchback",
     "bodyStyle": "Hatchback",
@@ -57,7 +57,7 @@
       "Wireless Charging",
       "Bose Audio"
     ],
-    "slug": "2024/Honda/Civic-Hatchback",
+    "slug": "2026/Honda/Civic-Hatchback",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-287-1648742553.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-6533-1648742564.jpg",
@@ -69,7 +69,7 @@
   },
   {
     "id": "63",
-    "year": "2024",
+    "year": "2026",
     "make": "Volkswagen",
     "model": "Golf GTI",
     "bodyStyle": "Hatchback",
@@ -92,7 +92,7 @@
       "Digital Cockpit Pro",
       "Harman Kardon Audio"
     ],
-    "slug": "2024/Volkswagen/Golf-GTI",
+    "slug": "2026/Volkswagen/Golf-GTI",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2022-volkswagen-gti-s-lt-1909-edit-1661958354.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2022-volkswagen-gti-s-lt-1793-1661958352.jpg",
@@ -104,7 +104,7 @@
   },
   {
     "id": "64",
-    "year": "2024",
+    "year": "2026",
     "make": "Volkswagen",
     "model": "Golf R",
     "bodyStyle": "Hatchback",
@@ -133,11 +133,11 @@
       "DCC Adaptive Chassis",
       "Harman Kardon Audio"
     ],
-    "slug": "2024/Volkswagen/Golf-R"
+    "slug": "2026/Volkswagen/Golf-R"
   },
   {
     "id": "65",
-    "year": "2024",
+    "year": "2026",
     "make": "Hyundai",
     "model": "Elantra GT",
     "bodyStyle": "Hatchback",
@@ -166,11 +166,11 @@
       "Wireless CarPlay",
       "Infinity Audio"
     ],
-    "slug": "2024/Hyundai/Elantra-GT"
+    "slug": "2026/Hyundai/Elantra-GT"
   },
   {
     "id": "69",
-    "year": "2024",
+    "year": "2026",
     "make": "Audi",
     "model": "A3",
     "bodyStyle": "Hatchback",
@@ -193,7 +193,7 @@
       "Virtual Cockpit",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/A3",
+    "slug": "2026/Audi/A3",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a3-102-64b1ab64749a0.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a3-101-64b1ab6459a41.jpg",
@@ -205,7 +205,7 @@
   },
   {
     "id": "70",
-    "year": "2024",
+    "year": "2026",
     "make": "Mercedes-Benz",
     "model": "A-Class",
     "bodyStyle": "Hatchback",
@@ -228,7 +228,7 @@
       "Burmester Audio",
       "AMG Line"
     ],
-    "slug": "2024/Mercedes-Benz/A-Class",
+    "slug": "2026/Mercedes-Benz/A-Class",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-benz-cla-coupe-101-1674062332.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-benz-cla-coupe-103-1674062332.jpg",
@@ -240,7 +240,7 @@
   },
   {
     "id": "71",
-    "year": "2024",
+    "year": "2026",
     "make": "BMW",
     "model": "1 Series",
     "bodyStyle": "Hatchback",
@@ -268,11 +268,11 @@
       "Harman Kardon Audio",
       "M Sport Package"
     ],
-    "slug": "2024/BMW/1-Series"
+    "slug": "2026/BMW/1-Series"
   },
   {
     "id": "72",
-    "year": "2024",
+    "year": "2026",
     "make": "Mini",
     "model": "Cooper Hardtop",
     "bodyStyle": "Hatchback",
@@ -295,7 +295,7 @@
       "Harman Kardon Audio",
       "Head-Up Display"
     ],
-    "slug": "2024/Mini/Cooper-Hardtop",
+    "slug": "2026/Mini/Cooper-Hardtop",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-mini-cooper-s-hardtop-2-door-131-66f2bf6aa5190.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-mini-cooper-s-hardtop-2-door-121-66f2bf649887f.jpg",
@@ -307,7 +307,7 @@
   },
   {
     "id": "76",
-    "year": "2024",
+    "year": "2026",
     "make": "Fiat",
     "model": "500",
     "bodyStyle": "Hatchback",
@@ -335,6 +335,6 @@
       "Beats Audio",
       "Panoramic Roof"
     ],
-    "slug": "2024/Fiat/500"
+    "slug": "2026/Fiat/500"
   }
 ]

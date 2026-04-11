@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useEffect, Fragment } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ChevronRight, SlidersHorizontal, Heart, Info, X } from 'lucide-react';
+import { SlidersHorizontal, Heart, Info, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -26,6 +26,8 @@ interface MiniDeal {
   image: string;
   slug: string;
   priceRange: string;
+  bodyStyle: string;
+  fuelType: string;
   dealType: 'zero-apr' | 'finance' | 'lease' | 'cash';
   dealText: string;
   dealHeadline: string;
@@ -134,7 +136,7 @@ const AllDealsPage = () => {
     });
   }, []);
 
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
   const allDeals = useMemo(() => {
     const deals: MiniDeal[] = [];
@@ -149,6 +151,7 @@ const AllDealsPage = () => {
           vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
+          bodyStyle: d.vehicle.bodyStyle, fuelType: d.vehicle.fuelType,
           dealType: 'zero-apr',
           dealText: '0% APR Financing',
           dealHeadline: `0% Interest Financing for ${d.term}`,
@@ -175,6 +178,7 @@ const AllDealsPage = () => {
           vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
+          bodyStyle: d.vehicle.bodyStyle, fuelType: d.vehicle.fuelType,
           dealType: 'finance',
           dealText: rangeLabel,
           dealHeadline: `${d.apr} APR Financing for ${d.term}`,
@@ -199,6 +203,7 @@ const AllDealsPage = () => {
           vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
+          bodyStyle: d.vehicle.bodyStyle, fuelType: d.vehicle.fuelType,
           dealType: 'cash',
           dealText: `${d.incentiveValue} cash back`,
           dealHeadline: 'Cash Back',
@@ -222,6 +227,7 @@ const AllDealsPage = () => {
           vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
           slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
+          bodyStyle: d.vehicle.bodyStyle, fuelType: d.vehicle.fuelType,
           dealType: 'lease',
           dealText: `${d.monthlyPayment}/mo lease`,
           dealHeadline: `Lease for ${d.monthlyPayment}/month`,
@@ -242,11 +248,9 @@ const AllDealsPage = () => {
 
   const applyFiltersToDeals = useCallback((dealList: MiniDeal[], f: DealsFilterState): MiniDeal[] => {
     return dealList.filter(d => {
-      if (f.bodyTypes.length > 0 && !f.bodyTypes.includes(d.make)) {
-        const bodyStyle = d.slug.split('/')[0] || '';
-        if (!f.bodyTypes.some(bt => bt.toLowerCase() === bodyStyle)) return false;
-      }
+      if (f.bodyTypes.length > 0 && !f.bodyTypes.includes(d.bodyStyle)) return false;
       if (f.makes.length > 0 && !f.makes.includes(d.make)) return false;
+      if (f.fuelTypes.length > 0 && !f.fuelTypes.includes(d.fuelType)) return false;
       if (f.accolades.length > 0) {
         const hasMatch = f.accolades.some(a => {
           if (a === 'editorsChoice') return d.editorsChoice;
@@ -281,7 +285,7 @@ const AllDealsPage = () => {
     return applyFiltersToDeals(allDeals, draftFilters).length;
   }, [allDeals, applyFiltersToDeals]);
 
-  const DEAL_TYPE_EMPTY_LABELS: Record<string, string> = { lease: 'Lease', finance: 'Finance', cash: 'Cash Back' };
+  const DEAL_TYPE_EMPTY_LABELS: Record<string, string> = { lease: 'Lease', finance: 'Buy', cash: 'Cash Back' };
   const emptyDealsCategory = filters.dealType === 'all' ? 'deal' : (DEAL_TYPE_EMPTY_LABELS[filters.dealType] || 'deal');
 
   const handleDealClick = (e: React.MouseEvent, deal: MiniDeal) => {
@@ -336,21 +340,26 @@ const AllDealsPage = () => {
         <div className="container all-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">{filteredDeals.length} {filteredDeals.length === 1 ? 'deal' : 'deals'}</span>
-            {activeFilterPills.length > 0 && (
-              <div className="active-filter-pills__row" aria-label="Active filters">
-                {activeFilterPills.map(pill => (
-                  <span key={pill.id} className="active-filter-pills__pill">
-                    <span className="active-filter-pills__pill-label">{pill.label}</span>
-                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
-                      <X size={12} strokeWidth={2.5} aria-hidden />
-                    </button>
-                  </span>
-                ))}
+            <div className="active-filter-pills__row" aria-label="Active filters">
+              {activeFilterPills.length === 0 && (
+                <span className="active-filter-pills__pill active-filter-pills__pill--static">
+                  <span className="active-filter-pills__pill-label">All Deals</span>
+                </span>
+              )}
+              {activeFilterPills.map(pill => (
+                <span key={pill.id} className="active-filter-pills__pill">
+                  <span className="active-filter-pills__pill-label">{pill.label}</span>
+                  <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                    <X size={12} strokeWidth={2.5} aria-hidden />
+                  </button>
+                </span>
+              ))}
+              {activeFilterPills.length > 0 && (
                 <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
                   Clear All
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <button
             type="button"
@@ -444,7 +453,7 @@ const AllDealsPage = () => {
                               {offersPopup.offers.map((o, idx) => (
                                 <li key={idx} className="all-deals__card-offers-popup-item">
                                   <span className={`all-deals__card-offers-popup-type all-deals__card-offers-popup-type--${o.type}`}>
-                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
                                   </span>
                                   <span className="all-deals__card-offers-popup-label">{o.label}</span>
                                   <span className="all-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
@@ -454,7 +463,7 @@ const AllDealsPage = () => {
                           </div>
                         )}
                         <span className={`all-deals__card-type-tag all-deals__card-type-tag--${deal.dealType}`}>
-                          {deal.dealType === 'zero-apr' ? '0% APR' : deal.dealType === 'finance' ? 'Finance' : deal.dealType === 'cash' ? 'Cash' : 'Lease'}
+                          {deal.dealType === 'zero-apr' ? '0% APR' : deal.dealType === 'finance' ? 'Buy' : deal.dealType === 'cash' ? 'Cash' : 'Lease'}
                         </span>
                         {(deal.editorsChoice || deal.tenBest) && (
                           <div className="all-deals__card-badges">
@@ -509,10 +518,9 @@ const AllDealsPage = () => {
 
                       <Link
                         to={`/${deal.slug}`}
-                        className="all-deals__card-toggle"
+                        className="all-deals__card-cta all-deals__card-cta--secondary"
                       >
-                        <span>Read More</span>
-                        <ChevronRight size={14} />
+                        Shop New {deal.model}
                       </Link>
                     </div>
                   </div>

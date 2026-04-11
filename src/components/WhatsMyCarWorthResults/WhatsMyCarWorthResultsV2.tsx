@@ -36,7 +36,7 @@ const carShoppingArticles = [
     id: '2',
     title: 'Trading in a Car with a Loan',
     image: 'https://hips.hearstapps.com/hmg-prod/images/2024-toyota-camry-xse-fwd-101-6553f4c3b4e4a.jpg',
-    category: 'Finance',
+    category: 'Buy',
   },
   {
     id: '3',

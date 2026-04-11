@@ -226,7 +226,7 @@ const EmailPreviewPage = () => {
       <div className="email-preview-page__instructions">
         <h3>How to Test:</h3>
         <ol>
-          <li>Browse some vehicle pages (e.g., <a href="/2025/Honda/Accord">/2025/Honda/Accord</a>)</li>
+          <li>Browse some vehicle pages (e.g., <a href="/2026/Honda/Accord">/2026/Honda/Accord</a>)</li>
           <li>Come back to this page and click "Refresh Data"</li>
           <li>The email preview will update with your browsed vehicles</li>
           <li>Sign in with Google One Tap to see your name in the email</li>

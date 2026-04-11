@@ -6,7 +6,7 @@ import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getUniqueMakes } from '../../services/vehicleService';
-import { TERM_OPTIONS, CREDIT_TIERS, parseTermMonths } from '../../utils/dealCalculations';
+import { TERM_OPTIONS, parseTermMonths } from '../../utils/dealCalculations';
 import type { CreditTier } from '../../utils/dealCalculations';
 import './DealsFilterModal.css';
 
@@ -59,7 +59,7 @@ const BASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
 const DEAL_TYPE_TABS: TabItem<DealTypeOption>[] = [
   { value: 'all', label: 'All Deals' },
   { value: 'lease', label: 'Lease' },
-  { value: 'finance', label: 'Finance' },
+  { value: 'finance', label: 'Buying' },
   { value: 'cash', label: 'Cash Back' },
 ];
 
@@ -84,7 +84,6 @@ const DealsFilterModal = ({
     monthlyPayment: false,
     make: false,
     term: false,
-    creditTier: false,
     dueAtSigning: false,
     fuelType: false,
     accolades: false,
@@ -200,7 +199,6 @@ const DealsFilterModal = ({
   const activeDealType = draft.dealType;
   const showMonthlyPayment = activeDealType === 'all' || activeDealType === 'lease';
   const showTermLength = activeDealType === 'all' || activeDealType === 'lease' || activeDealType === 'finance';
-  const showCreditScore = activeDealType === 'all' || activeDealType === 'lease' || activeDealType === 'finance';
   const showDueAtSigning = activeDealType === 'all' || activeDealType === 'lease';
 
   const sortOptions = useMemo(() => {
@@ -348,28 +346,6 @@ const DealsFilterModal = ({
                     onClick={() => toggleTerm(t)}
                   >
                     {t} mo
-                  </button>
-                ))}
-              </div>
-            </FilterSection>
-          )}
-
-          {/* Credit Score — lease, finance & all */}
-          {showCreditScore && (
-            <FilterSection
-              title="Credit score"
-              expanded={expandedSections.creditTier}
-              onToggle={() => toggleSection('creditTier')}
-            >
-              <div className="deals-filter__chips">
-                {CREDIT_TIERS.map(tier => (
-                  <button
-                    key={tier.value}
-                    type="button"
-                    className={`deals-filter__chip ${draft.creditTier === tier.value ? 'deals-filter__chip--active' : ''}`}
-                    onClick={() => setDraft(prev => ({ ...prev, creditTier: prev.creditTier === tier.value ? null : tier.value }))}
-                  >
-                    {tier.label}
                   </button>
                 ))}
               </div>

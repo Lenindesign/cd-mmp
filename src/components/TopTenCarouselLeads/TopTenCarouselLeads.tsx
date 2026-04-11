@@ -127,11 +127,11 @@ const TopTenCarouselLeads = ({
     let allVehicles = getAllVehicles();
     
     // Filter by inventory type (year)
-    // Used: 2024 only, New: 2025 or newer
+    // Used: prior model years, New: 2026 or newer
     if (inventoryType === 'used') {
-      allVehicles = allVehicles.filter(v => v.year === '2024');
+      allVehicles = allVehicles.filter(v => parseInt(v.year, 10) < 2026);
     } else {
-      allVehicles = allVehicles.filter(v => parseInt(v.year) >= 2025);
+      allVehicles = allVehicles.filter(v => parseInt(v.year) >= 2026);
     }
     
     // Filter by body style (use activeBodyStyleFilter which combines dropdown + prop)

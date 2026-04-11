@@ -71,7 +71,7 @@
   },
   {
     "id": "5",
-    "year": "2025",
+    "year": "2026",
     "make": "Tesla",
     "model": "Model 3",
     "bodyStyle": "Sedan",
@@ -101,11 +101,11 @@
       "Premium Audio",
       "Glass Roof"
     ],
-    "slug": "2025/Tesla/Model-3"
+    "slug": "2026/Tesla/Model-3"
   },
   {
     "id": "5a",
-    "year": "2025",
+    "year": "2026",
     "make": "Mazda",
     "model": "3",
     "bodyStyle": "Sedan",
@@ -137,7 +137,7 @@
       "Bose Audio",
       "Mazda Connect"
     ],
-    "slug": "2025/Mazda/3"
+    "slug": "2026/Mazda/3"
   },
   {
     "id": "7",
@@ -175,78 +175,8 @@
     ]
   },
   {
-    "id": "23",
-    "year": "2024",
-    "make": "Nissan",
-    "model": "Altima",
-    "bodyStyle": "Sedan",
-    "imageSource": "2024 Nissan Altima",
-    "image": null,
-    "priceRange": "$26,300 - $36,050",
-    "priceMin": 26300,
-    "priceMax": 36050,
-    "staffRating": 8.9,
-    "communityRating": 7.9,
-    "reviewCount": 167,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "CVT",
-    "mpg": "28/39",
-    "horsepower": 188,
-    "seatingCapacity": 5,
-    "features": [
-      "ProPILOT Assist",
-      "Zero Gravity Seats",
-      "Bose Audio"
-    ],
-    "slug": "2024/Nissan/Altima",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-163-6580987a4ce0f.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-114-658098744e795.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-181-6580987ad3d54.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-267-6580987ccc6c2.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-106-1654783713.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
-    ]
-  },
-  {
-    "id": "24",
-    "year": "2024",
-    "make": "Hyundai",
-    "model": "Sonata",
-    "bodyStyle": "Sedan",
-    "imageSource": "2024 Hyundai Sonata",
-    "image": null,
-    "priceRange": "$26,500 - $34,250",
-    "priceMin": 26500,
-    "priceMax": 34250,
-    "staffRating": 8.3,
-    "communityRating": 8,
-    "reviewCount": 189,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "Automatic",
-    "mpg": "27/37",
-    "horsepower": 191,
-    "seatingCapacity": 5,
-    "features": [
-      "Highway Driving Assist",
-      "Wireless Charging",
-      "Digital Key"
-    ],
-    "slug": "2024/Hyundai/Sonata",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-111-66c64b89296bf.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-112-66c64b89a99f6.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-120-66c64b8b9a8af.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-n-line-103-66c617902018c.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-hybrid-102-66c64b86e0218.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-camry-xle-awd-2025-honda-accord-touring-2025-hyundai-sonata-limited-hybrid-comparison-test-101-67acc59320728.jpg"
-    ]
-  },
-  {
     "id": "25",
-    "year": "2024",
+    "year": "2026",
     "make": "Kia",
     "model": "K5",
     "bodyStyle": "Sedan",
@@ -269,7 +199,7 @@
       "Wireless Apple CarPlay",
       "Bose Premium Audio"
     ],
-    "slug": "2024/Kia/K5",
+    "slug": "2026/Kia/K5",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-line-102-1602778026.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-line-120-1602778033.jpg",
@@ -281,7 +211,7 @@
   },
   {
     "id": "26",
-    "year": "2024",
+    "year": "2026",
     "make": "Kia",
     "model": "Forte",
     "bodyStyle": "Sedan",
@@ -310,44 +240,11 @@
       "Wireless CarPlay",
       "UVO Link"
     ],
-    "slug": "2024/Kia/Forte"
-  },
-  {
-    "id": "27",
-    "year": "2024",
-    "make": "Volkswagen",
-    "model": "Jetta",
-    "bodyStyle": "Sedan",
-    "imageSource": "2024 Volkswagen Jetta",
-    "image": "https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg",
-    "galleryImages": [
-      "https://hips.hearstapps.com/mtg-prod/65a479f68dd5b50008bfa4fe/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-11.jpg",
-      "https://hips.hearstapps.com/mtg-prod/65a479ef39c2000008a7fe80/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-16.jpg",
-      "https://hips.hearstapps.com/mtg-prod/65a479effc8dbb0008e5ccc7/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-12.jpg",
-      "https://hips.hearstapps.com/mtg-prod/65a479f6217f17000803d86d/2024-volkswagen-jetta-gli-40th-anniversary-edition-vw-5.jpg"
-    ],
-    "priceRange": "$21,995 - $30,995",
-    "priceMin": 21995,
-    "priceMax": 30995,
-    "staffRating": 8,
-    "communityRating": 7.8,
-    "reviewCount": 142,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "Automatic",
-    "mpg": "30/41",
-    "horsepower": 158,
-    "seatingCapacity": 5,
-    "features": [
-      "IQ.DRIVE",
-      "Digital Cockpit",
-      "Beats Audio"
-    ],
-    "slug": "2024/Volkswagen/Jetta"
+    "slug": "2026/Kia/Forte"
   },
   {
     "id": "28",
-    "year": "2024",
+    "year": "2026",
     "make": "Subaru",
     "model": "Legacy",
     "bodyStyle": "Sedan",
@@ -370,7 +267,7 @@
       "Symmetrical AWD",
       "Harman Kardon Audio"
     ],
-    "slug": "2024/Subaru/Legacy",
+    "slug": "2026/Subaru/Legacy",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2023-subaru-legacy-101-1652364061.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2023-subaru-legacy-109-1652364061.jpg",
@@ -382,7 +279,7 @@
   },
   {
     "id": "30",
-    "year": "2024",
+    "year": "2026",
     "make": "Lexus",
     "model": "ES",
     "bodyStyle": "Sedan",
@@ -411,11 +308,11 @@
       "Mark Levinson Audio",
       "Panoramic Roof"
     ],
-    "slug": "2024/Lexus/ES"
+    "slug": "2026/Lexus/ES"
   },
   {
     "id": "31",
-    "year": "2024",
+    "year": "2026",
     "make": "Genesis",
     "model": "G70",
     "bodyStyle": "Sedan",
@@ -438,7 +335,7 @@
       "Lexicon Audio",
       "Nappa Leather"
     ],
-    "slug": "2024/Genesis/G70",
+    "slug": "2026/Genesis/G70",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-awd-2p5t-sport-prestige-493-66ba237b7aae8.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-awd-2p5t-sport-prestige-472-66ba2377e2c4d.jpg",
@@ -450,7 +347,7 @@
   },
   {
     "id": "32",
-    "year": "2024",
+    "year": "2026",
     "make": "Audi",
     "model": "A4",
     "bodyStyle": "Sedan",
@@ -473,7 +370,7 @@
       "Virtual Cockpit Plus",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/A4",
+    "slug": "2026/Audi/A4",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a4-103-64aefe768be8e.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a4-102-64aefe76ddcf6.jpg",
@@ -485,7 +382,7 @@
   },
   {
     "id": "33",
-    "year": "2024",
+    "year": "2026",
     "make": "Mercedes-Benz",
     "model": "C-Class",
     "bodyStyle": "Sedan",
@@ -515,11 +412,11 @@
       "Burmester Surround Sound",
       "Active Brake Assist"
     ],
-    "slug": "2024/Mercedes-Benz/C-Class"
+    "slug": "2026/Mercedes-Benz/C-Class"
   },
   {
     "id": "34",
-    "year": "2024",
+    "year": "2026",
     "make": "Cadillac",
     "model": "CT5",
     "bodyStyle": "Sedan",
@@ -550,11 +447,11 @@
       "AKG Studio Audio",
       "Magnetic Ride Control"
     ],
-    "slug": "2024/Cadillac/CT5"
+    "slug": "2026/Cadillac/CT5"
   },
   {
     "id": "35",
-    "year": "2024",
+    "year": "2026",
     "make": "Volvo",
     "model": "S60",
     "bodyStyle": "Sedan",
@@ -577,7 +474,7 @@
       "Bowers & Wilkins Audio",
       "Scandinavian Design"
     ],
-    "slug": "2024/Volvo/S60",
+    "slug": "2026/Volvo/S60",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/294035-s60-recharge-t8-thunder-grey-1647010632.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/294031-s60-recharge-google-built-in-1647010622.jpg",
@@ -589,7 +486,7 @@
   },
   {
     "id": "36",
-    "year": "2024",
+    "year": "2026",
     "make": "Infiniti",
     "model": "Q50",
     "bodyStyle": "Sedan",
@@ -612,7 +509,7 @@
       "Bose Performance Audio",
       "Dynamic Digital Suspension"
     ],
-    "slug": "2024/Infiniti/Q50",
+    "slug": "2026/Infiniti/Q50",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-infiniti-q50-101-64e4bf38ee81e.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-infiniti-q50-103-64e4bf3819f5e.jpg",
@@ -624,7 +521,7 @@
   },
   {
     "id": "38",
-    "year": "2024",
+    "year": "2026",
     "make": "Dodge",
     "model": "Charger",
     "bodyStyle": "Sedan",
@@ -647,7 +544,7 @@
       "Performance Pages",
       "Brembo Brakes"
     ],
-    "slug": "2024/Dodge/Charger",
+    "slug": "2026/Dodge/Charger",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2026-dodge-charger-r-t-131-69aae70b7f4bf.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2026-dodge-charger-r-t-138-69aae7ee0d1cb.jpg",
@@ -659,7 +556,7 @@
   },
   {
     "id": "39",
-    "year": "2024",
+    "year": "2026",
     "make": "Alfa Romeo",
     "model": "Giulia",
     "bodyStyle": "Sedan",
@@ -682,7 +579,7 @@
       "Harman Kardon Audio",
       "Carbon Fiber Trim"
     ],
-    "slug": "2024/Alfa-Romeo/Giulia",
+    "slug": "2026/Alfa-Romeo/Giulia",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2023-alfa-romeo-giulia-108-6400fe6bc909a.jpeg",
       "https://hips.hearstapps.com/hmg-prod/images/2023-alfa-romeo-giulia-105-6400fe6b3cf4b.jpeg",
@@ -694,7 +591,7 @@
   },
   {
     "id": "69a",
-    "year": "2025",
+    "year": "2026",
     "make": "Audi",
     "model": "S3 / RS3",
     "bodyStyle": "Sedan",
@@ -718,7 +615,7 @@
       "Virtual Cockpit Plus",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2025/Audi/S3 / RS3",
+    "slug": "2026/Audi/S3 / RS3",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-audi-rs3-745-688d081b2c49d.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-audi-rs3-245-688b908b0b244.jpg",
@@ -729,177 +626,8 @@
     ]
   },
   {
-    "id": "cor1",
-    "year": "2023",
-    "make": "Toyota",
-    "model": "Corolla",
-    "bodyStyle": "Sedan",
-    "imageSource": "2023 Toyota Corolla",
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0c997954e00088d54f8/2023-toyota-gr-corolla-21.jpg",
-    "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0c997954e00088d54f8/2023-toyota-gr-corolla-21.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0cbc919e400085d6021/2023-toyota-gr-corolla-26.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0c9c919e400085d601e/2023-toyota-gr-corolla-23.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0f0d597954e00088d54fc/2023-toyota-gr-corolla-45.jpg"
-    ],
-    "priceRange": "$21,550 - $26,950",
-    "priceMin": 21550,
-    "priceMax": 26950,
-    "staffRating": 8.3,
-    "communityRating": 8.1,
-    "reviewCount": 342,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "CVT",
-    "mpg": "31/40",
-    "horsepower": 139,
-    "seatingCapacity": 5,
-    "features": [
-      "Toyota Safety Sense",
-      "Apple CarPlay",
-      "LED Headlights"
-    ],
-    "slug": "2023/Toyota/Corolla"
-  },
-  {
-    "id": "cor2",
-    "year": "2025",
-    "make": "Toyota",
-    "model": "Corolla",
-    "bodyStyle": "Sedan",
-    "imageSource": "2025 Toyota Corolla",
-    "image": "https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png",
-    "galleryImages": [
-      "https://hips.hearstapps.com/mtg-prod/665f029f56460a00090e3cba/2025toyotacorollafx6.png",
-      "https://hips.hearstapps.com/mtg-prod/665f02a283395a00088cb6ba/2025toyotacorollafx4.png",
-      "https://hips.hearstapps.com/mtg-prod/665f02a483395a00088cb6bc/2025toyotacorollafx3.png",
-      "https://hips.hearstapps.com/mtg-prod/665635fd1f37bc00080a6c5a/19-2025-toyota-corolla-interior.jpg"
-    ],
-    "priceRange": "$22,950 - $28,450",
-    "priceMin": 22950,
-    "priceMax": 28450,
-    "staffRating": 8.4,
-    "communityRating": 8.2,
-    "reviewCount": 198,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "CVT",
-    "mpg": "32/41",
-    "horsepower": 139,
-    "seatingCapacity": 5,
-    "features": [
-      "Toyota Safety Sense 3.0",
-      "Wireless CarPlay",
-      "LED Headlights"
-    ],
-    "slug": "2025/Toyota/Corolla"
-  },
-  {
-    "id": "acc1",
-    "year": "2023",
-    "make": "Honda",
-    "model": "Accord",
-    "bodyStyle": "Sedan",
-    "imageSource": "2023 Honda Accord",
-    "image": null,
-    "priceRange": "$27,295 - $38,050",
-    "priceMin": 27295,
-    "priceMax": 38050,
-    "staffRating": 8.7,
-    "communityRating": 8.5,
-    "reviewCount": 456,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "CVT",
-    "mpg": "29/37",
-    "horsepower": 192,
-    "seatingCapacity": 5,
-    "features": [
-      "Honda Sensing",
-      "Wireless Charging",
-      "Bose Audio"
-    ],
-    "slug": "2023/Honda/Accord",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/dsc00620-1677186777.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/dsc00514-1677186778.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/dsc02165-1677186783.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-2-5t-hedrick-005-1613770012.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-551-1635518371.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/c-005-1500x1000-1652713137.jpg"
-    ]
-  },
-  {
-    "id": "acc2",
-    "year": "2025",
-    "make": "Honda",
-    "model": "Accord",
-    "bodyStyle": "Sedan",
-    "imageSource": "2025 Honda Accord",
-    "image": "https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg",
-    "galleryImages": [
-      "https://hips.hearstapps.com/mtg-prod/671a7554264766000986939b/008-2025-honda-accord-hybrid.jpg",
-      "https://hips.hearstapps.com/mtg-prod/671a7557f7dbc0000848528b/009-2025-honda-accord-hybrid.jpg",
-      "https://hips.hearstapps.com/mtg-prod/671a7558958c1a00082e2e63/010-2025-honda-accord-hybrid.jpg",
-      "https://hips.hearstapps.com/mtg-prod/671a754a2647660009869398/003-2025-honda-accord-hybrid.jpg"
-    ],
-    "priceRange": "$28,795 - $39,550",
-    "priceMin": 28795,
-    "priceMax": 39550,
-    "staffRating": 8.8,
-    "communityRating": 8.6,
-    "reviewCount": 289,
-    "fuelType": "Hybrid",
-    "drivetrain": "FWD",
-    "transmission": "CVT",
-    "mpg": "48/47",
-    "horsepower": 204,
-    "seatingCapacity": 5,
-    "features": [
-      "Honda Sensing 360",
-      "Google Built-in",
-      "Bose Audio"
-    ],
-    "slug": "2025/Honda/Accord"
-  },
-  {
-    "id": "alt1",
-    "year": "2023",
-    "make": "Nissan",
-    "model": "Altima",
-    "bodyStyle": "Sedan",
-    "imageSource": "2023 Nissan Altima",
-    "image": null,
-    "priceRange": "$25,650 - $35,050",
-    "priceMin": 25650,
-    "priceMax": 35050,
-    "staffRating": 8.1,
-    "communityRating": 8,
-    "reviewCount": 334,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "CVT",
-    "mpg": "28/39",
-    "horsepower": 188,
-    "seatingCapacity": 5,
-    "features": [
-      "Nissan Safety Shield 360",
-      "ProPILOT Assist",
-      "Bose Audio"
-    ],
-    "slug": "2023/Nissan/Altima",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-113-1654783718.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-110-1654783716.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2023-nissan-altima-120-1654783721.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/dsc00620-1677186777.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-2-5t-hedrick-005-1613770012.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-551-1635518371.jpg"
-    ]
-  },
-  {
     "id": "alt2",
-    "year": "2025",
+    "year": "2026",
     "make": "Nissan",
     "model": "Altima",
     "bodyStyle": "Sedan",
@@ -922,7 +650,7 @@
       "ProPILOT Assist 2.0",
       "Bose Premium Audio"
     ],
-    "slug": "2025/Nissan/Altima",
+    "slug": "2026/Nissan/Altima",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-369-6580987e7e807.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-nissan-altima-sl-awd-217-6580987c1ea3f.jpg",
@@ -933,43 +661,8 @@
     ]
   },
   {
-    "id": "son1",
-    "year": "2023",
-    "make": "Hyundai",
-    "model": "Sonata",
-    "bodyStyle": "Sedan",
-    "imageSource": "2023 Hyundai Sonata",
-    "image": null,
-    "priceRange": "$25,950 - $34,250",
-    "priceMin": 25950,
-    "priceMax": 34250,
-    "staffRating": 8.4,
-    "communityRating": 8.2,
-    "reviewCount": 287,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "Automatic",
-    "mpg": "28/38",
-    "horsepower": 191,
-    "seatingCapacity": 5,
-    "features": [
-      "Hyundai SmartSense",
-      "Wireless CarPlay",
-      "Harman Kardon Audio"
-    ],
-    "slug": "2023/Hyundai/Sonata",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-551-1635518371.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-782-edit-1635518398.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2021-hyundai-sonata-n-line-lt-681-1635518380.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/dsc00620-1677186777.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2021-kia-k5-gt-2-5t-hedrick-005-1613770012.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/c-005-1500x1000-1652713137.jpg"
-    ]
-  },
-  {
     "id": "son2",
-    "year": "2025",
+    "year": "2026",
     "make": "Hyundai",
     "model": "Sonata",
     "bodyStyle": "Sedan",
@@ -992,7 +685,7 @@
       "Digital Key",
       "Bose Premium Audio"
     ],
-    "slug": "2025/Hyundai/Sonata",
+    "slug": "2026/Hyundai/Sonata",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-n-line-67575bf5529cc.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-hyundai-sonata-n-line-rear-67575c7edb541.jpg",
@@ -1004,7 +697,7 @@
   },
   {
     "id": "sed-comp1",
-    "year": "2025",
+    "year": "2026",
     "make": "Honda",
     "model": "Civic",
     "bodyStyle": "Sedan",
@@ -1033,44 +726,11 @@
       "Apple CarPlay",
       "Android Auto"
     ],
-    "slug": "2025/Honda/Civic"
-  },
-  {
-    "id": "sed-comp2",
-    "year": "2025",
-    "make": "Toyota",
-    "model": "Corolla",
-    "bodyStyle": "Sedan",
-    "imageSource": "2025 Toyota Corolla",
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68dc663f3643650002f24a60/004-2025-toyota-gr-corolla.jpg",
-    "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc663f3643650002f24a60/004-2025-toyota-gr-corolla.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc66453643650002f24a64/006-2025-toyota-gr-corolla.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc66413643650002f24a62/005-2025-toyota-gr-corolla.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/68dc666a6c42000002d17e9a/025-2025-toyota-gr-corolla.jpg"
-    ],
-    "priceRange": "$22,050 - $28,360",
-    "priceMin": 22050,
-    "priceMax": 28360,
-    "staffRating": 8.5,
-    "communityRating": 8.3,
-    "reviewCount": 398,
-    "fuelType": "Gas",
-    "drivetrain": "FWD",
-    "transmission": "CVT",
-    "mpg": "32/41",
-    "horsepower": 169,
-    "seatingCapacity": 5,
-    "features": [
-      "Toyota Safety Sense 3.0",
-      "Apple CarPlay",
-      "Android Auto"
-    ],
-    "slug": "2025/Toyota/Corolla"
+    "slug": "2026/Honda/Civic"
   },
   {
     "id": "sed-comp3",
-    "year": "2025",
+    "year": "2026",
     "make": "Nissan",
     "model": "Sentra",
     "bodyStyle": "Sedan",
@@ -1099,11 +759,11 @@
       "Apple CarPlay",
       "Android Auto"
     ],
-    "slug": "2025/Nissan/Sentra"
+    "slug": "2026/Nissan/Sentra"
   },
   {
     "id": "sed-comp4",
-    "year": "2025",
+    "year": "2026",
     "make": "Hyundai",
     "model": "Elantra",
     "bodyStyle": "Sedan",
@@ -1132,11 +792,11 @@
       "Wireless CarPlay",
       "Bluelink"
     ],
-    "slug": "2025/Hyundai/Elantra"
+    "slug": "2026/Hyundai/Elantra"
   },
   {
     "id": "sed-comp7",
-    "year": "2025",
+    "year": "2026",
     "make": "Subaru",
     "model": "Impreza",
     "bodyStyle": "Sedan",
@@ -1165,11 +825,11 @@
       "All-Wheel Drive",
       "Subaru STARLINK"
     ],
-    "slug": "2025/Subaru/Impreza"
+    "slug": "2026/Subaru/Impreza"
   },
   {
     "id": "sed-comp8",
-    "year": "2025",
+    "year": "2026",
     "make": "Volkswagen",
     "model": "Jetta",
     "bodyStyle": "Sedan",
@@ -1198,11 +858,11 @@
       "Digital Cockpit",
       "App-Connect"
     ],
-    "slug": "2025/Volkswagen/Jetta"
+    "slug": "2026/Volkswagen/Jetta"
   },
   {
     "id": "sed-comp9",
-    "year": "2025",
+    "year": "2026",
     "make": "Audi",
     "model": "A3",
     "bodyStyle": "Sedan",
@@ -1225,7 +885,7 @@
       "MMI Touch",
       "Audi Pre Sense"
     ],
-    "slug": "2025/Audi/A3",
+    "slug": "2026/Audi/A3",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-audi-a3-sedan-front-in-motion-65ef2c4d03100.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-audi-a3-sedan-rear-three-quarters-in-motion-65ef2c4de9228.jpg",
@@ -1237,7 +897,7 @@
   },
   {
     "id": "sed-comp10",
-    "year": "2025",
+    "year": "2026",
     "make": "BMW",
     "model": "2 Series",
     "bodyStyle": "Sedan",
@@ -1265,44 +925,11 @@
       "BMW Live Cockpit",
       "BMW Personal Assistant"
     ],
-    "slug": "2025/BMW/2-Series"
-  },
-  {
-    "id": "sed-elec1",
-    "year": "2025",
-    "make": "Tesla",
-    "model": "Model 3",
-    "bodyStyle": "Sedan",
-    "imageSource": "2025 Tesla Model 3",
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg",
-    "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67b657738dbbae000872fcff/40-2025-tesla-model-3-rear-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67b6575266bfb80008473959/25-2025-tesla-model-3-rear-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67b6576273572b0008fe325e/32-2025-tesla-model-3-front-view.jpg"
-    ],
-    "priceRange": "$38,990 - $50,990",
-    "priceMin": 38990,
-    "priceMax": 50990,
-    "staffRating": 8.7,
-    "communityRating": 8.5,
-    "reviewCount": 512,
-    "fuelType": "Electric",
-    "drivetrain": "AWD",
-    "transmission": "Automatic",
-    "mpg": "132 MPGe",
-    "horsepower": 346,
-    "seatingCapacity": 5,
-    "features": [
-      "Autopilot",
-      "Premium Audio",
-      "Glass Roof"
-    ],
-    "slug": "2025/Tesla/Model-3"
+    "slug": "2026/BMW/2-Series"
   },
   {
     "id": "sed-elec2",
-    "year": "2025",
+    "year": "2026",
     "make": "Tesla",
     "model": "Model S",
     "bodyStyle": "Sedan",
@@ -1331,11 +958,11 @@
       "Premium Audio",
       "Plaid Performance"
     ],
-    "slug": "2025/Tesla/Model-S"
+    "slug": "2026/Tesla/Model-S"
   },
   {
     "id": "sed-elec3",
-    "year": "2025",
+    "year": "2026",
     "make": "BMW",
     "model": "i4",
     "bodyStyle": "Sedan",
@@ -1358,7 +985,7 @@
       "BMW Live Cockpit",
       "BMW Personal Assistant"
     ],
-    "slug": "2025/BMW/i4",
+    "slug": "2026/BMW/i4",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-i4-m50-xdrive-106-662805af1097d.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-bmw-i4-m50-xdrive-105-662805b1da691.jpg",
@@ -1370,7 +997,7 @@
   },
   {
     "id": "sed-elec4",
-    "year": "2025",
+    "year": "2026",
     "make": "Mercedes-Benz",
     "model": "EQE",
     "bodyStyle": "Sedan",
@@ -1393,7 +1020,7 @@
       "MBUX Interior Assistant",
       "MBUX Augmented Reality"
     ],
-    "slug": "2025/Mercedes-Benz/EQE",
+    "slug": "2026/Mercedes-Benz/EQE",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-mercedes-benz-eqe-3-672e464f97079.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-mercedes-benz-eqe-1-672e464f9241a.jpg",
@@ -1405,7 +1032,7 @@
   },
   {
     "id": "sed-elec5",
-    "year": "2025",
+    "year": "2026",
     "make": "Audi",
     "model": "e-tron GT",
     "bodyStyle": "Sedan",
@@ -1434,11 +1061,11 @@
       "MMI Touch",
       "Bang & Olufsen Audio"
     ],
-    "slug": "2025/Audi/e-tron-GT"
+    "slug": "2026/Audi/e-tron-GT"
   },
   {
     "id": "sed-elec6",
-    "year": "2025",
+    "year": "2026",
     "make": "Porsche",
     "model": "Taycan",
     "bodyStyle": "Sedan",
@@ -1471,13 +1098,13 @@
       "Porsche Active Suspension",
       "Porsche Torque Vectoring"
     ],
-    "slug": "2025/Porsche/Taycan",
+    "slug": "2026/Porsche/Taycan",
     "editorsChoice": true,
     "evOfTheYear": true
   },
   {
     "id": "sed-elec7",
-    "year": "2025",
+    "year": "2026",
     "make": "Lucid",
     "model": "Air",
     "bodyStyle": "Sedan",
@@ -1506,11 +1133,11 @@
       "Glass Canopy",
       "34-inch Display"
     ],
-    "slug": "2025/Lucid/Air"
+    "slug": "2026/Lucid/Air"
   },
   {
     "id": "sed-elec8",
-    "year": "2025",
+    "year": "2026",
     "make": "Polestar",
     "model": "2",
     "bodyStyle": "Sedan",
@@ -1533,7 +1160,7 @@
       "Pilot Pack",
       "Plus Pack"
     ],
-    "slug": "2025/Polestar/2",
+    "slug": "2026/Polestar/2",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-polestar-2-3-672d4eec1bc30.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-polestar-2-2-672d4eec1edeb.jpg",
@@ -1545,7 +1172,7 @@
   },
   {
     "id": "sed-elec9",
-    "year": "2025",
+    "year": "2026",
     "make": "Hyundai",
     "model": "Ioniq 6",
     "bodyStyle": "Sedan",
@@ -1568,7 +1195,7 @@
       "Ultra-Fast Charging",
       "Vehicle-to-Load"
     ],
-    "slug": "2025/Hyundai/Ioniq-6",
+    "slug": "2026/Hyundai/Ioniq-6",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/hyundai-ioniq-6-141-64594931612f1.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/hyundai-ioniq-6-146-645949315a99a.jpg",
@@ -1580,7 +1207,7 @@
   },
   {
     "id": "sed-elec10",
-    "year": "2025",
+    "year": "2026",
     "make": "Nissan",
     "model": "Leaf",
     "bodyStyle": "Sedan",
@@ -1603,7 +1230,7 @@
       "e-Pedal",
       "ProPILOT Assist"
     ],
-    "slug": "2025/Nissan/Leaf",
+    "slug": "2026/Nissan/Leaf",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-nissan-leaf-121-6690462ff1899.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-nissan-leaf-122-66904631c3472.jpg",
@@ -1615,7 +1242,7 @@
   },
   {
     "id": "sed-elec11",
-    "year": "2025",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Bolt EV",
     "bodyStyle": "Sedan",
@@ -1638,7 +1265,7 @@
       "One-Pedal Driving",
       "DC Fast Charging"
     ],
-    "slug": "2025/Chevrolet/Bolt-EV",
+    "slug": "2026/Chevrolet/Bolt-EV",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-bolt-euv-redline-edition-001-1654115619.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2023-chevrolet-bolt-euv-redline-edition-007-1654198838.jpg",

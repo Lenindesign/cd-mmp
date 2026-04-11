@@ -681,31 +681,16 @@ a[class*='__card-cta'] {
   border-radius: var(--border-radius-sm) !important;
 }
 
-/* Deal-type tag overlay on card images (FINANCE / LEASE / CASH / BUY) */
+/* Deal-type tag overlay on card images — hidden globally */
 [class*='__card-deal-type-tag'] {
-  position: absolute;
-  bottom: var(--spacing-2);
-  right: var(--spacing-2);
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: var(--border-radius-sm);
-  font-family: var(--font-heading);
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-white);
-  background: var(--color-success);
-  z-index: 2;
-  pointer-events: none;
-  line-height: 1;
+  display: none;
 }
 
 /* Keep APR range text on one line */
 [class*='__card-payment-amount'] {
   font-size: clamp(20px, 5vw, 32px) !important;
   white-space: nowrap !important;
+  color: var(--color-success) !important;
 }
 
 /* Hide deal pill on all deal cards globally */
@@ -738,10 +723,47 @@ button[class*='__card-deal-pill'],
   font-size: clamp(10px, 2.5vw, 14px) !important;
 }
 
-/* Read More link on deal cards */
-a[class*='__card-toggle'] {
+/* Primary CTA on deal cards — transparent border matches secondary CTA height */
+button[class*='__card-cta'] {
+  border: 2px solid transparent !important;
+  box-sizing: border-box;
+}
+
+button[class*='__card-cta']:hover {
+  background: var(--color-dark) !important;
+  border-color: var(--color-dark) !important;
+}
+
+/* Secondary CTA on deal cards (Shop New …) */
+a[class*='__card-cta--secondary'] {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-3);
+  background: var(--color-white);
+  color: var(--color-blue-cobalt) !important;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  text-align: center;
   text-decoration: none !important;
+  letter-spacing: 0.5px;
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: var(--spacing-2);
+}
+
+a[class*='__card-cta--secondary']:hover {
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white) !important;
+}
+
+/* Savings text on deal cards */
+[class*='__card-payment-savings'] {
+  color: var(--color-dark) !important;
 }
 
 /* Expiration date below savings line */

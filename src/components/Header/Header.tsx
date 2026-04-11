@@ -144,9 +144,8 @@ const Header = () => {
       isRoute: true,
       children: [
         { label: 'All Deals', href: '/deals', isRoute: true },
-        { label: 'Best Buying Deals', href: BEST_BUYING_DEALS_PATH, isRoute: true },
+        { label: 'Buying Deals', href: BEST_BUYING_DEALS_PATH, isRoute: true },
         { label: '0% APR Deals', href: ZERO_PERCENT_APR_DEALS_PATH, isRoute: true },
-        { label: 'Cash & Finance Deals', href: '/deals/cash-finance', isRoute: true },
         { label: 'Lease Deals', href: '/deals/lease', isRoute: true },
         { label: 'SUV Deals', href: '/deals/suv', isRoute: true },
         { label: 'Truck Deals', href: '/deals/truck', isRoute: true },

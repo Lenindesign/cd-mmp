@@ -1,7 +1,7 @@
 [
   {
     "id": "101",
-    "year": "2025",
+    "year": "2026",
     "make": "Subaru",
     "model": "Outback",
     "bodyStyle": "Wagon",
@@ -30,11 +30,11 @@
       "Symmetrical AWD",
       "Harman Kardon Audio"
     ],
-    "slug": "2025/Subaru/Outback"
+    "slug": "2026/Subaru/Outback"
   },
   {
     "id": "102",
-    "year": "2024",
+    "year": "2026",
     "make": "Volvo",
     "model": "V60",
     "bodyStyle": "Wagon",
@@ -57,7 +57,7 @@
       "Bowers & Wilkins Audio",
       "Scandinavian Design"
     ],
-    "slug": "2024/Volvo/V60",
+    "slug": "2026/Volvo/V60",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2023-volvo-v60-cross-country-b5-awd-293-1667314391.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2023-volvo-v60-cross-country-b5-awd-482-1667314420.jpg",
@@ -69,7 +69,7 @@
   },
   {
     "id": "103",
-    "year": "2024",
+    "year": "2026",
     "make": "Volvo",
     "model": "V90",
     "bodyStyle": "Wagon",
@@ -92,7 +92,7 @@
       "Bowers & Wilkins Audio",
       "Air Suspension"
     ],
-    "slug": "2024/Volvo/V90",
+    "slug": "2026/Volvo/V90",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-volvo-v90-cross-country-102-64935e992ce4d.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-volvo-v90-cross-country-101-64935e9b081fd.jpg",
@@ -104,7 +104,7 @@
   },
   {
     "id": "104",
-    "year": "2024",
+    "year": "2026",
     "make": "Audi",
     "model": "A4 Allroad",
     "bodyStyle": "Wagon",
@@ -127,7 +127,7 @@
       "Virtual Cockpit Plus",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/A4-Allroad",
+    "slug": "2026/Audi/A4-Allroad",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2020-audi-a4-allroad-quattro-euro-spec-101-1557895679.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2020-audi-a4-allroad-quattro-euro-spec-102-1557895679.jpg",
@@ -139,7 +139,7 @@
   },
   {
     "id": "105",
-    "year": "2024",
+    "year": "2026",
     "make": "Audi",
     "model": "A6 Allroad",
     "bodyStyle": "Wagon",
@@ -162,7 +162,7 @@
       "Virtual Cockpit Plus",
       "Bang & Olufsen 3D Sound"
     ],
-    "slug": "2024/Audi/A6-Allroad",
+    "slug": "2026/Audi/A6-Allroad",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2020-audi-a6-allroad-vs-beaver-island-204-1596464859.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2020-audi-a6-allroad-vs-beaver-island-106-1595868218.jpg",
@@ -174,7 +174,7 @@
   },
   {
     "id": "106",
-    "year": "2024",
+    "year": "2026",
     "make": "Mercedes-Benz",
     "model": "E-Class Wagon",
     "bodyStyle": "Wagon",
@@ -197,7 +197,7 @@
       "MBUX",
       "Burmester Surround Sound"
     ],
-    "slug": "2024/Mercedes-Benz/E-Class-Wagon",
+    "slug": "2026/Mercedes-Benz/E-Class-Wagon",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-benz-e-class-103-64f2208293e41.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-mercedes-benz-e-class-107-64f2208448db9.jpg",
@@ -209,7 +209,7 @@
   },
   {
     "id": "108",
-    "year": "2024",
+    "year": "2026",
     "make": "BMW",
     "model": "5 Series Touring",
     "bodyStyle": "Wagon",
@@ -232,7 +232,7 @@
       "Harman Kardon Audio",
       "Integral Active Steering"
     ],
-    "slug": "2024/BMW/5-Series-Touring",
+    "slug": "2026/BMW/5-Series-Touring",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-bmw-530i-xdrive-118-65808a4c3d44a.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-bmw-530i-xdrive-126-65808a4f7b89b.jpg",
@@ -244,7 +244,7 @@
   },
   {
     "id": "109",
-    "year": "2024",
+    "year": "2026",
     "make": "Volkswagen",
     "model": "Golf Sportwagen",
     "bodyStyle": "Wagon",
@@ -267,7 +267,7 @@
       "Digital Cockpit",
       "Fender Audio"
     ],
-    "slug": "2024/Volkswagen/Golf-Sportwagen",
+    "slug": "2026/Volkswagen/Golf-Sportwagen",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2018-volkswagen-golf-alltrack-tsi-4motion-leadgallery-1544212342.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2018-volkswagen-golf-alltrack-tsi-4motion-103-1532452542.jpg",
@@ -279,7 +279,7 @@
   },
   {
     "id": "111",
-    "year": "2024",
+    "year": "2026",
     "make": "Porsche",
     "model": "Panamera Sport Turismo",
     "bodyStyle": "Wagon",
@@ -308,11 +308,11 @@
       "Bose Surround Sound",
       "Sport Chrono"
     ],
-    "slug": "2024/Porsche/Panamera-Sport-Turismo"
+    "slug": "2026/Porsche/Panamera-Sport-Turismo"
   },
   {
     "id": "112",
-    "year": "2024",
+    "year": "2026",
     "make": "Mazda",
     "model": "Mazda6 Wagon",
     "bodyStyle": "Wagon",
@@ -335,7 +335,7 @@
       "Bose Audio",
       "Nappa Leather"
     ],
-    "slug": "2024/Mazda/Mazda6-Wagon",
+    "slug": "2026/Mazda/Mazda6-Wagon",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2022-mazda-cx-5-2p5-turbo-signature-123-1657559083.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-mazda-cx-5-interior-101-647f86399618c.jpg",
@@ -347,7 +347,7 @@
   },
   {
     "id": "114",
-    "year": "2024",
+    "year": "2026",
     "make": "Jaguar",
     "model": "XF Sportbrake",
     "bodyStyle": "Wagon",
@@ -370,7 +370,7 @@
       "Meridian Surround Sound",
       "InControl Touch Pro"
     ],
-    "slug": "2024/Jaguar/XF-Sportbrake",
+    "slug": "2026/Jaguar/XF-Sportbrake",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-jaguar-xf-p300-r-dynamic-101-64e8cdd02fc9a.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-jaguar-xf-p300-r-dynamic-102-64e8cdcf467a0.jpg",

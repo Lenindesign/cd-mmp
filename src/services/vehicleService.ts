@@ -361,7 +361,7 @@ export const getRankingVehiclesFormatted = (
 // Get the Chevrolet Trax (main vehicle for our page)
 export const getChevroletTrax = (): Vehicle | undefined => {
   return vehicleDatabase.find(
-    v => v.make === 'Chevrolet' && v.model === 'Trax' && v.year === '2025'
+    v => v.make === 'Chevrolet' && v.model === 'Trax' && v.year === '2026'
   );
 };
 

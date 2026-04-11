@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -105,7 +105,8 @@ const SuvDealsPage = () => {
     params.set('filters', JSON.stringify(applied));
     navigate(`/deals/all?${params.toString()}`);
   }, [navigate]);
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
+  const clearAllFilters = useCallback(() => navigate('/deals/all'), [navigate]);
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -262,21 +263,27 @@ const SuvDealsPage = () => {
         <div className="container suv-deals-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">{filteredDeals.length} {filteredDeals.length === 1 ? 'deal' : 'deals'}</span>
-            {activeFilterPills.length > 0 && (
-              <div className="active-filter-pills__row" aria-label="Active filters">
-                {activeFilterPills.map(pill => (
-                  <span key={pill.id} className="active-filter-pills__pill">
-                    <span className="active-filter-pills__pill-label">{pill.label}</span>
-                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
-                      <X size={12} strokeWidth={2.5} aria-hidden />
-                    </button>
-                  </span>
-                ))}
+            <div className="active-filter-pills__row" aria-label="Active filters">
+              <span className="active-filter-pills__pill">
+                <span className="active-filter-pills__pill-label">SUV</span>
+                <button type="button" className="active-filter-pills__pill-x" aria-label="Remove SUV filter" onClick={() => navigate('/deals/all')}>
+                  <X size={12} strokeWidth={2.5} aria-hidden />
+                </button>
+              </span>
+              {activeFilterPills.map(pill => (
+                <span key={pill.id} className="active-filter-pills__pill">
+                  <span className="active-filter-pills__pill-label">{pill.label}</span>
+                  <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                    <X size={12} strokeWidth={2.5} aria-hidden />
+                  </button>
+                </span>
+              ))}
+              {activeFilterPills.length > 0 && (
                 <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
                   Clear All
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <button
             type="button"
@@ -372,7 +379,7 @@ const SuvDealsPage = () => {
                                 <Link to={`/${deal.vehicle.slug}`} className="suv-deals-page__card-image-link">
                                   <div className="suv-deals-page__card-image-container">
                                     <img src={deal.vehicle.image} alt={deal.vehicleName} className="suv-deals-page__card-image" />
-                                    <span className="suv-deals-page__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
+                                    <span className="suv-deals-page__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
                                     <button
                                       className={`suv-deals-page__card-save ${saved ? 'suv-deals-page__card-save--saved' : ''}`}
                                       onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
@@ -399,7 +406,7 @@ const SuvDealsPage = () => {
                                           {offersPopup.offers.map((o, idx) => (
                                             <li key={idx} className="suv-deals-page__card-offers-popup-item">
                                               <span className={`suv-deals-page__card-offers-popup-type suv-deals-page__card-offers-popup-type--${o.type}`}>
-                                                {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                                {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
                                               </span>
                                               <span className="suv-deals-page__card-offers-popup-label">{o.label}</span>
                                               <span className="suv-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
@@ -434,7 +441,7 @@ const SuvDealsPage = () => {
                                   </div>
 
                                   <button className="suv-deals-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-                                    <span className="suv-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Finance'}</span>
+                                    <span className="suv-deals-page__card-deal-pill-chip">{deal.dealType === 'lease' ? 'Lease' : 'Buy'}</span>
                                     <span className="suv-deals-page__card-deal-pill-text">{deal.dealText}</span>
                                     <span className="suv-deals-page__card-deal-pill-divider" />
                                     <span className="suv-deals-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
@@ -453,10 +460,9 @@ const SuvDealsPage = () => {
 
                                   <Link
                                     to={`/${deal.vehicle.slug}`}
-                                    className="suv-deals-page__card-toggle"
+                                    className="suv-deals-page__card-cta suv-deals-page__card-cta--secondary"
                                   >
-                                    <span>Read More</span>
-                                    <ChevronRight size={14} />
+                                    Shop New {deal.vehicle.model}
                                   </Link>
                                 </div>
                               </div>
@@ -500,11 +506,10 @@ const SuvDealsPage = () => {
                 <h2 className="suv-deals-page__section-title">Explore More</h2>
                 <div className="suv-deals-page__links-grid">
                   <Link to="/deals" className="suv-deals-page__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
-                  <Link to="/deals/best-buying-deals" className="suv-deals-page__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
+                  <Link to="/deals/best-buying-deals" className="suv-deals-page__link-card"><h3>Buying Deals</h3><p>0% APR, cash back, and special financing</p></Link>
                   <Link to="/deals/truck" className="suv-deals-page__link-card"><h3>Truck Deals</h3><p>Best deals on pickup trucks</p></Link>
                   <Link to="/deals/lease" className="suv-deals-page__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
                   <Link to="/rankings/suv" className="suv-deals-page__link-card"><h3>SUV Rankings</h3><p>Expert-ranked SUVs</p></Link>
-                  <Link to="/deals/cash-finance" className="suv-deals-page__link-card"><h3>Cash & Finance</h3><p>Cash-back and APR offers</p></Link>
                 </div>
               </section>
             </div>

@@ -17,8 +17,8 @@ import ExitIntentModal from '../../components/ExitIntentModal';
 import { CarFinderChat } from '../../components/CarFinderChat';
 import { suvs } from '../../services/vehicleService';
 
-// Get the 2025 Chevrolet Trax from database
-const traxFromDB = suvs.find(v => v.make === 'Chevrolet' && v.model === 'Trax' && v.year === '2025');
+// Get the 2026 Chevrolet Trax from database
+const traxFromDB = suvs.find(v => v.make === 'Chevrolet' && v.model === 'Trax' && v.year === '2026');
 
 const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,11 +27,11 @@ const HomePage = () => {
     setIsModalOpen(false);
   };
 
-  // Vehicle data for the 2025 Chevrolet Trax (enhanced with database)
+  // Vehicle data for the 2026 Chevrolet Trax (enhanced with database)
   const vehicleData = {
     make: traxFromDB?.make || 'Chevrolet',
     model: traxFromDB?.model || 'Trax',
-    year: parseInt(traxFromDB?.year || '2025'),
+    year: parseInt(traxFromDB?.year || '2026'),
     tagline: 'The Trax is an affordable subcompact SUV that delivers impressive interior space, practical features, and excellent value for budget-conscious buyers seeking reliable transportation without compromising on modern amenities.',
     rating: 10, // Editorial rating override
     priceRange: '$21,895–$25,895',

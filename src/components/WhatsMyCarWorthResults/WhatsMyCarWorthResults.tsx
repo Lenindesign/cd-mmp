@@ -736,11 +736,11 @@ const WhatsMyCarWorthResults = ({
                 <div className="next-vehicle__image">
                   <img 
                     src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg" 
-                    alt="2025 Honda Accord"
+                    alt="2026 Honda Accord"
                   />
                 </div>
                 <div className="next-vehicle__info">
-                  <h3 className="next-vehicle__name">2025 {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model}</h3>
+                  <h3 className="next-vehicle__name">2026 {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model}</h3>
                   <p className="next-vehicle__price">Starting at $32,825</p>
                   <Button variant="primary" size="medium" iconRight={<ChevronRight size={18} />}>
                     Shop New {tradeEstimate.vehicle.make} {tradeEstimate.vehicle.model}

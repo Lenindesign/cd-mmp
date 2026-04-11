@@ -1,7 +1,7 @@
 [
   {
     "id": "81",
-    "year": "2024",
+    "year": "2026",
     "make": "Mazda",
     "model": "MX-5 Miata",
     "bodyStyle": "Convertible",
@@ -24,7 +24,7 @@
       "Bose Audio",
       "Recaro Seats"
     ],
-    "slug": "2024/Mazda/MX-5-Miata",
+    "slug": "2026/Mazda/MX-5-Miata",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-mazda-mx5-miata-rf-club-101-66743f51b53e4.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-mazda-mx-5-miata-club-lightning-lap-2025-591-67ae41098c1d4.jpg",
@@ -36,7 +36,7 @@
   },
   {
     "id": "82",
-    "year": "2024",
+    "year": "2026",
     "make": "BMW",
     "model": "Z4",
     "bodyStyle": "Convertible",
@@ -59,7 +59,7 @@
       "Harman Kardon Audio",
       "Head-Up Display"
     ],
-    "slug": "2024/BMW/Z4",
+    "slug": "2026/BMW/Z4",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2023-bmw-z4-m40i-130-64a6f8c96d505.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2023-bmw-z4-m40i-148-64ac26a965559.jpg",
@@ -71,7 +71,7 @@
   },
   {
     "id": "83",
-    "year": "2024",
+    "year": "2026",
     "make": "Porsche",
     "model": "911 Cabriolet",
     "bodyStyle": "Convertible",
@@ -101,12 +101,12 @@
       "PASM",
       "Bose Surround Sound"
     ],
-    "slug": "2024/Porsche/911-Cabriolet",
+    "slug": "2026/Porsche/911-Cabriolet",
     "editorsChoice": true
   },
   {
     "id": "84",
-    "year": "2024",
+    "year": "2026",
     "make": "Mercedes-Benz",
     "model": "SL-Class",
     "bodyStyle": "Convertible",
@@ -129,7 +129,7 @@
       "Burmester High-End 3D Surround Sound",
       "AMG Performance"
     ],
-    "slug": "2024/Mercedes-Benz/SL-Class",
+    "slug": "2026/Mercedes-Benz/SL-Class",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2020-mercedes-benz-sl-class-mmp-1-1574793555.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2020-mercedes-benz-sl-class-mmp-2-1574793716.jpg",
@@ -141,7 +141,7 @@
   },
   {
     "id": "85",
-    "year": "2024",
+    "year": "2026",
     "make": "Audi",
     "model": "A5 Cabriolet",
     "bodyStyle": "Convertible",
@@ -164,7 +164,7 @@
       "Virtual Cockpit Plus",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/A5-Cabriolet",
+    "slug": "2026/Audi/A5-Cabriolet",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-audi-a5-101-64bacb64baa2d.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2020-audi-a5-coupe-109-1567777438.jpg",
@@ -176,7 +176,7 @@
   },
   {
     "id": "86",
-    "year": "2024",
+    "year": "2026",
     "make": "BMW",
     "model": "4 Series Convertible",
     "bodyStyle": "Convertible",
@@ -199,7 +199,7 @@
       "Harman Kardon Audio",
       "Adaptive M Suspension"
     ],
-    "slug": "2024/BMW/4-Series-Convertible",
+    "slug": "2026/BMW/4-Series-Convertible",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2021-bmw-m440i-xdrive-coupe-106-1602004316.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-bmw-3-series-interior-6418ac86d9e00.jpg",
@@ -211,7 +211,7 @@
   },
   {
     "id": "88",
-    "year": "2024",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Corvette Convertible",
     "bodyStyle": "Convertible",
@@ -240,11 +240,11 @@
       "Performance Data Recorder",
       "Bose Performance Audio"
     ],
-    "slug": "2024/Chevrolet/Corvette-Convertible"
+    "slug": "2026/Chevrolet/Corvette-Convertible"
   },
   {
     "id": "89",
-    "year": "2024",
+    "year": "2026",
     "make": "Ford",
     "model": "Mustang Convertible",
     "bodyStyle": "Convertible",
@@ -267,7 +267,7 @@
       "SYNC 4",
       "B&O Sound System"
     ],
-    "slug": "2024/Ford/Mustang-Convertible",
+    "slug": "2026/Ford/Mustang-Convertible",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-ford-mustang-gt-111-64e6608fce997.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-ford-mustang-gt-115-64e66092d783e.jpg",
@@ -279,7 +279,7 @@
   },
   {
     "id": "91",
-    "year": "2024",
+    "year": "2026",
     "make": "Jaguar",
     "model": "F-Type Convertible",
     "bodyStyle": "Convertible",
@@ -302,7 +302,7 @@
       "Meridian Surround Sound",
       "Configurable Dynamics"
     ],
-    "slug": "2024/Jaguar/F-Type-Convertible",
+    "slug": "2026/Jaguar/F-Type-Convertible",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-jaguar-f-type-r75-convertible-151-edit-660f012e498ef.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-jaguar-f-type-r75-convertible-101-edit-660f012e8cb87.jpg",
@@ -314,7 +314,7 @@
   },
   {
     "id": "92",
-    "year": "2024",
+    "year": "2026",
     "make": "Lexus",
     "model": "LC Convertible",
     "bodyStyle": "Convertible",
@@ -337,7 +337,7 @@
       "Mark Levinson Audio",
       "Active Rear Steering"
     ],
-    "slug": "2024/Lexus/LC-Convertible",
+    "slug": "2026/Lexus/LC-Convertible",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-lexus-lc-004-6463a5b41d024.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-lexus-lc-012-6463a5b4d1100.jpg",
@@ -349,7 +349,7 @@
   },
   {
     "id": "93",
-    "year": "2024",
+    "year": "2026",
     "make": "Mini",
     "model": "Convertible",
     "bodyStyle": "Convertible",
@@ -372,7 +372,7 @@
       "Harman Kardon Audio",
       "Union Jack Tail Lights"
     ],
-    "slug": "2024/Mini/Convertible",
+    "slug": "2026/Mini/Convertible",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-mini-cooper-s-hardtop-2-door-131-66f2bf6aa5190.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-mini-cooper-s-hardtop-2-door-121-66f2bf649887f.jpg",
@@ -384,7 +384,7 @@
   },
   {
     "id": "98",
-    "year": "2024",
+    "year": "2026",
     "make": "Cadillac",
     "model": "CT4 Convertible",
     "bodyStyle": "Convertible",
@@ -407,7 +407,7 @@
       "AKG Studio Audio",
       "Super Cruise"
     ],
-    "slug": "2024/Cadillac/CT4-Convertible",
+    "slug": "2026/Cadillac/CT4-Convertible",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2023-cadillac-ct4-350t-rwd-104-65bd26c431d5b.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2023-cadillac-ct4-350t-rwd-123-65bd26ceed8d8.jpg",
@@ -419,7 +419,7 @@
   },
   {
     "id": "99",
-    "year": "2024",
+    "year": "2026",
     "make": "Genesis",
     "model": "G70 Convertible",
     "bodyStyle": "Convertible",
@@ -442,7 +442,7 @@
       "Lexicon Audio",
       "Nappa Leather"
     ],
-    "slug": "2024/Genesis/G70-Convertible",
+    "slug": "2026/Genesis/G70-Convertible",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-awd-2p5t-sport-prestige-493-66ba237b7aae8.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-genesis-g70-awd-2p5t-sport-prestige-472-66ba2377e2c4d.jpg",

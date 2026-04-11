@@ -628,10 +628,10 @@ const VehiclesListPage = () => {
                       showShopButton={true}
                       shopButtonText={
                         vehicle.model.length > 10
-                          ? vehicle.year === '2024'
+                          ? parseInt(vehicle.year, 10) < 2026
                             ? 'SHOP USED'
                             : 'SHOP NEW'
-                          : vehicle.year === '2024'
+                          : parseInt(vehicle.year, 10) < 2026
                             ? `SHOP USED ${vehicle.model.toUpperCase()}`
                             : `SHOP NEW ${vehicle.model.toUpperCase()}`
                       }

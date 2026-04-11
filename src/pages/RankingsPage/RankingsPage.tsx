@@ -110,10 +110,10 @@ const generateCdSays = (year: string, make: string, model: string): string => {
   return `Read our ${year} ${make} ${model} review for information on ratings, pricing, specs, and features.`;
 };
 
-const YEAR_OPTIONS = [2022, 2023, 2024, 2025];
+const YEAR_OPTIONS = [2022, 2023, 2024, 2025, 2026];
 
 const YearSelector: React.FC = () => {
-  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedYear, setSelectedYear] = useState(2026);
   const [open, setOpen] = useState(false);
   const [animDone, setAnimDone] = useState(false);
   const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number } | null>(null);
@@ -253,7 +253,7 @@ const RankingsPage = () => {
     
     const vehicles = getAllVehicles()
       .filter(v => v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase())
-      .filter(v => parseInt(v.year) >= 2024); // Include 2024+ vehicles
+      .filter(v => parseInt(v.year) >= 2026); // Include 2026+ vehicles
     
     // Sort by rating
     return vehicles.sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
@@ -300,7 +300,7 @@ const RankingsPage = () => {
     Object.keys(BODY_STYLE_CONFIG).forEach((key) => {
       const vehicles = getAllVehicles()
         .filter(v => v.bodyStyle.toLowerCase() === key.toLowerCase())
-        .filter(v => parseInt(v.year) >= 2024)
+        .filter(v => parseInt(v.year) >= 2026)
         .sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
       
       result[key] = {
@@ -359,7 +359,7 @@ const RankingsPage = () => {
     return Object.entries(BODY_STYLE_CONFIG).map(([key, cfg]) => {
       const vehicles = getAllVehicles()
         .filter(v => v.bodyStyle.toLowerCase() === key)
-        .filter(v => parseInt(v.year) >= 2024)
+        .filter(v => parseInt(v.year) >= 2026)
         .sort((a, b) => getVehicleRating(b) - getVehicleRating(a))
         .slice(0, 3)
         .map((v, i) => ({
@@ -499,7 +499,7 @@ const RankingsPage = () => {
                       tenBest={vehicle.tenBest}
                       showShopButton={true}
                       showSaveButton={true}
-                      shopButtonText={`${parseInt(vehicle.year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
+                      shopButtonText={`${parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
                       shopButtonVariant="outline"
                       epaMpg={vehicle.epaMpg}
                       cdSays={vehicle.cdSays}
@@ -721,7 +721,7 @@ const RankingsPage = () => {
                               </>
                             )}
                             <button className="rankings-page__hero-card-cta">
-                              {parseInt(sub.vehicles[0].year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} {sub.vehicles[0].modelName.toUpperCase()}
+                              {parseInt(sub.vehicles[0].year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} {sub.vehicles[0].modelName.toUpperCase()}
                             </button>
                           </div>
                           <div className="rankings-page__hero-card-cdsays">
@@ -752,7 +752,7 @@ const RankingsPage = () => {
                           tenBest={vehicle.tenBest}
                           showShopButton={true}
                           showSaveButton={true}
-                          shopButtonText={`${parseInt(vehicle.year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
+                          shopButtonText={`${parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
                           shopButtonVariant="outline"
                           epaMpg={vehicle.epaMpg}
                           cdSays={vehicle.cdSays}
@@ -846,7 +846,7 @@ const RankingsPage = () => {
                               </>
                             )}
                             <button className="rankings-page__hero-card-cta">
-                              {parseInt(formattedVehicles[0].year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} {formattedVehicles[0].modelName.toUpperCase()}
+                              {parseInt(formattedVehicles[0].year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} {formattedVehicles[0].modelName.toUpperCase()}
                             </button>
                           </div>
                           <div className="rankings-page__hero-card-cdsays">
@@ -885,7 +885,7 @@ const RankingsPage = () => {
                           tenBest={vehicle.tenBest}
                           showShopButton={true}
                           showSaveButton={true}
-                          shopButtonText={`${parseInt(vehicle.year) >= 2025 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
+                          shopButtonText={`${parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
                           shopButtonVariant="outline"
                           epaMpg={vehicle.epaMpg}
                           cdSays={vehicle.cdSays}

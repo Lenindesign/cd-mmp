@@ -24,7 +24,7 @@ type Story = StoryObj<typeof Tabs>;
 const dealTypeItems: TabItem[] = [
   { value: 'all', label: 'All Deals' },
   { value: 'lease', label: 'Lease' },
-  { value: 'finance', label: 'Finance' },
+  { value: 'finance', label: 'Buy' },
   { value: 'cash', label: 'Cash Back' },
 ];
 

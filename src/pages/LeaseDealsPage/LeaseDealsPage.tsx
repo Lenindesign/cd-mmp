@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
@@ -101,7 +101,8 @@ const LeaseDealsPage = () => {
   }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
+  const clearAllFilters = useCallback(() => navigate('/deals/all'), [navigate]);
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -208,21 +209,27 @@ const LeaseDealsPage = () => {
         <div className="container lease-deals-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">{deals.length} {deals.length === 1 ? 'deal' : 'deals'}</span>
-            {activeFilterPills.length > 0 && (
-              <div className="active-filter-pills__row" aria-label="Active filters">
-                {activeFilterPills.map(pill => (
-                  <span key={pill.id} className="active-filter-pills__pill">
-                    <span className="active-filter-pills__pill-label">{pill.label}</span>
-                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
-                      <X size={12} strokeWidth={2.5} aria-hidden />
-                    </button>
-                  </span>
-                ))}
+            <div className="active-filter-pills__row" aria-label="Active filters">
+              <span className="active-filter-pills__pill">
+                <span className="active-filter-pills__pill-label">Lease</span>
+                <button type="button" className="active-filter-pills__pill-x" aria-label="Remove Lease filter" onClick={() => navigate('/deals/all')}>
+                  <X size={12} strokeWidth={2.5} aria-hidden />
+                </button>
+              </span>
+              {activeFilterPills.map(pill => (
+                <span key={pill.id} className="active-filter-pills__pill">
+                  <span className="active-filter-pills__pill-label">{pill.label}</span>
+                  <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                    <X size={12} strokeWidth={2.5} aria-hidden />
+                  </button>
+                </span>
+              ))}
+              {activeFilterPills.length > 0 && (
                 <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
                   Clear All
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <button
             type="button"
@@ -339,7 +346,7 @@ const LeaseDealsPage = () => {
                                           {offersPopup.offers.map((o, idx) => (
                                             <li key={idx} className="lease-deals-page__card-offers-popup-item">
                                               <span className={`lease-deals-page__card-offers-popup-type lease-deals-page__card-offers-popup-type--${o.type}`}>
-                                                {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                                {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
                                               </span>
                                               <span className="lease-deals-page__card-offers-popup-label">{o.label}</span>
                                               <span className="lease-deals-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
@@ -401,10 +408,9 @@ const LeaseDealsPage = () => {
 
                                   <Link
                                     to={`/${deal.vehicle.slug}`}
-                                    className="lease-deals-page__card-toggle"
+                                    className="lease-deals-page__card-cta lease-deals-page__card-cta--secondary"
                                   >
-                                    <span>Read More</span>
-                                    <ChevronRight size={14} />
+                                    Shop New {deal.vehicle.model}
                                   </Link>
                                 </div>
                               </div>
@@ -449,8 +455,7 @@ const LeaseDealsPage = () => {
                 <h2 className="lease-deals-page__section-title">Explore More Deals</h2>
                 <div className="lease-deals-page__links-grid">
                   <Link to="/deals" className="lease-deals-page__link-card"><h3>All Deals</h3><p>Browse every current deal and incentive</p></Link>
-                  <Link to="/deals/best-buying-deals" className="lease-deals-page__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
-                  <Link to="/deals/cash-finance" className="lease-deals-page__link-card"><h3>Cash & Finance Deals</h3><p>Cash-back rebates and special APR rates</p></Link>
+                  <Link to="/deals/best-buying-deals" className="lease-deals-page__link-card"><h3>Buying Deals</h3><p>0% APR, cash back, and special financing</p></Link>
                   <Link to="/deals/suv" className="lease-deals-page__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs and crossovers</p></Link>
                   <Link to="/deals/truck" className="lease-deals-page__link-card"><h3>Truck Deals</h3><p>Best deals on pickup trucks</p></Link>
                   <Link to="/rankings" className="lease-deals-page__link-card"><h3>Car Rankings</h3><p>Expert rankings across every category</p></Link>

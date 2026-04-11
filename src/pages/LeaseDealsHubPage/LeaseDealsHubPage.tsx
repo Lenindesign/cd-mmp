@@ -105,7 +105,7 @@ const LeaseDealsHubPage = () => {
       .map(([, label]) => ({ label, slug: slugForPath(label) }));
   }, [allLeaseDeals]);
 
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
   const matchesFilters = useCallback(
     (
@@ -360,7 +360,7 @@ const LeaseDealsHubPage = () => {
                                   {offersPopup.offers.map((o, idx) => (
                                     <li key={idx} className="lease-hub__card-offers-popup-item">
                                       <span className={`lease-hub__card-offers-popup-type lease-hub__card-offers-popup-type--${o.type}`}>
-                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
                                       </span>
                                       <span className="lease-hub__card-offers-popup-label">{o.label}</span>
                                       <span className="lease-hub__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>

@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, CarFront, Truck, Car, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Heart, Info, CarFront, Truck, Car, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
@@ -121,7 +121,8 @@ const CashFinanceBodyStylePage = () => {
     params.set('filters', JSON.stringify(applied));
     navigate(`/deals/all?${params.toString()}`);
   }, [navigate]);
-  const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters);
+  const { pills: activeFilterPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
+  const clearAllFilters = useCallback(() => navigate('/deals/all'), [navigate]);
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -315,7 +316,7 @@ const CashFinanceBodyStylePage = () => {
                   {offersPopup.offers.map((o, idx) => (
                     <li key={idx} className="cfbs-deals__card-offers-popup-item">
                       <span className={`cfbs-deals__card-offers-popup-type cfbs-deals__card-offers-popup-type--${o.type}`}>
-                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
                       </span>
                       <span className="cfbs-deals__card-offers-popup-label">{o.label}</span>
                       <span className="cfbs-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
@@ -376,9 +377,11 @@ const CashFinanceBodyStylePage = () => {
 
           <button type="button" className="cfbs-deals__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
 
-          <Link to={`/${deal.vehicle.slug}`} className="cfbs-deals__card-toggle">
-            <span>Read More</span>
-            <ChevronRight size={14} />
+          <Link
+            to={`/${deal.vehicle.slug}`}
+            className="cfbs-deals__card-cta cfbs-deals__card-cta--secondary"
+          >
+            Shop New {deal.vehicle.model}
           </Link>
         </div>
       </div>
@@ -387,7 +390,7 @@ const CashFinanceBodyStylePage = () => {
 
   const emptyBodyCategory =
     activeTab === 'all' ? 'body style' : BODY_TABS.find(t => t.key === activeTab)?.label.toLowerCase() || 'body style';
-  const pageTitle = `Finance Deals by Body Style – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
+  const pageTitle = `Buying Deals by Body Style – ${CURRENT_MONTH} ${CURRENT_YEAR}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
@@ -398,7 +401,7 @@ const CashFinanceBodyStylePage = () => {
         canonical={`${BASE_URL}/deals/cash-finance-body-style`}
         keywords={['finance deals by body style', 'finance deals SUV', 'sedan finance deals', 'truck finance deals', `car deals ${CURRENT_MONTH} ${CURRENT_YEAR}`]}
         structuredData={[
-          createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Finance by Body Style', url: `${BASE_URL}/deals/cash-finance-body-style` }]),
+          createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Buying Deals by Body Style', url: `${BASE_URL}/deals/cash-finance-body-style` }]),
           createFAQStructuredData(FAQ_DATA),
         ]}
         noIndex={allDeals.length === 0}
@@ -408,21 +411,27 @@ const CashFinanceBodyStylePage = () => {
         <div className="container cfbs-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">{displayDeals.length} {displayDeals.length === 1 ? 'deal' : 'deals'}</span>
-            {activeFilterPills.length > 0 && (
-              <div className="active-filter-pills__row" aria-label="Active filters">
-                {activeFilterPills.map(pill => (
-                  <span key={pill.id} className="active-filter-pills__pill">
-                    <span className="active-filter-pills__pill-label">{pill.label}</span>
-                    <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
-                      <X size={12} strokeWidth={2.5} aria-hidden />
-                    </button>
-                  </span>
-                ))}
+            <div className="active-filter-pills__row" aria-label="Active filters">
+              <span className="active-filter-pills__pill">
+                <span className="active-filter-pills__pill-label">Body Style</span>
+                <button type="button" className="active-filter-pills__pill-x" aria-label="Remove Body Style filter" onClick={() => navigate('/deals/all')}>
+                  <X size={12} strokeWidth={2.5} aria-hidden />
+                </button>
+              </span>
+              {activeFilterPills.map(pill => (
+                <span key={pill.id} className="active-filter-pills__pill">
+                  <span className="active-filter-pills__pill-label">{pill.label}</span>
+                  <button type="button" className="active-filter-pills__pill-x" aria-label={`Remove ${pill.label} filter`} onClick={pill.onRemove}>
+                    <X size={12} strokeWidth={2.5} aria-hidden />
+                  </button>
+                </span>
+              ))}
+              {activeFilterPills.length > 0 && (
                 <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
                   Clear All
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <button
             type="button"
@@ -442,14 +451,14 @@ const CashFinanceBodyStylePage = () => {
         <div className="container">
           <div className="cfbs-deals__hero-content">
             <div className="cfbs-deals__hero-badge">
-              <span className="hero-pill__label">Finance Deals by Body Style</span>
+              <span className="hero-pill__label">Buying Deals by Body Style</span>
             </div>
             <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span className="cfbs-deals__breadcrumb-sep">/</span>
               <Link to="/deals">Deals</Link>
               <span className="cfbs-deals__breadcrumb-sep">/</span>
-              <span>Finance by Body Style</span>
+              <span>Buy by Body Style</span>
             </nav>
             <h1 className="cfbs-deals__title">{pageTitle}</h1>
             <p className="cfbs-deals__description">
@@ -547,8 +556,7 @@ const CashFinanceBodyStylePage = () => {
                 <h2 className="cfbs-deals__section-title">Explore More</h2>
                 <div className="cfbs-deals__links-grid">
                   <Link to="/deals" className="cfbs-deals__link-card"><h3>All Deals</h3><p>Browse every current deal</p></Link>
-                  <Link to="/deals/cash-finance" className="cfbs-deals__link-card"><h3>Finance Deals</h3><p>APR and special finance offers</p></Link>
-                  <Link to="/deals/best-buying-deals" className="cfbs-deals__link-card"><h3>Best Buying Deals</h3><p>0% APR, special financing, and more</p></Link>
+                  <Link to="/deals/best-buying-deals" className="cfbs-deals__link-card"><h3>Buying Deals</h3><p>0% APR, cash back, and special financing</p></Link>
                   <Link to="/deals/lease" className="cfbs-deals__link-card"><h3>Lease Deals</h3><p>Monthly lease specials</p></Link>
                   <Link to="/deals/fuel-type" className="cfbs-deals__link-card"><h3>Fuel Type Deals</h3><p>Deals by powertrain</p></Link>
                   <Link to="/deals/suv" className="cfbs-deals__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs</p></Link>

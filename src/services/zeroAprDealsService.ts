@@ -15,7 +15,7 @@ export interface ZeroAprDeal {
 
 const CURRENT_MONTH = new Date().toLocaleString('default', { month: 'long' });
 const CURRENT_YEAR = new Date().getFullYear();
-const EXPIRATION_DATE = `April 1, ${CURRENT_YEAR}`;
+const EXPIRATION_DATE = `May 1, ${CURRENT_YEAR}`;
 
 const DEAL_DEFINITIONS: {
   make: string;
@@ -40,7 +40,7 @@ const DEAL_DEFINITIONS: {
     model: 'Trax',
     term: '48 months',
     programName: 'Chevrolet Spring Sales Event',
-    programDescription: 'Take advantage of 0% APR financing for 48 months on the 2025 Chevrolet Trax through GM Financial.',
+    programDescription: 'Take advantage of 0% APR financing for 48 months on the 2026 Chevrolet Trax through GM Financial.',
     targetAudience: 'Well-qualified buyers with 700+ credit score',
     trimsEligible: ['LS', '1RS', 'LT', 'ACTIV'],
   },
@@ -145,7 +145,7 @@ export const getZeroAprDeals = (): ZeroAprDeal[] => {
       (v) =>
         v.make.toLowerCase() === def.make.toLowerCase() &&
         v.model.toLowerCase() === def.model.toLowerCase() &&
-        parseInt(v.year) >= 2024
+        parseInt(v.year) >= 2026
     );
 
     if (vehicle) {

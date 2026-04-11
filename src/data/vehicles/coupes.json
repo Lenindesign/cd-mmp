@@ -36,7 +36,7 @@
   },
   {
     "id": "15",
-    "year": "2024",
+    "year": "2026",
     "make": "BMW",
     "model": "M4",
     "bodyStyle": "Coupe",
@@ -65,11 +65,11 @@
       "Carbon Fiber Roof",
       "Adaptive M Suspension"
     ],
-    "slug": "2024/BMW/M4"
+    "slug": "2026/BMW/M4"
   },
   {
     "id": "16",
-    "year": "2024",
+    "year": "2026",
     "make": "Audi",
     "model": "RS5",
     "bodyStyle": "Coupe",
@@ -92,7 +92,7 @@
       "Virtual Cockpit",
       "Bang & Olufsen Sound"
     ],
-    "slug": "2024/Audi/RS5",
+    "slug": "2026/Audi/RS5",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2023-audi-rs-5-coupe-101-1664913723.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2023-audi-rs-5-coupe-104-1664913726.jpg",
@@ -104,7 +104,7 @@
   },
   {
     "id": "17",
-    "year": "2024",
+    "year": "2026",
     "make": "Mercedes-Benz",
     "model": "C-Class Coupe",
     "bodyStyle": "Coupe",
@@ -135,11 +135,11 @@
       "Burmester Audio",
       "Active Brake Assist"
     ],
-    "slug": "2024/Mercedes-Benz/C-Class-Coupe"
+    "slug": "2026/Mercedes-Benz/C-Class-Coupe"
   },
   {
     "id": "18",
-    "year": "2024",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Camaro",
     "bodyStyle": "Coupe",
@@ -162,7 +162,7 @@
       "Performance Data Recorder",
       "Brembo Brakes"
     ],
-    "slug": "2024/Chevrolet/Camaro",
+    "slug": "2026/Chevrolet/Camaro",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-1-647e1933c6c20.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-111-1539790974.jpg",
@@ -174,7 +174,7 @@
   },
   {
     "id": "19",
-    "year": "2025",
+    "year": "2026",
     "make": "Ford",
     "model": "Mustang",
     "bodyStyle": "Coupe",
@@ -203,11 +203,11 @@
       "SYNC 4",
       "Track Apps"
     ],
-    "slug": "2025/Ford/Mustang"
+    "slug": "2026/Ford/Mustang"
   },
   {
     "id": "20",
-    "year": "2024",
+    "year": "2026",
     "make": "Nissan",
     "model": "Z",
     "bodyStyle": "Coupe",
@@ -236,11 +236,11 @@
       "Launch Control",
       "Bose Audio"
     ],
-    "slug": "2024/Nissan/Z"
+    "slug": "2026/Nissan/Z"
   },
   {
     "id": "21",
-    "year": "2024",
+    "year": "2026",
     "make": "Toyota",
     "model": "GR86",
     "bodyStyle": "Coupe",
@@ -263,7 +263,7 @@
       "Limited-Slip Differential",
       "Sport Seats"
     ],
-    "slug": "2024/Toyota/GR86",
+    "slug": "2026/Toyota/GR86",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-gr-86-trueno-103-648cac921d85c.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-gr-86-trueno-113-648cac93ca03b.jpg",
@@ -274,113 +274,8 @@
     ]
   },
   {
-    "id": "22",
-    "year": "2024",
-    "make": "Subaru",
-    "model": "BRZ",
-    "bodyStyle": "Coupe",
-    "imageSource": "2024 Subaru BRZ",
-    "image": null,
-    "priceRange": "$29,615 - $32,715",
-    "priceMin": 29615,
-    "priceMax": 32715,
-    "staffRating": 8.5,
-    "communityRating": 8.4,
-    "reviewCount": 143,
-    "fuelType": "Gas",
-    "drivetrain": "RWD",
-    "transmission": "Manual",
-    "mpg": "20/27",
-    "horsepower": 228,
-    "seatingCapacity": 4,
-    "features": [
-      "Torsen Limited-Slip Differential",
-      "EyeSight Safety",
-      "Performance Suspension"
-    ],
-    "slug": "2024/Subaru/BRZ",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-899-67ae42bf8b080.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-760-67ae42c0bb0e8.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-379-67ae42bf96418.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-136-658066dc62c05.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/cdb010124tenbest-cars-lo-656f33f352136.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-suabru-brz-2024-toyota-gr86-656dfaec19354.jpg"
-    ]
-  },
-  {
-    "id": "coupe1",
-    "year": "2025",
-    "make": "Ford",
-    "model": "Mustang",
-    "bodyStyle": "Coupe",
-    "imageSource": "2025 Ford Mustang",
-    "image": null,
-    "priceRange": "$28,565 - $59,565",
-    "priceMin": 28565,
-    "priceMax": 59565,
-    "staffRating": 8.9,
-    "communityRating": 8.7,
-    "reviewCount": 512,
-    "fuelType": "Gas",
-    "drivetrain": "RWD",
-    "transmission": "Manual",
-    "mpg": "16/25",
-    "horsepower": 450,
-    "seatingCapacity": 4,
-    "features": [
-      "Ford Co-Pilot360",
-      "SYNC 4",
-      "MagneRide Suspension"
-    ],
-    "slug": "2025/Ford/Mustang",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-mustang-60th-anniversary-exterior-66227932bb88e.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-mustang-interior-66227932ce258.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2025-mustang-60th-anniversary-package-04-661fd68a7eb78.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-mustang-gt-111-64e6608fce997.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2025-ford-mustang-dark-horse-669ea11eb0969.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-ford-mustang-gt-121-64e6609713999.jpg"
-    ]
-  },
-  {
-    "id": "coupe2",
-    "year": "2024",
-    "make": "Chevrolet",
-    "model": "Camaro",
-    "bodyStyle": "Coupe",
-    "imageSource": "2024 Chevrolet Camaro",
-    "image": null,
-    "priceRange": "$26,900 - $69,900",
-    "priceMin": 26900,
-    "priceMax": 69900,
-    "staffRating": 8.7,
-    "communityRating": 8.5,
-    "reviewCount": 445,
-    "fuelType": "Gas",
-    "drivetrain": "RWD",
-    "transmission": "Manual",
-    "mpg": "16/27",
-    "horsepower": 455,
-    "seatingCapacity": 4,
-    "features": [
-      "Chevrolet Infotainment 3",
-      "Performance Data Recorder",
-      "Magnetic Ride Control"
-    ],
-    "slug": "2024/Chevrolet/Camaro",
-    "galleryImages": [
-      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-1-647e1933c6c20.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-111-1539790974.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-123-1539790979.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-647e05dd3008a.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-1544717268.jpg",
-      "https://hips.hearstapps.com/hmg-prod/images/2025-chevrolet-camaro-z28-6452f1ee4d5ee.jpg"
-    ]
-  },
-  {
     "id": "coupe4",
-    "year": "2025",
+    "year": "2026",
     "make": "Chevrolet",
     "model": "Corvette",
     "bodyStyle": "Coupe",
@@ -410,11 +305,11 @@
       "Magnetic Ride Control",
       "Front Lift System"
     ],
-    "slug": "2025/Chevrolet/Corvette"
+    "slug": "2026/Chevrolet/Corvette"
   },
   {
     "id": "coupe5",
-    "year": "2025",
+    "year": "2026",
     "make": "Porsche",
     "model": "911",
     "bodyStyle": "Coupe",
@@ -443,11 +338,11 @@
       "Porsche Active Suspension",
       "Sport Chrono Package"
     ],
-    "slug": "2025/Porsche/911"
+    "slug": "2026/Porsche/911"
   },
   {
     "id": "coupe6",
-    "year": "2025",
+    "year": "2026",
     "make": "BMW",
     "model": "M2",
     "bodyStyle": "Coupe",
@@ -476,11 +371,11 @@
       "BMW Live Cockpit",
       "M Sport Package"
     ],
-    "slug": "2025/BMW/M2"
+    "slug": "2026/BMW/M2"
   },
   {
     "id": "coupe8",
-    "year": "2025",
+    "year": "2026",
     "make": "Mercedes-Benz",
     "model": "AMG GT",
     "bodyStyle": "Coupe",
@@ -509,11 +404,11 @@
       "AMG Performance",
       "AMG Track Pace"
     ],
-    "slug": "2025/Mercedes-Benz/AMG-GT"
+    "slug": "2026/Mercedes-Benz/AMG-GT"
   },
   {
     "id": "coupe9",
-    "year": "2025",
+    "year": "2026",
     "make": "Toyota",
     "model": "Supra",
     "bodyStyle": "Coupe",
@@ -536,7 +431,7 @@
       "Supra Connect",
       "Active Differential"
     ],
-    "slug": "2025/Toyota/Supra",
+    "slug": "2026/Toyota/Supra",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-gr-supra-102-668c519da0fe1.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2025-toyota-gr-supra-101-668c53c74bd62.jpg",
@@ -548,7 +443,7 @@
   },
   {
     "id": "coupe10",
-    "year": "2025",
+    "year": "2026",
     "make": "Subaru",
     "model": "BRZ",
     "bodyStyle": "Coupe",
@@ -571,7 +466,7 @@
       "Subaru STARLINK",
       "Sport Mode"
     ],
-    "slug": "2025/Subaru/BRZ",
+    "slug": "2026/Subaru/BRZ",
     "galleryImages": [
       "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-760-67ae42c0bb0e8.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/2024-subaru-brz-ts-lightning-lap-2025-625-67ae42bf92fcd.jpg",
@@ -582,43 +477,8 @@
     ]
   },
   {
-    "id": "coupe11",
-    "year": "2025",
-    "make": "Nissan",
-    "model": "Z",
-    "bodyStyle": "Coupe",
-    "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/67eedd8bf1dc420009b3a6b9/28-2025-nissan-z-nismo-front-view.jpg",
-    "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67eedd8bf1dc420009b3a6b9/28-2025-nissan-z-nismo-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67eedd73a8164c0008f661fe/18-2025-nissan-z-nismo-rear-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67eedd3ef1dc420009b3a6a9/2-2025-nissan-z-nismo-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67eedd7af1dc420009b3a6b6/21-2025-nissan-z-nismo-wheel-tire.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67eedd3bf1dc420009b3a6a7/1-2025-nissan-z-nismo-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/67eedd7c07a3bb0008290b3b/22-2025-nissan-z-nismo-side-view.jpg"
-    ],
-    "priceRange": "$40,990 - $53,990",
-    "priceMin": 40990,
-    "priceMax": 53990,
-    "staffRating": 8.7,
-    "communityRating": 8.5,
-    "reviewCount": 245,
-    "fuelType": "Gas",
-    "drivetrain": "RWD",
-    "transmission": "Manual",
-    "mpg": "19/26",
-    "horsepower": 400,
-    "seatingCapacity": 2,
-    "features": [
-      "Nissan Safety Shield 360",
-      "NissanConnect",
-      "Launch Control"
-    ],
-    "slug": "2025/Nissan/Z"
-  },
-  {
     "id": "coupe-elec1",
-    "year": "2025",
+    "year": "2026",
     "make": "Porsche",
     "model": "Taycan",
     "bodyStyle": "Coupe",
@@ -650,11 +510,11 @@
       "Porsche Active Suspension",
       "Porsche Torque Vectoring"
     ],
-    "slug": "2025/Porsche/Taycan-Coupe"
+    "slug": "2026/Porsche/Taycan-Coupe"
   },
   {
     "id": "coupe-elec2",
-    "year": "2025",
+    "year": "2026",
     "make": "Audi",
     "model": "e-tron GT",
     "bodyStyle": "Coupe",
@@ -683,11 +543,11 @@
       "MMI Touch",
       "Bang & Olufsen Audio"
     ],
-    "slug": "2025/Audi/e-tron-GT-Coupe"
+    "slug": "2026/Audi/e-tron-GT-Coupe"
   },
   {
     "id": "coupe-elec4",
-    "year": "2025",
+    "year": "2026",
     "make": "Tesla",
     "model": "Roadster",
     "bodyStyle": "Coupe",
@@ -716,11 +576,11 @@
       "Premium Audio",
       "Glass Roof"
     ],
-    "slug": "2025/Tesla/Roadster"
+    "slug": "2026/Tesla/Roadster"
   },
   {
     "id": "coupe-elec5",
-    "year": "2025",
+    "year": "2026",
     "make": "Lotus",
     "model": "Evija",
     "bodyStyle": "Coupe",
@@ -749,11 +609,11 @@
       "Active Aerodynamics",
       "Carbon Fiber Body"
     ],
-    "slug": "2025/Lotus/Evija"
+    "slug": "2026/Lotus/Evija"
   },
   {
     "id": "coupe-elec6",
-    "year": "2025",
+    "year": "2026",
     "make": "Rimac",
     "model": "Nevera",
     "bodyStyle": "Coupe",
@@ -783,11 +643,11 @@
       "Track Mode",
       "Active Aerodynamics"
     ],
-    "slug": "2025/Rimac/Nevera"
+    "slug": "2026/Rimac/Nevera"
   },
   {
     "id": "coupe-elec7",
-    "year": "2025",
+    "year": "2026",
     "make": "Pininfarina",
     "model": "Battista",
     "bodyStyle": "Coupe",
@@ -816,11 +676,11 @@
       "Track Mode",
       "Active Aerodynamics"
     ],
-    "slug": "2025/Pininfarina/Battista"
+    "slug": "2026/Pininfarina/Battista"
   },
   {
     "id": "coupe-elec8",
-    "year": "2025",
+    "year": "2026",
     "make": "McLaren",
     "model": "Artura",
     "bodyStyle": "Coupe",
@@ -850,11 +710,11 @@
       "Track Mode",
       "Active Aerodynamics"
     ],
-    "slug": "2025/McLaren/Artura"
+    "slug": "2026/McLaren/Artura"
   },
   {
     "id": "coupe-elec9",
-    "year": "2025",
+    "year": "2026",
     "make": "Ferrari",
     "model": "SF90 Stradale",
     "bodyStyle": "Coupe",
@@ -884,13 +744,13 @@
       "Track Mode",
       "Active Aerodynamics"
     ],
-    "slug": "2025/Ferrari/SF90-Stradale",
+    "slug": "2026/Ferrari/SF90-Stradale",
     "editorsChoice": true,
     "tenBest": true
   },
   {
     "id": "coupe-elec10",
-    "year": "2025",
+    "year": "2026",
     "make": "Lamborghini",
     "model": "Revuelto",
     "bodyStyle": "Coupe",
@@ -919,6 +779,6 @@
       "Track Mode",
       "Active Aerodynamics"
     ],
-    "slug": "2025/Lamborghini/Revuelto"
+    "slug": "2026/Lamborghini/Revuelto"
   }
 ]

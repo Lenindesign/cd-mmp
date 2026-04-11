@@ -55,9 +55,9 @@ const OnboardingResults: React.FC = () => {
     if (activeTab === 'all') {
       setFilteredVehicles(vehicles);
     } else if (activeTab === 'new') {
-      setFilteredVehicles(vehicles.filter(v => parseInt(v.year) >= 2024));
+      setFilteredVehicles(vehicles.filter(v => parseInt(v.year) >= 2026));
     } else {
-      setFilteredVehicles(vehicles.filter(v => parseInt(v.year) < 2024));
+      setFilteredVehicles(vehicles.filter(v => parseInt(v.year) < 2026));
     }
   }, [activeTab, vehicles]);
 
@@ -104,12 +104,12 @@ const OnboardingResults: React.FC = () => {
             {
               value: 'new',
               label: 'New Vehicles',
-              count: vehicles.filter(v => parseInt(v.year) >= 2024).length,
+              count: vehicles.filter(v => parseInt(v.year) >= 2026).length,
             },
             {
               value: 'used',
               label: 'Used Vehicles',
-              count: vehicles.filter(v => parseInt(v.year) < 2024).length,
+              count: vehicles.filter(v => parseInt(v.year) < 2026).length,
             },
           ]}
           value={activeTab}
@@ -170,7 +170,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onClick }) => {
           src={vehicle.image || `https://via.placeholder.com/400x250?text=${vehicle.make}+${vehicle.model}`}
           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
         />
-        {parseInt(vehicle.year) >= 2024 && (
+        {parseInt(vehicle.year) >= 2026 && (
           <span className="results-card__badge">New</span>
         )}
       </div>

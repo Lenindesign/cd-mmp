@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, SlidersHorizontal, Heart, Info } from 'lucide-react';
+import { ChevronRight, Heart, Info } from 'lucide-react';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, AVG_MARKET_APR, AVG_LOAN_TERM } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -95,9 +95,6 @@ const DealsHubPage = () => {
       return next;
     });
   }, []);
-
-  const hasActiveFilters = filters.bodyTypes.length > 0 || filters.makes.length > 0 || filters.fuelTypes.length > 0 || filters.accolades.length > 0 || filters.terms.length > 0 || filters.creditTier !== null;
-  const activeFilterCount = filters.bodyTypes.length + filters.makes.length + filters.fuelTypes.length + filters.accolades.length + filters.terms.length + (filters.creditTier ? 1 : 0);
 
   const rawData = useMemo(() => {
     const zeroAprDeals = getZeroAprDeals();
@@ -353,7 +350,7 @@ const DealsHubPage = () => {
       });
 
     return [
-      { title: 'Best Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates — save thousands when you buy.', href: BEST_BUYING_DEALS_PATH, count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
+      { title: 'Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates — save thousands when you buy.', href: BEST_BUYING_DEALS_PATH, count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
       { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, deals: toMiniLease(filteredLease) },
       { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, deals: toMiniMixed(suvDeals) },
       { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, deals: toMiniMixed(truckDeals) },
@@ -434,20 +431,12 @@ const DealsHubPage = () => {
               to help you find a great car at a great price.
             </p>
             <div className="deals-hub__hero-actions">
-              <Link to="/deals/all" className="deals-hub__view-all-link">
-                View All <ChevronRight size={14} aria-hidden />
+              <Link to="/deals/best-buying-deals" className="deals-hub__view-all-link">
+                Buying Deals <ChevronRight size={14} aria-hidden />
               </Link>
-              <button
-                type="button"
-                className={`deals-hub__filter-btn ${hasActiveFilters ? 'deals-hub__filter-btn--active' : ''}`}
-                onClick={() => setFilterOpen(true)}
-              >
-                <SlidersHorizontal size={16} aria-hidden />
-                <span>Filters</span>
-                {activeFilterCount > 0 && (
-                  <span className="deals-hub__filter-badge">{activeFilterCount}</span>
-                )}
-              </button>
+              <Link to="/deals/lease" className="deals-hub__view-all-link">
+                Leasing Deals <ChevronRight size={14} aria-hidden />
+              </Link>
             </div>
           </div>
         </div>
@@ -521,7 +510,7 @@ const DealsHubPage = () => {
                                 {offersPopup.offers.map((o, idx) => (
                                   <li key={idx} className="deals-hub__card-offers-popup-item">
                                     <span className={`deals-hub__card-offers-popup-type deals-hub__card-offers-popup-type--${o.type}`}>
-                                      {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Finance' : 'Lease'}
+                                      {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
                                     </span>
                                     <span className="deals-hub__card-offers-popup-label">{o.label}</span>
                                     <span className="deals-hub__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
@@ -586,10 +575,9 @@ const DealsHubPage = () => {
 
                         <Link
                           to={`/${deal.slug}`}
-                          className="deals-hub__card-toggle"
+                          className="deals-hub__card-cta deals-hub__card-cta--secondary"
                         >
-                          <span>Read More</span>
-                          <ChevronRight size={14} />
+                          Shop New {deal.model}
                         </Link>
                       </div>
                     </div>

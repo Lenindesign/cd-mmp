@@ -17,7 +17,7 @@ export interface LeaseDeal {
 
 const CURRENT_MONTH = new Date().toLocaleString('default', { month: 'long' });
 const CURRENT_YEAR = new Date().getFullYear();
-const EXPIRATION_DATE = `April 1, ${CURRENT_YEAR}`;
+const EXPIRATION_DATE = `May 1, ${CURRENT_YEAR}`;
 
 const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; model: string })[] = [
   {
@@ -82,7 +82,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Honda CR-V Lease Offer',
-    programDescription: 'Lease a 2025 CR-V LX for 36 months. $3,499 due at signing through Honda Financial Services.',
+    programDescription: 'Lease a 2026 CR-V LX for 36 months. $3,499 due at signing through Honda Financial Services.',
     trimsEligible: ['LX', 'EX'],
   },
   {
@@ -95,7 +95,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Honda Civic Lease Special',
-    programDescription: 'Lease a 2025 Civic LX for 36 months. $2,499 due at signing through Honda Financial Services.',
+    programDescription: 'Lease a 2026 Civic LX for 36 months. $2,499 due at signing through Honda Financial Services.',
     trimsEligible: ['LX', 'Sport'],
   },
   {
@@ -160,7 +160,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '12,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Honda Accord Lease Special',
-    programDescription: 'Lease a 2025 Accord LX for 36 months. $3,299 due at signing through Honda Financial Services.',
+    programDescription: 'Lease a 2026 Accord LX for 36 months. $3,299 due at signing through Honda Financial Services.',
     trimsEligible: ['LX', 'EX'],
   },
   {
@@ -225,7 +225,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Volkswagen Jetta Lease Event',
-    programDescription: 'Lease a 2025 Jetta S for 36 months. $2,099 due at signing through VW Credit.',
+    programDescription: 'Lease a 2026 Jetta S for 36 months. $2,099 due at signing through VW Credit.',
     trimsEligible: ['S', 'SE'],
   },
   {
@@ -238,7 +238,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Subaru Crosstrek Lease Offer',
-    programDescription: 'Lease a 2025 Crosstrek Base for 36 months. $2,799 due at signing through Subaru Motors Finance.',
+    programDescription: 'Lease a 2026 Crosstrek Base for 36 months. $2,799 due at signing through Subaru Motors Finance.',
     trimsEligible: ['Base', 'Premium'],
   },
   {
@@ -251,7 +251,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Subaru Forester Lease Special',
-    programDescription: 'Lease a 2025 Forester Base for 36 months. $2,999 due at signing through Subaru Motors Finance.',
+    programDescription: 'Lease a 2026 Forester Base for 36 months. $2,999 due at signing through Subaru Motors Finance.',
     trimsEligible: ['Base', 'Premium'],
   },
   {
@@ -264,7 +264,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '12,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Honda HR-V Lease Offer',
-    programDescription: 'Lease a 2025 HR-V LX for 36 months. $2,399 due at signing through Honda Financial Services.',
+    programDescription: 'Lease a 2026 HR-V LX for 36 months. $2,399 due at signing through Honda Financial Services.',
     trimsEligible: ['LX', 'Sport'],
   },
   {
@@ -329,7 +329,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Toyota Highlander Lease Special',
-    programDescription: 'Lease a 2025 Highlander LE for 36 months. $3,799 due at signing through Toyota Financial Services.',
+    programDescription: 'Lease a 2026 Highlander LE for 36 months. $3,799 due at signing through Toyota Financial Services.',
     trimsEligible: ['LE', 'XLE'],
   },
   {
@@ -355,7 +355,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,500 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Ford Maverick Lease Offer',
-    programDescription: 'Lease a 2025 Maverick XL for 36 months. $2,699 due at signing through Ford Motor Credit.',
+    programDescription: 'Lease a 2026 Maverick XL for 36 months. $2,699 due at signing through Ford Motor Credit.',
     trimsEligible: ['XL', 'XLT'],
   },
   {
@@ -368,7 +368,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,500 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Ford F-150 Lease Event',
-    programDescription: 'Lease a 2025 F-150 XL for 36 months. $3,999 due at signing through Ford Motor Credit.',
+    programDescription: 'Lease a 2026 F-150 XL for 36 months. $3,999 due at signing through Ford Motor Credit.',
     trimsEligible: ['XL', 'XLT'],
   },
   {
@@ -381,7 +381,7 @@ const LEASE_DEAL_DEFS: (Omit<LeaseDeal, 'id' | 'vehicle'> & { make: string; mode
     mileageAllowance: '10,000 mi/yr',
     expirationDate: EXPIRATION_DATE,
     programName: 'Chevrolet Silverado Lease Special',
-    programDescription: 'Lease a 2024 Silverado 1500 WT for 36 months. $4,199 due at signing. No security deposit required.',
+    programDescription: 'Lease a 2026 Silverado 1500 WT for 36 months. $4,199 due at signing. No security deposit required.',
     trimsEligible: ['WT', 'Custom'],
   },
 ];
@@ -394,7 +394,7 @@ export const getLeaseDeals = (): LeaseDeal[] => {
       (v) =>
         v.make.toLowerCase() === def.make.toLowerCase() &&
         v.model.toLowerCase() === def.model.toLowerCase() &&
-        parseInt(v.year) >= 2024
+        parseInt(v.year) >= 2026
     );
     if (vehicle) {
       deals.push({
