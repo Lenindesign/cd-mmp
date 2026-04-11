@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -99,6 +99,14 @@ const LeaseDealsPage = () => {
     params.set('filters', JSON.stringify(applied));
     navigate(`/deals/all?${params.toString()}`);
   }, [navigate]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      const global = getGlobalDealCounts();
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return getGlobalDealCounts().all;
+  }, []);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const { pills: activeFilterPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
@@ -487,6 +495,7 @@ const LeaseDealsPage = () => {
         filters={filters}
         onApply={handleFilterApply}
         totalResults={deals.length}
+        getResultCount={getResultCount}
         dealPageType="lease"
       />
     </div>

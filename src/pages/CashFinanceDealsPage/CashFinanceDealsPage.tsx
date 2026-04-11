@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -130,6 +130,14 @@ const CashFinanceDealsPage = () => {
       setOffersPopup({ slug, offers: getVehicleOffers(make, model) });
     }
   }, [offersPopup]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      const global = getGlobalDealCounts();
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return getGlobalDealCounts().all;
+  }, []);
 
   const financeDeals = useMemo(() => {
     return getFinanceDeals()
@@ -611,6 +619,7 @@ const CashFinanceDealsPage = () => {
         onClose={() => setFilterOpen(false)}
         filters={filters}
         onApply={handleFilterApply}
+        getResultCount={getResultCount}
         totalResults={displayDeals.length}
       />
     </div>

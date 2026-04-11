@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, ChevronUp, Heart, Info, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
@@ -148,6 +148,14 @@ const LeaseDealsHubPage = () => {
     },
     [offersPopup],
   );
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      const global = getGlobalDealCounts();
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return getGlobalDealCounts().all;
+  }, []);
 
   const deals = useMemo(() => {
     return getLeaseDeals()
@@ -537,7 +545,7 @@ const LeaseDealsHubPage = () => {
         itemImage={pendingSaveVehicle?.image}
       />
 
-      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} totalResults={deals.length} dealPageType="lease" />
+      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} getResultCount={getResultCount} totalResults={deals.length} dealPageType="lease" />
     </div>
   );
 };

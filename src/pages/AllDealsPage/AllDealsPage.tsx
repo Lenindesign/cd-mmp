@@ -11,7 +11,7 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import AdBanner from '../../components/AdBanner';
@@ -282,8 +282,12 @@ const AllDealsPage = () => {
   const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    return applyFiltersToDeals(allDeals, draftFilters).length;
-  }, [allDeals, applyFiltersToDeals]);
+    const global = getGlobalDealCounts();
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return global.all;
+  }, []);
 
   const DEAL_TYPE_EMPTY_LABELS: Record<string, string> = { lease: 'Lease', finance: 'Buy', cash: 'Cash Back' };
   const emptyDealsCategory = filters.dealType === 'all' ? 'deal' : (DEAL_TYPE_EMPTY_LABELS[filters.dealType] || 'deal');

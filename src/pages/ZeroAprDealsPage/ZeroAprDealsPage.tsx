@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, Heart, Info, X, SlidersHorizontal } from 'lucid
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -275,8 +275,12 @@ const ZeroAprDealsPage = () => {
   const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    return applyFiltersToDeals(allDeals, draftFilters).length;
-  }, [allDeals, applyFiltersToDeals]);
+    const global = getGlobalDealCounts();
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return global.all;
+  }, []);
 
   const isVehicleSaved = (vehicleName: string) => user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
 
@@ -562,7 +566,7 @@ const ZeroAprDealsPage = () => {
             <p className="zero-apr-page__description">
               {isZeroPercentOnlyRoute
                 ? 'These manufacturer-backed offers charge no interest on your auto loan—every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
-                : 'The best manufacturer-backed purchase incentives in one place. 0% APR financing, special low rates, and cash-back rebates—compare offers and C/D ratings to find the right deal.'}
+                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average—these offers can save you thousands over the life of your loan.'}
             </p>
           </div>
         </div>

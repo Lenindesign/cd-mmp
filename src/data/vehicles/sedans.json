@@ -1274,5 +1274,38 @@
       "https://hips.hearstapps.com/hmg-prod/images/bestelectricsuvs-1660569416.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
     ]
+  },
+  {
+    "id": "sed-camry-2026",
+    "year": "2026",
+    "make": "Toyota",
+    "model": "Camry",
+    "bodyStyle": "Sedan",
+    "imageSource": "2026 Toyota Camry",
+    "image": "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-camry-102-64cbc4858e198.jpg",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-toyota-camry-102-64cbc4858e198.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68d4789daa39b80002b684f4/2026-toyota-gr-corolla-premium-plus-at-supersonicred-014.jpg"
+    ],
+    "priceRange": "$29,495 - $35,070",
+    "priceMin": 29495,
+    "priceMax": 35070,
+    "staffRating": 8.5,
+    "communityRating": 8.4,
+    "reviewCount": 210,
+    "fuelType": "Gas",
+    "drivetrain": "FWD",
+    "transmission": "Automatic",
+    "mpg": "28/39",
+    "horsepower": 203,
+    "seatingCapacity": 5,
+    "features": [
+      "Toyota Safety Sense 3.0",
+      "Apple CarPlay",
+      "Wireless Charging"
+    ],
+    "slug": "2026/Toyota/Camry",
+    "editorsChoice": true,
+    "tenBest": true
   }
 ]

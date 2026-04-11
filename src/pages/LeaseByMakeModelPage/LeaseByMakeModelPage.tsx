@@ -10,6 +10,7 @@ import {
   creditTierQualifies,
   getVehicleOffers,
   offersToIncentives,
+  getGlobalDealCounts,
 } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
@@ -199,6 +200,14 @@ const LeaseByMakeModelPage = () => {
     },
     [offersPopup],
   );
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      const global = getGlobalDealCounts();
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return getGlobalDealCounts().all;
+  }, []);
 
   const allDeals = useMemo((): LeaseByMakeModelDeal[] => {
     const out: LeaseByMakeModelDeal[] = [];
@@ -628,6 +637,7 @@ const LeaseByMakeModelPage = () => {
         onClose={() => setFilterOpen(false)}
         filters={filters}
         onApply={handleFilterApply}
+        getResultCount={getResultCount}
         totalResults={allDeals.length}
         dealPageType="lease"
       />

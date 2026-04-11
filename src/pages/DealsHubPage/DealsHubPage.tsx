@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, Heart, Info } from 'lucide-react';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, AVG_MARKET_APR, AVG_LOAN_TERM } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, AVG_MARKET_APR, AVG_LOAN_TERM, getGlobalDealCounts } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
@@ -94,6 +94,14 @@ const DealsHubPage = () => {
       if (next.has(slug)) next.delete(slug); else next.add(slug);
       return next;
     });
+  }, []);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      const global = getGlobalDealCounts();
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return getGlobalDealCounts().all;
   }, []);
 
   const rawData = useMemo(() => {
@@ -625,6 +633,7 @@ const DealsHubPage = () => {
         onClose={() => setFilterOpen(false)}
         filters={filters}
         onApply={handleFilterApply}
+        getResultCount={getResultCount}
         totalResults={totalResults}
       />
     </div>

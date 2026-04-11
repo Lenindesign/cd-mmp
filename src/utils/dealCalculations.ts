@@ -177,3 +177,27 @@ export function offersToIncentives(make: string, model: string): {
     };
   });
 }
+
+export interface GlobalDealCounts {
+  all: number;
+  lease: number;
+  finance: number;
+  cash: number;
+}
+
+let cachedCounts: GlobalDealCounts | null = null;
+
+export function getGlobalDealCounts(): GlobalDealCounts {
+  if (cachedCounts) return cachedCounts;
+  const leaseCount = getLeaseDeals().length;
+  const zeroAprCount = getZeroAprDeals().length;
+  const financeCount = getFinanceDeals().length;
+  const cashCount = getCashDeals().length;
+  cachedCounts = {
+    all: leaseCount + zeroAprCount + financeCount + cashCount,
+    lease: leaseCount,
+    finance: zeroAprCount + financeCount,
+    cash: cashCount,
+  };
+  return cachedCounts;
+}

@@ -13,7 +13,7 @@ import SignInToSaveModal from '../../components/SignInToSaveModal';
 import SavingsText from '../../components/SavingsText';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies, getGlobalDealCounts } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
@@ -144,6 +144,14 @@ const TruckDealsPage = () => {
       setOffersPopup({ slug, offers: getVehicleOffers(make, model) });
     }
   }, [offersPopup]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
+      const global = getGlobalDealCounts();
+      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+    }
+    return getGlobalDealCounts().all;
+  }, []);
 
   const deals = useMemo((): UnifiedDeal[] => {
     const results: UnifiedDeal[] = [];
@@ -540,6 +548,7 @@ const TruckDealsPage = () => {
         onClose={() => setFilterOpen(false)}
         filters={filters}
         onApply={handleFilterApply}
+        getResultCount={getResultCount}
         totalResults={filteredDeals.length}
       />
     </div>
