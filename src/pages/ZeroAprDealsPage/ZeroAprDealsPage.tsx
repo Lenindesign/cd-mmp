@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, X, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
@@ -12,13 +12,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
+import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
-import SavingsText from '../../components/SavingsText';
-import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import { DealCard } from '../../components/DealCard';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH } from '../../constants/dealRoutes';
 import './ZeroAprDealsPage.css';
 
@@ -92,29 +92,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
 
 const CAR_AND_DRIVER = 'Car and Driver';
 
-/** In-feed leaderboard after each batch of this many deal cards (e.g. 6 rows × 2 columns) */
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-/** Sidebar stack after the first full-bleed in-feed ad (distinct creatives from the initial column) */
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
+const MOBILE_AD_INTERVAL = 4;
 
 function renderFaqQuestionText(question: string) {
   const i = question.indexOf(CAR_AND_DRIVER);
@@ -272,8 +250,6 @@ const ZeroAprDealsPage = () => {
     return filteredAll.filter(d => d.aprType === activeTab);
   }, [filteredAll, activeTab]);
 
-  const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
-
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
     const global = getGlobalDealCounts();
     if (draftFilters.dealType && draftFilters.dealType !== 'all') {
@@ -294,135 +270,63 @@ const ZeroAprDealsPage = () => {
 
   const renderAprDealCard = (deal: UnifiedAprDeal) => {
     const saved = isVehicleSaved(deal.vehicleName);
+    const isCash = deal.aprType === 'cash';
+    const dealTypeTag = isCash ? 'Cash' : 'Buy';
+    const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+    const payment = isCash
+      ? {
+          amount: deal.incentiveValue ?? '',
+          period: 'Cash Back',
+          savings: { type: 'plain' as const, text: `${deal.percentOffMsrp} off MSRP` },
+          savingsTooltip: deal.savingsTooltip,
+          expirationDate: deal.expirationDate,
+        }
+      : {
+          amount: deal.aprDisplay,
+          period: ' APR',
+          savings: { type: 'savings-text' as const, text: deal.savingsVsAvg },
+          savingsTooltip: deal.savingsTooltip,
+          expirationDate: deal.expirationDate,
+        };
+    const pill = {
+      chipLabel: dealTypeTag,
+      text: deal.dealText,
+      expirationDate: deal.expirationDate,
+    };
+    const details = [
+      { label: 'MSRP Range', value: deal.vehicle.priceRange },
+      isCash
+        ? { label: 'Est. off MSRP', value: deal.percentOffMsrp ?? '' }
+        : { label: 'Term', value: deal.term },
+    ];
+
     return (
-      <div key={deal.id} className="zero-apr-page__card">
-        <div className="zero-apr-page__card-header">
-          <Link to={`/${deal.vehicle.slug}`} className="zero-apr-page__card-name-link">
-            <h3 className="zero-apr-page__card-name">{deal.vehicleName}</h3>
-          </Link>
-          <div className="zero-apr-page__card-rating">
-            <span className="zero-apr-page__card-rating-value">{deal.rating}</span>
-            <span className="zero-apr-page__card-rating-max">/10</span>
-            <span className="zero-apr-page__card-rating-label">C/D Rating</span>
-          </div>
-        </div>
-
-        <Link to={`/${deal.vehicle.slug}`} className="zero-apr-page__card-image-link">
-          <div className="zero-apr-page__card-image-container">
-            <img src={deal.vehicle.image} alt={deal.vehicleName} className="zero-apr-page__card-image" />
-            <span className="zero-apr-page__card-deal-type-tag">{deal.aprType === 'cash' ? 'Cash' : 'Buy'}</span>
-            <button
-              type="button"
-              className={`zero-apr-page__card-save ${saved ? 'zero-apr-page__card-save--saved' : ''}`}
-              onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
-            >
-              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
-            </button>
-            {(() => {
-              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-              if (allOffers.length > 1) {
-                return (
-                  <button type="button" className="zero-apr-page__card-offers-tag" onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}>
-                    {allOffers.length} Offers Available
-                  </button>
-                );
-              }
-              return null;
-            })()}
-            {offersPopup?.slug === deal.vehicle.slug && (
-              <div className="zero-apr-page__card-offers-popup">
-                <div className="zero-apr-page__card-offers-popup-header">
-                  <strong>{offersPopup.offers.length} Available Offers</strong>
-                  <button type="button" className="zero-apr-page__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
-                </div>
-                <ul className="zero-apr-page__card-offers-popup-list">
-                  {offersPopup.offers.map((o, idx) => (
-                    <li key={idx} className="zero-apr-page__card-offers-popup-item">
-                      <span className={`zero-apr-page__card-offers-popup-type zero-apr-page__card-offers-popup-type--${o.type}`}>
-                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
-                      </span>
-                      <span className="zero-apr-page__card-offers-popup-label">{o.label}</span>
-                      <span className="zero-apr-page__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-              <div className="zero-apr-page__card-badges">
-                {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="zero-apr-page__card-badge-img" />}
-                {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="zero-apr-page__card-badge-img" />}
-              </div>
-            )}
-          </div>
-        </Link>
-
-        <div className="zero-apr-page__card-body">
-          <button type="button" className="zero-apr-page__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-            <span className="zero-apr-page__card-deal-pill-chip">{deal.aprType === 'cash' ? 'Cash' : 'Buy'}</span>
-            <span className="zero-apr-page__card-deal-pill-text">{deal.dealText}</span>
-            <span className="zero-apr-page__card-deal-pill-divider" />
-            <span className="zero-apr-page__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
-          </button>
-
-          {deal.aprType === 'cash' ? (
-            <div className="zero-apr-page__card-payment-block">
-              <div className="zero-apr-page__card-payment">
-                <span className="zero-apr-page__card-payment-amount">{deal.incentiveValue}</span>
-                <span className="zero-apr-page__card-payment-period">Cash Back</span>
-              </div>
-              <span className="zero-apr-page__card-payment-savings">
-                {deal.percentOffMsrp} off MSRP
-                <span className="zero-apr-page__card-tooltip-wrap">
-                  <Info size={13} className="zero-apr-page__card-tooltip-icon" />
-                  <span className="zero-apr-page__card-tooltip">{deal.savingsTooltip}</span>
-                </span>
-              </span>
-              <span className="zero-apr-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-            </div>
-          ) : (
-            <div className="zero-apr-page__card-payment-block">
-              <div className="zero-apr-page__card-payment">
-                <span className="zero-apr-page__card-payment-amount">{deal.aprDisplay}</span>
-                <span className="zero-apr-page__card-payment-period"> APR</span>
-              </div>
-              <span className="zero-apr-page__card-payment-savings">
-                <SavingsText text={deal.savingsVsAvg} />
-                <span className="zero-apr-page__card-tooltip-wrap">
-                  <Info size={13} className="zero-apr-page__card-tooltip-icon" />
-                  <span className="zero-apr-page__card-tooltip">{deal.savingsTooltip}</span>
-                </span>
-              </span>
-              <span className="zero-apr-page__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-            </div>
-          )}
-
-          <div className="zero-apr-page__card-details">
-            <div className="zero-apr-page__card-detail">
-              <span className="zero-apr-page__card-detail-label">MSRP Range</span>
-              <span className="zero-apr-page__card-detail-value">{deal.vehicle.priceRange}</span>
-            </div>
-            {deal.aprType === 'cash' ? (
-              <div className="zero-apr-page__card-detail">
-                <span className="zero-apr-page__card-detail-label">Est. off MSRP</span>
-                <span className="zero-apr-page__card-detail-value">{deal.percentOffMsrp}</span>
-              </div>
-            ) : (
-              <div className="zero-apr-page__card-detail">
-                <span className="zero-apr-page__card-detail-label">Term</span>
-                <span className="zero-apr-page__card-detail-value">{deal.term}</span>
-              </div>
-            )}
-          </div>
-
-          <button type="button" className="zero-apr-page__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
-
-          <Link to={`/${deal.vehicle.slug}`} className="zero-apr-page__card-cta zero-apr-page__card-cta--secondary">
-            Shop New {deal.vehicle.model}
-          </Link>
-        </div>
-      </div>
+      <DealCard
+        slug={deal.vehicle.slug}
+        vehicleName={deal.vehicleName}
+        vehicleImage={deal.vehicle.image}
+        vehicleSlug={deal.vehicle.slug}
+        vehicleMake={deal.vehicle.make}
+        vehicleModel={deal.vehicle.model}
+        rating={deal.rating}
+        dealTypeTag={dealTypeTag}
+        editorsChoice={deal.vehicle.editorsChoice}
+        tenBest={deal.vehicle.tenBest}
+        isSaved={saved}
+        onSaveClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
+        offers={offers}
+        offersPopupOpen={offersPopup?.slug === deal.vehicle.slug}
+        onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+        onCloseOffersPopup={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOffersPopup(null);
+        }}
+        payment={payment}
+        pill={pill}
+        details={details}
+        onDealClick={() => setActiveDealId(deal.id)}
+      />
     );
   };
 
@@ -572,7 +476,7 @@ const ZeroAprDealsPage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
 
       <div className="zero-apr-page__content">
         <div className={`container${deals.length > 0 ? ' zero-apr-page__container--stacked' : ''}`}>
@@ -607,29 +511,25 @@ const ZeroAprDealsPage = () => {
               </aside>
             </div>
           ) : (
-            <>
-              {dealChunks.map((chunk, chunkIndex) => (
-                <Fragment key={`apr-segment-${chunkIndex}`}>
-                  <div className="zero-apr-page__segment">
-                    <div className="zero-apr-page__main">
-                      <section className="zero-apr-page__deals-section">
-                        <div className="zero-apr-page__grid">{chunk.map((deal) => renderAprDealCard(deal))}</div>
-                      </section>
-                    </div>
-                    <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
-                      <div className="zero-apr-page__sidebar-sticky">
-                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
-                      </div>
-                    </aside>
+            <div className="zero-apr-page__segment">
+              <div className="zero-apr-page__main">
+                <section className="zero-apr-page__deals-section">
+                  <div className="zero-apr-page__grid">
+                    {deals.map((deal, i) => (
+                      <Fragment key={deal.id}>
+                        {i > 0 && i % MOBILE_AD_INTERVAL === 0 && <GridAd />}
+                        {renderAprDealCard(deal)}
+                      </Fragment>
+                    ))}
                   </div>
-                  {chunkIndex < dealChunks.length - 1 && (
-                    <div className="zero-apr-page__full-bleed-breaker" role="complementary" aria-label="Advertisement">
-                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-            </>
+                </section>
+              </div>
+              <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
+                <div className="zero-apr-page__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
           )}
 
           <div className="zero-apr-page__segment zero-apr-page__segment--tail">
@@ -678,7 +578,7 @@ const ZeroAprDealsPage = () => {
             </div>
             <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
               <div className="zero-apr-page__sidebar-sticky">
-                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+                <AdSidebar />
               </div>
             </aside>
           </div>

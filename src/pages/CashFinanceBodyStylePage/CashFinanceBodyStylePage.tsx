@@ -1,14 +1,15 @@
 import { Fragment, useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Heart, Info, CarFront, Truck, Car, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, CarFront, Truck, Car, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
 import AdBanner from '../../components/AdBanner';
+import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
-import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies, getGlobalDealCounts } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
@@ -17,7 +18,6 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
-import SavingsText from '../../components/SavingsText';
 import Tabs from '../../components/Tabs/Tabs';
 import './CashFinanceBodyStylePage.css';
 
@@ -79,29 +79,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-/** In-feed leaderboard after each batch of this many deal cards (e.g. 6 rows × 2 columns) */
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-/** Sidebar stack after the first full-bleed in-feed ad (distinct creatives from the initial column) */
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
+const MOBILE_AD_INTERVAL = 4;
 
 const CashFinanceBodyStylePage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
@@ -221,8 +199,6 @@ const CashFinanceBodyStylePage = () => {
     });
   }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, matchesFilters]);
 
-  const dealChunks = useMemo(() => chunkArray(displayDeals, GRID_BREAKER_AFTER_CARD_COUNT), [displayDeals]);
-
   const tabCounts = useMemo(() => {
     const counts: Record<BodyTab, number> = { all: allDeals.length, suv: 0, sedan: 0, truck: 0, coupe: 0, hatchback: 0 };
     for (const d of allDeals) {
@@ -277,122 +253,51 @@ const CashFinanceBodyStylePage = () => {
 
   const renderDealCard = (deal: UnifiedDeal) => {
     const saved = isVehicleSaved(deal.vehicleName);
+    const isCash = deal.dealType === 'cash';
+    const dealTypeTag = isCash ? 'Cash' : 'Buy';
+    const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+    const payment = {
+      amount: isCash ? (deal.incentiveValue ?? '') : (deal.aprDisplay ?? ''),
+      period: isCash ? 'Cash Back' : ' APR',
+      savings: { type: 'savings-text' as const, text: deal.savingsVsAvg },
+      savingsTooltip: deal.savingsTooltip,
+      expirationDate: deal.expirationDate,
+    };
+    const pill = {
+      chipLabel: dealTypeTag,
+      text: deal.dealText,
+      expirationDate: deal.expirationDate,
+    };
+    const details = deal.details.map((d) => ({ label: d.label, value: d.value }));
+
     return (
-      <div key={deal.id} className="cfbs-deals__card">
-        <div className="cfbs-deals__card-header">
-          <Link to={`/${deal.vehicle.slug}`} className="cfbs-deals__card-name-link">
-            <h3 className="cfbs-deals__card-name">{deal.vehicleName}</h3>
-          </Link>
-          <div className="cfbs-deals__card-rating">
-            <span className="cfbs-deals__card-rating-value">{deal.rating}</span>
-            <span className="cfbs-deals__card-rating-max">/10</span>
-            <span className="cfbs-deals__card-rating-label">C/D Rating</span>
-          </div>
-        </div>
-
-        <Link to={`/${deal.vehicle.slug}`} className="cfbs-deals__card-image-link">
-          <div className="cfbs-deals__card-image-container">
-            <img src={deal.vehicle.image} alt={deal.vehicleName} className="cfbs-deals__card-image" />
-            <span className="cfbs-deals__card-deal-type-tag">{deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
-            <span className="cfbs-deals__card-body-badge">{deal.bodyStyle}</span>
-            <button
-              type="button"
-              className={`cfbs-deals__card-save ${saved ? 'cfbs-deals__card-save--saved' : ''}`}
-              onClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
-            >
-              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
-            </button>
-            {(() => {
-              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-              if (allOffers.length > 1) {
-                return (
-                  <button type="button" className="cfbs-deals__card-offers-tag" onClick={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}>
-                    {allOffers.length} Offers Available
-                  </button>
-                );
-              }
-              return null;
-            })()}
-            {offersPopup?.slug === deal.vehicle.slug && (
-              <div className="cfbs-deals__card-offers-popup">
-                <div className="cfbs-deals__card-offers-popup-header">
-                  <strong>{offersPopup.offers.length} Available Offers</strong>
-                  <button type="button" className="cfbs-deals__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
-                </div>
-                <ul className="cfbs-deals__card-offers-popup-list">
-                  {offersPopup.offers.map((o, idx) => (
-                    <li key={idx} className="cfbs-deals__card-offers-popup-item">
-                      <span className={`cfbs-deals__card-offers-popup-type cfbs-deals__card-offers-popup-type--${o.type}`}>
-                        {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
-                      </span>
-                      <span className="cfbs-deals__card-offers-popup-label">{o.label}</span>
-                      <span className="cfbs-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-              <div className="cfbs-deals__card-badges">
-                {deal.vehicle.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="cfbs-deals__card-badge-img" />}
-                {deal.vehicle.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="cfbs-deals__card-badge-img" />}
-              </div>
-            )}
-          </div>
-        </Link>
-
-        <div className="cfbs-deals__card-body">
-          <div className="cfbs-deals__card-payment-block">
-            <div className="cfbs-deals__card-payment">
-              {deal.dealType === 'cash' ? (
-                <>
-                  <span className="cfbs-deals__card-payment-amount">{deal.incentiveValue}</span>
-                  <span className="cfbs-deals__card-payment-period">Cash Back</span>
-                </>
-              ) : (
-                <>
-                  <span className="cfbs-deals__card-payment-amount">{deal.aprDisplay}</span>
-                  <span className="cfbs-deals__card-payment-period"> APR</span>
-                </>
-              )}
-            </div>
-            <span className="cfbs-deals__card-payment-savings">
-              <SavingsText text={deal.savingsVsAvg} />
-              <span className="cfbs-deals__card-tooltip-wrap">
-                <Info size={13} className="cfbs-deals__card-tooltip-icon" />
-                <span className="cfbs-deals__card-tooltip">{deal.savingsTooltip}</span>
-              </span>
-            </span>
-            <span className="cfbs-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-          </div>
-
-          <button type="button" className="cfbs-deals__card-deal-pill" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}>
-            <span className="cfbs-deals__card-deal-pill-chip">{deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
-            <span className="cfbs-deals__card-deal-pill-text">{deal.dealText}</span>
-            <span className="cfbs-deals__card-deal-pill-divider" />
-            <span className="cfbs-deals__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
-          </button>
-
-          <div className="cfbs-deals__card-details">
-            {deal.details.map((d, i) => (
-              <div key={i} className="cfbs-deals__card-detail">
-                <span className="cfbs-deals__card-detail-label">{d.label}</span>
-                <span className="cfbs-deals__card-detail-value">{d.value}</span>
-              </div>
-            ))}
-          </div>
-
-          <button type="button" className="cfbs-deals__card-cta" onClick={() => setActiveDealId(deal.id)}>Get This Deal</button>
-
-          <Link
-            to={`/${deal.vehicle.slug}`}
-            className="cfbs-deals__card-cta cfbs-deals__card-cta--secondary"
-          >
-            Shop New {deal.vehicle.model}
-          </Link>
-        </div>
-      </div>
+      <DealCard
+        slug={deal.vehicle.slug}
+        vehicleName={deal.vehicleName}
+        vehicleImage={deal.vehicle.image}
+        vehicleSlug={deal.vehicle.slug}
+        vehicleMake={deal.vehicle.make}
+        vehicleModel={deal.vehicle.model}
+        rating={deal.rating}
+        dealTypeTag={dealTypeTag}
+        imageBadge={deal.bodyStyle}
+        editorsChoice={deal.vehicle.editorsChoice}
+        tenBest={deal.vehicle.tenBest}
+        isSaved={saved}
+        onSaveClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
+        offers={offers}
+        offersPopupOpen={offersPopup?.slug === deal.vehicle.slug}
+        onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+        onCloseOffersPopup={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOffersPopup(null);
+        }}
+        payment={payment}
+        pill={pill}
+        details={details}
+        onDealClick={() => setActiveDealId(deal.id)}
+      />
     );
   };
 
@@ -476,7 +381,7 @@ const CashFinanceBodyStylePage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
 
       <div className="cfbs-deals__content">
         <div className={`container${displayDeals.length > 0 ? ' cfbs-deals__container--stacked' : ''}`}>
@@ -519,29 +424,27 @@ const CashFinanceBodyStylePage = () => {
               </aside>
             </div>
           ) : (
-            <>
-              {dealChunks.map((chunk, chunkIndex) => (
-                <Fragment key={`cfbs-segment-${chunkIndex}`}>
-                  <div className="cfbs-deals__segment">
-                    <div className="cfbs-deals__main">
-                      <section className="cfbs-deals__section">
-                        <div className="cfbs-deals__grid">{chunk.map((deal) => renderDealCard(deal))}</div>
-                      </section>
-                    </div>
-                    <aside className="cfbs-deals__sidebar" aria-label="Advertisement">
-                      <div className="cfbs-deals__sidebar-sticky">
-                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
-                      </div>
-                    </aside>
+            <div className="cfbs-deals__segment">
+              <div className="cfbs-deals__main">
+                <section className="cfbs-deals__section">
+                  <div className="cfbs-deals__grid">
+                    {displayDeals.map((deal, i) => (
+                      <Fragment key={deal.id}>
+                        {i > 0 && i % MOBILE_AD_INTERVAL === 0 && (
+                          <GridAd />
+                        )}
+                        {renderDealCard(deal)}
+                      </Fragment>
+                    ))}
                   </div>
-                  {chunkIndex < dealChunks.length - 1 && (
-                    <div className="cfbs-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
-                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-            </>
+                </section>
+              </div>
+              <aside className="cfbs-deals__sidebar" aria-label="Advertisement">
+                <div className="cfbs-deals__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
           )}
 
           <div className="cfbs-deals__segment cfbs-deals__segment--tail">
@@ -573,7 +476,7 @@ const CashFinanceBodyStylePage = () => {
             </div>
             <aside className="cfbs-deals__sidebar" aria-label="Advertisement">
               <div className="cfbs-deals__sidebar-sticky">
-                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+                <AdSidebar />
               </div>
             </aside>
           </div>

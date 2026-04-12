@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useEffect, Fragment } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, Heart, Info, X } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -10,13 +10,13 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
-import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import { DealCard } from '../../components/DealCard';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
-import SavingsText from '../../components/SavingsText';
+import { GridAd } from '../../components/GridAd';
 import './AllDealsPage.css';
 
 interface MiniDeal {
@@ -67,6 +67,8 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
+const MOBILE_AD_INTERVAL = 4;
+
 function parseFiltersFromUrl(raw: string | null): DealsFilterState | null {
   if (!raw) return null;
   try {
@@ -75,28 +77,6 @@ function parseFiltersFromUrl(raw: string | null): DealsFilterState | null {
   } catch {
     return null;
   }
-}
-
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
 }
 
 const AllDealsPage = () => {
@@ -279,8 +259,6 @@ const AllDealsPage = () => {
     return filtered;
   }, [allDeals, filters, applyFiltersToDeals]);
 
-  const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);
-
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
     const global = getGlobalDealCounts();
     if (draftFilters.dealType && draftFilters.dealType !== 'all') {
@@ -398,153 +376,78 @@ const AllDealsPage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
 
       <div className="all-deals__content">
         <div className="container">
           {filteredDeals.length > 0 ? (
-            dealChunks.map((chunk, chunkIndex) => (
-              <Fragment key={`all-deals-segment-${chunkIndex}`}>
-                <div className="all-deals__segment">
-                  <div className="all-deals__main">
-                    <div className="all-deals__grid">
-                      {chunk.map((deal, i) => {
-                        const originalIndex = chunkIndex * GRID_BREAKER_AFTER_CARD_COUNT + i;
-                        const cardKey = `${deal.slug}-${deal.dealType}-${originalIndex}`;
-                        return (
-                  <div key={cardKey} className="all-deals__card">
-                    <div className="all-deals__card-header">
-                      <Link to={`/${deal.slug}`} className="all-deals__card-name-link">
-                        <h3 className="all-deals__card-name">{deal.vehicleName}</h3>
-                      </Link>
-                      {deal.staffRating != null && (
-                        <div className="all-deals__card-rating">
-                          <span className="all-deals__card-rating-score">{deal.staffRating}</span>
-                          <span className="all-deals__card-rating-max">/10</span>
-                          <span className="all-deals__card-rating-label">C/D Rating</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <Link to={`/${deal.slug}`} className="all-deals__card-image-link">
-                      <div className="all-deals__card-image">
-                        <img src={deal.image} alt={deal.vehicleName} />
-                        <span className="all-deals__card-deal-type-tag">{deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}</span>
-                        <button
-                          type="button"
-                          className={`all-deals__card-save ${savedDeals.has(deal.slug) ? 'all-deals__card-save--active' : ''}`}
-                          onClick={(e) => toggleSave(e, deal.slug)}
-                          aria-label={savedDeals.has(deal.slug) ? 'Remove from favorites' : 'Add to favorites'}
-                        >
-                          <Heart size={16} fill={savedDeals.has(deal.slug) ? 'currentColor' : 'none'} />
-                        </button>
-                        {(() => {
-                          const allOffers = getVehicleOffers(deal.make, deal.model);
-                          if (allOffers.length > 1) return (
-                            <button type="button" className="all-deals__card-offers-tag" onClick={(e) => toggleOffersPopup(e, deal.make, deal.model, deal.slug)}>
-                              {allOffers.length} Offers Available
-                            </button>
-                          );
-                          return null;
-                        })()}
-                        {offersPopup?.slug === deal.slug && (
-                          <div className="all-deals__card-offers-popup">
-                            <div className="all-deals__card-offers-popup-header">
-                              <strong>{offersPopup.offers.length} Available Offers</strong>
-                              <button type="button" className="all-deals__card-offers-popup-close" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}>&times;</button>
-                            </div>
-                            <ul className="all-deals__card-offers-popup-list">
-                              {offersPopup.offers.map((o, idx) => (
-                                <li key={idx} className="all-deals__card-offers-popup-item">
-                                  <span className={`all-deals__card-offers-popup-type all-deals__card-offers-popup-type--${o.type}`}>
-                                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
-                                  </span>
-                                  <span className="all-deals__card-offers-popup-label">{o.label}</span>
-                                  <span className="all-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+            <div className="all-deals__segment">
+              <div className="all-deals__main">
+                <div className="all-deals__grid">
+                  {filteredDeals.map((deal, i) => {
+                    const cardKey = `${deal.slug}-${deal.dealType}-${i}`;
+                    const offers = getVehicleOffers(deal.make, deal.model);
+                    const isSaved = savedDeals.has(deal.slug);
+                    const dealTypeTag = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
+                    const pillChipLabel = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
+                    const paymentAmount = (deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? deal.aprDisplay : deal.estimatedMonthly;
+                    const paymentPeriod = deal.dealType === 'cash'
+                      ? 'Cash Back'
+                      : (deal.dealType === 'zero-apr' || deal.dealType === 'finance')
+                        ? ' APR'
+                        : '/mo';
+                    const cardDetails = [
+                      { label: 'MSRP Range', value: deal.priceRange },
+                      ...(deal.term ? [{ label: 'Term', value: deal.term }] : []),
+                    ];
+                    return (
+                      <Fragment key={cardKey}>
+                        {i > 0 && i % MOBILE_AD_INTERVAL === 0 && (
+                          <GridAd />
                         )}
-                        <span className={`all-deals__card-type-tag all-deals__card-type-tag--${deal.dealType}`}>
-                          {deal.dealType === 'zero-apr' ? '0% APR' : deal.dealType === 'finance' ? 'Buy' : deal.dealType === 'cash' ? 'Cash' : 'Lease'}
-                        </span>
-                        {(deal.editorsChoice || deal.tenBest) && (
-                          <div className="all-deals__card-badges">
-                            {deal.tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="all-deals__card-badge-img" />}
-                            {deal.editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="all-deals__card-badge-img" />}
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-
-                    <div className="all-deals__card-body">
-                      <div className="all-deals__card-payment-block">
-                        <div className="all-deals__card-payment">
-                          <span className="all-deals__card-payment-amount">{(deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? deal.aprDisplay : deal.estimatedMonthly}</span>
-                          <span className="all-deals__card-payment-period">
-                            {deal.dealType === 'cash' ? 'Cash Back' : (deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? ' APR' : '/mo'}
-                          </span>
-                        </div>
-                        <span className="all-deals__card-payment-savings">
-                          <SavingsText text={deal.savingsVsAvg} />
-                          <span className="all-deals__card-tooltip-wrap">
-                            <Info size={13} className="all-deals__card-tooltip-icon" />
-                            <span className="all-deals__card-tooltip">{deal.savingsTooltip}</span>
-                          </span>
-                        </span>
-                        <span className="all-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-                      </div>
-
-                      <button className="all-deals__card-deal-pill" onClick={(e) => handleDealClick(e, deal)}>
-                        <span className="all-deals__card-deal-pill-chip">
-                          {deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy'}
-                        </span>
-                        <span className="all-deals__card-deal-pill-text">{deal.dealText}</span>
-                        <span className="all-deals__card-deal-pill-divider" />
-                        <span className="all-deals__card-deal-pill-expires">expires {formatExpiration(deal.expirationDate)}</span>
-                      </button>
-
-                      <div className="all-deals__card-details">
-                        <div className="all-deals__card-detail">
-                          <span className="all-deals__card-detail-label">MSRP Range</span>
-                          <span className="all-deals__card-detail-value">{deal.priceRange}</span>
-                        </div>
-                        {deal.term && (
-                          <div className="all-deals__card-detail">
-                            <span className="all-deals__card-detail-label">Term</span>
-                            <span className="all-deals__card-detail-value">{deal.term}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <button type="button" className="all-deals__card-cta" onClick={(e) => handleDealClick(e, deal)}>Get This Deal</button>
-
-                      <Link
-                        to={`/${deal.slug}`}
-                        className="all-deals__card-cta all-deals__card-cta--secondary"
-                      >
-                        Shop New {deal.model}
-                      </Link>
-                    </div>
-                  </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <aside className="all-deals__sidebar" aria-label="Advertisement">
-                    <div className="all-deals__sidebar-sticky">
-                      {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
-                    </div>
-                  </aside>
+                        <DealCard
+                          slug={deal.slug}
+                          vehicleName={deal.vehicleName}
+                          vehicleImage={deal.image}
+                          vehicleSlug={deal.slug}
+                          vehicleMake={deal.make}
+                          vehicleModel={deal.model}
+                          {...(deal.staffRating != null ? { rating: deal.staffRating } : {})}
+                          dealTypeTag={dealTypeTag}
+                          editorsChoice={deal.editorsChoice}
+                          tenBest={deal.tenBest}
+                          isSaved={isSaved}
+                          onSaveClick={(e) => toggleSave(e, deal.slug)}
+                          offers={offers}
+                          offersPopupOpen={offersPopup?.slug === deal.slug}
+                          onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.make, deal.model, deal.slug)}
+                          onCloseOffersPopup={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}
+                          payment={{
+                            amount: paymentAmount ?? '',
+                            period: paymentPeriod,
+                            savings: { type: 'savings-text', text: deal.savingsVsAvg },
+                            savingsTooltip: deal.savingsTooltip,
+                            expirationDate: deal.expirationDate,
+                          }}
+                          pill={{
+                            chipLabel: pillChipLabel,
+                            text: deal.dealText,
+                            expirationDate: deal.expirationDate,
+                          }}
+                          details={cardDetails}
+                          onDealClick={(e) => handleDealClick(e, deal)}
+                        />
+                      </Fragment>
+                    );
+                  })}
                 </div>
-                {chunkIndex < dealChunks.length - 1 && (
-                  <div className="all-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
-                    <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
-                  </div>
-                )}
-              </Fragment>
-            ))
+              </div>
+              <aside className="all-deals__sidebar" aria-label="Advertisement">
+                <div className="all-deals__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
           ) : (
             <div className="all-deals__empty-state">
               <p className="all-deals__empty-state-text">

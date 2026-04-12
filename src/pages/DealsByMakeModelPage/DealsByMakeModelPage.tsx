@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Heart, Info, SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -24,13 +24,14 @@ import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
+import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
-import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
+import { DealCard } from '../../components/DealCard';
+import type { DealCardDetail, DealCardPayment } from '../../components/DealCard';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
-import SavingsText from '../../components/SavingsText';
 import './DealsByMakeModelPage.css';
 
 type DealKind = 'zero-apr' | 'finance' | 'lease' | 'cash';
@@ -75,29 +76,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-/** In-feed leaderboard after each batch of this many deal cards (e.g. 6 rows × 2 columns) */
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-/** Sidebar stack after the first full-bleed in-feed ad (distinct creatives from the initial column) */
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
+const MOBILE_AD_INTERVAL = 4;
 
 function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferDetail> | undefined {
   if (!deal) return undefined;
@@ -348,8 +327,6 @@ const DealsByMakeModelPage = () => {
     return out.sort((a, b) => a.sortMonthly - b.sortMonthly);
   }, [getSupabaseRating, matchesFilters, matchesMakeAndModel]);
 
-  const dealChunks = useMemo(() => chunkArray(allDeals, GRID_BREAKER_AFTER_CARD_COUNT), [allDeals]);
-
   const mmpYear = useMemo(() => {
     if (allDeals.length === 0) return year;
     return String(Math.max(...allDeals.map((d) => parseInt(d.vehicle.year, 10) || 0)));
@@ -385,284 +362,6 @@ const DealsByMakeModelPage = () => {
   const canonicalPath =
     makeParam && modelParam ? `${BASE_URL}/${makeParam}/${modelParam}/deals-incentives` : BASE_URL;
   const makeDealsPath = makeParam ? `/${makeParam}/deals-incentives` : '/deals';
-
-  const renderDealCard = (deal: UnifiedMakeDeal) => {
-    const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
-    const saved = isVehicleSaved(vehicleName);
-    const isLease = deal.dealType === 'lease';
-    const isCash = deal.dealType === 'cash';
-
-    return (
-      <div key={deal.id} className="mm-deals__card">
-        <div className="mm-deals__card-header">
-          <Link to={`/${deal.vehicle.slug}`} className="mm-deals__card-name-link">
-            <h3 className="mm-deals__card-name">{vehicleName}</h3>
-          </Link>
-          <div className="mm-deals__card-rating">
-            <span className="mm-deals__card-rating-value">{deal.rating}</span>
-            <span className="mm-deals__card-rating-max">/10</span>
-            <span className="mm-deals__card-rating-label">C/D Rating</span>
-          </div>
-        </div>
-
-        <Link to={`/${deal.vehicle.slug}`} className="mm-deals__card-image-link">
-          <div className="mm-deals__card-image-container">
-            <img src={deal.vehicle.image} alt={vehicleName} className="mm-deals__card-image" />
-            <span className="mm-deals__card-deal-type-tag">{deal.chipLabel}</span>
-            <button
-              className={`mm-deals__card-save ${saved ? 'mm-deals__card-save--saved' : ''}`}
-              onClick={(e) =>
-                handleSaveClick(e, {
-                  name: vehicleName,
-                  slug: deal.vehicle.slug,
-                  image: deal.vehicle.image,
-                })
-              }
-              aria-label={saved ? 'Remove from favorites' : 'Add to favorites'}
-            >
-              <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
-            </button>
-            {(() => {
-              const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-              if (allOffers.length > 1)
-                return (
-                  <button
-                    type="button"
-                    className="mm-deals__card-offers-tag"
-                    onClick={(e) =>
-                      toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)
-                    }
-                  >
-                    {allOffers.length} Offers Available
-                  </button>
-                );
-              return null;
-            })()}
-            {offersPopup?.slug === deal.vehicle.slug && (
-              <div className="mm-deals__card-offers-popup">
-                <div className="mm-deals__card-offers-popup-header">
-                  <strong>{offersPopup.offers.length} Available Offers</strong>
-                  <button
-                    type="button"
-                    className="mm-deals__card-offers-popup-close"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setOffersPopup(null);
-                    }}
-                  >
-                    &times;
-                  </button>
-                </div>
-                <ul className="mm-deals__card-offers-popup-list">
-                  {offersPopup.offers.map((o, idx) => (
-                    <li key={idx} className="mm-deals__card-offers-popup-item">
-                      <span
-                        className={`mm-deals__card-offers-popup-type mm-deals__card-offers-popup-type--${o.type}`}
-                      >
-                        {o.type === 'zero-apr'
-                          ? '0% APR'
-                          : o.type === 'cash'
-                            ? 'Cash'
-                            : o.type === 'finance'
-                              ? 'Buy'
-                              : 'Lease'}
-                      </span>
-                      <span className="mm-deals__card-offers-popup-label">{o.label}</span>
-                      <span className="mm-deals__card-offers-popup-exp">expires {formatExpiration(o.expires)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {(deal.vehicle.editorsChoice || deal.vehicle.tenBest) && (
-              <div className="mm-deals__card-badges">
-                {deal.vehicle.tenBest && (
-                  <img src={TEN_BEST_BADGE_URL} alt="10Best" className="mm-deals__card-badge-img" />
-                )}
-                {deal.vehicle.editorsChoice && (
-                  <img
-                    src={EDITORS_CHOICE_BADGE_URL}
-                    alt="Editors' Choice"
-                    className="mm-deals__card-badge-img"
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        </Link>
-
-        <div className="mm-deals__card-body">
-          {isLease ? (
-            <>
-              {(() => {
-                const leaseNum = deal.monthlyPaymentNum!;
-                const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
-                return (
-                  <div className="mm-deals__card-payment-block">
-                    <div className="mm-deals__card-payment">
-                      <span className="mm-deals__card-payment-amount">{deal.monthlyPayment}</span>
-                      <span className="mm-deals__card-payment-period">/mo</span>
-                    </div>
-                    <span className="mm-deals__card-payment-savings">
-                      <SavingsText text={savingsVsAvg} />
-                      <span className="mm-deals__card-tooltip-wrap">
-                        <Info size={13} className="mm-deals__card-tooltip-icon" />
-                        <span className="mm-deals__card-tooltip">{savingsTooltip}</span>
-                      </span>
-                    </span>
-                    <span className="mm-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-                  </div>
-                );
-              })()}
-              <button
-                className="mm-deals__card-deal-pill"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setActiveDealId(deal.id);
-                }}
-              >
-                <span className="mm-deals__card-deal-pill-chip">{deal.chipLabel}</span>
-                <span className="mm-deals__card-deal-pill-text">{deal.monthlyPayment}/mo lease</span>
-                <span className="mm-deals__card-deal-pill-divider" />
-                <span className="mm-deals__card-deal-pill-expires">
-                  expires {formatExpiration(deal.expirationDate)}
-                </span>
-              </button>
-              <div className="mm-deals__card-details">
-                <div className="mm-deals__card-detail">
-                  <span className="mm-deals__card-detail-label">Term</span>
-                  <span className="mm-deals__card-detail-value">{deal.term}</span>
-                </div>
-                <div className="mm-deals__card-detail">
-                  <span className="mm-deals__card-detail-label">Due at Signing</span>
-                  <span className="mm-deals__card-detail-value">{deal.dueAtSigning}</span>
-                </div>
-              </div>
-            </>
-          ) : isCash ? (
-            <>
-              {(() => {
-                const msrp = parseMsrpMin(deal.vehicle.priceRange);
-                const principal = Math.max(msrp - (deal.incentiveAmount ?? 0), 1);
-                const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
-                const { savingsTooltip } = buildSavingsText(monthlyAfterCash, deal.vehicle.bodyStyle, 'cash');
-                return (
-                  <div className="mm-deals__card-payment-block">
-                    <div className="mm-deals__card-payment">
-                      <span className="mm-deals__card-payment-amount">{deal.incentiveValue}</span>
-                      <span className="mm-deals__card-payment-period">Cash Back</span>
-                    </div>
-                    <span className="mm-deals__card-payment-savings">
-                      {deal.percentOffMsrp} off MSRP
-                      <span className="mm-deals__card-tooltip-wrap">
-                        <Info size={13} className="mm-deals__card-tooltip-icon" />
-                        <span className="mm-deals__card-tooltip">{savingsTooltip}</span>
-                      </span>
-                    </span>
-                    <span className="mm-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-                  </div>
-                );
-              })()}
-              <button
-                className="mm-deals__card-deal-pill"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setActiveDealId(deal.id);
-                }}
-              >
-                <span className="mm-deals__card-deal-pill-chip">{deal.chipLabel}</span>
-                <span className="mm-deals__card-deal-pill-text">{deal.incentiveValue} cash back</span>
-                <span className="mm-deals__card-deal-pill-divider" />
-                <span className="mm-deals__card-deal-pill-expires">
-                  expires {formatExpiration(deal.expirationDate)}
-                </span>
-              </button>
-              <div className="mm-deals__card-details">
-                <div className="mm-deals__card-detail">
-                  <span className="mm-deals__card-detail-label">MSRP Range</span>
-                  <span className="mm-deals__card-detail-value">{deal.vehicle.priceRange}</span>
-                </div>
-                <div className="mm-deals__card-detail">
-                  <span className="mm-deals__card-detail-label">Est. off MSRP</span>
-                  <span className="mm-deals__card-detail-value">{deal.percentOffMsrp}</span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              {(() => {
-                const msrp = parseMsrpMin(deal.vehicle.priceRange);
-                const aprNum =
-                  deal.dealType === 'zero-apr' ? 0 : parseFloat((deal.aprDisplay ?? '').replace('%', ''));
-                const months = parseTermMonths(deal.term!);
-                const monthly = calcMonthly(msrp, aprNum, months);
-                const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
-                return (
-                  <div className="mm-deals__card-payment-block">
-                    <div className="mm-deals__card-payment">
-                      <span className="mm-deals__card-payment-amount">{deal.aprDisplay}</span>
-                      <span className="mm-deals__card-payment-period"> APR</span>
-                    </div>
-                    <span className="mm-deals__card-payment-savings">
-                      <SavingsText text={savingsVsAvg} />
-                      <span className="mm-deals__card-tooltip-wrap">
-                        <Info size={13} className="mm-deals__card-tooltip-icon" />
-                        <span className="mm-deals__card-tooltip">{savingsTooltip}</span>
-                      </span>
-                    </span>
-                    <span className="mm-deals__card-payment-expires">Expires {formatExpiration(deal.expirationDate)}</span>
-                  </div>
-                );
-              })()}
-              <button
-                className="mm-deals__card-deal-pill"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setActiveDealId(deal.id);
-                }}
-              >
-                <span className="mm-deals__card-deal-pill-chip">{deal.chipLabel}</span>
-                <span className="mm-deals__card-deal-pill-text">
-                  {deal.dealType === 'zero-apr'
-                    ? `0% APR for ${deal.term}`
-                    : `${deal.aprDisplay} APR for ${deal.term}`}
-                </span>
-                <span className="mm-deals__card-deal-pill-divider" />
-                <span className="mm-deals__card-deal-pill-expires">
-                  expires {formatExpiration(deal.expirationDate)}
-                </span>
-              </button>
-              <div className="mm-deals__card-details">
-                <div className="mm-deals__card-detail">
-                  <span className="mm-deals__card-detail-label">MSRP Range</span>
-                  <span className="mm-deals__card-detail-value">{deal.vehicle.priceRange}</span>
-                </div>
-                <div className="mm-deals__card-detail">
-                  <span className="mm-deals__card-detail-label">Term</span>
-                  <span className="mm-deals__card-detail-value">{deal.term}</span>
-                </div>
-              </div>
-            </>
-          )}
-
-          <button type="button" className="mm-deals__card-cta" onClick={() => setActiveDealId(deal.id)}>
-            Get This Deal
-          </button>
-
-          <Link
-            to={`/${deal.vehicle.slug}`}
-            className="mm-deals__card-cta mm-deals__card-cta--secondary"
-          >
-            Shop New {deal.vehicle.model}
-          </Link>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="mm-deals">
@@ -760,7 +459,7 @@ const DealsByMakeModelPage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
 
       <div className="mm-deals__content">
         <div className={`container${allDeals.length > 0 ? ' mm-deals__container--stacked' : ''}`}>
@@ -788,29 +487,150 @@ const DealsByMakeModelPage = () => {
               </aside>
             </div>
           ) : (
-            <>
-              {dealChunks.map((chunk, chunkIndex) => (
-                <Fragment key={`mm-deals-segment-${chunkIndex}`}>
-                  <div className="mm-deals__segment">
-                    <div className="mm-deals__main">
-                      <section className="mm-deals__section">
-                        <div className="mm-deals__grid">{chunk.map(renderDealCard)}</div>
-                      </section>
-                    </div>
-                    <aside className="mm-deals__sidebar" aria-label="Advertisement">
-                      <div className="mm-deals__sidebar-sticky">
-                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
-                      </div>
-                    </aside>
+            <div className="mm-deals__segment">
+              <div className="mm-deals__main">
+                <section className="mm-deals__section">
+                  <div className="mm-deals__grid">
+                    {allDeals.map((deal, i) => {
+                      const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
+                      const saved = isVehicleSaved(vehicleName);
+                      const isLease = deal.dealType === 'lease';
+                      const isCash = deal.dealType === 'cash';
+                      const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                      const offersPopupOpen = offersPopup?.slug === deal.vehicle.slug;
+
+                      let payment: DealCardPayment;
+                      let details: DealCardDetail[];
+                      let pillText: string;
+
+                      if (isLease) {
+                        const leaseNum = deal.monthlyPaymentNum!;
+                        const { savingsVsAvg, savingsTooltip } = buildSavingsText(
+                          leaseNum,
+                          deal.vehicle.bodyStyle,
+                        );
+                        payment = {
+                          amount: deal.monthlyPayment!,
+                          period: '/mo',
+                          savings: { type: 'savings-text', text: savingsVsAvg },
+                          savingsTooltip,
+                          expirationDate: deal.expirationDate,
+                        };
+                        pillText = `${deal.monthlyPayment}/mo lease`;
+                        details = [
+                          { label: 'Term', value: deal.term! },
+                          { label: 'Due at Signing', value: deal.dueAtSigning! },
+                        ];
+                      } else if (isCash) {
+                        const msrp = parseMsrpMin(deal.vehicle.priceRange);
+                        const principal = Math.max(msrp - (deal.incentiveAmount ?? 0), 1);
+                        const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
+                        const { savingsTooltip } = buildSavingsText(
+                          monthlyAfterCash,
+                          deal.vehicle.bodyStyle,
+                          'cash',
+                        );
+                        payment = {
+                          amount: deal.incentiveValue!,
+                          period: 'Cash Back',
+                          savings: { type: 'plain', text: `${deal.percentOffMsrp} off MSRP` },
+                          savingsTooltip,
+                          expirationDate: deal.expirationDate,
+                        };
+                        pillText = `${deal.incentiveValue} cash back`;
+                        details = [
+                          { label: 'MSRP Range', value: deal.vehicle.priceRange },
+                          { label: 'Est. off MSRP', value: deal.percentOffMsrp! },
+                        ];
+                      } else {
+                        const msrp = parseMsrpMin(deal.vehicle.priceRange);
+                        const aprNum =
+                          deal.dealType === 'zero-apr'
+                            ? 0
+                            : parseFloat((deal.aprDisplay ?? '').replace('%', ''));
+                        const months = parseTermMonths(deal.term!);
+                        const monthly = calcMonthly(msrp, aprNum, months);
+                        const { savingsVsAvg, savingsTooltip } = buildSavingsText(
+                          monthly,
+                          deal.vehicle.bodyStyle,
+                        );
+                        payment = {
+                          amount: deal.aprDisplay!,
+                          period: ' APR',
+                          savings: { type: 'savings-text', text: savingsVsAvg },
+                          savingsTooltip,
+                          expirationDate: deal.expirationDate,
+                        };
+                        pillText =
+                          deal.dealType === 'zero-apr'
+                            ? `0% APR for ${deal.term}`
+                            : `${deal.aprDisplay} APR for ${deal.term}`;
+                        details = [
+                          { label: 'MSRP Range', value: deal.vehicle.priceRange },
+                          { label: 'Term', value: deal.term! },
+                        ];
+                      }
+
+                      return (
+                        <Fragment key={deal.id}>
+                          {i > 0 && i % MOBILE_AD_INTERVAL === 0 && (
+                            <GridAd />
+                          )}
+                          <DealCard
+                            slug={deal.vehicle.slug}
+                            vehicleName={vehicleName}
+                            vehicleImage={deal.vehicle.image}
+                            vehicleSlug={deal.vehicle.slug}
+                            vehicleMake={deal.vehicle.make}
+                            vehicleModel={deal.vehicle.model}
+                            rating={deal.rating}
+                            dealTypeTag={deal.chipLabel}
+                            editorsChoice={!!deal.vehicle.editorsChoice}
+                            tenBest={!!deal.vehicle.tenBest}
+                            isSaved={saved}
+                            onSaveClick={(e) =>
+                              handleSaveClick(e, {
+                                name: vehicleName,
+                                slug: deal.vehicle.slug,
+                                image: deal.vehicle.image,
+                              })
+                            }
+                            offers={offers}
+                            offersPopupOpen={offersPopupOpen}
+                            onToggleOffersPopup={(e) =>
+                              toggleOffersPopup(
+                                e,
+                                deal.vehicle.make,
+                                deal.vehicle.model,
+                                deal.vehicle.slug,
+                              )
+                            }
+                            onCloseOffersPopup={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setOffersPopup(null);
+                            }}
+                            payment={payment}
+                            pill={{
+                              chipLabel: deal.chipLabel,
+                              text: pillText,
+                              expirationDate: deal.expirationDate,
+                            }}
+                            details={details}
+                            onDealClick={() => setActiveDealId(deal.id)}
+                          />
+                        </Fragment>
+                      );
+                    })}
                   </div>
-                  {chunkIndex < dealChunks.length - 1 && (
-                    <div className="mm-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
-                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-            </>
+                </section>
+              </div>
+              <aside className="mm-deals__sidebar" aria-label="Advertisement">
+                <div className="mm-deals__sidebar-sticky">
+                  <AdSidebar />
+                </div>
+              </aside>
+            </div>
           )}
 
           <div className="mm-deals__segment mm-deals__segment--tail">
@@ -835,7 +655,7 @@ const DealsByMakeModelPage = () => {
             </div>
             <aside className="mm-deals__sidebar" aria-label="Advertisement">
               <div className="mm-deals__sidebar-sticky">
-                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+                <AdSidebar />
               </div>
             </aside>
           </div>
