@@ -760,11 +760,11 @@
   text-overflow: ellipsis;
 }
 
-/* Detail grid — two equal columns (shared deals card pattern) */
+/* Detail grid — auto-fit columns so long values don't overlap */
 .deals-hub__card-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3) var(--spacing-5);
   margin-bottom: var(--spacing-3);
 }
 
@@ -789,7 +789,7 @@
   font-weight: var(--font-weight-extrabold);
   color: var(--color-dark);
   line-height: 1.2;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .deals-hub__card-detail-unit {

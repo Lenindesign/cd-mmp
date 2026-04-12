@@ -1,47 +1,29 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calculator, ChevronDown, ChevronRight, Clock, ShieldCheck, SlidersHorizontal } from 'lucide-react';
-import PaymentCalculator from '../../components/PaymentCalculator/PaymentCalculator';
+import { ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import BuyingPotential from '../../components/BuyingPotential/BuyingPotential';
 import { ArticleCard } from '../../components/Resin/ArticleCard';
 import './FinancingPage.css';
-
-const VALUE_PROPS = [
-  {
-    icon: <Clock size={24} />,
-    title: 'Pre-Qualified in Minutes',
-    text: 'Getting pre-qualified takes just 2 minutes, and your credit score will not be impacted.',
-  },
-  {
-    icon: <ShieldCheck size={24} />,
-    title: 'Qualify Regardless of Credit',
-    text: "We'll show you our best available rates across all vehicles — even with less-than-perfect credit.",
-  },
-  {
-    icon: <SlidersHorizontal size={24} />,
-    title: 'Real Monthly Payments',
-    text: "After pre-qualifying, you'll see real costs for our entire inventory. Your rates won't change for 30 days.",
-  },
-];
 
 const ARTICLES = [
   {
     id: 'interest-rate',
     headline: 'How Interest Rates Affect Your Monthly Payment',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-1437816467-677e76f050508.jpg?crop=0.668xw:1.00xh;0.187xw,0&resize=700:*',
+    image: 'https://hips.hearstapps.com/hmg-prod/images/loving-car-driver-decisions-decisions-6761eb879566a.jpg?crop=0.915xw:0.764xh;0.0493xw,0.123xh',
     category: 'Financing Guide',
     href: '/news/interest-rates-monthly-payment',
   },
   {
     id: 'credit-score',
     headline: 'How Your Credit Score Impacts Auto Loan Rates',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/close-up-of-hands-holding-car-key-royalty-free-image-1689024142.jpg?crop=0.668xw:1.00xh;0.167xw,0&resize=700:*',
+    image: 'https://hips.hearstapps.com/hmg-prod/images/04022026-belicta-castelbarco-illustration-collage-car-s-drivers-kopie-kopie-69839f1af3da4.jpg?crop=1.00xw:0.565xh;0,0.209xh&resize=2048:*',
     category: "Buyer's Guide",
     href: '/news/credit-score-auto-loan-rates',
   },
   {
     id: 'loan-term',
     headline: 'Choosing the Right Loan Term: 36 vs 60 vs 72 Months',
-    image: 'https://hips.hearstapps.com/hmg-prod/images/2024-toyota-camry-xse-fwd-276-65f4abd5a30c6.jpg?crop=0.632xw:0.534xh;0.140xw,0.281xh&resize=700:*',
+    image: 'https://hips.hearstapps.com/hmg-prod/images/loving-car-driver-under-pressure-6761cc7dc7272.jpg?crop=1.00xw:0.766xh;0,0.130xh&resize=2048:*',
     category: 'Financing Guide',
     href: '/news/choosing-right-loan-term',
   },
@@ -75,45 +57,11 @@ const FinancingPage = () => {
 
   return (
     <div className="financing-page">
-      {/* Hero */}
-      <section className="financing__hero">
-        <div className="container financing__hero-content">
-          <div className="financing__hero-eyebrow">
-            <Calculator size={14} />
-            Car Payment Calculator
-          </div>
-          <h1 className="financing__hero-title">Calculate Your Monthly Car Payment</h1>
-          <p className="financing__hero-subtitle">
-            Estimate finance, lease, and cash payments. Adjust your down payment, credit score, and term to find the right budget.
-          </p>
-        </div>
-      </section>
-
-      {/* Payment Calculator */}
+      {/* Buying Power Calculator */}
       <section className="financing__calculator">
-        <div className="container">
-          <PaymentCalculator
-            msrp={21895}
-            vehicleName="2025 Chevrolet Trax"
-          />
-        </div>
+        <BuyingPotential />
       </section>
 
-      {/* Value Props */}
-      <section className="financing__value-props">
-        <div className="container">
-          <h2 className="financing__value-props-title">Why Finance With Car &amp; Driver?</h2>
-          <div className="financing__value-grid">
-            {VALUE_PROPS.map((prop) => (
-              <div key={prop.title} className="financing__value-card">
-                <div className="financing__value-icon">{prop.icon}</div>
-                <h3 className="financing__value-card-title">{prop.title}</h3>
-                <p className="financing__value-card-text">{prop.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Articles */}
       <section className="financing__articles">
@@ -142,25 +90,26 @@ const FinancingPage = () => {
       </section>
 
       {/* FAQ */}
-      <section className="financing__faq">
+      <section className="financing__faq-section" aria-labelledby="financing-faq-heading">
         <div className="container">
-          <h2 className="financing__faq-title">FAQs</h2>
+          <h2 id="financing-faq-heading" className="financing__faq-heading">FAQs</h2>
           <div className="financing__faq-list">
             {FAQ_ITEMS.map((item, idx) => (
-              <div key={idx} className="financing__faq-item">
+              <div key={idx} className={`financing__faq-item ${openFaq === idx ? 'financing__faq-item--expanded' : ''}`}>
                 <button
+                  type="button"
                   className="financing__faq-question"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  aria-expanded={openFaq === idx}
                 >
-                  {item.question}
-                  <ChevronDown
-                    size={18}
-                    className={`financing__faq-chevron ${openFaq === idx ? 'financing__faq-chevron--open' : ''}`}
-                  />
+                  <span className="financing__faq-question-text">{item.question}</span>
+                  {openFaq === idx ? <ChevronUp size={24} aria-hidden /> : <ChevronDown size={24} aria-hidden />}
                 </button>
-                <div className={`financing__faq-answer ${openFaq === idx ? 'financing__faq-answer--open' : ''}`}>
-                  <p>{item.answer}</p>
-                </div>
+                {openFaq === idx && (
+                  <div className="financing__faq-answer">
+                    <p>{item.answer}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -6,60 +6,6 @@
   background: var(--color-white);
 }
 
-/* ---- Hero ---- */
-.financing__hero {
-  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-dark-surface) 60%, var(--color-blue-cobalt-dark) 100%);
-  padding: var(--spacing-14) 0 var(--spacing-10);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.financing__hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, rgba(27, 95, 138, 0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.financing__hero-content {
-  position: relative;
-  z-index: 1;
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.financing__hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-family: var(--font-heading);
-  font-size: 12px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--color-blue-cobalt-light);
-  margin-bottom: var(--spacing-4);
-}
-
-.financing__hero-title {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-extrabold);
-  color: var(--color-white);
-  line-height: var(--line-height-tight);
-  margin: 0 0 var(--spacing-3);
-}
-
-.financing__hero-subtitle {
-  font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  color: var(--color-gray-300);
-  line-height: var(--line-height-normal);
-  margin: 0;
-}
-
 /* ---- Calculator section ---- */
 .financing__calculator {
   padding: var(--spacing-10) 0;
@@ -169,18 +115,6 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
-  .financing__hero {
-    padding: var(--spacing-10) 0 var(--spacing-8);
-  }
-
-  .financing__hero-title {
-    font-size: var(--font-size-2xl);
-  }
-
-  .financing__hero-subtitle {
-    font-size: var(--font-size-base);
-  }
-
   .financing__value-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-4);

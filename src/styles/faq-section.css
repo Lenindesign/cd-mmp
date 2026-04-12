@@ -22,18 +22,17 @@
 }
 
 [class*='__faq-item'] {
-  background: var(--color-white);
+  background: transparent;
   border-bottom: 1px solid var(--color-gray-200);
-  transition: background-color var(--transition-fast);
 }
 
 [class*='__faq-item']:hover:not([class*='--expanded']) {
-  background: var(--color-gray-100);
+  background: transparent;
 }
 
 [class*='__faq-item'][class*='--expanded'],
 [class*='__faq-item'][class*='--expanded']:hover {
-  background: var(--color-white);
+  background: transparent;
 }
 
 button[class*='__faq-question'] {

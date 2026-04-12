@@ -774,3 +774,65 @@ a[class*='__card-cta--secondary']:hover {
   color: var(--color-gray-500);
   margin-top: var(--spacing-1);
 }
+
+/* FAQ question buttons — transparent background */
+[class*='__faq-question'] {
+  background: transparent !important;
+}
+
+/* ── Explore More link lists (arrow-prefixed, two-column) ── */
+[class*='__links-section'] {
+  border-top: 1px solid var(--color-gray-200);
+  padding-top: var(--spacing-6);
+  margin-top: var(--spacing-8);
+}
+
+[class*='__links-grid'] {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 0 var(--spacing-8) !important;
+}
+
+[class*='__link-card'] {
+  all: unset;
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-gray-600);
+  padding: var(--spacing-2) 0;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+[class*='__link-card']::before {
+  content: '→ ';
+  color: var(--color-dark);
+}
+
+[class*='__link-card']:hover {
+  color: var(--color-blue-cobalt);
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+[class*='__link-card'] h3 {
+  display: inline;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  color: inherit;
+}
+
+[class*='__link-card'] p {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  [class*='__links-grid'] {
+    grid-template-columns: 1fr !important;
+  }
+}

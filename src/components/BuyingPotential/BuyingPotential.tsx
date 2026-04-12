@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, CheckCircle, ArrowRight, MapPin, Tag } from 'lucide-react';
+import { ChevronDown, Check, ArrowRight, MapPin, Tag } from 'lucide-react';
 import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../services/vehicleService';
 import { getAllListings, type Listing } from '../../services/listingsService';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
@@ -83,12 +83,16 @@ const getCategoryLabel = (bodyStyle: string, maxPrice: number): string => {
   return styleLabel;
 };
 
+const BODY_STYLE_OPTIONS = ['SUV', 'Sedan', 'Truck', 'Coupe', 'Hatchback', 'Convertible', 'Wagon'];
+
 const BuyingPotential = ({
-  bodyStyle = 'SUV',
+  bodyStyle: initialBodyStyle = 'SUV',
   vehicleName = '2025 Chevrolet Trax',
   vehicleImage = 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png',
 }: BuyingPotentialProps) => {
   const [vehicleType, setVehicleType] = useState('New car');
+  const [bodyStyle, setBodyStyle] = useState(initialBodyStyle);
+  const [bodyStyleOpen, setBodyStyleOpen] = useState(false);
   const [downPayment, setDownPayment] = useState(2500);
   const [creditScore, setCreditScore] = useState('Good (670-739)');
   const [monthlyPayment, setMonthlyPayment] = useState(450);
@@ -249,6 +253,7 @@ const BuyingPotential = ({
                           setVehicleTypeOpen(!vehicleTypeOpen);
                           setCreditScoreOpen(false);
                           setLoanTermOpen(false);
+                          setBodyStyleOpen(false);
                         }}
                       >
                         {vehicleType}
@@ -286,6 +291,7 @@ const BuyingPotential = ({
                           setCreditScoreOpen(!creditScoreOpen);
                           setVehicleTypeOpen(false);
                           setLoanTermOpen(false);
+                          setBodyStyleOpen(false);
                         }}
                       >
                         {creditScore}
@@ -321,6 +327,7 @@ const BuyingPotential = ({
                           setLoanTermOpen(!loanTermOpen);
                           setVehicleTypeOpen(false);
                           setCreditScoreOpen(false);
+                          setBodyStyleOpen(false);
                         }}
                       >
                         {loanTerm} months
@@ -410,6 +417,9 @@ const BuyingPotential = ({
                         placeholder="0"
                       />
                     </div>
+                    <Link to="/whats-my-car-worth" className="buying-potential__trade-in-link">
+                      Don't know your car's value? Get an estimate →
+                    </Link>
                   </div>
                 )}
               </div>
@@ -442,12 +452,44 @@ const BuyingPotential = ({
             <div className="buying-potential__right">
               {matchCount > 0 ? (
                 <div className="buying-potential__matches">
-                  <h3 className="buying-potential__matches-title">
-                    <span>
-                      {isUsedMode ? `Used ${categoryLabel}` : categoryLabel.toUpperCase()} IN YOUR BUDGET
-                    </span>
-                    <span className="buying-potential__matches-count">{matchCount} found</span>
-                  </h3>
+                  <div className="buying-potential__matches-header">
+                    <h3 className="buying-potential__matches-title">
+                      <span>
+                        {isUsedMode ? `Used ${categoryLabel}` : categoryLabel.toUpperCase()} IN YOUR BUDGET
+                      </span>
+                      <span className="buying-potential__matches-count">{matchCount} found</span>
+                    </h3>
+                    <div className="buying-potential__body-style-select">
+                      <button
+                        type="button"
+                        className="buying-potential__body-style-btn"
+                        onClick={() => {
+                          setBodyStyleOpen(!bodyStyleOpen);
+                          setVehicleTypeOpen(false);
+                          setCreditScoreOpen(false);
+                          setLoanTermOpen(false);
+                        }}
+                      >
+                        {bodyStyle}
+                        <ChevronDown size={14} />
+                      </button>
+                      {bodyStyleOpen && (
+                        <ul className="buying-potential__body-style-options">
+                          {BODY_STYLE_OPTIONS.map((style) => (
+                            <li key={style}>
+                              <button
+                                type="button"
+                                className={`buying-potential__body-style-option ${bodyStyle === style ? 'active' : ''}`}
+                                onClick={() => { setBodyStyle(style); setBodyStyleOpen(false); }}
+                              >
+                                {style}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
                   <div className="buying-potential__matches-list">
                     {isUsedMode ? (
                       // Used car listings
@@ -465,7 +507,7 @@ const BuyingPotential = ({
                             </span>
                             <span className="buying-potential__match-price">{formatCurrency(listing.price)}</span>
                           </div>
-                          <CheckCircle size={18} className="buying-potential__match-check" />
+                          <div className="buying-potential__match-check"><Check size={12} /></div>
                         </Link>
                       ))
                     ) : (
@@ -489,7 +531,7 @@ const BuyingPotential = ({
                                 </span>
                               )}
                             </div>
-                            <CheckCircle size={18} className="buying-potential__match-check" />
+                            <div className="buying-potential__match-check"><Check size={12} /></div>
                           </Link>
                         );
                       })

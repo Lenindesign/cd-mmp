@@ -380,7 +380,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-3);
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .vehicle-card__price {
@@ -400,9 +400,10 @@
 
 .vehicle-card__price-value {
   font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-neutrals-2);
+  white-space: nowrap;
 }
 
 /* ============================================
