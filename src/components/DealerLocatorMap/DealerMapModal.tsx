@@ -10,7 +10,7 @@ export interface DealerMapModalProps {
   vehicle: VehicleInfo;
   initialLocation?: { lat: number; lng: number };
   initialZipCode?: string;
-  /** Passed through to DealerLocatorMap — drives post–lead submission overlay variant. */
+  /** Passed through to DealerLocatorMap - drives post-lead submission overlay variant. */
   postSubmitOutcome?: 'matched' | 'unmatched';
 }
 

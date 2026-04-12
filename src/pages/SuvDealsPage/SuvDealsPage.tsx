@@ -45,7 +45,7 @@ const FAQ_DATA = [
   { question: 'What types of SUV deals are available?', answer: 'SUV deals typically include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers rotate these offers monthly, so the best deal depends on your purchase timeline and financial situation.' },
   { question: 'Are SUV deals different from sedan or truck deals?', answer: 'The types of incentives are similar, but SUVs often have different dollar amounts and terms. Popular SUVs may have smaller incentives due to high demand, while slower-selling models may offer more aggressive deals to move inventory.' },
   { question: 'Can I combine multiple SUV incentives?', answer: 'It depends on the manufacturer. Some allow stacking loyalty bonuses or military discounts with a finance or lease offer, but you typically cannot combine cash-back with special APR financing. Always ask the dealer to calculate both scenarios.' },
-  { question: 'When is the best time to buy an SUV?', answer: 'End of model year (August–October) and holiday weekends often bring the best deals. However, manufacturers can offer strong incentives any month. Monitoring deals monthly—like on this page—ensures you catch the best offers.' },
+  { question: 'When is the best time to buy an SUV?', answer: 'End of model year (August–October) and holiday weekends often bring the best deals. However, manufacturers can offer strong incentives any month. Monitoring deals monthly, like on this page, ensures you catch the best offers.' },
   { question: 'Do these deals apply to hybrid and electric SUVs?', answer: 'Some deals apply to hybrid and plug-in hybrid trims, but electric SUVs often have separate incentive programs. Check the "Eligible Trims" section of each deal for specifics, and remember that federal and state EV tax credits may also apply.' },
 ];
 
@@ -232,7 +232,7 @@ const SuvDealsPage = () => {
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };
@@ -298,7 +298,7 @@ const SuvDealsPage = () => {
               <span>SUV Deals</span>
             </nav>
             <h1 className="suv-deals-page__title">{pageTitle}</h1>
-            <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place—0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
+            <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place - 0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
           </div>
         </div>
       </div>

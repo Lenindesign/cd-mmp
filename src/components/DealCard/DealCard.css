@@ -342,7 +342,7 @@
   font-family: var(--font-heading);
   font-size: 32px;
   font-weight: var(--font-weight-extrabold);
-  color: var(--color-dark);
+  color: var(--color-success);
   line-height: 1;
 }
 
@@ -515,7 +515,7 @@
 
 .deal-card__detail-value {
   font-family: var(--font-heading);
-  font-size: clamp(10px, 2.5vw, 14px);
+  font-size: clamp(11px, 2.5vw, 15px);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-dark);
   line-height: 1.2;

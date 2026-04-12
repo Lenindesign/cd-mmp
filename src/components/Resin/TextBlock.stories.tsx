@@ -269,7 +269,7 @@ export const HTMLContent: Story = {
       </ul>
       <blockquote>
         <p>The Accord remains the gold standard for midsize sedans.</p>
-        <cite>— Car and Driver</cite>
+        <cite>- Car and Driver</cite>
       </blockquote>
       <p>Whether you're looking for <em>efficiency</em>, <strong>comfort</strong>, or 
       <u>value</u>, the Accord delivers on all fronts.</p>

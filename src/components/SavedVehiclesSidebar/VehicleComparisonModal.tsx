@@ -428,7 +428,7 @@ const VehicleComparisonModal = ({ isOpen, onClose, vehicles }: VehicleComparison
             </div>
           )}
 
-          {/* AI Module — between Pricing and Ratings */}
+          {/* AI Module - between Pricing and Ratings */}
           <div className="vehicle-compare-ai">
             <button
               type="button"

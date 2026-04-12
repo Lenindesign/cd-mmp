@@ -30,10 +30,10 @@ The editorial heart of the VDP. Expert analysis that differentiates us from deal
 
 ## Key Metrics
 
-- **Read Depth** — How much content users consume
-- **Time on Section** — Engagement duration
-- **Scroll Behavior** — Do users read highs/lows?
-- **SEO Performance** — Organic traffic to VDPs
+- **Read Depth** - How much content users consume
+- **Time on Section** - Engagement duration
+- **Scroll Behavior** - Do users read highs/lows?
+- **SEO Performance** - Organic traffic to VDPs
 
 ---
 

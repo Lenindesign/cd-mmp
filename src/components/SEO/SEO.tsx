@@ -15,7 +15,7 @@ export interface SEOProps {
   titleTemplate?: boolean;
   /** Additional keywords */
   keywords?: string[];
-  /** Structured data (JSON-LD) — single object or multiple script blocks */
+  /** Structured data (JSON-LD) - single object or multiple script blocks */
   structuredData?: object | object[];
   /** No index directive */
   noIndex?: boolean;

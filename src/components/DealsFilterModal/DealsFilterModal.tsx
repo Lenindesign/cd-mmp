@@ -311,7 +311,7 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Monthly Payment — lease & all */}
+          {/* Monthly Payment - lease & all */}
           {showMonthlyPayment && (
             <FilterSection
               title="Monthly payment"
@@ -330,7 +330,7 @@ const DealsFilterModal = ({
             </FilterSection>
           )}
 
-          {/* Term Length — lease, finance & all */}
+          {/* Term Length - lease, finance & all */}
           {showTermLength && (
             <FilterSection
               title="Term length"
@@ -373,7 +373,7 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Due at Signing — lease & all */}
+          {/* Due at Signing - lease & all */}
           {showDueAtSigning && (
             <FilterSection
               title="Due at signing"

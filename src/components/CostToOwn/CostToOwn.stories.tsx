@@ -31,10 +31,10 @@ Shows the true cost of ownership beyond the sticker price. Helps users understan
 
 ## Key Metrics
 
-- **Section Engagement** — Time spent, interactions
-- **Trim Comparison Usage** — Users comparing trims
-- **EV vs Gas Comparison** — Cross-shopping behavior
-- **Correlation with Leads** — Does viewing predict conversion?
+- **Section Engagement** - Time spent, interactions
+- **Trim Comparison Usage** - Users comparing trims
+- **EV vs Gas Comparison** - Cross-shopping behavior
+- **Correlation with Leads** - Does viewing predict conversion?
 
 ---
 
@@ -261,10 +261,10 @@ type EnhancedStory = StoryObj<typeof CostToOwnEnhanced>;
  * 
  * ### Business Value
  * 
- * - **Higher engagement** — Interactive customization keeps users on page
- * - **Trust building** — Transparent competitor comparison
- * - **Lead generation** — Clear CTAs for financing and insurance
- * - **SEO value** — Comprehensive content for "cost to own" searches
+ * - **Higher engagement** - Interactive customization keeps users on page
+ * - **Trust building** - Transparent competitor comparison
+ * - **Lead generation** - Clear CTAs for financing and insurance
+ * - **SEO value** - Comprehensive content for "cost to own" searches
  */
 export const Enhanced: EnhancedStory = {
   render: () => (
@@ -330,8 +330,8 @@ Users can adjust:
 - 💡 Compare insurance quotes → Save 15-25%
 
 ### 7. Clear CTAs
-- **Get Pre-Approved** — Primary action
-- **Compare Insurance Quotes** — Secondary action
+- **Get Pre-Approved** - Primary action
+- **Compare Insurance Quotes** - Secondary action
         `,
       },
     },

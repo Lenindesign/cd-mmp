@@ -32,7 +32,7 @@ const ARTICLES = [
 const FAQ_ITEMS = [
   {
     question: 'How does interest rate impact your monthly payment?',
-    answer: 'The interest rate directly affects how much you pay over the life of the loan. A lower rate means a lower monthly payment and less total interest paid. For example, on a $30,000 loan over 60 months, the difference between a 4% and 7% rate is roughly $45/month — or over $2,700 total.',
+    answer: 'The interest rate directly affects how much you pay over the life of the loan. A lower rate means a lower monthly payment and less total interest paid. For example, on a $30,000 loan over 60 months, the difference between a 4% and 7% rate is roughly $45/month - or over $2,700 total.',
   },
   {
     question: 'How does your credit score impact your monthly payment?',
@@ -44,7 +44,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'How does a trade-in potentially impact your monthly payment?',
-    answer: "A trade-in reduces the amount you need to finance. If your trade-in is worth $5,000 on a $30,000 vehicle, you'd only finance $25,000 — lowering your monthly payment by roughly $80–$100/month depending on your rate and term. It can also reduce sales tax in most states.",
+    answer: "A trade-in reduces the amount you need to finance. If your trade-in is worth $5,000 on a $30,000 vehicle, you'd only finance $25,000 - lowering your monthly payment by roughly $80–$100/month depending on your rate and term. It can also reduce sales tax in most states.",
   },
   {
     question: 'How do you calculate monthly car payments?',

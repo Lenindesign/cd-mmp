@@ -88,7 +88,7 @@ export const Quote: React.FC<{
 }> = ({ children, cite, className = '' }) => (
   <blockquote className={`text-block__quote ${className}`}>
     <p>{children}</p>
-    {cite && <cite className="text-block__quote-cite">— {cite}</cite>}
+    {cite && <cite className="text-block__quote-cite">- {cite}</cite>}
   </blockquote>
 );
 

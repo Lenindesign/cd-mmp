@@ -81,7 +81,7 @@ function buildActiveOffer(deal: LeaseByMakeDeal | null): Partial<IncentiveOfferD
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
     offerHeadline: `Lease for ${deal.monthlyPayment}/month`,
     whatItMeans: `Instead of buying, you're renting the car for ${deal.term}. Your monthly payment is just ${deal.monthlyPayment} with ${deal.dueAtSigning} due at signing.`,
     yourSavings: `${deal.monthlyPayment}/mo is significantly lower than a typical purchase payment. ${deal.dueAtSigning} due at signing. Includes ${deal.mileageAllowance} mileage allowance.`,

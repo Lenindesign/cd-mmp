@@ -30,10 +30,10 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 
 ## Key Metrics
 
-- **Click-through Rate** — Users clicking competitor cards
-- **Scroll Depth** — How many rankings users view
-- **Return Visits** — Users coming back to compare
-- **Time in Section** — Engagement with rankings
+- **Click-through Rate** - Users clicking competitor cards
+- **Scroll Depth** - How many rankings users view
+- **Return Visits** - Users coming back to compare
+- **Time in Section** - Engagement with rankings
 
 ---
 
@@ -102,9 +102,9 @@ Shows where the current vehicle ranks among competitors in its segment. This com
 ## Product Considerations
 
 **Score Display Options**
-- \`showScore: false\` — Clean card without score
-- \`showScore: true, scoreStyle: 'bold'\` — Prominent score
-- \`showScore: true, scoreStyle: 'subtle'\` — Understated score
+- \`showScore: false\` - Clean card without score
+- \`showScore: true, scoreStyle: 'bold'\` - Prominent score
+- \`showScore: true, scoreStyle: 'subtle'\` - Understated score
 
 **Data Dependencies**
 - Vehicle database with ratings

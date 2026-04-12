@@ -30,10 +30,10 @@ Helps users understand what they should pay for a vehicle by showing MSRP, marke
 
 ## Key Metrics
 
-- **Trim Selector Usage** — Which trims users explore
-- **Time in Section** — Engagement with pricing data
-- **Scroll to CTA** — Correlation with lead form completion
-- **Price Alert Signups** — Users wanting price notifications
+- **Trim Selector Usage** - Which trims users explore
+- **Time in Section** - Engagement with pricing data
+- **Scroll to CTA** - Correlation with lead form completion
+- **Price Alert Signups** - Users wanting price notifications
 
 ---
 

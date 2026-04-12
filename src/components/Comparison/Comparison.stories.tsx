@@ -30,10 +30,10 @@ Side-by-side comparison showing how the current vehicle stacks up against compet
 
 ## Key Metrics
 
-- **Competitor Click Rate** — Which alternatives get clicks
-- **Comparison Tool Usage** — Full comparison page visits
-- **Return Behavior** — Users coming back to compare
-- **Conversion Correlation** — Does comparing predict leads?
+- **Competitor Click Rate** - Which alternatives get clicks
+- **Comparison Tool Usage** - Full comparison page visits
+- **Return Behavior** - Users coming back to compare
+- **Conversion Correlation** - Does comparing predict leads?
 
 ---
 

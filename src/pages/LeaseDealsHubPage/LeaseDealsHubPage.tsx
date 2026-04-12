@@ -205,7 +205,7 @@ const LeaseDealsHubPage = () => {
           yourSavings: `${activeDealObj.monthlyPayment}/mo is significantly lower than a typical purchase payment. ${activeDealObj.dueAtSigning} due at signing. Includes ${activeDealObj.mileageAllowance} mileage allowance.`,
           whoQualifies: "Well-qualified lessees with approved credit through the manufacturer's financial arm.",
           eligibleTrims: activeDealObj.trimsEligible,
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };

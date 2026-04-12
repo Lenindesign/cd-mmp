@@ -31,7 +31,7 @@ const FAQ_DATA = [
   },
   {
     question: 'What happens if I drive more than the mileage limit?',
-    answer: 'Most leases include a mileage allowance (typically 10,000–12,000 miles per year). If you exceed it, you\'ll pay an excess mileage fee—usually $0.15 to $0.25 per mile—when you return the vehicle. If you know you\'ll drive more, negotiate a higher mileage allowance upfront; it\'s cheaper than paying overage fees.',
+    answer: 'Most leases include a mileage allowance (typically 10,000–12,000 miles per year). If you exceed it, you\'ll pay an excess mileage fee, usually $0.15 to $0.25 per mile, when you return the vehicle. If you know you\'ll drive more, negotiate a higher mileage allowance upfront; it\'s cheaper than paying overage fees.',
   },
   {
     question: 'Can I buy the car at the end of the lease?',
@@ -162,7 +162,7 @@ const LeaseDealsPage = () => {
           yourSavings: `${activeDealObj.monthlyPayment}/mo is significantly lower than a typical purchase payment. ${activeDealObj.dueAtSigning} due at signing. Includes ${activeDealObj.mileageAllowance} mileage allowance.`,
           whoQualifies: 'Well-qualified lessees with approved credit through the manufacturer\'s financial arm.',
           eligibleTrims: activeDealObj.trimsEligible,
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };

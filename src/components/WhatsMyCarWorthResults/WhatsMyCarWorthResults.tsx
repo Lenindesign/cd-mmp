@@ -383,7 +383,7 @@ const WhatsMyCarWorthResults = ({
             <strong>Choose the condition that best matches your car today,</strong> not how it looked when it was new.
           </p>
           <ul className="value-section__tip-list">
-            <li><strong>Clean:</strong> No major dents, scratches, or mechanical issues—well cared for inside and out.</li>
+            <li><strong>Clean:</strong> No major dents, scratches, or mechanical issues. Well cared for inside and out.</li>
             <li><strong>Average:</strong> Normal wear and tear for its age, but nothing that needs immediate repair.</li>
             <li><strong>Rough:</strong> Visible damage, mechanical problems, or heavy interior wear.</li>
           </ul>
@@ -566,7 +566,7 @@ const WhatsMyCarWorthResults = ({
             <div className="marketplace-analysis__insight">
               <p className="marketplace-analysis__insight-text">
                 <strong>Best time to buy:</strong> With 67+ day inventory and declining prices, you have strong negotiating power. 
-                Dealers are motivated to move K5s—use your {formatPrice(tradeEstimate.mid)} trade-in as leverage.
+                Dealers are motivated to move K5s. Use your {formatPrice(tradeEstimate.mid)} trade-in as leverage.
               </p>
             </div>
           </div>

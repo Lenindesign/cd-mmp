@@ -222,7 +222,7 @@ const ContactDealerModal = ({
                 <a href="#" className="contact-dealer-modal__link">Visitor Agreement</a>
                 {' and '}
                 <a href="#" className="contact-dealer-modal__link">Privacy Statement</a>
-                {' — '}
+                {' - '}
                 {disclaimerText}
               </p>
             </form>

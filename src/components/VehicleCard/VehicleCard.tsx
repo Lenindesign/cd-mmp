@@ -516,7 +516,7 @@ export const VehicleCard = ({
           </div>
         )}
 
-        {/* Save Button — top right circle */}
+        {/* Save Button - top right circle */}
         {showSaveButton && (
           <button
             className={`vehicle-card__save-circle ${isSaved ? 'vehicle-card__save-circle--saved' : ''}`}

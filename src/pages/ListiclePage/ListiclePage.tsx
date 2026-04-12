@@ -583,7 +583,7 @@ const ListiclePage = () => {
           <div className="listicle__conclusion">
             <h3>What These Results Tell Us</h3>
             <p>
-              The dominance of SUVs in this year's list isn't surprising—they continue to be the preferred 
+              The dominance of SUVs in this year's list isn't surprising. They continue to be the preferred 
               body style for American buyers. What's notable is the range of price points represented, from 
               the sub-$22,000 Chevrolet Trax to the $80,000 Tesla Cybertruck.
             </p>

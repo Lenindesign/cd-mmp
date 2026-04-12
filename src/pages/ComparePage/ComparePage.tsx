@@ -463,7 +463,7 @@ const ComparePage = () => {
               </div>
             )}
 
-            {/* AI Module — between Pricing and Ratings */}
+            {/* AI Module - between Pricing and Ratings */}
             <div className="compare-page__ai">
               <button
                 type="button"

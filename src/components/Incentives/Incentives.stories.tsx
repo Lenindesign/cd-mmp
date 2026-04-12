@@ -30,10 +30,10 @@ Displays current manufacturer incentives, rebates, and special financing. This i
 
 ## Key Metrics
 
-- **Incentive Views** — Which offers get most attention
-- **CTA Clicks** — "Get This Deal" engagement
-- **Time Sensitivity** — Impact of expiration dates
-- **Regional Variance** — Local offer performance
+- **Incentive Views** - Which offers get most attention
+- **CTA Clicks** - "Get This Deal" engagement
+- **Time Sensitivity** - Impact of expiration dates
+- **Regional Variance** - Local offer performance
 
 ---
 

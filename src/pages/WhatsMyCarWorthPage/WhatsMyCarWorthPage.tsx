@@ -3,6 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import WhatsMyCarWorth from '../../components/WhatsMyCarWorth';
 import './WhatsMyCarWorthPage.css';
 
+const SolidCheckCircle = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" fill="currentColor" />
+    <path d="M8 12.5l2.5 2.5 5.5-5.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 const WhatsMyCarWorthPage = () => {
   const navigate = useNavigate();
 
@@ -62,7 +69,7 @@ const WhatsMyCarWorthPage = () => {
           </h1>
           <p className="whats-my-car-worth-page__hero-subtitle">
             Find out what your vehicle is worth in today's market. Get an instant estimate 
-            powered by real-time market data from Black Book—the industry standard for 
+            powered by real-time market data from Black Book, the industry standard for 
             vehicle valuation.
           </p>
           
@@ -119,41 +126,11 @@ const WhatsMyCarWorthPage = () => {
           <div className="whats-my-car-worth-page__info-card">
             <h3 className="whats-my-car-worth-page__info-title">Why Use Our Tool?</h3>
             <ul className="whats-my-car-worth-page__benefits">
-              <li>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22,4 12,14.01 9,11.01" />
-                </svg>
-                <span>Real-time market data from Black Book</span>
-              </li>
-              <li>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22,4 12,14.01 9,11.01" />
-                </svg>
-                <span>Updated daily with latest pricing</span>
-              </li>
-              <li>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22,4 12,14.01 9,11.01" />
-                </svg>
-                <span>No personal information required</span>
-              </li>
-              <li>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22,4 12,14.01 9,11.01" />
-                </svg>
-                <span>Instant results in seconds</span>
-              </li>
-              <li>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22,4 12,14.01 9,11.01" />
-                </svg>
-                <span>VIN scanning for accurate identification</span>
-              </li>
+              <li><SolidCheckCircle size={20} /><span>Real-time market data from Black Book</span></li>
+              <li><SolidCheckCircle size={20} /><span>Updated daily with latest pricing</span></li>
+              <li><SolidCheckCircle size={20} /><span>No personal information required</span></li>
+              <li><SolidCheckCircle size={20} /><span>Instant results in seconds</span></li>
+              <li><SolidCheckCircle size={20} /><span>VIN scanning for accurate identification</span></li>
             </ul>
           </div>
 

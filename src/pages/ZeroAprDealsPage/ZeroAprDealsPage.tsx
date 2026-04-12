@@ -57,7 +57,7 @@ const FAQ_DATA = [
   },
   {
     question: 'Who qualifies for low APR car deals?',
-    answer: 'Qualifying for 0% APR typically requires excellent credit—usually a FICO score of 720 or higher. Special APR rates (1.9%–3.9%) may be available with good credit (680+). Lenders also consider your debt-to-income ratio, employment history, and the amount you\'re financing.',
+    answer: 'Qualifying for 0% APR typically requires excellent credit, usually a FICO score of 720 or higher. Special APR rates (1.9%–3.9%) may be available with good credit (680+). Lenders also consider your debt-to-income ratio, employment history, and the amount you\'re financing.',
   },
   {
     question: 'Can I combine APR deals with other incentives?',
@@ -348,7 +348,7 @@ const ZeroAprDealsPage = () => {
         whatItMeans: activeDealObj.aprType === 'cash'
           ? `A manufacturer rebate of ${activeDealObj.incentiveValue} applied at purchase, reducing the effective price of the vehicle.`
           : activeDealObj.aprType === 'zero-apr'
-          ? 'You pay absolutely zero interest on your auto loan. Every dollar of your monthly payment goes directly toward the price of the car—not to the bank.'
+          ? 'You pay absolutely zero interest on your auto loan. Every dollar of your monthly payment goes directly toward the price of the car, not to the bank.'
           : `A below-market ${activeDealObj.aprDisplay} interest rate from the manufacturer that lowers your monthly payment and total cost vs. the average ~6.5% rate.`,
         yourSavings: activeDealObj.aprType === 'cash'
           ? `${activeDealObj.incentiveValue} off the purchase price (${activeDealObj.percentOffMsrp} off MSRP).`
@@ -357,7 +357,7 @@ const ZeroAprDealsPage = () => {
           : `At ${activeDealObj.aprDisplay} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term.`,
         whoQualifies: activeDealObj.targetAudience || 'All buyers',
         eligibleTrims: activeDealObj.trimsEligible,
-        dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+        dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
         eventLabel: activeDealObj.programName,
         expirationDate: activeDealObj.expirationDate,
       }
@@ -373,7 +373,7 @@ const ZeroAprDealsPage = () => {
   const BASE_URL = 'https://www.caranddriver.com';
 
   const seoDescription = isZeroPercentOnlyRoute
-    ? `Browse every current 0% APR financing offer for ${month} ${year}. Pay no interest on your auto loan—paired with Car and Driver expert ratings.`
+    ? `Browse every current 0% APR financing offer for ${month} ${year}. Pay no interest on your auto loan, paired with Car and Driver expert ratings.`
     : `Find the best buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, cash-back rebates, and special offers on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`;
 
   const seoCanonical = `${BASE_URL}${isZeroPercentOnlyRoute ? ZERO_PERCENT_APR_DEALS_PATH : BEST_BUYING_DEALS_PATH}`;
@@ -469,8 +469,8 @@ const ZeroAprDealsPage = () => {
             <h1 className="zero-apr-page__title">{pageTitle}</h1>
             <p className="zero-apr-page__description">
               {isZeroPercentOnlyRoute
-                ? 'These manufacturer-backed offers charge no interest on your auto loan—every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
-                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average—these offers can save you thousands over the life of your loan.'}
+                ? 'These manufacturer-backed offers charge no interest on your auto loan, so every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
+                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average, these offers can save you thousands over the life of your loan.'}
             </p>
           </div>
         </div>

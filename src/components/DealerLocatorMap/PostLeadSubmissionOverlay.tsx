@@ -96,7 +96,7 @@ const PostLeadSubmissionOverlay = ({
               <strong>We&apos;re sorry…</strong>
               <p>
                 We couldn&apos;t match a participating dealer near your location for this request right now. Try a
-                different ZIP or city, or browse all deals—we&apos;ll keep improving coverage in your area.
+                different ZIP or city, or browse all deals. We&apos;ll keep improving coverage in your area.
               </p>
             </div>
           </>

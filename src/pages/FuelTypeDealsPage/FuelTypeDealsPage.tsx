@@ -264,7 +264,7 @@ const FuelTypeDealsPage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
@@ -362,7 +362,7 @@ const FuelTypeDealsPage = () => {
             </nav>
             <h1 className="fuel-deals__title">{pageTitle}</h1>
             <p className="fuel-deals__description">
-              Shop deals by powertrain—whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
+              Shop deals by powertrain, whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
             </p>
           </div>
         </div>

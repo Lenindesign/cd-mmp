@@ -520,7 +520,7 @@ const TypographyPage = () => (
               0123456789
             </div>
             <div className="font-showcase-desc">
-              <strong>Sans-serif</strong> — Used for display headlines, headings, body text, and all UI elements.
+              <strong>Sans-serif</strong> - Used for display headlines, headings, body text, and all UI elements.
               Clean, modern, and highly legible at all sizes.
             </div>
           </div>
@@ -533,7 +533,7 @@ const TypographyPage = () => (
               0123456789
             </div>
             <div className="font-showcase-desc">
-              <strong>Serif</strong> — Used for editorial content, article text, and "C/D Says" sections.
+              <strong>Serif</strong> - Used for editorial content, article text, and "C/D Says" sections.
               Adds a premium, editorial feel to long-form content.
             </div>
           </div>
@@ -546,7 +546,7 @@ const TypographyPage = () => (
               0123456789
             </div>
             <div className="font-showcase-desc">
-              <strong>Condensed Sans-serif</strong> — Used for labels, badges, condition headers, and compact UI elements.
+              <strong>Condensed Sans-serif</strong> - Used for labels, badges, condition headers, and compact UI elements.
               Space-efficient with strong visual presence.
             </div>
           </div>
@@ -1078,7 +1078,7 @@ const TypographyPage = () => (
             "The Accord's blend of comfort, efficiency, and driving enjoyment makes it the 
             quintessential family sedan. It's the car we'd recommend to anyone shopping in 
             this segment."
-            <cite>— Car and Driver Editors</cite>
+            <cite>- Car and Driver Editors</cite>
           </blockquote>
         </div>
         
@@ -1096,10 +1096,10 @@ const TypographyPage = () => (
           
           <span className="sample-label">Ordered List</span>
           <ol>
-            <li>Honda Accord Hybrid Touring — Best overall value</li>
-            <li>Toyota Camry XSE — Sportiest driving dynamics</li>
-            <li>Mazda 6 Signature — Premium interior quality</li>
-            <li>Hyundai Sonata Limited — Most tech features</li>
+            <li>Honda Accord Hybrid Touring - Best overall value</li>
+            <li>Toyota Camry XSE - Sportiest driving dynamics</li>
+            <li>Mazda 6 Signature - Premium interior quality</li>
+            <li>Hyundai Sonata Limited - Most tech features</li>
           </ol>
         </div>
         
@@ -1189,7 +1189,7 @@ const TypographyPage = () => (
           <blockquote>
             "The Accord doesn't need dramatic changes because the fundamentals are so strong. 
             These updates simply keep it fresh."
-            <cite>— Honda Product Planning</cite>
+            <cite>- Honda Product Planning</cite>
           </blockquote>
           
           <h3>Interior Improvements</h3>

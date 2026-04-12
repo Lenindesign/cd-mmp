@@ -60,10 +60,10 @@ SEO has advised that adding the Model name to our Shopping CTAs will help our pa
 
 ## Metrics to Track
 
-- **Click-through Rate (CTR)** — Primary metric
-- **Conversion Rate** — From CTA click to dealer lead
-- **SEO Indexing** — Page ranking improvements
-- **User Engagement** — Time to first CTA click
+- **Click-through Rate (CTR)** - Primary metric
+- **Conversion Rate** - From CTA click to dealer lead
+- **SEO Indexing** - Page ranking improvements
+- **User Engagement** - Time to first CTA click
 
 ---
 

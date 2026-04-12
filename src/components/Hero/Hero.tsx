@@ -153,7 +153,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
       yourSavings: selectedIncentive.terms || selectedIncentive.description,
       whoQualifies: selectedIncentive.eligibility || 'All qualified buyers. See dealer for details.',
       eligibleTrims: ['Base', 'Sport', 'Premium'],
-      dontWaitText: `This offer expires ${selectedIncentive.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+      dontWaitText: `This offer expires ${selectedIncentive.expirationDate}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
       expirationDate: selectedIncentive.expirationDate,
     };
   }, [selectedIncentive, vehicle]);

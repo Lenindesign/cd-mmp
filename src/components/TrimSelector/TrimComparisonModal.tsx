@@ -294,7 +294,7 @@ const TrimComparisonModal = ({ isOpen, onClose, trims, vehicleName }: TrimCompar
       points.push({
         icon: 'balance',
         title: 'Perfect Balance',
-        description: `Strikes the ideal balance between price and features—you get what matters without overpaying.`
+        description: `Strikes the ideal balance between price and features. You get what matters without overpaying.`
       });
     }
 

@@ -788,7 +788,7 @@ const VehiclePageConcept = () => {
       <section className="concept__section concept__overview">
         <div className="concept__container">
           <p className="concept__tagline">
-            The {vehicle.make} {vehicle.model} represents the pinnacle of {vehicle.bodyStyle.toLowerCase()} design—where performance meets everyday practicality.
+            The {vehicle.make} {vehicle.model} represents the pinnacle of {vehicle.bodyStyle.toLowerCase()} design, where performance meets everyday practicality.
           </p>
           
           <div className="concept__cta-row">

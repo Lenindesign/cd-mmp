@@ -55,9 +55,9 @@ const BODY_TABS: { key: BodyTab; label: string; icon: React.ReactNode; match: (b
 ];
 
 const FAQ_DATA = [
-  { question: 'What types of finance deals are available by body style?', answer: 'Manufacturers offer special APR and financing terms across all body styles—SUVs, sedans, trucks, coupes, and hatchbacks. Rates and terms vary by model and often by trim level.' },
+  { question: 'What types of finance deals are available by body style?', answer: 'Manufacturers offer special APR and financing terms across all body styles, including SUVs, sedans, trucks, coupes, and hatchbacks. Rates and terms vary by model and often by trim level.' },
   { question: 'Do SUVs get better finance offers than sedans?', answer: 'It depends on market demand and manufacturer strategy. Popular models may have less aggressive APR promotions, while slower-selling vehicles sometimes get stronger financing incentives regardless of body style.' },
-  { question: 'Can I stack other discounts with a finance offer?', answer: 'Some manufacturers allow loyalty, conquest, or military incentives alongside a promotional APR. Terms vary by brand—ask the dealer which programs you qualify for and how they affect your payment.' },
+  { question: 'Can I stack other discounts with a finance offer?', answer: 'Some manufacturers allow loyalty, conquest, or military incentives alongside a promotional APR. Terms vary by brand, so ask the dealer which programs you qualify for and how they affect your payment.' },
   { question: 'How often do these deals change?', answer: 'Manufacturer incentives typically rotate monthly. We update this page as new deals become available, so check back at the start of each month for the latest offers.' },
   { question: 'Are truck finance deals different from car deals?', answer: 'Promotional APRs and terms follow similar patterns, but loan amounts and monthly payments often differ because trucks can carry higher MSRPs. Compare the rate, term, and payment on the specific vehicle you are considering.' },
 ];
@@ -227,7 +227,7 @@ const CashFinanceBodyStylePage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),

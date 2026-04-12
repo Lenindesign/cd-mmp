@@ -93,7 +93,7 @@ function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferD
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
   };
 
   if (deal.dealType === 'lease') {

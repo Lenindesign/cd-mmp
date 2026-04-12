@@ -45,9 +45,9 @@ interface UnifiedDeal {
 
 const FAQ_DATA = [
   { question: 'What types of truck deals are available?', answer: 'Truck deals include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers adjust these offers monthly based on inventory levels and sales targets.' },
-  { question: 'Are truck deals as good as sedan or SUV deals?', answer: 'Trucks are in high demand, so incentives can be smaller than sedans. However, manufacturers still offer competitive deals—especially on outgoing model years or well-stocked trims. Monitoring deals monthly helps you catch the best offers.' },
+  { question: 'Are truck deals as good as sedan or SUV deals?', answer: 'Trucks are in high demand, so incentives can be smaller than sedans. However, manufacturers still offer competitive deals, especially on outgoing model years or well-stocked trims. Monitoring deals monthly helps you catch the best offers.' },
   { question: 'Can I combine truck incentives?', answer: 'Some manufacturers allow stacking loyalty, military, or first-responder bonuses with a finance or lease offer. However, cash-back and special APR typically cannot be combined. Ask the dealer to compare both scenarios for your situation.' },
-  { question: 'When is the best time to buy a truck?', answer: 'End of model year (August–October), holiday weekends, and the end of each quarter often bring the strongest deals. That said, great truck incentives can appear any month—check this page regularly.' },
+  { question: 'When is the best time to buy a truck?', answer: 'End of model year (August–October), holiday weekends, and the end of each quarter often bring the strongest deals. That said, great truck incentives can appear any month, so check this page regularly.' },
   { question: 'Do these deals apply to heavy-duty trucks?', answer: 'Most deals listed here apply to light-duty pickups (1500 series). Heavy-duty trucks (2500/3500) sometimes have separate incentive programs with different terms. Check the "Eligible Trims" section of each deal for specifics.' },
 ];
 
@@ -233,7 +233,7 @@ const TruckDealsPage = () => {
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };
@@ -299,7 +299,7 @@ const TruckDealsPage = () => {
               <span>Truck Deals</span>
             </nav>
             <h1 className="truck-deals-page__title">{pageTitle}</h1>
-            <p className="truck-deals-page__description">Every current incentive on pickup trucks—0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
+            <p className="truck-deals-page__description">Every current incentive on pickup trucks - 0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
           </div>
         </div>
       </div>

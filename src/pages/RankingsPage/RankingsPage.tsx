@@ -415,7 +415,7 @@ const RankingsPage = () => {
               <h1 className="rankings-page__title">Find Your Perfect Car</h1>
               <p className="rankings-page__description">
                 Every vehicle tested, rated, and ranked by our expert editors. 
-                From fuel-efficient commuters to powerful sports cars—discover the best in every category.
+                From fuel-efficient commuters to powerful sports cars, discover the best in every category.
               </p>
               <div className="rankings-page__hero-stats">
                 <div className="rankings-page__hero-stat">

@@ -38,12 +38,12 @@ const generateNewCarAdvice = (vehicle: VehicleInventoryData) => {
   return {
     title: `Negotiation Advice: New ${vehicleName}`,
     marketSummary: marketFavor === 'buyers' 
-      ? `This market favors buyers. There are **${numberAvailable} new ${vehicleName}s available**, with vehicles sitting an **average of ${averageDaysOnLot} days on the lot**—${averageDaysOnLot >= 30 ? 'well past the 30-day threshold where dealers start feeling pressure to sell.' : 'giving you some room to negotiate.'}`
+      ? `This market favors buyers. There are **${numberAvailable} new ${vehicleName}s available**, with vehicles sitting an **average of ${averageDaysOnLot} days on the lot**, ${averageDaysOnLot >= 30 ? 'well past the 30-day threshold where dealers start feeling pressure to sell.' : 'giving you some room to negotiate.'}`
       : `This is a competitive market with limited inventory. Only **${numberAvailable} new ${vehicleName}s are available**, so be prepared to act quickly on good deals.`,
     tips: [
       isAgedInventory 
         ? `Use inventory age as your entry point. Ask how long the specific ${model} has been on the lot and focus on units at **40+ days**, where dealers are most likely to move on price.`
-        : `Ask about specific units that have been on the lot longest—these offer the best negotiating leverage.`,
+        : `Ask about specific units that have been on the lot longest. These offer the best negotiating leverage.`,
       hasIncentive 
         ? `The **$${formatNumber(cashIncentive)} cash incentive** should be treated as a given, not the negotiation. Apply it first, then push for additional dealer discount.`
         : `Check for manufacturer incentives or dealer cash that can be stacked on top of your negotiated price.`,
@@ -80,14 +80,14 @@ const generateUsedCarAdvice = (vehicle: VehicleInventoryData) => {
     marketSummary: `This is a **${marketCondition} market**. Only **${numberAvailable} used ${vehicleName}s are available locally**, and ${numberWithGoodPrice === 0 ? '**none are rated as a good or great price**' : `only **${numberWithGoodPrice}** are rated as a good or great price`}, which suggests sellers are testing the top of the market rather than competing aggressively.`,
     tips: [
       hasWideMileageRange && mileageRange
-        ? `The **wide mileage range (${formatNumber(mileageRange.low)}–${formatNumber(mileageRange.high)} miles)** creates meaningful pricing spread. Higher-mileage units give you the strongest negotiating leverage, especially if they're priced close to lower-mileage examples. Use mileage—and expected future maintenance—as justification for a price correction.`
+        ? `The **wide mileage range (${formatNumber(mileageRange.low)}–${formatNumber(mileageRange.high)} miles)** creates meaningful pricing spread. Higher-mileage units give you the strongest negotiating leverage, especially if they're priced close to lower-mileage examples. Use mileage, and expected future maintenance, as justification for a price correction.`
         : `Compare mileage across available units to find pricing inconsistencies you can use as leverage.`,
       hasFewNewListings
         ? `Only **${numberNewlyListed === 1 ? 'one vehicle is' : `${numberNewlyListed} vehicles are`} newly listed**, meaning most listings have been sitting without attracting buyers. That's a signal to push back on price, particularly on older listings where sellers may be more willing to negotiate after limited interest.`
-        : `With **${numberNewlyListed} newly listed vehicles**, there's fresh competition in the market—use this to your advantage.`,
+        : `With **${numberNewlyListed} newly listed vehicles**, there's fresh competition in the market. Use this to your advantage.`,
     ],
     bottomLine: hasNoPricedWell
-      ? `Be prepared to walk—scarcity exists, but pricing is still soft.`
+      ? `Be prepared to walk. Scarcity exists, but pricing is still soft.`
       : `There are deals to be found, but you'll need to negotiate to get there.`,
     playbook: [
       hasWideMileageRange ? `Push hardest on **higher-mileage ${vehicleName}s**` : `Focus on **highest-mileage** units for best leverage`,
@@ -95,7 +95,7 @@ const generateUsedCarAdvice = (vehicle: VehicleInventoryData) => {
         ? `Challenge pricing using **comparable listings**, since none are well-priced`
         : `Reference the **${numberWithGoodPrice} well-priced** listings in your negotiation`,
       hasFewNewListings ? `Focus on vehicles that are **not newly listed**` : `Compare against **newly listed** vehicles`,
-      `Be prepared to walk—scarcity exists, but pricing is still soft`,
+      `Be prepared to walk. Scarcity exists, but pricing is still soft`,
     ],
   };
 };

@@ -75,7 +75,7 @@ export interface DealCardProps {
   /** Primary CTA click handler */
   onDealClick: (e: React.MouseEvent) => void;
 
-  /** Secondary CTA — defaults to "Shop New {model}" link.
+  /** Secondary CTA - defaults to "Shop New {model}" link.
    *  Set to 'none' to hide, or provide a custom config. */
   secondaryCta?:
     | 'none'

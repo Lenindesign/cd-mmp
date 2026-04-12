@@ -115,7 +115,7 @@ const DEFAULT_OFFER: IncentiveOfferDetail = {
   whoQualifies: 'Well-qualified buyers. Credit approval required through Honda Financial Services.',
   eligibleTrims: ['EX', 'EX-L', 'LX', 'Sport', 'Hybrid Sport'],
   dontWaitText:
-    "This offer expires January 2, 2026. Honda incentives change monthly—lock in your rate before it's gone.",
+    "This offer expires January 2, 2026. Honda incentives change monthly, so lock in your rate before it's gone.",
   eventLabel: 'Honda CR-V Current Offers',
   expirationDate: 'January 2, 2026',
 };
@@ -277,7 +277,7 @@ const IncentivesModal = ({
     };
   }, [isOpen, onClose]);
 
-  /** Shared lead handoff — conversion-b keeps modal open to show dealer / no-dealer result. */
+  /** Shared lead handoff - conversion-b keeps modal open to show dealer / no-dealer result. */
   const submitLead = useCallback(() => {
     const resolvedMessage =
       message.trim() ||
@@ -793,14 +793,14 @@ const IncentivesModal = ({
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
                           <p className="incentives-modal__v5-key-section-text">
-                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.
+                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.
                           </p>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* Fallback if no allIncentives provided — use legacy single-offer view */}
+                  {/* Fallback if no allIncentives provided - use legacy single-offer view */}
                   {(!allIncentives || allIncentives.length === 0) && (
                     <>
                       <div className="incentives-modal__v5-offer-row">
@@ -986,7 +986,7 @@ const IncentivesModal = ({
                     <div className="incentives-modal__v5-post-result incentives-modal__v5-post-result--no-dealer">
                       <h3 className="incentives-modal__v5-post-no-dealer-title">No dealer matched nearby</h3>
                       <p className="incentives-modal__v5-post-no-dealer-text">
-                        Sorry — we don&apos;t have a participating dealer for this vehicle in your area right now.
+                        Sorry, we don&apos;t have a participating dealer for this vehicle in your area right now.
                         Car &amp; Driver Marketplace has thousands of listings to explore.
                       </p>
                       <p className="incentives-modal__v5-post-no-dealer-cta-hint">
@@ -1175,7 +1175,7 @@ const IncentivesModal = ({
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
                           <p className="incentives-modal__v5-key-section-text">
-                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.
+                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.
                           </p>
                         </div>
                       </div>

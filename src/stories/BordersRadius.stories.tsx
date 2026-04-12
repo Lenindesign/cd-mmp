@@ -175,7 +175,7 @@ export const RadiusUseCases: Story = {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Small - Inputs, Chips */}
           <div>
-            <p style={styles.label}>Small (4px) — Inputs, Chips, Small Buttons</p>
+            <p style={styles.label}>Small (4px) - Inputs, Chips, Small Buttons</p>
             <div style={styles.previewBox}>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
                 <input 
@@ -215,7 +215,7 @@ export const RadiusUseCases: Story = {
           
           {/* Medium - Dropdowns, Tooltips */}
           <div>
-            <p style={styles.label}>Medium (6px) — Dropdowns, Tooltips</p>
+            <p style={styles.label}>Medium (6px) - Dropdowns, Tooltips</p>
             <div style={styles.previewBox}>
               <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
                 <div style={{
@@ -245,7 +245,7 @@ export const RadiusUseCases: Story = {
           
           {/* Large - Cards, Modals */}
           <div>
-            <p style={styles.label}>Large (8px) — Cards, Modals</p>
+            <p style={styles.label}>Large (8px) - Cards, Modals</p>
             <div style={styles.previewBox}>
               <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
                 <div style={{
@@ -279,7 +279,7 @@ export const RadiusUseCases: Story = {
           
           {/* Extra Large - Hero Cards, Features */}
           <div>
-            <p style={styles.label}>Extra Large (12px) — Hero Cards, Feature Sections</p>
+            <p style={styles.label}>Extra Large (12px) - Hero Cards, Feature Sections</p>
             <div style={styles.previewBox}>
               <div style={{
                 padding: '2rem',
@@ -320,7 +320,7 @@ export const RadiusUseCases: Story = {
           
           {/* Full - Avatars, Pills */}
           <div>
-            <p style={styles.label}>Full (9999px) — Avatars, Pills, Circular Buttons</p>
+            <p style={styles.label}>Full (9999px) - Avatars, Pills, Circular Buttons</p>
             <div style={styles.previewBox}>
               <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                 <div style={{

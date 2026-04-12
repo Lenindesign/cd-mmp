@@ -214,7 +214,7 @@ const WelcomeEmail = ({
               <td className="welcome-email__greeting">
                 <h1 className="welcome-email__greeting-name">Hi {userName},</h1>
                 <p className="welcome-email__greeting-text">
-                  Welcome to Car And Driver! We're here to help you find the perfect car—whether 
+                  Welcome to Car And Driver! We're here to help you find the perfect car, whether 
                   you're browsing new models, comparing prices, or ready to buy. Get expert reviews, 
                   real pricing data, and connect with trusted dealers near you.
                 </p>

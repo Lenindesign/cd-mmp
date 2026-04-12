@@ -187,7 +187,7 @@ const AllDealsPage = () => {
           dealType: 'cash',
           dealText: `${d.incentiveValue} cash back`,
           dealHeadline: 'Cash Back',
-          whatItMeans: 'Manufacturer customer cash reduces the amount you finance or pay at signing—often instead of a promotional APR.',
+          whatItMeans: 'Manufacturer customer cash reduces the amount you finance or pay at signing, often instead of a promotional APR.',
           savingsNote: `${d.incentiveValue} in customer cash on eligible trims. Eligibility and stacking rules vary by dealer.`,
           whoQualifies: 'Retail buyers on select new vehicles; see program details for restrictions.',
           programName: d.programName, programDescription: d.programDescription,
@@ -294,7 +294,7 @@ const AllDealsPage = () => {
           yourSavings: activeDeal.savingsNote,
           whoQualifies: activeDeal.whoQualifies,
           eligibleTrims: activeDeal.trimsEligible,
-          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDeal.programName,
           expirationDate: activeDeal.expirationDate,
         };
@@ -307,7 +307,7 @@ const AllDealsPage = () => {
     <div className="all-deals">
       <SEO
         title={`All Car Deals & Incentives for ${month} ${year}`}
-        description={`Browse every current car deal, incentive, and offer for ${month} ${year}. 0% APR, finance rates, and lease specials — all in one place.`}
+        description={`Browse every current car deal, incentive, and offer for ${month} ${year}. 0% APR, finance rates, and lease specials - all in one place.`}
         canonical={`${BASE_URL}/deals/all`}
         keywords={['all car deals', 'car incentives', `car deals ${month} ${year}`, 'new car offers']}
         structuredData={createBreadcrumbStructuredData([
@@ -369,7 +369,7 @@ const AllDealsPage = () => {
             </nav>
             <h1 className="all-deals__title">All Deals for {month} {year}</h1>
             <p className="all-deals__description">
-              Every current manufacturer incentive in one place — 0% APR financing,
+              Every current manufacturer incentive in one place - 0% APR financing,
               special finance rates, and lease specials, all paired with Car and Driver expert ratings.
             </p>
           </div>

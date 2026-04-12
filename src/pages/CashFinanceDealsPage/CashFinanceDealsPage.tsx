@@ -23,11 +23,11 @@ import './CashFinanceDealsPage.css';
 const FAQ_DATA = [
   {
     question: 'How do special finance rates work?',
-    answer: 'Special finance rates are below-market APR (Annual Percentage Rate) offers provided through the manufacturer\'s captive finance company—like GM Financial, Toyota Financial Services, or Ford Credit. These rates are subsidized by the manufacturer, meaning you pay less interest over the life of your loan compared to a typical bank or credit union loan.',
+    answer: 'Special finance rates are below-market APR (Annual Percentage Rate) offers provided through the manufacturer\'s captive finance company, such as GM Financial, Toyota Financial Services, or Ford Credit. These rates are subsidized by the manufacturer, meaning you pay less interest over the life of your loan compared to a typical bank or credit union loan.',
   },
   {
     question: 'How does Car and Driver rate these vehicles?',
-    answer: 'Our ratings are based on comprehensive real-world testing by our expert editorial team. Each vehicle is evaluated on driving dynamics, comfort, interior quality, technology, value, and more. Our 10-point scale reflects how a vehicle compares to its direct competitors. Vehicles earning 10Best or Editor\'s Choice awards represent the absolute best in their category—a distinction that can give you confidence in your purchase.',
+    answer: 'Our ratings are based on comprehensive real-world testing by our expert editorial team. Each vehicle is evaluated on driving dynamics, comfort, interior quality, technology, value, and more. Our 10-point scale reflects how a vehicle compares to its direct competitors. Vehicles earning 10Best or Editor\'s Choice awards represent the absolute best in their category, a distinction that can give you confidence in your purchase.',
   },
   {
     question: 'Do these deals apply to all trims and configurations?',
@@ -183,7 +183,7 @@ const CashFinanceDealsPage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: activeDealObj.trimsEligible,
@@ -281,7 +281,7 @@ const CashFinanceDealsPage = () => {
             </nav>
             <h1 className="cf-deals-page__title">{pageTitle}</h1>
             <p className="cf-deals-page__description">
-              Manufacturers offer special finance rates to move inventory—and those savings go directly to you.
+              Manufacturers offer special finance rates to move inventory, and those savings go directly to you.
               We've combined the best current offers with Car and Driver's expert ratings so you can find not just
               a good price, but a great car at a great price.
             </p>

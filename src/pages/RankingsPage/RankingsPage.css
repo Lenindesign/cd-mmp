@@ -161,6 +161,8 @@
 
 .rankings-page__year-value-wrap {
   position: relative;
+  height: var(--year-h, 40px);
+  padding-top: 1px;
 }
 
 .rankings-page__year-ticker {
@@ -183,13 +185,14 @@
 
 @keyframes yearTickUp {
   0%   { transform: translateY(0); }
-  100% { transform: translateY(calc(var(--year-h, 40px) * -3)); }
+  100% { transform: translateY(calc(var(--year-h, 40px) * -4)); }
 }
 
 .rankings-page__year-btn {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
+  height: var(--year-h, 40px);
   background: none;
   border: none;
   padding: 0;

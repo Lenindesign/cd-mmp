@@ -30,10 +30,10 @@ The Hero is the primary above-the-fold component on every Vehicle Detail Page (V
 
 ## Key Metrics
 
-- **CTA Click Rate** — Shop New vs Shop Used vs Trade-In
-- **Gallery Engagement** — Slides viewed per session
-- **Year Selector Usage** — How often users switch years
-- **Time on Component** — Engagement before scrolling
+- **CTA Click Rate** - Shop New vs Shop Used vs Trade-In
+- **Gallery Engagement** - Slides viewed per session
+- **Year Selector Usage** - How often users switch years
+- **Time on Component** - Engagement before scrolling
 
 ---
 
@@ -55,9 +55,9 @@ The Hero is the primary above-the-fold component on every Vehicle Detail Page (V
 
 Accolades appear when vehicles earn editorial recognition:
 
-- **Editor's Choice** — Vehicles that excel in their segment
-- **10Best** — Annual top picks across categories
-- **EV of the Year** — Best electric vehicle (when applicable)
+- **Editor's Choice** - Vehicles that excel in their segment
+- **10Best** - Annual top picks across categories
+- **EV of the Year** - Best electric vehicle (when applicable)
 
 These badges increase user trust and can improve conversion rates.
 
@@ -459,9 +459,9 @@ Hero with animated shop buttons that include the vehicle model name. Buttons dis
 
 ### Benefits
 
-- **Clearer Intent** — Users immediately know what they're shopping for
-- **Better UX** — Reinforces the vehicle they're researching
-- **SEO Potential** — More specific CTA text for tracking
+- **Clearer Intent** - Users immediately know what they're shopping for
+- **Better UX** - Reinforces the vehicle they're researching
+- **SEO Potential** - More specific CTA text for tracking
 
 ---
 

@@ -31,10 +31,10 @@ A high-impact carousel showcasing top-ranked vehicles with integrated lead gener
 
 ## Key Metrics
 
-- **Lead Conversion Rate** — Shop Used clicks to dealer form submissions
-- **Carousel Engagement** — Slides scrolled, arrows clicked
-- **Card CTR** — Which rank positions get most clicks
-- **Filter Usage** — Which filters users apply most
+- **Lead Conversion Rate** - Shop Used clicks to dealer form submissions
+- **Carousel Engagement** - Slides scrolled, arrows clicked
+- **Card CTR** - Which rank positions get most clicks
+- **Filter Usage** - Which filters users apply most
 
 ---
 

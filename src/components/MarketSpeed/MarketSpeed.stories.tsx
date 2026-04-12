@@ -30,10 +30,10 @@ Shows how quickly vehicles are selling in the market. Creates urgency for hot ve
 
 ## Key Metrics
 
-- **Correlation with Leads** — Does "Hot" increase conversions?
-- **User Engagement** — Time spent, interactions
-- **Regional Accuracy** — Data quality by market
-- **Update Frequency** — Freshness of data
+- **Correlation with Leads** - Does "Hot" increase conversions?
+- **User Engagement** - Time spent, interactions
+- **Regional Accuracy** - Data quality by market
+- **Update Frequency** - Freshness of data
 
 ---
 

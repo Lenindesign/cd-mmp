@@ -184,7 +184,7 @@ const DealsHubPage = () => {
           dealType: 'zero-apr',
           dealText: '0% APR Financing',
           dealHeadline: `0% Interest Financing for ${d.term}`,
-          whatItMeans: `You pay absolutely zero interest on your auto loan. Every dollar of your monthly payment goes directly toward the price of the car—not to the bank. On a typical $35,000 loan, this could save you $3,000–$6,000 compared to the average new-car interest rate.`,
+          whatItMeans: `You pay absolutely zero interest on your auto loan. Every dollar of your monthly payment goes directly toward the price of the car, not to the bank. On a typical $35,000 loan, this could save you $3,000–$6,000 compared to the average new-car interest rate.`,
           savingsNote: `On a $35,000 loan over ${d.term}, you'd save approximately $${d.term.includes('72') ? '5,400' : d.term.includes('60') ? '4,500' : d.term.includes('48') ? '3,600' : '2,700'} in interest vs. the average 6.5% rate.`,
           whoQualifies: d.targetAudience,
           programName: d.programName,
@@ -243,8 +243,8 @@ const DealsHubPage = () => {
           dealType: 'cash' as const,
           dealText: `${d.incentiveValue} Cash Back`,
           dealHeadline: `${d.incentiveValue} Customer Cash Back`,
-          whatItMeans: 'Manufacturer cash back reduces what you pay at purchase—you can apply it toward price or down payment. It often cannot be combined with special financing; compare both options with your dealer.',
-          savingsNote: `${d.incentiveValue} before financing—about ${d.percentOffMsrp} off MSRP on many configurations.`,
+          whatItMeans: 'Manufacturer cash back reduces what you pay at purchase; you can apply it toward price or down payment. It often cannot be combined with special financing; compare both options with your dealer.',
+          savingsNote: `${d.incentiveValue} before financing, about ${d.percentOffMsrp} off MSRP on many configurations.`,
           whoQualifies: 'Typically retail buyers; see program rules for eligibility and stackability.',
           programName: d.programName,
           programDescription: d.programDescription,
@@ -313,7 +313,7 @@ const DealsHubPage = () => {
           const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, bs, 'zero-apr');
           const audience = 'targetAudience' in d ? d.targetAudience : 'Well-qualified buyers with approved credit.';
           return { ...base, dealType: 'zero-apr' as const, dealText: '0% APR Financing', dealHeadline: `0% Interest Financing for ${term}`,
-            whatItMeans: 'Zero interest on your auto loan—every payment dollar goes toward the car. This could save you thousands compared to a typical rate.',
+            whatItMeans: 'Zero interest on your auto loan: every payment dollar goes toward the car. This could save you thousands compared to a typical rate.',
             savingsNote: "On a $35,000 loan, you'd save approximately $3,000–$5,000 in interest.", whoQualifies: audience,
             estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: '0%', savingsVsAvg, savingsTooltip };
         }
@@ -327,7 +327,7 @@ const DealsHubPage = () => {
             dealText: `${d.incentiveValue} Cash Back`,
             dealHeadline: `${d.incentiveValue} Cash Back`,
             whatItMeans: 'Customer cash from the manufacturer lowers your out-the-door price or down payment.',
-            savingsNote: `${d.percentOffMsrp} off MSRP on many builds—confirm with your dealer.`,
+            savingsNote: `${d.percentOffMsrp} off MSRP on many builds; confirm with your dealer.`,
             whoQualifies: 'Retail buyers; see brand program rules for stackability with finance offers.',
             estimatedMonthly: d.incentiveValue,
             savingsVsAvg,
@@ -357,11 +357,11 @@ const DealsHubPage = () => {
       });
 
     return [
-      { title: 'Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates — save thousands when you buy.', href: BEST_BUYING_DEALS_PATH, count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
+      { title: 'Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates - save thousands when you buy.', href: BEST_BUYING_DEALS_PATH, count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
       { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, deals: toMiniLease(filteredLease) },
-      { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers — from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, deals: toMiniMixed(suvDeals) },
+      { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers - from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, deals: toMiniMixed(suvDeals) },
       { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, deals: toMiniMixed(truckDeals) },
-      { title: 'Deals by Fuel Type', description: 'Shop by powertrain — hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
+      { title: 'Deals by Fuel Type', description: 'Shop by powertrain - hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
       { title: 'Buying by Body Style', description: 'Purchase deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length + filteredCash.length, deals: [...filteredFinance, ...filteredCash].slice(0, 3).map(d => (d.type === 'cash' ? toMiniCash([d])[0] : toMiniFinance([d])[0])) },
     ];
   }, [rawData, matchesFilters]);
@@ -399,7 +399,7 @@ const DealsHubPage = () => {
           yourSavings: activeDeal.savingsNote,
           whoQualifies: activeDeal.whoQualifies,
           eligibleTrims: activeDeal.trimsEligible,
-          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly—once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDeal.programName,
           expirationDate: activeDeal.expirationDate,
         };
@@ -434,7 +434,7 @@ const DealsHubPage = () => {
             <h1 className="deals-hub__title">Best New Car Deals for {month} {year}</h1>
             <p className="deals-hub__description">
               We track every manufacturer incentive so you don't have to. Browse 0% APR financing, cash-back
-              rebates, special finance rates, and lease deals—all paired with Car and Driver's expert ratings
+              rebates, special finance rates, and lease deals, all paired with Car and Driver's expert ratings
               to help you find a great car at a great price.
             </p>
             <div className="deals-hub__hero-actions">

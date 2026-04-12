@@ -79,7 +79,7 @@ const defaultAdditionalSections: ContentSection[] = [
   },
   {
     title: 'Warranty and Maintenance Coverage',
-    content: `Chevy's basic warranty package is just that—basic—but so is the coverage of its competitors. The Kia Soul and its corporate cousin, the Hyundai Kona, both offer longer protection plans. Chevy also provides one free dealer maintenance visit within the first year of ownership, which is a nice perk. The limited warranty covers three years or 36,000 miles, the powertrain warranty covers five years or 60,000 miles, and complimentary maintenance is covered for the first visit.`,
+    content: `Chevy's basic warranty package is just that, basic, but so is the coverage of its competitors. The Kia Soul and its corporate cousin, the Hyundai Kona, both offer longer protection plans. Chevy also provides one free dealer maintenance visit within the first year of ownership, which is a nice perk. The limited warranty covers three years or 36,000 miles, the powertrain warranty covers five years or 60,000 miles, and complimentary maintenance is covered for the first visit.`,
   },
 ];
 
