@@ -20,7 +20,7 @@
 /* Header */
 .deal-card__header {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-4) var(--spacing-2);
