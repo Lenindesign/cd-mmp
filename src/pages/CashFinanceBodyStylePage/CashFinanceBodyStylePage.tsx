@@ -79,7 +79,27 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const MOBILE_AD_INTERVAL = 4;
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 const CashFinanceBodyStylePage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
@@ -198,6 +218,11 @@ const CashFinanceBodyStylePage = () => {
       return matchesFilters(d.vehicle, { term, targetAudience });
     });
   }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, matchesFilters]);
+
+  const dealChunks = useMemo(
+    () => chunkArray(displayDeals, GRID_BREAKER_AFTER_CARD_COUNT),
+    [displayDeals],
+  );
 
   const tabCounts = useMemo(() => {
     const counts: Record<BodyTab, number> = { all: allDeals.length, suv: 0, sedan: 0, truck: 0, coupe: 0, hatchback: 0 };
@@ -424,27 +449,36 @@ const CashFinanceBodyStylePage = () => {
               </aside>
             </div>
           ) : (
-            <div className="cfbs-deals__segment">
-              <div className="cfbs-deals__main">
-                <section className="cfbs-deals__section">
-                  <div className="cfbs-deals__grid">
-                    {displayDeals.map((deal, i) => (
-                      <Fragment key={deal.id}>
-                        {i > 0 && i % MOBILE_AD_INTERVAL === 0 && (
-                          <GridAd />
-                        )}
-                        {renderDealCard(deal)}
-                      </Fragment>
-                    ))}
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`cfbs-segment-${chunkIndex}`}>
+                  <div className="cfbs-deals__segment">
+                    <div className="cfbs-deals__main">
+                      <section className="cfbs-deals__section">
+                        <div className="cfbs-deals__grid">
+                          {chunk.map((deal, i) => (
+                            <Fragment key={deal.id}>
+                              {i > 0 && i % 4 === 0 && <GridAd />}
+                              {renderDealCard(deal)}
+                            </Fragment>
+                          ))}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="cfbs-deals__sidebar" aria-label="Advertisement">
+                      <div className="cfbs-deals__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                </section>
-              </div>
-              <aside className="cfbs-deals__sidebar" aria-label="Advertisement">
-                <div className="cfbs-deals__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
-            </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="cfbs-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
           )}
 
           <div className="cfbs-deals__segment cfbs-deals__segment--tail">
@@ -476,7 +510,7 @@ const CashFinanceBodyStylePage = () => {
             </div>
             <aside className="cfbs-deals__sidebar" aria-label="Advertisement">
               <div className="cfbs-deals__sidebar-sticky">
-                <AdSidebar />
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
               </div>
             </aside>
           </div>

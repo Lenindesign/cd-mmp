@@ -74,7 +74,27 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const MOBILE_AD_INTERVAL = 4;
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 const FuelTypeDealsPage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
@@ -246,6 +266,11 @@ const FuelTypeDealsPage = () => {
     return result.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }));
   }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, matchesFilters]);
 
+  const dealChunks = useMemo(
+    () => chunkArray(displayDeals, GRID_BREAKER_AFTER_CARD_COUNT),
+    [displayDeals],
+  );
+
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
   const handleSaveClick = (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
     e.preventDefault(); e.stopPropagation();
@@ -395,75 +420,84 @@ const FuelTypeDealsPage = () => {
               </aside>
             </div>
           ) : (
-            <div className="fuel-deals__segment">
-              <div className="fuel-deals__main">
-                <section className="fuel-deals__section">
-                  <div className="fuel-deals__grid">
-                    {displayDeals.map((deal, i) => {
-                      const saved = isVehicleSaved(deal.vehicleName);
-                      const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-                      const dealTypeTag = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
-                      const pillChipLabel = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
-                      const paymentAmount = deal.dealType === 'cash'
-                        ? (deal.incentiveValue ?? '')
-                        : deal.dealType === 'lease'
-                          ? `$${deal.estimatedMonthly}`
-                          : (deal.aprDisplay ?? '');
-                      const paymentPeriod = deal.dealType === 'cash'
-                        ? 'Cash Back'
-                        : deal.dealType === 'lease'
-                          ? '/mo'
-                          : ' APR';
-                      return (
-                        <Fragment key={deal.id}>
-                          {i > 0 && i % MOBILE_AD_INTERVAL === 0 && (
-                            <GridAd />
-                          )}
-                          <DealCard
-                            slug={deal.vehicle.slug}
-                            vehicleName={deal.vehicleName}
-                            vehicleImage={deal.vehicle.image}
-                            vehicleSlug={deal.vehicle.slug}
-                            vehicleMake={deal.vehicle.make}
-                            vehicleModel={deal.vehicle.model}
-                            rating={deal.rating}
-                            dealTypeTag={dealTypeTag}
-                            imageBadge={deal.fuelType}
-                            editorsChoice={deal.vehicle.editorsChoice}
-                            tenBest={deal.vehicle.tenBest}
-                            isSaved={saved}
-                            onSaveClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-                            offers={offers}
-                            offersPopupOpen={offersPopup?.slug === deal.vehicle.slug}
-                            onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
-                            onCloseOffersPopup={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}
-                            payment={{
-                              amount: paymentAmount,
-                              period: paymentPeriod,
-                              savings: { type: 'savings-text', text: deal.savingsVsAvg },
-                              savingsTooltip: deal.savingsTooltip,
-                              expirationDate: deal.expirationDate,
-                            }}
-                            pill={{
-                              chipLabel: pillChipLabel,
-                              text: deal.dealText,
-                              expirationDate: deal.expirationDate,
-                            }}
-                            details={deal.details}
-                            onDealClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}
-                          />
-                        </Fragment>
-                      );
-                    })}
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`fuel-segment-${chunkIndex}`}>
+                  <div className="fuel-deals__segment">
+                    <div className="fuel-deals__main">
+                      <section className="fuel-deals__section">
+                        <div className="fuel-deals__grid">
+                          {chunk.map((deal, i) => {
+                            const saved = isVehicleSaved(deal.vehicleName);
+                            const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                            const dealTypeTag = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
+                            const pillChipLabel = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
+                            const paymentAmount = deal.dealType === 'cash'
+                              ? (deal.incentiveValue ?? '')
+                              : deal.dealType === 'lease'
+                                ? `$${deal.estimatedMonthly}`
+                                : (deal.aprDisplay ?? '');
+                            const paymentPeriod = deal.dealType === 'cash'
+                              ? 'Cash Back'
+                              : deal.dealType === 'lease'
+                                ? '/mo'
+                                : ' APR';
+                            return (
+                              <Fragment key={deal.id}>
+                                {i > 0 && i % 4 === 0 && <GridAd />}
+                                <DealCard
+                                  slug={deal.vehicle.slug}
+                                  vehicleName={deal.vehicleName}
+                                  vehicleImage={deal.vehicle.image}
+                                  vehicleSlug={deal.vehicle.slug}
+                                  vehicleMake={deal.vehicle.make}
+                                  vehicleModel={deal.vehicle.model}
+                                  rating={deal.rating}
+                                  dealTypeTag={dealTypeTag}
+                                  imageBadge={deal.fuelType}
+                                  editorsChoice={deal.vehicle.editorsChoice}
+                                  tenBest={deal.vehicle.tenBest}
+                                  isSaved={saved}
+                                  onSaveClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
+                                  offers={offers}
+                                  offersPopupOpen={offersPopup?.slug === deal.vehicle.slug}
+                                  onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                                  onCloseOffersPopup={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}
+                                  payment={{
+                                    amount: paymentAmount,
+                                    period: paymentPeriod,
+                                    savings: { type: 'savings-text', text: deal.savingsVsAvg },
+                                    savingsTooltip: deal.savingsTooltip,
+                                    expirationDate: deal.expirationDate,
+                                  }}
+                                  pill={{
+                                    chipLabel: pillChipLabel,
+                                    text: deal.dealText,
+                                    expirationDate: deal.expirationDate,
+                                  }}
+                                  details={deal.details}
+                                  onDealClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}
+                                />
+                              </Fragment>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="fuel-deals__sidebar" aria-label="Advertisement">
+                      <div className="fuel-deals__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                </section>
-              </div>
-              <aside className="fuel-deals__sidebar" aria-label="Advertisement">
-                <div className="fuel-deals__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
-            </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="fuel-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
           )}
 
           <div className="fuel-deals__segment fuel-deals__segment--tail">
@@ -495,7 +529,7 @@ const FuelTypeDealsPage = () => {
             </div>
             <aside className="fuel-deals__sidebar" aria-label="Advertisement">
               <div className="fuel-deals__sidebar-sticky">
-                <AdSidebar />
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
               </div>
             </aside>
           </div>

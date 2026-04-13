@@ -92,7 +92,27 @@ const DEFAULT_FILTERS: DealsFilterState = {
 
 const CAR_AND_DRIVER = 'Car and Driver';
 
-const MOBILE_AD_INTERVAL = 4;
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 function renderFaqQuestionText(question: string) {
   const i = question.indexOf(CAR_AND_DRIVER);
@@ -249,6 +269,8 @@ const ZeroAprDealsPage = () => {
     if (activeTab === 'all') return filteredAll;
     return filteredAll.filter(d => d.aprType === activeTab);
   }, [filteredAll, activeTab]);
+
+  const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
     const global = getGlobalDealCounts();
@@ -511,25 +533,36 @@ const ZeroAprDealsPage = () => {
               </aside>
             </div>
           ) : (
-            <div className="zero-apr-page__segment">
-              <div className="zero-apr-page__main">
-                <section className="zero-apr-page__deals-section">
-                  <div className="zero-apr-page__grid">
-                    {deals.map((deal, i) => (
-                      <Fragment key={deal.id}>
-                        {i > 0 && i % MOBILE_AD_INTERVAL === 0 && <GridAd />}
-                        {renderAprDealCard(deal)}
-                      </Fragment>
-                    ))}
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`apr-segment-${chunkIndex}`}>
+                  <div className="zero-apr-page__segment">
+                    <div className="zero-apr-page__main">
+                      <section className="zero-apr-page__deals-section">
+                        <div className="zero-apr-page__grid">
+                          {chunk.map((deal, i) => (
+                            <Fragment key={deal.id}>
+                              {i > 0 && i % 4 === 0 && <GridAd />}
+                              {renderAprDealCard(deal)}
+                            </Fragment>
+                          ))}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
+                      <div className="zero-apr-page__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                </section>
-              </div>
-              <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
-                <div className="zero-apr-page__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
-            </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="zero-apr-page__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
           )}
 
           <div className="zero-apr-page__segment zero-apr-page__segment--tail">
@@ -578,7 +611,7 @@ const ZeroAprDealsPage = () => {
             </div>
             <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
               <div className="zero-apr-page__sidebar-sticky">
-                <AdSidebar />
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
               </div>
             </aside>
           </div>

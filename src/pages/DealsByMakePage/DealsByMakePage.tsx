@@ -76,7 +76,27 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const MOBILE_AD_INTERVAL = 4;
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferDetail> | undefined {
   if (!deal) return undefined;
@@ -321,6 +341,8 @@ const DealsByMakePage = () => {
 
   const deals = allDeals;
 
+  const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
+
   const modelLinks = useMemo(() => {
     const byModel = new Map<string, { year: string; model: string }>();
     for (const d of allDeals) {
@@ -480,137 +502,146 @@ const DealsByMakePage = () => {
               </aside>
             </div>
           ) : (
-            <div className="make-deals__segment">
-              <div className="make-deals__main">
-                <section className="make-deals__section">
-                  <div className="make-deals__grid">
-                    {deals.map((deal, i) => {
-                      const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
-                      const saved = isVehicleSaved(vehicleName);
-                      const isLease = deal.dealType === 'lease';
-                      const isCash = deal.dealType === 'cash';
-                      const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-                      const offersPopupOpen = offersPopup?.slug === deal.vehicle.slug;
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`make-segment-${chunkIndex}`}>
+                  <div className="make-deals__segment">
+                    <div className="make-deals__main">
+                      <section className="make-deals__section">
+                        <div className="make-deals__grid">
+                          {chunk.map((deal, i) => {
+                            const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
+                            const saved = isVehicleSaved(vehicleName);
+                            const isLease = deal.dealType === 'lease';
+                            const isCash = deal.dealType === 'cash';
+                            const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                            const offersPopupOpen = offersPopup?.slug === deal.vehicle.slug;
 
-                      let payment: DealCardPayment;
-                      let details: DealCardDetail[];
-                      let pillText: string;
+                            let payment: DealCardPayment;
+                            let details: DealCardDetail[];
+                            let pillText: string;
 
-                      if (isLease) {
-                        const leaseNum = deal.monthlyPaymentNum!;
-                        const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
-                        payment = {
-                          amount: deal.monthlyPayment!,
-                          period: '/mo',
-                          savings: { type: 'savings-text', text: savingsVsAvg },
-                          savingsTooltip,
-                          expirationDate: deal.expirationDate,
-                        };
-                        pillText = `${deal.monthlyPayment}/mo lease`;
-                        details = [
-                          { label: 'Term', value: deal.term! },
-                          { label: 'Due at Signing', value: deal.dueAtSigning! },
-                        ];
-                      } else if (isCash) {
-                        const msrp = parseMsrpMin(deal.vehicle.priceRange);
-                        const principal = Math.max(msrp - (deal.incentiveAmount ?? 0), 1);
-                        const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
-                        const { savingsTooltip } = buildSavingsText(
-                          monthlyAfterCash,
-                          deal.vehicle.bodyStyle,
-                          'cash',
-                        );
-                        payment = {
-                          amount: deal.incentiveValue!,
-                          period: 'Cash Back',
-                          savings: { type: 'plain', text: `${deal.percentOffMsrp} off MSRP` },
-                          savingsTooltip,
-                          expirationDate: deal.expirationDate,
-                        };
-                        pillText = `${deal.incentiveValue} cash back`;
-                        details = [
-                          { label: 'MSRP Range', value: deal.vehicle.priceRange },
-                          { label: 'Est. off MSRP', value: deal.percentOffMsrp! },
-                        ];
-                      } else {
-                        const msrp = parseMsrpMin(deal.vehicle.priceRange);
-                        const aprNum =
-                          deal.dealType === 'zero-apr' ? 0 : parseFloat((deal.aprDisplay ?? '').replace('%', ''));
-                        const months = parseTermMonths(deal.term!);
-                        const monthly = calcMonthly(msrp, aprNum, months);
-                        const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
-                        payment = {
-                          amount: deal.aprDisplay!,
-                          period: ' APR',
-                          savings: { type: 'savings-text', text: savingsVsAvg },
-                          savingsTooltip,
-                          expirationDate: deal.expirationDate,
-                        };
-                        pillText =
-                          deal.dealType === 'zero-apr'
-                            ? `0% APR for ${deal.term}`
-                            : `${deal.aprDisplay} APR for ${deal.term}`;
-                        details = [
-                          { label: 'MSRP Range', value: deal.vehicle.priceRange },
-                          { label: 'Term', value: deal.term! },
-                        ];
-                      }
-
-                      return (
-                        <Fragment key={deal.id}>
-                          {i > 0 && i % MOBILE_AD_INTERVAL === 0 && (
-                            <GridAd />
-                          )}
-                          <DealCard
-                            slug={deal.vehicle.slug}
-                            vehicleName={vehicleName}
-                            vehicleImage={deal.vehicle.image}
-                            vehicleSlug={deal.vehicle.slug}
-                            vehicleMake={deal.vehicle.make}
-                            vehicleModel={deal.vehicle.model}
-                            rating={deal.rating}
-                            dealTypeTag={deal.chipLabel}
-                            editorsChoice={!!deal.vehicle.editorsChoice}
-                            tenBest={!!deal.vehicle.tenBest}
-                            isSaved={saved}
-                            onSaveClick={(e) =>
-                              handleSaveClick(e, {
-                                name: vehicleName,
-                                slug: deal.vehicle.slug,
-                                image: deal.vehicle.image,
-                              })
+                            if (isLease) {
+                              const leaseNum = deal.monthlyPaymentNum!;
+                              const { savingsVsAvg, savingsTooltip } = buildSavingsText(leaseNum, deal.vehicle.bodyStyle);
+                              payment = {
+                                amount: deal.monthlyPayment!,
+                                period: '/mo',
+                                savings: { type: 'savings-text', text: savingsVsAvg },
+                                savingsTooltip,
+                                expirationDate: deal.expirationDate,
+                              };
+                              pillText = `${deal.monthlyPayment}/mo lease`;
+                              details = [
+                                { label: 'Term', value: deal.term! },
+                                { label: 'Due at Signing', value: deal.dueAtSigning! },
+                              ];
+                            } else if (isCash) {
+                              const msrp = parseMsrpMin(deal.vehicle.priceRange);
+                              const principal = Math.max(msrp - (deal.incentiveAmount ?? 0), 1);
+                              const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
+                              const { savingsTooltip } = buildSavingsText(
+                                monthlyAfterCash,
+                                deal.vehicle.bodyStyle,
+                                'cash',
+                              );
+                              payment = {
+                                amount: deal.incentiveValue!,
+                                period: 'Cash Back',
+                                savings: { type: 'plain', text: `${deal.percentOffMsrp} off MSRP` },
+                                savingsTooltip,
+                                expirationDate: deal.expirationDate,
+                              };
+                              pillText = `${deal.incentiveValue} cash back`;
+                              details = [
+                                { label: 'MSRP Range', value: deal.vehicle.priceRange },
+                                { label: 'Est. off MSRP', value: deal.percentOffMsrp! },
+                              ];
+                            } else {
+                              const msrp = parseMsrpMin(deal.vehicle.priceRange);
+                              const aprNum =
+                                deal.dealType === 'zero-apr' ? 0 : parseFloat((deal.aprDisplay ?? '').replace('%', ''));
+                              const months = parseTermMonths(deal.term!);
+                              const monthly = calcMonthly(msrp, aprNum, months);
+                              const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
+                              payment = {
+                                amount: deal.aprDisplay!,
+                                period: ' APR',
+                                savings: { type: 'savings-text', text: savingsVsAvg },
+                                savingsTooltip,
+                                expirationDate: deal.expirationDate,
+                              };
+                              pillText =
+                                deal.dealType === 'zero-apr'
+                                  ? `0% APR for ${deal.term}`
+                                  : `${deal.aprDisplay} APR for ${deal.term}`;
+                              details = [
+                                { label: 'MSRP Range', value: deal.vehicle.priceRange },
+                                { label: 'Term', value: deal.term! },
+                              ];
                             }
-                            offers={offers}
-                            offersPopupOpen={offersPopupOpen}
-                            onToggleOffersPopup={(e) =>
-                              toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)
-                            }
-                            onCloseOffersPopup={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setOffersPopup(null);
-                            }}
-                            payment={payment}
-                            pill={{
-                              chipLabel: deal.chipLabel,
-                              text: pillText,
-                              expirationDate: deal.expirationDate,
-                            }}
-                            details={details}
-                            onDealClick={() => setActiveDealId(deal.id)}
-                          />
-                        </Fragment>
-                      );
-                    })}
+
+                            return (
+                              <Fragment key={deal.id}>
+                                {i > 0 && i % 4 === 0 && <GridAd />}
+                                <DealCard
+                                  slug={deal.vehicle.slug}
+                                  vehicleName={vehicleName}
+                                  vehicleImage={deal.vehicle.image}
+                                  vehicleSlug={deal.vehicle.slug}
+                                  vehicleMake={deal.vehicle.make}
+                                  vehicleModel={deal.vehicle.model}
+                                  rating={deal.rating}
+                                  dealTypeTag={deal.chipLabel}
+                                  editorsChoice={!!deal.vehicle.editorsChoice}
+                                  tenBest={!!deal.vehicle.tenBest}
+                                  isSaved={saved}
+                                  onSaveClick={(e) =>
+                                    handleSaveClick(e, {
+                                      name: vehicleName,
+                                      slug: deal.vehicle.slug,
+                                      image: deal.vehicle.image,
+                                    })
+                                  }
+                                  offers={offers}
+                                  offersPopupOpen={offersPopupOpen}
+                                  onToggleOffersPopup={(e) =>
+                                    toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)
+                                  }
+                                  onCloseOffersPopup={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setOffersPopup(null);
+                                  }}
+                                  payment={payment}
+                                  pill={{
+                                    chipLabel: deal.chipLabel,
+                                    text: pillText,
+                                    expirationDate: deal.expirationDate,
+                                  }}
+                                  details={details}
+                                  onDealClick={() => setActiveDealId(deal.id)}
+                                />
+                              </Fragment>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="make-deals__sidebar" aria-label="Advertisement">
+                      <div className="make-deals__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                </section>
-              </div>
-              <aside className="make-deals__sidebar" aria-label="Advertisement">
-                <div className="make-deals__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
-            </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="make-deals__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
           )}
 
           <div className="make-deals__segment make-deals__segment--tail">
@@ -631,7 +662,7 @@ const DealsByMakePage = () => {
             </div>
             <aside className="make-deals__sidebar" aria-label="Advertisement">
               <div className="make-deals__sidebar-sticky">
-                <AdSidebar />
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
               </div>
             </aside>
           </div>

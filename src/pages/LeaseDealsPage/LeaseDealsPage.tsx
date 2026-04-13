@@ -60,7 +60,27 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const MOBILE_AD_INTERVAL = 4;
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 const LeaseDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
@@ -136,6 +156,8 @@ const LeaseDealsPage = () => {
         rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
       }));
   }, [getSupabaseRating, matchesFilters]);
+
+  const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
 
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
 
@@ -281,63 +303,74 @@ const LeaseDealsPage = () => {
               </aside>
             </div>
           ) : (
-            <div className="lease-deals-page__segment">
-              <div className="lease-deals-page__main">
-                <section className="lease-deals-page__section">
-                  <div className="lease-deals-page__grid">
-                    {deals.map((deal, i) => {
-                      const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
-                      const saved = isVehicleSaved(vehicleName);
-                      const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-                      const { savingsVsAvg, savingsTooltip } = buildSavingsText(deal.monthlyPaymentNum, deal.vehicle.bodyStyle);
-                      return (
-                        <Fragment key={deal.id}>
-                          {i > 0 && i % MOBILE_AD_INTERVAL === 0 && (
-                            <GridAd />
-                          )}
-                          <DealCard
-                            slug={deal.vehicle.slug}
-                            vehicleName={vehicleName}
-                            vehicleImage={deal.vehicle.image}
-                            vehicleSlug={deal.vehicle.slug}
-                            vehicleMake={deal.vehicle.make}
-                            vehicleModel={deal.vehicle.model}
-                            rating={deal.rating}
-                            dealTypeTag="Lease"
-                            editorsChoice={deal.vehicle.editorsChoice}
-                            tenBest={deal.vehicle.tenBest}
-                            isSaved={saved}
-                            onSaveClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
-                            offers={allOffers}
-                            offersPopupOpen={offersPopup?.slug === deal.vehicle.slug}
-                            onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
-                            onCloseOffersPopup={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}
-                            payment={{
-                              amount: deal.monthlyPayment,
-                              period: '/mo',
-                              savings: { type: 'savings-text', text: savingsVsAvg },
-                              savingsTooltip,
-                              expirationDate: deal.expirationDate,
-                            }}
-                            pill={{ chipLabel: 'Lease', text: `${deal.monthlyPayment}/mo lease`, expirationDate: deal.expirationDate }}
-                            details={[
-                              { label: 'Term', value: deal.term },
-                              { label: 'Mileage Allowance', value: deal.mileageAllowance },
-                            ]}
-                            onDealClick={() => setActiveDealId(deal.id)}
-                          />
-                        </Fragment>
-                      );
-                    })}
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`lease-segment-${chunkIndex}`}>
+                  <div className="lease-deals-page__segment">
+                    <div className="lease-deals-page__main">
+                      <section className="lease-deals-page__section">
+                        <div className="lease-deals-page__grid">
+                          {chunk.map((deal, i) => {
+                            const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
+                            const saved = isVehicleSaved(vehicleName);
+                            const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+                            const { savingsVsAvg, savingsTooltip } = buildSavingsText(deal.monthlyPaymentNum, deal.vehicle.bodyStyle);
+                            return (
+                              <Fragment key={deal.id}>
+                                {i > 0 && i % 4 === 0 && (
+                                  <GridAd />
+                                )}
+                                <DealCard
+                                  slug={deal.vehicle.slug}
+                                  vehicleName={vehicleName}
+                                  vehicleImage={deal.vehicle.image}
+                                  vehicleSlug={deal.vehicle.slug}
+                                  vehicleMake={deal.vehicle.make}
+                                  vehicleModel={deal.vehicle.model}
+                                  rating={deal.rating}
+                                  dealTypeTag="Lease"
+                                  editorsChoice={deal.vehicle.editorsChoice}
+                                  tenBest={deal.vehicle.tenBest}
+                                  isSaved={saved}
+                                  onSaveClick={(e) => handleSaveClick(e, { name: vehicleName, slug: deal.vehicle.slug, image: deal.vehicle.image })}
+                                  offers={allOffers}
+                                  offersPopupOpen={offersPopup?.slug === deal.vehicle.slug}
+                                  onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.vehicle.make, deal.vehicle.model, deal.vehicle.slug)}
+                                  onCloseOffersPopup={(e) => { e.preventDefault(); e.stopPropagation(); setOffersPopup(null); }}
+                                  payment={{
+                                    amount: deal.monthlyPayment,
+                                    period: '/mo',
+                                    savings: { type: 'savings-text', text: savingsVsAvg },
+                                    savingsTooltip,
+                                    expirationDate: deal.expirationDate,
+                                  }}
+                                  pill={{ chipLabel: 'Lease', text: `${deal.monthlyPayment}/mo lease`, expirationDate: deal.expirationDate }}
+                                  details={[
+                                    { label: 'Term', value: deal.term },
+                                    { label: 'Mileage Allowance', value: deal.mileageAllowance },
+                                  ]}
+                                  onDealClick={() => setActiveDealId(deal.id)}
+                                />
+                              </Fragment>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="lease-deals-page__sidebar" aria-label="Advertisement">
+                      <div className="lease-deals-page__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                </section>
-              </div>
-              <aside className="lease-deals-page__sidebar" aria-label="Advertisement">
-                <div className="lease-deals-page__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
-            </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="lease-deals-page__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
           )}
 
           <div className="lease-deals-page__segment lease-deals-page__segment--tail">
@@ -369,7 +402,7 @@ const LeaseDealsPage = () => {
             </div>
             <aside className="lease-deals-page__sidebar" aria-label="Advertisement">
               <div className="lease-deals-page__sidebar-sticky">
-                <AdSidebar />
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
               </div>
             </aside>
           </div>

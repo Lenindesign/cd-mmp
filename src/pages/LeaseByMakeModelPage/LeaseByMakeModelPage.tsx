@@ -64,7 +64,27 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const MOBILE_AD_INTERVAL = 4;
+const GRID_BREAKER_AFTER_CARD_COUNT = 12;
+const DEALS_GRID_BREAKER_AD_URL =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+
+const SIDEBAR_AFTER_BREAK_PROPS = {
+  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+  altText: 'Advertisement',
+  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryAltText: 'Advertisement',
+  link: '#',
+  secondaryLink: '#',
+};
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
 
 function buildActiveOffer(deal: LeaseByMakeModelDeal | null): Partial<IncentiveOfferDetail> | undefined {
   if (!deal) return undefined;
@@ -215,6 +235,8 @@ const LeaseByMakeModelPage = () => {
 
     return out.sort((a, b) => a.sortMonthly - b.sortMonthly);
   }, [getSupabaseRating, matchesFilters, matchesMakeAndModel, makeName, modelName]);
+
+  const dealChunks = useMemo(() => chunkArray(allDeals, GRID_BREAKER_AFTER_CARD_COUNT), [allDeals]);
 
   const mmpYear = useMemo(() => {
     if (allDeals.length === 0) return String(year);
@@ -430,25 +452,36 @@ const LeaseByMakeModelPage = () => {
               </aside>
             </div>
           ) : (
-            <div className="mm-lease__segment">
-              <div className="mm-lease__main">
-                <section className="mm-lease__section">
-                  <div className="mm-lease__grid">
-                    {allDeals.map((deal, i) => (
-                      <Fragment key={deal.id}>
-                        {i > 0 && i % MOBILE_AD_INTERVAL === 0 && <GridAd />}
-                        {renderLeaseDealCard(deal)}
-                      </Fragment>
-                    ))}
+            <>
+              {dealChunks.map((chunk, chunkIndex) => (
+                <Fragment key={`lease-mm-segment-${chunkIndex}`}>
+                  <div className="mm-lease__segment">
+                    <div className="mm-lease__main">
+                      <section className="mm-lease__section">
+                        <div className="mm-lease__grid">
+                          {chunk.map((deal, i) => (
+                            <Fragment key={deal.id}>
+                              {i > 0 && i % 4 === 0 && <GridAd />}
+                              {renderLeaseDealCard(deal)}
+                            </Fragment>
+                          ))}
+                        </div>
+                      </section>
+                    </div>
+                    <aside className="mm-lease__sidebar" aria-label="Advertisement">
+                      <div className="mm-lease__sidebar-sticky">
+                        {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
+                      </div>
+                    </aside>
                   </div>
-                </section>
-              </div>
-              <aside className="mm-lease__sidebar" aria-label="Advertisement">
-                <div className="mm-lease__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
-            </div>
+                  {chunkIndex < dealChunks.length - 1 && (
+                    <div className="mm-lease__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                      <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </>
           )}
 
           <div className="mm-lease__segment mm-lease__segment--tail">
@@ -473,7 +506,7 @@ const LeaseByMakeModelPage = () => {
             </div>
             <aside className="mm-lease__sidebar" aria-label="Advertisement">
               <div className="mm-lease__sidebar-sticky">
-                <AdSidebar />
+                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
               </div>
             </aside>
           </div>
