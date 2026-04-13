@@ -508,6 +508,7 @@ const AllDealsPage = () => {
         onApply={setFilters}
         totalResults={filteredDeals.length}
         getResultCount={getResultCount}
+        dealPageType="all"
       />
     </div>
   );

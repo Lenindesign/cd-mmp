@@ -229,14 +229,14 @@ const DealsFilterModal = ({
 
         {/* Scrollable body */}
         <div className="deals-filter__body">
-          {/* Deal Type */}
-          <div className="deals-filter__deal-type-row">
+          {/* Deal Type - only on All Deals page */}
+          {dealPageType === 'all' && <div className="deals-filter__deal-type-row">
             <Tabs<DealTypeOption>
               items={DEAL_TYPE_TABS}
               value={draft.dealType}
               onChange={(val) => setDraft(prev => {
                 const next = { ...prev, dealType: val };
-                const isLeaseSort = val === 'lease' || dealPageType === 'lease';
+                const isLeaseSort = val === 'lease';
                 const leaseSortValues = LEASE_SORT_OPTIONS.map(o => o.value);
                 if (!isLeaseSort && leaseSortValues.includes(prev.sortBy as typeof leaseSortValues[number])) {
                   next.sortBy = 'a-z';
@@ -247,7 +247,7 @@ const DealsFilterModal = ({
               fullWidth
               ariaLabel="Deal type"
             />
-          </div>
+          </div>}
 
           {/* Location */}
           <div className="deals-filter__section deals-filter__section--location">
