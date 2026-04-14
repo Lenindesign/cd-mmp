@@ -208,7 +208,7 @@
 
 /* Main Content */
 .mm-lease__content {
-  padding: var(--spacing-8) 0;
+  padding: var(--spacing-3) 0 var(--spacing-8);
 }
 
 .mm-lease__container--stacked {

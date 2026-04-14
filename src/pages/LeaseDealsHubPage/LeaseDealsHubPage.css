@@ -120,7 +120,7 @@
 
 /* Main Content */
 .lease-hub__content {
-  padding: var(--spacing-8) 0;
+  padding: var(--spacing-3) 0 var(--spacing-8);
 }
 
 .lease-hub__layout {

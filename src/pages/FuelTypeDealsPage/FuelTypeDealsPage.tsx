@@ -330,6 +330,27 @@ const FuelTypeDealsPage = () => {
         noIndex={allDeals.length === 0}
       />
 
+      <div className="fuel-deals__hero">
+        <div className="container">
+          <div className="fuel-deals__hero-content">
+            <div className="fuel-deals__hero-badge">
+              <span className="hero-pill__label">Fuel Type Deals</span>
+            </div>
+            <nav className="fuel-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="fuel-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="fuel-deals__breadcrumb-sep">/</span>
+              <span>Fuel Type Deals</span>
+            </nav>
+            <h1 className="fuel-deals__title">{pageTitle}</h1>
+            <p className="fuel-deals__description">
+              Shop deals by powertrain, whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="fuel-deals__toolbar">
         <div className="container fuel-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -372,28 +393,7 @@ const FuelTypeDealsPage = () => {
         </div>
       </div>
 
-      <div className="fuel-deals__hero">
-        <div className="container">
-          <div className="fuel-deals__hero-content">
-            <div className="fuel-deals__hero-badge">
-              <span className="hero-pill__label">Fuel Type Deals</span>
-            </div>
-            <nav className="fuel-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="fuel-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="fuel-deals__breadcrumb-sep">/</span>
-              <span>Fuel Type Deals</span>
-            </nav>
-            <h1 className="fuel-deals__title">{pageTitle}</h1>
-            <p className="fuel-deals__description">
-              Shop deals by powertrain, whether you want a traditional gas engine, a fuel-sipping hybrid, a zero-emission EV, or a torque-rich diesel. Every current incentive, paired with Car and Driver expert ratings.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="fuel-deals__content">
         <div className={`container${displayDeals.length > 0 ? ' fuel-deals__container--stacked' : ''}`}>

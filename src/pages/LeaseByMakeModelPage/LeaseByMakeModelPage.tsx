@@ -356,6 +356,33 @@ const LeaseByMakeModelPage = () => {
         noIndex={allDeals.length === 0}
       />
 
+      <div className="mm-lease__hero">
+        <div className="container">
+          <div className="mm-lease__hero-content">
+            <div className="mm-lease__hero-badge">
+              <span className="hero-pill__label">
+                {makeName} {modelName}
+              </span>
+            </div>
+            <nav className="mm-lease__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="mm-lease__breadcrumb-sep">/</span>
+              <Link to="/lease-deals">Lease Deals</Link>
+              <span className="mm-lease__breadcrumb-sep">/</span>
+              <Link to={makeParam ? `/${makeParam}/lease-deals` : '/lease-deals'}>
+                {makeName} Lease Deals
+              </Link>
+              <span className="mm-lease__breadcrumb-sep">/</span>
+              <span>
+                {makeName} {modelName}
+              </span>
+            </nav>
+            <h1 className="mm-lease__title">{pageTitle}</h1>
+            <p className="mm-lease__description">{pageDescription}</p>
+          </div>
+        </div>
+      </div>
+
       <div className="mm-lease__toolbar">
         <div className="container mm-lease__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -397,34 +424,7 @@ const LeaseByMakeModelPage = () => {
         </div>
       </div>
 
-      <div className="mm-lease__hero">
-        <div className="container">
-          <div className="mm-lease__hero-content">
-            <div className="mm-lease__hero-badge">
-              <span className="hero-pill__label">
-                {makeName} {modelName}
-              </span>
-            </div>
-            <nav className="mm-lease__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="mm-lease__breadcrumb-sep">/</span>
-              <Link to="/lease-deals">Lease Deals</Link>
-              <span className="mm-lease__breadcrumb-sep">/</span>
-              <Link to={makeParam ? `/${makeParam}/lease-deals` : '/lease-deals'}>
-                {makeName} Lease Deals
-              </Link>
-              <span className="mm-lease__breadcrumb-sep">/</span>
-              <span>
-                {makeName} {modelName}
-              </span>
-            </nav>
-            <h1 className="mm-lease__title">{pageTitle}</h1>
-            <p className="mm-lease__description">{pageDescription}</p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="mm-lease__content">
         <div className={`container${allDeals.length > 0 ? ' mm-lease__container--stacked' : ''}`}>

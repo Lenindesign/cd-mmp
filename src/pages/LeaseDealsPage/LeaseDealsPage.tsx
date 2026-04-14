@@ -224,7 +224,29 @@ const LeaseDealsPage = () => {
         noIndex={deals.length === 0}
       />
 
-      {/* Filter toolbar */}
+      <div className="lease-deals-page__hero">
+        <div className="container">
+          <div className="lease-deals-page__hero-content">
+            <div className="lease-deals-page__hero-badge">
+              <span className="hero-pill__label">Lease Deals</span>
+            </div>
+            <nav className="lease-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="lease-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="lease-deals-page__breadcrumb-sep">/</span>
+              <span>Lease Deals</span>
+            </nav>
+            <h1 className="lease-deals-page__title">{pageTitle}</h1>
+            <p className="lease-deals-page__description">
+              Leasing lets you drive a brand-new car with lower monthly payments than buying. We've compiled
+              the best manufacturer lease specials and paired them with our expert ratings so you can find the
+              best value for your budget.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="lease-deals-page__toolbar">
         <div className="container lease-deals-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -264,30 +286,7 @@ const LeaseDealsPage = () => {
         </div>
       </div>
 
-      <div className="lease-deals-page__hero">
-        <div className="container">
-          <div className="lease-deals-page__hero-content">
-            <div className="lease-deals-page__hero-badge">
-              <span className="hero-pill__label">Lease Deals</span>
-            </div>
-            <nav className="lease-deals-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="lease-deals-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="lease-deals-page__breadcrumb-sep">/</span>
-              <span>Lease Deals</span>
-            </nav>
-            <h1 className="lease-deals-page__title">{pageTitle}</h1>
-            <p className="lease-deals-page__description">
-              Leasing lets you drive a brand-new car with lower monthly payments than buying. We've compiled
-              the best manufacturer lease specials and paired them with our expert ratings so you can find the
-              best value for your budget.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="lease-deals-page__content">
         <div className={`container${deals.length > 0 ? ' lease-deals-page__container--stacked' : ''}`}>

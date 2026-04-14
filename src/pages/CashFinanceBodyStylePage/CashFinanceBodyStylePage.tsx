@@ -345,6 +345,27 @@ const CashFinanceBodyStylePage = () => {
         noIndex={allDeals.length === 0}
       />
 
+      <div className="cfbs-deals__hero">
+        <div className="container">
+          <div className="cfbs-deals__hero-content">
+            <div className="cfbs-deals__hero-badge">
+              <span className="hero-pill__label">Buying Deals by Body Style</span>
+            </div>
+            <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="cfbs-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="cfbs-deals__breadcrumb-sep">/</span>
+              <span>Buy by Body Style</span>
+            </nav>
+            <h1 className="cfbs-deals__title">{pageTitle}</h1>
+            <p className="cfbs-deals__description">
+              Special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="cfbs-deals__toolbar">
         <div className="container cfbs-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -385,28 +406,7 @@ const CashFinanceBodyStylePage = () => {
         </div>
       </div>
 
-      <div className="cfbs-deals__hero">
-        <div className="container">
-          <div className="cfbs-deals__hero-content">
-            <div className="cfbs-deals__hero-badge">
-              <span className="hero-pill__label">Buying Deals by Body Style</span>
-            </div>
-            <nav className="cfbs-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="cfbs-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="cfbs-deals__breadcrumb-sep">/</span>
-              <span>Buy by Body Style</span>
-            </nav>
-            <h1 className="cfbs-deals__title">{pageTitle}</h1>
-            <p className="cfbs-deals__description">
-              Special finance rates organized by body style. Whether you're shopping for an SUV, sedan, truck, or coupe, find the best manufacturer incentives paired with Car and Driver expert ratings.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="cfbs-deals__content">
         <div className={`container${displayDeals.length > 0 ? ' cfbs-deals__container--stacked' : ''}`}>

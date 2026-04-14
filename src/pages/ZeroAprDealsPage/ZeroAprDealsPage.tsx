@@ -427,6 +427,34 @@ const ZeroAprDealsPage = () => {
         noIndex={isZeroPercentOnlyRoute ? deals.length === 0 : allDeals.length === 0}
       />
 
+      <div className="zero-apr-page__hero">
+        <div className="container">
+          <div className="zero-apr-page__hero-content">
+            <nav className="zero-apr-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="zero-apr-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="zero-apr-page__breadcrumb-sep">/</span>
+              {isZeroPercentOnlyRoute ? (
+                <>
+                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
+                  <span className="zero-apr-page__breadcrumb-sep">/</span>
+                  <span>0% APR Deals</span>
+                </>
+              ) : (
+                <span>Best Buying Deals</span>
+              )}
+            </nav>
+            <h1 className="zero-apr-page__title">{pageTitle}</h1>
+            <p className="zero-apr-page__description">
+              {isZeroPercentOnlyRoute
+                ? 'These manufacturer-backed offers charge no interest on your auto loan, so every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
+                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average, these offers can save you thousands over the life of your loan.'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="zero-apr-page__toolbar">
         <div className="container zero-apr-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -467,35 +495,7 @@ const ZeroAprDealsPage = () => {
         </div>
       </div>
 
-      <div className="zero-apr-page__hero">
-        <div className="container">
-          <div className="zero-apr-page__hero-content">
-            <nav className="zero-apr-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="zero-apr-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="zero-apr-page__breadcrumb-sep">/</span>
-              {isZeroPercentOnlyRoute ? (
-                <>
-                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
-                  <span className="zero-apr-page__breadcrumb-sep">/</span>
-                  <span>0% APR Deals</span>
-                </>
-              ) : (
-                <span>Best Buying Deals</span>
-              )}
-            </nav>
-            <h1 className="zero-apr-page__title">{pageTitle}</h1>
-            <p className="zero-apr-page__description">
-              {isZeroPercentOnlyRoute
-                ? 'These manufacturer-backed offers charge no interest on your auto loan, so every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
-                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average, these offers can save you thousands over the life of your loan.'}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="zero-apr-page__content">
         <div className={`container${deals.length > 0 ? ' zero-apr-page__container--stacked' : ''}`}>

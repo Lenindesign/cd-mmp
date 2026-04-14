@@ -415,6 +415,25 @@ const DealsByMakePage = () => {
         noIndex={allDeals.length === 0}
       />
 
+      <div className="make-deals__hero">
+        <div className="container">
+          <div className="make-deals__hero-content">
+            <div className="make-deals__hero-badge">
+              <span className="hero-pill__label">{makeName}</span>
+            </div>
+            <nav className="make-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="make-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="make-deals__breadcrumb-sep">/</span>
+              <span>{makeName} Deals</span>
+            </nav>
+            <h1 className="make-deals__title">{pageTitle}</h1>
+            <p className="make-deals__description">{pageDescription}</p>
+          </div>
+        </div>
+      </div>
+
       <div className="make-deals__toolbar">
         <div className="container make-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -456,26 +475,7 @@ const DealsByMakePage = () => {
         </div>
       </div>
 
-      <div className="make-deals__hero">
-        <div className="container">
-          <div className="make-deals__hero-content">
-            <div className="make-deals__hero-badge">
-              <span className="hero-pill__label">{makeName}</span>
-            </div>
-            <nav className="make-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="make-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="make-deals__breadcrumb-sep">/</span>
-              <span>{makeName} Deals</span>
-            </nav>
-            <h1 className="make-deals__title">{pageTitle}</h1>
-            <p className="make-deals__description">{pageDescription}</p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="make-deals__content">
         <div className={`container${allDeals.length > 0 ? ' make-deals__container--stacked' : ''}`}>

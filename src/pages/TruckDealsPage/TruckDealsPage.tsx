@@ -268,6 +268,24 @@ const TruckDealsPage = () => {
   return (
     <div className="truck-deals-page">
       <SEO title={pageTitle} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on pickup trucks. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/truck`} keywords={['truck deals', 'pickup truck deals', `truck deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best truck incentives', 'truck lease deals', 'truck cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Truck Deals', url: `${BASE_URL}/deals/truck` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
+      <div className="truck-deals-page__hero">
+        <div className="container">
+          <div className="truck-deals-page__hero-content">
+            <div className="truck-deals-page__hero-badge">
+              <span className="hero-pill__label">Truck Deals</span>
+            </div>
+            <nav className="truck-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="truck-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="truck-deals-page__breadcrumb-sep">/</span>
+              <span>Truck Deals</span>
+            </nav>
+            <h1 className="truck-deals-page__title">{pageTitle}</h1>
+            <p className="truck-deals-page__description">Every current incentive on pickup trucks - 0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
+          </div>
+        </div>
+      </div>
       <div className="truck-deals-page__toolbar">
         <div className="container truck-deals-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -307,25 +325,7 @@ const TruckDealsPage = () => {
           </button>
         </div>
       </div>
-      <div className="truck-deals-page__hero">
-        <div className="container">
-          <div className="truck-deals-page__hero-content">
-            <div className="truck-deals-page__hero-badge">
-              <span className="hero-pill__label">Truck Deals</span>
-            </div>
-            <nav className="truck-deals-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="truck-deals-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="truck-deals-page__breadcrumb-sep">/</span>
-              <span>Truck Deals</span>
-            </nav>
-            <h1 className="truck-deals-page__title">{pageTitle}</h1>
-            <p className="truck-deals-page__description">Every current incentive on pickup trucks - 0% APR financing, cash-back rebates, special finance rates, and lease specials. Paired with Car and Driver expert ratings to help you find the best truck at the best price.</p>
-          </div>
-        </div>
-      </div>
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
       <div className="truck-deals-page__content">
         <div className={`container${filteredDeals.length > 0 ? ' truck-deals-page__container--stacked' : ''}`}>
           {filteredDeals.length === 0 ? (

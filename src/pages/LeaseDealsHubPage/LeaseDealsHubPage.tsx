@@ -241,6 +241,27 @@ const LeaseDealsHubPage = () => {
         noIndex={allLeaseDeals.length === 0}
       />
 
+      <div className="lease-hub__hero">
+        <div className="container">
+          <div className="lease-hub__hero-content">
+            <div className="lease-hub__hero-badge">
+              <span className="hero-pill__label">Lease Deals Hub</span>
+            </div>
+            <nav className="lease-hub__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="lease-hub__breadcrumb-sep">/</span>
+              <span aria-current="page">Lease Deals</span>
+            </nav>
+            <h1 className="lease-hub__title">{h1Title}</h1>
+            <p className="lease-hub__description">
+              Car and Driver&apos;s editors track every manufacturer lease special so you don&apos;t have to. Below you&apos;ll find the best lease deals
+              available right now, updated monthly with the latest offers. Use our ratings and filters to compare payments and find a lease that fits your
+              budget.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="lease-hub__toolbar">
         <div className="container lease-hub__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -279,27 +300,6 @@ const LeaseDealsHubPage = () => {
               <span className="deals-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
-        </div>
-      </div>
-
-      <div className="lease-hub__hero">
-        <div className="container">
-          <div className="lease-hub__hero-content">
-            <div className="lease-hub__hero-badge">
-              <span className="hero-pill__label">Lease Deals Hub</span>
-            </div>
-            <nav className="lease-hub__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="lease-hub__breadcrumb-sep">/</span>
-              <span aria-current="page">Lease Deals</span>
-            </nav>
-            <h1 className="lease-hub__title">{h1Title}</h1>
-            <p className="lease-hub__description">
-              Car and Driver&apos;s editors track every manufacturer lease special so you don&apos;t have to. Below you&apos;ll find the best lease deals
-              available right now, updated monthly with the latest offers. Use our ratings and filters to compare payments and find a lease that fits your
-              budget.
-            </p>
-          </div>
         </div>
       </div>
 

@@ -182,7 +182,7 @@
 
 /* Main Content */
 .cf-deals-page__content {
-  padding: var(--spacing-8) 0;
+  padding: var(--spacing-3) 0 var(--spacing-8);
 }
 
 .cf-deals-page__container--stacked {

@@ -415,6 +415,31 @@ const DealsByMakeModelPage = () => {
         noIndex={allDeals.length === 0}
       />
 
+      <div className="mm-deals__hero">
+        <div className="container">
+          <div className="mm-deals__hero-content">
+            <div className="mm-deals__hero-badge">
+              <span className="hero-pill__label">
+                {makeName} {modelName}
+              </span>
+            </div>
+            <nav className="mm-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="mm-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="mm-deals__breadcrumb-sep">/</span>
+              <Link to={makeDealsPath}>{makeName} Deals</Link>
+              <span className="mm-deals__breadcrumb-sep">/</span>
+              <span>
+                {makeName} {modelName}
+              </span>
+            </nav>
+            <h1 className="mm-deals__title">{pageTitle}</h1>
+            <p className="mm-deals__description">{pageDescription}</p>
+          </div>
+        </div>
+      </div>
+
       <div className="mm-deals__toolbar">
         <div className="container mm-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -456,32 +481,7 @@ const DealsByMakeModelPage = () => {
         </div>
       </div>
 
-      <div className="mm-deals__hero">
-        <div className="container">
-          <div className="mm-deals__hero-content">
-            <div className="mm-deals__hero-badge">
-              <span className="hero-pill__label">
-                {makeName} {modelName}
-              </span>
-            </div>
-            <nav className="mm-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="mm-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="mm-deals__breadcrumb-sep">/</span>
-              <Link to={makeDealsPath}>{makeName} Deals</Link>
-              <span className="mm-deals__breadcrumb-sep">/</span>
-              <span>
-                {makeName} {modelName}
-              </span>
-            </nav>
-            <h1 className="mm-deals__title">{pageTitle}</h1>
-            <p className="mm-deals__description">{pageDescription}</p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="mm-deals__content">
         <div className={`container${allDeals.length > 0 ? ' mm-deals__container--stacked' : ''}`}>

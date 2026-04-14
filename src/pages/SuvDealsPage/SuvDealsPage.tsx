@@ -267,6 +267,24 @@ const SuvDealsPage = () => {
   return (
     <div className="suv-deals-page">
       <SEO title={pageTitle} description={`Find the best SUV deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on SUVs and crossovers. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/suv`} keywords={['SUV deals', 'crossover deals', `SUV deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best SUV incentives', 'SUV lease deals', 'SUV cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'SUV Deals', url: `${BASE_URL}/deals/suv` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
+      <div className="suv-deals-page__hero">
+        <div className="container">
+          <div className="suv-deals-page__hero-content">
+            <div className="suv-deals-page__hero-badge">
+              <span className="hero-pill__label">SUV Deals</span>
+            </div>
+            <nav className="suv-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="suv-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="suv-deals-page__breadcrumb-sep">/</span>
+              <span>SUV Deals</span>
+            </nav>
+            <h1 className="suv-deals-page__title">{pageTitle}</h1>
+            <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place - 0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
+          </div>
+        </div>
+      </div>
       <div className="suv-deals-page__toolbar">
         <div className="container suv-deals-page__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -306,25 +324,7 @@ const SuvDealsPage = () => {
           </button>
         </div>
       </div>
-      <div className="suv-deals-page__hero">
-        <div className="container">
-          <div className="suv-deals-page__hero-content">
-            <div className="suv-deals-page__hero-badge">
-              <span className="hero-pill__label">SUV Deals</span>
-            </div>
-            <nav className="suv-deals-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="suv-deals-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="suv-deals-page__breadcrumb-sep">/</span>
-              <span>SUV Deals</span>
-            </nav>
-            <h1 className="suv-deals-page__title">{pageTitle}</h1>
-            <p className="suv-deals-page__description">Every current deal on SUVs and crossovers in one place - 0% APR financing, cash-back rebates, special finance rates, and lease specials. All paired with Car and Driver expert ratings.</p>
-          </div>
-        </div>
-      </div>
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
       <div className="suv-deals-page__content">
         <div className={`container${filteredDeals.length > 0 ? ' suv-deals-page__container--stacked' : ''}`}>
           {filteredDeals.length === 0 ? (

@@ -252,6 +252,30 @@ const CashFinanceDealsPage = () => {
         noIndex={displayDeals.length === 0}
       />
 
+      {/* Hero Section */}
+      <div className="cf-deals-page__hero">
+        <div className="container">
+          <div className="cf-deals-page__hero-content">
+            <div className="cf-deals-page__hero-badge">
+              <span className="hero-pill__label">Buying Deals</span>
+            </div>
+            <nav className="cf-deals-page__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="cf-deals-page__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="cf-deals-page__breadcrumb-sep">/</span>
+              <span>Buying Deals</span>
+            </nav>
+            <h1 className="cf-deals-page__title">{pageTitle}</h1>
+            <p className="cf-deals-page__description">
+              Manufacturers offer special finance rates to move inventory, and those savings go directly to you.
+              We've combined the best current offers with Car and Driver's expert ratings so you can find not just
+              a good price, but a great car at a great price.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Filter toolbar */}
       <div className="cf-deals-page__toolbar">
         <div className="container cf-deals-page__toolbar-inner">
@@ -287,31 +311,7 @@ const CashFinanceDealsPage = () => {
         </div>
       </div>
 
-      {/* Hero Section */}
-      <div className="cf-deals-page__hero">
-        <div className="container">
-          <div className="cf-deals-page__hero-content">
-            <div className="cf-deals-page__hero-badge">
-              <span className="hero-pill__label">Buying Deals</span>
-            </div>
-            <nav className="cf-deals-page__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="cf-deals-page__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="cf-deals-page__breadcrumb-sep">/</span>
-              <span>Buying Deals</span>
-            </nav>
-            <h1 className="cf-deals-page__title">{pageTitle}</h1>
-            <p className="cf-deals-page__description">
-              Manufacturers offer special finance rates to move inventory, and those savings go directly to you.
-              We've combined the best current offers with Car and Driver's expert ratings so you can find not just
-              a good price, but a great car at a great price.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       {/* Main Content */}
       <div className="cf-deals-page__content">

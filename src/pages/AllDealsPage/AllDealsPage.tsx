@@ -305,6 +305,25 @@ const AllDealsPage = () => {
         noIndex={allDeals.length === 0}
       />
 
+      <div className="all-deals__hero">
+        <div className="container">
+          <div className="all-deals__hero-content">
+            <nav className="all-deals__breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="all-deals__breadcrumb-sep">/</span>
+              <Link to="/deals">Deals</Link>
+              <span className="all-deals__breadcrumb-sep">/</span>
+              <span>All Deals</span>
+            </nav>
+            <h1 className="all-deals__title">All Deals for {month} {year}</h1>
+            <p className="all-deals__description">
+              Every current manufacturer incentive in one place - 0% APR financing,
+              special finance rates, and lease specials, all paired with Car and Driver expert ratings.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="all-deals__toolbar">
         <div className="container all-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
@@ -344,26 +363,7 @@ const AllDealsPage = () => {
         </div>
       </div>
 
-      <div className="all-deals__hero">
-        <div className="container">
-          <div className="all-deals__hero-content">
-            <nav className="all-deals__breadcrumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="all-deals__breadcrumb-sep">/</span>
-              <Link to="/deals">Deals</Link>
-              <span className="all-deals__breadcrumb-sep">/</span>
-              <span>All Deals</span>
-            </nav>
-            <h1 className="all-deals__title">All Deals for {month} {year}</h1>
-            <p className="all-deals__description">
-              Every current manufacturer incentive in one place - 0% APR financing,
-              special finance rates, and lease specials, all paired with Car and Driver expert ratings.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="all-deals__content">
         <div className="container">
