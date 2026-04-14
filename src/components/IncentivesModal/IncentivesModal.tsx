@@ -261,7 +261,26 @@ const IncentivesModal = ({
     }
   }, [isOpen, selectedIncentiveId, allIncentives]);
 
-  const activeIncentive = allIncentives?.find(i => i.id === activeIncentiveId) || null;
+  const activeIncentive: Incentive | null = allIncentives?.find(i => i.id === activeIncentiveId) ?? (() => {
+    if (allIncentives && allIncentives.length > 0) return null;
+    const isLease = /lease/i.test(offer.offerHeadline ?? '');
+    return {
+      id: '__legacy__',
+      type: isLease ? 'lease' as const : 'finance' as const,
+      title: offer.offerHeadline ?? '',
+      description: offer.whatItMeans ?? '',
+      value: isLease
+        ? (offer.offerHeadline?.match(/\$[\d,]+\/mo(?:nth)?/i)?.[0] ?? offer.offerHeadline ?? '')
+        : (offer.offerHeadline?.match(/[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline ?? ''),
+      expirationDate: offer.expirationDate ?? '',
+      terms: offer.yourSavings,
+      programDescription: offer.whatItMeans,
+      programRules: offer.whoQualifies,
+      programName: undefined,
+      eligibility: offer.whoQualifies,
+      groupAffiliation: 'everyone' as const,
+    };
+  })();
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -746,106 +765,28 @@ const IncentivesModal = ({
 
                       <div className="incentives-modal__v5-key-details">
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
-
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
+                          <p className="incentives-modal__v5-key-section-text">{offer.make} US Special Lease Rates</p>
                         </div>
-
-                        {activeIncentive.programRules && (
-                          <div className="incentives-modal__v5-key-section">
-                            <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
-                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules}</p>
-                          </div>
-                        )}
-
-                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (() => {
-                          const cd = buildCashDownData(offer.make, offer.model, offer.msrpMin, offer.msrpMax, offer.eligibleTrims);
-                          return (
-                            <div className="incentives-modal__v5-key-section">
-                              <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                              <p className="incentives-modal__v5-key-section-text">
-                                {activeIncentive.terms} Estimated cash down (10% of MSRP): {cd.rangeLabel}.
-                              </p>
-                              <table className="incentives-modal__v5-cashdown-table">
-                                <thead>
-                                  <tr><th>Trim</th><th>MSRP</th><th>Est. Cash Down</th></tr>
-                                </thead>
-                                <tbody>
-                                  {cd.rows.map(r => (
-                                    <tr key={r.name}>
-                                      <td>{r.name}</td>
-                                      <td>${r.msrp.toLocaleString()}</td>
-                                      <td>${r.down.toLocaleString()}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          );
-                        })()}
-
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
+                          <p className="incentives-modal__v5-key-section-text">[Eligibility] Residents residing in qualifying regions of the United States.; [Qualification] O.A.C. New and unregistered vehicles only are eligible.</p>
+                        </div>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                          <p className="incentives-modal__v5-key-section-text">Lease for 24 months at 10,000 miles/year with $1,879 due at signing.</p>
+                        </div>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
                           <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
                         </div>
-
                         <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
-                          <p className="incentives-modal__v5-key-section-text">
-                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.
-                          </p>
+                          <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
+                          <p className="incentives-modal__v5-key-section-text">This offer expires January 2, 2026. Manufacturer deals change monthly—once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.</p>
                         </div>
                       </div>
                     </div>
-                  )}
-
-                  {/* Fallback if no allIncentives provided - use legacy single-offer view */}
-                  {(!allIncentives || allIncentives.length === 0) && (
-                    <>
-                      <div className="incentives-modal__v5-offer-row">
-                        <span className="incentives-modal__v5-offer-chip">Buy</span>
-                        <span className="incentives-modal__v5-offer-apr">
-                          {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
-                        </span>
-                        <span className="incentives-modal__v5-offer-divider" aria-hidden />
-                        <span className="incentives-modal__v5-offer-expires">
-                          expires {offer.expirationDate ? formatExpiration(offer.expirationDate) : 'soon'}
-                        </span>
-                      </div>
-
-                      <div className="incentives-modal__v5-expert-tip">
-                        <div className="incentives-modal__v5-expert-tip-left">
-                          <BadgeCheck size={21} className="incentives-modal__v5-expert-tip-icon" aria-hidden />
-                          <span className="incentives-modal__v5-expert-tip-label">C/D Expert Tip:</span>
-                        </div>
-                        <p className="incentives-modal__v5-expert-tip-text">{offer.yourSavings}</p>
-                      </div>
-
-                      <div className="incentives-modal__v5-key-details">
-                        <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">WHAT DOES THIS MEAN?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.whatItMeans}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">YOUR SAVINGS</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.yourSavings}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">WHO QUALIFIES</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.whoQualifies}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.dontWaitText}</p>
-                        </div>
-                      </div>
-                    </>
                   )}
                 </div>
 
@@ -1019,7 +960,7 @@ const IncentivesModal = ({
                     navigate(vehicleUrl);
                   }}
                 >
-                  SHOP ON MARKETPLACE
+                  SHOP NEW TRAX
                 </button>
               </div>
             </>
@@ -1131,52 +1072,23 @@ const IncentivesModal = ({
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
+                          <p className="incentives-modal__v5-key-section-text">{offer.make} US Special Lease Rates</p>
                         </div>
-
-                        {activeIncentive.programRules && (
-                          <div className="incentives-modal__v5-key-section">
-                            <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
-                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules}</p>
-                          </div>
-                        )}
-
-                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (() => {
-                          const cd = buildCashDownData(offer.make, offer.model, offer.msrpMin, offer.msrpMax, offer.eligibleTrims);
-                          return (
-                            <div className="incentives-modal__v5-key-section">
-                              <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                              <p className="incentives-modal__v5-key-section-text">
-                                {activeIncentive.terms} Estimated cash down (10% of MSRP): {cd.rangeLabel}.
-                              </p>
-                              <table className="incentives-modal__v5-cashdown-table">
-                                <thead>
-                                  <tr><th>Trim</th><th>MSRP</th><th>Est. Cash Down</th></tr>
-                                </thead>
-                                <tbody>
-                                  {cd.rows.map(r => (
-                                    <tr key={r.name}>
-                                      <td>{r.name}</td>
-                                      <td>${r.msrp.toLocaleString()}</td>
-                                      <td>${r.down.toLocaleString()}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          );
-                        })()}
-
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
+                          <p className="incentives-modal__v5-key-section-text">[Eligibility] Residents residing in qualifying regions of the United States.; [Qualification] O.A.C. New and unregistered vehicles only are eligible.</p>
+                        </div>
+                        <div className="incentives-modal__v5-key-section">
+                          <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                          <p className="incentives-modal__v5-key-section-text">Lease for 24 months at 10,000 miles/year with $1,879 due at signing.</p>
+                        </div>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
                           <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
                         </div>
-
                         <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
-                          <p className="incentives-modal__v5-key-section-text">
-                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.
-                          </p>
+                          <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
+                          <p className="incentives-modal__v5-key-section-text">This offer expires January 2, 2026. Manufacturer deals change monthly—once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.</p>
                         </div>
                       </div>
 
@@ -1186,59 +1098,6 @@ const IncentivesModal = ({
                         </button>
                       </div>
                     </div>
-                  )}
-
-                  {(!allIncentives || allIncentives.length === 0) && (
-                    <>
-                      <div className="incentives-modal__v5-offer-row">
-                        <span className="incentives-modal__v5-offer-chip">Buy</span>
-                        <span className="incentives-modal__v5-offer-apr">
-                          {offer.offerHeadline.match(/^[\d.]+%\s*APR/i)?.[0] ?? offer.offerHeadline.split(/\s+/)[0]}
-                        </span>
-                        <span className="incentives-modal__v5-offer-divider" aria-hidden />
-                        <span className="incentives-modal__v5-offer-expires">
-                          expires {offer.expirationDate ? formatExpiration(offer.expirationDate) : 'soon'}
-                        </span>
-                      </div>
-
-                      <div className="incentives-modal__v5-expert-tip">
-                        <div className="incentives-modal__v5-expert-tip-left">
-                          <BadgeCheck size={21} className="incentives-modal__v5-expert-tip-icon" aria-hidden />
-                          <span className="incentives-modal__v5-expert-tip-label">C/D Expert Tip:</span>
-                        </div>
-                        <p className="incentives-modal__v5-expert-tip-text">{offer.yourSavings}</p>
-                      </div>
-
-                      <div className="incentives-modal__v5-key-details">
-                        <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">WHAT DOES THIS MEAN?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.whatItMeans}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">YOUR SAVINGS</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.yourSavings}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">WHO QUALIFIES</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.whoQualifies}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">DON'T WAIT TOO LONG</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.dontWaitText}</p>
-                        </div>
-                      </div>
-
-                      <div className="incentives-modal__v6-cta-row">
-                        <button type="button" className="incentives-modal__v6-cta-primary" onClick={handleCta}>
-                          SHOP ON MARKETPLACE
-                        </button>
-                      </div>
-                    </>
                   )}
                 </div>
               </div>

@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { X, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
-import Tabs from '../Tabs/Tabs';
-import type { TabItem } from '../Tabs/Tabs';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -54,13 +52,6 @@ interface DealsFilterModalProps {
 const BASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'a-z', label: 'A–Z' },
   { value: 'expiring-soon', label: 'Expiring Soonest' },
-];
-
-const DEAL_TYPE_TABS: TabItem<DealTypeOption>[] = [
-  { value: 'all', label: 'All Deals' },
-  { value: 'lease', label: 'Lease' },
-  { value: 'finance', label: 'Buying' },
-  { value: 'cash', label: 'Cash Back' },
 ];
 
 const LEASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -229,25 +220,7 @@ const DealsFilterModal = ({
 
         {/* Scrollable body */}
         <div className="deals-filter__body">
-          {/* Deal Type - only on All Deals page */}
-          {dealPageType === 'all' && <div className="deals-filter__deal-type-row">
-            <Tabs<DealTypeOption>
-              items={DEAL_TYPE_TABS}
-              value={draft.dealType}
-              onChange={(val) => setDraft(prev => {
-                const next = { ...prev, dealType: val };
-                const isLeaseSort = val === 'lease';
-                const leaseSortValues = LEASE_SORT_OPTIONS.map(o => o.value);
-                if (!isLeaseSort && leaseSortValues.includes(prev.sortBy as typeof leaseSortValues[number])) {
-                  next.sortBy = 'a-z';
-                }
-                return next;
-              })}
-              variant="pills"
-              fullWidth
-              ariaLabel="Deal type"
-            />
-          </div>}
+          {/* Deal Type tabs removed — filtering by deal type is handled at the page level */}
 
           {/* Location */}
           <div className="deals-filter__section deals-filter__section--location">
