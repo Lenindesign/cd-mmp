@@ -1,10 +1,10 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -19,7 +19,7 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { DealCard } from '../../components/DealCard';
-import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH } from '../../constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
 import './ZeroAprDealsPage.css';
 
 type AprTab = 'all' | 'zero-apr' | 'special-apr' | 'cash';
@@ -79,10 +79,10 @@ const DEFAULT_FILTERS: DealsFilterState = {
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
-  monthlyPaymentMax: 99999,
+  monthlyPaymentMax: 1500,
   makes: [],
   dueAtSigningMin: 0,
-  dueAtSigningMax: 99999,
+  dueAtSigningMax: 5000,
   fuelTypes: [],
   accolades: [],
   terms: [],
@@ -130,18 +130,21 @@ function renderFaqQuestionText(question: string) {
 
 const ZeroAprDealsPage = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+
   const isZeroPercentOnlyRoute = location.pathname === ZERO_PERCENT_APR_DEALS_PATH;
+  const isCashBackOnlyRoute = location.pathname === CASH_BACK_DEALS_PATH;
 
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
 
-  const [activeTab, setActiveTab] = useState<AprTab>(() => (isZeroPercentOnlyRoute ? 'zero-apr' : 'all'));
+  const routeTab: AprTab = isZeroPercentOnlyRoute ? 'zero-apr' : isCashBackOnlyRoute ? 'cash' : 'all';
+
+  const [activeTab, setActiveTab] = useState<AprTab>(routeTab);
 
   useEffect(() => {
-    setActiveTab(isZeroPercentOnlyRoute ? 'zero-apr' : 'all');
-  }, [isZeroPercentOnlyRoute]);
+    setActiveTab(routeTab);
+  }, [routeTab]);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
@@ -151,24 +154,23 @@ const ZeroAprDealsPage = () => {
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
-    const params = new URLSearchParams();
-    params.set('filters', JSON.stringify(applied));
-    navigate(`/deals/all?${params.toString()}`);
-  }, [navigate]);
+    setFilters(applied);
+  }, []);
 
   const { pills: sharedPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
   const activeFilterPills = useMemo(() => {
     const tabLabel = activeTab === 'zero-apr' ? '0% APR' : activeTab === 'special-apr' ? 'Special APR' : activeTab === 'cash' ? 'Cash Back' : '';
     const extra = tabLabel
-      ? [{ id: `tab-${activeTab}`, label: tabLabel, onRemove: () => navigate('/deals/all') }]
+      ? [{ id: `tab-${activeTab}`, label: tabLabel, onRemove: () => { setActiveTab('best-deals'); setFilters(DEFAULT_FILTERS); } }]
       : [];
     return [...extra, ...sharedPills];
-  }, [activeTab, sharedPills, navigate]);
+  }, [activeTab, sharedPills]);
 
   const clearAllFilters = useCallback(() => {
-    navigate('/deals/all');
-  }, [navigate]);
+    setActiveTab('best-deals');
+    setFilters(DEFAULT_FILTERS);
+  }, []);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -256,7 +258,7 @@ const ZeroAprDealsPage = () => {
         const dealTier = inferCreditTier(d.targetAudience);
         if (!creditTierQualifies(dealTier, f.creditTier)) return false;
       }
-      if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 99999) {
+      if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 1500) {
         if (d.estimatedMonthly < f.monthlyPaymentMin || d.estimatedMonthly > f.monthlyPaymentMax) return false;
       }
       return true;
@@ -273,12 +275,10 @@ const ZeroAprDealsPage = () => {
   const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    const global = getGlobalDealCounts();
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
-    }
-    return global.all;
-  }, []);
+    const filtered = applyFiltersToDeals(allDeals, draftFilters);
+    if (activeTab === 'all') return filtered.length;
+    return filtered.filter(d => d.aprType === activeTab).length;
+  }, [allDeals, applyFiltersToDeals, activeTab]);
 
   const isVehicleSaved = (vehicleName: string) => user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
 
@@ -433,11 +433,8 @@ const ZeroAprDealsPage = () => {
             <span className="active-filter-pills__count">{deals.length} {deals.length === 1 ? 'deal' : 'deals'}</span>
             <div className="active-filter-pills__row" aria-label="Active filters">
               {activeFilterPills.length === 0 && (
-                <span className="active-filter-pills__pill">
+                <span className="active-filter-pills__pill active-filter-pills__pill--static">
                   <span className="active-filter-pills__pill-label">Buying Deals</span>
-                  <button type="button" className="active-filter-pills__pill-x" aria-label="Remove Buying Deals filter" onClick={() => navigate('/deals/all')}>
-                    <X size={12} strokeWidth={2.5} aria-hidden />
-                  </button>
                 </span>
               )}
               {activeFilterPills.map(pill => (
@@ -458,13 +455,13 @@ const ZeroAprDealsPage = () => {
 
           <button
             type="button"
-            className={`zero-apr-page__filter-btn ${activeFilterPills.length > 0 ? 'zero-apr-page__filter-btn--active' : ''}`}
+            className={`deals-filter-btn ${activeFilterPills.length > 0 ? 'deals-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="zero-apr-page__filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>

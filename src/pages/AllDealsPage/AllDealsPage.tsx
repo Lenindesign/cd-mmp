@@ -3,7 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
-import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
@@ -56,10 +55,10 @@ const DEFAULT_FILTERS: DealsFilterState = {
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
-  monthlyPaymentMax: 99999,
+  monthlyPaymentMax: 1500,
   makes: [],
   dueAtSigningMin: 0,
-  dueAtSigningMax: 99999,
+  dueAtSigningMax: 5000,
   fuelTypes: [],
   accolades: [],
   terms: [],
@@ -220,29 +219,6 @@ const AllDealsPage = () => {
         });
       });
 
-    getLeaseDeals().forEach(d => {
-        const leaseNum = d.monthlyPaymentNum;
-        const savings = buildSavingsText(leaseNum, d.vehicle.bodyStyle, 'lease');
-        deals.push({
-          vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
-          make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
-          slug: d.vehicle.slug, priceRange: d.vehicle.priceRange,
-          bodyStyle: d.vehicle.bodyStyle, fuelType: d.vehicle.fuelType,
-          dealType: 'lease',
-          dealText: `${d.monthlyPayment}/mo lease`,
-          dealHeadline: `Lease for ${d.monthlyPayment}/month`,
-          whatItMeans: `Lease for ${d.term} at ${d.monthlyPayment}/mo with ${d.dueAtSigning} due at signing.`,
-          savingsNote: `${d.monthlyPayment}/mo is significantly lower than a typical purchase payment.`,
-          whoQualifies: 'Well-qualified lessees with approved credit.',
-          programName: d.programName, programDescription: d.programDescription,
-          trimsEligible: d.trimsEligible, expirationDate: d.expirationDate,
-          editorsChoice: d.vehicle.editorsChoice, tenBest: d.vehicle.tenBest,
-          staffRating: d.vehicle.staffRating, monthlyPayment: d.monthlyPayment, term: d.term,
-          estimatedMonthly: d.monthlyPayment, monthlyNum: leaseNum,
-          savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
-        });
-      });
-
     return deals;
   }, []);
 
@@ -262,7 +238,7 @@ const AllDealsPage = () => {
       if (f.terms.length > 0 && d.term) {
         if (!f.terms.includes(parseTermMonths(d.term))) return false;
       }
-      if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 99999) {
+      if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 1500) {
         if (d.monthlyNum < f.monthlyPaymentMin || d.monthlyNum > f.monthlyPaymentMax) return false;
       }
       return true;
@@ -270,27 +246,16 @@ const AllDealsPage = () => {
   }, []);
 
   const filteredDeals = useMemo(() => {
-    let filtered = applyFiltersToDeals(allDeals, filters);
-    if (filters.dealType !== 'all') {
-      const typeMap: Record<string, string> = { lease: 'lease', finance: 'finance', cash: 'cash' };
-      const mapped = typeMap[filters.dealType];
-      if (mapped) filtered = filtered.filter(d => d.dealType === mapped);
-    }
-    return filtered;
+    return applyFiltersToDeals(allDeals, filters);
   }, [allDeals, filters, applyFiltersToDeals]);
 
   const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);
 
-  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    const global = getGlobalDealCounts();
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
-    }
-    return global.all;
+  const getResultCount = useCallback((): number => {
+    return getGlobalDealCounts().all;
   }, []);
 
-  const DEAL_TYPE_EMPTY_LABELS: Record<string, string> = { lease: 'Lease', finance: 'Buy', cash: 'Cash Back' };
-  const emptyDealsCategory = filters.dealType === 'all' ? 'deal' : (DEAL_TYPE_EMPTY_LABELS[filters.dealType] || 'deal');
+  const emptyDealsCategory = 'deal';
 
   const handleDealClick = (e: React.MouseEvent, deal: MiniDeal) => {
     e.preventDefault();
@@ -367,13 +332,13 @@ const AllDealsPage = () => {
           </div>
           <button
             type="button"
-            className={`all-deals__filter-btn ${activeFilterPills.length > 0 ? 'all-deals__filter-btn--active' : ''}`}
+            className={`deals-filter-btn ${activeFilterPills.length > 0 ? 'deals-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
-            <SlidersHorizontal size={16} />
+            <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="all-deals__filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -508,7 +473,6 @@ const AllDealsPage = () => {
         onApply={setFilters}
         totalResults={filteredDeals.length}
         getResultCount={getResultCount}
-        dealPageType="all"
       />
     </div>
   );

@@ -41,10 +41,10 @@ const DEFAULT_FILTERS: DealsFilterState = {
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
-  monthlyPaymentMax: 99999,
+  monthlyPaymentMax: 1500,
   makes: [],
   dueAtSigningMin: 0,
-  dueAtSigningMax: 99999,
+  dueAtSigningMax: 5000,
   fuelTypes: [],
   accolades: [],
   terms: [],
@@ -275,13 +275,13 @@ const CashFinanceDealsPage = () => {
           </div>
           <button
             type="button"
-            className={`cf-deals-page__toolbar-filter-btn ${activeFilterPills.length > 0 ? 'cf-deals-page__toolbar-filter-btn--active' : ''}`}
+            className={`deals-filter-btn ${activeFilterPills.length > 0 ? 'deals-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
-            <SlidersHorizontal size={16} />
+            <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="cf-deals-page__toolbar-filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>

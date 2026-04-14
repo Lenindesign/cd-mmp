@@ -68,10 +68,10 @@ const DEFAULT_FILTERS: DealsFilterState = {
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
-  monthlyPaymentMax: 99999,
+  monthlyPaymentMax: 1500,
   makes: [],
   dueAtSigningMin: 0,
-  dueAtSigningMax: 99999,
+  dueAtSigningMax: 5000,
   fuelTypes: [],
   accolades: [],
   terms: [],
@@ -211,7 +211,7 @@ const CashFinanceBodyStylePage = () => {
   const displayDeals = useMemo(() => {
     let result = deals;
     if (filters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= filters.monthlyPaymentMin);
-    if (filters.monthlyPaymentMax < 99999) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
+    if (filters.monthlyPaymentMax < 1500) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
     return result.filter(d => {
       const term = d.details.find(x => x.label === 'Term')?.value;
       const targetAudience = d.additionalInfo.find(x => x.label === 'Target Audience')?.value;
@@ -373,13 +373,13 @@ const CashFinanceBodyStylePage = () => {
           </div>
           <button
             type="button"
-            className={`cfbs-deals__filter-btn ${activeFilterPills.length > 0 ? 'cfbs-deals__filter-btn--active' : ''}`}
+            className={`deals-filter-btn ${activeFilterPills.length > 0 ? 'deals-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
-            <SlidersHorizontal size={16} />
+            <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="cfbs-deals__filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>

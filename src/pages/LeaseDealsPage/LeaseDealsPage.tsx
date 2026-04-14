@@ -1,9 +1,9 @@
 import { Fragment, useMemo, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { DealCard } from '../../components/DealCard';
@@ -49,10 +49,10 @@ const DEFAULT_FILTERS: DealsFilterState = {
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
-  monthlyPaymentMax: 99999,
+  monthlyPaymentMax: 1500,
   makes: [],
   dueAtSigningMin: 0,
-  dueAtSigningMax: 99999,
+  dueAtSigningMax: 5000,
   fuelTypes: [],
   accolades: [],
   terms: [],
@@ -93,24 +93,36 @@ const LeaseDealsPage = () => {
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
-  const navigate = useNavigate();
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
-    const params = new URLSearchParams();
-    params.set('filters', JSON.stringify(applied));
-    navigate(`/deals/all?${params.toString()}`);
-  }, [navigate]);
+    setFilters(applied);
+  }, []);
+
+  const allLeaseDeals = useMemo(() => getLeaseDeals(), []);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      const global = getGlobalDealCounts();
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
-    }
-    return getGlobalDealCounts().all;
-  }, []);
+    return allLeaseDeals.filter(deal => {
+      const v = deal.vehicle;
+      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
+      if (draftFilters.accolades.length > 0) {
+        const hasMatch = draftFilters.accolades.some(a => {
+          if (a === 'editorsChoice') return v.editorsChoice;
+          if (a === 'tenBest') return v.tenBest;
+          return false;
+        });
+        if (!hasMatch) return false;
+      }
+      if (draftFilters.terms.length > 0 && deal.term) {
+        if (!draftFilters.terms.includes(parseTermMonths(deal.term))) return false;
+      }
+      return true;
+    }).length;
+  }, [allLeaseDeals]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const { pills: activeFilterPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
-  const clearAllFilters = useCallback(() => navigate('/deals/all'), [navigate]);
+  const clearAllFilters = useCallback(() => setFilters(DEFAULT_FILTERS), []);
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -218,12 +230,11 @@ const LeaseDealsPage = () => {
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">{deals.length} {deals.length === 1 ? 'deal' : 'deals'}</span>
             <div className="active-filter-pills__row" aria-label="Active filters">
-              <span className="active-filter-pills__pill">
-                <span className="active-filter-pills__pill-label">Lease</span>
-                <button type="button" className="active-filter-pills__pill-x" aria-label="Remove Lease filter" onClick={() => navigate('/deals/all')}>
-                  <X size={12} strokeWidth={2.5} aria-hidden />
-                </button>
-              </span>
+              {activeFilterPills.length === 0 && (
+                <span className="active-filter-pills__pill active-filter-pills__pill--static">
+                  <span className="active-filter-pills__pill-label">Lease Deals</span>
+                </span>
+              )}
               {activeFilterPills.map(pill => (
                 <span key={pill.id} className="active-filter-pills__pill">
                   <span className="active-filter-pills__pill-label">{pill.label}</span>
@@ -241,13 +252,13 @@ const LeaseDealsPage = () => {
           </div>
           <button
             type="button"
-            className={`lease-deals-page__filter-btn ${activeFilterPills.length > 0 ? 'lease-deals-page__filter-btn--active' : ''}`}
+            className={`deals-filter-btn ${activeFilterPills.length > 0 ? 'deals-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
-            <SlidersHorizontal size={16} />
+            <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="lease-deals-page__filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>

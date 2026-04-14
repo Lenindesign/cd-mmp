@@ -1,6 +1,6 @@
 import { Facebook, Twitter, Instagram, Youtube, Mail, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH } from '../../constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
 import { Button } from '../Button';
 import { useCarFinder } from '../../contexts/CarFinderContext';
 import './Footer.css';
@@ -14,12 +14,10 @@ const Footer = () => {
         { label: 'Car Rankings', path: '/rankings' },
         { label: 'SUV Rankings', path: '/rankings' },
         { label: 'Truck Rankings', path: '/rankings' },
-        { label: 'Deals Hub', path: '/deals' },
         { label: 'Buying Deals', path: BEST_BUYING_DEALS_PATH },
+        { label: 'Lease Deals', path: '/deals/lease' },
         { label: '0% APR Deals', path: ZERO_PERCENT_APR_DEALS_PATH },
-        { label: 'Lease Deals Hub', path: '/lease-deals' },
-        { label: 'SUV Deals', path: '/deals/suv' },
-        { label: 'Truck Deals', path: '/deals/truck' },
+        { label: 'Cash Back Deals', path: CASH_BACK_DEALS_PATH },
       ],
     },
     {

@@ -63,10 +63,10 @@ const DEFAULT_FILTERS: DealsFilterState = {
   zipCode: '90245',
   bodyTypes: [],
   monthlyPaymentMin: 0,
-  monthlyPaymentMax: 99999,
+  monthlyPaymentMax: 1500,
   makes: [],
   dueAtSigningMin: 0,
-  dueAtSigningMax: 99999,
+  dueAtSigningMax: 5000,
   fuelTypes: [],
   accolades: [],
   terms: [],
@@ -252,14 +252,14 @@ const FuelTypeDealsPage = () => {
   const displayDeals = useMemo(() => {
     let result = deals;
     if (filters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= filters.monthlyPaymentMin);
-    if (filters.monthlyPaymentMax < 99999) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
-    if (filters.dueAtSigningMin > 0 || filters.dueAtSigningMax < 99999) {
+    if (filters.monthlyPaymentMax < 1500) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
+    if (filters.dueAtSigningMin > 0 || filters.dueAtSigningMax < 5000) {
       result = result.filter(d => {
         if (d.dealType !== 'lease') return true;
         if (d.dueAtSigningNum == null) return false;
         const n = d.dueAtSigningNum;
         if (filters.dueAtSigningMin > 0 && n < filters.dueAtSigningMin) return false;
-        if (filters.dueAtSigningMax < 99999 && n > filters.dueAtSigningMax) return false;
+        if (filters.dueAtSigningMax < 5000 && n > filters.dueAtSigningMax) return false;
         return true;
       });
     }
@@ -360,13 +360,13 @@ const FuelTypeDealsPage = () => {
           </div>
           <button
             type="button"
-            className={`fuel-deals__filter-btn ${activeFilterPills.length > 0 ? 'fuel-deals__filter-btn--active' : ''}`}
+            className={`deals-filter-btn ${activeFilterPills.length > 0 ? 'deals-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
-            <SlidersHorizontal size={16} />
+            <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="fuel-deals__filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge">{activeFilterPills.length}</span>
             )}
           </button>
         </div>

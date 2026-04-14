@@ -164,6 +164,26 @@ const DealsFilterModal = ({
     }));
   }, []);
 
+  const optionCounts = useMemo(() => {
+    if (!getResultCount) return null;
+    const base = { ...draft };
+    const counts: Record<string, number> = {};
+
+    for (const bt of bodyTypes) {
+      counts[`body-${bt}`] = getResultCount({ ...base, bodyTypes: [bt] });
+    }
+    for (const m of makes) {
+      counts[`make-${m}`] = getResultCount({ ...base, makes: [m] });
+    }
+    for (const t of availableTerms) {
+      counts[`term-${t}`] = getResultCount({ ...base, terms: [t] });
+    }
+    for (const ft of fuelTypes) {
+      counts[`fuel-${ft}`] = getResultCount({ ...base, fuelTypes: [ft] });
+    }
+    return counts;
+  }, [getResultCount, draft, bodyTypes, makes, availableTerms, fuelTypes]);
+
   const handleClearAll = useCallback(() => {
     setDraft(prev => ({
       ...prev,
@@ -271,16 +291,19 @@ const DealsFilterModal = ({
             onToggle={() => toggleSection('bodyType')}
           >
             <div className="deals-filter__chips">
-              {bodyTypes.map(bt => (
-                <button
-                  key={bt}
-                  type="button"
-                  className={`deals-filter__chip ${draft.bodyTypes.includes(bt) ? 'deals-filter__chip--active' : ''}`}
-                  onClick={() => toggleArrayItem('bodyTypes', bt)}
-                >
-                  {bt}
-                </button>
-              ))}
+              {bodyTypes.map(bt => {
+                const count = optionCounts?.[`body-${bt}`];
+                return (
+                  <button
+                    key={bt}
+                    type="button"
+                    className={`deals-filter__chip ${draft.bodyTypes.includes(bt) ? 'deals-filter__chip--active' : ''}`}
+                    onClick={() => toggleArrayItem('bodyTypes', bt)}
+                  >
+                    {bt}{count != null ? ` (${count})` : ''}
+                  </button>
+                );
+              })}
             </div>
           </FilterSection>
 
@@ -311,16 +334,19 @@ const DealsFilterModal = ({
               onToggle={() => toggleSection('term')}
             >
               <div className="deals-filter__chips">
-                {availableTerms.map(t => (
-                  <button
-                    key={t}
-                    type="button"
-                    className={`deals-filter__chip ${draft.terms.includes(t) ? 'deals-filter__chip--active' : ''}`}
-                    onClick={() => toggleTerm(t)}
-                  >
-                    {t} mo
-                  </button>
-                ))}
+                {availableTerms.map(t => {
+                  const count = optionCounts?.[`term-${t}`];
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`deals-filter__chip ${draft.terms.includes(t) ? 'deals-filter__chip--active' : ''}`}
+                      onClick={() => toggleTerm(t)}
+                    >
+                      {t} mo{count != null ? ` (${count})` : ''}
+                    </button>
+                  );
+                })}
               </div>
             </FilterSection>
           )}
@@ -332,17 +358,20 @@ const DealsFilterModal = ({
             onToggle={() => toggleSection('make')}
           >
             <div className="deals-filter__checkbox-list">
-              {makes.map(m => (
-                <label key={m} className="deals-filter__checkbox-row">
-                  <span className="deals-filter__checkbox-label">{m}</span>
-                  <input
-                    type="checkbox"
-                    className="deals-filter__checkbox"
-                    checked={draft.makes.includes(m)}
-                    onChange={() => toggleArrayItem('makes', m)}
-                  />
-                </label>
-              ))}
+              {makes.map(m => {
+                const count = optionCounts?.[`make-${m}`];
+                return (
+                  <label key={m} className="deals-filter__checkbox-row">
+                    <span className="deals-filter__checkbox-label">{m}{count != null ? ` (${count})` : ''}</span>
+                    <input
+                      type="checkbox"
+                      className="deals-filter__checkbox"
+                      checked={draft.makes.includes(m)}
+                      onChange={() => toggleArrayItem('makes', m)}
+                    />
+                  </label>
+                );
+              })}
             </div>
           </FilterSection>
 
@@ -372,16 +401,19 @@ const DealsFilterModal = ({
             onToggle={() => toggleSection('fuelType')}
           >
             <div className="deals-filter__chips">
-              {fuelTypes.map(ft => (
-                <button
-                  key={ft}
-                  type="button"
-                  className={`deals-filter__chip ${draft.fuelTypes.includes(ft) ? 'deals-filter__chip--active' : ''}`}
-                  onClick={() => toggleArrayItem('fuelTypes', ft)}
-                >
-                  {ft}
-                </button>
-              ))}
+              {fuelTypes.map(ft => {
+                const count = optionCounts?.[`fuel-${ft}`];
+                return (
+                  <button
+                    key={ft}
+                    type="button"
+                    className={`deals-filter__chip ${draft.fuelTypes.includes(ft) ? 'deals-filter__chip--active' : ''}`}
+                    onClick={() => toggleArrayItem('fuelTypes', ft)}
+                  >
+                    {ft}{count != null ? ` (${count})` : ''}
+                  </button>
+                );
+              })}
             </div>
           </FilterSection>
 

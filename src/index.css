@@ -836,3 +836,44 @@ a[class*='__card-cta--secondary']:hover {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ── Shared deals toolbar filter button ── */
+.deals-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+.deals-filter-btn:hover { color: var(--color-blue-cobalt); }
+.deals-filter-btn:focus-visible { outline: 2px solid var(--color-blue-cobalt); outline-offset: var(--spacing-1); }
+.deals-filter-btn--active { color: var(--color-blue-cobalt); font-weight: var(--font-weight-bold); }
+.deals-filter-btn--active:hover { color: var(--color-blue-cobalt-dark); }
+
+.deals-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  background: var(--color-gray-200);
+  color: var(--color-gray-800);
+  border-radius: var(--border-radius-sm);
+}
+.deals-filter-btn--active .deals-filter-badge {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
