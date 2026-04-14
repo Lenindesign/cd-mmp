@@ -162,13 +162,13 @@ const ZeroAprDealsPage = () => {
   const activeFilterPills = useMemo(() => {
     const tabLabel = activeTab === 'zero-apr' ? '0% APR' : activeTab === 'special-apr' ? 'Special APR' : activeTab === 'cash' ? 'Cash Back' : '';
     const extra = tabLabel
-      ? [{ id: `tab-${activeTab}`, label: tabLabel, onRemove: () => { setActiveTab('best-deals'); setFilters(DEFAULT_FILTERS); } }]
+      ? [{ id: `tab-${activeTab}`, label: tabLabel, onRemove: () => { setActiveTab('all'); setFilters(DEFAULT_FILTERS); } }]
       : [];
     return [...extra, ...sharedPills];
   }, [activeTab, sharedPills]);
 
   const clearAllFilters = useCallback(() => {
-    setActiveTab('best-deals');
+    setActiveTab('all');
     setFilters(DEFAULT_FILTERS);
   }, []);
 

@@ -17,44 +17,8 @@ import {
   Navigation,
 } from 'lucide-react';
 import type { Incentive, GroupAffiliation } from '../../services/incentivesService';
-import { getVehicleTrims } from '../../services/trimService';
 import { formatExpiration } from '../../utils/dateUtils';
 import './IncentivesModal.css';
-
-function buildCashDownData(
-  make: string, model: string,
-  msrpMin: number, msrpMax: number,
-  eligibleTrims: string[],
-) {
-  const trims = getVehicleTrims(make, model, msrpMin, msrpMax);
-  const matched = trims.filter(t => eligibleTrims.some(
-    et => et.toLowerCase() === t.name.toLowerCase(),
-  ));
-
-  let rows: { name: string; msrp: number; down: number }[];
-
-  if (matched.length > 0) {
-    rows = matched.map(t => {
-      const msrp = parseInt(t.price.replace(/[^0-9]/g, ''), 10);
-      return { name: t.name, msrp, down: Math.round(msrp * 0.1) };
-    });
-  } else {
-    const count = eligibleTrims.length;
-    const step = count > 1 ? (msrpMax - msrpMin) / (count - 1) : 0;
-    rows = eligibleTrims.map((name, i) => {
-      const msrp = Math.round(msrpMin + step * i);
-      return { name, msrp, down: Math.round(msrp * 0.1) };
-    });
-  }
-
-  const downs = rows.map(r => r.down);
-  const lo = Math.min(...downs);
-  const hi = Math.max(...downs);
-  const rangeLabel = lo === hi
-    ? `$${lo.toLocaleString()}`
-    : `$${lo.toLocaleString()} – $${hi.toLocaleString()}`;
-  return { rows, rangeLabel };
-}
 
 export type IncentivesModalVariant = 'simple' | 'complete-with-form' | 'edmunds' | 'conversion-a' | 'conversion-b' | 'conversion-b-no-form';
 
