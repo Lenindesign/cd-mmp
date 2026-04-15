@@ -17,8 +17,44 @@ import {
   Navigation,
 } from 'lucide-react';
 import type { Incentive, GroupAffiliation } from '../../services/incentivesService';
+import { getVehicleTrims } from '../../services/trimService';
 import { formatExpiration } from '../../utils/dateUtils';
 import './IncentivesModal.css';
+
+function buildCashDownData(
+  make: string, model: string,
+  msrpMin: number, msrpMax: number,
+  eligibleTrims: string[],
+) {
+  const trims = getVehicleTrims(make, model, msrpMin, msrpMax);
+  const matched = trims.filter(t => eligibleTrims.some(
+    et => et.toLowerCase() === t.name.toLowerCase(),
+  ));
+
+  let rows: { name: string; msrp: number; down: number }[];
+
+  if (matched.length > 0) {
+    rows = matched.map(t => {
+      const msrp = parseInt(t.price.replace(/[^0-9]/g, ''), 10);
+      return { name: t.name, msrp, down: Math.round(msrp * 0.1) };
+    });
+  } else {
+    const count = eligibleTrims.length;
+    const step = count > 1 ? (msrpMax - msrpMin) / (count - 1) : 0;
+    rows = eligibleTrims.map((name, i) => {
+      const msrp = Math.round(msrpMin + step * i);
+      return { name, msrp, down: Math.round(msrp * 0.1) };
+    });
+  }
+
+  const downs = rows.map(r => r.down);
+  const lo = Math.min(...downs);
+  const hi = Math.max(...downs);
+  const rangeLabel = lo === hi
+    ? `$${lo.toLocaleString()}`
+    : `$${lo.toLocaleString()} – $${hi.toLocaleString()}`;
+  return { rows, rangeLabel };
+}
 
 export type IncentivesModalVariant = 'simple' | 'complete-with-form' | 'edmunds' | 'conversion-a' | 'conversion-b' | 'conversion-b-no-form';
 
@@ -208,6 +244,10 @@ const IncentivesModal = ({
   const [activeIncentiveId, setActiveIncentiveId] = useState<string | null>(null);
   const [conversionBPostSubmit, setConversionBPostSubmit] = useState<'dealer' | 'no-dealer' | null>(null);
   const conversionBFormRef = useRef<HTMLFormElement>(null);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
+  const leftFadeRef = useRef<HTMLDivElement>(null);
+  const rightFadeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -259,6 +299,36 @@ const IncentivesModal = ({
       document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const THRESHOLD = 8;
+    const pairs: [HTMLElement | null, HTMLElement | null][] = [
+      [leftColRef.current, leftFadeRef.current],
+      [rightColRef.current, rightFadeRef.current],
+    ];
+    const update = (col: HTMLElement | null, fade: HTMLElement | null) => {
+      if (!col || !fade) return;
+      const canScroll = col.scrollHeight - col.scrollTop - col.clientHeight > THRESHOLD;
+      fade.classList.toggle('incentives-modal__scroll-fade--visible', canScroll);
+    };
+    const onScroll = (e: Event) => {
+      const col = e.target as HTMLElement;
+      const fade = col === leftColRef.current ? leftFadeRef.current : rightFadeRef.current;
+      update(col, fade);
+    };
+    const ro = new ResizeObserver(() => pairs.forEach(([c, f]) => update(c, f)));
+    pairs.forEach(([col, fade]) => {
+      if (!col) return;
+      update(col, fade);
+      col.addEventListener('scroll', onScroll, { passive: true });
+      ro.observe(col);
+    });
+    return () => {
+      pairs.forEach(([col]) => col?.removeEventListener('scroll', onScroll));
+      ro.disconnect();
+    };
+  }, [isOpen, activeIncentiveId]);
 
   /** Shared lead handoff - conversion-b keeps modal open to show dealer / no-dealer result. */
   const submitLead = useCallback(() => {
@@ -640,7 +710,8 @@ const IncentivesModal = ({
               <div className="incentives-modal__v5-body-scroll">
                 <div className="incentives-modal__v5-layout">
                 {/* LEFT COLUMN: Offer browser + details */}
-                <div className="incentives-modal__v5-left">
+                <div ref={leftColRef} className="incentives-modal__v5-left">
+                  <div ref={leftFadeRef} className="incentives-modal__scroll-fade" aria-hidden />
                   <h2 id="incentives-modal-title" className="incentives-modal__v5-title">
                     {vehicleLabel}
                   </h2>
@@ -731,23 +802,51 @@ const IncentivesModal = ({
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.make} US Special Lease Rates</p>
+                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                         </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
-                          <p className="incentives-modal__v5-key-section-text">[Eligibility] Residents residing in qualifying regions of the United States.; [Qualification] O.A.C. New and unregistered vehicles only are eligible.</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                          <p className="incentives-modal__v5-key-section-text">Lease for 24 months at 10,000 miles/year with $1,879 due at signing.</p>
-                        </div>
+
+                        {activeIncentive.programRules && (
+                          <div className="incentives-modal__v5-key-section">
+                            <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
+                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules}</p>
+                          </div>
+                        )}
+
+                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (() => {
+                          const cd = buildCashDownData(offer.make, offer.model, offer.msrpMin, offer.msrpMax, offer.eligibleTrims);
+                          return (
+                            <div className="incentives-modal__v5-key-section">
+                              <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                              <p className="incentives-modal__v5-key-section-text">
+                                {activeIncentive.terms} Estimated cash down (10% of MSRP): {cd.rangeLabel}.
+                              </p>
+                              <table className="incentives-modal__v5-cashdown-table">
+                                <thead>
+                                  <tr><th>Trim</th><th>MSRP</th><th>Est. Cash Down</th></tr>
+                                </thead>
+                                <tbody>
+                                  {cd.rows.map(r => (
+                                    <tr key={r.name}>
+                                      <td>{r.name}</td>
+                                      <td>${r.msrp.toLocaleString()}</td>
+                                      <td>${r.down.toLocaleString()}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          );
+                        })()}
+
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
                           <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
                         </div>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
-                          <p className="incentives-modal__v5-key-section-text">This offer expires January 2, 2026. Manufacturer deals change monthly—once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.</p>
+                          <p className="incentives-modal__v5-key-section-text">
+                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -755,7 +854,8 @@ const IncentivesModal = ({
                 </div>
 
                 {/* RIGHT COLUMN: Dealer contact form or post-submit result */}
-                <div className="incentives-modal__v5-right" id="incentives-modal-dealer-panel">
+                <div ref={rightColRef} className="incentives-modal__v5-right" id="incentives-modal-dealer-panel">
+                  <div ref={rightFadeRef} className="incentives-modal__scroll-fade" aria-hidden />
                   {conversionBPostSubmit === null && (
                     <>
                       <h3 className="incentives-modal__v5-form-heading">Got Questions? Contact the Dealer</h3>
@@ -899,33 +999,34 @@ const IncentivesModal = ({
                       </p>
                     </div>
                   )}
+
+                  <div className="incentives-modal__v5-cta-sticky">
+                    {conversionBPostSubmit === null ? (
+                      <button
+                        type="button"
+                        className="incentives-modal__v5-submit"
+                        onClick={handleConversionBContactClick}
+                      >
+                        CONTACT DEALER
+                      </button>
+                    ) : (
+                      <button type="button" className="incentives-modal__v5-submit" onClick={onClose}>
+                        Done
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="incentives-modal__v5-marketplace-btn"
+                      onClick={() => {
+                        onClose();
+                        navigate(vehicleUrl);
+                      }}
+                    >
+                      SHOP NEW TRAX
+                    </button>
+                  </div>
                 </div>
                 </div>
-              </div>
-              <div className="incentives-modal__v5-cta-sticky">
-                {conversionBPostSubmit === null ? (
-                  <button
-                    type="button"
-                    className="incentives-modal__v5-submit"
-                    onClick={handleConversionBContactClick}
-                  >
-                    CONTACT DEALER
-                  </button>
-                ) : (
-                  <button type="button" className="incentives-modal__v5-submit" onClick={onClose}>
-                    Done
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className="incentives-modal__v5-marketplace-btn"
-                  onClick={() => {
-                    onClose();
-                    navigate(vehicleUrl);
-                  }}
-                >
-                  SHOP NEW TRAX
-                </button>
               </div>
             </>
           )}
@@ -1036,23 +1137,51 @@ const IncentivesModal = ({
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
-                          <p className="incentives-modal__v5-key-section-text">{offer.make} US Special Lease Rates</p>
+                          <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                         </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
-                          <p className="incentives-modal__v5-key-section-text">[Eligibility] Residents residing in qualifying regions of the United States.; [Qualification] O.A.C. New and unregistered vehicles only are eligible.</p>
-                        </div>
-                        <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                          <p className="incentives-modal__v5-key-section-text">Lease for 24 months at 10,000 miles/year with $1,879 due at signing.</p>
-                        </div>
+
+                        {activeIncentive.programRules && (
+                          <div className="incentives-modal__v5-key-section">
+                            <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
+                            <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules}</p>
+                          </div>
+                        )}
+
+                        {activeIncentive.terms && activeIncentive.type !== 'cash' && (() => {
+                          const cd = buildCashDownData(offer.make, offer.model, offer.msrpMin, offer.msrpMax, offer.eligibleTrims);
+                          return (
+                            <div className="incentives-modal__v5-key-section">
+                              <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                              <p className="incentives-modal__v5-key-section-text">
+                                {activeIncentive.terms} Estimated cash down (10% of MSRP): {cd.rangeLabel}.
+                              </p>
+                              <table className="incentives-modal__v5-cashdown-table">
+                                <thead>
+                                  <tr><th>Trim</th><th>MSRP</th><th>Est. Cash Down</th></tr>
+                                </thead>
+                                <tbody>
+                                  {cd.rows.map(r => (
+                                    <tr key={r.name}>
+                                      <td>{r.name}</td>
+                                      <td>${r.msrp.toLocaleString()}</td>
+                                      <td>${r.down.toLocaleString()}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          );
+                        })()}
+
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
                           <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
                         </div>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
-                          <p className="incentives-modal__v5-key-section-text">This offer expires January 2, 2026. Manufacturer deals change monthly—once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.</p>
+                          <p className="incentives-modal__v5-key-section-text">
+                            This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
+                          </p>
                         </div>
                       </div>
 

@@ -42,7 +42,7 @@
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
-  max-height: min(90vh, 100dvh);
+  height: min(90vh, 100dvh);
 }
 
 /* ========== Modal A (conversion-b) – two-column layout ========== */
@@ -52,41 +52,69 @@
   }
 }
 
-/* conversion-b: scroll middle, CTAs pinned below scroll (mobile + desktop) */
+/* conversion-b: the inner div is the two-column grid */
 .incentives-modal__inner--conversion-b {
   display: grid;
   grid-template-columns: 1fr 300px;
-  grid-template-rows: minmax(0, 1fr) auto;
   column-gap: 40px;
-  align-content: start;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
   overflow: hidden;
   padding-bottom: 0;
 }
 
+/* body-scroll + layout are transparent pass-throughs on desktop;
+   they become the scroll container on mobile (single column). */
 .incentives-modal__v5-body-scroll {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  min-height: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  z-index: 0;
+  display: contents;
 }
 
 .incentives-modal__v5-layout {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 40px;
-  align-items: start;
+  display: contents;
 }
 
-/* Left column: offer details */
+/* Left column: scrolls independently, fills the full modal height */
 .incentives-modal__v5-left {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+
+/* Right column: scrolls independently, CTAs pinned at bottom */
+.incentives-modal__v5-right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 1px solid var(--color-gray-200);
+  padding-left: 32px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+
+/* Scroll-hint gradient overlay */
+.incentives-modal__scroll-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 1) 100%);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.incentives-modal__scroll-fade--visible {
+  opacity: 1;
 }
 
 .incentives-modal__v5-label {
@@ -94,17 +122,6 @@
   color: var(--color-gray-400);
   margin: 0 0 16px;
   text-transform: italic;
-}
-
-/* Right column: dealer form */
-.incentives-modal__v5-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  border-left: 1px solid var(--color-gray-200);
-  padding-left: 32px;
-  scroll-margin-top: var(--spacing-3);
-  scroll-margin-bottom: var(--spacing-4);
 }
 
 .incentives-modal__v5-title {
@@ -555,6 +572,7 @@
   overflow: hidden;
   background: var(--color-gray-100);
   margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .incentives-modal__v5-form-image {
@@ -825,18 +843,15 @@
 }
 
 .incentives-modal__v5-cta-sticky {
-  grid-column: 2;
-  grid-row: 2;
-  position: relative;
+  position: sticky;
+  bottom: 0;
   z-index: 5;
-  isolation: isolate;
   flex-shrink: 0;
   background: var(--color-white, #fff);
   padding: 12px 0 16px;
   padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
-  margin-top: 0;
+  margin-top: auto;
   border-top: 1px solid var(--color-gray-200);
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.06);
   pointer-events: auto;
 }
 
@@ -896,38 +911,50 @@
   }
 
   .incentives-modal__inner--conversion-b {
-    grid-template-columns: 1fr !important;
-    grid-template-rows: minmax(0, 1fr) auto;
-    column-gap: 0 !important;
+    display: flex;
+    flex-direction: column;
     padding: 0;
     padding-top: max(var(--spacing-10), calc(var(--spacing-8) + env(safe-area-inset-top, 0px)));
     flex: 1 1 0;
     min-height: 0;
     width: 100%;
     max-width: 100%;
-    align-content: stretch;
     height: 100%;
     box-sizing: border-box;
   }
 
   .incentives-modal__v5-body-scroll {
+    display: block;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     padding-left: var(--spacing-4);
     padding-right: var(--spacing-4);
     padding-bottom: 0;
   }
 
+  .incentives-modal__v5-layout {
+    display: block;
+  }
+
   .incentives-modal__v5-cta-sticky {
-    grid-column: 1;
-    grid-row: 2;
-    padding: var(--spacing-3) 0;
+    position: relative;
+    margin-top: 0;
+    padding: var(--spacing-3) var(--spacing-4);
     padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
     border-top: 1px solid var(--color-gray-200);
   }
 
-  .incentives-modal__v5-layout {
-    grid-template-columns: 1fr !important;
-    gap: var(--spacing-6);
-    min-width: 0;
+  .incentives-modal__v5-left,
+  .incentives-modal__v5-right {
+    overflow-y: visible;
+    min-height: auto;
+  }
+
+  .incentives-modal__scroll-fade {
+    display: none;
   }
 
   .incentives-modal__v5-left,
