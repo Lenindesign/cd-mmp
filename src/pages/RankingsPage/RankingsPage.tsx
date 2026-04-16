@@ -1,8 +1,9 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, ChevronDown, Bookmark } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
+import { getVehicleOffers } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { VehicleCard } from '../../components/VehicleCard';
@@ -194,6 +195,7 @@ const YearSelector: React.FC = () => {
 
 const RankingsPage = () => {
   const { bodyStyle, subcategory } = useParams<{ bodyStyle: string; subcategory?: string }>();
+  const navigate = useNavigate();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated: isAuthContextAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
 
@@ -277,6 +279,7 @@ const RankingsPage = () => {
       id: vehicle.id,
       rank: index + 1,
       name: `${vehicle.make} ${vehicle.model}`,
+      make: vehicle.make,
       year: vehicle.year,
       price: `$${vehicle.priceMin.toLocaleString()}`,
       image: vehicle.image,
@@ -334,6 +337,7 @@ const RankingsPage = () => {
           id: vehicle.id,
           rank: index + 1,
           name: `${vehicle.make} ${vehicle.model}`,
+          make: vehicle.make,
           year: vehicle.year,
           price: `$${vehicle.priceMin.toLocaleString()}`,
           image: vehicle.image,
@@ -366,6 +370,7 @@ const RankingsPage = () => {
           id: v.id,
           rank: i + 1,
           name: `${v.make} ${v.model}`,
+          make: v.make,
           year: v.year,
           price: `$${v.priceMin.toLocaleString()}`,
           image: v.image,
@@ -485,7 +490,9 @@ const RankingsPage = () => {
                   </Link>
                 </div>
                 <div className="rankings-page__body-row-cards">
-                  {row.vehicles.map((vehicle) => (
+                  {row.vehicles.map((vehicle) => {
+                    const offers = getVehicleOffers(vehicle.make, vehicle.modelName);
+                    return (
                     <VehicleCard
                       key={vehicle.id}
                       id={vehicle.id}
@@ -504,8 +511,10 @@ const RankingsPage = () => {
                       epaMpg={vehicle.epaMpg}
                       cdSays={vehicle.cdSays}
                       modelName={vehicle.modelName}
-                    />
-                  ))}
+                      incentiveCount={offers.length}
+                      onIncentiveClick={() => navigate(`/${vehicle.make.toLowerCase()}/${vehicle.modelName.toLowerCase().replace(/\s+/g, '-')}/deals-incentives`)}
+                    />);
+                  })}
                 </div>
               </section>
             ))}
@@ -738,7 +747,9 @@ const RankingsPage = () => {
                   {/* #2 and #3 Cards */}
                   {sub.vehicles.length > 1 && (
                     <div className="rankings-page__subcategory-grid">
-                      {sub.vehicles.slice(1).map((vehicle) => (
+                      {sub.vehicles.slice(1).map((vehicle) => {
+                        const offers = getVehicleOffers(vehicle.make, vehicle.modelName);
+                        return (
                         <VehicleCard
                           key={vehicle.id}
                           id={vehicle.id}
@@ -757,8 +768,10 @@ const RankingsPage = () => {
                           epaMpg={vehicle.epaMpg}
                           cdSays={vehicle.cdSays}
                           modelName={vehicle.modelName}
-                        />
-                      ))}
+                          incentiveCount={offers.length}
+                          onIncentiveClick={() => navigate(`/${vehicle.make.toLowerCase()}/${vehicle.modelName.toLowerCase().replace(/\s+/g, '-')}/deals-incentives`)}
+                        />);
+                      })}
                     </div>
                   )}
                 </section>
@@ -871,7 +884,9 @@ const RankingsPage = () => {
                       All {subcategoryConfig?.name || pageTitle}
                     </h2>
                     <div className="rankings-page__grid">
-                      {formattedVehicles.slice(1).map((vehicle) => (
+                      {formattedVehicles.slice(1).map((vehicle) => {
+                        const offers = getVehicleOffers(vehicle.make, vehicle.modelName);
+                        return (
                         <VehicleCard
                           key={vehicle.id}
                           id={vehicle.id}
@@ -890,8 +905,10 @@ const RankingsPage = () => {
                           epaMpg={vehicle.epaMpg}
                           cdSays={vehicle.cdSays}
                           modelName={vehicle.modelName}
-                        />
-                      ))}
+                          incentiveCount={offers.length}
+                          onIncentiveClick={() => navigate(`/${vehicle.make.toLowerCase()}/${vehicle.modelName.toLowerCase().replace(/\s+/g, '-')}/deals-incentives`)}
+                        />);
+                      })}
                     </div>
                   </section>
                 </>

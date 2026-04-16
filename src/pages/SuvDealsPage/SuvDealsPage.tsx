@@ -13,13 +13,14 @@ import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, inferCreditTier, creditTierQualifies, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getGlobalDealCounts } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './SuvDealsPage.css';
 
 interface UnifiedDeal {
@@ -98,7 +99,7 @@ const SuvDealsPage = () => {
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
     const params = new URLSearchParams();
@@ -144,12 +145,19 @@ const SuvDealsPage = () => {
   }, [offersPopup]);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      const global = getGlobalDealCounts();
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
-    }
-    return getGlobalDealCounts().all;
-  }, []);
+    let result = deals;
+    if (draftFilters.dealType === 'lease') result = result.filter(d => d.dealType === 'lease');
+    else if (draftFilters.dealType === 'finance') result = result.filter(d => d.dealType !== 'lease');
+    if (draftFilters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= draftFilters.monthlyPaymentMin);
+    if (draftFilters.monthlyPaymentMax < 1500) result = result.filter(d => d.estimatedMonthly <= draftFilters.monthlyPaymentMax);
+    return result.filter(d => {
+      const v = d.vehicle;
+      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
+      return true;
+    }).length;
+  }, [deals]);
 
   const deals = useMemo((): UnifiedDeal[] => {
     const results: UnifiedDeal[] = [];
@@ -220,14 +228,17 @@ const SuvDealsPage = () => {
 
   const filteredDeals = useMemo(() => {
     let result = deals;
+    if (filters.dealType === 'lease') result = result.filter(d => d.dealType === 'lease');
+    else if (filters.dealType === 'finance') result = result.filter(d => d.dealType !== 'lease');
     if (filters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= filters.monthlyPaymentMin);
     if (filters.monthlyPaymentMax < 1500) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
-    return result.filter(d => {
+    const filtered = result.filter(d => {
       const term = d.details.find(x => x.label === 'Term')?.value;
       const targetAudience = d.additionalInfo.find(x => x.label === 'Target Audience')?.value;
       return matchesFilters(d.vehicle, { term, targetAudience });
     });
-  }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, matchesFilters]);
+    return sortDeals(filtered, filters.sortBy);
+  }, [deals, filters.dealType, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.sortBy, matchesFilters]);
 
   const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);
 
@@ -475,7 +486,15 @@ const SuvDealsPage = () => {
         variant="conversion-b"
         offer={activeOffer}
         allIncentives={activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined}
-        selectedIncentiveId={undefined}
+        selectedIncentiveId={activeDealObj
+          ? findMatchingIncentiveId(
+              activeDealObj.vehicle.make,
+              activeDealObj.vehicle.model,
+              activeDealObj.dealType,
+              { apr: activeDealObj.aprDisplay, term: activeDealObj.details.find(x => x.label === 'Term')?.value },
+            )
+          : undefined
+        }
       />
       <SignInToSaveModal isOpen={showSignInModal} onClose={() => { setShowSignInModal(false); setPendingSaveVehicle(null); }} itemType="vehicle" itemName={pendingSaveVehicle?.name} itemImage={pendingSaveVehicle?.image} />
       <DealsFilterModal

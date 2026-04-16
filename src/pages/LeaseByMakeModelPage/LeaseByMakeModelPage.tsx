@@ -10,6 +10,9 @@ import {
   creditTierQualifies,
   getVehicleOffers,
   offersToIncentives,
+  findMatchingIncentiveId,
+  sortDeals,
+  applyLeaseRangeFilters,
   getGlobalDealCounts,
 } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
@@ -25,8 +28,10 @@ import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
-import type { DealsFilterState } from '../../components/DealsFilterModal';
+import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
+import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { DealCard } from '../../components/DealCard';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './LeaseByMakeModelPage.css';
 
 interface LeaseByMakeModelDeal {
@@ -131,7 +136,7 @@ const LeaseByMakeModelPage = () => {
     null,
   );
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const navigate = useNavigate();
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
@@ -199,12 +204,28 @@ const LeaseByMakeModelPage = () => {
     [offersPopup],
   );
 
-  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      const global = getGlobalDealCounts();
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
+    if (dealType === 'finance' || dealType === 'all') {
+      navigate(`${BEST_BUYING_DEALS_PATH}?openFilters=true`);
     }
-    return getGlobalDealCounts().all;
+  }, [navigate]);
+
+  const allLeaseDealsRaw = useMemo(() => getLeaseDeals(), []);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    return allLeaseDealsRaw.filter(deal => {
+      const v = deal.vehicle;
+      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
+      if (draftFilters.terms.length > 0 && deal.term) {
+        if (!draftFilters.terms.includes(parseTermMonths(deal.term))) return false;
+      }
+      if (deal.monthlyPaymentNum < draftFilters.monthlyPaymentMin || deal.monthlyPaymentNum > draftFilters.monthlyPaymentMax) return false;
+      const signingNum = parseInt(deal.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0;
+      if (signingNum < draftFilters.dueAtSigningMin || signingNum > draftFilters.dueAtSigningMax) return false;
+      return true;
+    }).length;
   }, []);
 
   const allDeals = useMemo((): LeaseByMakeModelDeal[] => {
@@ -233,8 +254,17 @@ const LeaseByMakeModelPage = () => {
       });
     }
 
-    return out.sort((a, b) => a.sortMonthly - b.sortMonthly);
-  }, [getSupabaseRating, matchesFilters, matchesMakeAndModel, makeName, modelName]);
+    const withSigning = out.map(d => ({
+      ...d,
+      dueAtSigningNum: parseInt(d.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0,
+    }));
+    const ranged = applyLeaseRangeFilters(
+      withSigning,
+      filters.monthlyPaymentMin, filters.monthlyPaymentMax,
+      filters.dueAtSigningMin, filters.dueAtSigningMax,
+    );
+    return sortDeals(ranged, filters.sortBy);
+  }, [getSupabaseRating, matchesFilters, matchesMakeAndModel, makeName, modelName, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, filters.sortBy]);
 
   const dealChunks = useMemo(() => chunkArray(allDeals, GRID_BREAKER_AFTER_CARD_COUNT), [allDeals]);
 
@@ -521,7 +551,7 @@ const LeaseByMakeModelPage = () => {
         allIncentives={
           activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined
         }
-        selectedIncentiveId={undefined}
+        selectedIncentiveId={activeDealObj ? findMatchingIncentiveId(activeDealObj.vehicle.make, activeDealObj.vehicle.model, 'lease', { value: activeDealObj.monthlyPayment }) : undefined}
       />
       <SignInToSaveModal
         isOpen={showSignInModal}
@@ -542,6 +572,7 @@ const LeaseByMakeModelPage = () => {
         getResultCount={getResultCount}
         totalResults={allDeals.length}
         dealPageType="lease"
+        onDealTypeNavigate={handleDealTypeNavigate}
       />
     </div>
   );

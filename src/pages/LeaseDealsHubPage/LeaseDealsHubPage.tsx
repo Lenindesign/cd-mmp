@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, applyLeaseRangeFilters, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -15,8 +15,10 @@ import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
-import type { DealsFilterState } from '../../components/DealsFilterModal';
+import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
+import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { DealCard } from '../../components/DealCard';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './LeaseDealsHubPage.css';
 
 const FAQ_DATA = [
@@ -74,7 +76,7 @@ const LeaseDealsHubPage = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
     const params = new URLSearchParams();
@@ -151,22 +153,46 @@ const LeaseDealsHubPage = () => {
     [offersPopup],
   );
 
-  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      const global = getGlobalDealCounts();
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
+    if (dealType === 'finance' || dealType === 'all') {
+      navigate(`${BEST_BUYING_DEALS_PATH}?openFilters=true`);
     }
-    return getGlobalDealCounts().all;
+  }, [navigate]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    return allLeaseDeals.filter(deal => {
+      const v = deal.vehicle;
+      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
+      if (draftFilters.terms.length > 0 && deal.term) {
+        if (!draftFilters.terms.includes(parseTermMonths(deal.term))) return false;
+      }
+      if (deal.monthlyPaymentNum < draftFilters.monthlyPaymentMin || deal.monthlyPaymentNum > draftFilters.monthlyPaymentMax) return false;
+      const signingNum = parseInt(deal.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0;
+      if (signingNum < draftFilters.dueAtSigningMin || signingNum > draftFilters.dueAtSigningMax) return false;
+      return true;
+    }).length;
   }, []);
 
   const deals = useMemo(() => {
-    return getLeaseDeals()
+    const filtered = getLeaseDeals()
       .filter((deal) => matchesFilters(deal.vehicle, { term: deal.term }))
-      .map((deal) => ({
-        ...deal,
-        rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
-      }));
-  }, [getSupabaseRating, matchesFilters]);
+      .map((deal) => {
+        const signingNum = parseInt(deal.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0;
+        return {
+          ...deal,
+          rating: getSupabaseRating(deal.vehicle.id, getCategory(deal.vehicle.bodyStyle), deal.vehicle.staffRating),
+          dueAtSigningNum: signingNum,
+        };
+      });
+    const ranged = applyLeaseRangeFilters(
+      filtered,
+      filters.monthlyPaymentMin, filters.monthlyPaymentMax,
+      filters.dueAtSigningMin, filters.dueAtSigningMax,
+    );
+    return sortDeals(ranged, filters.sortBy);
+  }, [getSupabaseRating, matchesFilters, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, filters.sortBy]);
 
   const isVehicleSaved = (name: string) => user?.savedVehicles?.some((v) => v.name === name) || false;
 
@@ -438,7 +464,7 @@ const LeaseDealsHubPage = () => {
         variant="conversion-b"
         offer={activeOffer}
         allIncentives={activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined}
-        selectedIncentiveId={undefined}
+        selectedIncentiveId={activeDealObj ? findMatchingIncentiveId(activeDealObj.vehicle.make, activeDealObj.vehicle.model, 'lease', { value: activeDealObj.monthlyPayment }) : undefined}
       />
       <SignInToSaveModal
         isOpen={showSignInModal}
@@ -451,7 +477,7 @@ const LeaseDealsHubPage = () => {
         itemImage={pendingSaveVehicle?.image}
       />
 
-      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} getResultCount={getResultCount} totalResults={deals.length} dealPageType="lease" />
+      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} getResultCount={getResultCount} totalResults={deals.length} dealPageType="lease" onDealTypeNavigate={handleDealTypeNavigate} />
     </div>
   );
 };

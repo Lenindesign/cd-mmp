@@ -178,6 +178,101 @@ export function offersToIncentives(make: string, model: string): {
   });
 }
 
+/**
+ * Find the incentive ID that matches a specific deal so the overlay opens
+ * to the correct offer instead of defaulting to the first one.
+ */
+export function findMatchingIncentiveId(
+  make: string,
+  model: string,
+  dealType: 'cash' | 'finance' | 'lease' | 'zero-apr',
+  identifiers?: { apr?: string; term?: string; value?: string },
+): string | undefined {
+  const incentives = offersToIncentives(make, model);
+  if (dealType === 'cash') {
+    return incentives.find(inc => inc.type === 'cash')?.id;
+  }
+  if (dealType === 'lease') {
+    if (identifiers?.value) {
+      return incentives.find(inc => inc.type === 'lease' && inc.title.includes(identifiers.value!))?.id;
+    }
+    return incentives.find(inc => inc.type === 'lease')?.id;
+  }
+  if (dealType === 'zero-apr') {
+    return incentives.find(inc => inc.type === 'finance' && inc.title.startsWith('0%'))?.id;
+  }
+  if (identifiers?.apr && identifiers?.term) {
+    return incentives.find(inc =>
+      inc.title.includes(identifiers.apr!) && inc.title.includes(identifiers.term!),
+    )?.id;
+  }
+  if (identifiers?.apr) {
+    return incentives.find(inc => inc.title.includes(identifiers.apr!))?.id;
+  }
+  return incentives.find(inc => inc.type === 'finance')?.id;
+}
+
+/**
+ * Sort a deals array based on the filter modal's sortBy value.
+ * Each deal needs: vehicle.make, vehicle.model, expirationDate, rating.
+ * Lease-specific sorts need: monthlyPaymentNum, dueAtSigningNum.
+ */
+export function sortDeals<T extends {
+  vehicle: { make: string; model: string };
+  expirationDate: string;
+  rating: number;
+  monthlyPaymentNum?: number;
+  estimatedMonthly?: number;
+  dueAtSigningNum?: number;
+}>(deals: T[], sortBy: string): T[] {
+  const sorted = [...deals];
+  switch (sortBy) {
+    case 'a-z':
+      return sorted.sort((a, b) =>
+        `${a.vehicle.make} ${a.vehicle.model}`.localeCompare(`${b.vehicle.make} ${b.vehicle.model}`),
+      );
+    case 'expiring-soon':
+      return sorted.sort((a, b) =>
+        new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime(),
+      );
+    case 'rating-high':
+      return sorted.sort((a, b) => b.rating - a.rating);
+    case 'payment-low':
+      return sorted.sort((a, b) =>
+        (a.monthlyPaymentNum ?? a.estimatedMonthly ?? Infinity) -
+        (b.monthlyPaymentNum ?? b.estimatedMonthly ?? Infinity),
+      );
+    case 'cash-down-low':
+      return sorted.sort((a, b) => (a.dueAtSigningNum ?? Infinity) - (b.dueAtSigningNum ?? Infinity));
+    default:
+      return sorted;
+  }
+}
+
+/**
+ * Apply monthly payment and due-at-signing range filters to lease deals.
+ */
+export function applyLeaseRangeFilters<T extends {
+  monthlyPaymentNum?: number;
+  dueAtSigningNum?: number;
+}>(
+  deals: T[],
+  paymentMin: number,
+  paymentMax: number,
+  signingMin: number,
+  signingMax: number,
+): T[] {
+  return deals.filter(d => {
+    if (d.monthlyPaymentNum != null) {
+      if (d.monthlyPaymentNum < paymentMin || d.monthlyPaymentNum > paymentMax) return false;
+    }
+    if (d.dueAtSigningNum != null) {
+      if (d.dueAtSigningNum < signingMin || d.dueAtSigningNum > signingMax) return false;
+    }
+    return true;
+  });
+}
+
 export interface GlobalDealCounts {
   all: number;
   lease: number;

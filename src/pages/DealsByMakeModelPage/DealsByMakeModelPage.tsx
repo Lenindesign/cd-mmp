@@ -14,6 +14,9 @@ import {
   creditTierQualifies,
   getVehicleOffers,
   offersToIncentives,
+  findMatchingIncentiveId,
+  sortDeals,
+  applyLeaseRangeFilters,
   getGlobalDealCounts,
 } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
@@ -32,6 +35,7 @@ import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesMo
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './DealsByMakeModelPage.css';
 
 type DealKind = 'zero-apr' | 'finance' | 'lease' | 'cash';
@@ -172,7 +176,7 @@ const DealsByMakeModelPage = () => {
     null,
   );
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const navigate = useNavigate();
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
@@ -239,14 +243,6 @@ const DealsByMakeModelPage = () => {
     },
     [offersPopup],
   );
-
-  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      const global = getGlobalDealCounts();
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
-    }
-    return getGlobalDealCounts().all;
-  }, []);
 
   const allDeals = useMemo((): UnifiedMakeDeal[] => {
     const out: UnifiedMakeDeal[] = [];
@@ -344,10 +340,38 @@ const DealsByMakeModelPage = () => {
       });
     }
 
-    return out.sort((a, b) => a.sortMonthly - b.sortMonthly);
-  }, [getSupabaseRating, matchesFilters, matchesMakeAndModel]);
+    const withSigning = out.map(d => ({
+      ...d,
+      dueAtSigningNum: d.dueAtSigning ? parseInt(d.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0 : undefined,
+    }));
+    const ranged = applyLeaseRangeFilters(
+      withSigning,
+      filters.monthlyPaymentMin, filters.monthlyPaymentMax,
+      filters.dueAtSigningMin, filters.dueAtSigningMax,
+    );
+    return sortDeals(ranged, filters.sortBy);
+  }, [getSupabaseRating, matchesFilters, matchesMakeAndModel, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, filters.sortBy]);
 
-  const dealChunks = useMemo(() => chunkArray(allDeals, GRID_BREAKER_AFTER_CARD_COUNT), [allDeals]);
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    let result = allDeals;
+    if (draftFilters.dealType === 'lease') result = result.filter(d => d.dealType === 'lease');
+    else if (draftFilters.dealType === 'finance') result = result.filter(d => d.dealType !== 'lease');
+    return result.filter(d => {
+      const v = d.vehicle;
+      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
+      return true;
+    }).length;
+  }, [allDeals]);
+
+  const filteredDeals = useMemo(() => {
+    if (filters.dealType === 'lease') return allDeals.filter(d => d.dealType === 'lease');
+    if (filters.dealType === 'finance') return allDeals.filter(d => d.dealType !== 'lease');
+    return allDeals;
+  }, [allDeals, filters.dealType]);
+
+  const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);
 
   const mmpYear = useMemo(() => {
     if (allDeals.length === 0) return year;
@@ -375,7 +399,7 @@ const DealsByMakeModelPage = () => {
     }
   };
 
-  const activeDealObj = activeDealId ? allDeals.find((d) => d.id === activeDealId) : null;
+  const activeDealObj = activeDealId ? filteredDeals.find((d) => d.id === activeDealId) : null;
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
 
   const pageTitle = `Best ${makeName} ${modelName} Deals & Incentives for ${month} ${year}`;
@@ -444,7 +468,7 @@ const DealsByMakeModelPage = () => {
         <div className="container mm-deals__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">
-              {allDeals.length} {allDeals.length === 1 ? 'deal' : 'deals'}
+              {filteredDeals.length} {filteredDeals.length === 1 ? 'deal' : 'deals'}
             </span>
             {activeFilterPills.length > 0 && (
               <div className="active-filter-pills__row" aria-label="Active filters">
@@ -484,8 +508,8 @@ const DealsByMakeModelPage = () => {
       <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
       <div className="mm-deals__content">
-        <div className={`container${allDeals.length > 0 ? ' mm-deals__container--stacked' : ''}`}>
-          {allDeals.length === 0 ? (
+        <div className={`container${filteredDeals.length > 0 ? ' mm-deals__container--stacked' : ''}`}>
+          {filteredDeals.length === 0 ? (
             <div className="mm-deals__segment">
               <div className="mm-deals__main">
                 <section className="mm-deals__section">
@@ -701,7 +725,15 @@ const DealsByMakeModelPage = () => {
         allIncentives={
           activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined
         }
-        selectedIncentiveId={undefined}
+        selectedIncentiveId={activeDealObj
+          ? findMatchingIncentiveId(
+              activeDealObj.vehicle.make,
+              activeDealObj.vehicle.model,
+              activeDealObj.dealType,
+              { apr: activeDealObj.aprDisplay, term: activeDealObj.term },
+            )
+          : undefined
+        }
       />
       <SignInToSaveModal
         isOpen={showSignInModal}
@@ -720,7 +752,7 @@ const DealsByMakeModelPage = () => {
         filters={filters}
         onApply={handleFilterApply}
         getResultCount={getResultCount}
-        totalResults={allDeals.length}
+        totalResults={filteredDeals.length}
       />
     </div>
   );

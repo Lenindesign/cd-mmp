@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, AVG_MARKET_APR, AVG_LOAN_TERM, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, AVG_MARKET_APR, AVG_LOAN_TERM, getGlobalDealCounts } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
@@ -10,10 +10,11 @@ import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
-import type { DealsFilterState } from '../../components/DealsFilterModal';
+import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { DealCard } from '../../components/DealCard';
 import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './DealsHubPage.css';
 
 interface MiniDeal {
@@ -65,8 +66,13 @@ const DealsHubPage = () => {
   const { month, year } = getCurrentPeriod();
   const navigate = useNavigate();
   const [activeDeal, setActiveDeal] = useState<MiniDeal | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
+    if (dealType === 'lease') navigate('/deals/lease?openFilters=true');
+    else if (dealType === 'finance') navigate(`${BEST_BUYING_DEALS_PATH}?openFilters=true`);
+  }, [navigate]);
+
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
     const params = new URLSearchParams();
     params.set('filters', JSON.stringify(applied));
@@ -553,7 +559,15 @@ const DealsHubPage = () => {
         variant="conversion-b"
         offer={activeOffer}
         allIncentives={activeDeal ? offersToIncentives(activeDeal.make, activeDeal.model) : undefined}
-        selectedIncentiveId={undefined}
+        selectedIncentiveId={activeDeal
+          ? findMatchingIncentiveId(
+              activeDeal.make,
+              activeDeal.model,
+              activeDeal.dealType,
+              { apr: activeDeal.aprDisplay, term: activeDeal.term },
+            )
+          : undefined
+        }
       />
 
       <DealsFilterModal
@@ -563,6 +577,7 @@ const DealsHubPage = () => {
         onApply={handleFilterApply}
         getResultCount={getResultCount}
         totalResults={totalResults}
+        onDealTypeNavigate={handleDealTypeNavigate}
       />
     </div>
   );

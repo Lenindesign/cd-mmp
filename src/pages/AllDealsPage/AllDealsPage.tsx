@@ -16,6 +16,7 @@ import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import { GridAd } from '../../components/GridAd';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './AllDealsPage.css';
 
 interface MiniDeal {
@@ -102,7 +103,7 @@ const AllDealsPage = () => {
   const { month, year } = getCurrentPeriod();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeDeal, setActiveDeal] = useState<MiniDeal | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(() => {
     return parseFiltersFromUrl(searchParams.get('filters')) ?? DEFAULT_FILTERS;
   });
@@ -224,6 +225,8 @@ const AllDealsPage = () => {
 
   const applyFiltersToDeals = useCallback((dealList: MiniDeal[], f: DealsFilterState): MiniDeal[] => {
     return dealList.filter(d => {
+      if (f.dealType === 'lease') { if (d.dealType !== 'lease') return false; }
+      else if (f.dealType === 'finance') { if (d.dealType === 'lease') return false; }
       if (f.bodyTypes.length > 0 && !f.bodyTypes.includes(d.bodyStyle)) return false;
       if (f.makes.length > 0 && !f.makes.includes(d.make)) return false;
       if (f.fuelTypes.length > 0 && !f.fuelTypes.includes(d.fuelType)) return false;
@@ -246,7 +249,25 @@ const AllDealsPage = () => {
   }, []);
 
   const filteredDeals = useMemo(() => {
-    return applyFiltersToDeals(allDeals, filters);
+    const filtered = applyFiltersToDeals(allDeals, filters);
+    const sorted = [...filtered];
+    switch (filters.sortBy) {
+      case 'a-z':
+        sorted.sort((a, b) => `${a.make} ${a.model}`.localeCompare(`${b.make} ${b.model}`));
+        break;
+      case 'expiring-soon':
+        sorted.sort((a, b) => new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime());
+        break;
+      case 'rating-high':
+        sorted.sort((a, b) => (b.staffRating ?? 0) - (a.staffRating ?? 0));
+        break;
+      case 'payment-low':
+        sorted.sort((a, b) => a.monthlyNum - b.monthlyNum);
+        break;
+      default:
+        break;
+    }
+    return sorted;
   }, [allDeals, filters, applyFiltersToDeals]);
 
   const dealChunks = useMemo(() => chunkArray(filteredDeals, GRID_BREAKER_AFTER_CARD_COUNT), [filteredDeals]);

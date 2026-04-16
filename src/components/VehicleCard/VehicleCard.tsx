@@ -95,6 +95,10 @@ export interface VehicleCardProps {
 
   // Save/Bookmark functionality
   showSaveButton?: boolean;
+
+  // Incentives
+  incentiveCount?: number;
+  onIncentiveClick?: (e: React.MouseEvent) => void;
   
   // Variant
   variant?: 'default' | 'next-vehicle';
@@ -139,6 +143,8 @@ export const VehicleCard = ({
   yearDetails,
   modelName,
   showSaveButton = false,
+  incentiveCount,
+  onIncentiveClick,
   variant = 'default',
 }: VehicleCardProps) => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
@@ -569,6 +575,17 @@ export const VehicleCard = ({
           </div>
         )}
 
+
+        {/* Incentive Badge - bottom left of image */}
+        {incentiveCount != null && incentiveCount > 0 && (
+          <button
+            type="button"
+            className="vehicle-card__incentive-btn"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onIncentiveClick?.(e); }}
+          >
+            INCENTIVE
+          </button>
+        )}
 
         <OptimizedImage 
           src={image} 

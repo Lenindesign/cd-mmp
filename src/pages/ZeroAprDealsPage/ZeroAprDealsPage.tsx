@@ -1,10 +1,10 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -17,9 +17,10 @@ import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
-import type { DealsFilterState } from '../../components/DealsFilterModal';
+import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { DealCard } from '../../components/DealCard';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './ZeroAprDealsPage.css';
 
 type AprTab = 'all' | 'zero-apr' | 'special-apr' | 'cash';
@@ -130,6 +131,7 @@ function renderFaqQuestionText(question: string) {
 
 const ZeroAprDealsPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isZeroPercentOnlyRoute = location.pathname === ZERO_PERCENT_APR_DEALS_PATH;
   const isCashBackOnlyRoute = location.pathname === CASH_BACK_DEALS_PATH;
@@ -149,13 +151,19 @@ const ZeroAprDealsPage = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
     setFilters(applied);
   }, []);
+
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
+    if (dealType === 'lease') {
+      navigate('/deals/lease?openFilters=true');
+    }
+  }, [navigate]);
 
   const { pills: sharedPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
@@ -268,9 +276,9 @@ const ZeroAprDealsPage = () => {
   const filteredAll = useMemo(() => applyFiltersToDeals(allDeals, filters), [allDeals, filters, applyFiltersToDeals]);
 
   const deals = useMemo(() => {
-    if (activeTab === 'all') return filteredAll;
-    return filteredAll.filter(d => d.aprType === activeTab);
-  }, [filteredAll, activeTab]);
+    const tabbed = activeTab === 'all' ? filteredAll : filteredAll.filter(d => d.aprType === activeTab);
+    return sortDeals(tabbed, filters.sortBy);
+  }, [filteredAll, activeTab, filters.sortBy]);
 
   const dealChunks = useMemo(() => chunkArray(deals, GRID_BREAKER_AFTER_CARD_COUNT), [deals]);
 
@@ -621,10 +629,18 @@ const ZeroAprDealsPage = () => {
         variant="conversion-b"
         offer={activeOffer}
         allIncentives={activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined}
-        selectedIncentiveId={undefined}
+        selectedIncentiveId={activeDealObj
+          ? findMatchingIncentiveId(
+              activeDealObj.vehicle.make,
+              activeDealObj.vehicle.model,
+              activeDealObj.aprType === 'special-apr' ? 'finance' : activeDealObj.aprType,
+              activeDealObj.aprType !== 'cash' ? { apr: `${activeDealObj.apr}%`, term: activeDealObj.term } : undefined,
+            )
+          : undefined
+        }
       />
       <SignInToSaveModal isOpen={showSignInModal} onClose={() => { setShowSignInModal(false); setPendingSaveVehicle(null); }} itemType="vehicle" itemName={pendingSaveVehicle?.name} itemImage={pendingSaveVehicle?.image} />
-      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} totalResults={deals.length} getResultCount={getResultCount} />
+      <DealsFilterModal isOpen={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onApply={handleFilterApply} totalResults={deals.length} getResultCount={getResultCount} dealPageType="finance" onDealTypeNavigate={handleDealTypeNavigate} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { X, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
@@ -13,6 +13,7 @@ export type DealFilterTab = 'best-deals' | 'all-specials';
 export type SortOption =
   | 'a-z'
   | 'expiring-soon'
+  | 'rating-high'
   | 'payment-low'
   | 'cash-down-low';
 
@@ -47,11 +48,14 @@ interface DealsFilterModalProps {
   totalResults: number;
   getResultCount?: (filters: DealsFilterState) => number;
   dealPageType?: DealPageType;
+  /** When set, clicking the Lease/Buy toggle navigates instead of just toggling the draft state. */
+  onDealTypeNavigate?: (dealType: DealTypeOption) => void;
 }
 
 const BASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: 'a-z', label: 'A–Z' },
+  { value: 'a-z', label: 'Make Model (A–Z)' },
   { value: 'expiring-soon', label: 'Expiring Soonest' },
+  { value: 'rating-high', label: 'C/D Rating (High to Low)' },
 ];
 
 const LEASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -67,6 +71,7 @@ const DealsFilterModal = ({
   totalResults,
   getResultCount,
   dealPageType = 'general',
+  onDealTypeNavigate,
 }: DealsFilterModalProps) => {
   const [draft, setDraft] = useState<DealsFilterState>(externalFilters);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -208,16 +213,17 @@ const DealsFilterModal = ({
   }, [draft, onApply, onClose]);
 
   const activeDealType = draft.dealType;
-  const showMonthlyPayment = activeDealType === 'all' || activeDealType === 'lease';
-  const showTermLength = activeDealType === 'all' || activeDealType === 'lease' || activeDealType === 'finance';
-  const showDueAtSigning = activeDealType === 'all' || activeDealType === 'lease';
+  const isLeaseMode = activeDealType === 'lease' || activeDealType === 'all';
+  const showMonthlyPayment = isLeaseMode;
+  const showCashDown = isLeaseMode;
+  const showTermLength = isLeaseMode;
 
   const sortOptions = useMemo(() => {
-    if (activeDealType === 'lease' || dealPageType === 'lease') {
+    if (activeDealType === 'lease' || activeDealType === 'all') {
       return [...BASE_SORT_OPTIONS, ...LEASE_SORT_OPTIONS];
     }
     return BASE_SORT_OPTIONS;
-  }, [activeDealType, dealPageType]);
+  }, [activeDealType]);
 
   if (!isOpen) return null;
 
@@ -240,26 +246,30 @@ const DealsFilterModal = ({
 
         {/* Scrollable body */}
         <div className="deals-filter__body">
-          {/* Deal Type tabs removed — filtering by deal type is handled at the page level */}
-
-          {/* Location */}
-          <div className="deals-filter__section deals-filter__section--location">
-            <h3 className="deals-filter__section-label">Location</h3>
-            <div className="deals-filter__zip-input-wrap">
-              <span className="deals-filter__zip-label">Zip Code</span>
-              <div className="deals-filter__zip-row">
-                <MapPin size={14} className="deals-filter__zip-icon" />
-                <input
-                  type="text"
-                  className="deals-filter__zip-input"
-                  value={draft.zipCode}
-                  onChange={e => setDraft(prev => ({ ...prev, zipCode: e.target.value.replace(/\D/g, '').slice(0, 5) }))}
-                  maxLength={5}
-                  placeholder="Enter zip"
-                  aria-label="Zip code"
-                />
-              </div>
-            </div>
+          {/* Deal Type toggle */}
+          <div className="deals-filter__deal-type-row">
+            <button
+              type="button"
+              className={`deals-filter__deal-type-btn ${draft.dealType === 'lease' ? 'deals-filter__deal-type-btn--active' : ''}`}
+              onClick={() => {
+                const next: DealTypeOption = draft.dealType === 'lease' ? 'all' : 'lease';
+                if (onDealTypeNavigate) { onDealTypeNavigate(next); return; }
+                setDraft(prev => ({ ...prev, dealType: next }));
+              }}
+            >
+              Lease
+            </button>
+            <button
+              type="button"
+              className={`deals-filter__deal-type-btn ${draft.dealType === 'finance' ? 'deals-filter__deal-type-btn--active' : ''}`}
+              onClick={() => {
+                const next: DealTypeOption = draft.dealType === 'finance' ? 'all' : 'finance';
+                if (onDealTypeNavigate) { onDealTypeNavigate(next); return; }
+                setDraft(prev => ({ ...prev, dealType: next }));
+              }}
+            >
+              Buy
+            </button>
           </div>
 
           {/* Sort By */}
@@ -284,7 +294,7 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Body Type */}
+          {/* Body Style */}
           <FilterSection
             title="Body Style"
             expanded={expandedSections.bodyType}
@@ -306,50 +316,6 @@ const DealsFilterModal = ({
               })}
             </div>
           </FilterSection>
-
-          {/* Monthly Payment - lease & all */}
-          {showMonthlyPayment && (
-            <FilterSection
-              title="Monthly payment"
-              expanded={expandedSections.monthlyPayment}
-              onToggle={() => toggleSection('monthlyPayment')}
-            >
-              <RangeInputs
-                minValue={draft.monthlyPaymentMin}
-                maxValue={draft.monthlyPaymentMax}
-                absMin={paymentRange.min}
-                absMax={paymentRange.max}
-                prefix="$"
-                onMinChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMin: v }))}
-                onMaxChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMax: v }))}
-              />
-            </FilterSection>
-          )}
-
-          {/* Term Length - lease, finance & all */}
-          {showTermLength && (
-            <FilterSection
-              title="Term length"
-              expanded={expandedSections.term}
-              onToggle={() => toggleSection('term')}
-            >
-              <div className="deals-filter__chips">
-                {availableTerms.map(t => {
-                  const count = optionCounts?.[`term-${t}`];
-                  return (
-                    <button
-                      key={t}
-                      type="button"
-                      className={`deals-filter__chip ${draft.terms.includes(t) ? 'deals-filter__chip--active' : ''}`}
-                      onClick={() => toggleTerm(t)}
-                    >
-                      {t} mo{count != null ? ` (${count})` : ''}
-                    </button>
-                  );
-                })}
-              </div>
-            </FilterSection>
-          )}
 
           {/* Make */}
           <FilterSection
@@ -375,28 +341,9 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Due at Signing - lease & all */}
-          {showDueAtSigning && (
-            <FilterSection
-              title="Due at signing"
-              expanded={expandedSections.dueAtSigning}
-              onToggle={() => toggleSection('dueAtSigning')}
-            >
-              <RangeInputs
-                minValue={draft.dueAtSigningMin}
-                maxValue={draft.dueAtSigningMax}
-                absMin={signingRange.min}
-                absMax={signingRange.max}
-                prefix="$"
-                onMinChange={v => setDraft(prev => ({ ...prev, dueAtSigningMin: v }))}
-                onMaxChange={v => setDraft(prev => ({ ...prev, dueAtSigningMax: v }))}
-              />
-            </FilterSection>
-          )}
-
           {/* Fuel Type */}
           <FilterSection
-            title="Fuel type"
+            title="Fuel Type"
             expanded={expandedSections.fuelType}
             onToggle={() => toggleSection('fuelType')}
           >
@@ -417,7 +364,68 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
+          {/* Monthly Payment — lease only */}
+          {showMonthlyPayment && (
+            <FilterSection
+              title="Monthly Payment"
+              expanded={expandedSections.monthlyPayment}
+              onToggle={() => toggleSection('monthlyPayment')}
+            >
+              <RangeInputs
+                minValue={draft.monthlyPaymentMin}
+                maxValue={draft.monthlyPaymentMax}
+                absMin={paymentRange.min}
+                absMax={paymentRange.max}
+                prefix="$"
+                onMinChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMin: v }))}
+                onMaxChange={v => setDraft(prev => ({ ...prev, monthlyPaymentMax: v }))}
+              />
+            </FilterSection>
+          )}
 
+          {/* Cash Down — lease only */}
+          {showCashDown && (
+            <FilterSection
+              title="Cash Down"
+              expanded={expandedSections.dueAtSigning}
+              onToggle={() => toggleSection('dueAtSigning')}
+            >
+              <RangeInputs
+                minValue={draft.dueAtSigningMin}
+                maxValue={draft.dueAtSigningMax}
+                absMin={signingRange.min}
+                absMax={signingRange.max}
+                prefix="$"
+                onMinChange={v => setDraft(prev => ({ ...prev, dueAtSigningMin: v }))}
+                onMaxChange={v => setDraft(prev => ({ ...prev, dueAtSigningMax: v }))}
+              />
+            </FilterSection>
+          )}
+
+          {/* Term Length — lease only */}
+          {showTermLength && (
+            <FilterSection
+              title="Term Length"
+              expanded={expandedSections.term}
+              onToggle={() => toggleSection('term')}
+            >
+              <div className="deals-filter__chips">
+                {availableTerms.map(t => {
+                  const count = optionCounts?.[`term-${t}`];
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`deals-filter__chip ${draft.terms.includes(t) ? 'deals-filter__chip--active' : ''}`}
+                      onClick={() => toggleTerm(t)}
+                    >
+                      {t} mo{count != null ? ` (${count})` : ''}
+                    </button>
+                  );
+                })}
+              </div>
+            </FilterSection>
+          )}
         </div>
 
         {/* Footer */}

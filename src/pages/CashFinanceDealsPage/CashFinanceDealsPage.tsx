@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -17,7 +17,8 @@ import { DealCard } from '../../components/DealCard';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
-import type { DealsFilterState } from '../../components/DealsFilterModal';
+import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
+import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './CashFinanceDealsPage.css';
 
 const FAQ_DATA = [
@@ -83,7 +84,7 @@ const CashFinanceDealsPage = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const navigate = useNavigate();
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
@@ -131,12 +132,22 @@ const CashFinanceDealsPage = () => {
     }
   }, [offersPopup]);
 
-  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    if (draftFilters.dealType && draftFilters.dealType !== 'all') {
-      const global = getGlobalDealCounts();
-      return global[draftFilters.dealType as keyof typeof global] ?? global.all;
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
+    if (dealType === 'lease') {
+      navigate('/deals/lease?openFilters=true');
     }
-    return getGlobalDealCounts().all;
+  }, [navigate]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    const allFinance = getFinanceDeals();
+    const allCash = getCashDeals();
+    return [...allFinance, ...allCash].filter(deal => {
+      const v = deal.vehicle;
+      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
+      return true;
+    }).length;
   }, []);
 
   const financeDeals = useMemo(() => {
@@ -158,13 +169,8 @@ const CashFinanceDealsPage = () => {
   }, [getSupabaseRating, matchesFilters]);
 
   const displayDeals = useMemo(
-    () =>
-      [...cashDeals, ...financeDeals].sort((a, b) =>
-        `${a.vehicle.year} ${a.vehicle.make} ${a.vehicle.model}`.localeCompare(
-          `${b.vehicle.year} ${b.vehicle.make} ${b.vehicle.model}`,
-        ),
-      ),
-    [cashDeals, financeDeals],
+    () => sortDeals([...cashDeals, ...financeDeals], filters.sortBy),
+    [cashDeals, financeDeals, filters.sortBy],
   );
 
   const dealChunks = useMemo(() => chunkArray(displayDeals, GRID_BREAKER_AFTER_CARD_COUNT), [displayDeals]);
@@ -532,7 +538,17 @@ const CashFinanceDealsPage = () => {
         variant="conversion-b"
         offer={activeOffer}
         allIncentives={activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined}
-        selectedIncentiveId={undefined}
+        selectedIncentiveId={activeDealObj
+          ? findMatchingIncentiveId(
+              activeDealObj.vehicle.make,
+              activeDealObj.vehicle.model,
+              activeDealObj.type,
+              activeDealObj.type === 'finance'
+                ? { apr: (activeDealObj as { apr: string; term: string }).apr, term: (activeDealObj as { apr: string; term: string }).term }
+                : undefined,
+            )
+          : undefined
+        }
       />
       <SignInToSaveModal
         isOpen={showSignInModal}
@@ -552,6 +568,8 @@ const CashFinanceDealsPage = () => {
         onApply={handleFilterApply}
         getResultCount={getResultCount}
         totalResults={displayDeals.length}
+        dealPageType="finance"
+        onDealTypeNavigate={handleDealTypeNavigate}
       />
     </div>
   );
