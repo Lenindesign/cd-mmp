@@ -82,6 +82,24 @@ button[class*='__faq-question'] svg {
   margin: 0;
 }
 
+[class*='__faq-answer'] p + p {
+  margin-top: var(--spacing-4);
+}
+
+[class*='__faq-answer'] ul {
+  margin: var(--spacing-2) 0 0;
+  padding-left: var(--spacing-6);
+  list-style: disc;
+}
+
+[class*='__faq-answer'] ul li {
+  font-family: var(--font-article);
+  font-size: 19px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  line-height: 28px;
+}
+
 @media (max-width: 768px) {
   [class*='__faq-heading'] {
     font-size: var(--font-size-2xl) !important;
@@ -95,5 +113,10 @@ button[class*='__faq-question'] svg {
   [class*='__faq-answer'] p {
     font-size: 17px !important;
     line-height: 22px !important;
+  }
+
+  [class*='__faq-answer'] ul li {
+    font-size: 17px;
+    line-height: 24px;
   }
 }

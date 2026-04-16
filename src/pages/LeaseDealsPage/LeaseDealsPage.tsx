@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { buildSavingsText, parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, applyLeaseRangeFilters } from '../../utils/dealCalculations';
+import { parseTermMonths, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, applyLeaseRangeFilters } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { DealCard } from '../../components/DealCard';
@@ -22,26 +22,66 @@ import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './LeaseDealsPage.css';
 
-const FAQ_DATA = [
+const FAQ_DATA: { question: string; answer: string; bullets?: string[] }[] = [
   {
-    question: 'How does leasing a car work?',
-    answer: 'When you lease a car, you\'re essentially paying for the vehicle\'s depreciation during the lease term rather than the full purchase price. You make monthly payments for a set period (typically 24–36 months) and return the car at the end. Your payment is based on the difference between the car\'s price and its projected residual value, plus fees and taxes.',
+    question: 'Can you lease a car with no money down?',
+    answer: 'Yes, you can lease a car with no money down, but that usually means more of the upfront cost gets pushed into the monthly payment. In many offers, taxes, registration, acquisition fees, or even the first payment are still due at signing unless the ad specifically says everything is rolled in.\n\nA zero-down lease can help preserve cash and may be safer than putting a large amount upfront if the vehicle is stolen or totaled early in the term. But it is not automatically the cheapest option, so the smarter comparison is total lease cost over the full term, not just what is due on day one.',
+    bullets: [
+      'Verify whether "$0 down" also means "$0 due at signing."',
+      'Compare total paid over the full 24- or 36-month term, not just the headline payment.',
+      'Ask whether taxes, acquisition fee, and registration are included or rolled into the payment.',
+      'Check mileage limits and end-of-lease fees before signing.',
+    ],
   },
   {
-    question: 'What does "due at signing" mean?',
-    answer: 'Due at signing is the upfront cost you pay when you start the lease. It typically includes the first month\'s payment, a security deposit (if required), acquisition fee, and sometimes a down payment. A lower due-at-signing amount means more money in your pocket upfront, but it may result in slightly higher monthly payments.',
+    question: 'What credit score do you need to lease a car?',
+    answer: 'There is no single minimum credit score for every lease, but the best advertised lease specials usually go to shoppers with strong, top-tier credit. A 650 score may qualify with some lenders, while a 500 score is much tougher and often means fewer vehicle choices, a larger amount due at signing, or the need for a co-signer.\n\nDealers and lenders also look beyond the score itself. Income, debt, prior auto history, payment history, and stability all affect approval, so shoppers should assume the headline lease payment is built for well-qualified customers unless the fine print says otherwise.',
+    bullets: [
+      'Ask whether the advertised payment assumes top-tier credit.',
+      'Bring proof of income and be ready to explain recent credit issues if needed.',
+      'A trade-in, larger upfront payment, or co-signer can improve approval odds.',
+      'If approval is tight, compare the lease against a lower-priced model or a used-car loan.',
+    ],
   },
   {
-    question: 'What happens if I drive more than the mileage limit?',
-    answer: 'Most leases include a mileage allowance (typically 10,000–12,000 miles per year). If you exceed it, you\'ll pay an excess mileage fee, usually $0.15 to $0.25 per mile, when you return the vehicle. If you know you\'ll drive more, negotiate a higher mileage allowance upfront; it\'s cheaper than paying overage fees.',
+    question: 'Can you really lease a car for $200 to $300 a month?',
+    answer: 'Sometimes, yes, but usually only on smaller, lower-trim vehicles or outgoing inventory with strong incentives. The lowest advertised lease payments often assume top-tier credit, limited annual mileage, a short term, and some money due at signing.\n\nThe more useful question is not just whether a $199 or $299 payment exists, but what you are giving up to get it. A slightly higher payment with lower drive-off costs, more realistic mileage, or fewer fees can easily be the better deal for a real shopper.',
+    bullets: [
+      'Check the amount due at signing before comparing monthly payments.',
+      'Confirm mileage allowance, taxes, registration, and dealer fees.',
+      'Expect payments to rise quickly on higher trims or popular option packages.',
+      'Remember that lease offers change by ZIP code, inventory, and month.',
+    ],
   },
   {
-    question: 'Can I buy the car at the end of the lease?',
-    answer: 'Yes, most leases include a purchase option at the end of the term. The buyout price is the residual value set at the start of the lease plus any applicable fees. If the car is worth more than its residual value, buying it can be a good deal. If not, simply return it and walk away.',
+    question: 'Can you negotiate a car lease?',
+    answer: 'Yes, parts of a lease are negotiable, especially the selling price of the vehicle, the trade-in value, and sometimes certain end-of-lease fees. The pieces with the least flexibility are usually lender-set items such as residual value and acquisition fee.\n\nThe smartest way to negotiate a lease is to work the deal in layers. Nail down the vehicle price first, then review how the payment is built, because a dealer can make the monthly number look lower by extending the term or moving costs into the upfront amount.',
+    bullets: [
+      'Focus on cap cost, money due at signing, mileage allowance, and disposition fee.',
+      'Ask for an itemized lease worksheet instead of discussing only the monthly payment.',
+      'Compare quotes from more than one dealer, especially near month-end or quarter-end.',
+      'Read the final contract closely to make sure it matches the quote.',
+    ],
   },
   {
-    question: 'Is leasing or buying better for me?',
-    answer: 'Leasing is ideal if you like driving a new car every few years, want lower monthly payments, and don\'t drive excessive miles. Buying is better if you want to build equity, plan to keep the car long-term, or drive more than 12,000–15,000 miles per year. Consider your lifestyle and financial goals when deciding.',
+    question: 'What are the biggest downsides and red flags in a car lease?',
+    answer: 'The biggest downside to leasing is that you keep making payments without building ownership equity. A lease can look affordable at first, but excess-mileage charges, wear-and-tear bills, disposition fees, insurance requirements, and early termination costs can make it more expensive than shoppers expect.\n\nThe biggest red flags are vague fees, low headline payments tied to large upfront costs, unrealistic mileage caps, and numbers that change when the contract shows up. If the dealer cannot clearly explain every fee on the worksheet, that is a warning sign by itself.',
+    bullets: [
+      'Match the mileage limit to how you really drive, not how the ad is structured.',
+      'Ask how wear-and-tear, tire damage, and excess mileage are billed at turn-in.',
+      'Confirm whether gap coverage is included and what happens if you end the lease early.',
+      'Compare the signed contract against the original quote line by line.',
+    ],
+  },
+  {
+    question: 'Is it better to lease or buy a car?',
+    answer: 'Leasing is usually better for shoppers who want a lower monthly payment, a newer car every few years, and less interest in long-term ownership. Buying is usually better if you drive a lot, want to keep the vehicle after the loan is paid off, or want the freedom to customize and build equity.\n\nFor most shoppers, the real difference is time horizon. If you swap vehicles often, a strong lease can make sense. If you keep cars for years, buying usually wins on long-term value because the payment eventually ends and the car is still yours.',
+    bullets: [
+      'Lease if lower payment and short commitment matter most.',
+      'Buy if you want long-term value, no mileage limits, and ownership flexibility.',
+      'Compare 3-year out-of-pocket cost against 6- to 8-year ownership cost.',
+      'Check insurance, fees, residual value, and the lease buyout option before deciding.',
+    ],
   },
 ];
 
@@ -225,7 +265,7 @@ const LeaseDealsPage = () => {
       })()
     : undefined;
 
-  const pageTitle = `Best Lease Deals for ${month} ${year}`;
+  const pageTitle = `Best Car Lease Deals for ${month} ${year}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
@@ -262,7 +302,7 @@ const LeaseDealsPage = () => {
             <h1 className="lease-deals-page__title">{pageTitle}</h1>
             <p className="lease-deals-page__description">
               Leasing lets you drive a brand-new car with lower monthly payments than buying. We've compiled
-              the best manufacturer lease specials and paired them with our expert ratings so you can find the
+              the best manufacturer lease specials and paired them with our expert vehicle ratings so you can find the
               best value for your budget.
             </p>
           </div>
@@ -346,7 +386,6 @@ const LeaseDealsPage = () => {
                             const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                             const saved = isVehicleSaved(vehicleName);
                             const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
-                            const { savingsVsAvg, savingsTooltip } = buildSavingsText(deal.monthlyPaymentNum, deal.vehicle.bodyStyle);
                             return (
                               <Fragment key={deal.id}>
                                 {i > 0 && i % 4 === 0 && (
@@ -372,8 +411,6 @@ const LeaseDealsPage = () => {
                                   payment={{
                                     amount: deal.monthlyPayment,
                                     period: '/mo',
-                                    savings: { type: 'savings-text', text: savingsVsAvg },
-                                    savingsTooltip,
                                     expirationDate: deal.expirationDate,
                                   }}
                                   pill={{ chipLabel: 'Lease', text: `${deal.monthlyPayment}/mo lease`, expirationDate: deal.expirationDate }}
@@ -415,7 +452,19 @@ const LeaseDealsPage = () => {
                       <button className="lease-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
                         <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                       </button>
-                      {expandedFaqIndex === i && <div className="lease-deals-page__faq-answer"><p>{faq.answer}</p></div>}
+                      {expandedFaqIndex === i && (
+                        <div className="lease-deals-page__faq-answer">
+                          {faq.answer.split('\n\n').map((para, j) => <p key={j}>{para}</p>)}
+                          {faq.bullets && faq.bullets.length > 0 && (
+                            <>
+                              <p><strong>Things to keep in mind:</strong></p>
+                              <ul>
+                                {faq.bullets.map((b, j) => <li key={j}>{b}</li>)}
+                              </ul>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -424,11 +473,8 @@ const LeaseDealsPage = () => {
               <section className="lease-deals-page__links-section">
                 <h2 className="lease-deals-page__section-title">Explore More Deals</h2>
                 <div className="lease-deals-page__links-grid">
-                  <Link to="/deals" className="lease-deals-page__link-card"><h3>All Deals</h3><p>Browse every current deal and incentive</p></Link>
-                  <Link to="/deals/best-buying-deals" className="lease-deals-page__link-card"><h3>Buying Deals</h3><p>0% APR, cash back, and special financing</p></Link>
-                  <Link to="/deals/suv" className="lease-deals-page__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs and crossovers</p></Link>
-                  <Link to="/deals/truck" className="lease-deals-page__link-card"><h3>Truck Deals</h3><p>Best deals on pickup trucks</p></Link>
-                  <Link to="/rankings" className="lease-deals-page__link-card"><h3>Car Rankings</h3><p>Expert rankings across every category</p></Link>
+                  <Link to="/deals/0-percent-apr" className="lease-deals-page__link-card"><h3>Best 0% APR Deals</h3><p>Interest-free manufacturer financing in one list</p></Link>
+                  <Link to="/deals/best-buying-deals" className="lease-deals-page__link-card"><h3>Best Car Deals and Incentives</h3><p>Cash back, special financing, and more</p></Link>
                 </div>
               </section>
             </div>

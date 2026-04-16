@@ -47,30 +47,131 @@ interface UnifiedAprDeal {
   percentOffMsrp?: string;
 }
 
-const FAQ_DATA = [
+type FaqItem = { question: string; answer: string; bullets?: string[] };
+
+const ZERO_APR_FAQ: FaqItem[] = [
   {
-    question: 'What does 0% APR financing mean?',
-    answer: 'A 0% APR (Annual Percentage Rate) financing offer means you pay no interest on your auto loan. You only pay the principal balance divided equally across your loan term, saving you thousands compared to a standard auto loan. For example, a $35,000 car financed at 0% for 60 months costs $583/month with zero dollars going toward interest.',
+    question: 'What cars are 0% financing right now?',
+    answer: '0% APR offers are real, but they usually apply only to certain new models, trims, and loan terms for a limited time. The list changes month to month, so the right way to shop is to check the exact model year, term length, and ZIP-code availability instead of assuming an entire brand has 0% financing.\n\nA strong 0% offer is not just about the rate. Shoppers should also check whether the deal applies to the trim they actually want, whether inventory is available nearby, and whether taking the offer means giving up cash rebates or other incentives.',
+    bullets: [
+      'Filter by model, trim, and term, not just by brand.',
+      'Confirm whether the offer is national, regional, or dealer specific.',
+      'Check whether bonus cash can be combined with the 0% APR program.',
+      'Look at real inventory before building your budget around an ad.',
+    ],
   },
   {
-    question: 'What are special APR financing deals?',
-    answer: 'Special APR deals are below-market interest rates offered through the manufacturer\'s captive finance company. While not 0%, rates like 1.9%, 2.9%, or 3.9% are significantly lower than the national average of ~6.5%. These can save you $1,500–$4,000 in interest over the life of the loan.',
+    question: 'Can I get 0% interest on a car loan?',
+    answer: 'Yes, but usually only if you have excellent credit and the vehicle qualifies for a manufacturer-backed promotional offer. Most 0% APR deals are aimed at well-qualified buyers and often come with shorter terms, such as 36 or 48 months, rather than the longest loan options.\n\nBefore assuming you qualify, check your credit, read the fine print, and ask whether the offer must be financed through the manufacturer\u2019s captive lender. Even a real 0% deal may not be the best fit if the required monthly payment is too high for your budget.',
+    bullets: [
+      'Expect top-tier credit requirements on most 0% offers.',
+      'Read the term length, residency rules, and model restrictions carefully.',
+      'Ask whether you must finance through the manufacturer\u2019s lender to get the promo.',
+      'Compare the 0% offer against a rebate or low-APR alternative.',
+    ],
   },
   {
-    question: 'Who qualifies for low APR car deals?',
-    answer: 'Qualifying for 0% APR typically requires excellent credit, usually a FICO score of 720 or higher. Special APR rates (1.9%–3.9%) may be available with good credit (680+). Lenders also consider your debt-to-income ratio, employment history, and the amount you\'re financing.',
+    question: 'Are 0% car deals really free?',
+    answer: 'A 0% APR car loan does mean you are not paying finance charges on the amount borrowed, so the interest itself is effectively free. But that does not automatically make the deal the cheapest overall option, because many 0% offers require shorter terms, stronger credit, or giving up a cash rebate.\n\nThe real comparison is total cost. On a large loan, 0% APR can save a shopper thousands in interest, but a rebate plus standard financing can still win if the cash offer is large enough or if the shorter 0% term makes the monthly payment too aggressive.',
+    bullets: [
+      'Compare total loan cost, not just the APR shown in the ad.',
+      'Check whether 0% financing replaces cash back or bonus cash.',
+      'Watch for add-ons in the finance office that can erase the savings.',
+      'Make sure the monthly payment still fits your budget comfortably.',
+    ],
   },
   {
-    question: 'Can I combine APR deals with other incentives?',
-    answer: 'In most cases, special financing cannot be combined with cash-back rebates. Manufacturers typically require you to choose between low-rate financing and cash incentives. However, some programs like military, first responder, or college graduate discounts can sometimes be stacked. Always ask the dealer about combining offers.',
+    question: 'Can you negotiate 0% financing when buying a new car?',
+    answer: 'Sometimes, but the 0% rate itself is usually a manufacturer program rather than something the dealer invents. What you can often negotiate is the selling price, dealer fees, trade-in value, add-ons, and which incentive structure makes the most sense for your budget.\n\nIn practice, the best move is to negotiate the vehicle price first and then compare two versions of the deal side by side: one with 0% APR and one with the best available rebate or discount. That makes it much easier to see which deal is actually stronger.',
+    bullets: [
+      'Negotiate the out-the-door price separately from the financing offer.',
+      'Ask for side-by-side quotes: 0% APR versus rebate plus standard rate.',
+      'Be careful with products and add-ons that raise the financed amount.',
+      'Confirm that the promotional rate still applies after the final terms are set.',
+    ],
   },
   {
-    question: 'How are Car and Driver ratings determined?',
-    answer: 'Car and Driver ratings are based on comprehensive real-world testing by our expert editorial team. Each vehicle is evaluated on driving dynamics, comfort, interior quality, technology, value, and more. Our 10-point scale reflects how a vehicle compares to its direct competitors.',
+    question: 'What is the payment on a $30,000 car at 0% APR for 60 months?',
+    answer: 'At 0% APR for 60 months, a $30,000 loan works out to a base payment of $500 per month because you are simply dividing the amount financed by the number of months. That number rises if you roll taxes, title, registration, doc fees, or add-ons into the financed amount.\n\nThat simple math is one reason 0% deals are attractive: every payment dollar goes toward principal. But it also shows why some shoppers still need to be careful, because even with no interest, the monthly payment has to be high enough to clear the balance inside the promotional term.',
+    bullets: [
+      'Base math is $30,000 divided by 60 months, or $500 before taxes and fees.',
+      'Add all out-the-door costs to estimate the real financed amount.',
+      'Compare 36-, 48-, and 60-month terms before choosing the promo.',
+      'Do not stretch your budget just because the APR is 0%.',
+    ],
   },
   {
-    question: 'Should I choose 0% APR or a cash rebate?',
-    answer: 'It depends on the loan amount, term, and rates. For shorter loan terms or smaller amounts, the cash-back rebate often saves more. For longer terms or larger amounts, a low APR can result in greater overall savings. Calculate the total interest you\'d pay at the standard rate minus the rebate, and compare it to the total interest at the special rate.',
+    question: 'Which cars have the lowest interest rates right now?',
+    answer: 'The lowest-rate vehicles are usually the same models backed by manufacturer subvented financing, sometimes at 0% APR and sometimes at 0.9% or 1.9% for longer terms. The best low-rate offer changes frequently, so shoppers should look at the exact model, trim, and loan term rather than only the brand name.\n\nA near-zero APR deal can actually be more practical than forcing a 0% offer if it comes with a longer term, more available inventory, or the ability to keep a rebate. The better deal is the one with the lower total cost and the payment that still fits your budget.',
+    bullets: [
+      'Check loan term length, not just the APR headline.',
+      'Compare 0%, 0.9%, and 1.9% offers on the exact trim you want.',
+      'Verify whether low APR can be combined with bonus cash.',
+      'Make sure the offer is available in your ZIP code and on in-stock vehicles.',
+    ],
+  },
+];
+
+const FAQ_DATA: FaqItem[] = [
+  {
+    question: 'What does a $1,000 car rebate mean?',
+    answer: 'A $1,000 car rebate usually means the manufacturer, government, or another incentive program is offering $1,000 in savings if you meet the eligibility rules. In some cases the money comes off the transaction at the dealership, while in others you claim the benefit later.\n\nThe important nuance is what kind of rebate it is. Customer cash, dealer cash, EV rebates, and tax credits all work differently, and some stack with other offers while others replace special financing or lease programs.',
+    bullets: [
+      'Ask whether the rebate is applied at point of sale or claimed later.',
+      'Confirm whether it stacks with dealer discounts, low APR financing, or lease specials.',
+      'Check ZIP code, trim, and VIN eligibility before counting the savings.',
+      'Read the expiration date and fine print carefully.',
+    ],
+  },
+  {
+    question: 'Can you negotiate a new-car price if there are already incentives?',
+    answer: 'Yes. Manufacturer incentives and rebates do not automatically mean the negotiated selling price is final. In many cases you can still negotiate the vehicle price, shop one dealer quote against another, and push for a better out-the-door number.\n\nThe key is to separate the deal into layers: vehicle price, dealer fees, trade-in value, financing, and incentives. That makes it easier to see whether the rebate is actually lowering your cost or just making an average deal sound better in the ad.',
+    bullets: [
+      'Ask for the out-the-door price before discussing monthly payment.',
+      'Separate dealer discount from manufacturer rebate on the quote sheet.',
+      'Compare written quotes, not verbal promises.',
+      'Watch for add-ons that can erase the savings in the finance office.',
+    ],
+  },
+  {
+    question: 'What monthly payment should you expect on a $30,000 to $40,000 car?',
+    answer: 'The monthly payment depends more on down payment, interest rate, and loan term than on the sticker price alone. On the same $30,000 to $40,000 vehicle, stretching the loan term can lower the payment, but it can also raise the total amount you pay over time.\n\nIncentives matter because a rebate lowers the amount financed, while a low APR lowers finance charges. The most useful way to judge affordability is to compare full loan cost and total financed amount, not just chase the lowest monthly number on the worksheet.',
+    bullets: [
+      'Run the payment at 48, 60, and 72 months before deciding what is realistic.',
+      'Include taxes, registration, doc fees, and any trade-in payoff in the estimate.',
+      'A lower payment can still be a worse deal if the term is much longer.',
+      'Use incentives to reduce either the amount financed or the interest cost.',
+    ],
+  },
+  {
+    question: 'What credit score do you need to buy a $30,000 car?',
+    answer: 'There is no universal score required to buy a $30,000 car. Approval depends on the full deal: your credit score, income, current debts, down payment, trade-in equity, and the lender\u2019s own rules. Better credit usually means lower rates and more flexibility, but buyers with average credit can still get approved.\n\nThe more important question is whether the payment fits your budget at the rate you actually qualify for. A buyer with weaker credit may still get the car, but the higher APR can make the same vehicle much less affordable month to month.',
+    bullets: [
+      'Check your credit before shopping so you know which offers are realistic.',
+      'Compare lender preapprovals instead of relying only on dealer-arranged financing.',
+      'A bigger down payment can improve approval odds and reduce the payment.',
+      'Watch the APR as closely as the monthly payment.',
+    ],
+  },
+  {
+    question: 'When is the best time to shop for new car incentives?',
+    answer: 'The best time to shop is usually when dealers or manufacturers are trying to move inventory. That often means end of month, end of quarter, holiday weekends, and especially the point when outgoing model-year vehicles are still on the lot and need help selling.\n\nTiming helps, but inventory matters just as much. A model with too much stock usually gets better incentives than a hot-selling vehicle with tight supply, even if you shop on a traditionally strong car-buying weekend.',
+    bullets: [
+      'Watch for model-year changeovers and aging inventory.',
+      'Compare end-of-month offers against end-of-quarter offers on the same vehicle.',
+      'Do not wait for a perfect date if the pricing already works for your budget.',
+      'Confirm whether the incentive expires before you can actually take delivery.',
+    ],
+  },
+  {
+    question: 'Which cars qualify for tax credits and rebates?',
+    answer: 'Eligibility depends on the exact program. Some incentives are manufacturer rebates that apply to most shoppers on eligible inventory, while tax credits and state EV programs may depend on the vehicle\u2019s VIN, assembly or battery rules, MSRP cap, buyer income, and where the car is registered.\n\nThe safest approach is to verify the exact trim and VIN before you count the savings in your budget. Even within one model line, one version may qualify while another does not, and program rules can change faster than dealer ad copy.',
+    bullets: [
+      'Check whether the program is federal, state, utility, or manufacturer based.',
+      'Verify model year, trim, MSRP, and ZIP-code rules before signing.',
+      'Ask whether the savings is applied at purchase or claimed later when filing taxes.',
+      'Save the VIN and program terms in writing if the credit affects your budget.',
+    ],
   },
 ];
 
@@ -307,15 +408,11 @@ const ZeroAprDealsPage = () => {
       ? {
           amount: deal.incentiveValue ?? '',
           period: 'Cash Back',
-          savings: { type: 'plain' as const, text: `${deal.percentOffMsrp} off MSRP` },
-          savingsTooltip: deal.savingsTooltip,
           expirationDate: deal.expirationDate,
         }
       : {
           amount: deal.aprDisplay,
           period: ' APR',
-          savings: { type: 'savings-text' as const, text: deal.savingsVsAvg },
-          savingsTooltip: deal.savingsTooltip,
           expirationDate: deal.expirationDate,
         };
     const pill = {
@@ -394,12 +491,12 @@ const ZeroAprDealsPage = () => {
     : undefined;
 
   const pageTitle = activeTab === 'zero-apr'
-    ? `Best 0% APR Deals for ${month} ${year}`
+    ? `Best Interest Free & 0% APR Deals for ${month} ${year}`
     : activeTab === 'special-apr'
     ? `Best Special APR Deals for ${month} ${year}`
     : activeTab === 'cash'
     ? `Best Cash Back Deals for ${month} ${year}`
-    : `Best Buying Deals for ${month} ${year}`;
+    : `Best Car Deals & Incentives for ${month} ${year}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   const seoDescription = isZeroPercentOnlyRoute
@@ -430,7 +527,7 @@ const ZeroAprDealsPage = () => {
         keywords={['buying deals', '0% APR deals', 'cash back deals', 'low APR financing', `car deals ${month} ${year}`, 'special APR rates', 'new car financing deals']}
         structuredData={[
           createBreadcrumbStructuredData(breadcrumbItems),
-          createFAQStructuredData(FAQ_DATA),
+          createFAQStructuredData(isZeroPercentOnlyRoute ? ZERO_APR_FAQ : FAQ_DATA),
         ]}
         noIndex={isZeroPercentOnlyRoute ? deals.length === 0 : allDeals.length === 0}
       />
@@ -456,8 +553,8 @@ const ZeroAprDealsPage = () => {
             <h1 className="zero-apr-page__title">{pageTitle}</h1>
             <p className="zero-apr-page__description">
               {isZeroPercentOnlyRoute
-                ? 'These manufacturer-backed offers charge no interest on your auto loan, so every payment goes toward the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
-                : 'Manufacturer-subsidized financing is one of the best deals a car shopper can find. From 0% APR where every dollar goes toward the vehicle, to special low rates well below the national average, these offers can save you thousands over the life of your loan.'}
+                ? 'These manufacturer-backed offers charge no interest on your auto loan, so every payment goes toward paying off the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
+                : 'Manufacturer-subsidized financing\u2014cash-back deals or low financing rates\u2014is one of the best deals a car shopper can find. These offers can save you thousands over the life of your loan.'}
             </p>
           </div>
         </div>
@@ -577,7 +674,7 @@ const ZeroAprDealsPage = () => {
                   FAQs
                 </h2>
                 <div className="zero-apr-page__faq-list">
-                  {FAQ_DATA.map((faq, index) => (
+                  {(isZeroPercentOnlyRoute ? ZERO_APR_FAQ : FAQ_DATA).map((faq, index) => (
                     <div key={index} className={`zero-apr-page__faq-item ${expandedFaqIndex === index ? 'zero-apr-page__faq-item--expanded' : ''}`}>
                       <button
                         type="button"
@@ -590,7 +687,15 @@ const ZeroAprDealsPage = () => {
                       </button>
                       {expandedFaqIndex === index && (
                         <div className="zero-apr-page__faq-answer">
-                          <p>{faq.answer}</p>
+                          {faq.answer.split('\n\n').map((para, j) => <p key={j}>{para}</p>)}
+                          {faq.bullets && faq.bullets.length > 0 && (
+                            <>
+                              <p><strong>Things to keep in mind:</strong></p>
+                              <ul>
+                                {faq.bullets.map((b, j) => <li key={j}>{b}</li>)}
+                              </ul>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>
@@ -601,16 +706,8 @@ const ZeroAprDealsPage = () => {
               <section className="zero-apr-page__links-section">
                 <h2 className="zero-apr-page__section-title">Explore More</h2>
                 <div className="zero-apr-page__links-grid">
-                  {isZeroPercentOnlyRoute ? (
-                    <Link to={BEST_BUYING_DEALS_PATH} className="zero-apr-page__link-card"><h3>All Buying Deals</h3><p>0% APR, special financing, cash back, and more</p></Link>
-                  ) : (
-                    <Link to={ZERO_PERCENT_APR_DEALS_PATH} className="zero-apr-page__link-card"><h3>0% APR Deals Only</h3><p>Interest-free manufacturer financing in one list</p></Link>
-                  )}
-                  <Link to="/deals" className="zero-apr-page__link-card"><h3>All Deals</h3><p>Browse every current deal and incentive</p></Link>
-                  <Link to="/deals/lease" className="zero-apr-page__link-card"><h3>Lease Deals</h3><p>Monthly lease specials on new cars</p></Link>
-                  <Link to="/deals/suv" className="zero-apr-page__link-card"><h3>SUV Deals</h3><p>Best deals on SUVs and crossovers</p></Link>
-                  <Link to="/deals/truck" className="zero-apr-page__link-card"><h3>Truck Deals</h3><p>Best deals on pickup trucks</p></Link>
-                  <Link to="/deals/fuel-type" className="zero-apr-page__link-card"><h3>Fuel Type Deals</h3><p>Deals by powertrain</p></Link>
+                  <Link to={ZERO_PERCENT_APR_DEALS_PATH} className="zero-apr-page__link-card"><h3>Best 0% APR Deals</h3><p>Interest-free manufacturer financing in one list</p></Link>
+                  <Link to="/deals/lease" className="zero-apr-page__link-card"><h3>Best Car Lease Deals</h3><p>Monthly lease specials on new cars</p></Link>
                 </div>
               </section>
             </div>
