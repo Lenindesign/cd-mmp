@@ -13,7 +13,6 @@ import {
   findMatchingIncentiveId,
   sortDeals,
   applyLeaseRangeFilters,
-  getGlobalDealCounts,
 } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';

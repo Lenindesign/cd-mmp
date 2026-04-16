@@ -70,9 +70,10 @@ const DealsFilterModal = ({
   onApply,
   totalResults,
   getResultCount,
-  dealPageType = 'general',
+  dealPageType: _dealPageType,
   onDealTypeNavigate,
 }: DealsFilterModalProps) => {
+  void _dealPageType;
   const [draft, setDraft] = useState<DealsFilterState>(externalFilters);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     sortBy: true,

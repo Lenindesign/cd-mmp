@@ -13,7 +13,7 @@ import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
@@ -144,21 +144,6 @@ const SuvDealsPage = () => {
     }
   }, [offersPopup]);
 
-  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    let result = deals;
-    if (draftFilters.dealType === 'lease') result = result.filter(d => d.dealType === 'lease');
-    else if (draftFilters.dealType === 'finance') result = result.filter(d => d.dealType !== 'lease');
-    if (draftFilters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= draftFilters.monthlyPaymentMin);
-    if (draftFilters.monthlyPaymentMax < 1500) result = result.filter(d => d.estimatedMonthly <= draftFilters.monthlyPaymentMax);
-    return result.filter(d => {
-      const v = d.vehicle;
-      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
-      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
-      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
-      return true;
-    }).length;
-  }, [deals]);
-
   const deals = useMemo((): UnifiedDeal[] => {
     const results: UnifiedDeal[] = [];
     const isSuv = (bodyStyle: string) => bodyStyle.toLowerCase() === 'suv';
@@ -225,6 +210,21 @@ const SuvDealsPage = () => {
     }
     return results;
   }, [getSupabaseRating]);
+
+  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    let result = deals;
+    if (draftFilters.dealType === 'lease') result = result.filter(d => d.dealType === 'lease');
+    else if (draftFilters.dealType === 'finance') result = result.filter(d => d.dealType !== 'lease');
+    if (draftFilters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= draftFilters.monthlyPaymentMin);
+    if (draftFilters.monthlyPaymentMax < 1500) result = result.filter(d => d.estimatedMonthly <= draftFilters.monthlyPaymentMax);
+    return result.filter(d => {
+      const v = d.vehicle;
+      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
+      return true;
+    }).length;
+  }, [deals]);
 
   const filteredDeals = useMemo(() => {
     let result = deals;
