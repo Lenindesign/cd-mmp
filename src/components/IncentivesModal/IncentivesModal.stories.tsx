@@ -1,41 +1,193 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState, useEffect } from 'react';
-import IncentivesModal, { type IncentivesModalVariant } from './IncentivesModal';
+import IncentivesModal, {
+  type IncentivesModalVariant,
+  type IncentiveOfferDetail,
+  type IncentivesModalFormData,
+} from './IncentivesModal';
+import type { Incentive } from '../../services/incentivesService';
+import './IncentivesModal.stories.css';
 
-const VARIANTS: IncentivesModalVariant[] = [
-  'simple',
-  'complete-with-form',
-  'edmunds',
-  'conversion-a',
-  'conversion-b',
-  'conversion-b-no-form',
+/* ---------------------------------------------------------------------------
+ * SAMPLE DATA
+ * Each vehicle/offer set can be mixed and matched across variants.
+ * These mirror the shapes built by `offersToIncentives` on real deal pages.
+ * --------------------------------------------------------------------------- */
+
+const EQUINOX_IMAGE =
+  'https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4f9417c9000085e7bba/003-2024-chevrolet-trailblazer-front-three-quarters-view.jpg';
+const CAMRY_IMAGE =
+  'https://hips.hearstapps.com/hmg-prod/images/2024-toyota-camry-102-64cbc4858e198.jpg';
+
+const equinoxOffer: Partial<IncentiveOfferDetail> = {
+  year: 2026,
+  make: 'Chevrolet',
+  model: 'Equinox',
+  slug: '2026/chevrolet/equinox',
+  imageUrl: EQUINOX_IMAGE,
+  msrpMin: 33300,
+  msrpMax: 38500,
+  offerHeadline: '0% APR for 60 months',
+  whatItMeans:
+    'Zero-interest financing means every dollar of your payment goes toward the vehicle — not the bank. On a $35,000 loan, this saves you roughly $5,600 in interest vs. the average 7.1% rate.',
+  yourSavings:
+    "On a $35,000 loan over 60 months, $0 in interest vs. approximately $5,600 at 7.1% APR. That's over $93/month in savings.",
+  whoQualifies:
+    'Well-qualified buyers with approved credit through GM Financial.',
+  eligibleTrims: ['LT', '2RS', '3RS', 'Activ'],
+  dontWaitText:
+    "This offer expires May 1, 2026. Chevrolet incentives change monthly, so lock in your rate before it's gone.",
+  eventLabel: 'Chevrolet Equinox Current Offers',
+  expirationDate: 'May 1, 2026',
+};
+
+const camryOffer: Partial<IncentiveOfferDetail> = {
+  year: 2026,
+  make: 'Toyota',
+  model: 'Camry',
+  slug: '2026/toyota/camry',
+  imageUrl: CAMRY_IMAGE,
+  msrpMin: 28855,
+  msrpMax: 34780,
+  offerHeadline: '$359/mo Lease for 36 months',
+  whatItMeans:
+    'A manufacturer-subsidized lease gives you a lower monthly payment than financing. You drive a new Camry for 3 years with the option to buy at the end.',
+  yourSavings:
+    'Monthly lease payments start at $359/mo with $2,999 due at signing — significantly less than typical finance payments on this vehicle.',
+  whoQualifies:
+    'Well-qualified lessees with approved credit through Toyota Financial Services.',
+  eligibleTrims: ['LE', 'SE', 'XLE', 'XSE'],
+  dontWaitText:
+    'This offer expires April 30, 2026. Toyota adjusts lease programs monthly.',
+  expirationDate: 'April 30, 2026',
+};
+
+const equinoxIncentives: Incentive[] = [
+  {
+    id: 'equinox-finance-1',
+    type: 'finance',
+    title: '0% APR for 60 months',
+    description:
+      'Zero-interest financing through GM Financial. Every payment goes toward the vehicle.',
+    value: '0% APR',
+    expirationDate: 'May 1, 2026',
+    terms:
+      'For well-qualified buyers. 60-month term available through GM Financial. Not compatible with some other offers.',
+    eligibility: 'All qualified buyers with approved credit through GM Financial.',
+    programName: 'Chevrolet Bonus Cash + APR',
+    programDescription: 'Manufacturer financing incentive',
+    groupAffiliation: 'everyone',
+  },
+  {
+    id: 'equinox-cash-1',
+    type: 'cash',
+    title: '$1,500 Customer Cash',
+    description:
+      'Cash allowance applied toward the purchase of a new Equinox.',
+    value: '$1,500',
+    expirationDate: 'May 1, 2026',
+    terms: 'Must take delivery by offer expiration. Cannot be combined with 0% APR.',
+    groupAffiliation: 'everyone',
+  },
+  {
+    id: 'equinox-special-military',
+    type: 'special',
+    title: '$500 Military Appreciation',
+    description:
+      'Cash allowance for active, reserve, and retired military personnel.',
+    value: '$500',
+    expirationDate: 'Ongoing',
+    eligibility: 'Valid military ID required.',
+    groupAffiliation: 'military',
+  },
 ];
 
-const VARIANT_NAMES: Record<IncentivesModalVariant, string> = {
-  simple: 'Incentives Modal 1 – Simple',
-  'complete-with-form': 'Incentives Modal 2 – Complete + contact form',
-  edmunds: 'Incentives Modal 3 – Edmunds-style',
-  'conversion-a': 'Incentives Modal 4 – Conversion (urgency + benefits)',
-  'conversion-b': 'Incentives Modal 5 – Conversion (two-column + form)',
-  'conversion-b-no-form': 'Incentives Modal 6 – Conversion (no form)',
+const camryIncentives: Incentive[] = [
+  {
+    id: 'camry-lease-1',
+    type: 'lease',
+    title: '$359/mo Lease for 36 months',
+    description:
+      'Manufacturer-subsidized lease with $2,999 due at signing. 12,000 miles/year.',
+    value: '$359/mo',
+    expirationDate: 'April 30, 2026',
+    terms:
+      '$359/mo for 36 months with $2,999 due at signing. 12,000 miles/year. $0.15/mi overage. Tax, title, license extra.',
+    eligibility: 'Well-qualified lessees with approved credit through Toyota Financial Services.',
+    programName: 'Toyota Lease Specials',
+    groupAffiliation: 'everyone',
+  },
+  {
+    id: 'camry-finance-1',
+    type: 'finance',
+    title: '3.9% APR for 60 months',
+    description: 'Below-market financing through Toyota Financial.',
+    value: '3.9% APR',
+    expirationDate: 'April 30, 2026',
+    terms: '3.9% APR for 60 months. 4.9% for 72 months. Well-qualified buyers through TFS.',
+    groupAffiliation: 'everyone',
+  },
+];
+
+/* ---------------------------------------------------------------------------
+ * VARIANT LIST & LABELS
+ * --------------------------------------------------------------------------- */
+
+type ReviewVariant = Extract<IncentivesModalVariant, 'conversion-b' | 'conversion-b-no-form'>;
+
+interface VariantConfig {
+  label: string;
+  title: string;
+  description: string;
+}
+
+const VARIANT_CONFIG: Record<ReviewVariant, VariantConfig> = {
+  'conversion-b': {
+    label: '5',
+    title: '5 – Conversion B (Two-Column + Form)',
+    description:
+      'Two-column layout: left side shows full offer details with incentive switching; right side has a lead form that resolves to dealer match. Production variant used on all deal pages.',
+  },
+  'conversion-b-no-form': {
+    label: '6',
+    title: '6 – Conversion B (No Form)',
+    description:
+      'Same left-column detail as Conversion B but without the form. Single column with a "Shop on Marketplace" CTA. Used in Hero component for info-only display.',
+  },
 };
+
+const VARIANTS = Object.keys(VARIANT_CONFIG) as ReviewVariant[];
+
+/* ---------------------------------------------------------------------------
+ * SHARED STORY ACTIONS
+ * --------------------------------------------------------------------------- */
+
+const actions = {
+  onClose: () => console.log('[story] Modal closed'),
+  onCtaClick: () => console.log('[story] CTA clicked'),
+  onSubmitForm: (data: IncentivesModalFormData) => console.log('[story] Form submitted', data),
+};
+
+/* ---------------------------------------------------------------------------
+ * REVIEW ALL — interactive variant switcher
+ * --------------------------------------------------------------------------- */
 
 function ReviewAllVariants() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const variant = VARIANTS[currentIndex];
+  const config = VARIANT_CONFIG[variant];
 
-  // Cycle variants with keyboard arrows when modal is open
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        setCurrentIndex((i) => (i === 0 ? VARIANTS.length - 1 : i - 1));
+        setCurrentIndex(i => (i === 0 ? VARIANTS.length - 1 : i - 1));
       }
       if (e.key === 'ArrowRight') {
         e.preventDefault();
-        setCurrentIndex((i) => (i === VARIANTS.length - 1 ? 0 : i + 1));
+        setCurrentIndex(i => (i === VARIANTS.length - 1 ? 0 : i + 1));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -43,62 +195,46 @@ function ReviewAllVariants() {
   }, [isOpen]);
 
   return (
-    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          alignItems: 'center',
-          marginBottom: '32px',
-        }}
-      >
-        <p style={{ fontSize: '14px', color: 'var(--color-gray-600)', margin: 0 }}>
-          Pick a variant 1–5, then open the modal. Sample: 2026 Honda CR-V with photo. Use <kbd>←</kbd> <kbd>→</kbd> to cycle when the modal is open.
+    <div className="stories-switcher">
+      <div className="stories-switcher__panel">
+        <p className="stories-switcher__intro">
+          Pick a variant, then open the modal. Use{' '}
+          <kbd className="stories-switcher__kbd">←</kbd>{' '}
+          <kbd className="stories-switcher__kbd">→</kbd> to cycle when the modal is open.
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <span style={{ fontSize: '14px', fontWeight: 600 }}>Variant:</span>
-          {VARIANTS.map((_, index) => (
-            <button
-              key={VARIANTS[index]}
-              type="button"
-              onClick={() => setCurrentIndex(index)}
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                border: currentIndex === index ? '2px solid var(--color-blue-cobalt)' : '1px solid var(--color-gray-300)',
-                background: currentIndex === index ? 'var(--color-blue-cobalt)' : 'var(--color-white)',
-                color: currentIndex === index ? 'white' : 'var(--color-dark)',
-                fontWeight: 700,
-                fontSize: '16px',
-                cursor: 'pointer',
-              }}
-              aria-pressed={currentIndex === index}
-              aria-label={`Incentives Modal ${index + 1}`}
-            >
-              {index + 1}
-            </button>
-          ))}
+
+        <div className="stories-switcher__controls" role="group" aria-label="Variant picker">
+          <span className="stories-switcher__label">Variant:</span>
+          {VARIANTS.map((v, index) => {
+            const isActive = currentIndex === index;
+            return (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setCurrentIndex(index)}
+                className={
+                  isActive
+                    ? 'stories-switcher__pill stories-switcher__pill--active'
+                    : 'stories-switcher__pill'
+                }
+                aria-pressed={isActive}
+                aria-label={VARIANT_CONFIG[v].title}
+              >
+                {VARIANT_CONFIG[v].label}
+              </button>
+            );
+          })}
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--color-gray-500)', margin: 0 }}>
-          {VARIANT_NAMES[variant]}
-          {isOpen && ' · Use ← → to cycle'}
-        </p>
+
+        <div className="stories-switcher__meta">
+          <p className="stories-switcher__title">{config.title}</p>
+          <p className="stories-switcher__description">{config.description}</p>
+        </div>
+
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          style={{
-            padding: '12px 24px',
-            fontFamily: 'var(--font-heading)',
-            fontWeight: 700,
-            fontSize: '14px',
-            color: 'white',
-            background: 'var(--color-blue-cobalt)',
-            border: 'none',
-            borderRadius: 'var(--border-radius-sm)',
-            cursor: 'pointer',
-          }}
+          className="stories-switcher__cta"
         >
           Open modal
         </button>
@@ -106,14 +242,20 @@ function ReviewAllVariants() {
 
       <IncentivesModal
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
         variant={variant}
-        onCtaClick={() => console.log('CTA clicked')}
-        onSubmitForm={(data) => console.log('Form submitted', data)}
+        offer={equinoxOffer}
+        allIncentives={equinoxIncentives}
+        selectedIncentiveId="equinox-finance-1"
+        {...actions}
+        onClose={() => setIsOpen(false)}
       />
     </div>
   );
 }
+
+/* ---------------------------------------------------------------------------
+ * META
+ * --------------------------------------------------------------------------- */
 
 const meta: Meta<typeof IncentivesModal> = {
   title: 'Organisms/IncentivesModal',
@@ -122,23 +264,42 @@ const meta: Meta<typeof IncentivesModal> = {
     layout: 'centered',
     docs: {
       description: {
-        component: `
-Five variants based on your reference modal, using the **2026 Honda CR-V** as the sample (with photo and current incentives):
-
-- **Incentives Modal 1 (Simple)** – Vehicle photo + name + MSRP, green offer banner, one short “what it means” line, event label, “Get this deal” + “View full vehicle details”.
-- **Incentives Modal 2 (Complete + form)** – Full reference layout (What does this mean, Your savings, Who qualifies, Eligible trims, Don’t wait) plus **contact dealer form** (First/Last, Email, Phone, Message) and “Request info from dealer”.
-- **Incentives Modal 3 (Edmunds-style)** – Offer headline, “Our take” value card, Key offer details list, “Get this deal”.
-- **Incentives Modal 4 (Conversion A)** – Urgency badge, header + offer banner, savings line, benefit bullets, single CTA.
-- **Incentives Modal 5 (Conversion B)** – Minimal: header, hero offer line, one-liner, one CTA.
-
-Use the **Review all** story and the 1–5 counter to pick one.
-        `,
+        component:
+          'A full-screen modal for vehicle deal/incentive details. Used across all deal pages to show offer breakdowns, expert tips, eligibility, and lead capture.\n\n' +
+          '**Production variants:** conversion-b (default, two-column + form) and conversion-b-no-form (single column, used in Hero).\n\n' +
+          'Use the "Review all" story to cycle between variants interactively. The Conversion B sub-stories below demonstrate different incentive types (finance, lease, cash, military/restricted) and the default fallback.',
       },
+      story: { inline: false, iframeHeight: 600 },
     },
   },
   tags: ['autodocs'],
   argTypes: {
-    variant: { control: 'select', options: VARIANTS },
+    variant: {
+      control: 'select',
+      options: VARIANTS,
+      description: 'Modal layout variant',
+      table: { category: 'Core' },
+    },
+    isOpen: {
+      control: 'boolean',
+      description: 'Controls modal visibility',
+      table: { category: 'Core' },
+    },
+    offer: {
+      description: 'Vehicle and offer data. Falls back to built-in sample.',
+      table: { category: 'Data' },
+    },
+    allIncentives: {
+      description: 'Full incentive list — enables offer switching in conversion-b.',
+      table: { category: 'Data' },
+    },
+    selectedIncentiveId: {
+      description: 'Pre-selected incentive ID.',
+      table: { category: 'Data' },
+    },
+    onClose: { table: { category: 'Callbacks' } },
+    onCtaClick: { table: { category: 'Callbacks' } },
+    onSubmitForm: { table: { category: 'Callbacks' } },
   },
 };
 
@@ -146,38 +307,109 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const defaultArgs = {
-  isOpen: true,
-  onClose: () => {},
-  onCtaClick: () => {},
-};
+/* ---------------------------------------------------------------------------
+ * STORIES
+ * --------------------------------------------------------------------------- */
 
+/**
+ * Interactive variant switcher. Pick 1–6 and use arrow keys to cycle.
+ * All variants use the Chevrolet Equinox 0% APR sample with 3 incentives.
+ */
 export const ReviewAll: Story = {
-  name: 'Review all (1–5 counter)',
+  name: 'Review all (1–6 switcher)',
   render: () => <ReviewAllVariants />,
 };
 
-export const IncentivesModal1: Story = {
-  name: 'Incentives Modal 1',
-  args: { ...defaultArgs, variant: 'simple' },
+/**
+ * **Conversion B** — production default on all deal pages.
+ * Two-column: left = full offer with incentive switching; right = lead form → dealer match.
+ * This story provides `allIncentives` with 3 offers (finance, cash, special) for switching.
+ */
+export const ConversionB: Story = {
+  name: '5 – Conversion B (Finance offer)',
+  args: {
+    isOpen: true,
+    variant: 'conversion-b',
+    offer: equinoxOffer,
+    allIncentives: equinoxIncentives,
+    selectedIncentiveId: 'equinox-finance-1',
+    ...actions,
+  },
 };
 
-export const IncentivesModal2: Story = {
-  name: 'Incentives Modal 2',
-  args: { ...defaultArgs, variant: 'complete-with-form' },
+/**
+ * **Conversion B with Lease** — same two-column layout but with a lease-type incentive selected.
+ * Shows lease-specific sections: monthly payment, cash-down table by trim, mileage terms.
+ */
+export const ConversionBLease: Story = {
+  name: '5b – Conversion B (Lease offer)',
+  args: {
+    isOpen: true,
+    variant: 'conversion-b',
+    offer: camryOffer,
+    allIncentives: camryIncentives,
+    selectedIncentiveId: 'camry-lease-1',
+    ...actions,
+  },
 };
 
-export const IncentivesModal3: Story = {
-  name: 'Incentives Modal 3',
-  args: { ...defaultArgs, variant: 'edmunds' },
+/**
+ * **Conversion B with Cash** — pre-selects the $1,500 cash back offer.
+ * Shows cash-specific rendering: "cash back" suffix, different expert tip.
+ */
+export const ConversionBCash: Story = {
+  name: '5c – Conversion B (Cash offer)',
+  args: {
+    isOpen: true,
+    variant: 'conversion-b',
+    offer: equinoxOffer,
+    allIncentives: equinoxIncentives,
+    selectedIncentiveId: 'equinox-cash-1',
+    ...actions,
+  },
 };
 
-export const IncentivesModal4: Story = {
-  name: 'Incentives Modal 4',
-  args: { ...defaultArgs, variant: 'conversion-a' },
+/**
+ * **Conversion B with Military incentive** — shows the restricted eligibility UI.
+ * The eligibility box renders with a "Military / Veterans" badge and restricted styling.
+ */
+export const ConversionBMilitary: Story = {
+  name: '5d – Conversion B (Military/restricted)',
+  args: {
+    isOpen: true,
+    variant: 'conversion-b',
+    offer: equinoxOffer,
+    allIncentives: equinoxIncentives,
+    selectedIncentiveId: 'equinox-special-military',
+    ...actions,
+  },
 };
 
-export const IncentivesModal5: Story = {
-  name: 'Incentives Modal 5',
-  args: { ...defaultArgs, variant: 'conversion-b' },
+/**
+ * **Conversion B — no offer data.** Falls back to the built-in Honda CR-V sample.
+ * Tests the default/fallback rendering path.
+ */
+export const ConversionBFallback: Story = {
+  name: '5e – Conversion B (Default fallback)',
+  args: {
+    isOpen: true,
+    variant: 'conversion-b',
+    ...actions,
+  },
+};
+
+/**
+ * **Conversion B — No Form** — single-column, no lead form.
+ * Used in the Hero component for info-only display. Shows "Shop on Marketplace" CTA.
+ */
+export const ConversionBNoForm: Story = {
+  name: '6 – Conversion B (No Form)',
+  args: {
+    isOpen: true,
+    variant: 'conversion-b-no-form',
+    offer: equinoxOffer,
+    allIncentives: equinoxIncentives,
+    selectedIncentiveId: 'equinox-finance-1',
+    ...actions,
+  },
 };

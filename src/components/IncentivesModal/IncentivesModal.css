@@ -83,6 +83,8 @@
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   min-height: 0;
+  padding-right: var(--spacing-2);
+  scrollbar-gutter: stable;
 }
 
 /* Right column: scrolls independently, CTAs pinned at bottom */
@@ -93,10 +95,58 @@
   gap: 0;
   border-left: 1px solid var(--color-gray-200);
   padding-left: 32px;
+  padding-right: var(--spacing-3);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   min-height: 0;
+  scrollbar-gutter: stable;
+}
+
+/*
+ * Subtle scrollbars for internal modal scroll containers.
+ * Uses thin, low-contrast thumbs that fade up on hover.
+ * Firefox uses scrollbar-color; WebKit/Chromium uses ::-webkit-scrollbar.
+ */
+.incentives-modal,
+.incentives-modal__v5-left,
+.incentives-modal__v5-right,
+.incentives-modal__v5-body-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+.incentives-modal::-webkit-scrollbar,
+.incentives-modal__v5-left::-webkit-scrollbar,
+.incentives-modal__v5-right::-webkit-scrollbar,
+.incentives-modal__v5-body-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.incentives-modal::-webkit-scrollbar-track,
+.incentives-modal__v5-left::-webkit-scrollbar-track,
+.incentives-modal__v5-right::-webkit-scrollbar-track,
+.incentives-modal__v5-body-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.incentives-modal::-webkit-scrollbar-thumb,
+.incentives-modal__v5-left::-webkit-scrollbar-thumb,
+.incentives-modal__v5-right::-webkit-scrollbar-thumb,
+.incentives-modal__v5-body-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color var(--transition-fast);
+}
+
+.incentives-modal::-webkit-scrollbar-thumb:hover,
+.incentives-modal__v5-left::-webkit-scrollbar-thumb:hover,
+.incentives-modal__v5-right::-webkit-scrollbar-thumb:hover,
+.incentives-modal__v5-body-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.32);
 }
 
 /* Scroll-hint gradient overlay */
@@ -989,7 +1039,12 @@
     border-left: none;
     border-top: 1px solid var(--color-gray-200);
     padding-left: 0;
+    padding-right: 0;
     padding-top: var(--spacing-6);
+  }
+
+  .incentives-modal__v5-left {
+    padding-right: 0;
   }
 
   .incentives-modal__close {
