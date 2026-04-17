@@ -1,0 +1,71 @@
+.toyota-incentives {
+  padding: var(--spacing-8) 0;
+}
+
+.toyota-incentives__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+  flex-wrap: wrap;
+}
+
+.toyota-incentives__title {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.05;
+  margin: 0 0 var(--spacing-2);
+}
+
+.toyota-incentives__subtitle {
+  margin: 0;
+  color: var(--color-text-secondary, #4c4c4c);
+  font-size: var(--font-size-base, 15px);
+  max-width: 68ch;
+}
+
+.toyota-incentives__cta {
+  border: 1px solid var(--color-brand-blue, #1b5f8a);
+  background: transparent;
+  color: var(--color-brand-blue, #1b5f8a);
+  border-radius: var(--border-radius-sm, 5px);
+  padding: 14px 22px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--font-size-sm, 14px);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.toyota-incentives__cta:hover {
+  background: var(--color-brand-blue, #1b5f8a);
+  color: #fff;
+}
+
+.toyota-incentives__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: var(--spacing-5);
+}
+
+@media (max-width: 980px) {
+  .toyota-incentives__grid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .toyota-incentives__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toyota-incentives__cta {
+    width: 100%;
+  }
+
+  .toyota-incentives__grid {
+    grid-template-columns: 1fr;
+  }
+}

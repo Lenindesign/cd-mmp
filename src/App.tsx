@@ -36,6 +36,9 @@ const VehicleRatingEditor = lazy(() => import('./pages/VehicleRatingEditor/Vehic
 // Rankings pages - lazy loaded
 const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
 
+// Brand hub pages - lazy loaded
+const ToyotaBrandPage = lazy(() => import('./pages/ToyotaBrandPage/ToyotaBrandPage'));
+
 // Deals pages - lazy loaded
 const DealsHubPage = lazy(() => import('./pages/DealsHubPage/DealsHubPage'));
 const ZeroAprDealsPage = lazy(() => import('./pages/ZeroAprDealsPage/ZeroAprDealsPage'));
@@ -158,6 +161,9 @@ function App() {
             {/* Admin Pages */}
             <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
             
+            {/* Brand Hub Pages */}
+            <Route path="/brands/toyota" element={<ToyotaBrandPage />} />
+
             {/* Rankings Pages */}
             <Route path="/rankings" element={<RankingsPage />} />
             <Route path="/rankings/:bodyStyle" element={<RankingsPage />} />
