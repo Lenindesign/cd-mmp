@@ -1,0 +1,1 @@
+const r=["January","February","March","April","May","June","July","August","September","October","November","December"],n=()=>{const e=new Date;return{month:r[e.getMonth()],year:e.getFullYear()}},a=e=>{try{const t=new Date(e);return isNaN(t.getTime())?e:`${t.getMonth()+1}/${t.getDate()}/${String(t.getFullYear()).slice(-2)}`}catch{return e}};export{a as f,n as g};
