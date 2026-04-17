@@ -11,6 +11,7 @@ import type { Vehicle } from '../../types/vehicle';
 import { getVehicleOffers } from '../../utils/dealCalculations';
 import { VehicleCard } from '../../components/VehicleCard';
 import ToyotaIncentives from '../../components/ToyotaIncentives/ToyotaIncentives';
+import TopRankedGlance from '../../components/TopRankedGlance/TopRankedGlance';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import './ToyotaBrandPage.css';
 
@@ -412,6 +413,8 @@ const ToyotaBrandPage = () => {
             </div>
           </section>
         ))}
+
+        <TopRankedGlance make={MAKE} limit={3} />
 
         <div className="brand-page__footer-cta">
           <p className="brand-page__footer-cta-count">

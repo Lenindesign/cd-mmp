@@ -583,7 +583,7 @@ export const VehicleCard = ({
             className="vehicle-card__incentive-btn"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onIncentiveClick?.(e); }}
           >
-            INCENTIVE
+            OFFERS AVAILABLE
           </button>
         )}
 
