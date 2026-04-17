@@ -1,5 +1,5 @@
-import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Fragment, useMemo, useState, useCallback } from 'react';
+import { Link, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
@@ -32,9 +32,11 @@ import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { DealCard } from '../../components/DealCard';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
-import './LeaseByMakePage.css';
+import './LeaseLandingPage.css';
 
-export interface LeaseByMakeDeal {
+type CategoryKind = 'make' | 'bodyStyle' | 'fuelType';
+
+interface LeaseLandingDeal {
   id: string;
   dealType: 'lease';
   chipLabel: 'Lease';
@@ -82,6 +84,40 @@ const SIDEBAR_AFTER_BREAK_PROPS = {
   secondaryLink: '#',
 };
 
+function slugify(value: string): string {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function toTitleCase(value: string): string {
+  return value
+    .split(' ')
+    .map((w) => (w.toUpperCase() === 'SUV' ? 'SUV' : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
+    .join(' ');
+}
+
+/**
+ * Detect whether the URL slug maps to a make, body style, or fuel type.
+ * Lookup order: make → body style → fuel type. Returns the canonical
+ * (cased) label and the category kind, or null if nothing matches.
+ */
+function detectCategory(slug: string): { kind: CategoryKind; label: string } | null {
+  const target = slug.toLowerCase();
+  const deals = getLeaseDeals();
+
+  for (const d of deals) {
+    if (slugify(d.vehicle.make) === target) return { kind: 'make', label: d.vehicle.make };
+  }
+  for (const d of deals) {
+    if (slugify(d.vehicle.bodyStyle) === target) return { kind: 'bodyStyle', label: d.vehicle.bodyStyle };
+  }
+  for (const d of deals) {
+    if (d.vehicle.fuelType && slugify(d.vehicle.fuelType) === target) {
+      return { kind: 'fuelType', label: d.vehicle.fuelType };
+    }
+  }
+  return null;
+}
+
 function chunkArray<T>(items: T[], chunkSize: number): T[][] {
   if (chunkSize <= 0) return [items];
   const chunks: T[][] = [];
@@ -91,7 +127,7 @@ function chunkArray<T>(items: T[], chunkSize: number): T[][] {
   return chunks;
 }
 
-function buildActiveOffer(deal: LeaseByMakeDeal | null): Partial<IncentiveOfferDetail> | undefined {
+function buildActiveOffer(deal: LeaseLandingDeal | null): Partial<IncentiveOfferDetail> | undefined {
   if (!deal) return undefined;
   const v = deal.vehicle;
   const priceParts = v.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/);
@@ -114,25 +150,9 @@ function buildActiveOffer(deal: LeaseByMakeDeal | null): Partial<IncentiveOfferD
   };
 }
 
-const LeaseByMakePage = () => {
-  const params = useParams<{ make?: string; slug?: string }>();
-  const makeParam = params.make ?? params.slug ?? '';
-
-  const allLeaseDealsRaw = useMemo(() => getLeaseDeals(), []);
-
-  // Resolve the URL slug back to the canonical make string stored on deals
-  // ("bmw" → "BMW", "alfa-romeo" → "Alfa Romeo") so filter matching stays
-  // case-exact.
-  const makeName = useMemo(() => {
-    if (!makeParam) return '';
-    const target = makeParam.toLowerCase().replace(/-/g, ' ');
-    const match = allLeaseDealsRaw.find((d) => d.vehicle.make.toLowerCase() === target);
-    if (match) return match.vehicle.make;
-    return makeParam
-      .split('-')
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-      .join(' ');
-  }, [makeParam, allLeaseDealsRaw]);
+const LeaseLandingPage = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const category = useMemo(() => (slug ? detectCategory(slug) : null), [slug]);
 
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
@@ -144,19 +164,7 @@ const LeaseByMakePage = () => {
   );
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
-  const [filters, setFilters] = useState<DealsFilterState>(() =>
-    makeName ? { ...DEFAULT_FILTERS, makes: [makeName] } : DEFAULT_FILTERS,
-  );
-
-  // Keep the filter state in sync with the URL so the modal always reflects
-  // the current make as a pre-selected chip.
-  useEffect(() => {
-    setFilters(prev =>
-      makeName
-        ? { ...prev, makes: prev.makes.includes(makeName) ? prev.makes : [makeName] }
-        : prev,
-    );
-  }, [makeName]);
+  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const navigate = useNavigate();
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
     const dest = resolveLeaseFilterDestination(applied);
@@ -170,9 +178,14 @@ const LeaseByMakePage = () => {
 
   const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
-  const matchesMake = useCallback(
-    (vehicle: Vehicle) => vehicle.make.toLowerCase() === makeName.toLowerCase(),
-    [makeName],
+  const matchesCategory = useCallback(
+    (vehicle: Vehicle) => {
+      if (!category) return false;
+      if (category.kind === 'make') return vehicle.make.toLowerCase() === category.label.toLowerCase();
+      if (category.kind === 'bodyStyle') return vehicle.bodyStyle.toLowerCase() === category.label.toLowerCase();
+      return (vehicle.fuelType || '').toLowerCase() === category.label.toLowerCase();
+    },
+    [category],
   );
 
   const matchesFilters = useCallback(
@@ -230,9 +243,15 @@ const LeaseByMakePage = () => {
     }
   }, [navigate]);
 
+  const allLeaseDealsRaw = useMemo(() => getLeaseDeals(), []);
+
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
+    if (!category) return 0;
     return allLeaseDealsRaw.filter(deal => {
       const v = deal.vehicle;
+      if (category.kind === 'make' && v.make.toLowerCase() !== category.label.toLowerCase()) return false;
+      if (category.kind === 'bodyStyle' && v.bodyStyle.toLowerCase() !== category.label.toLowerCase()) return false;
+      if (category.kind === 'fuelType' && (v.fuelType || '').toLowerCase() !== category.label.toLowerCase()) return false;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
@@ -244,13 +263,14 @@ const LeaseByMakePage = () => {
       if (signingNum < draftFilters.dueAtSigningMin || signingNum > draftFilters.dueAtSigningMax) return false;
       return true;
     }).length;
-  }, [allLeaseDealsRaw]);
+  }, [allLeaseDealsRaw, category]);
 
-  const allDeals = useMemo((): LeaseByMakeDeal[] => {
-    const out: LeaseByMakeDeal[] = [];
+  const allDeals = useMemo((): LeaseLandingDeal[] => {
+    if (!category) return [];
+    const out: LeaseLandingDeal[] = [];
 
     for (const d of getLeaseDeals()) {
-      if (!matchesMake(d.vehicle)) continue;
+      if (!matchesCategory(d.vehicle)) continue;
       if (!matchesFilters(d.vehicle, { term: d.term })) continue;
       out.push({
         id: d.id,
@@ -281,28 +301,38 @@ const LeaseByMakePage = () => {
       filters.dueAtSigningMin, filters.dueAtSigningMax,
     );
     return sortDeals(ranged, filters.sortBy);
-  }, [getSupabaseRating, matchesFilters, matchesMake, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, filters.sortBy]);
+  }, [category, getSupabaseRating, matchesFilters, matchesCategory, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, filters.sortBy]);
 
   const dealChunks = useMemo(() => chunkArray(allDeals, GRID_BREAKER_AFTER_CARD_COUNT), [allDeals]);
 
-  const modelLinks = useMemo(() => {
-    const byModel = new Map<string, { year: string; model: string }>();
-    for (const d of allDeals) {
-      const key = d.vehicle.model.toLowerCase().replace(/\s+/g, '-');
-      const existing = byModel.get(key);
-      const y = parseInt(d.vehicle.year, 10);
-      if (!existing || y > parseInt(existing.year, 10)) {
-        byModel.set(key, { year: d.vehicle.year, model: d.vehicle.model });
+  const crossLinks = useMemo(() => {
+    if (!category) return [];
+    if (category.kind === 'make') {
+      const byModel = new Map<string, { year: string; model: string }>();
+      for (const d of allDeals) {
+        const key = slugify(d.vehicle.model);
+        const existing = byModel.get(key);
+        const y = parseInt(d.vehicle.year, 10);
+        if (!existing || y > parseInt(existing.year, 10)) {
+          byModel.set(key, { year: d.vehicle.year, model: d.vehicle.model });
+        }
       }
+      return Array.from(byModel.entries())
+        .map(([modelSlug, { year: y, model }]) => ({
+          label: `${y} ${category.label} ${model} Lease Deals`,
+          to: `/deals/lease/${slugify(category.label)}/${modelSlug}`,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label));
     }
-    return Array.from(byModel.entries())
-      .map(([modelSlug, { year: y, model }]) => ({
-        modelSlug,
-        label: `${y} ${makeName} ${model} Lease Deals`,
-        to: `/${makeParam}/${modelSlug}/lease-deals`,
+    const byMake = new Map<string, string>();
+    for (const d of allDeals) byMake.set(d.vehicle.make.toLowerCase(), d.vehicle.make);
+    return [...byMake.entries()]
+      .map(([, label]) => ({
+        label: `${toTitleCase(label)} ${toTitleCase(category.label)} Lease Deals`,
+        to: `/deals/lease/${slugify(label)}`,
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
-  }, [allDeals, makeName, makeParam]);
+  }, [allDeals, category]);
 
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
@@ -325,10 +355,19 @@ const LeaseByMakePage = () => {
     }
   };
 
+  if (!slug) return <Navigate to="/deals/lease" replace />;
+  if (!category) return <Navigate to="/deals/lease" replace />;
+
+  const displayLabel = toTitleCase(category.label);
+  const categoryNoun =
+    category.kind === 'make' ? displayLabel :
+    category.kind === 'bodyStyle' ? displayLabel :
+    `${displayLabel} vehicles`;
+
   const activeDealObj = activeDealId ? allDeals.find((d) => d.id === activeDealId) : null;
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
 
-  const renderLeaseDealCard = (deal: LeaseByMakeDeal) => {
+  const renderLeaseDealCard = (deal: LeaseLandingDeal) => {
     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
     const saved = isVehicleSaved(vehicleName);
     const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
@@ -383,55 +422,62 @@ const LeaseByMakePage = () => {
     );
   };
 
-  const pageTitle = `Best ${makeName} Lease Deals for ${month} ${year}`;
-  const pageDescription = `Find the best ${makeName} lease deals for ${month} ${year}. Compare monthly payments, terms, and manufacturer lease specials from Car and Driver.`;
+  const pageTitle = `Best ${displayLabel} Lease Deals for ${month} ${year}`;
+  const pageDescription =
+    category.kind === 'make'
+      ? `Find the best ${displayLabel} lease deals for ${month} ${year}. Compare monthly payments, terms, and manufacturer lease specials from Car and Driver.`
+      : `Find the best ${displayLabel.toLowerCase()} lease deals for ${month} ${year}. Compare monthly payments, terms, and manufacturer lease specials on ${categoryNoun.toLowerCase()} from Car and Driver.`;
   const BASE_URL = 'https://www.caranddriver.com';
-  const canonicalPath = makeParam ? `${BASE_URL}/${makeParam}/lease-deals` : BASE_URL;
+  const canonicalPath = `${BASE_URL}/deals/lease/${slugify(category.label)}`;
+
+  const crossSectionTitle =
+    category.kind === 'make'
+      ? `Lease Deals by ${displayLabel} Model`
+      : `${displayLabel} Lease Deals by Make`;
 
   return (
-    <div className="make-lease">
+    <div className="lease-landing">
       <SEO
         title={pageTitle}
         description={pageDescription}
         canonical={canonicalPath}
         keywords={[
-          `${makeName} lease deals`,
-          `${makeName} lease specials`,
+          `${displayLabel} lease deals`,
+          `${displayLabel} lease specials`,
           `car lease deals ${month} ${year}`,
-          'new car lease',
           'manufacturer lease offers',
         ]}
         structuredData={[
           createBreadcrumbStructuredData([
             { name: 'Home', url: BASE_URL },
             { name: 'Lease Deals', url: `${BASE_URL}/lease-deals` },
-            { name: `${makeName} Lease Deals`, url: canonicalPath },
+            { name: `${displayLabel} Lease Deals`, url: canonicalPath },
           ]),
         ]}
         noIndex={allDeals.length === 0}
       />
 
-      <div className="make-lease__hero">
+      <div className="lease-landing__hero">
         <div className="container">
-          <div className="make-lease__hero-content">
-            <div className="make-lease__hero-badge">
-              <span className="hero-pill__label">{makeName}</span>
+          <div className="lease-landing__hero-content">
+            <div className="lease-landing__hero-badge">
+              <span className="hero-pill__label">{displayLabel} Lease Deals</span>
             </div>
-            <nav className="make-lease__breadcrumb" aria-label="Breadcrumb">
+            <nav className="lease-landing__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
-              <span className="make-lease__breadcrumb-sep">/</span>
+              <span className="lease-landing__breadcrumb-sep">/</span>
               <Link to="/lease-deals">Lease Deals</Link>
-              <span className="make-lease__breadcrumb-sep">/</span>
-              <span>{makeName} Lease Deals</span>
+              <span className="lease-landing__breadcrumb-sep">/</span>
+              <span>{displayLabel} Lease Deals</span>
             </nav>
-            <h1 className="make-lease__title">{pageTitle}</h1>
-            <p className="make-lease__description">{pageDescription}</p>
+            <h1 className="lease-landing__title">{pageTitle}</h1>
+            <p className="lease-landing__description">{pageDescription}</p>
           </div>
         </div>
       </div>
 
-      <div className="make-lease__toolbar">
-        <div className="container make-lease__toolbar-inner">
+      <div className="lease-landing__toolbar">
+        <div className="container lease-landing__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">
               {allDeals.length} {allDeals.length === 1 ? 'deal' : 'deals'}
@@ -473,26 +519,26 @@ const LeaseByMakePage = () => {
 
       <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
-      <div className="make-lease__content">
-        <div className={`container${allDeals.length > 0 ? ' make-lease__container--stacked' : ''}`}>
+      <div className="lease-landing__content">
+        <div className={`container${allDeals.length > 0 ? ' lease-landing__container--stacked' : ''}`}>
           {allDeals.length === 0 ? (
-            <div className="make-lease__segment">
-              <div className="make-lease__main">
-                <section className="make-lease__section">
-                  <div className="make-lease__grid">
-                    <div className="make-lease__empty-state">
-                      <p className="make-lease__empty-state-text">
-                        There are currently no active {makeName} lease offers. Check back soon or browse all lease deals.
+            <div className="lease-landing__segment">
+              <div className="lease-landing__main">
+                <section className="lease-landing__section">
+                  <div className="lease-landing__grid">
+                    <div className="lease-landing__empty-state">
+                      <p className="lease-landing__empty-state-text">
+                        There are currently no active {displayLabel.toLowerCase()} lease offers. Check back soon or browse all lease deals.
                       </p>
-                      <Link to="/lease-deals" className="make-lease__empty-state-link">
+                      <Link to="/lease-deals" className="lease-landing__empty-state-link">
                         Browse Lease Deals
                       </Link>
                     </div>
                   </div>
                 </section>
               </div>
-              <aside className="make-lease__sidebar" aria-label="Advertisement">
-                <div className="make-lease__sidebar-sticky">
+              <aside className="lease-landing__sidebar" aria-label="Advertisement">
+                <div className="lease-landing__sidebar-sticky">
                   <AdSidebar />
                 </div>
               </aside>
@@ -500,11 +546,11 @@ const LeaseByMakePage = () => {
           ) : (
             <>
               {dealChunks.map((chunk, chunkIndex) => (
-                <Fragment key={`lease-make-segment-${chunkIndex}`}>
-                  <div className="make-lease__segment">
-                    <div className="make-lease__main">
-                      <section className="make-lease__section">
-                        <div className="make-lease__grid">
+                <Fragment key={`lease-landing-segment-${chunkIndex}`}>
+                  <div className="lease-landing__segment">
+                    <div className="lease-landing__main">
+                      <section className="lease-landing__section">
+                        <div className="lease-landing__grid">
                           {chunk.map((deal, i) => (
                             <Fragment key={deal.id}>
                               {i > 0 && i % 4 === 0 && <GridAd />}
@@ -514,14 +560,14 @@ const LeaseByMakePage = () => {
                         </div>
                       </section>
                     </div>
-                    <aside className="make-lease__sidebar" aria-label="Advertisement">
-                      <div className="make-lease__sidebar-sticky">
+                    <aside className="lease-landing__sidebar" aria-label="Advertisement">
+                      <div className="lease-landing__sidebar-sticky">
                         {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
                       </div>
                     </aside>
                   </div>
                   {chunkIndex < dealChunks.length - 1 && (
-                    <div className="make-lease__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                    <div className="lease-landing__full-bleed-breaker" role="complementary" aria-label="Advertisement">
                       <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
                     </div>
                   )}
@@ -530,27 +576,27 @@ const LeaseByMakePage = () => {
             </>
           )}
 
-          {modelLinks.length > 0 && (
-            <div className="make-lease__segment make-lease__segment--tail">
-              <div className="make-lease__main">
-                <section className="make-lease__links-section">
-                  <h2 className="make-lease__section-title">Lease Deals by {makeName} Model</h2>
-                  <div className="make-lease__links-grid">
-                    <Link to="/lease-deals" className="make-lease__link-card">
+          {crossLinks.length > 0 && (
+            <div className="lease-landing__segment lease-landing__segment--tail">
+              <div className="lease-landing__main">
+                <section className="lease-landing__links-section">
+                  <h2 className="lease-landing__section-title">{crossSectionTitle}</h2>
+                  <div className="lease-landing__links-grid">
+                    <Link to="/lease-deals" className="lease-landing__link-card">
                       <h3>All Lease Deals</h3>
-                      <p>Browse manufacturer lease specials across every make</p>
+                      <p>Browse every manufacturer lease special</p>
                     </Link>
-                    {modelLinks.map(({ to, label }) => (
-                      <Link key={to} to={to} className="make-lease__link-card">
+                    {crossLinks.map(({ to, label }) => (
+                      <Link key={to} to={to} className="lease-landing__link-card">
                         <h3>{label}</h3>
-                        <p>View lease offers and terms for this model</p>
+                        <p>View lease offers and terms</p>
                       </Link>
                     ))}
                   </div>
                 </section>
               </div>
-              <aside className="make-lease__sidebar" aria-label="Advertisement">
-                <div className="make-lease__sidebar-sticky">
+              <aside className="lease-landing__sidebar" aria-label="Advertisement">
+                <div className="lease-landing__sidebar-sticky">
                   <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
                 </div>
               </aside>
@@ -594,4 +640,4 @@ const LeaseByMakePage = () => {
   );
 };
 
-export default LeaseByMakePage;
+export default LeaseLandingPage;

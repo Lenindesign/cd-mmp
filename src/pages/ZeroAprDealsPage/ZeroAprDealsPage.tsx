@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
@@ -21,6 +21,7 @@ import type { DealsFilterState, DealTypeOption } from '../../components/DealsFil
 import { DealCard } from '../../components/DealCard';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
+import { resolveBuyingFilterDestination } from '../../utils/buyingFilterNavigation';
 import './ZeroAprDealsPage.css';
 
 type AprTab = 'all' | 'zero-apr' | 'special-apr' | 'cash';
@@ -233,6 +234,8 @@ function renderFaqQuestionText(question: string) {
 const ZeroAprDealsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const params = useParams<{ slug?: string }>();
+  const categorySlug = params.slug ?? '';
 
   const isZeroPercentOnlyRoute = location.pathname === ZERO_PERCENT_APR_DEALS_PATH;
   const isCashBackOnlyRoute = location.pathname === CASH_BACK_DEALS_PATH;
@@ -240,6 +243,38 @@ const ZeroAprDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
+
+  // Resolve the URL slug against the buying dataset. Detection order mirrors
+  // the lease dispatcher: body style → fuel type → make. If nothing in the
+  // data matches we fall through to a title-cased make name so the page
+  // still renders a useful header rather than silently dropping context.
+  const { bodyStyleName, fuelTypeName, makeName } = useMemo(() => {
+    if (!categorySlug) return { bodyStyleName: '', fuelTypeName: '', makeName: '' };
+    const target = categorySlug.toLowerCase().replace(/-/g, ' ');
+    const allBuyingDeals = [
+      ...getZeroAprDeals(),
+      ...getFinanceDeals(),
+      ...getCashDeals(),
+    ];
+
+    const bodyMatch = allBuyingDeals.find((d) => d.vehicle.bodyStyle.toLowerCase() === target);
+    if (bodyMatch) return { bodyStyleName: bodyMatch.vehicle.bodyStyle, fuelTypeName: '', makeName: '' };
+
+    const fuelMatch = allBuyingDeals.find((d) => d.vehicle.fuelType.toLowerCase() === target);
+    if (fuelMatch) return { bodyStyleName: '', fuelTypeName: fuelMatch.vehicle.fuelType, makeName: '' };
+
+    const makeMatch = allBuyingDeals.find((d) => d.vehicle.make.toLowerCase() === target);
+    if (makeMatch) return { bodyStyleName: '', fuelTypeName: '', makeName: makeMatch.vehicle.make };
+
+    return {
+      bodyStyleName: '',
+      fuelTypeName: '',
+      makeName: categorySlug
+        .split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(' '),
+    };
+  }, [categorySlug]);
 
   const routeTab: AprTab = isZeroPercentOnlyRoute ? 'zero-apr' : isCashBackOnlyRoute ? 'cash' : 'all';
 
@@ -253,16 +288,71 @@ const ZeroAprDealsPage = () => {
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
-  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
+
+  const initialFiltersFromNavState = (location.state as { filters?: DealsFilterState } | null)?.filters;
+  const [filters, setFilters] = useState<DealsFilterState>(() => {
+    if (initialFiltersFromNavState) return initialFiltersFromNavState;
+    if (bodyStyleName) return { ...DEFAULT_FILTERS, bodyTypes: [bodyStyleName] };
+    if (fuelTypeName) return { ...DEFAULT_FILTERS, fuelTypes: [fuelTypeName] };
+    if (makeName) return { ...DEFAULT_FILTERS, makes: [makeName] };
+    return DEFAULT_FILTERS;
+  });
+
+  // Keep the filter state in sync with the URL when the user navigates between
+  // category-scoped buying pages so the modal always reflects the current
+  // context as a pre-selected chip.
+  useEffect(() => {
+    setFilters((prev) => {
+      if (bodyStyleName) {
+        return {
+          ...prev,
+          bodyTypes: prev.bodyTypes.includes(bodyStyleName) ? prev.bodyTypes : [bodyStyleName],
+        };
+      }
+      if (fuelTypeName) {
+        return {
+          ...prev,
+          fuelTypes: prev.fuelTypes.includes(fuelTypeName) ? prev.fuelTypes : [fuelTypeName],
+        };
+      }
+      if (makeName) {
+        return {
+          ...prev,
+          makes: prev.makes.includes(makeName) ? prev.makes : [makeName],
+        };
+      }
+      return prev;
+    });
+  }, [bodyStyleName, fuelTypeName, makeName]);
+
+  // Hydrate filters when the user arrives from another buying surface with a
+  // multi-selection carried via router state, then clear the state so a
+  // refresh resets cleanly.
+  useEffect(() => {
+    const incoming = (location.state as { filters?: DealsFilterState } | null)?.filters;
+    if (incoming) {
+      setFilters(incoming);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state, location.pathname, navigate]);
+
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
-  const handleFilterApply = useCallback((applied: DealsFilterState) => {
-    setFilters(applied);
-  }, []);
+  const handleFilterApply = useCallback(
+    (applied: DealsFilterState) => {
+      const dest = resolveBuyingFilterDestination(applied);
+      if (dest && dest.path !== location.pathname) {
+        navigate(dest.path, dest.carryFilters ? { state: { filters: applied } } : undefined);
+        return;
+      }
+      setFilters(applied);
+    },
+    [navigate, location.pathname],
+  );
 
-  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
-    if (dealType === 'lease') {
-      navigate('/deals/lease?openFilters=true');
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'lease' || dealType === 'all') {
+      navigate('/deals/lease', { state: { filters: carriedFilters } });
     }
   }, [navigate]);
 
@@ -490,7 +580,13 @@ const ZeroAprDealsPage = () => {
       }
     : undefined;
 
-  const pageTitle = activeTab === 'zero-apr'
+  const pageTitle = bodyStyleName
+    ? `Best ${bodyStyleName} Deals & Incentives for ${month} ${year}`
+    : fuelTypeName
+    ? `Best ${fuelTypeName} Deals & Incentives for ${month} ${year}`
+    : makeName
+    ? `Best ${makeName} Deals & Incentives for ${month} ${year}`
+    : activeTab === 'zero-apr'
     ? `Best Interest Free & 0% APR Deals for ${month} ${year}`
     : activeTab === 'special-apr'
     ? `Best Special APR Deals for ${month} ${year}`
@@ -499,13 +595,42 @@ const ZeroAprDealsPage = () => {
     : `Best Car Deals & Incentives for ${month} ${year}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
-  const seoDescription = isZeroPercentOnlyRoute
+  const seoDescription = bodyStyleName
+    ? `Find the best ${bodyStyleName.toLowerCase()} buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, and cash-back rebates on every ${bodyStyleName.toLowerCase()}. Expert ratings from Car and Driver.`
+    : fuelTypeName
+    ? `Find the best ${fuelTypeName.toLowerCase()} buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, and cash-back rebates on every ${fuelTypeName.toLowerCase()} vehicle. Expert ratings from Car and Driver.`
+    : makeName
+    ? `Find the best ${makeName} buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, and cash-back rebates on every new ${makeName}. Expert ratings from Car and Driver.`
+    : isZeroPercentOnlyRoute
     ? `Browse every current 0% APR financing offer for ${month} ${year}. Pay no interest on your auto loan, paired with Car and Driver expert ratings.`
     : `Find the best buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, cash-back rebates, and special offers on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`;
 
-  const seoCanonical = `${BASE_URL}${isZeroPercentOnlyRoute ? ZERO_PERCENT_APR_DEALS_PATH : BEST_BUYING_DEALS_PATH}`;
+  const seoCanonical = bodyStyleName || fuelTypeName || makeName
+    ? `${BASE_URL}${BEST_BUYING_DEALS_PATH}/${categorySlug}`
+    : `${BASE_URL}${isZeroPercentOnlyRoute ? ZERO_PERCENT_APR_DEALS_PATH : BEST_BUYING_DEALS_PATH}`;
 
-  const breadcrumbItems = isZeroPercentOnlyRoute
+  const breadcrumbItems = bodyStyleName
+    ? [
+        { name: 'Home', url: BASE_URL },
+        { name: 'Deals', url: `${BASE_URL}/deals` },
+        { name: 'Best Buying Deals', url: `${BASE_URL}${BEST_BUYING_DEALS_PATH}` },
+        { name: `${bodyStyleName} Deals`, url: seoCanonical },
+      ]
+    : fuelTypeName
+    ? [
+        { name: 'Home', url: BASE_URL },
+        { name: 'Deals', url: `${BASE_URL}/deals` },
+        { name: 'Best Buying Deals', url: `${BASE_URL}${BEST_BUYING_DEALS_PATH}` },
+        { name: `${fuelTypeName} Deals`, url: seoCanonical },
+      ]
+    : makeName
+    ? [
+        { name: 'Home', url: BASE_URL },
+        { name: 'Deals', url: `${BASE_URL}/deals` },
+        { name: 'Best Buying Deals', url: `${BASE_URL}${BEST_BUYING_DEALS_PATH}` },
+        { name: `${makeName} Deals`, url: seoCanonical },
+      ]
+    : isZeroPercentOnlyRoute
     ? [
         { name: 'Home', url: BASE_URL },
         { name: 'Deals', url: `${BASE_URL}/deals` },
@@ -540,7 +665,25 @@ const ZeroAprDealsPage = () => {
               <span className="zero-apr-page__breadcrumb-sep">/</span>
               <Link to="/deals">Deals</Link>
               <span className="zero-apr-page__breadcrumb-sep">/</span>
-              {isZeroPercentOnlyRoute ? (
+              {bodyStyleName ? (
+                <>
+                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
+                  <span className="zero-apr-page__breadcrumb-sep">/</span>
+                  <span>{bodyStyleName} Deals</span>
+                </>
+              ) : fuelTypeName ? (
+                <>
+                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
+                  <span className="zero-apr-page__breadcrumb-sep">/</span>
+                  <span>{fuelTypeName} Deals</span>
+                </>
+              ) : makeName ? (
+                <>
+                  <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
+                  <span className="zero-apr-page__breadcrumb-sep">/</span>
+                  <span>{makeName} Deals</span>
+                </>
+              ) : isZeroPercentOnlyRoute ? (
                 <>
                   <Link to={BEST_BUYING_DEALS_PATH}>Best Buying Deals</Link>
                   <span className="zero-apr-page__breadcrumb-sep">/</span>

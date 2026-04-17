@@ -68,9 +68,9 @@ const DealsHubPage = () => {
   const [activeDeal, setActiveDeal] = useState<MiniDeal | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters] = useState<DealsFilterState>(DEFAULT_FILTERS);
-  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
-    if (dealType === 'lease') navigate('/deals/lease?openFilters=true');
-    else if (dealType === 'finance') navigate(`${BEST_BUYING_DEALS_PATH}?openFilters=true`);
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'lease') navigate('/deals/lease', { state: { filters: carriedFilters } });
+    else if (dealType === 'finance' || dealType === 'cash' || dealType === 'all') navigate(BEST_BUYING_DEALS_PATH, { state: { filters: carriedFilters } });
   }, [navigate]);
 
   const handleFilterApply = useCallback((applied: DealsFilterState) => {

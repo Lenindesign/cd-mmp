@@ -19,6 +19,7 @@ import type { DealsFilterState, DealTypeOption } from '../../components/DealsFil
 import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { DealCard } from '../../components/DealCard';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
+import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
 import './LeaseDealsHubPage.css';
 
 const FAQ_DATA = [
@@ -79,9 +80,12 @@ const LeaseDealsHubPage = () => {
   const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
-    const params = new URLSearchParams();
-    params.set('filters', JSON.stringify(applied));
-    navigate(`/deals/all?${params.toString()}`);
+    const dest = resolveLeaseFilterDestination(applied);
+    if (dest) {
+      navigate(dest.path, dest.carryFilters ? { state: { filters: applied } } : undefined);
+      return;
+    }
+    setFilters(applied);
   }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
@@ -153,9 +157,9 @@ const LeaseDealsHubPage = () => {
     [offersPopup],
   );
 
-  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
-    if (dealType === 'finance' || dealType === 'all') {
-      navigate(`${BEST_BUYING_DEALS_PATH}?openFilters=true`);
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'finance' || dealType === 'cash' || dealType === 'all') {
+      navigate(BEST_BUYING_DEALS_PATH, { state: { filters: carriedFilters } });
     }
   }, [navigate]);
 

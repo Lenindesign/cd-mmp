@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { ChevronDown, Info, ArrowUpRight, Clock, AlertCircle } from 'lucide-react';
-import { getVehicleIncentives, getCurrentPeriod } from '../../services/incentivesService';
-import type { Incentive } from '../../services/incentivesService';
+import { offersToIncentives } from '../../utils/dealCalculations';
+import { getCurrentPeriod } from '../../utils/dateUtils';
 import { Button } from '../Button';
 import Tabs from '../Tabs/Tabs';
 import './Incentives.css';
+
+type Incentive = ReturnType<typeof offersToIncentives>[number];
 
 interface IncentivesProps {
   month?: string;
@@ -21,41 +23,45 @@ const Incentives = ({
   make = 'Chevrolet',
   model = 'Trax',
   zipCode = '10940',
-  msrp = 21895,
   fuelType = 'Gas',
 }: IncentivesProps) => {
   const [activeTab, setActiveTab] = useState('all');
   const [creditScore, setCreditScore] = useState('Select Est. Credit Score');
   const [monthlyTerm, setMonthlyTerm] = useState('Select Monthly Term');
 
-  // Get current period
   const { month, year } = getCurrentPeriod();
 
-  const tabs = [
-    { id: 'all', label: 'All' },
-    { id: 'cash', label: 'Cash' },
-    { id: 'finance', label: 'Buy' },
-    { id: 'lease', label: 'Lease' },
-    { id: 'special', label: 'Special' },
-  ];
-
-  // Get real incentives from service
-  const vehicleIncentives = useMemo(
-    () => getVehicleIncentives(make, model),
+  const incentives = useMemo<Incentive[]>(
+    () => offersToIncentives(make, model),
     [make, model]
   );
 
-  const { incentives, totalSavings } = vehicleIncentives;
+  const totalSavings = useMemo(() => {
+    return incentives
+      .filter(i => i.type === 'cash')
+      .reduce((sum, i) => {
+        const match = i.value.match(/\$([\d,]+)/);
+        return match ? sum + parseInt(match[1].replace(/,/g, ''), 10) : sum;
+      }, 0);
+  }, [incentives]);
 
-  // Get APR and lease info from incentives if available
+  const hasType = (type: Incentive['type']) => incentives.some(i => i.type === type);
+
+  const tabs = [
+    { id: 'all', label: 'All' },
+    ...(hasType('cash') ? [{ id: 'cash', label: 'Cash' }] : []),
+    ...(hasType('finance') ? [{ id: 'finance', label: 'Buy' }] : []),
+    ...(hasType('lease') ? [{ id: 'lease', label: 'Lease' }] : []),
+  ];
+
   const financeIncentive = incentives.find(i => i.type === 'finance');
   const leaseIncentive = incentives.find(i => i.type === 'lease');
-  
-  const aprRate = financeIncentive?.value.match(/[\d.]+/)?.[0] || '5.9';
-  const leasePayment = leaseIncentive?.value.match(/\$[\d,]+/)?.[0] || `$${Math.round(msrp * 0.01)}`;
 
-  const filteredIncentives = activeTab === 'all' 
-    ? incentives 
+  const aprRate = financeIncentive?.value.match(/[\d.]+/)?.[0] || null;
+  const leasePayment = leaseIncentive?.value.match(/\$[\d,]+/)?.[0] || null;
+
+  const filteredIncentives = activeTab === 'all'
+    ? incentives
     : incentives.filter(inc => inc.type === activeTab);
 
   const formatCurrency = (value: number) => {
@@ -77,6 +83,32 @@ const Incentives = ({
     return labels[type];
   };
 
+  const descriptionParts: string[] = [];
+  if (aprRate) descriptionParts.push(`interest rates starting as low as ${aprRate}% APR`);
+  if (leasePayment) descriptionParts.push(`lease deals starting at ${leasePayment}/month`);
+  if (totalSavings > 0) descriptionParts.push(`up to ${formatCurrency(totalSavings)} in combined cash incentives`);
+  const descriptionSentence = descriptionParts.length > 0
+    ? `, offering ${descriptionParts.join(', ').replace(/,([^,]*)$/, ', and$1')}.`
+    : '.';
+
+  if (incentives.length === 0) {
+    return (
+      <section className="incentives">
+        <div className="container">
+          <div className="incentives__card">
+            <div className="incentives__header">
+              <h2 className="incentives__title">Manufacturer Incentives & Rebates</h2>
+            </div>
+            <p className="incentives__description">
+              No current manufacturer incentives are available for the {make} {model} in {month} {year}.
+              Check back soon — {make} typically refreshes programs at the start of each month.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="incentives">
       <div className="container">
@@ -87,30 +119,29 @@ const Incentives = ({
           </div>
 
           {/* Urgency CTA */}
-          <div className="incentives__urgency">
-            <div className="incentives__urgency-alert">
-              <AlertCircle size={20} />
-              <span>These incentives expire soon!</span>
-            </div>
-            <div className="incentives__urgency-content">
-              <div className="incentives__urgency-text">
-                <Clock size={18} />
-                <p>Don't miss out on <strong>up to {formatCurrency(totalSavings)}</strong> in savings. Year-end deals won't last forever!</p>
+          {totalSavings > 0 && (
+            <div className="incentives__urgency">
+              <div className="incentives__urgency-alert">
+                <AlertCircle size={20} />
+                <span>These incentives expire soon!</span>
               </div>
-              <Button variant="primary" className="incentives__urgency-cta">
-                Claim Your Incentive Now
-              </Button>
+              <div className="incentives__urgency-content">
+                <div className="incentives__urgency-text">
+                  <Clock size={18} />
+                  <p>Don't miss out on <strong>up to {formatCurrency(totalSavings)}</strong> in savings. Act before these offers expire.</p>
+                </div>
+                <Button variant="primary" className="incentives__urgency-cta">
+                  Claim Your Incentive Now
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Description */}
           <p className="incentives__description">
-            For <strong>{month} {year}</strong>, {make} is offering competitive financing rates on the {model}, 
-            with interest rates starting as low as {aprRate}% APR. Lease deals are also available starting 
-            at {leasePayment}/month. Additionally, {make} is providing up to {formatCurrency(totalSavings)} in combined cash incentives on the {model}
-            {fuelType === 'Electric' && ', including federal EV tax credits'}
-            {fuelType === 'Hybrid' && ', including clean vehicle credits'}
-            , including military and first responder discounts.
+            For <strong>{month} {year}</strong>, {make} is running {incentives.length} active {incentives.length === 1 ? 'program' : 'programs'} on the {model}{descriptionSentence}
+            {fuelType === 'Electric' && ' This vehicle may also qualify for federal EV tax credits.'}
+            {fuelType === 'Hybrid' && ' This vehicle may also qualify for clean vehicle credits.'}
           </p>
 
           {/* Filters */}

@@ -32,9 +32,9 @@ import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { DealCard } from '../../components/DealCard';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
-import './LeaseByMakePage.css';
+import './LeaseByFuelTypePage.css';
 
-export interface LeaseByMakeDeal {
+interface LeaseByFuelTypeDeal {
   id: string;
   dealType: 'lease';
   chipLabel: 'Lease';
@@ -69,6 +69,10 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
+// Canonical fuel type strings used by the deal data. Kept in sync with the
+// option list in DealsFilterModal so every fuel slug round-trips cleanly.
+const KNOWN_FUEL_TYPES = ['Gas', 'Hybrid', 'Plug-In Hybrid', 'Electric', 'Diesel'];
+
 const GRID_BREAKER_AFTER_CARD_COUNT = 12;
 const DEALS_GRID_BREAKER_AD_URL =
   'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
@@ -91,7 +95,7 @@ function chunkArray<T>(items: T[], chunkSize: number): T[][] {
   return chunks;
 }
 
-function buildActiveOffer(deal: LeaseByMakeDeal | null): Partial<IncentiveOfferDetail> | undefined {
+function buildActiveOffer(deal: LeaseByFuelTypeDeal | null): Partial<IncentiveOfferDetail> | undefined {
   if (!deal) return undefined;
   const v = deal.vehicle;
   const priceParts = v.priceRange.replace(/[^0-9,\-–]/g, '').split(/[-–]/);
@@ -114,25 +118,26 @@ function buildActiveOffer(deal: LeaseByMakeDeal | null): Partial<IncentiveOfferD
   };
 }
 
-const LeaseByMakePage = () => {
-  const params = useParams<{ make?: string; slug?: string }>();
-  const makeParam = params.make ?? params.slug ?? '';
+const LeaseByFuelTypePage = () => {
+  const params = useParams<{ fuelType?: string; slug?: string }>();
+  const fuelTypeParam = params.fuelType ?? params.slug ?? '';
 
   const allLeaseDealsRaw = useMemo(() => getLeaseDeals(), []);
 
-  // Resolve the URL slug back to the canonical make string stored on deals
-  // ("bmw" → "BMW", "alfa-romeo" → "Alfa Romeo") so filter matching stays
-  // case-exact.
-  const makeName = useMemo(() => {
-    if (!makeParam) return '';
-    const target = makeParam.toLowerCase().replace(/-/g, ' ');
-    const match = allLeaseDealsRaw.find((d) => d.vehicle.make.toLowerCase() === target);
-    if (match) return match.vehicle.make;
-    return makeParam
+  // Resolve the URL slug ("gas", "plug-in-hybrid") back to the canonical fuel
+  // type string the deal data uses ("Gas", "Plug-In Hybrid").
+  const fuelTypeName = useMemo(() => {
+    if (!fuelTypeParam) return '';
+    const target = fuelTypeParam.toLowerCase().replace(/-/g, ' ');
+    const dataMatch = allLeaseDealsRaw.find((d) => d.vehicle.fuelType.toLowerCase() === target);
+    if (dataMatch) return dataMatch.vehicle.fuelType;
+    const knownMatch = KNOWN_FUEL_TYPES.find((f) => f.toLowerCase() === target);
+    if (knownMatch) return knownMatch;
+    return fuelTypeParam
       .split('-')
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
       .join(' ');
-  }, [makeParam, allLeaseDealsRaw]);
+  }, [fuelTypeParam, allLeaseDealsRaw]);
 
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
@@ -145,34 +150,36 @@ const LeaseByMakePage = () => {
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(() =>
-    makeName ? { ...DEFAULT_FILTERS, makes: [makeName] } : DEFAULT_FILTERS,
+    fuelTypeName ? { ...DEFAULT_FILTERS, fuelTypes: [fuelTypeName] } : DEFAULT_FILTERS,
   );
 
-  // Keep the filter state in sync with the URL so the modal always reflects
-  // the current make as a pre-selected chip.
   useEffect(() => {
     setFilters(prev =>
-      makeName
-        ? { ...prev, makes: prev.makes.includes(makeName) ? prev.makes : [makeName] }
+      fuelTypeName
+        ? { ...prev, fuelTypes: prev.fuelTypes.includes(fuelTypeName) ? prev.fuelTypes : [fuelTypeName] }
         : prev,
     );
-  }, [makeName]);
+  }, [fuelTypeName]);
+
   const navigate = useNavigate();
-  const handleFilterApply = useCallback((applied: DealsFilterState) => {
-    const dest = resolveLeaseFilterDestination(applied);
-    if (dest) {
-      navigate(dest.path, dest.carryFilters ? { state: { filters: applied } } : undefined);
-      return;
-    }
-    setFilters(applied);
-  }, [navigate]);
+  const handleFilterApply = useCallback(
+    (applied: DealsFilterState) => {
+      const dest = resolveLeaseFilterDestination(applied);
+      if (dest) {
+        navigate(dest.path, dest.carryFilters ? { state: { filters: applied } } : undefined);
+        return;
+      }
+      setFilters(applied);
+    },
+    [navigate],
+  );
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
-  const matchesMake = useCallback(
-    (vehicle: Vehicle) => vehicle.make.toLowerCase() === makeName.toLowerCase(),
-    [makeName],
+  const matchesFuelType = useCallback(
+    (vehicle: Vehicle) => vehicle.fuelType.toLowerCase() === fuelTypeName.toLowerCase(),
+    [fuelTypeName],
   );
 
   const matchesFilters = useCallback(
@@ -224,33 +231,43 @@ const LeaseByMakePage = () => {
     [offersPopup],
   );
 
-  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
-    if (dealType === 'finance' || dealType === 'cash' || dealType === 'all') {
-      navigate(BEST_BUYING_DEALS_PATH, { state: { filters: carriedFilters } });
-    }
-  }, [navigate]);
-
-  const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
-    return allLeaseDealsRaw.filter(deal => {
-      const v = deal.vehicle;
-      if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
-      if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
-      if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
-      if (draftFilters.terms.length > 0 && deal.term) {
-        if (!draftFilters.terms.includes(parseTermMonths(deal.term))) return false;
+  const handleDealTypeNavigate = useCallback(
+    (dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+      if (dealType === 'finance' || dealType === 'cash' || dealType === 'all') {
+        navigate(BEST_BUYING_DEALS_PATH, { state: { filters: carriedFilters } });
       }
-      if (deal.monthlyPaymentNum < draftFilters.monthlyPaymentMin || deal.monthlyPaymentNum > draftFilters.monthlyPaymentMax) return false;
-      const signingNum = parseInt(deal.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0;
-      if (signingNum < draftFilters.dueAtSigningMin || signingNum > draftFilters.dueAtSigningMax) return false;
-      return true;
-    }).length;
-  }, [allLeaseDealsRaw]);
+    },
+    [navigate],
+  );
 
-  const allDeals = useMemo((): LeaseByMakeDeal[] => {
-    const out: LeaseByMakeDeal[] = [];
+  // Counts shown inside the modal reflect the full catalog so every fuel-type
+  // option displays its true global count rather than the intersection with
+  // the current page.
+  const getResultCount = useCallback(
+    (draftFilters: DealsFilterState): number => {
+      return allLeaseDealsRaw.filter((deal) => {
+        const v = deal.vehicle;
+        if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
+        if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+        if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
+        if (draftFilters.terms.length > 0 && deal.term) {
+          if (!draftFilters.terms.includes(parseTermMonths(deal.term))) return false;
+        }
+        if (deal.monthlyPaymentNum < draftFilters.monthlyPaymentMin || deal.monthlyPaymentNum > draftFilters.monthlyPaymentMax)
+          return false;
+        const signingNum = parseInt(deal.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0;
+        if (signingNum < draftFilters.dueAtSigningMin || signingNum > draftFilters.dueAtSigningMax) return false;
+        return true;
+      }).length;
+    },
+    [allLeaseDealsRaw],
+  );
 
-    for (const d of getLeaseDeals()) {
-      if (!matchesMake(d.vehicle)) continue;
+  const allDeals = useMemo((): LeaseByFuelTypeDeal[] => {
+    const out: LeaseByFuelTypeDeal[] = [];
+
+    for (const d of allLeaseDealsRaw) {
+      if (!matchesFuelType(d.vehicle)) continue;
       if (!matchesFilters(d.vehicle, { term: d.term })) continue;
       out.push({
         id: d.id,
@@ -271,38 +288,49 @@ const LeaseByMakePage = () => {
       });
     }
 
-    const withSigning = out.map(d => ({
+    const withSigning = out.map((d) => ({
       ...d,
       dueAtSigningNum: parseInt(d.dueAtSigning.replace(/[^0-9]/g, ''), 10) || 0,
     }));
     const ranged = applyLeaseRangeFilters(
       withSigning,
-      filters.monthlyPaymentMin, filters.monthlyPaymentMax,
-      filters.dueAtSigningMin, filters.dueAtSigningMax,
+      filters.monthlyPaymentMin,
+      filters.monthlyPaymentMax,
+      filters.dueAtSigningMin,
+      filters.dueAtSigningMax,
     );
     return sortDeals(ranged, filters.sortBy);
-  }, [getSupabaseRating, matchesFilters, matchesMake, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, filters.sortBy]);
+  }, [
+    allLeaseDealsRaw,
+    getSupabaseRating,
+    matchesFilters,
+    matchesFuelType,
+    filters.monthlyPaymentMin,
+    filters.monthlyPaymentMax,
+    filters.dueAtSigningMin,
+    filters.dueAtSigningMax,
+    filters.sortBy,
+  ]);
 
   const dealChunks = useMemo(() => chunkArray(allDeals, GRID_BREAKER_AFTER_CARD_COUNT), [allDeals]);
 
-  const modelLinks = useMemo(() => {
-    const byModel = new Map<string, { year: string; model: string }>();
+  const makeLinks = useMemo(() => {
+    const byMake = new Map<string, { make: string; count: number }>();
     for (const d of allDeals) {
-      const key = d.vehicle.model.toLowerCase().replace(/\s+/g, '-');
-      const existing = byModel.get(key);
-      const y = parseInt(d.vehicle.year, 10);
-      if (!existing || y > parseInt(existing.year, 10)) {
-        byModel.set(key, { year: d.vehicle.year, model: d.vehicle.model });
-      }
+      const key = d.vehicle.make.toLowerCase();
+      const existing = byMake.get(key);
+      byMake.set(key, { make: d.vehicle.make, count: (existing?.count ?? 0) + 1 });
     }
-    return Array.from(byModel.entries())
-      .map(([modelSlug, { year: y, model }]) => ({
-        modelSlug,
-        label: `${y} ${makeName} ${model} Lease Deals`,
-        to: `/${makeParam}/${modelSlug}/lease-deals`,
+    return Array.from(byMake.entries())
+      .map(([key, { make, count }]) => ({
+        make,
+        makeSlug: key.replace(/\s+/g, '-'),
+        label: `${make} ${fuelTypeName} Lease Deals`,
+        count,
+        to: `/deals/lease/${key.replace(/\s+/g, '-')}`,
       }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }, [allDeals, makeName, makeParam]);
+      .sort((a, b) => b.count - a.count || a.make.localeCompare(b.make));
+  }, [allDeals, fuelTypeName]);
 
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
@@ -328,7 +356,7 @@ const LeaseByMakePage = () => {
   const activeDealObj = activeDealId ? allDeals.find((d) => d.id === activeDealId) : null;
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
 
-  const renderLeaseDealCard = (deal: LeaseByMakeDeal) => {
+  const renderLeaseDealCard = (deal: LeaseByFuelTypeDeal) => {
     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
     const saved = isVehicleSaved(vehicleName);
     const allOffers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
@@ -383,20 +411,20 @@ const LeaseByMakePage = () => {
     );
   };
 
-  const pageTitle = `Best ${makeName} Lease Deals for ${month} ${year}`;
-  const pageDescription = `Find the best ${makeName} lease deals for ${month} ${year}. Compare monthly payments, terms, and manufacturer lease specials from Car and Driver.`;
+  const pageTitle = `Best ${fuelTypeName} Lease Deals for ${month} ${year}`;
+  const pageDescription = `Find the best ${fuelTypeName.toLowerCase()} lease deals for ${month} ${year}. Compare monthly payments, terms, and manufacturer lease specials across every ${fuelTypeName.toLowerCase()} vehicle from Car and Driver.`;
   const BASE_URL = 'https://www.caranddriver.com';
-  const canonicalPath = makeParam ? `${BASE_URL}/${makeParam}/lease-deals` : BASE_URL;
+  const canonicalPath = fuelTypeParam ? `${BASE_URL}/deals/lease/${fuelTypeParam}` : BASE_URL;
 
   return (
-    <div className="make-lease">
+    <div className="fuel-type-lease">
       <SEO
         title={pageTitle}
         description={pageDescription}
         canonical={canonicalPath}
         keywords={[
-          `${makeName} lease deals`,
-          `${makeName} lease specials`,
+          `${fuelTypeName} lease deals`,
+          `${fuelTypeName} lease specials`,
           `car lease deals ${month} ${year}`,
           'new car lease',
           'manufacturer lease offers',
@@ -405,33 +433,33 @@ const LeaseByMakePage = () => {
           createBreadcrumbStructuredData([
             { name: 'Home', url: BASE_URL },
             { name: 'Lease Deals', url: `${BASE_URL}/lease-deals` },
-            { name: `${makeName} Lease Deals`, url: canonicalPath },
+            { name: `${fuelTypeName} Lease Deals`, url: canonicalPath },
           ]),
         ]}
         noIndex={allDeals.length === 0}
       />
 
-      <div className="make-lease__hero">
+      <div className="fuel-type-lease__hero">
         <div className="container">
-          <div className="make-lease__hero-content">
-            <div className="make-lease__hero-badge">
-              <span className="hero-pill__label">{makeName}</span>
+          <div className="fuel-type-lease__hero-content">
+            <div className="fuel-type-lease__hero-badge">
+              <span className="hero-pill__label">{fuelTypeName}</span>
             </div>
-            <nav className="make-lease__breadcrumb" aria-label="Breadcrumb">
+            <nav className="fuel-type-lease__breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
-              <span className="make-lease__breadcrumb-sep">/</span>
+              <span className="fuel-type-lease__breadcrumb-sep">/</span>
               <Link to="/lease-deals">Lease Deals</Link>
-              <span className="make-lease__breadcrumb-sep">/</span>
-              <span>{makeName} Lease Deals</span>
+              <span className="fuel-type-lease__breadcrumb-sep">/</span>
+              <span>{fuelTypeName} Lease Deals</span>
             </nav>
-            <h1 className="make-lease__title">{pageTitle}</h1>
-            <p className="make-lease__description">{pageDescription}</p>
+            <h1 className="fuel-type-lease__title">{pageTitle}</h1>
+            <p className="fuel-type-lease__description">{pageDescription}</p>
           </div>
         </div>
       </div>
 
-      <div className="make-lease__toolbar">
-        <div className="container make-lease__toolbar-inner">
+      <div className="fuel-type-lease__toolbar">
+        <div className="container fuel-type-lease__toolbar-inner">
           <div className="active-filter-pills__toolbar-left">
             <span className="active-filter-pills__count">
               {allDeals.length} {allDeals.length === 1 ? 'deal' : 'deals'}
@@ -473,26 +501,26 @@ const LeaseByMakePage = () => {
 
       <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
 
-      <div className="make-lease__content">
-        <div className={`container${allDeals.length > 0 ? ' make-lease__container--stacked' : ''}`}>
+      <div className="fuel-type-lease__content">
+        <div className={`container${allDeals.length > 0 ? ' fuel-type-lease__container--stacked' : ''}`}>
           {allDeals.length === 0 ? (
-            <div className="make-lease__segment">
-              <div className="make-lease__main">
-                <section className="make-lease__section">
-                  <div className="make-lease__grid">
-                    <div className="make-lease__empty-state">
-                      <p className="make-lease__empty-state-text">
-                        There are currently no active {makeName} lease offers. Check back soon or browse all lease deals.
+            <div className="fuel-type-lease__segment">
+              <div className="fuel-type-lease__main">
+                <section className="fuel-type-lease__section">
+                  <div className="fuel-type-lease__grid">
+                    <div className="fuel-type-lease__empty-state">
+                      <p className="fuel-type-lease__empty-state-text">
+                        There are currently no active {fuelTypeName} lease offers. Check back soon or browse all lease deals.
                       </p>
-                      <Link to="/lease-deals" className="make-lease__empty-state-link">
+                      <Link to="/lease-deals" className="fuel-type-lease__empty-state-link">
                         Browse Lease Deals
                       </Link>
                     </div>
                   </div>
                 </section>
               </div>
-              <aside className="make-lease__sidebar" aria-label="Advertisement">
-                <div className="make-lease__sidebar-sticky">
+              <aside className="fuel-type-lease__sidebar" aria-label="Advertisement">
+                <div className="fuel-type-lease__sidebar-sticky">
                   <AdSidebar />
                 </div>
               </aside>
@@ -500,11 +528,11 @@ const LeaseByMakePage = () => {
           ) : (
             <>
               {dealChunks.map((chunk, chunkIndex) => (
-                <Fragment key={`lease-make-segment-${chunkIndex}`}>
-                  <div className="make-lease__segment">
-                    <div className="make-lease__main">
-                      <section className="make-lease__section">
-                        <div className="make-lease__grid">
+                <Fragment key={`lease-fuel-type-segment-${chunkIndex}`}>
+                  <div className="fuel-type-lease__segment">
+                    <div className="fuel-type-lease__main">
+                      <section className="fuel-type-lease__section">
+                        <div className="fuel-type-lease__grid">
                           {chunk.map((deal, i) => (
                             <Fragment key={deal.id}>
                               {i > 0 && i % 4 === 0 && <GridAd />}
@@ -514,14 +542,14 @@ const LeaseByMakePage = () => {
                         </div>
                       </section>
                     </div>
-                    <aside className="make-lease__sidebar" aria-label="Advertisement">
-                      <div className="make-lease__sidebar-sticky">
+                    <aside className="fuel-type-lease__sidebar" aria-label="Advertisement">
+                      <div className="fuel-type-lease__sidebar-sticky">
                         {chunkIndex === 0 ? <AdSidebar /> : <AdSidebar {...SIDEBAR_AFTER_BREAK_PROPS} />}
                       </div>
                     </aside>
                   </div>
                   {chunkIndex < dealChunks.length - 1 && (
-                    <div className="make-lease__full-bleed-breaker" role="complementary" aria-label="Advertisement">
+                    <div className="fuel-type-lease__full-bleed-breaker" role="complementary" aria-label="Advertisement">
                       <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
                     </div>
                   )}
@@ -530,27 +558,27 @@ const LeaseByMakePage = () => {
             </>
           )}
 
-          {modelLinks.length > 0 && (
-            <div className="make-lease__segment make-lease__segment--tail">
-              <div className="make-lease__main">
-                <section className="make-lease__links-section">
-                  <h2 className="make-lease__section-title">Lease Deals by {makeName} Model</h2>
-                  <div className="make-lease__links-grid">
-                    <Link to="/lease-deals" className="make-lease__link-card">
+          {makeLinks.length > 0 && (
+            <div className="fuel-type-lease__segment fuel-type-lease__segment--tail">
+              <div className="fuel-type-lease__main">
+                <section className="fuel-type-lease__links-section">
+                  <h2 className="fuel-type-lease__section-title">{fuelTypeName} Lease Deals by Make</h2>
+                  <div className="fuel-type-lease__links-grid">
+                    <Link to="/lease-deals" className="fuel-type-lease__link-card">
                       <h3>All Lease Deals</h3>
                       <p>Browse manufacturer lease specials across every make</p>
                     </Link>
-                    {modelLinks.map(({ to, label }) => (
-                      <Link key={to} to={to} className="make-lease__link-card">
+                    {makeLinks.map(({ to, label }) => (
+                      <Link key={to} to={to} className="fuel-type-lease__link-card">
                         <h3>{label}</h3>
-                        <p>View lease offers and terms for this model</p>
+                        <p>View lease offers and terms for this make</p>
                       </Link>
                     ))}
                   </div>
                 </section>
               </div>
-              <aside className="make-lease__sidebar" aria-label="Advertisement">
-                <div className="make-lease__sidebar-sticky">
+              <aside className="fuel-type-lease__sidebar" aria-label="Advertisement">
+                <div className="fuel-type-lease__sidebar-sticky">
                   <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
                 </div>
               </aside>
@@ -567,7 +595,13 @@ const LeaseByMakePage = () => {
         allIncentives={
           activeDealObj ? offersToIncentives(activeDealObj.vehicle.make, activeDealObj.vehicle.model) : undefined
         }
-        selectedIncentiveId={activeDealObj ? findMatchingIncentiveId(activeDealObj.vehicle.make, activeDealObj.vehicle.model, 'lease', { value: activeDealObj.monthlyPayment }) : undefined}
+        selectedIncentiveId={
+          activeDealObj
+            ? findMatchingIncentiveId(activeDealObj.vehicle.make, activeDealObj.vehicle.model, 'lease', {
+                value: activeDealObj.monthlyPayment,
+              })
+            : undefined
+        }
       />
       <SignInToSaveModal
         isOpen={showSignInModal}
@@ -594,4 +628,6 @@ const LeaseByMakePage = () => {
   );
 };
 
-export default LeaseByMakePage;
+export default LeaseByFuelTypePage;
+
+export { KNOWN_FUEL_TYPES };

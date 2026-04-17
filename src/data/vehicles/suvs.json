@@ -2157,5 +2157,172 @@
     "slug": "2026/Ford/Escape",
     "editorsChoice": false,
     "tenBest": false
+  },
+  {
+    "id": "suv-rav4-prime-2026",
+    "year": "2026",
+    "make": "Toyota",
+    "model": "RAV4 Prime",
+    "bodyStyle": "SUV",
+    "imageSource": "2026 Toyota RAV4 Prime",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66f583eb78b3510007c3ecf3/2025toyotarav4plug-inhybrid7.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66f58625c7980500088c3322/2025toyotarav4plug-inhybrid11.jpg"
+    ],
+    "priceRange": "$44,265 - $49,885",
+    "priceMin": 44265,
+    "priceMax": 49885,
+    "staffRating": 8.7,
+    "communityRating": 8.6,
+    "reviewCount": 168,
+    "fuelType": "Plug-In Hybrid",
+    "drivetrain": "AWD",
+    "transmission": "CVT",
+    "mpg": "38/94 MPGe",
+    "horsepower": 302,
+    "seatingCapacity": 5,
+    "cargoSpace": 37.6,
+    "features": [
+      "Toyota Safety Sense 3.0",
+      "42-mile electric range",
+      "All-Wheel Drive"
+    ],
+    "slug": "2026/Toyota/RAV4-Prime",
+    "editorsChoice": true,
+    "tenBest": false
+  },
+  {
+    "id": "suv-wrangler-4xe-2026",
+    "year": "2026",
+    "make": "Jeep",
+    "model": "Wrangler 4xe",
+    "bodyStyle": "SUV",
+    "imageSource": "2026 Jeep Wrangler 4xe",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg"
+    ],
+    "priceRange": "$51,995 - $68,890",
+    "priceMin": 51995,
+    "priceMax": 68890,
+    "staffRating": 7.9,
+    "communityRating": 8.2,
+    "reviewCount": 142,
+    "fuelType": "Plug-In Hybrid",
+    "drivetrain": "4WD",
+    "transmission": "Automatic",
+    "mpg": "20/49 MPGe",
+    "horsepower": 375,
+    "seatingCapacity": 5,
+    "cargoSpace": 31.7,
+    "features": [
+      "22-mile electric range",
+      "Selec-Trac 4x4",
+      "Uconnect 5"
+    ],
+    "slug": "2026/Jeep/Wrangler-4xe",
+    "editorsChoice": false,
+    "tenBest": false
+  },
+  {
+    "id": "suv-grand-cherokee-4xe-2026",
+    "year": "2026",
+    "make": "Jeep",
+    "model": "Grand Cherokee 4xe",
+    "bodyStyle": "SUV",
+    "imageSource": "2026 Jeep Grand Cherokee 4xe",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg"
+    ],
+    "priceRange": "$62,995 - $78,890",
+    "priceMin": 62995,
+    "priceMax": 78890,
+    "staffRating": 8.1,
+    "communityRating": 8.0,
+    "reviewCount": 124,
+    "fuelType": "Plug-In Hybrid",
+    "drivetrain": "4WD",
+    "transmission": "Automatic",
+    "mpg": "23/56 MPGe",
+    "horsepower": 375,
+    "seatingCapacity": 5,
+    "cargoSpace": 37.7,
+    "features": [
+      "Quadra-Trac II 4WD",
+      "25-mile electric range",
+      "Selec-Terrain"
+    ],
+    "slug": "2026/Jeep/Grand-Cherokee-4xe",
+    "editorsChoice": false,
+    "tenBest": false
+  },
+  {
+    "id": "suv-x5-phev-2026",
+    "year": "2026",
+    "make": "BMW",
+    "model": "X5 xDrive50e",
+    "bodyStyle": "SUV",
+    "imageSource": "2026 BMW X5 xDrive50e",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg"
+    ],
+    "priceRange": "$73,700 - $85,000",
+    "priceMin": 73700,
+    "priceMax": 85000,
+    "staffRating": 9.0,
+    "communityRating": 8.8,
+    "reviewCount": 156,
+    "fuelType": "Plug-In Hybrid",
+    "drivetrain": "AWD",
+    "transmission": "Automatic",
+    "mpg": "21/62 MPGe",
+    "horsepower": 483,
+    "seatingCapacity": 5,
+    "cargoSpace": 33.9,
+    "features": [
+      "39-mile electric range",
+      "xDrive AWD",
+      "iDrive 8.5"
+    ],
+    "slug": "2026/BMW/X5-xDrive50e",
+    "editorsChoice": true,
+    "tenBest": false
+  },
+  {
+    "id": "suv-escape-phev-2026",
+    "year": "2026",
+    "make": "Ford",
+    "model": "Escape PHEV",
+    "bodyStyle": "SUV",
+    "imageSource": "2026 Ford Escape PHEV",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg"
+    ],
+    "priceRange": "$40,500 - $43,495",
+    "priceMin": 40500,
+    "priceMax": 43495,
+    "staffRating": 7.3,
+    "communityRating": 7.5,
+    "reviewCount": 88,
+    "fuelType": "Plug-In Hybrid",
+    "drivetrain": "FWD",
+    "transmission": "CVT",
+    "mpg": "40/105 MPGe",
+    "horsepower": 210,
+    "seatingCapacity": 5,
+    "cargoSpace": 34.4,
+    "features": [
+      "37-mile electric range",
+      "Ford Co-Pilot360",
+      "SYNC 4"
+    ],
+    "slug": "2026/Ford/Escape-PHEV",
+    "editorsChoice": false,
+    "tenBest": false
   }
 ]

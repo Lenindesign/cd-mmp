@@ -50,6 +50,7 @@ const DealsByMakeModelPage = lazy(() => import('./pages/DealsByMakeModelPage/Dea
 const LeaseDealsHubPage = lazy(() => import('./pages/LeaseDealsHubPage/LeaseDealsHubPage'));
 const LeaseByMakePage = lazy(() => import('./pages/LeaseByMakePage/LeaseByMakePage'));
 const LeaseByMakeModelPage = lazy(() => import('./pages/LeaseByMakeModelPage/LeaseByMakeModelPage'));
+const LeaseCategoryDispatcher = lazy(() => import('./pages/LeaseCategoryDispatcher/LeaseCategoryDispatcher'));
 
 // Financing page - lazy loaded
 const FinancingPage = lazy(() => import('./pages/FinancingPage/FinancingPage'));
@@ -172,11 +173,14 @@ function App() {
             {/* Deals Pages */}
             <Route path="/deals" element={<DealsHubPage />} />
             <Route path={BEST_BUYING_DEALS_PATH} element={<ZeroAprDealsPage />} />
+            <Route path={`${BEST_BUYING_DEALS_PATH}/:slug`} element={<ZeroAprDealsPage />} />
             <Route path={ZERO_PERCENT_APR_DEALS_PATH} element={<ZeroAprDealsPage />} />
             <Route path={CASH_BACK_DEALS_PATH} element={<ZeroAprDealsPage />} />
             <Route path="/deals/zero-apr" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
             <Route path="/deals/cash-finance" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
             <Route path="/deals/lease" element={<LeaseDealsPage />} />
+            <Route path="/deals/lease/:slug" element={<LeaseCategoryDispatcher />} />
+            <Route path="/deals/lease/:make/:model" element={<LeaseByMakeModelPage />} />
             <Route path="/deals/suv" element={<SuvDealsPage />} />
             <Route path="/deals/truck" element={<TruckDealsPage />} />
             <Route path="/deals/all" element={<AllDealsPage />} />

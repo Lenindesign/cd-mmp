@@ -770,5 +770,101 @@
       "https://hips.hearstapps.com/hmg-prod/images/2022-nissan-frontier-pro-4x-107-1612384774.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg"
     ]
+  },
+  {
+    "id": "truck-silverado-diesel-2026",
+    "year": "2026",
+    "make": "Chevrolet",
+    "model": "Silverado 1500 Duramax",
+    "bodyStyle": "Truck",
+    "imageSource": "2026 Chevrolet Silverado Duramax",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg"
+    ],
+    "priceRange": "$46,500 - $62,800",
+    "priceMin": 46500,
+    "priceMax": 62800,
+    "staffRating": 8.2,
+    "communityRating": 8.0,
+    "reviewCount": 96,
+    "fuelType": "Diesel",
+    "drivetrain": "4WD",
+    "transmission": "Automatic",
+    "mpg": "23/29",
+    "horsepower": 305,
+    "seatingCapacity": 6,
+    "features": [
+      "3.0L Duramax Turbo-Diesel",
+      "Trailering Package",
+      "Chevy Safety Assist"
+    ],
+    "slug": "2026/Chevrolet/Silverado-1500-Duramax",
+    "editorsChoice": false,
+    "tenBest": false
+  },
+  {
+    "id": "truck-ram-ecodiesel-2026",
+    "year": "2026",
+    "make": "Ram",
+    "model": "1500 EcoDiesel",
+    "bodyStyle": "Truck",
+    "imageSource": "2026 Ram 1500 EcoDiesel",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg"
+    ],
+    "priceRange": "$48,900 - $64,200",
+    "priceMin": 48900,
+    "priceMax": 64200,
+    "staffRating": 8.0,
+    "communityRating": 7.9,
+    "reviewCount": 78,
+    "fuelType": "Diesel",
+    "drivetrain": "4WD",
+    "transmission": "Automatic",
+    "mpg": "22/32",
+    "horsepower": 260,
+    "seatingCapacity": 6,
+    "features": [
+      "3.0L EcoDiesel V6",
+      "Air Suspension available",
+      "Uconnect 5"
+    ],
+    "slug": "2026/Ram/1500-EcoDiesel",
+    "editorsChoice": false,
+    "tenBest": false
+  },
+  {
+    "id": "truck-sierra-diesel-2026",
+    "year": "2026",
+    "make": "GMC",
+    "model": "Sierra 1500 Duramax",
+    "bodyStyle": "Truck",
+    "imageSource": "2026 GMC Sierra Duramax",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/672a8165bee9b50008b7d315/016-2025-ford-f-150-hybrid-king-ranch-front-view.jpg"
+    ],
+    "priceRange": "$47,800 - $64,500",
+    "priceMin": 47800,
+    "priceMax": 64500,
+    "staffRating": 8.3,
+    "communityRating": 8.1,
+    "reviewCount": 84,
+    "fuelType": "Diesel",
+    "drivetrain": "4WD",
+    "transmission": "Automatic",
+    "mpg": "23/30",
+    "horsepower": 305,
+    "seatingCapacity": 6,
+    "features": [
+      "3.0L Duramax Turbo-Diesel",
+      "ProGrade Trailering System",
+      "MultiPro Tailgate"
+    ],
+    "slug": "2026/GMC/Sierra-1500-Duramax",
+    "editorsChoice": false,
+    "tenBest": false
   }
 ]

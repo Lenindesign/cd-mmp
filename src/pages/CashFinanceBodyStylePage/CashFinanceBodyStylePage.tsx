@@ -159,9 +159,9 @@ const CashFinanceBodyStylePage = () => {
     }
   }, [offersPopup]);
 
-  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
-    if (dealType === 'lease') {
-      navigate('/deals/lease?openFilters=true');
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'lease' || dealType === 'all') {
+      navigate('/deals/lease', { state: { filters: carriedFilters } });
     }
   }, [navigate]);
 

@@ -1,5 +1,5 @@
-import { Fragment, useMemo, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
@@ -20,6 +20,7 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
+import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
 import './LeaseDealsPage.css';
 
 const FAQ_DATA: { question: string; answer: string; bullets?: string[] }[] = [
@@ -126,6 +127,7 @@ function chunkArray<T>(items: T[], chunkSize: number): T[][] {
 
 const LeaseDealsPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
   const { month, year } = getCurrentPeriod();
@@ -135,14 +137,30 @@ const LeaseDealsPage = () => {
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
-  const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
-  const handleFilterApply = useCallback((applied: DealsFilterState) => {
-    setFilters(applied);
-  }, []);
+  const initialFiltersFromState = (location.state as { filters?: DealsFilterState } | null)?.filters;
+  const [filters, setFilters] = useState<DealsFilterState>(initialFiltersFromState ?? DEFAULT_FILTERS);
 
-  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption) => {
-    if (dealType === 'finance' || dealType === 'all') {
-      navigate(`${BEST_BUYING_DEALS_PATH}?openFilters=true`);
+  // Hydrate filters when the user arrives from a branded lease page with a
+  // multi-make selection, then clear the router state so refreshes reset.
+  useEffect(() => {
+    const incoming = (location.state as { filters?: DealsFilterState } | null)?.filters;
+    if (incoming) {
+      setFilters(incoming);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state, location.pathname, navigate]);
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    const dest = resolveLeaseFilterDestination(applied);
+    if (dest && dest.path !== '/deals/lease') {
+      navigate(dest.path, dest.carryFilters ? { state: { filters: applied } } : undefined);
+      return;
+    }
+    setFilters(applied);
+  }, [navigate]);
+
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'finance' || dealType === 'cash' || dealType === 'all') {
+      navigate(BEST_BUYING_DEALS_PATH, { state: { filters: carriedFilters } });
     }
   }, [navigate]);
 
