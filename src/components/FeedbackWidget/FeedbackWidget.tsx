@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { isSupabaseConfigured, supabase } from '../../lib/supabase';
 
 /**
  * FeedbackWidget mounts the SitePing review widget when enabled.
@@ -12,15 +13,21 @@ import { useEffect } from 'react';
  * reviewers do not need to re-add the query param as they navigate between pages.
  * Use `?review=0` to opt out and clear the preference.
  *
+ * Storage backend:
+ *   - When Supabase is configured (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY set),
+ *     all reviewers share a single feedback stream via the `siteping_feedback` +
+ *     `siteping_annotations` tables. Run `supabase/migrations/20260418_siteping_feedback.sql`
+ *     in your Supabase project to provision the schema.
+ *   - Otherwise, each reviewer's comments live only in their own browser's
+ *     localStorage. Useful as a fallback but NOT suitable for shared stakeholder
+ *     reviews — switch to Supabase before handing the URL to multiple reviewers.
+ *
  * The widget packages are lazy-loaded — when feedback is disabled, none of the
  * SitePing code is downloaded. Normal visitors pay zero bundle cost.
- *
- * Comments persist in each reviewer's own browser (localStorage). To share
- * feedback across stakeholders, swap `LocalStorageStore` for a Supabase-backed
- * SitepingStore implementation.
  */
 const STORAGE_FLAG_KEY = 'cd-mmp:feedback';
 const STORAGE_DATA_KEY = 'cd-mmp:feedback:data';
+const PROJECT_NAME = 'cd-mmp-review';
 
 function isFeedbackEnabled(): boolean {
   if (typeof window === 'undefined') return false;
@@ -62,15 +69,40 @@ export default function FeedbackWidget() {
     let destroy: (() => void) | null = null;
     let cancelled = false;
 
-    Promise.all([
-      import('@siteping/widget'),
-      import('@siteping/adapter-localstorage'),
-    ]).then(([{ initSiteping }, { LocalStorageStore }]) => {
+    const loadStore = async () => {
+      const { initSiteping } = await import('@siteping/widget');
+
+      if (isSupabaseConfigured && supabase) {
+        const { SitepingSupabaseStore } = await import('../../lib/sitepingSupabaseStore');
+        return {
+          initSiteping,
+          store: new SitepingSupabaseStore({ supabase }),
+          backend: 'supabase' as const,
+        };
+      }
+
+      const { LocalStorageStore } = await import('@siteping/adapter-localstorage');
+      return {
+        initSiteping,
+        store: new LocalStorageStore({ key: STORAGE_DATA_KEY }),
+        backend: 'localstorage' as const,
+      };
+    };
+
+    loadStore().then(({ initSiteping, store, backend }) => {
       if (cancelled) return;
 
+      if (backend === 'localstorage' && import.meta.env.DEV) {
+        console.warn(
+          '[FeedbackWidget] Running with LocalStorage store — comments are NOT shared ' +
+            'across reviewers. Configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY ' +
+            'to switch to the shared Supabase store.',
+        );
+      }
+
       const instance = initSiteping({
-        store: new LocalStorageStore({ key: STORAGE_DATA_KEY }),
-        projectName: 'cd-mmp-review',
+        store,
+        projectName: PROJECT_NAME,
         position: 'bottom-right',
         accentColor: '#1B5F8A',
         theme: 'light',

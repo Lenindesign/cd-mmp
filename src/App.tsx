@@ -32,6 +32,7 @@ const SignUp = lazy(() => import('./pages/Onboarding/SignUp'));
 
 // Admin pages - lazy loaded
 const VehicleRatingEditor = lazy(() => import('./pages/VehicleRatingEditor/VehicleRatingEditor'));
+const FeedbackAdmin = lazy(() => import('./pages/FeedbackAdmin/FeedbackAdmin'));
 
 // Rankings pages - lazy loaded
 const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
@@ -160,6 +161,7 @@ function App() {
             
             {/* Admin Pages */}
             <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
+            <Route path="/admin/feedback" element={<FeedbackAdmin />} />
             
             {/* Brand Hub Pages */}
             <Route path="/brands/toyota" element={<ToyotaBrandPage />} />
