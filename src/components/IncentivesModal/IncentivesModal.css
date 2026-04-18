@@ -1009,12 +1009,31 @@
     display: block;
   }
 
+  /* Pinned to the bottom of the modal panel on mobile so the primary actions
+   * are always in reach, regardless of scroll position. `position: fixed` is
+   * correct here (not sticky) because on mobile the CTAs live at the very end
+   * of a long vertical stack and we want them visible immediately, not only
+   * once the user has scrolled to them. */
   .incentives-modal__v5-cta-sticky {
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
     margin-top: 0;
     padding: var(--spacing-3) var(--spacing-4);
-    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
+    padding-bottom: max(var(--spacing-3), calc(var(--spacing-3) + env(safe-area-inset-bottom, 0px)));
     border-top: 1px solid var(--color-gray-200);
+    background: var(--color-white, #fff);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Reserve space at the bottom of the scrollable area so the fixed CTA bar
+   * doesn't obscure the last rows of form / content. ~120px covers the
+   * two-button stack (Contact Dealer + Shop on Marketplace) plus safe-area
+   * inset on most phones. */
+  .incentives-modal__v5-body-scroll {
+    padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
   }
 
   .incentives-modal__v5-left,
