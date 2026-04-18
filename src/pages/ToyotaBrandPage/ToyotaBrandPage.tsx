@@ -282,7 +282,7 @@ const ToyotaBrandPage = () => {
           </div>
         </header>
 
-        <ToyotaIncentives />
+        <TopRankedGlance make={MAKE} limit={3} />
 
         <div className="brand-page__featured-row">
           <div className="brand-page__featured-main">
@@ -414,7 +414,7 @@ const ToyotaBrandPage = () => {
           </section>
         ))}
 
-        <TopRankedGlance make={MAKE} limit={3} />
+        <ToyotaIncentives />
 
         <div className="brand-page__footer-cta">
           <p className="brand-page__footer-cta-count">

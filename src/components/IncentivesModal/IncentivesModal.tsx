@@ -245,9 +245,7 @@ const IncentivesModal = ({
   const [conversionBPostSubmit, setConversionBPostSubmit] = useState<'dealer' | 'no-dealer' | null>(null);
   const conversionBFormRef = useRef<HTMLFormElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
   const leftFadeRef = useRef<HTMLDivElement>(null);
-  const rightFadeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -305,17 +303,16 @@ const IncentivesModal = ({
     const THRESHOLD = 8;
     const pairs: [HTMLElement | null, HTMLElement | null][] = [
       [leftColRef.current, leftFadeRef.current],
-      [rightColRef.current, rightFadeRef.current],
     ];
     const update = (col: HTMLElement | null, fade: HTMLElement | null) => {
       if (!col || !fade) return;
       const canScroll = col.scrollHeight - col.scrollTop - col.clientHeight > THRESHOLD;
-      fade.classList.toggle('incentives-modal__scroll-fade--visible', canScroll);
+      fade.classList.toggle('incentives-modal__scroll-fade--hidden', !canScroll);
     };
     const onScroll = (e: Event) => {
       const col = e.target as HTMLElement;
-      const fade = col === leftColRef.current ? leftFadeRef.current : rightFadeRef.current;
-      update(col, fade);
+      if (col !== leftColRef.current) return;
+      update(col, leftFadeRef.current);
     };
     const ro = new ResizeObserver(() => pairs.forEach(([c, f]) => update(c, f)));
     pairs.forEach(([col, fade]) => {
@@ -710,8 +707,8 @@ const IncentivesModal = ({
               <div className="incentives-modal__v5-body-scroll">
                 <div className="incentives-modal__v5-layout">
                 {/* LEFT COLUMN: Offer browser + details */}
+                <div className="incentives-modal__v5-col-wrap">
                 <div ref={leftColRef} className="incentives-modal__v5-left">
-                  <div ref={leftFadeRef} className="incentives-modal__scroll-fade" aria-hidden />
                   <h2 id="incentives-modal-title" className="incentives-modal__v5-title">
                     {vehicleLabel}
                   </h2>
@@ -880,10 +877,12 @@ const IncentivesModal = ({
                     </div>
                   )}
                 </div>
+                  <div ref={leftFadeRef} className="incentives-modal__scroll-fade" aria-hidden />
+                </div>
 
                 {/* RIGHT COLUMN: Dealer contact form or post-submit result */}
-                <div ref={rightColRef} className="incentives-modal__v5-right" id="incentives-modal-dealer-panel">
-                  <div ref={rightFadeRef} className="incentives-modal__scroll-fade" aria-hidden />
+                <div className="incentives-modal__v5-col-wrap">
+                <div className="incentives-modal__v5-right" id="incentives-modal-dealer-panel">
                   {conversionBPostSubmit === null && (
                     <>
                       <h3 className="incentives-modal__v5-form-heading">Got Questions? Contact the Dealer</h3>
@@ -1053,6 +1052,7 @@ const IncentivesModal = ({
                       SHOP NEW TRAX
                     </button>
                   </div>
+                </div>
                 </div>
                 </div>
               </div>

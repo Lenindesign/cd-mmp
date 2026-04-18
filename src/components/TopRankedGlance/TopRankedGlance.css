@@ -144,7 +144,7 @@
   text-overflow: ellipsis;
 }
 
-/* ---- Offer row (body-style badge + primary offer) ---- */
+/* ---- Offer row (primary offer) ---- */
 
 .top-ranked-glance__offer-row {
   display: flex;
@@ -152,22 +152,6 @@
   gap: var(--spacing-2);
   flex-wrap: nowrap;
   min-width: 0;
-}
-
-.top-ranked-glance__offer-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  background: var(--color-gray-100, #f0f0f0);
-  border: 1px solid var(--color-gray-200, #e0e0e0);
-  border-radius: 3px;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-2xs, 10px);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-gray-600, #555);
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .top-ranked-glance__offer-text {

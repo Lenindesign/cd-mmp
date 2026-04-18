@@ -106,7 +106,6 @@ const TopRankedGlance = ({
                 </h3>
 
                 <div className="top-ranked-glance__offer-row">
-                  <span className="top-ranked-glance__offer-badge">{vehicle.bodyStyle}</span>
                   <span className="top-ranked-glance__offer-text">{summarizeOffer(primaryOffer)}</span>
                 </div>
 
