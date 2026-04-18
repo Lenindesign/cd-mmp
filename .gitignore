@@ -33,3 +33,11 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+# AI assistant & tooling working directories
+.agents/
+.claude/
+.continue/
+.kiro/
+screenshots/
+skills-lock.json

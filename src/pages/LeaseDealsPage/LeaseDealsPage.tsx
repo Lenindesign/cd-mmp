@@ -21,70 +21,8 @@ import type { DealsFilterState, DealTypeOption } from '../../components/DealsFil
 import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
+import { LEASE_FAQ as FAQ_DATA } from '../../data/faqs';
 import './LeaseDealsPage.css';
-
-const FAQ_DATA: { question: string; answer: string; bullets?: string[] }[] = [
-  {
-    question: 'Can you lease a car with no money down?',
-    answer: 'Yes, you can lease a car with no money down, but that usually means more of the upfront cost gets pushed into the monthly payment. In many offers, taxes, registration, acquisition fees, or even the first payment are still due at signing unless the ad specifically says everything is rolled in.\n\nA zero-down lease can help preserve cash and may be safer than putting a large amount upfront if the vehicle is stolen or totaled early in the term. But it is not automatically the cheapest option, so the smarter comparison is total lease cost over the full term, not just what is due on day one.',
-    bullets: [
-      'Verify whether "$0 down" also means "$0 due at signing."',
-      'Compare total paid over the full 24- or 36-month term, not just the headline payment.',
-      'Ask whether taxes, acquisition fee, and registration are included or rolled into the payment.',
-      'Check mileage limits and end-of-lease fees before signing.',
-    ],
-  },
-  {
-    question: 'What credit score do you need to lease a car?',
-    answer: 'There is no single minimum credit score for every lease, but the best advertised lease specials usually go to shoppers with strong, top-tier credit. A 650 score may qualify with some lenders, while a 500 score is much tougher and often means fewer vehicle choices, a larger amount due at signing, or the need for a co-signer.\n\nDealers and lenders also look beyond the score itself. Income, debt, prior auto history, payment history, and stability all affect approval, so shoppers should assume the headline lease payment is built for well-qualified customers unless the fine print says otherwise.',
-    bullets: [
-      'Ask whether the advertised payment assumes top-tier credit.',
-      'Bring proof of income and be ready to explain recent credit issues if needed.',
-      'A trade-in, larger upfront payment, or co-signer can improve approval odds.',
-      'If approval is tight, compare the lease against a lower-priced model or a used-car loan.',
-    ],
-  },
-  {
-    question: 'Can you really lease a car for $200 to $300 a month?',
-    answer: 'Sometimes, yes, but usually only on smaller, lower-trim vehicles or outgoing inventory with strong incentives. The lowest advertised lease payments often assume top-tier credit, limited annual mileage, a short term, and some money due at signing.\n\nThe more useful question is not just whether a $199 or $299 payment exists, but what you are giving up to get it. A slightly higher payment with lower drive-off costs, more realistic mileage, or fewer fees can easily be the better deal for a real shopper.',
-    bullets: [
-      'Check the amount due at signing before comparing monthly payments.',
-      'Confirm mileage allowance, taxes, registration, and dealer fees.',
-      'Expect payments to rise quickly on higher trims or popular option packages.',
-      'Remember that lease offers change by ZIP code, inventory, and month.',
-    ],
-  },
-  {
-    question: 'Can you negotiate a car lease?',
-    answer: 'Yes, parts of a lease are negotiable, especially the selling price of the vehicle, the trade-in value, and sometimes certain end-of-lease fees. The pieces with the least flexibility are usually lender-set items such as residual value and acquisition fee.\n\nThe smartest way to negotiate a lease is to work the deal in layers. Nail down the vehicle price first, then review how the payment is built, because a dealer can make the monthly number look lower by extending the term or moving costs into the upfront amount.',
-    bullets: [
-      'Focus on cap cost, money due at signing, mileage allowance, and disposition fee.',
-      'Ask for an itemized lease worksheet instead of discussing only the monthly payment.',
-      'Compare quotes from more than one dealer, especially near month-end or quarter-end.',
-      'Read the final contract closely to make sure it matches the quote.',
-    ],
-  },
-  {
-    question: 'What are the biggest downsides and red flags in a car lease?',
-    answer: 'The biggest downside to leasing is that you keep making payments without building ownership equity. A lease can look affordable at first, but excess-mileage charges, wear-and-tear bills, disposition fees, insurance requirements, and early termination costs can make it more expensive than shoppers expect.\n\nThe biggest red flags are vague fees, low headline payments tied to large upfront costs, unrealistic mileage caps, and numbers that change when the contract shows up. If the dealer cannot clearly explain every fee on the worksheet, that is a warning sign by itself.',
-    bullets: [
-      'Match the mileage limit to how you really drive, not how the ad is structured.',
-      'Ask how wear-and-tear, tire damage, and excess mileage are billed at turn-in.',
-      'Confirm whether gap coverage is included and what happens if you end the lease early.',
-      'Compare the signed contract against the original quote line by line.',
-    ],
-  },
-  {
-    question: 'Is it better to lease or buy a car?',
-    answer: 'Leasing is usually better for shoppers who want a lower monthly payment, a newer car every few years, and less interest in long-term ownership. Buying is usually better if you drive a lot, want to keep the vehicle after the loan is paid off, or want the freedom to customize and build equity.\n\nFor most shoppers, the real difference is time horizon. If you swap vehicles often, a strong lease can make sense. If you keep cars for years, buying usually wins on long-term value because the payment eventually ends and the car is still yours.',
-    bullets: [
-      'Lease if lower payment and short commitment matter most.',
-      'Buy if you want long-term value, no mileage limits, and ownership flexibility.',
-      'Compare 3-year out-of-pocket cost against 6- to 8-year ownership cost.',
-      'Check insurance, fees, residual value, and the lease buyout option before deciding.',
-    ],
-  },
-];
 
 const DEFAULT_FILTERS: DealsFilterState = {
   tab: 'best-deals',
