@@ -10,6 +10,7 @@ import { VehicleCard } from '../../components/VehicleCard';
 import { SEO } from '../../components/SEO';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
+import { chunkArray } from '../../utils/chunkArray';
 import './VehiclesListPage.css';
 
 // Vehicle History Tooltip Component
@@ -138,15 +139,6 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
     </div>
   );
 };
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
 
 const VehiclesListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();

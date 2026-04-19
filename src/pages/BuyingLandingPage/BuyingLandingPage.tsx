@@ -35,6 +35,12 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
+import {
+  GRID_BREAKER_AFTER_CARD_COUNT,
+  DEALS_GRID_BREAKER_AD_URL,
+  SIDEBAR_AFTER_BREAK_PROPS,
+} from '../../constants/dealsLayout';
+import { chunkArray } from '../../utils/chunkArray';
 import './BuyingLandingPage.css';
 
 type CategoryKind = 'make' | 'bodyStyle' | 'fuelType';
@@ -79,18 +85,6 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
 
 function slugify(value: string): string {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -130,15 +124,6 @@ function detectCategory(slug: string): { kind: CategoryKind; label: string } | n
     if (v.fuelType && slugify(v.fuelType) === target) return { kind: 'fuelType', label: v.fuelType };
   }
   return null;
-}
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
 }
 
 function buildActiveOffer(deal: BuyingLandingDeal | null): Partial<IncentiveOfferDetail> | undefined {

@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback, useEffect, Fragment } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
@@ -10,6 +10,8 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { DealCard } from '../../components/DealCard';
+import SignInToSaveModal from '../../components/SignInToSaveModal';
+import { useAuth } from '../../contexts/AuthContext';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
@@ -17,6 +19,12 @@ import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import { GridAd } from '../../components/GridAd';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
+import {
+  GRID_BREAKER_AFTER_CARD_COUNT,
+  DEALS_GRID_BREAKER_AD_URL,
+  SIDEBAR_AFTER_BREAK_PROPS,
+} from '../../constants/dealsLayout';
+import { chunkArray } from '../../utils/chunkArray';
 import './AllDealsPage.css';
 
 interface MiniDeal {
@@ -67,28 +75,6 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
-
 function parseFiltersFromUrl(raw: string | null): DealsFilterState | null {
   if (!raw) return null;
   try {
@@ -101,6 +87,7 @@ function parseFiltersFromUrl(raw: string | null): DealsFilterState | null {
 
 const AllDealsPage = () => {
   const { month, year } = getCurrentPeriod();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeDeal, setActiveDeal] = useState<MiniDeal | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
@@ -114,7 +101,12 @@ const AllDealsPage = () => {
     }
   }, []);
 
-  const [savedDeals, setSavedDeals] = useState<Set<string>>(new Set());
+  // Save-state now lives on the authenticated user like every other deals
+  // listing (P1.15 in the 2026-04-18 audit). Unauthenticated taps open the
+  // sign-in modal so saves persist across sessions.
+  const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
@@ -126,17 +118,44 @@ const AllDealsPage = () => {
       setOffersPopup({ slug, offers: getVehicleOffers(make, model) });
     }
   }, [offersPopup]);
-  const toggleSave = useCallback((e: React.MouseEvent, slug: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setSavedDeals(prev => {
-      const next = new Set(prev);
-      if (next.has(slug)) next.delete(slug); else next.add(slug);
-      return next;
-    });
-  }, []);
+
+  const isVehicleSaved = useCallback(
+    (vehicleName: string) => user?.savedVehicles?.some((v) => v.name === vehicleName) ?? false,
+    [user],
+  );
+
+  const handleSaveClick = useCallback(
+    (e: React.MouseEvent, vehicle: { name: string; slug: string; image?: string }) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isAuthenticated) {
+        setPendingSaveVehicle(vehicle);
+        setShowSignInModal(true);
+        return;
+      }
+      const saved = user?.savedVehicles?.find((v) => v.name === vehicle.name);
+      if (saved) {
+        removeSavedVehicle(saved.id);
+        return;
+      }
+      addSavedVehicle({ id: vehicle.slug, name: vehicle.name, ownership: 'want' });
+    },
+    [isAuthenticated, user, addSavedVehicle, removeSavedVehicle],
+  );
 
   const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
+
+  // The all-deals dataset only contains 0% APR, finance, and cash rows —
+  // lease deals live on `/deals/lease`. Choosing lease on this page used
+  // to silently return zero results (P0.2 in the 2026-04-18 audit); now
+  // we route the user to the lease listing carrying their filter context.
+  const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    if (applied.dealType === 'lease') {
+      navigate('/deals/lease', { state: { filters: applied } });
+      return;
+    }
+    setFilters(applied);
+  }, [navigate]);
 
   const allDeals = useMemo(() => {
     const deals: MiniDeal[] = [];
@@ -398,7 +417,7 @@ const AllDealsPage = () => {
                         {chunk.map((deal, i) => {
                           const cardKey = `${deal.slug}-${deal.dealType}-${chunkIndex}-${i}`;
                           const offers = getVehicleOffers(deal.make, deal.model);
-                          const isSaved = savedDeals.has(deal.slug);
+                          const isSaved = isVehicleSaved(deal.vehicleName);
                           const dealTypeTag = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
                           const pillChipLabel = deal.dealType === 'lease' ? 'Lease' : deal.dealType === 'cash' ? 'Cash' : 'Buy';
                           const paymentAmount = (deal.dealType === 'zero-apr' || deal.dealType === 'finance') ? deal.aprDisplay : deal.estimatedMonthly;
@@ -428,7 +447,7 @@ const AllDealsPage = () => {
                                 editorsChoice={deal.editorsChoice}
                                 tenBest={deal.tenBest}
                                 isSaved={isSaved}
-                                onSaveClick={(e) => toggleSave(e, deal.slug)}
+                                onSaveClick={(e) => handleSaveClick(e, { name: deal.vehicleName, slug: deal.slug, image: deal.image })}
                                 offers={offers}
                                 offersPopupOpen={offersPopup?.slug === deal.slug}
                                 onToggleOffersPopup={(e) => toggleOffersPopup(e, deal.make, deal.model, deal.slug)}
@@ -491,9 +510,20 @@ const AllDealsPage = () => {
         isOpen={filterOpen}
         onClose={() => setFilterOpen(false)}
         filters={filters}
-        onApply={setFilters}
+        onApply={handleFilterApply}
         totalResults={filteredDeals.length}
         getResultCount={getResultCount}
+      />
+
+      <SignInToSaveModal
+        isOpen={showSignInModal}
+        onClose={() => {
+          setShowSignInModal(false);
+          setPendingSaveVehicle(null);
+        }}
+        itemType="vehicle"
+        itemName={pendingSaveVehicle?.name}
+        itemImage={pendingSaveVehicle?.image}
       />
     </div>
   );

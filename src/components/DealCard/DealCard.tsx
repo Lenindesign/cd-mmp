@@ -193,8 +193,18 @@ const DealCard: React.FC<DealCardProps> = ({
 
           {(editorsChoice || tenBest) && (
             <div className="deal-card__badges">
-              {tenBest && <img src={TEN_BEST_BADGE_URL} alt="10Best" className="deal-card__badge-img" />}
-              {editorsChoice && <img src={EDITORS_CHOICE_BADGE_URL} alt="Editors' Choice" className="deal-card__badge-img" />}
+              {tenBest && (
+                <span className="deal-card__badge" aria-label="10Best winner">
+                  <img src={TEN_BEST_BADGE_URL} alt="" aria-hidden="true" className="deal-card__badge-img" />
+                  <span className="deal-card__badge-tip" role="tooltip">10Best</span>
+                </span>
+              )}
+              {editorsChoice && (
+                <span className="deal-card__badge" aria-label="Editors' Choice">
+                  <img src={EDITORS_CHOICE_BADGE_URL} alt="" aria-hidden="true" className="deal-card__badge-img" />
+                  <span className="deal-card__badge-tip" role="tooltip">Editors' Choice</span>
+                </span>
+              )}
             </div>
           )}
         </div>

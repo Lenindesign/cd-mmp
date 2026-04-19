@@ -21,6 +21,12 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState } from '../../components/DealsFilterModal';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
+import {
+  GRID_BREAKER_AFTER_CARD_COUNT,
+  DEALS_GRID_BREAKER_AD_URL,
+  SIDEBAR_AFTER_BREAK_PROPS,
+} from '../../constants/dealsLayout';
+import { chunkArray } from '../../utils/chunkArray';
 import './FuelTypeDealsPage.css';
 
 
@@ -75,28 +81,6 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
-
 const FuelTypeDealsPage = () => {
   const { month: CURRENT_MONTH, year: CURRENT_YEAR } = getCurrentPeriod();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
@@ -115,7 +99,9 @@ const FuelTypeDealsPage = () => {
     navigate(`/deals/all?${params.toString()}`);
   }, [navigate]);
   const { pills: activeFilterPills } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
-  const clearAllFilters = useCallback(() => navigate('/deals/all'), [navigate]);
+  // Clear resets both modal filters AND the fuel-type exclusion chips on
+  // the page, instead of teleporting to /deals/all. The old behavior hid
+  // the user's page context and was flagged in the 2026-04-18 audit.
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
@@ -241,6 +227,17 @@ const FuelTypeDealsPage = () => {
     () => excludedFuelTypes.size === 0 ? allDeals : allDeals.filter(d => !excludedFuelTypes.has(d.fuelType)),
     [allDeals, excludedFuelTypes],
   );
+
+  // Badge count on the Filters button must reflect EVERY active constraint —
+  // both modal filters and the per-row fuel-type exclusion chips. The 2026-
+  // 04-18 audit (P0.3) flagged that the previous count hid exclusions, so
+  // users couldn't tell why their grid was narrower than expected.
+  const activeFilterCount = activeFilterPills.length + excludedFuelTypes.size;
+
+  const clearAllFilters = useCallback(() => {
+    setFilters(DEFAULT_FILTERS);
+    setExcludedFuelTypes(new Set());
+  }, []);
 
   const getResultCount = useCallback((draftFilters: DealsFilterState): number => {
     let result = deals;
@@ -383,8 +380,8 @@ const FuelTypeDealsPage = () => {
                   </button>
                 </span>
               ))}
-              {(excludedFuelTypes.size > 0 || activeFilterPills.length > 0) && (
-                <button type="button" className="active-filter-pills__clear-all" onClick={excludedFuelTypes.size > 0 && activeFilterPills.length === 0 ? () => setExcludedFuelTypes(new Set()) : clearAllFilters}>
+              {activeFilterCount > 0 && (
+                <button type="button" className="active-filter-pills__clear-all" onClick={clearAllFilters}>
                   Clear All
                 </button>
               )}
@@ -392,13 +389,13 @@ const FuelTypeDealsPage = () => {
           </div>
           <button
             type="button"
-            className={`deals-filter-btn ${activeFilterPills.length > 0 ? 'deals-filter-btn--active' : ''}`}
+            className={`deals-filter-btn ${activeFilterCount > 0 ? 'deals-filter-btn--active' : ''}`}
             onClick={() => setFilterOpen(true)}
           >
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
-            {activeFilterPills.length > 0 && (
-              <span className="deals-filter-badge">{activeFilterPills.length}</span>
+            {activeFilterCount > 0 && (
+              <span className="deals-filter-badge">{activeFilterCount}</span>
             )}
           </button>
         </div>

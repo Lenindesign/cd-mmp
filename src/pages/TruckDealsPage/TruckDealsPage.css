@@ -35,26 +35,27 @@
 .truck-deals-page__breadcrumb {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: var(--spacing-1-5);
+  margin-bottom: var(--spacing-3);
   font-family: var(--font-heading);
-  font-size: 13px;
+  font-size: var(--font-size-13);
   color: rgba(255, 255, 255, 0.7);
 }
 
 .truck-deals-page__breadcrumb a {
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  transition: color 0.15s;
+  transition: color var(--transition-fast);
 }
 
-.truck-deals-page__breadcrumb a:hover {
-  color: #ffffff;
+.truck-deals-page__breadcrumb a:hover,
+.truck-deals-page__breadcrumb a:focus-visible {
+  color: var(--color-white);
 }
 
 .truck-deals-page__breadcrumb-sep {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 }
 
 .truck-deals-page__hero-badge {
@@ -211,35 +212,36 @@
 .truck-deals-page__empty-state {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 48px 24px;
-  background: var(--color-gray-50, #f9fafb);
-  border-radius: 12px;
-  margin: 24px 0;
+  padding: var(--spacing-12) var(--spacing-6);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-xl);
+  margin: var(--spacing-6) 0;
 }
 
 .truck-deals-page__empty-state-text {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   color: var(--color-gray-600);
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
   line-height: 1.5;
 }
 
 .truck-deals-page__empty-state-link {
   display: inline-block;
-  padding: 10px 24px;
+  padding: var(--spacing-2-5) var(--spacing-6);
   background: var(--color-blue-cobalt);
   color: var(--color-white);
-  border-radius: 8px;
+  border-radius: var(--border-radius-lg);
   font-family: var(--font-heading);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   text-decoration: none;
-  transition: background 0.15s;
+  transition: background var(--transition-fast);
 }
 
-.truck-deals-page__empty-state-link:hover {
-  background: var(--color-blue-dark, #1a3a5c);
+.truck-deals-page__empty-state-link:hover,
+.truck-deals-page__empty-state-link:focus-visible {
+  background: var(--color-blue-cobalt-dark);
 }
 
 button.truck-deals-page__empty-state-link {
@@ -306,7 +308,7 @@ button.truck-deals-page__empty-state-link {
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .truck-deals-page__grid {
     grid-template-columns: repeat(2, 1fr);
   }

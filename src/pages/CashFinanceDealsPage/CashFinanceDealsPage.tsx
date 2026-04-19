@@ -19,6 +19,12 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
+import {
+  GRID_BREAKER_AFTER_CARD_COUNT,
+  DEALS_GRID_BREAKER_AD_URL,
+  SIDEBAR_AFTER_BREAK_PROPS,
+} from '../../constants/dealsLayout';
+import { chunkArray } from '../../utils/chunkArray';
 import './CashFinanceDealsPage.css';
 
 const FAQ_DATA = [
@@ -53,28 +59,6 @@ const DEFAULT_FILTERS: DealsFilterState = {
   sortBy: 'a-z',
 };
 
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
-
 const CashFinanceDealsPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
@@ -87,10 +71,16 @@ const CashFinanceDealsPage = () => {
   const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters, setFilters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const navigate = useNavigate();
+  // Apply filters in-place. Previously this page kicked the user over to
+  // `/deals/all?filters=…`, which broke URL stability and was called out
+  // as P1.14 in the 2026-04-18 deals audit. Lease is the one dealType we
+  // still route away for, because this dataset has no lease rows.
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
-    const params = new URLSearchParams();
-    params.set('filters', JSON.stringify(applied));
-    navigate(`/deals/all?${params.toString()}`);
+    if (applied.dealType === 'lease') {
+      navigate('/deals/lease', { state: { filters: applied } });
+      return;
+    }
+    setFilters(applied);
   }, [navigate]);
   const [offersPopup, setOffersPopup] = useState<{ slug: string; offers: VehicleOfferSummary[] } | null>(null);
 

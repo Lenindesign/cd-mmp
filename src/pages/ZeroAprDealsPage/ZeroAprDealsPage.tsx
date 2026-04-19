@@ -23,6 +23,13 @@ import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PA
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveBuyingFilterDestination } from '../../utils/buyingFilterNavigation';
 import { ZERO_APR_FAQ, BEST_BUYING_FAQ as FAQ_DATA } from '../../data/faqs';
+import {
+  GRID_BREAKER_AFTER_CARD_COUNT,
+  DEALS_GRID_BREAKER_AD_URL,
+  SIDEBAR_AFTER_BREAK_PROPS,
+} from '../../constants/dealsLayout';
+import { chunkArray } from '../../utils/chunkArray';
+import { renderFaqQuestionText } from '../../utils/renderFaqQuestionText';
 import './ZeroAprDealsPage.css';
 
 type AprTab = 'all' | 'zero-apr' | 'special-apr' | 'cash';
@@ -65,44 +72,6 @@ const DEFAULT_FILTERS: DealsFilterState = {
   creditTier: null,
   sortBy: 'a-z',
 };
-
-const CAR_AND_DRIVER = 'Car and Driver';
-
-const GRID_BREAKER_AFTER_CARD_COUNT = 12;
-const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
-
-const SIDEBAR_AFTER_BREAK_PROPS = {
-  imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
-  altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
-  secondaryAltText: 'Advertisement',
-  link: '#',
-  secondaryLink: '#',
-};
-
-function chunkArray<T>(items: T[], chunkSize: number): T[][] {
-  if (chunkSize <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
-
-function renderFaqQuestionText(question: string) {
-  const i = question.indexOf(CAR_AND_DRIVER);
-  if (i === -1) {
-    return question;
-  }
-  return (
-    <>
-      {question.slice(0, i)}
-      <em className="zero-apr-page__faq-question-brand">{CAR_AND_DRIVER}</em>
-      {question.slice(i + CAR_AND_DRIVER.length)}
-    </>
-  );
-}
 
 const ZeroAprDealsPage = () => {
   const location = useLocation();
@@ -698,7 +667,7 @@ const ZeroAprDealsPage = () => {
                         onClick={() => setExpandedFaqIndex(expandedFaqIndex === index ? null : index)}
                         aria-expanded={expandedFaqIndex === index}
                       >
-                        <span className="zero-apr-page__faq-question-text">{renderFaqQuestionText(faq.question)}</span>
+                        <span className="zero-apr-page__faq-question-text">{renderFaqQuestionText(faq.question, 'zero-apr-page__faq-question-brand')}</span>
                         {expandedFaqIndex === index ? <ChevronUp size={24} aria-hidden /> : <ChevronDown size={24} aria-hidden />}
                       </button>
                       {expandedFaqIndex === index && (

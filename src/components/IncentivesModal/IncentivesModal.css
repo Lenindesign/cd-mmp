@@ -1623,13 +1623,17 @@
   color: var(--color-blue-cobalt);
   background: var(--color-white);
   border: 2px solid var(--color-blue-cobalt);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   text-align: center;
-  transition: all 0.15s ease;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
-.incentives-modal__v5-marketplace-btn:hover {
+.incentives-modal__v5-marketplace-btn:hover,
+.incentives-modal__v5-marketplace-btn:focus-visible {
   background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
