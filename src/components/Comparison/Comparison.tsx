@@ -1,6 +1,8 @@
 import { useState, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { getComparisonVehicles } from '../../services/vehicleService';
+import { getVehicleOffers } from '../../utils/dealCalculations';
 import { VehicleCard } from '../VehicleCard/VehicleCard';
 import './Comparison.css';
 
@@ -29,6 +31,7 @@ interface ComparisonProps {
 }
 
 const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehicles" }: ComparisonProps) => {
+  const navigate = useNavigate();
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -93,24 +96,30 @@ const Comparison = ({ competitors, currentVehicle, title = "Compare Similar Vehi
             ref={carouselRef}
             onScroll={checkScrollPosition}
           >
-            {displayCompetitors.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                id={vehicle.id}
-                name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                slug={vehicle.slug}
-                image={vehicle.image}
-                price={vehicle.price}
-                rating={vehicle.rating}
-                editorsChoice={vehicle.hasEditorChoice}
-                tenBest={vehicle.hasTenBest}
-                epaMpg={vehicle.mpg ? parseInt(vehicle.mpg.split('–')[0]) : undefined}
-                cdSays={vehicle.review}
-                showShopButton={true}
-                shopButtonText="Shop Now"
-                availableYears={[vehicle.year, vehicle.year - 1, vehicle.year - 2]}
-              />
-            ))}
+            {displayCompetitors.map((vehicle) => {
+              const offers = getVehicleOffers(vehicle.make, vehicle.model);
+              return (
+                <VehicleCard
+                  key={vehicle.id}
+                  id={vehicle.id}
+                  name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                  slug={vehicle.slug}
+                  image={vehicle.image}
+                  price={vehicle.price}
+                  rating={vehicle.rating}
+                  editorsChoice={vehicle.hasEditorChoice}
+                  tenBest={vehicle.hasTenBest}
+                  epaMpg={vehicle.mpg ? parseInt(vehicle.mpg.split('–')[0]) : undefined}
+                  cdSays={vehicle.review}
+                  showShopButton={true}
+                  shopButtonText="Shop Now"
+                  shopButtonVariant="primary"
+                  availableYears={[vehicle.year, vehicle.year - 1, vehicle.year - 2]}
+                  incentiveCount={offers.length}
+                  onIncentiveClick={() => navigate(`/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase().replace(/\s+/g, '-')}/deals-incentives`)}
+                />
+              );
+            })}
           </div>
 
           {/* Right Arrow */}

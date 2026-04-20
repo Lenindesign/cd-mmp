@@ -507,7 +507,7 @@ const RankingsPage = () => {
                       showShopButton={true}
                       showSaveButton={true}
                       shopButtonText={`${parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
-                      shopButtonVariant="outline"
+                      shopButtonVariant="primary"
                       epaMpg={vehicle.epaMpg}
                       cdSays={vehicle.cdSays}
                       modelName={vehicle.modelName}
@@ -764,7 +764,7 @@ const RankingsPage = () => {
                           showShopButton={true}
                           showSaveButton={true}
                           shopButtonText={`${parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
-                          shopButtonVariant="outline"
+                          shopButtonVariant="primary"
                           epaMpg={vehicle.epaMpg}
                           cdSays={vehicle.cdSays}
                           modelName={vehicle.modelName}
@@ -901,7 +901,7 @@ const RankingsPage = () => {
                           showShopButton={true}
                           showSaveButton={true}
                           shopButtonText={`${parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
-                          shopButtonVariant="outline"
+                          shopButtonVariant="primary"
                           epaMpg={vehicle.epaMpg}
                           cdSays={vehicle.cdSays}
                           modelName={vehicle.modelName}

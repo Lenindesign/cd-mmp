@@ -447,22 +447,6 @@
   margin-top: var(--spacing-2);
 }
 
-.vehicle-ranking__card-incentive-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--color-success);
-  color: var(--color-white);
-  flex-shrink: 0;
-}
-
-.vehicle-ranking__card-incentive-icon svg {
-  width: 12px;
-  height: 12px;
-}
 
 .vehicle-ranking__card-incentive-text {
   font-family: var(--font-heading);

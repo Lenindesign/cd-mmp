@@ -576,17 +576,6 @@ export const VehicleCard = ({
         )}
 
 
-        {/* Incentive Badge - bottom left of image */}
-        {incentiveCount != null && incentiveCount > 0 && (
-          <button
-            type="button"
-            className="vehicle-card__incentive-btn"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onIncentiveClick?.(e); }}
-          >
-            OFFERS AVAILABLE
-          </button>
-        )}
-
         <OptimizedImage 
           src={image} 
           alt={name}
@@ -660,6 +649,17 @@ export const VehicleCard = ({
               <strong>{epaMpg}</strong> combined
             </span>
           </div>
+        )}
+
+        {/* Incentive Badge */}
+        {incentiveCount != null && incentiveCount > 0 && (
+          <button
+            type="button"
+            className="vehicle-card__incentive-btn"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onIncentiveClick?.(e); }}
+          >
+            {incentiveCount} {incentiveCount === 1 ? 'OFFER' : 'OFFERS'} AVAILABLE
+          </button>
         )}
 
         {/* Divider before C/D Says */}

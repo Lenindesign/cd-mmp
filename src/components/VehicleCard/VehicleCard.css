@@ -425,15 +425,22 @@
   white-space: nowrap;
 }
 
+.vehicle-card .btn--outline {
+  color: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
+}
+
+.vehicle-card .btn--outline:hover:not(:disabled) {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
 /* ============================================
    INCENTIVE BUTTON (overlays bottom-left of image)
    ============================================ */
 
 .vehicle-card__incentive-btn {
-  position: absolute;
-  bottom: var(--spacing-2);
-  left: var(--spacing-2);
-  z-index: 2;
+  align-self: flex-start;
   padding: var(--spacing-1) var(--spacing-2);
   border: none;
   border-radius: var(--radius-xs);
@@ -441,11 +448,12 @@
   color: #005b00;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.44px;
   text-transform: uppercase;
   cursor: pointer;
   transition: background var(--transition-normal);
+  margin-top: var(--spacing-1);
 }
 
 .vehicle-card__incentive-btn:hover {

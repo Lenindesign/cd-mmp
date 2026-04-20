@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, DollarSign } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { getRankingVehiclesFormatted, getCurrentVehicleRank, type RankedVehicle } from '../../services/vehicleService';
 import { getVehicleIncentives } from '../../services/incentivesService';
 import './VehicleRanking.css';
@@ -158,7 +158,6 @@ const VehicleCardInfo = ({
       </p>
       {topIncentive && (
         <div className="vehicle-ranking__card-incentive">
-          <span className="vehicle-ranking__card-incentive-icon"><DollarSign size={14} /></span>
           <span className="vehicle-ranking__card-incentive-text">{topIncentive.title}</span>
         </div>
       )}
