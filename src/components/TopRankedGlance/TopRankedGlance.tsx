@@ -72,7 +72,7 @@ const TopRankedGlance = ({
     <section className="top-ranked-glance">
       <div className="top-ranked-glance__header">
         <h2 className="top-ranked-glance__title">
-          {make.toUpperCase()} INCENTIVES AT A GLANCE
+          {make} Deals, Incentives and Special Offers
         </h2>
         <Link to={resolvedDealsPath} className="top-ranked-glance__see-all">
           See all {make} deals
@@ -121,8 +121,11 @@ const TopRankedGlance = ({
       </div>
 
       <div className="top-ranked-glance__footer">
-        <Link to={resolvedDealsPath} className="top-ranked-glance__cta">
-          VIEW ALL {make.toUpperCase()} DEALS
+        <Link to={`${resolvedDealsPath}?type=buying`} className="top-ranked-glance__cta">
+          {make.toUpperCase()} BUYING DEALS
+        </Link>
+        <Link to={`${resolvedDealsPath}?type=leasing`} className="top-ranked-glance__cta top-ranked-glance__cta--outline">
+          {make.toUpperCase()} LEASING DEALS
         </Link>
       </div>
     </section>
