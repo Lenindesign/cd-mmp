@@ -88,6 +88,7 @@ export interface DealCardProps {
 /* ------------------------------------------------------------------ */
 
 const DealCard: React.FC<DealCardProps> = ({
+  slug,
   vehicleName,
   vehicleImage,
   vehicleSlug,
@@ -116,7 +117,7 @@ const DealCard: React.FC<DealCardProps> = ({
     : secondaryCta;
 
   return (
-    <div className="deal-card">
+    <div className="deal-card" role="listitem">
       {/* Header */}
       <div className="deal-card__header">
         <Link to={vehiclePath} className="deal-card__name-link">
@@ -134,7 +135,7 @@ const DealCard: React.FC<DealCardProps> = ({
       {/* Image */}
       <Link to={vehiclePath} className="deal-card__image-link">
         <div className="deal-card__image-container">
-          <img src={vehicleImage} alt={vehicleName} className="deal-card__image" />
+          <img src={vehicleImage} alt={vehicleName} className="deal-card__image" loading="lazy" />
 
           {dealTypeTag && (
             <span className="deal-card__deal-type-tag">{dealTypeTag}</span>
@@ -154,19 +155,22 @@ const DealCard: React.FC<DealCardProps> = ({
               type="button"
               className="deal-card__offers-tag"
               onClick={onToggleOffersPopup}
+              aria-expanded={offersPopupOpen}
+              aria-controls={`${slug}-offers-popup`}
             >
               {offers.length} Offers Available
             </button>
           )}
 
           {offersPopupOpen && (
-            <div className="deal-card__offers-popup">
+            <div className="deal-card__offers-popup" id={`${slug}-offers-popup`} role="region" aria-label={`${offers.length} available offers`}>
               <div className="deal-card__offers-popup-header">
                 <strong>{offers.length} Available Offers</strong>
                 <button
                   type="button"
                   className="deal-card__offers-popup-close"
                   onClick={onCloseOffersPopup}
+                  aria-label="Close offers"
                 >
                   &times;
                 </button>
@@ -290,4 +294,4 @@ const DealCard: React.FC<DealCardProps> = ({
   );
 };
 
-export default DealCard;
+export default React.memo(DealCard);

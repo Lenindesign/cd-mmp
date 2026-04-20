@@ -317,7 +317,7 @@ const SuvDealsPage = () => {
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="deals-filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge" aria-label={`${activeFilterPills.length} active filters`}>{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -366,7 +366,7 @@ const SuvDealsPage = () => {
                   <div className="suv-deals-page__segment">
                     <div className="suv-deals-page__main">
                       <section className="suv-deals-page__section">
-                        <div className="suv-deals-page__grid">
+                        <div className="suv-deals-page__grid" role="list">
                           {chunk.map((deal, i) => {
                             const saved = isVehicleSaved(deal.vehicleName);
                             const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
@@ -443,8 +443,8 @@ const SuvDealsPage = () => {
                 <div className="suv-deals-page__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`suv-deals-page__faq-item ${expandedFaqIndex === i ? 'suv-deals-page__faq-item--expanded' : ''}`}>
-                      <button className="suv-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
-                        <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                      <button type="button" className="suv-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
+                        <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} aria-hidden /> : <ChevronDown size={20} aria-hidden />}
                       </button>
                       {expandedFaqIndex === i && <div className="suv-deals-page__faq-answer"><p>{faq.answer}</p></div>}
                     </div>

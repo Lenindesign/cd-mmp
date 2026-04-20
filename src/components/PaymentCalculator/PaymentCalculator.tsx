@@ -75,7 +75,7 @@ const PaymentCalculator = ({ msrp, vehicleName, bestApr, onGetDeal }: PaymentCal
   const showPerMonth = tab !== 'cash';
 
   return (
-    <section className="payment-calc">
+    <section id="payment-calculator" className="payment-calc">
       <div className="container">
         <div className="payment-calc__wrapper">
           <div className="payment-calc__header">

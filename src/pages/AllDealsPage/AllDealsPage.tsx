@@ -397,7 +397,7 @@ const AllDealsPage = () => {
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="deals-filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge" aria-label={`${activeFilterPills.length} active filters`}>{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -413,7 +413,7 @@ const AllDealsPage = () => {
                 <Fragment key={`all-segment-${chunkIndex}`}>
                   <div className="all-deals__segment">
                     <div className="all-deals__main">
-                      <div className="all-deals__grid">
+                      <div className="all-deals__grid" role="list">
                         {chunk.map((deal, i) => {
                           const cardKey = `${deal.slug}-${deal.dealType}-${chunkIndex}-${i}`;
                           const offers = getVehicleOffers(deal.make, deal.model);

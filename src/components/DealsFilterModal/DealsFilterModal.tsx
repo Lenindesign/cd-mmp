@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
@@ -15,7 +15,8 @@ export type SortOption =
   | 'expiring-soon'
   | 'rating-high'
   | 'payment-low'
-  | 'cash-down-low';
+  | 'cash-down-low'
+  | 'apr-zero-first';
 
 export type Accolade = 'editorsChoice' | 'tenBest' | 'evOfTheYear';
 
@@ -69,6 +70,10 @@ const LEASE_SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'cash-down-low', label: 'Lowest Cash Down' },
 ];
 
+const BUYING_SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'apr-zero-first', label: '0% APR Deals' },
+];
+
 const DealsFilterModal = ({
   isOpen,
   onClose,
@@ -107,17 +112,40 @@ const DealsFilterModal = ({
     }
   }, [isOpen, externalFilters]);
 
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const scrollYRef = useRef(0);
+
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      triggerRef.current = document.activeElement as HTMLElement | null;
+      scrollYRef.current = window.scrollY;
       document.body.style.overflow = 'hidden';
+      window.scrollTo(0, scrollYRef.current);
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      requestAnimationFrame(() => dialogRef.current?.querySelector<HTMLElement>('button, [tabindex]')?.focus());
     }
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
+      window.scrollTo(0, scrollYRef.current);
+      if (!isOpen) triggerRef.current?.focus();
     };
   }, [isOpen, onClose]);
 
@@ -320,7 +348,7 @@ const DealsFilterModal = ({
     if (isLeaseMode) {
       return [...BASE_SORT_OPTIONS, ...LEASE_SORT_OPTIONS];
     }
-    return BASE_SORT_OPTIONS;
+    return [...BASE_SORT_OPTIONS, ...BUYING_SORT_OPTIONS];
   }, [isLeaseMode]);
 
   if (!isOpen) return null;
@@ -328,6 +356,7 @@ const DealsFilterModal = ({
   return (
     <div className="deals-filter__overlay" onClick={onClose}>
       <div
+        ref={dialogRef}
         className="deals-filter"
         onClick={e => e.stopPropagation()}
         role="dialog"
@@ -545,15 +574,24 @@ const FilterSection = ({
   expanded: boolean;
   onToggle: () => void;
   children: React.ReactNode;
-}) => (
-  <div className="deals-filter__section">
-    <button type="button" className="deals-filter__section-toggle" onClick={onToggle}>
-      <h3 className="deals-filter__section-label">{title}</h3>
-      {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-    </button>
-    {expanded && <div className="deals-filter__section-content">{children}</div>}
-  </div>
-);
+}) => {
+  const sectionId = `filter-section-${title.toLowerCase().replace(/\s+/g, '-')}`;
+  return (
+    <div className="deals-filter__section">
+      <button
+        type="button"
+        className="deals-filter__section-toggle"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        aria-controls={sectionId}
+      >
+        <h3 className="deals-filter__section-label">{title}</h3>
+        {expanded ? <ChevronUp size={18} aria-hidden /> : <ChevronDown size={18} aria-hidden />}
+      </button>
+      {expanded && <div id={sectionId} className="deals-filter__section-content">{children}</div>}
+    </div>
+  );
+};
 
 /* ── Min/Max range inputs ── */
 const RangeInputs = ({

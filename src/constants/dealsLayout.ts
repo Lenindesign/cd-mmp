@@ -30,10 +30,13 @@ export const DEALS_SIDEBAR_PRIMARY_IMAGE =
  * breaker. The first segment uses the default `AdSidebar` (no props) so the
  * house primary ad appears at the top of the page.
  */
+export const DEALS_SIDEBAR_SECONDARY_IMAGE =
+  'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg';
+
 export const SIDEBAR_AFTER_BREAK_PROPS: SidebarCreativeProps = {
   imageUrl: DEALS_SIDEBAR_PRIMARY_IMAGE,
   altText: 'Advertisement',
-  secondaryImageUrl: DEALS_GRID_BREAKER_AD_URL,
+  secondaryImageUrl: DEALS_SIDEBAR_SECONDARY_IMAGE,
   secondaryAltText: 'Advertisement',
   link: '#',
   secondaryLink: '#',

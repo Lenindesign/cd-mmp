@@ -1,44 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, Check, ArrowRight, MapPin, Tag } from 'lucide-react';
+import { ChevronDown, Check, ArrowRight, MapPin } from 'lucide-react';
 import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../services/vehicleService';
 import { getAllListings, type Listing } from '../../services/listingsService';
-import { getZeroAprDeals } from '../../services/zeroAprDealsService';
-import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
-import { getLeaseDeals } from '../../services/leaseDealsService';
+import { getVehicleOffers, offersToIncentives, findMatchingIncentiveId } from '../../utils/dealCalculations';
+import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import IncentivesModal from '../IncentivesModal/IncentivesModal';
+import type { IncentiveOfferDetail } from '../IncentivesModal/IncentivesModal';
 import './BuyingPotential.css';
-
-interface VehicleDeal {
-  type: 'zero-apr' | 'cash' | 'finance' | 'lease';
-  label: string;
-}
-
-function getBestDealForVehicle(make: string, model: string): VehicleDeal | null {
-  const mk = make.toLowerCase();
-  const md = model.toLowerCase();
-
-  const zeroApr = getZeroAprDeals().find(
-    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
-  );
-  if (zeroApr) return { type: 'zero-apr', label: `0% APR for ${zeroApr.term}` };
-
-  const cash = getCashDeals().find(
-    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
-  );
-  if (cash) return { type: 'cash', label: `${cash.incentiveValue} Cash Back` };
-
-  const lease = getLeaseDeals().find(
-    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
-  );
-  if (lease) return { type: 'lease', label: `${lease.monthlyPayment}/mo Lease` };
-
-  const finance = getFinanceDeals().find(
-    d => d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md,
-  );
-  if (finance) return { type: 'finance', label: `${finance.apr} APR` };
-
-  return null;
-}
 
 interface BuyingPotentialProps {
   bodyStyle?: string;
@@ -106,6 +75,26 @@ const BuyingPotential = ({
   const [vehicleTypeOpen, setVehicleTypeOpen] = useState(false);
   const [creditScoreOpen, setCreditScoreOpen] = useState(false);
   const [loanTermOpen, setLoanTermOpen] = useState(false);
+  const [modalVehicle, setModalVehicle] = useState<{ vehicle: BuyingPotentialVehicle; offer: VehicleOfferSummary } | null>(null);
+
+  const handleOfferClick = useCallback((e: React.MouseEvent, vehicle: BuyingPotentialVehicle, offer: VehicleOfferSummary) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setModalVehicle({ vehicle, offer });
+  }, []);
+
+  const modalOffer: Partial<IncentiveOfferDetail> | undefined = modalVehicle
+    ? {
+        year: parseInt(modalVehicle.vehicle.name.split(' ')[0], 10),
+        make: modalVehicle.vehicle.make,
+        model: modalVehicle.vehicle.model,
+        slug: modalVehicle.vehicle.slug,
+        imageUrl: modalVehicle.vehicle.image,
+        msrpMin: modalVehicle.vehicle.price,
+        msrpMax: modalVehicle.vehicle.price,
+        offerHeadline: modalVehicle.offer.label,
+      }
+    : undefined;
 
   const vehicleTypes = ['New car', 'Used car'];
   const creditScores = [
@@ -513,22 +502,37 @@ const BuyingPotential = ({
                     ) : (
                       // New vehicles
                       vehicleMatches.map((vehicle, index) => {
-                        const deal = getBestDealForVehicle(vehicle.make, vehicle.model);
+                        const offers = getVehicleOffers(vehicle.make, vehicle.model);
+                        const primaryOffer = offers[0] ?? null;
                         return (
                           <Link key={index} to={`/${vehicle.slug}`} className="buying-potential__match">
-                            <img src={vehicle.image} alt={vehicle.name} className="buying-potential__match-image" />
-                            <div className="buying-potential__match-info">
+                            <div className="buying-potential__match-image-cell">
+                              <img src={vehicle.image} alt={vehicle.name} />
+                            </div>
+                            <div className="buying-potential__match-body">
+                              <div className="buying-potential__match-rating">
+                                <span className="buying-potential__match-rating-check" aria-hidden="true">&#10003;</span>
+                                <span className="buying-potential__match-rating-label">C/D RATING:</span>
+                                <span className="buying-potential__match-rating-value">{vehicle.rating}/10</span>
+                              </div>
                               <span className="buying-potential__match-name">{vehicle.name}</span>
-                              <span className="buying-potential__match-trim">
-                                {vehicle.trim}
-                                <span className="buying-potential__match-rating"><span className="buying-potential__match-rating-score">{vehicle.rating}</span>/10</span>
-                              </span>
-                              <span className="buying-potential__match-price">{formatCurrency(vehicle.price)}</span>
-                              {deal && (
-                                <span className={`buying-potential__match-deal buying-potential__match-deal--${deal.type}`}>
-                                  <Tag size={11} />
-                                  {deal.label}
-                                </span>
+                              {primaryOffer ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="buying-potential__match-offer"
+                                    onClick={(e) => handleOfferClick(e, vehicle, primaryOffer)}
+                                  >
+                                    {primaryOffer.label}
+                                  </button>
+                                  {offers.length > 1 && (
+                                    <span className="buying-potential__match-more">
+                                      +{offers.length - 1} more offer{offers.length - 1 > 1 ? 's' : ''}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <span className="buying-potential__match-price">Starting at {formatCurrency(vehicle.price)}</span>
                               )}
                             </div>
                             <div className="buying-potential__match-check"><Check size={12} /></div>
@@ -571,6 +575,22 @@ const BuyingPotential = ({
           </div>
         </div>
       </div>
+
+      <IncentivesModal
+        isOpen={!!modalVehicle}
+        onClose={() => setModalVehicle(null)}
+        variant="conversion-b"
+        offer={modalOffer}
+        allIncentives={modalVehicle ? offersToIncentives(modalVehicle.vehicle.make, modalVehicle.vehicle.model) : undefined}
+        selectedIncentiveId={modalVehicle
+          ? findMatchingIncentiveId(
+              modalVehicle.vehicle.make,
+              modalVehicle.vehicle.model,
+              modalVehicle.offer.type === 'zero-apr' ? 'zero-apr' : modalVehicle.offer.type,
+            )
+          : undefined
+        }
+      />
     </section>
   );
 };

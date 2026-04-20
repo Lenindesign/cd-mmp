@@ -395,7 +395,7 @@ const FuelTypeDealsPage = () => {
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterCount > 0 && (
-              <span className="deals-filter-badge">{activeFilterCount}</span>
+              <span className="deals-filter-badge" aria-label={`${activeFilterCount} active filters`}>{activeFilterCount}</span>
             )}
           </button>
         </div>
@@ -434,7 +434,7 @@ const FuelTypeDealsPage = () => {
                   <div className="fuel-deals__segment">
                     <div className="fuel-deals__main">
                       <section className="fuel-deals__section">
-                        <div className="fuel-deals__grid">
+                        <div className="fuel-deals__grid" role="list">
                           {chunk.map((deal, i) => {
                             const saved = isVehicleSaved(deal.vehicleName);
                             const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
@@ -516,7 +516,7 @@ const FuelTypeDealsPage = () => {
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`fuel-deals__faq-item ${expandedFaqIndex === i ? 'fuel-deals__faq-item--expanded' : ''}`}>
                       <button type="button" className="fuel-deals__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
-                        <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                        <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} aria-hidden /> : <ChevronDown size={20} aria-hidden />}
                       </button>
                       {expandedFaqIndex === i && <div className="fuel-deals__faq-answer"><p>{faq.answer}</p></div>}
                     </div>

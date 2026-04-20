@@ -301,7 +301,7 @@ const CashFinanceDealsPage = () => {
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="deals-filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge" aria-label={`${activeFilterPills.length} active filters`}>{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -341,7 +341,7 @@ const CashFinanceDealsPage = () => {
                   <div className="cf-deals-page__segment">
                     <div className="cf-deals-page__main">
                       <section className="cf-deals-page__section">
-                        <div className="cf-deals-page__grid">
+                        <div className="cf-deals-page__grid" role="list">
                           {chunk.map((deal, i) => {
                             const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                             const saved = isVehicleSaved(vehicleName);
@@ -464,12 +464,13 @@ const CashFinanceDealsPage = () => {
                       className={`cf-deals-page__faq-item ${expandedFaqIndex === index ? 'cf-deals-page__faq-item--expanded' : ''}`}
                     >
                       <button
+                        type="button"
                         className="cf-deals-page__faq-question"
                         onClick={() => toggleFaq(index)}
                         aria-expanded={expandedFaqIndex === index}
                       >
                         <span>{faq.question}</span>
-                        {expandedFaqIndex === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                        {expandedFaqIndex === index ? <ChevronUp size={20} aria-hidden /> : <ChevronDown size={20} aria-hidden />}
                       </button>
                       {expandedFaqIndex === index && (
                         <div className="cf-deals-page__faq-answer">

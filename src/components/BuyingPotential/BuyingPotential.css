@@ -318,9 +318,10 @@
 .buying-potential__matches-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
-  max-height: 500px;
+  gap: var(--spacing-2);
+  max-height: 460px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding-right: var(--spacing-2);
 }
 
@@ -344,107 +345,126 @@
 }
 
 .buying-potential__match {
-  display: flex;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
   align-items: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3);
+  text-decoration: none;
+  color: inherit;
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-  transition: all var(--transition-fast);
+  border-radius: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: box-shadow var(--transition-fast, 150ms ease);
 }
 
 .buying-potential__match:hover {
-  border-color: var(--color-blue-cobalt);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
-.buying-potential__match-image {
-  width: var(--spacing-20);
-  height: 60px;
-  object-fit: cover;
+.buying-potential__match-image-cell {
+  position: relative;
+  background: var(--color-gray-100, #f5f5f5);
+  overflow: hidden;
+  margin-left: var(--spacing-3);
   border-radius: var(--border-radius-sm);
 }
 
-.buying-potential__match-info {
-  flex: 1;
+.buying-potential__match-image-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.buying-potential__match-body {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-0-5);
+  justify-content: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  gap: 3px;
+  min-width: 0;
+  min-height: 72px;
+}
+
+.buying-potential__match-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1;
+}
+
+.buying-potential__match-rating-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-blue-cobalt, #1b5f8a);
+  color: var(--color-white, #fff);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.buying-potential__match-rating-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs, 12px);
+  font-weight: 600;
+  color: var(--color-gray-500, #6b6b6b);
+  letter-spacing: 0.02em;
+}
+
+.buying-potential__match-rating-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: 800;
+  color: var(--color-dark, #222);
 }
 
 .buying-potential__match-name {
   font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-black);
+  font-size: clamp(14px, 1.4vw, 16px);
+  font-weight: 800;
+  color: var(--color-dark, #222);
+  line-height: 1.25;
 }
 
-.buying-potential__match-trim {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
-}
-
-.buying-potential__match-rating {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--spacing-0-5) var(--spacing-1-5);
-  background: var(--color-gray-100);
-  border-radius: var(--border-radius-sm);
+.buying-potential__match-offer {
   font-family: var(--font-heading);
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-600);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: 700;
+  color: var(--color-success, #26870d);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
 }
 
-.buying-potential__match-rating-score {
-  color: var(--color-blue-cobalt);
+.buying-potential__match-offer:hover {
+  text-decoration: underline;
 }
 
 .buying-potential__match-price {
   font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-blue-cobalt);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: 600;
+  color: var(--color-gray-500, #6b6b6b);
 }
 
-.buying-potential__match-deal {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 2px;
-  padding: 2px 8px;
+.buying-potential__match-more {
   font-family: var(--font-heading);
-  font-size: 10px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  border-radius: var(--border-radius-sm);
-  width: fit-content;
+  font-size: var(--font-size-xs, 12px);
+  font-weight: 600;
+  color: var(--color-blue-cobalt, #1b5f8a);
 }
 
-.buying-potential__match-deal--zero-apr {
-  background: var(--color-blue-cobalt);
-  color: var(--color-white);
-}
-
-.buying-potential__match-deal--cash {
-  background: var(--color-success);
-  color: var(--color-white);
-}
-
-.buying-potential__match-deal--finance {
-  background: #92620a;
-  color: var(--color-white);
-}
-
-.buying-potential__match-deal--lease {
-  background: #d97706;
-  color: var(--color-white);
+.buying-potential__match:hover .buying-potential__match-more {
+  text-decoration: underline;
 }
 
 .buying-potential__match-dealer {
@@ -460,14 +480,48 @@
   flex-shrink: 0;
 }
 
-.buying-potential__match--used .buying-potential__match-trim {
-  color: var(--color-neutrals-4);
+.buying-potential__match--used {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  border-radius: var(--border-radius-md);
+}
+
+.buying-potential__match--used .buying-potential__match-image {
+  width: var(--spacing-20);
+  height: 60px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm);
+}
+
+.buying-potential__match--used .buying-potential__match-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0-5);
+}
+
+.buying-potential__match--used .buying-potential__match-price {
+  font-family: var(--font-heading);
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+}
+
+.buying-potential__match--used .buying-potential__match-trim {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-neutrals-4);
 }
 
 .buying-potential__match-check {
   width: 20px;
   height: 20px;
+  margin-right: var(--spacing-3);
   background: var(--color-success);
   border-radius: 50%;
   display: flex;

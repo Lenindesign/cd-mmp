@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './GridAd.css';
 
 const DEFAULT_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x250.jpg';
+  'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg';
 
 interface GridAdProps {
   imageUrl?: string;

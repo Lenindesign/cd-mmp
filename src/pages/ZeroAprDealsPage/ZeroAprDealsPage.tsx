@@ -422,19 +422,21 @@ const ZeroAprDealsPage = () => {
       }
     : undefined;
 
-  const pageTitle = bodyStyleName
-    ? `Best ${bodyStyleName} Deals & Incentives for ${month} ${year}`
+  const pageTitleMain = bodyStyleName
+    ? `Best ${bodyStyleName} Deals & Incentives`
     : fuelTypeName
-    ? `Best ${fuelTypeName} Deals & Incentives for ${month} ${year}`
+    ? `Best ${fuelTypeName} Deals & Incentives`
     : makeName
-    ? `Best ${makeName} Deals & Incentives for ${month} ${year}`
+    ? `Best ${makeName} Deals & Incentives`
     : activeTab === 'zero-apr'
-    ? `Best Interest Free & 0% APR Deals for ${month} ${year}`
+    ? `Best Interest Free & 0% APR Deals`
     : activeTab === 'special-apr'
-    ? `Best Special APR Deals for ${month} ${year}`
+    ? `Best Special APR Deals`
     : activeTab === 'cash'
-    ? `Best Cash Back Deals for ${month} ${year}`
-    : `Best Car Deals & Incentives for ${month} ${year}`;
+    ? `Best Cash Back Deals`
+    : `Best Car Deals & Incentives`;
+  const pageTitleDate = `for ${month} ${year}`;
+  const pageTitle = `${pageTitleMain} ${pageTitleDate}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   const seoDescription = bodyStyleName
@@ -535,7 +537,7 @@ const ZeroAprDealsPage = () => {
                 <span>Best Buying Deals</span>
               )}
             </nav>
-            <h1 className="zero-apr-page__title">{pageTitle}</h1>
+            <h1 className="zero-apr-page__title">{pageTitleMain}<br />{pageTitleDate}</h1>
             <p className="zero-apr-page__description">
               {isZeroPercentOnlyRoute
                 ? 'These manufacturer-backed offers charge no interest on your auto loan, so every payment goes toward paying off the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
@@ -579,7 +581,7 @@ const ZeroAprDealsPage = () => {
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="deals-filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge" aria-label={`${activeFilterPills.length} active filters`}>{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -626,7 +628,7 @@ const ZeroAprDealsPage = () => {
                   <div className="zero-apr-page__segment">
                     <div className="zero-apr-page__main">
                       <section className="zero-apr-page__deals-section">
-                        <div className="zero-apr-page__grid">
+                        <div className="zero-apr-page__grid" role="list">
                           {chunk.map((deal, i) => (
                             <Fragment key={deal.id}>
                               {i > 0 && i % 4 === 0 && <GridAd />}

@@ -284,17 +284,36 @@ const IncentivesModal = ({
     };
   })();
 
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      triggerRef.current = document.activeElement as HTMLElement | null;
       document.body.style.overflow = 'hidden';
     }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      requestAnimationFrame(() => dialogRef.current?.querySelector<HTMLElement>('button, [tabindex]')?.focus());
+    }
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
+      if (!isOpen) triggerRef.current?.focus();
     };
   }, [isOpen, onClose]);
 
@@ -334,39 +353,8 @@ const IncentivesModal = ({
       `I would like more information about available offers for the New ${vehicleLabel}.`;
     onSubmitForm?.({ firstName, lastName, email, phone, message: resolvedMessage });
 
-    // #region agent log
-    fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
-      body: JSON.stringify({
-        sessionId: '5ae22c',
-        runId: 'pre-fix',
-        hypothesisId: 'H1',
-        location: 'IncentivesModal.tsx:submitLead',
-        message: 'submitLead entry',
-        data: { variant, isConversionB: variant === 'conversion-b' },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-
     if (variant === 'conversion-b') {
       const match = getConversionBDealerMatch(offer);
-      // #region agent log
-      fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
-        body: JSON.stringify({
-          sessionId: '5ae22c',
-          runId: 'pre-fix',
-          hypothesisId: 'H2',
-          location: 'IncentivesModal.tsx:submitLead',
-          message: 'conversion-b dealer match',
-          data: { match, year: offer.year, make: offer.make, model: offer.model },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       setConversionBPostSubmit(match);
       return;
     }
@@ -375,22 +363,6 @@ const IncentivesModal = ({
 
   /** Sticky CTA sits outside the <form>; validate the real form node then submit via React state (same as onSubmit). */
   const handleConversionBContactClick = useCallback(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
-      body: JSON.stringify({
-        sessionId: '5ae22c',
-        runId: 'pre-fix',
-        hypothesisId: 'H5',
-        location: 'IncentivesModal.tsx:handleConversionBContactClick',
-        message: 'CONTACT DEALER click',
-        data: { postSubmit: conversionBPostSubmit },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-
     if (conversionBPostSubmit !== null) return;
 
     const form =
@@ -404,21 +376,6 @@ const IncentivesModal = ({
     }
     const panel = document.getElementById('incentives-modal-dealer-panel');
     if (!form.checkValidity()) {
-      // #region agent log
-      fetch('http://127.0.0.1:7660/ingest/7fe76f52-b1ea-4406-969d-e85007d7e727', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '5ae22c' },
-        body: JSON.stringify({
-          sessionId: '5ae22c',
-          runId: 'pre-fix',
-          hypothesisId: 'H5',
-          location: 'IncentivesModal.tsx:handleConversionBContactClick',
-          message: 'form invalid',
-          data: {},
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       (panel ?? form).scrollIntoView({ behavior: 'smooth', block: 'start' });
       window.setTimeout(() => {
         form.reportValidity();
@@ -491,6 +448,7 @@ const IncentivesModal = ({
   const modalTree = (
     <div className="incentives-modal__overlay cd-mobile-modal__overlay" onClick={onClose}>
       <div
+        ref={dialogRef}
         className={`incentives-modal incentives-modal--${variant} cd-mobile-modal__panel`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -520,9 +478,9 @@ const IncentivesModal = ({
               <button type="button" className="incentives-modal__cta" onClick={handleCta}>
                 {ctaLabel}
               </button>
-              <a href="#" className="incentives-modal__secondary-link" onClick={(e) => { e.preventDefault(); onClose(); }}>
+              <button type="button" className="incentives-modal__secondary-link" onClick={onClose}>
                 View Full Vehicle Details
-              </a>
+              </button>
             </>
           )}
 
@@ -626,9 +584,9 @@ const IncentivesModal = ({
               >
                 REQUEST INFO FROM DEALER
               </button>
-              <a href="#" className="incentives-modal__secondary-link" onClick={(e) => { e.preventDefault(); onClose(); }}>
+              <button type="button" className="incentives-modal__secondary-link" onClick={onClose}>
                 View Full Vehicle Details
-              </a>
+              </button>
             </>
           )}
 

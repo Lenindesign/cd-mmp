@@ -24,7 +24,7 @@ export const Default: Story = {
     altText: 'Advertisement',
     link: '#',
     secondaryImageUrl:
-      'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x250.jpg',
+      'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg',
     secondaryAltText: 'Advertisement',
     secondaryLink: '#',
   },
@@ -43,7 +43,7 @@ export const NissanAd: Story = {
     altText: 'Nissan Advertisement',
     link: 'https://www.nissan.com',
     secondaryImageUrl:
-      'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x250.jpg',
+      'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg',
     secondaryAltText: 'Nissan Advertisement',
     secondaryLink: 'https://www.nissan.com',
   },
@@ -67,7 +67,7 @@ export const InSidebarLayout: Story = {
         <AdSidebar
           imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg"
           altText="Advertisement"
-          secondaryImageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x250.jpg"
+          secondaryImageUrl="https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg"
           secondaryAltText="Advertisement"
         />
       </div>

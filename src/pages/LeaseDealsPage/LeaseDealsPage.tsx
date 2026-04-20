@@ -205,13 +205,14 @@ const LeaseDealsPage = () => {
       })()
     : undefined;
 
-  const pageTitle = `Best Car Lease Deals for ${month} ${year}`;
+  const pageTitle = `Best Car Lease Deals`;
+  const pageTitleDate = `for ${month} ${year}`;
   const BASE_URL = 'https://www.caranddriver.com';
 
   return (
     <div className="lease-deals-page">
       <SEO
-        title={pageTitle}
+        title={`${pageTitle} ${pageTitleDate}`}
         description={`Find the best car lease deals for ${month} ${year}. Compare monthly payments, due-at-signing costs, and terms on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`}
         canonical={`${BASE_URL}/deals/lease`}
         keywords={['lease deals', 'car lease specials', `lease deals ${month} ${year}`, 'best lease offers', 'new car lease', 'monthly lease payments']}
@@ -239,7 +240,7 @@ const LeaseDealsPage = () => {
               <span className="lease-deals-page__breadcrumb-sep">/</span>
               <span>Lease Deals</span>
             </nav>
-            <h1 className="lease-deals-page__title">{pageTitle}</h1>
+            <h1 className="lease-deals-page__title">{pageTitle}<br />{pageTitleDate}</h1>
             <p className="lease-deals-page__description">
               Leasing lets you drive a brand-new car with lower monthly payments than buying. We've compiled
               the best manufacturer lease specials and paired them with our expert vehicle ratings so you can find the
@@ -282,7 +283,7 @@ const LeaseDealsPage = () => {
             <SlidersHorizontal size={16} aria-hidden />
             <span>Filters</span>
             {activeFilterPills.length > 0 && (
-              <span className="deals-filter-badge">{activeFilterPills.length}</span>
+              <span className="deals-filter-badge" aria-label={`${activeFilterPills.length} active filters`}>{activeFilterPills.length}</span>
             )}
           </button>
         </div>
@@ -321,7 +322,7 @@ const LeaseDealsPage = () => {
                   <div className="lease-deals-page__segment">
                     <div className="lease-deals-page__main">
                       <section className="lease-deals-page__section">
-                        <div className="lease-deals-page__grid">
+                        <div className="lease-deals-page__grid" role="list">
                           {chunk.map((deal, i) => {
                             const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                             const saved = isVehicleSaved(vehicleName);
@@ -389,8 +390,8 @@ const LeaseDealsPage = () => {
                 <div className="lease-deals-page__faq-list">
                   {FAQ_DATA.map((faq, i) => (
                     <div key={i} className={`lease-deals-page__faq-item ${expandedFaqIndex === i ? 'lease-deals-page__faq-item--expanded' : ''}`}>
-                      <button className="lease-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
-                        <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                      <button type="button" className="lease-deals-page__faq-question" onClick={() => setExpandedFaqIndex(expandedFaqIndex === i ? null : i)} aria-expanded={expandedFaqIndex === i}>
+                        <span>{faq.question}</span>{expandedFaqIndex === i ? <ChevronUp size={20} aria-hidden /> : <ChevronDown size={20} aria-hidden />}
                       </button>
                       {expandedFaqIndex === i && (
                         <div className="lease-deals-page__faq-answer">

@@ -3,7 +3,8 @@ import './AdSidebar.css';
 
 const DEFAULT_PRIMARY_URL =
   'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg';
-const DEFAULT_SECONDARY_URL = DEFAULT_PRIMARY_URL.replace('300x600.jpg', '300x250.jpg');
+const DEFAULT_SECONDARY_URL =
+  'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg';
 
 interface AdSidebarProps {
   imageUrl?: string;
