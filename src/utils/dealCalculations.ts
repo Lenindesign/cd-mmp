@@ -224,7 +224,7 @@ export function sortDeals<T extends {
   monthlyPaymentNum?: number;
   estimatedMonthly?: number;
   dueAtSigningNum?: number;
-  apr?: number;
+  apr?: number | string;
 }>(deals: T[], sortBy: string): T[] {
   const sorted = [...deals];
   switch (sortBy) {
@@ -245,13 +245,16 @@ export function sortDeals<T extends {
       );
     case 'cash-down-low':
       return sorted.sort((a, b) => (a.dueAtSigningNum ?? Infinity) - (b.dueAtSigningNum ?? Infinity));
-    case 'apr-zero-first':
+    case 'apr-zero-first': {
+      const toNum = (v: string | number | undefined): number =>
+        v == null ? Infinity : typeof v === 'string' ? parseFloat(v) || Infinity : v;
       return sorted.sort((a, b) => {
-        const aIsZero = (a.apr ?? Infinity) === 0 ? 0 : 1;
-        const bIsZero = (b.apr ?? Infinity) === 0 ? 0 : 1;
+        const aIsZero = toNum(a.apr) === 0 ? 0 : 1;
+        const bIsZero = toNum(b.apr) === 0 ? 0 : 1;
         if (aIsZero !== bIsZero) return aIsZero - bIsZero;
         return `${a.vehicle.make} ${a.vehicle.model}`.localeCompare(`${b.vehicle.make} ${b.vehicle.model}`);
       });
+    }
     default:
       return sorted;
   }
