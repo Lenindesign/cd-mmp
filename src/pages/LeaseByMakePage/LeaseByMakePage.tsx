@@ -455,7 +455,7 @@ const LeaseByMakePage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop />
+      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
 
       <div className="make-lease__content">
         <div className={`container${allDeals.length > 0 ? ' make-lease__container--stacked' : ''}`}>
