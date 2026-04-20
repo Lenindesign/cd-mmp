@@ -15,6 +15,7 @@ interface SidebarCreativeProps {
   secondaryImageUrl?: string;
   secondaryAltText?: string;
   secondaryLink?: string;
+  skyscraperOnly?: boolean;
 }
 
 export const GRID_BREAKER_AFTER_CARD_COUNT = 12;
@@ -36,10 +37,8 @@ export const DEALS_SIDEBAR_SECONDARY_IMAGE =
 export const SIDEBAR_AFTER_BREAK_PROPS: SidebarCreativeProps = {
   imageUrl: DEALS_SIDEBAR_PRIMARY_IMAGE,
   altText: 'Advertisement',
-  secondaryImageUrl: DEALS_SIDEBAR_SECONDARY_IMAGE,
-  secondaryAltText: 'Advertisement',
   link: '#',
-  secondaryLink: '#',
+  skyscraperOnly: true,
 };
 
 /**

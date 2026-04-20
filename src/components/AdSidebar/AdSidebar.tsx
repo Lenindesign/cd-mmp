@@ -14,6 +14,8 @@ interface AdSidebarProps {
   secondaryImageUrl?: string;
   secondaryAltText?: string;
   secondaryLink?: string;
+  /** When true, only the skyscraper (300×600) is rendered */
+  skyscraperOnly?: boolean;
 }
 
 type CreativeVariant = 'skyscraper' | 'mediumRectangle';
@@ -82,6 +84,7 @@ const AdSidebar = ({
   secondaryImageUrl = DEFAULT_SECONDARY_URL,
   secondaryAltText = 'Advertisement',
   secondaryLink = '#',
+  skyscraperOnly = false,
 }: AdSidebarProps) => {
   return (
     <aside className="ad-sidebar">
@@ -89,12 +92,14 @@ const AdSidebar = ({
         <span className="ad-sidebar__label">Advertisement</span>
         <div className="ad-sidebar__stack">
           <AdSidebarCreative variant="skyscraper" imageUrl={imageUrl} altText={altText} link={link} />
-          <AdSidebarCreative
-            variant="mediumRectangle"
-            imageUrl={secondaryImageUrl}
-            altText={secondaryAltText}
-            link={secondaryLink}
-          />
+          {!skyscraperOnly && (
+            <AdSidebarCreative
+              variant="mediumRectangle"
+              imageUrl={secondaryImageUrl}
+              altText={secondaryAltText}
+              link={secondaryLink}
+            />
+          )}
         </div>
       </div>
     </aside>
