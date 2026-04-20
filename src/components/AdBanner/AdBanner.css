@@ -90,6 +90,12 @@
   color: var(--color-gray-500);
 }
 
+/* Mobile-compact: 300×250 on mobile, no header/line */
+
+.ad-banner__container--mobile {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .ad-banner--minimal-desktop .ad-banner__header,
   .ad-banner--minimal-desktop .ad-banner__line {
@@ -107,6 +113,28 @@
     max-width: 728px;
     height: auto;
     aspect-ratio: 728 / 90;
+  }
+
+  .ad-banner--mobile-compact .ad-banner__header,
+  .ad-banner--mobile-compact .ad-banner__line {
+    display: none;
+  }
+
+  .ad-banner--mobile-compact .ad-banner__container--desktop {
+    display: none;
+  }
+
+  .ad-banner--mobile-compact .ad-banner__container--mobile {
+    display: flex;
+  }
+
+  .ad-banner--mobile-compact .ad-banner__image--mobile {
+    width: 300px;
+    height: 250px;
+    aspect-ratio: 300 / 250;
+    object-fit: cover;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
   }
 }
 

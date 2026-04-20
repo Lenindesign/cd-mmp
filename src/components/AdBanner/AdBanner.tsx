@@ -9,9 +9,15 @@ interface AdBannerProps {
   hideLine?: boolean;
   /** Hide header + line on desktop only (≥768px). Overrides hideHeader/hideLine on large screens. */
   minimalDesktop?: boolean;
+  /** On mobile, swap to a 300×250 creative and hide the header/line entirely. */
+  mobileCompact?: boolean;
+  mobileImageUrl?: string;
 }
 
-const AdBanner = ({ imageUrl, altText = 'Advertisement', link, hideHeader = false, hideLine = false, minimalDesktop = false }: AdBannerProps) => {
+const DEFAULT_MOBILE_AD_URL =
+  'https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg';
+
+const AdBanner = ({ imageUrl, altText = 'Advertisement', link, hideHeader = false, hideLine = false, minimalDesktop = false, mobileCompact = false, mobileImageUrl = DEFAULT_MOBILE_AD_URL }: AdBannerProps) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -51,8 +57,14 @@ const AdBanner = ({ imageUrl, altText = 'Advertisement', link, hideHeader = fals
     />
   );
 
+  const classNames = [
+    'ad-banner',
+    minimalDesktop && 'ad-banner--minimal-desktop',
+    mobileCompact && 'ad-banner--mobile-compact',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={`ad-banner${minimalDesktop ? ' ad-banner--minimal-desktop' : ''}`}>
+    <div className={classNames}>
       {!hideHeader && (
         <div className="ad-banner__header">
           <div className="ad-banner__header-line" />
@@ -61,7 +73,7 @@ const AdBanner = ({ imageUrl, altText = 'Advertisement', link, hideHeader = fals
         </div>
       )}
       <div className="ad-banner__content">
-        <div className="ad-banner__container">
+        <div className="ad-banner__container ad-banner__container--desktop">
           {link && !imageError ? (
             <a href={link} target="_blank" rel="noopener noreferrer" className="ad-banner__link">
               {adContent}
@@ -70,6 +82,15 @@ const AdBanner = ({ imageUrl, altText = 'Advertisement', link, hideHeader = fals
             adContent
           )}
         </div>
+        {mobileCompact && (
+          <div className="ad-banner__container ad-banner__container--mobile">
+            <img
+              src={mobileImageUrl}
+              alt={altText}
+              className="ad-banner__image ad-banner__image--mobile"
+            />
+          </div>
+        )}
       </div>
       {!hideLine && <div className="ad-banner__line" />}
     </div>
