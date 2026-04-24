@@ -438,26 +438,6 @@
     justify-content: center;
   }
 
-  .hero__accolades {
-    text-align: center;
-    align-items: center;
-    margin-left: 0;
-    width: 100%;
-    margin-top: var(--spacing-8);
-  }
-
-  .hero__accolades-header {
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero__accolades-title {
-    text-align: center;
-  }
-
-  .hero__accolades-badges {
-    justify-content: center;
-  }
 }
 
 /* MSRP Section */
@@ -577,25 +557,46 @@
 
 /* Accolades */
 .hero__accolades {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Desktop: inline with price row, right-aligned */
+.hero__accolades--desktop {
+  align-items: flex-end;
   text-align: right;
   margin-left: auto;
-  margin-top: var(--spacing-8);
+}
+
+/* Mobile: below offers, left-aligned */
+.hero__accolades--mobile {
+  align-items: flex-start;
+  text-align: left;
+  margin-top: var(--spacing-6);
+}
+
+@media (min-width: 939px) {
+  .hero__accolades--mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 938px) {
+  .hero__accolades--desktop {
+    display: none;
+  }
 }
 
 .hero__accolades-header {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end;
-  gap: var(--spacing-1);
+  align-items: baseline;
+  gap: var(--spacing-3);
   margin-bottom: var(--spacing-3);
 }
 
 .hero__accolades-title {
   font-size: var(--font-size-base);
   color: var(--color-black);
-  vertical-align: bottom;
-  text-align: right;
 }
 
 .hero__accolades-title em {
@@ -616,32 +617,10 @@
 .hero__accolades-badges {
   display: flex;
   gap: var(--spacing-4);
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: flex-start;
 }
 
-/* Mobile: Center accolades */
-@media (max-width: 938px) {
-  .hero__accolades {
-    text-align: center;
-    align-items: center;
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .hero__accolades-header {
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero__accolades-title {
-    text-align: center;
-  }
-
-  .hero__accolades-badges {
-    justify-content: center;
-  }
-}
 
 .hero__accolade {
   display: flex;
@@ -959,7 +938,7 @@
 .hero__offers-b-pill-exp {
   font-family: var(--font-body);
   font-size: 12px;
-  color: var(--color-gray-400);
+  color: #595959;
   white-space: nowrap;
   padding: 3px 8px;
   background: var(--color-gray-50);
@@ -1140,18 +1119,6 @@
     justify-content: center;
   }
   
-  .hero__accolades {
-    text-align: center;
-  }
-  
-  .hero__accolades-header {
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .hero__accolades-badges {
-    justify-content: center;
-  }
 }
 
 /* Show carousel on mobile, hide grid */

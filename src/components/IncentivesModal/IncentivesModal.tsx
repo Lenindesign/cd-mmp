@@ -286,11 +286,15 @@ const IncentivesModal = ({
 
   const triggerRef = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const scrollYRef = useRef(0);
+  const wasLockedRef = useRef(false);
 
   useEffect(() => {
     if (isOpen) {
       triggerRef.current = document.activeElement as HTMLElement | null;
+      scrollYRef.current = window.scrollY;
       document.body.style.overflow = 'hidden';
+      wasLockedRef.current = true;
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -312,8 +316,16 @@ const IncentivesModal = ({
     }
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-      if (!isOpen) triggerRef.current?.focus();
+      // Only restore scroll if body was actually locked. This guards against
+      // the cleanup firing when the modal opens (first deps change) and
+      // against open-to-open re-renders — we only want to restore when
+      // transitioning out of the locked state.
+      if (wasLockedRef.current && isOpen) {
+        wasLockedRef.current = false;
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollYRef.current);
+        triggerRef.current?.focus({ preventScroll: true });
+      }
     };
   }, [isOpen, onClose]);
 

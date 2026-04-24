@@ -1,0 +1,44 @@
+.carousel-audit-page {
+  padding-block: var(--spacing-10);
+  background: var(--color-white);
+}
+
+.carousel-audit-page__container {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--spacing-4);
+}
+
+@media (min-width: 768px) {
+  .carousel-audit-page__container {
+    padding-inline: var(--spacing-6);
+  }
+}
+
+.carousel-audit-page__intro {
+  margin-bottom: var(--spacing-10);
+  max-width: 48rem;
+}
+
+.carousel-audit-page__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: var(--color-gray-700);
+  margin: 0 0 var(--spacing-3);
+  line-height: 1.2;
+}
+
+.carousel-audit-page__lede {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.carousel-audit-page__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}

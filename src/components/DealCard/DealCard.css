@@ -441,7 +441,7 @@
   display: block;
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-gray-600);
   margin-top: var(--spacing-1);
 }
 

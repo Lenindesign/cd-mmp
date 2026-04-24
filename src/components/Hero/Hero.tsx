@@ -139,6 +139,60 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
     setShowIncentiveModal(true);
   }, []);
 
+  const hasAccolades = vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear;
+
+  const renderAccolades = (className?: string) => hasAccolades ? (
+    <div className={`hero__accolades${className ? ` ${className}` : ''}`}>
+      <div className="hero__accolades-header">
+        <span className="hero__accolades-title">
+          <em>Car and Driver</em> Accolades
+        </span>
+        <a href="#" className="hero__accolades-link">What's this?</a>
+      </div>
+      <div className="hero__accolades-badges">
+        {vehicle.editorsChoice && (
+          <div className="hero__accolade">
+            <div className="hero__accolade-icon hero__accolade-icon--ec">
+              <img 
+                src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" 
+                alt="Editor's Choice"
+                width="48"
+                height="44"
+              />
+            </div>
+            <span className="hero__accolade-label">Editors'<br/>Choice</span>
+          </div>
+        )}
+        {vehicle.evOfTheYear && (
+          <div className="hero__accolade">
+            <div className="hero__accolade-icon hero__accolade-icon--ev">
+              <img 
+                src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ev-of-the-year.721e420.svg" 
+                alt="EV of the Year"
+                width="48"
+                height="49"
+              />
+            </div>
+            <span className="hero__accolade-label">EV of the<br/>Year</span>
+          </div>
+        )}
+        {vehicle.tenBest && (
+          <div className="hero__accolade">
+            <div className="hero__accolade-icon hero__accolade-icon--10best">
+              <img 
+                src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" 
+                alt="10Best"
+                width="48"
+                height="54"
+              />
+            </div>
+            <span className="hero__accolade-label">10Best</span>
+          </div>
+        )}
+      </div>
+    </div>
+  ) : null;
+
   const incentiveOfferDetail = useMemo(() => {
     if (!selectedIncentive) return undefined;
     return {
@@ -406,12 +460,10 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
 
           {/* MSRP and Accolades Row */}
           <div className="hero__bottom-row">
-            {/* MSRP Section */}
             <div className="hero__msrp">
               <span className="hero__msrp-label">MSRP</span>
               <div className="hero__msrp-price-row">
                 <span className="hero__msrp-price">{vehicle.priceRange}</span>
-                {/* Shop Buttons - Aligned with price numbers */}
                 <div 
                   ref={buttonsRef}
                   className={`hero__shop-buttons ${animateButtons ? (buttonsInView ? 'hero__shop-buttons--animated' : 'hero__shop-buttons--hidden') : ''}`}
@@ -429,58 +481,8 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
               </div>
             </div>
 
-            {/* Accolades - Only show if vehicle has awards */}
-            {(vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear) && (
-              <div className="hero__accolades">
-                <div className="hero__accolades-header">
-                  <span className="hero__accolades-title">
-                    <em>Car and Driver</em> Accolades
-                  </span>
-                  <a href="#" className="hero__accolades-link">What's this?</a>
-                </div>
-                <div className="hero__accolades-badges">
-                  {vehicle.editorsChoice && (
-                    <div className="hero__accolade">
-                      <div className="hero__accolade-icon hero__accolade-icon--ec">
-                        <img 
-                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" 
-                          alt="Editor's Choice"
-                          width="48"
-                          height="44"
-                        />
-                      </div>
-                      <span className="hero__accolade-label">Editors'<br/>Choice</span>
-                    </div>
-                  )}
-                  {vehicle.evOfTheYear && (
-                    <div className="hero__accolade">
-                      <div className="hero__accolade-icon hero__accolade-icon--ev">
-                        <img 
-                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ev-of-the-year.721e420.svg" 
-                          alt="EV of the Year"
-                          width="48"
-                          height="49"
-                        />
-                      </div>
-                      <span className="hero__accolade-label">EV of the<br/>Year</span>
-                    </div>
-                  )}
-                  {vehicle.tenBest && (
-                    <div className="hero__accolade">
-                      <div className="hero__accolade-icon hero__accolade-icon--10best">
-                        <img 
-                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" 
-                          alt="10Best"
-                          width="48"
-                          height="54"
-                        />
-                      </div>
-                      <span className="hero__accolade-label">10Best</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* Desktop accolades — inline with price row */}
+            {renderAccolades('hero__accolades--desktop')}
           </div>
 
           {/* Special Offers and Incentives */}
@@ -497,6 +499,9 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
               onOfferClick={handleOfferClick}
             />
           )}
+
+          {/* Mobile accolades — below offers */}
+          {renderAccolades('hero__accolades--mobile')}
         </div>
       </div>
 

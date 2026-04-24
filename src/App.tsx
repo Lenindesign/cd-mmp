@@ -64,6 +64,7 @@ const ComparePage = lazy(() => import('./pages/ComparePage/ComparePage'));
 
 // Audit pages - lazy loaded
 const CardAudit = lazy(() => import('./pages/CardAudit/CardAudit'));
+const CarouselAuditPage = lazy(() => import('./pages/CarouselAuditPage/CarouselAuditPage'));
 
 // Account pages - lazy loaded
 const MyAccount = lazy(() => import('./pages/Account/MyAccount'));
@@ -202,6 +203,7 @@ function App() {
             
             {/* Audit Pages */}
             <Route path="/audit/cards" element={<CardAudit />} />
+            <Route path="/audit/carousels" element={<CarouselAuditPage />} />
             
             {/* Account Pages */}
             <Route path="/account" element={<MyAccount />} />

@@ -3,6 +3,15 @@ import { getZeroAprDeals } from '../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../services/leaseDealsService';
 
+// Re-export incentive functions from the unified adapter so every consumer
+// that imports from `dealCalculations` keeps working with zero changes.
+export {
+  getVehicleOffers,
+  offersToIncentives,
+  findMatchingIncentiveId,
+} from '../services/incentiveAdapter';
+export type { VehicleOfferSummary } from '../services/incentiveAdapter';
+
 export const AVG_MARKET_APR = 6.5;
 export const AVG_LOAN_TERM = 60;
 
@@ -93,123 +102,6 @@ export function buildSavingsText(
     : `Compared to the median payment for similar ${bodyStyle}s financed at ${AVG_MARKET_APR}% over ${AVG_LOAN_TERM} months ($${segAvg}/mo).`;
 
   return { savingsVsAvg, savingsTooltip: (dealType && tooltipMap[dealType]) || fallback };
-}
-
-export interface VehicleOfferSummary {
-  type: 'zero-apr' | 'cash' | 'finance' | 'lease';
-  label: string;
-  expires: string;
-}
-
-const offerCache = new Map<string, VehicleOfferSummary[]>();
-
-export function getVehicleOffers(make: string, model: string): VehicleOfferSummary[] {
-  const key = `${make.toLowerCase()}-${model.toLowerCase()}`;
-  if (offerCache.has(key)) return offerCache.get(key)!;
-
-  const offers: VehicleOfferSummary[] = [];
-  const mk = make.toLowerCase();
-  const md = model.toLowerCase();
-
-  for (const d of getZeroAprDeals()) {
-    if (d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md) {
-      offers.push({ type: 'zero-apr', label: `0% APR for ${d.term}`, expires: d.expirationDate });
-    }
-  }
-  for (const d of getCashDeals()) {
-    if (d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md) {
-      offers.push({ type: 'cash', label: `${d.incentiveValue} Cash Back`, expires: d.expirationDate });
-    }
-  }
-  for (const d of getFinanceDeals()) {
-    if (d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md) {
-      offers.push({ type: 'finance', label: `${d.apr} APR for ${d.term}`, expires: d.expirationDate });
-    }
-  }
-  for (const d of getLeaseDeals()) {
-    if (d.vehicle.make.toLowerCase() === mk && d.vehicle.model.toLowerCase() === md) {
-      offers.push({ type: 'lease', label: `${d.monthlyPayment}/mo Lease`, expires: d.expirationDate });
-    }
-  }
-
-  offerCache.set(key, offers);
-  return offers;
-}
-
-/**
- * Convert VehicleOfferSummary[] into the Incentive shape used by IncentivesModal's
- * allIncentives prop, so deals pages and the Hero modal show the same offers.
- */
-export function offersToIncentives(make: string, model: string): {
-  id: string; type: 'cash' | 'finance' | 'lease' | 'special';
-  title: string; description: string; value: string; expirationDate: string;
-  terms?: string; eligibility?: string;
-}[] {
-  const offers = getVehicleOffers(make, model);
-  return offers.map((o, i) => {
-    const type = o.type === 'zero-apr' ? 'finance' as const : o.type;
-    let description: string;
-    let terms: string | undefined;
-
-    if (o.type === 'zero-apr') {
-      description = `Zero-interest financing means every dollar of your payment goes toward the vehicle — not the bank. This could save you thousands over the life of the loan.`;
-      terms = `For well-qualified buyers. ${o.label.replace('0% APR for ', '')} term available through manufacturer financing.`;
-    } else if (o.type === 'finance') {
-      const aprMatch = o.label.match(/([\d.]+%)/);
-      const apr = aprMatch ? aprMatch[1] : '';
-      description = `A below-market ${apr} rate from the manufacturer lowers your monthly payment and total cost compared to standard financing.`;
-      terms = `For well-qualified buyers. ${o.label.replace(/[\d.]+% APR for /, '')} term available through manufacturer financing.`;
-    } else if (o.type === 'lease') {
-      description = `Leasing lets you drive a new ${make} ${model} with lower monthly payments than buying. Return it at the end or buy it out.`;
-      terms = `Well-qualified lessees with approved credit. See dealer for mileage allowance and due-at-signing details.`;
-    } else {
-      description = o.label;
-    }
-
-    return {
-      id: `${make}-${model}-offer-${i}`,
-      type,
-      title: o.label,
-      description,
-      value: o.label,
-      expirationDate: o.expires,
-      terms,
-    };
-  });
-}
-
-/**
- * Find the incentive ID that matches a specific deal so the overlay opens
- * to the correct offer instead of defaulting to the first one.
- */
-export function findMatchingIncentiveId(
-  make: string,
-  model: string,
-  dealType: 'cash' | 'finance' | 'lease' | 'zero-apr',
-  identifiers?: { apr?: string; term?: string; value?: string },
-): string | undefined {
-  const incentives = offersToIncentives(make, model);
-  if (dealType === 'cash') {
-    return incentives.find(inc => inc.type === 'cash')?.id;
-  }
-  if (dealType === 'lease') {
-    if (identifiers?.value) {
-      return incentives.find(inc => inc.type === 'lease' && inc.title.includes(identifiers.value!))?.id;
-    }
-    return incentives.find(inc => inc.type === 'lease')?.id;
-  }
-  if (dealType === 'zero-apr') {
-    return incentives.find(inc => inc.type === 'finance' && inc.title.startsWith('0%'))?.id;
-  }
-  if (identifiers?.apr && identifiers?.term) {
-    return incentives.find(inc =>
-      inc.title.includes(identifiers.apr!) && inc.title.includes(identifiers.term!),
-    )?.id;
-  }
-  if (identifiers?.apr) {
-    return incentives.find(inc => inc.title.includes(identifiers.apr!))?.id;
-  }
-  return incentives.find(inc => inc.type === 'finance')?.id;
 }
 
 /**
