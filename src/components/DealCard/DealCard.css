@@ -394,13 +394,19 @@
 
 /* Payment block
  * Uses the token-backed success tint directly; a 135deg two-stop gradient
- * with near-identical hex values reads as decorative noise, not signal. */
+ * with near-identical hex values reads as decorative noise, not signal.
+ * min-height ensures consistent card alignment when some cards have cash back
+ * labels and others don't (grid siblings should match visually). */
 .deal-card__payment-block {
   background: var(--color-success-light);
   border-radius: var(--border-radius-sm);
   padding: var(--spacing-3) var(--spacing-4);
   margin: var(--spacing-3) 0;
   text-align: center;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .deal-card__payment {
@@ -423,6 +429,15 @@
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-600);
+}
+
+.deal-card__payment-cashback {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: #166534;
+  margin-top: var(--spacing-1);
 }
 
 .deal-card__payment-savings {
@@ -712,6 +727,7 @@
   .deal-card__payment-block {
     padding: var(--spacing-2-5) var(--spacing-3);
     margin: var(--spacing-2) 0 var(--spacing-3);
+    min-height: 88px;
   }
 
   .deal-card__payment-amount {

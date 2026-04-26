@@ -4,8 +4,10 @@ import {
   EXPIRATION_DATE,
   cashDeal,
   financeDeal,
+  financeDealTiered,
   type CashDealDef,
   type FinanceDealDef,
+  type RateTier,
 } from './_dealComposer';
 
 export interface CashDeal {
@@ -32,6 +34,8 @@ export interface FinanceDeal {
   programDescription: string;
   targetAudience: string;
   trimsEligible: string[];
+  /** Tiered rate data for deals with multiple terms and/or variable cash back. */
+  rateTiers?: RateTier[];
 }
 
 export type Deal = CashDeal | FinanceDeal;
@@ -112,52 +116,344 @@ const CASH_DEAL_DEFS: CashDealDef[] = [
  * Composition (see `docs/deals-coverage-2026.md`): 26 Gas / 5 Electric /
  * 2 Hybrid / 2 Plug-In Hybrid. APR values composed via `financeDeal({ apr: N })`
  * which formats the `N%` display.
+ *
+ * 25 deals now use tiered financing with variable cash back by term:
+ * - Short terms (12-24 mo) typically have higher cash back ($2,000-$2,500)
+ * - Long terms (36-72 mo) typically have lower cash back ($1,000-$1,500)
  */
 const FINANCE_DEAL_DEFS: FinanceDealDef[] = [
-  // Chevrolet
-  financeDeal({ make: 'Chevrolet', model: 'Trax', apr: 6.6, term: '36–72 months', programName: 'GM Financial Special APR', programDescription: '6.6% APR financing for 36–72 months through GM Financial on select 2026 Trax models.', targetAudience: 'Well-qualified buyers with credit approval through GM Financial', trims: ['LS', '1RS', 'LT', 'ACTIV'] }),
-  financeDeal({ make: 'Chevrolet', model: 'Equinox', apr: 5.9, term: '36–72 months', programName: 'Chevrolet Special Finance Rate', programDescription: '5.9% APR through GM Financial on the Equinox. For well-qualified buyers.', targetAudience: 'Well-qualified buyers with 700+ credit score', trims: ['LS', 'LT', 'RS'] }),
-  financeDeal({ make: 'Chevrolet', model: 'Silverado', apr: 4.9, term: '48–72 months', programName: 'Silverado Low APR + Bonus Cash', programDescription: '4.9% APR plus $1,500 bonus cash on select 2026 Silverado 1500 models.', targetAudience: 'Well-qualified buyers financing through GM Financial', trims: ['WT', 'Custom', 'LT', 'RST'] }),
-  financeDeal({ make: 'Chevrolet', model: 'Colorado', apr: 5.4, term: '48–72 months', programName: 'Chevrolet Colorado Finance Rate', trims: ['WT', 'LT', 'Z71'] }),
+  // ══════════════════════════════════════════════════════════════════════════
+  // TIERED FINANCE DEALS (25 deals with variable APR + cash back by term)
+  // ══════════════════════════════════════════════════════════════════════════
 
-  // Toyota
-  financeDeal({ make: 'Toyota', model: 'Camry', apr: 4.99, term: '60 months', programName: 'Toyota Financial Services Special APR', programDescription: '4.99% APR for 60 months on the 2026 Camry through Toyota Financial Services.', targetAudience: 'Tier 1+ credit customers through Toyota Financial Services', trims: ['LE', 'SE', 'XLE', 'XSE'] }),
-  financeDeal({ make: 'Toyota', model: 'RAV4', apr: 5.49, term: '60 months', programName: 'Toyota RAV4 Finance Offer', programDescription: '5.49% APR for 60 months on the 2026 RAV4. Available through Toyota Financial Services.', trims: ['LE', 'XLE', 'XLE Premium'] }),
-  financeDeal({ make: 'Toyota', model: 'Corolla', apr: 4.9, term: '60 months', programName: 'Toyota Corolla Finance Offer', trims: ['LE', 'SE'] }),
-  financeDeal({ make: 'Toyota', model: 'Highlander', apr: 5.49, term: '60 months', programName: 'Toyota Highlander Finance Rate', trims: ['LE', 'XLE'] }),
-  financeDeal({ make: 'Toyota', model: 'Tundra', apr: 5.9, term: '60 months', programName: 'Toyota Tundra Finance Offer', trims: ['SR', 'SR5', 'Limited'] }),
+  // Chevrolet — 4 tiered deals
+  financeDealTiered({
+    make: 'Chevrolet', model: 'Trax',
+    tiers: [
+      { term: 12, apr: 4.9, cashBack: 2000 },
+      { term: 24, apr: 5.4, cashBack: 2000 },
+      { term: 36, apr: 5.9, cashBack: 1500 },
+      { term: 48, apr: 6.2, cashBack: 1500 },
+      { term: 60, apr: 6.4, cashBack: 1000 },
+      { term: 72, apr: 6.6, cashBack: 1000 },
+    ],
+    programName: 'GM Financial Tiered APR + Cash Back',
+    programDescription: 'Tiered APR financing with bonus cash back through GM Financial on select 2026 Trax models. Shorter terms get higher cash back.',
+    targetAudience: 'Well-qualified buyers with credit approval through GM Financial',
+    trims: ['LS', '1RS', 'LT', 'ACTIV'],
+  }),
+  financeDealTiered({
+    make: 'Chevrolet', model: 'Equinox',
+    tiers: [
+      { term: 24, apr: 4.9, cashBack: 2500 },
+      { term: 36, apr: 5.4, cashBack: 2000 },
+      { term: 48, apr: 5.7, cashBack: 1500 },
+      { term: 60, apr: 5.9, cashBack: 1500 },
+      { term: 72, apr: 6.2, cashBack: 1000 },
+    ],
+    programName: 'Chevrolet Equinox APR + Bonus Cash',
+    programDescription: 'Tiered APR with up to $2,500 bonus cash on the 2026 Equinox. Cash back varies by financing term.',
+    targetAudience: 'Well-qualified buyers with 700+ credit score',
+    trims: ['LS', 'LT', 'RS'],
+  }),
+  financeDealTiered({
+    make: 'Chevrolet', model: 'Silverado',
+    tiers: [
+      { term: 36, apr: 3.9, cashBack: 2500 },
+      { term: 48, apr: 4.4, cashBack: 2000 },
+      { term: 60, apr: 4.9, cashBack: 1500 },
+      { term: 72, apr: 5.4, cashBack: 1500 },
+      { term: 84, apr: 5.9, cashBack: 1000 },
+    ],
+    programName: 'Silverado Truck Month APR + Cash',
+    programDescription: 'Chevrolet Truck Month brings tiered APR plus up to $2,500 bonus cash on select Silverado 1500 models.',
+    targetAudience: 'Well-qualified buyers financing through GM Financial',
+    trims: ['WT', 'Custom', 'LT', 'RST', 'LT Trail Boss'],
+  }),
+  financeDealTiered({
+    make: 'Chevrolet', model: 'Colorado',
+    tiers: [
+      { term: 36, apr: 4.4, cashBack: 2000 },
+      { term: 48, apr: 4.9, cashBack: 1500 },
+      { term: 60, apr: 5.4, cashBack: 1500 },
+      { term: 72, apr: 5.9, cashBack: 1000 },
+    ],
+    programName: 'Chevrolet Colorado Tiered Finance',
+    trims: ['WT', 'LT', 'Z71'],
+  }),
 
-  // Honda
-  financeDeal({ make: 'Honda', model: 'CR-V', apr: 5.9, term: '48–60 months', programName: 'Honda Financial Special Rate', programDescription: '5.9% APR for 48–60 months through Honda Financial on the 2026 CR-V.', targetAudience: 'Well-qualified buyers with 700+ credit score', trims: ['LX', 'EX', 'EX-L'] }),
-  financeDeal({ make: 'Honda', model: 'Civic', apr: 4.9, term: '48–60 months', programName: 'Honda Civic Finance Special', programDescription: '4.9% APR for 48–60 months on the 2026 Honda Civic through Honda Financial Services.', targetAudience: 'Well-qualified buyers through Honda Financial Services', trims: ['LX', 'Sport', 'EX'] }),
-  financeDeal({ make: 'Honda', model: 'HR-V', apr: 4.9, term: '48–60 months', programName: 'Honda HR-V Finance Rate', trims: ['LX', 'Sport'] }),
-  financeDeal({ make: 'Honda', model: 'Pilot', apr: 5.49, term: '60 months', programName: 'Honda Pilot Finance Offer', trims: ['Sport', 'EX-L'] }),
+  // Toyota — 5 tiered deals
+  financeDealTiered({
+    make: 'Toyota', model: 'Camry',
+    tiers: [
+      { term: 24, apr: 3.99, cashBack: 2000 },
+      { term: 36, apr: 4.49, cashBack: 1500 },
+      { term: 48, apr: 4.79, cashBack: 1500 },
+      { term: 60, apr: 4.99, cashBack: 1000 },
+      { term: 72, apr: 5.49, cashBack: 1000 },
+    ],
+    programName: 'Toyota Camry APR + Cash Incentive',
+    programDescription: 'Toyota Financial Services tiered APR with up to $2,000 cash back on the 2026 Camry.',
+    targetAudience: 'Tier 1+ credit customers through Toyota Financial Services',
+    trims: ['LE', 'SE', 'XLE', 'XSE'],
+  }),
+  financeDealTiered({
+    make: 'Toyota', model: 'RAV4',
+    tiers: [
+      { term: 24, apr: 4.49, cashBack: 2000 },
+      { term: 36, apr: 4.99, cashBack: 1500 },
+      { term: 48, apr: 5.29, cashBack: 1500 },
+      { term: 60, apr: 5.49, cashBack: 1000 },
+      { term: 72, apr: 5.99, cashBack: 1000 },
+    ],
+    programName: 'Toyota RAV4 Tiered Finance + Cash',
+    programDescription: 'Tiered APR financing with up to $2,000 cash back on the 2026 RAV4.',
+    trims: ['LE', 'XLE', 'XLE Premium'],
+  }),
+  financeDealTiered({
+    make: 'Toyota', model: 'Corolla',
+    tiers: [
+      { term: 24, apr: 3.9, cashBack: 1500 },
+      { term: 36, apr: 4.4, cashBack: 1500 },
+      { term: 48, apr: 4.7, cashBack: 1000 },
+      { term: 60, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Toyota Corolla Finance + Bonus Cash',
+    trims: ['LE', 'SE'],
+  }),
+  financeDealTiered({
+    make: 'Toyota', model: 'Highlander',
+    tiers: [
+      { term: 36, apr: 4.49, cashBack: 2000 },
+      { term: 48, apr: 4.99, cashBack: 1500 },
+      { term: 60, apr: 5.49, cashBack: 1500 },
+      { term: 72, apr: 5.99, cashBack: 1000 },
+    ],
+    programName: 'Toyota Highlander Tiered APR',
+    trims: ['LE', 'XLE'],
+  }),
+  financeDealTiered({
+    make: 'Toyota', model: 'Tundra',
+    tiers: [
+      { term: 36, apr: 4.9, cashBack: 2500 },
+      { term: 48, apr: 5.4, cashBack: 2000 },
+      { term: 60, apr: 5.9, cashBack: 1500 },
+      { term: 72, apr: 6.4, cashBack: 1500 },
+    ],
+    programName: 'Toyota Tundra APR + Truck Cash',
+    trims: ['SR', 'SR5', 'Limited'],
+  }),
+
+  // Honda — 4 tiered deals
+  financeDealTiered({
+    make: 'Honda', model: 'CR-V',
+    tiers: [
+      { term: 24, apr: 4.9, cashBack: 2000 },
+      { term: 36, apr: 5.4, cashBack: 1500 },
+      { term: 48, apr: 5.7, cashBack: 1500 },
+      { term: 60, apr: 5.9, cashBack: 1000 },
+    ],
+    programName: 'Honda CR-V Tiered Finance Special',
+    programDescription: 'Honda Financial tiered APR with up to $2,000 cash back on the 2026 CR-V.',
+    targetAudience: 'Well-qualified buyers with 700+ credit score',
+    trims: ['LX', 'EX', 'EX-L'],
+  }),
+  financeDealTiered({
+    make: 'Honda', model: 'Civic',
+    tiers: [
+      { term: 24, apr: 3.9, cashBack: 1500 },
+      { term: 36, apr: 4.4, cashBack: 1500 },
+      { term: 48, apr: 4.7, cashBack: 1000 },
+      { term: 60, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Honda Civic APR + Cash Event',
+    programDescription: 'Tiered APR with up to $1,500 cash back on the 2026 Honda Civic.',
+    targetAudience: 'Well-qualified buyers through Honda Financial Services',
+    trims: ['LX', 'Sport', 'EX'],
+  }),
+  financeDealTiered({
+    make: 'Honda', model: 'HR-V',
+    tiers: [
+      { term: 24, apr: 3.9, cashBack: 1500 },
+      { term: 36, apr: 4.4, cashBack: 1500 },
+      { term: 48, apr: 4.7, cashBack: 1000 },
+      { term: 60, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Honda HR-V Finance + Cash Back',
+    trims: ['LX', 'Sport'],
+  }),
+  financeDealTiered({
+    make: 'Honda', model: 'Pilot',
+    tiers: [
+      { term: 36, apr: 4.49, cashBack: 2000 },
+      { term: 48, apr: 4.99, cashBack: 1500 },
+      { term: 60, apr: 5.49, cashBack: 1500 },
+      { term: 72, apr: 5.99, cashBack: 1000 },
+    ],
+    programName: 'Honda Pilot Tiered Finance Offer',
+    trims: ['Sport', 'EX-L'],
+  }),
+
+  // Ford — 3 tiered deals
+  financeDealTiered({
+    make: 'Ford', model: 'F-150',
+    tiers: [
+      { term: 36, apr: 2.9, cashBack: 3000 },
+      { term: 48, apr: 3.4, cashBack: 2500 },
+      { term: 60, apr: 3.9, cashBack: 2000 },
+      { term: 72, apr: 4.4, cashBack: 1500 },
+      { term: 84, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Ford F-150 Truck Season APR + Cash',
+    programDescription: 'Ford Truck Season brings tiered APR plus up to $3,000 bonus cash on select F-150 models.',
+    targetAudience: 'Well-qualified buyers financing through Ford Credit',
+    trims: ['XL', 'XLT', 'Lariat'],
+  }),
+  financeDealTiered({
+    make: 'Ford', model: 'Escape',
+    tiers: [
+      { term: 24, apr: 4.49, cashBack: 2000 },
+      { term: 36, apr: 4.99, cashBack: 1500 },
+      { term: 48, apr: 5.29, cashBack: 1500 },
+      { term: 60, apr: 5.49, cashBack: 1000 },
+    ],
+    programName: 'Ford Escape APR + Bonus Cash',
+    trims: ['Active', 'ST-Line'],
+  }),
+  financeDealTiered({
+    make: 'Ford', model: 'Mustang Mach-E',
+    tiers: [
+      { term: 36, apr: 3.9, cashBack: 2500 },
+      { term: 48, apr: 4.4, cashBack: 2000 },
+      { term: 60, apr: 4.9, cashBack: 1500 },
+      { term: 72, apr: 5.4, cashBack: 1000 },
+    ],
+    programName: 'Ford Mach-E EV Finance + Cash',
+    trims: ['Select', 'Premium'],
+  }),
+
+  // Hyundai — 3 tiered deals
+  financeDealTiered({
+    make: 'Hyundai', model: 'Tucson',
+    tiers: [
+      { term: 24, apr: 3.9, cashBack: 2000 },
+      { term: 36, apr: 4.4, cashBack: 1500 },
+      { term: 48, apr: 4.7, cashBack: 1500 },
+      { term: 60, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Hyundai Tucson APR + Cash Savings',
+    programDescription: 'Tiered APR with up to $2,000 cash back on the 2026 Tucson. Includes complimentary maintenance.',
+    targetAudience: 'Well-qualified buyers with 720+ credit score',
+    trims: ['SE', 'SEL', 'N Line'],
+  }),
+  financeDealTiered({
+    make: 'Hyundai', model: 'Kona',
+    tiers: [
+      { term: 24, apr: 4.49, cashBack: 1500 },
+      { term: 36, apr: 4.99, cashBack: 1500 },
+      { term: 48, apr: 5.29, cashBack: 1000 },
+      { term: 60, apr: 5.49, cashBack: 1000 },
+    ],
+    programName: 'Hyundai Kona Finance + Cash Back',
+    programDescription: 'Tiered APR with up to $1,500 cash back on the 2026 Kona.',
+    trims: ['SE', 'SEL', 'Limited'],
+  }),
+  financeDealTiered({
+    make: 'Hyundai', model: 'Ioniq 5',
+    tiers: [
+      { term: 36, apr: 2.99, cashBack: 3000 },
+      { term: 48, apr: 3.49, cashBack: 2500 },
+      { term: 60, apr: 3.99, cashBack: 2000 },
+      { term: 72, apr: 4.49, cashBack: 1500 },
+    ],
+    programName: 'Hyundai Ioniq 5 EV APR + Cash',
+    programDescription: 'Ultra-low tiered APR with up to $3,000 cash back on the 2026 Ioniq 5. Combine with federal EV tax credit.',
+    trims: ['SE', 'SEL', 'Limited'],
+  }),
+
+  // Kia — 3 tiered deals
+  financeDealTiered({
+    make: 'Kia', model: 'Seltos',
+    tiers: [
+      { term: 24, apr: 3.9, cashBack: 2000 },
+      { term: 36, apr: 4.4, cashBack: 1500 },
+      { term: 48, apr: 4.7, cashBack: 1500 },
+      { term: 60, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Kia Seltos APR + Cash Incentive',
+    programDescription: 'Tiered APR with up to $2,000 cash back on the Kia Seltos through Kia Finance America.',
+    targetAudience: 'Well-qualified buyers through Kia Finance America',
+    trims: ['LX', 'S', 'EX'],
+  }),
+  financeDealTiered({
+    make: 'Kia', model: 'K5',
+    tiers: [
+      { term: 24, apr: 3.9, cashBack: 2000 },
+      { term: 36, apr: 4.4, cashBack: 1500 },
+      { term: 48, apr: 4.7, cashBack: 1500 },
+      { term: 60, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Kia K5 Tiered Finance + Cash',
+    trims: ['LXS', 'GT-Line'],
+  }),
+  financeDealTiered({
+    make: 'Kia', model: 'EV6',
+    tiers: [
+      { term: 36, apr: 2.99, cashBack: 3000 },
+      { term: 48, apr: 3.49, cashBack: 2500 },
+      { term: 60, apr: 3.99, cashBack: 2000 },
+      { term: 72, apr: 4.49, cashBack: 1500 },
+    ],
+    programName: 'Kia EV6 Special APR + Cash',
+    programDescription: 'Ultra-low tiered APR with up to $3,000 cash back on the 2026 EV6. Combine with federal EV tax credit.',
+    trims: ['Light', 'Wind', 'GT-Line'],
+  }),
+
+  // Nissan — 3 tiered deals
+  financeDealTiered({
+    make: 'Nissan', model: 'Rogue',
+    tiers: [
+      { term: 24, apr: 3.9, cashBack: 2000 },
+      { term: 36, apr: 4.4, cashBack: 1500 },
+      { term: 48, apr: 4.7, cashBack: 1500 },
+      { term: 60, apr: 4.9, cashBack: 1000 },
+    ],
+    programName: 'Nissan Rogue APR + Bonus Cash',
+    programDescription: 'Tiered APR with up to $2,000 bonus cash on the 2026 Rogue through NMAC.',
+    targetAudience: 'Well-qualified buyers with Tier 1 credit',
+    trims: ['S', 'SV', 'SL'],
+  }),
+  financeDealTiered({
+    make: 'Nissan', model: 'Altima',
+    tiers: [
+      { term: 24, apr: 4.49, cashBack: 1500 },
+      { term: 36, apr: 4.99, cashBack: 1500 },
+      { term: 48, apr: 5.29, cashBack: 1000 },
+      { term: 60, apr: 5.49, cashBack: 1000 },
+    ],
+    programName: 'Nissan Altima Tiered Finance',
+    trims: ['S', 'SV'],
+  }),
+  financeDealTiered({
+    make: 'Nissan', model: 'Leaf',
+    tiers: [
+      { term: 36, apr: 0.9, cashBack: 3000 },
+      { term: 48, apr: 1.4, cashBack: 2500 },
+      { term: 60, apr: 1.9, cashBack: 2000 },
+    ],
+    programName: 'Nissan Leaf EV Special Finance',
+    programDescription: 'Ultra-low tiered APR with up to $3,000 cash back on the 2026 Nissan Leaf. Combine with state and federal EV incentives.',
+    trims: ['S', 'SV Plus'],
+  }),
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // STANDARD FINANCE DEALS (10 deals without tiered cash back)
+  // ══════════════════════════════════════════════════════════════════════════
+
   financeDeal({ make: 'Honda', model: 'Accord', apr: 4.99, term: '60 months', programName: 'Honda Accord Hybrid Finance Rate', trims: ['Sport Hybrid', 'EX-L Hybrid'] }),
-
-  // Ford
-  financeDeal({ make: 'Ford', model: 'F-150', apr: 3.9, term: '60–72 months', programName: 'Ford Credit Low APR', programDescription: '3.9% APR plus $2,000 bonus cash on select 2026 F-150 models through Ford Credit.', targetAudience: 'Well-qualified buyers financing through Ford Credit', trims: ['XL', 'XLT', 'Lariat'] }),
   financeDeal({ make: 'Ford', model: 'Mustang', apr: 5.9, term: '48–60 months', programName: 'Ford Mustang Finance Offer', programDescription: '5.9% APR through Ford Credit on the 2026 Mustang. For well-qualified buyers.', targetAudience: 'Well-qualified buyers financing through Ford Credit', trims: ['EcoBoost', 'GT'] }),
-  financeDeal({ make: 'Ford', model: 'Escape', apr: 5.49, term: '60 months', programName: 'Ford Escape Finance Rate', trims: ['Active', 'ST-Line'] }),
   financeDeal({ make: 'Ford', model: 'Escape PHEV', apr: 3.9, term: '60 months', programName: 'Ford Escape PHEV Special Finance', programDescription: '3.9% APR for 60 months on the 2026 Escape Plug-In Hybrid through Ford Credit.', trims: ['ST-Line', 'Platinum'] }),
-  financeDeal({ make: 'Ford', model: 'Mustang Mach-E', apr: 4.9, term: '60–72 months', programName: 'Ford Mustang Mach-E Finance Offer', trims: ['Select', 'Premium'] }),
-
-  // Hyundai
-  financeDeal({ make: 'Hyundai', model: 'Tucson', apr: 4.9, term: '60 months', programName: 'Hyundai Motor Finance Special APR', programDescription: '4.9% APR for 60 months on the Tucson through Hyundai Motor Finance. Includes complimentary maintenance.', targetAudience: 'Well-qualified buyers with 720+ credit score', trims: ['SE', 'SEL', 'N Line'] }),
-  financeDeal({ make: 'Hyundai', model: 'Kona', apr: 5.49, term: '48–60 months', programName: 'Hyundai Kona Finance Rate', programDescription: '5.49% APR through Hyundai Motor Finance on the 2026 Kona.', trims: ['SE', 'SEL', 'Limited'] }),
-  financeDeal({ make: 'Hyundai', model: 'Ioniq 5', apr: 3.99, term: '60–72 months', programName: 'Hyundai Ioniq 5 EV Finance Offer', programDescription: '3.99% APR through Hyundai Motor Finance on the 2026 Ioniq 5. Combine with federal EV tax credit.', trims: ['SE', 'SEL', 'Limited'] }),
   financeDeal({ make: 'Hyundai', model: 'Ioniq 6', apr: 3.99, term: '60–72 months', programName: 'Hyundai Ioniq 6 Finance Rate', trims: ['SE', 'SEL'] }),
-
-  // Kia
-  financeDeal({ make: 'Kia', model: 'Seltos', apr: 4.9, term: '60 months', programName: 'Kia Finance America Special APR', programDescription: '4.9% APR for 60 months on the Kia Seltos through Kia Finance America.', targetAudience: 'Well-qualified buyers through Kia Finance America', trims: ['LX', 'S', 'EX'] }),
-  financeDeal({ make: 'Kia', model: 'K5', apr: 4.9, term: '60 months', programName: 'Kia K5 Finance Offer', trims: ['LXS', 'GT-Line'] }),
-  financeDeal({ make: 'Kia', model: 'EV6', apr: 3.99, term: '60–72 months', programName: 'Kia EV6 Special Finance', programDescription: '3.99% APR on the 2026 EV6 through Kia Finance America. Combine with federal EV tax credit.', trims: ['Light', 'Wind', 'GT-Line'] }),
-
-  // Nissan
-  financeDeal({ make: 'Nissan', model: 'Rogue', apr: 4.9, term: '60 months', programName: 'Nissan Now Finance Offer', programDescription: '4.9% APR plus $1,000 bonus cash on the 2026 Rogue through NMAC.', targetAudience: 'Well-qualified buyers with Tier 1 credit', trims: ['S', 'SV', 'SL'] }),
-  financeDeal({ make: 'Nissan', model: 'Altima', apr: 5.49, term: '60 months', programName: 'Nissan Altima Finance Rate', trims: ['S', 'SV'] }),
-  financeDeal({ make: 'Nissan', model: 'Leaf', apr: 1.9, term: '60 months', programName: 'Nissan Leaf EV Special Finance', programDescription: 'Ultra-low 1.9% APR through NMAC on the 2026 Nissan Leaf. Combine with state and federal EV incentives when eligible.', trims: ['S', 'SV Plus'] }),
-
-  // Luxury
   financeDeal({ make: 'Mercedes-Benz', model: 'C-Class', apr: 3.99, term: '36–60 months', programName: 'Mercedes-Benz Special Finance Rate', trims: ['C 300', 'C 300 4MATIC'] }),
   financeDeal({ make: 'Mercedes-Benz', model: 'GLE', apr: 3.99, term: '36–60 months', programName: 'Mercedes-Benz GLE Finance Offer', trims: ['GLE 350', 'GLE 450 4MATIC'] }),
   financeDeal({ make: 'BMW', model: '3 Series', apr: 4.99, term: '36–60 months', programName: 'BMW Financial Services Special Rate', programDescription: '4.99% APR through BMW Financial Services on select 3 Series models.', targetAudience: 'Well-qualified buyers through BMW Financial Services', trims: ['330i', '330i xDrive'] }),
@@ -213,6 +509,7 @@ export const getFinanceDeals = (): FinanceDeal[] => {
         programDescription: def.programDescription,
         targetAudience: def.targetAudience,
         trimsEligible: def.trimsEligible,
+        rateTiers: def.rateTiers,
       });
     }
   }

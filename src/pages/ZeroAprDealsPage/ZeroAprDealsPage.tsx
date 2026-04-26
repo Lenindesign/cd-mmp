@@ -4,9 +4,9 @@ import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
-import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
@@ -54,6 +54,7 @@ interface UnifiedAprDeal {
   rating: number;
   incentiveValue?: string;
   percentOffMsrp?: string;
+  rateTiers?: RateTier[];
 }
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -247,7 +248,7 @@ const ZeroAprDealsPage = () => {
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, aprNum, months);
       const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
-      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
+      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term, rateTiers: d.rateTiers });
       const displayRate = rangeLabel.replace(/\s*APR$/, '');
       results.push({
         id: d.id, aprType: 'special-apr', vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
@@ -256,6 +257,7 @@ const ZeroAprDealsPage = () => {
         programName: d.programName, programDescription: d.programDescription,
         targetAudience: d.targetAudience, trimsEligible: d.trimsEligible,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        rateTiers: d.rateTiers,
       });
     }
 
@@ -336,6 +338,10 @@ const ZeroAprDealsPage = () => {
     const isCash = deal.aprType === 'cash';
     const dealTypeTag = isCash ? 'Cash' : 'Buy';
     const offers = getVehicleOffers(deal.vehicle.make, deal.vehicle.model);
+
+    // Calculate cash back label for tiered finance deals
+    const cashBackLabel = !isCash ? getCashBackLabel(deal.rateTiers) : undefined;
+
     const payment = isCash
       ? {
           amount: deal.incentiveValue ?? '',
@@ -346,6 +352,7 @@ const ZeroAprDealsPage = () => {
           amount: deal.aprDisplay,
           period: ' APR',
           expirationDate: deal.expirationDate,
+          cashBackLabel,
         };
     const pill = {
       chipLabel: dealTypeTag,

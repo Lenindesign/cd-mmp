@@ -10,7 +10,19 @@ export {
   offersToIncentives,
   findMatchingIncentiveId,
 } from '../services/incentiveAdapter';
-export type { VehicleOfferSummary } from '../services/incentiveAdapter';
+export type { VehicleOfferSummary, RateTier } from '../services/incentiveAdapter';
+
+/**
+ * Build a cashBackLabel from rateTiers if any tier has cash back.
+ * Returns undefined if no cash back exists.
+ */
+export function getCashBackLabel(rateTiers?: { cashBack?: number }[]): string | undefined {
+  if (!rateTiers) return undefined;
+  const cashBacks = rateTiers.map(t => t.cashBack ?? 0).filter(c => c > 0);
+  if (cashBacks.length === 0) return undefined;
+  const maxCashBack = Math.max(...cashBacks);
+  return `+ up to $${maxCashBack.toLocaleString()} cash back`;
+}
 
 export const AVG_MARKET_APR = 6.5;
 export const AVG_LOAN_TERM = 60;

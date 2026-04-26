@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -357,6 +357,7 @@ const CashFinanceDealsPage = () => {
                               savings?: { type: 'savings-text'; text: string } | { type: 'plain'; text: string };
                               savingsTooltip?: string;
                               expirationDate: string;
+                              cashBackLabel?: string;
                             };
 
                             if (isCash) {
@@ -377,12 +378,17 @@ const CashFinanceDealsPage = () => {
                               const months = parseTermMonths(deal.term);
                               const monthly = calcMonthly(msrp, aprNum, months);
                               const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
+
+                              // Calculate cash back label for tiered finance deals
+                              const cashBackLabel = getCashBackLabel((deal as { rateTiers?: { cashBack?: number }[] }).rateTiers);
+
                               payment = {
                                 amount: financeDisplayRate,
                                 period: ' APR',
                                 savings: { type: 'savings-text', text: savingsVsAvg },
                                 savingsTooltip,
                                 expirationDate: deal.expirationDate,
+                                cashBackLabel,
                               };
                             }
 

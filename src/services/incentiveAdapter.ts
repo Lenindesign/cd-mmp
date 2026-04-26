@@ -28,6 +28,13 @@ export type GroupAffiliation =
   | 'disaster-relief'
   | 'trade-in';
 
+/** A single term tier with APR and optional cash back for tiered finance deals. */
+export interface RateTier {
+  term: number;
+  apr: number;
+  cashBack?: number;
+}
+
 export interface Incentive {
   id: string;
   type: 'cash' | 'finance' | 'lease' | 'special';
@@ -41,6 +48,8 @@ export interface Incentive {
   programDescription?: string;
   programRules?: string;
   groupAffiliation?: GroupAffiliation;
+  /** Tiered rate data for finance deals with multiple terms and/or variable cash back. */
+  rateTiers?: RateTier[];
 }
 
 export interface VehicleIncentives {
@@ -120,11 +129,18 @@ function buildEntry(make: string, model: string): CachedEntry {
     if (d.vehicle.make.toLowerCase() !== mk || d.vehicle.model.toLowerCase() !== md) continue;
     const id = `${make}-${model}-offer-${idx++}`;
     offers.push({ type: 'finance', label: `${d.apr} APR for ${d.term}`, expires: d.expirationDate });
+
+    const hasTieredCashBack = d.rateTiers && d.rateTiers.some(t => t.cashBack && t.cashBack > 0);
+    const maxCashBack = d.rateTiers ? Math.max(...d.rateTiers.map(t => t.cashBack ?? 0)) : 0;
+    const cashBackSuffix = hasTieredCashBack ? ` + up to $${maxCashBack.toLocaleString()} cash back` : '';
+
     incentives.push({
       id,
       type: 'finance',
-      title: `${d.apr} APR for ${d.term}`,
-      description: `A below-market ${d.apr} rate from the manufacturer lowers your monthly payment and total cost compared to standard financing.`,
+      title: `${d.apr} APR for ${d.term}${cashBackSuffix}`,
+      description: hasTieredCashBack
+        ? `A below-market ${d.apr} rate from the manufacturer plus cash back that varies by term. Shorter terms typically offer higher cash back.`
+        : `A below-market ${d.apr} rate from the manufacturer lowers your monthly payment and total cost compared to standard financing.`,
       value: `${d.apr} APR`,
       expirationDate: d.expirationDate,
       terms: `For well-qualified buyers. ${d.term} term available through manufacturer financing.`,
@@ -132,6 +148,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       programName: d.programName,
       programDescription: d.programDescription,
       groupAffiliation: 'everyone',
+      rateTiers: d.rateTiers,
     });
   }
 

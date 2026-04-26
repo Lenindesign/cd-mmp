@@ -16,7 +16,7 @@ import {
   MapPin,
   Navigation,
 } from 'lucide-react';
-import type { Incentive, GroupAffiliation } from '../../services/incentivesService';
+import type { Incentive, GroupAffiliation, RateTier } from '../../services/incentiveAdapter';
 import { getVehicleTrims } from '../../services/trimService';
 import { formatExpiration } from '../../utils/dateUtils';
 import './IncentivesModal.css';
@@ -180,7 +180,14 @@ const getEligibilityInfo = (inc: Incentive): { label: string; restricted: boolea
 
 
 
-export function getAprRangeLabel(active: { value: string; title: string; terms?: string }): string {
+/** Row shape for the APR table — now includes optional cash back. */
+export interface AprTableRow {
+  term: number;
+  apr: number;
+  cashBack?: number;
+}
+
+export function getAprRangeLabel(active: { value: string; title: string; terms?: string; rateTiers?: RateTier[] }): string {
   const rows = buildAprTable(active);
   const rates = rows.map(r => r.apr);
   const lo = Math.min(...rates);
@@ -189,7 +196,22 @@ export function getAprRangeLabel(active: { value: string; title: string; terms?:
   return `${lo}% - ${hi}% APR`;
 }
 
-export function buildAprTable(incentive: { value: string; title: string; terms?: string }) {
+/**
+ * Build the APR table rows for a finance incentive.
+ * If the incentive has rateTiers (tiered deal), use that data directly.
+ * Otherwise, fall back to parsing the text and generating synthetic rows.
+ */
+export function buildAprTable(incentive: { value: string; title: string; terms?: string; rateTiers?: RateTier[] }): AprTableRow[] {
+  // If we have explicit tier data, use it directly
+  if (incentive.rateTiers && incentive.rateTiers.length > 0) {
+    return incentive.rateTiers.map(tier => ({
+      term: tier.term,
+      apr: tier.apr,
+      cashBack: tier.cashBack,
+    }));
+  }
+
+  // Legacy fallback: parse text and generate synthetic rows
   const text = `${incentive.value} ${incentive.title} ${incentive.terms ?? ''}`;
   const aprMatch = text.match(/([\d.]+)%/);
   const apr = aprMatch ? parseFloat(aprMatch[1]) : 0;
@@ -217,6 +239,27 @@ export function buildAprTable(incentive: { value: string; title: string; terms?:
     term: t,
     apr: Math.round((apr + (spreadByTerm[t] ?? 0)) * 100) / 100,
   }));
+}
+
+/**
+ * Checks if cash back varies by term (needs 3-column table) or is uniform (can show as badge).
+ */
+export function hasTieredCashBack(rows: AprTableRow[]): boolean {
+  const cashBacks = rows.map(r => r.cashBack ?? 0).filter(c => c > 0);
+  if (cashBacks.length === 0) return false;
+  const uniqueValues = new Set(cashBacks);
+  return uniqueValues.size > 1;
+}
+
+/**
+ * Get uniform cash back amount if all rows have the same value (for badge display).
+ */
+export function getUniformCashBack(rows: AprTableRow[]): number | null {
+  const cashBacks = rows.map(r => r.cashBack ?? 0).filter(c => c > 0);
+  if (cashBacks.length === 0) return null;
+  const uniqueValues = new Set(cashBacks);
+  if (uniqueValues.size === 1) return cashBacks[0];
+  return null;
 }
 
 const IncentivesModal = ({
@@ -696,13 +739,25 @@ const IncentivesModal = ({
                         <span className="incentives-modal__v5-offer-chip">
                           {getOfferRowChipLabel(activeIncentive.type)}
                         </span>
-                        <span className="incentives-modal__v5-offer-apr">
-                          {activeIncentive.type === 'finance'
-                            ? getAprRangeLabel(activeIncentive)
-                            : activeIncentive.type === 'cash'
-                              ? <>{activeIncentive.value} <span className="incentives-modal__v5-offer-apr-suffix">cash back</span></>
-                              : activeIncentive.value}
-                        </span>
+                        <div className="incentives-modal__v5-offer-value-block">
+                          <span className="incentives-modal__v5-offer-apr">
+                            {activeIncentive.type === 'finance'
+                              ? getAprRangeLabel(activeIncentive)
+                              : activeIncentive.type === 'cash'
+                                ? <>{activeIncentive.value} <span className="incentives-modal__v5-offer-apr-suffix">cash back</span></>
+                                : activeIncentive.value}
+                          </span>
+                          {activeIncentive.type === 'finance' && activeIncentive.rateTiers && (() => {
+                            const cashBacks = activeIncentive.rateTiers.map(t => t.cashBack ?? 0).filter(c => c > 0);
+                            if (cashBacks.length === 0) return null;
+                            const maxCashBack = Math.max(...cashBacks);
+                            return (
+                              <span className="incentives-modal__v5-offer-cashback-line">
+                                + up to ${maxCashBack.toLocaleString()} cash back
+                              </span>
+                            );
+                          })()}
+                        </div>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">
                           expires {formatExpiration(activeIncentive.expirationDate)}
@@ -743,27 +798,55 @@ const IncentivesModal = ({
                       })()}
 
                       {/* APR Rate Table for finance offers */}
-                      {activeIncentive.type === 'finance' && (
-                        <div className="incentives-modal__rate-table">
-                          <h4 className="incentives-modal__rate-table-title">Available APR Options</h4>
-                          <table className="incentives-modal__rate-grid">
-                            <thead>
-                              <tr>
-                                <th>Term</th>
-                                <th>Rate</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {buildAprTable(activeIncentive).map(row => (
-                                <tr key={row.term}>
-                                  <td className="incentives-modal__rate-term">{row.term} mo</td>
-                                  <td className="incentives-modal__rate-cell">{row.apr}%</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
+                      {activeIncentive.type === 'finance' && (() => {
+                        const rows = buildAprTable(activeIncentive);
+                        const showCashBackColumn = hasTieredCashBack(rows);
+                        const uniformCashBack = getUniformCashBack(rows);
+                        const hasMoreTerms = rows.length > 3;
+                        return (
+                          <div className="incentives-modal__rate-table">
+                            <h4 className="incentives-modal__rate-table-title">Available APR Options</h4>
+                            {uniformCashBack && (
+                              <div className="incentives-modal__rate-table-badge">
+                                + ${uniformCashBack.toLocaleString()} Cash Back on all terms
+                              </div>
+                            )}
+                            <div
+                              className={`incentives-modal__rate-table-scroll${hasMoreTerms ? ' incentives-modal__rate-table-scroll--has-more' : ''}`}
+                              tabIndex={hasMoreTerms ? 0 : undefined}
+                              aria-label={hasMoreTerms ? 'APR terms table. Scroll for more terms.' : 'APR terms table'}
+                            >
+                              <table className={`incentives-modal__rate-grid${showCashBackColumn ? ' incentives-modal__rate-grid--with-cashback' : ''}`}>
+                                <thead>
+                                  <tr>
+                                    <th>Term</th>
+                                    <th>Rate</th>
+                                    {showCashBackColumn && <th>Cash Back</th>}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {rows.map(row => (
+                                    <tr key={row.term}>
+                                      <td className="incentives-modal__rate-term">{row.term} mo</td>
+                                      <td className="incentives-modal__rate-cell">{row.apr}%</td>
+                                      {showCashBackColumn && (
+                                        <td className="incentives-modal__rate-cashback">
+                                          {row.cashBack ? `$${row.cashBack.toLocaleString()}` : '—'}
+                                        </td>
+                                      )}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                            {hasMoreTerms && (
+                              <div className="incentives-modal__rate-scroll-cue" aria-hidden="true">
+                                Scroll for more terms
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
 
                       <div className="incentives-modal__v5-key-details">
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
@@ -1063,13 +1146,25 @@ const IncentivesModal = ({
                         <span className="incentives-modal__v5-offer-chip">
                           {getOfferRowChipLabel(activeIncentive.type)}
                         </span>
-                        <span className="incentives-modal__v5-offer-apr">
-                          {activeIncentive.type === 'finance'
-                            ? getAprRangeLabel(activeIncentive)
-                            : activeIncentive.type === 'cash'
-                              ? <>{activeIncentive.value} <span className="incentives-modal__v5-offer-apr-suffix">cash back</span></>
-                              : activeIncentive.value}
-                        </span>
+                        <div className="incentives-modal__v5-offer-value-block">
+                          <span className="incentives-modal__v5-offer-apr">
+                            {activeIncentive.type === 'finance'
+                              ? getAprRangeLabel(activeIncentive)
+                              : activeIncentive.type === 'cash'
+                                ? <>{activeIncentive.value} <span className="incentives-modal__v5-offer-apr-suffix">cash back</span></>
+                                : activeIncentive.value}
+                          </span>
+                          {activeIncentive.type === 'finance' && activeIncentive.rateTiers && (() => {
+                            const cashBacks = activeIncentive.rateTiers.map(t => t.cashBack ?? 0).filter(c => c > 0);
+                            if (cashBacks.length === 0) return null;
+                            const maxCashBack = Math.max(...cashBacks);
+                            return (
+                              <span className="incentives-modal__v5-offer-cashback-line">
+                                + up to ${maxCashBack.toLocaleString()} cash back
+                              </span>
+                            );
+                          })()}
+                        </div>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
                         <span className="incentives-modal__v5-offer-expires">
                           expires {formatExpiration(activeIncentive.expirationDate)}
@@ -1109,27 +1204,55 @@ const IncentivesModal = ({
                         );
                       })()}
 
-                      {activeIncentive.type === 'finance' && (
-                        <div className="incentives-modal__rate-table">
-                          <h4 className="incentives-modal__rate-table-title">Available APR Options</h4>
-                          <table className="incentives-modal__rate-grid">
-                            <thead>
-                              <tr>
-                                <th>Term</th>
-                                <th>Rate</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {buildAprTable(activeIncentive).map(row => (
-                                <tr key={row.term}>
-                                  <td className="incentives-modal__rate-term">{row.term} mo</td>
-                                  <td className="incentives-modal__rate-cell">{row.apr}%</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
+                      {activeIncentive.type === 'finance' && (() => {
+                        const rows = buildAprTable(activeIncentive);
+                        const showCashBackColumn = hasTieredCashBack(rows);
+                        const uniformCashBack = getUniformCashBack(rows);
+                        const hasMoreTerms = rows.length > 3;
+                        return (
+                          <div className="incentives-modal__rate-table">
+                            <h4 className="incentives-modal__rate-table-title">Available APR Options</h4>
+                            {uniformCashBack && (
+                              <div className="incentives-modal__rate-table-badge">
+                                + ${uniformCashBack.toLocaleString()} Cash Back on all terms
+                              </div>
+                            )}
+                            <div
+                              className={`incentives-modal__rate-table-scroll${hasMoreTerms ? ' incentives-modal__rate-table-scroll--has-more' : ''}`}
+                              tabIndex={hasMoreTerms ? 0 : undefined}
+                              aria-label={hasMoreTerms ? 'APR terms table. Scroll for more terms.' : 'APR terms table'}
+                            >
+                              <table className={`incentives-modal__rate-grid${showCashBackColumn ? ' incentives-modal__rate-grid--with-cashback' : ''}`}>
+                                <thead>
+                                  <tr>
+                                    <th>Term</th>
+                                    <th>Rate</th>
+                                    {showCashBackColumn && <th>Cash Back</th>}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {rows.map(row => (
+                                    <tr key={row.term}>
+                                      <td className="incentives-modal__rate-term">{row.term} mo</td>
+                                      <td className="incentives-modal__rate-cell">{row.apr}%</td>
+                                      {showCashBackColumn && (
+                                        <td className="incentives-modal__rate-cashback">
+                                          {row.cashBack ? `$${row.cashBack.toLocaleString()}` : '—'}
+                                        </td>
+                                      )}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                            {hasMoreTerms && (
+                              <div className="incentives-modal__rate-scroll-cue" aria-hidden="true">
+                                Scroll for more terms
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
 
                       <div className="incentives-modal__v5-key-details">
                         <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>

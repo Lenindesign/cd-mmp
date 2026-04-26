@@ -14,7 +14,8 @@ import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
-import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
+import { getCashBackLabel } from '../../utils/dealCalculations';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import { GridAd } from '../../components/GridAd';
@@ -56,6 +57,7 @@ interface MiniDeal {
   savingsVsAvg: string;
   savingsTooltip: string;
   term?: string;
+  rateTiers?: RateTier[];
 }
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -192,7 +194,7 @@ const AllDealsPage = () => {
         const months = parseTermMonths(d.term);
         const monthly = calcMonthly(msrp, aprNum, months);
         const savings = buildSavingsText(monthly, d.vehicle.bodyStyle, 'finance');
-        const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
+        const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term, rateTiers: d.rateTiers });
         deals.push({
           vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`,
           make: d.vehicle.make, model: d.vehicle.model, image: d.vehicle.image,
@@ -210,6 +212,7 @@ const AllDealsPage = () => {
           staffRating: d.vehicle.staffRating, term: d.term,
           estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: rangeLabel.replace(/\s*APR$/, ''), monthlyNum: monthly,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
+          rateTiers: d.rateTiers,
         });
       });
 
@@ -426,6 +429,10 @@ const AllDealsPage = () => {
                             : (deal.dealType === 'zero-apr' || deal.dealType === 'finance')
                               ? ' APR'
                               : '/mo';
+
+                          // Calculate cash back label for tiered finance deals
+                          const cashBackLabel = deal.dealType === 'finance' ? getCashBackLabel(deal.rateTiers) : undefined;
+
                           const cardDetails = [
                             { label: 'MSRP Range', value: deal.priceRange },
                             ...(deal.term ? [{ label: 'Term', value: deal.term }] : []),
@@ -458,6 +465,7 @@ const AllDealsPage = () => {
                                   savings: { type: 'savings-text', text: deal.savingsVsAvg },
                                   savingsTooltip: deal.savingsTooltip,
                                   expirationDate: deal.expirationDate,
+                                  cashBackLabel,
                                 }}
                                 pill={{
                                   chipLabel: pillChipLabel,

@@ -150,6 +150,25 @@ export interface FinanceSpec {
   trims?: string[];
 }
 
+/** A single term tier with APR and optional cash back. */
+export interface RateTier {
+  term: number;
+  apr: number;
+  cashBack?: number;
+}
+
+/** Spec for tiered finance deals with multiple terms and variable cash back. */
+export interface FinanceTieredSpec {
+  make: string;
+  model: string;
+  /** Array of rate tiers, each with term (months), APR, and optional cash back. */
+  tiers: RateTier[];
+  programName?: string;
+  programDescription?: string;
+  targetAudience?: string;
+  trims?: string[];
+}
+
 /** Output shape matches `FINANCE_DEAL_DEFS` in `cashFinanceDealsService.ts`. */
 export interface FinanceDealDef {
   type: 'finance';
@@ -162,6 +181,8 @@ export interface FinanceDealDef {
   programDescription: string;
   targetAudience: string;
   trimsEligible: string[];
+  /** Tiered rate data for deals with multiple terms and/or variable cash back. */
+  rateTiers?: RateTier[];
 }
 
 export function financeDeal(spec: FinanceSpec): FinanceDealDef {
@@ -182,6 +203,48 @@ export function financeDeal(spec: FinanceSpec): FinanceDealDef {
     programDescription,
     targetAudience: spec.targetAudience ?? 'Well-qualified buyers with approved credit',
     trimsEligible: spec.trims ?? [],
+  };
+}
+
+/**
+ * Creates a tiered finance deal with multiple term/APR/cash-back combinations.
+ * Used for deals like "5.7% APR for 48mo + $2,000 cash back" vs "6.4% APR for 72mo + $1,500 cash back".
+ */
+export function financeDealTiered(spec: FinanceTieredSpec): FinanceDealDef {
+  const sortedTiers = [...spec.tiers].sort((a, b) => a.term - b.term);
+  const aprs = sortedTiers.map(t => t.apr);
+  const minApr = Math.min(...aprs);
+  const maxApr = Math.max(...aprs);
+  const aprStr = minApr === maxApr ? `${minApr}%` : `${minApr}% - ${maxApr}%`;
+
+  const terms = sortedTiers.map(t => t.term);
+  const minTerm = Math.min(...terms);
+  const maxTerm = Math.max(...terms);
+  const termStr = minTerm === maxTerm ? `${minTerm} months` : `${minTerm}–${maxTerm} months`;
+
+  const cashBacks = sortedTiers.map(t => t.cashBack ?? 0).filter(c => c > 0);
+  const hasCashBack = cashBacks.length > 0;
+  const cashBackStr = hasCashBack
+    ? ` + up to ${formatMoney(Math.max(...cashBacks))} cash back`
+    : '';
+
+  const programName = spec.programName ?? `${spec.make} ${spec.model} Special Finance Rate`;
+  const programDescription =
+    spec.programDescription ??
+    `${aprStr} APR for ${termStr}${cashBackStr} on the 2026 ${spec.make} ${spec.model}. Available to well-qualified buyers.`;
+
+  return {
+    type: 'finance',
+    make: spec.make,
+    model: spec.model,
+    apr: aprStr,
+    term: termStr,
+    expirationDate: EXPIRATION_DATE,
+    programName,
+    programDescription,
+    targetAudience: spec.targetAudience ?? 'Well-qualified buyers with approved credit',
+    trimsEligible: spec.trims ?? [],
+    rateTiers: sortedTiers,
   };
 }
 

@@ -21,6 +21,7 @@ import {
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import type { Vehicle } from '../../types/vehicle';
+import type { RateTier } from '../../services/incentiveAdapter';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
@@ -66,6 +67,7 @@ interface UnifiedMakeDeal {
   incentiveValue?: string;
   incentiveAmount?: number;
   percentOffMsrp?: string;
+  rateTiers?: RateTier[];
 }
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -252,7 +254,7 @@ const DealsByMakePage = () => {
       const aprNum = parseFloat(d.apr.replace('%', ''));
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, aprNum, months);
-      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
+      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term, rateTiers: d.rateTiers });
       out.push({
         id: d.id,
         dealType: 'finance',
@@ -267,6 +269,7 @@ const DealsByMakePage = () => {
         term: d.term,
         targetAudience: d.targetAudience,
         aprDisplay: rangeLabel.replace(/\s*APR$/, ''),
+        rateTiers: d.rateTiers,
       });
     }
 
@@ -569,12 +572,24 @@ const DealsByMakePage = () => {
                               const months = parseTermMonths(deal.term!);
                               const monthly = calcMonthly(msrp, aprNum, months);
                               const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, deal.vehicle.bodyStyle);
+
+                              // Calculate cash back label for tiered finance deals
+                              let cashBackLabel: string | undefined;
+                              if (deal.rateTiers) {
+                                const cashBacks = deal.rateTiers.map(t => t.cashBack ?? 0).filter(c => c > 0);
+                                if (cashBacks.length > 0) {
+                                  const maxCashBack = Math.max(...cashBacks);
+                                  cashBackLabel = `+ up to $${maxCashBack.toLocaleString()} cash back`;
+                                }
+                              }
+
                               payment = {
                                 amount: deal.aprDisplay!,
                                 period: ' APR',
                                 savings: { type: 'savings-text', text: savingsVsAvg },
                                 savingsTooltip,
                                 expirationDate: deal.expirationDate,
+                                cashBackLabel,
                               };
                               pillText =
                                 deal.dealType === 'zero-apr'

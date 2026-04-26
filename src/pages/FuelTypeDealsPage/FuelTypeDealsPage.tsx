@@ -13,8 +13,8 @@ import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals } from '../../utils/dealCalculations';
-import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
+import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
@@ -53,6 +53,7 @@ interface UnifiedDeal {
   rating: number;
   incentiveValue?: string;
   percentOffMsrp?: string;
+  rateTiers?: RateTier[];
 }
 
 
@@ -165,7 +166,7 @@ const FuelTypeDealsPage = () => {
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, aprNum, months);
       const { savingsVsAvg, savingsTooltip } = buildSavingsText(monthly, d.vehicle.bodyStyle);
-      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term });
+      const rangeLabel = getAprRangeLabel({ value: `${d.apr} APR`, title: d.programName, terms: d.term, rateTiers: d.rateTiers });
       results.push({
         id: d.id, dealType: 'finance', fuelType: d.vehicle.fuelType, vehicleName: `${d.vehicle.year} ${d.vehicle.make} ${d.vehicle.model}`, vehicle: d.vehicle,
         estimatedMonthly: monthly, aprDisplay: rangeLabel.replace(/\s*APR$/, ''), savingsVsAvg, savingsTooltip,
@@ -176,6 +177,7 @@ const FuelTypeDealsPage = () => {
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         term: d.term,
         targetAudience: d.targetAudience,
+        rateTiers: d.rateTiers,
       });
     }
     for (const d of getLeaseDeals()) {
@@ -450,6 +452,7 @@ const FuelTypeDealsPage = () => {
                               : deal.dealType === 'lease'
                                 ? '/mo'
                                 : ' APR';
+                            const cashBackLabel = deal.dealType === 'finance' ? getCashBackLabel(deal.rateTiers) : undefined;
                             return (
                               <Fragment key={deal.id}>
                                 {i > 0 && i % 4 === 0 && <GridAd />}
@@ -477,6 +480,7 @@ const FuelTypeDealsPage = () => {
                                     savings: { type: 'savings-text', text: deal.savingsVsAvg },
                                     savingsTooltip: deal.savingsTooltip,
                                     expirationDate: deal.expirationDate,
+                                    cashBackLabel,
                                   }}
                                   pill={{
                                     chipLabel: pillChipLabel,

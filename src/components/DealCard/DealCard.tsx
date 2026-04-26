@@ -23,6 +23,8 @@ export interface DealCardPayment {
   savings?: { type: 'savings-text'; text: string } | { type: 'plain'; text: string };
   savingsTooltip?: string;
   expirationDate: string;
+  /** Optional cash back label for tiered finance deals (e.g. "+ up to $2,000 cash back") */
+  cashBackLabel?: string;
 }
 
 export interface DealCardPill {
@@ -222,6 +224,9 @@ const DealCard: React.FC<DealCardProps> = ({
             <span className="deal-card__payment-amount">{payment.amount}</span>
             <span className="deal-card__payment-period">{payment.period}</span>
           </div>
+          {payment.cashBackLabel && (
+            <span className="deal-card__payment-cashback">{payment.cashBackLabel}</span>
+          )}
           {payment.savings && (
             <span className="deal-card__payment-savings">
               {payment.savings.type === 'savings-text'
