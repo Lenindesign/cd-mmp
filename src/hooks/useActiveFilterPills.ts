@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import type { DealsFilterState } from '../components/DealsFilterModal';
+import { ELIGIBILITY_FILTER_OPTIONS } from '../utils/dealCalculations';
 
 export interface FilterPill {
   id: string;
@@ -20,6 +21,10 @@ const CREDIT_LABELS: Record<string, string> = {
   all: 'Any Credit',
 };
 
+const ELIGIBILITY_LABELS = Object.fromEntries(
+  ELIGIBILITY_FILTER_OPTIONS.map(opt => [opt.value, opt.label]),
+) as Record<string, string>;
+
 const GLOBAL_DEFAULTS: DealsFilterState = {
   tab: 'best-deals',
   dealType: 'all',
@@ -34,6 +39,7 @@ const GLOBAL_DEFAULTS: DealsFilterState = {
   accolades: [],
   terms: [],
   creditTier: null,
+  eligibilityTags: [],
   sortBy: 'a-z',
 };
 
@@ -100,6 +106,17 @@ export function useActiveFilterPills(
     if (filters.creditTier && filters.creditTier !== defaults.creditTier) {
       result.push({ id: 'credit', label: CREDIT_LABELS[filters.creditTier] || filters.creditTier, onRemove: () => setFilters(f => ({ ...f, creditTier: defaults.creditTier })) });
     }
+
+    const defaultEligibilityTags = new Set(defaults.eligibilityTags ?? []);
+    for (const tag of filters.eligibilityTags ?? []) {
+      if (defaultEligibilityTags.has(tag)) continue;
+      result.push({
+        id: `eligibility-${tag}`,
+        label: ELIGIBILITY_LABELS[tag] || tag,
+        onRemove: () => setFilters(f => ({ ...f, eligibilityTags: (f.eligibilityTags ?? []).filter(x => x !== tag) })),
+      });
+    }
+
     if (filters.monthlyPaymentMin > defaults.monthlyPaymentMin) {
       result.push({ id: 'pay-min', label: `$${filters.monthlyPaymentMin}+ /mo`, onRemove: () => setFilters(f => ({ ...f, monthlyPaymentMin: defaults.monthlyPaymentMin })) });
     }

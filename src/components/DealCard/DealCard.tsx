@@ -74,6 +74,9 @@ export interface DealCardProps {
   /** Detail rows (e.g. Term, MSRP Range, Due at Signing) */
   details: DealCardDetail[];
 
+  /** Optional special eligibility labels, e.g. Military eligible. */
+  eligibilityLabels?: string[];
+
   /** Primary CTA click handler */
   onDealClick: (e: React.MouseEvent) => void;
 
@@ -109,6 +112,7 @@ const DealCard: React.FC<DealCardProps> = ({
   payment,
   pill,
   details,
+  eligibilityLabels,
   onDealClick,
   secondaryCta,
 }) => {
@@ -242,6 +246,14 @@ const DealCard: React.FC<DealCardProps> = ({
           )}
           <span className="deal-card__payment-expires">
             Expires {formatExpiration(payment.expirationDate)}
+            {eligibilityLabels && eligibilityLabels.length > 0 && (
+              <>
+                <span className="deal-card__payment-meta-separator" aria-hidden="true">•</span>
+                <span className="deal-card__payment-eligibility">
+                  {eligibilityLabels.join(' • ')}
+                </span>
+              </>
+            )}
           </span>
         </div>
 

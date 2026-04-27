@@ -13,8 +13,8 @@ import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
-import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
+import type { EligibilityTag, VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
@@ -49,6 +49,7 @@ interface UnifiedDeal {
   additionalInfo: { icon: string; label: string; value: string }[];
   rating: number;
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 const FAQ_DATA = [
@@ -101,7 +102,7 @@ const TruckDealsPage = () => {
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
-    deal?: { term?: string; targetAudience?: string },
+    deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
     if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
@@ -121,8 +122,9 @@ const TruckDealsPage = () => {
       const dealTier = inferCreditTier(deal.targetAudience);
       if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
     }
+    if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  }, [filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -152,6 +154,7 @@ const TruckDealsPage = () => {
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getCashDeals().filter((d) => isTruck(d.vehicle.bodyStyle))) {
@@ -167,6 +170,7 @@ const TruckDealsPage = () => {
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getFinanceDeals().filter((d) => isTruck(d.vehicle.bodyStyle))) {
@@ -186,6 +190,7 @@ const TruckDealsPage = () => {
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         rateTiers: d.rateTiers,
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getLeaseDeals().filter((d) => isTruck(d.vehicle.bodyStyle))) {
@@ -216,6 +221,7 @@ const TruckDealsPage = () => {
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
+      if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
     }).length;
   }, [deals]);
@@ -226,7 +232,7 @@ const TruckDealsPage = () => {
     else if (filters.dealType === 'finance') result = result.filter(d => d.dealType !== 'lease');
     if (filters.monthlyPaymentMin > 0) result = result.filter(d => d.estimatedMonthly >= filters.monthlyPaymentMin);
     if (filters.monthlyPaymentMax < 1500) result = result.filter(d => d.estimatedMonthly <= filters.monthlyPaymentMax);
-    const filtered = result.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }));
+    const filtered = result.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience, eligibilityTags: d.eligibilityTags }));
     return sortDeals(filtered, filters.sortBy);
   }, [deals, filters.dealType, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.sortBy, matchesFilters]);
 
@@ -417,6 +423,7 @@ const TruckDealsPage = () => {
                                     expirationDate: deal.expirationDate,
                                   }}
                                   details={deal.details}
+                                  eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
                                   onDealClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}
                                 />
                               </Fragment>

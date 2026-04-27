@@ -4,9 +4,9 @@ import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
-import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
+import type { EligibilityTag, VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '../../components/SEO';
@@ -55,6 +55,7 @@ interface UnifiedAprDeal {
   incentiveValue?: string;
   percentOffMsrp?: string;
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -239,6 +240,7 @@ const ZeroAprDealsPage = () => {
         programName: d.programName, programDescription: d.programDescription,
         targetAudience: d.targetAudience, trimsEligible: d.trimsEligible,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        eligibilityTags: d.eligibilityTags,
       });
     }
 
@@ -258,6 +260,7 @@ const ZeroAprDealsPage = () => {
         targetAudience: d.targetAudience, trimsEligible: d.trimsEligible,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         rateTiers: d.rateTiers,
+        eligibilityTags: d.eligibilityTags,
       });
     }
 
@@ -273,6 +276,7 @@ const ZeroAprDealsPage = () => {
         targetAudience: '', trimsEligible: d.trimsEligible,
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         incentiveValue: d.incentiveValue, percentOffMsrp: d.percentOffMsrp,
+        eligibilityTags: d.eligibilityTags,
       });
     }
 
@@ -301,6 +305,7 @@ const ZeroAprDealsPage = () => {
         const dealTier = inferCreditTier(d.targetAudience);
         if (!creditTierQualifies(dealTier, f.creditTier)) return false;
       }
+      if (!matchesEligibilityTags(f.eligibilityTags, d.eligibilityTags)) return false;
       if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 1500) {
         if (d.estimatedMonthly < f.monthlyPaymentMin || d.estimatedMonthly > f.monthlyPaymentMax) return false;
       }
@@ -391,6 +396,7 @@ const ZeroAprDealsPage = () => {
         payment={payment}
         pill={pill}
         details={details}
+        eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
         onDealClick={() => setActiveDealId(deal.id)}
       />
     );

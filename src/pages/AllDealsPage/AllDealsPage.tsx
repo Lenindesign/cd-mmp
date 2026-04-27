@@ -12,10 +12,9 @@ import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { DealCard } from '../../components/DealCard';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { useAuth } from '../../contexts/AuthContext';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
-import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
-import { getCashBackLabel } from '../../utils/dealCalculations';
+import type { EligibilityTag, VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import { GridAd } from '../../components/GridAd';
@@ -58,6 +57,7 @@ interface MiniDeal {
   savingsTooltip: string;
   term?: string;
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -185,6 +185,7 @@ const AllDealsPage = () => {
           staffRating: d.vehicle.staffRating, term: d.term,
           estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: '0%', monthlyNum: monthly,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
+          eligibilityTags: d.eligibilityTags,
         });
       });
 
@@ -213,6 +214,7 @@ const AllDealsPage = () => {
           estimatedMonthly: `$${monthly.toLocaleString()}`, aprDisplay: rangeLabel.replace(/\s*APR$/, ''), monthlyNum: monthly,
           savingsVsAvg: savings.savingsVsAvg, savingsTooltip: savings.savingsTooltip,
           rateTiers: d.rateTiers,
+          eligibilityTags: d.eligibilityTags,
         });
       });
 
@@ -239,6 +241,7 @@ const AllDealsPage = () => {
           estimatedMonthly: d.incentiveValue, monthlyNum: monthlyAfterCash,
           savingsVsAvg: `${d.percentOffMsrp} off MSRP`,
           savingsTooltip: savings.savingsTooltip,
+          eligibilityTags: d.eligibilityTags,
         });
       });
 
@@ -266,6 +269,7 @@ const AllDealsPage = () => {
       if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 1500) {
         if (d.monthlyNum < f.monthlyPaymentMin || d.monthlyNum > f.monthlyPaymentMax) return false;
       }
+      if (!matchesEligibilityTags(f.eligibilityTags, d.eligibilityTags)) return false;
       return true;
     });
   }, []);
@@ -473,6 +477,7 @@ const AllDealsPage = () => {
                                   expirationDate: deal.expirationDate,
                                 }}
                                 details={cardDetails}
+                                eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
                                 onDealClick={(e) => handleDealClick(e, deal)}
                               />
                             </Fragment>

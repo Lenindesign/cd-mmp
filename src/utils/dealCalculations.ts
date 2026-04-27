@@ -11,6 +11,36 @@ export {
   findMatchingIncentiveId,
 } from '../services/incentiveAdapter';
 export type { VehicleOfferSummary, RateTier } from '../services/incentiveAdapter';
+export type { EligibilityTag } from '../services/_dealComposer';
+
+export const ELIGIBILITY_FILTER_OPTIONS: { value: import('../services/_dealComposer').EligibilityTag; label: string }[] = [
+  { value: 'military', label: 'Military' },
+  { value: 'firstResponder', label: 'First Responders' },
+  { value: 'collegeGrad', label: 'College Grad' },
+  { value: 'loyalty', label: 'Loyalty' },
+  { value: 'conquest', label: 'Conquest' },
+];
+
+const ELIGIBILITY_LABELS: Record<import('../services/_dealComposer').EligibilityTag, string> = {
+  military: 'Military eligible',
+  firstResponder: 'First responder bonus',
+  collegeGrad: 'College grad offer',
+  loyalty: 'Loyalty offer',
+  conquest: 'Conquest offer',
+};
+
+export function getEligibilityLabels(tags?: import('../services/_dealComposer').EligibilityTag[]): string[] {
+  return tags?.map(tag => ELIGIBILITY_LABELS[tag]).filter(Boolean) ?? [];
+}
+
+export function matchesEligibilityTags(
+  selectedTags?: import('../services/_dealComposer').EligibilityTag[],
+  dealTags?: import('../services/_dealComposer').EligibilityTag[],
+): boolean {
+  if (!selectedTags || selectedTags.length === 0) return true;
+  if (!dealTags || dealTags.length === 0) return false;
+  return selectedTags.some(tag => dealTags.includes(tag));
+}
 
 /**
  * Build a cashBackLabel from rateTiers if any tier has cash back.

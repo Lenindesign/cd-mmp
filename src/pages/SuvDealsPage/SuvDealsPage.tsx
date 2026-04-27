@@ -13,8 +13,8 @@ import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
-import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, AVG_MARKET_APR, AVG_LOAN_TERM, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
+import type { EligibilityTag, VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
@@ -47,6 +47,7 @@ interface UnifiedDeal {
   additionalInfo: { icon: string; label: string; value: string }[];
   rating: number;
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 const FAQ_DATA = [
@@ -99,7 +100,7 @@ const SuvDealsPage = () => {
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
-    deal?: { term?: string; targetAudience?: string },
+    deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
     if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
@@ -119,8 +120,9 @@ const SuvDealsPage = () => {
       const dealTier = inferCreditTier(deal.targetAudience);
       if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
     }
+    if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  }, [filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -149,6 +151,7 @@ const SuvDealsPage = () => {
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getCashDeals().filter((d) => isSuv(d.vehicle.bodyStyle))) {
@@ -164,6 +167,7 @@ const SuvDealsPage = () => {
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getFinanceDeals().filter((d) => isSuv(d.vehicle.bodyStyle))) {
@@ -182,6 +186,7 @@ const SuvDealsPage = () => {
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         rateTiers: d.rateTiers,
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getLeaseDeals().filter((d) => isSuv(d.vehicle.bodyStyle))) {
@@ -224,7 +229,7 @@ const SuvDealsPage = () => {
     const filtered = result.filter(d => {
       const term = d.details.find(x => x.label === 'Term')?.value;
       const targetAudience = d.additionalInfo.find(x => x.label === 'Target Audience')?.value;
-      return matchesFilters(d.vehicle, { term, targetAudience });
+      return matchesFilters(d.vehicle, { term, targetAudience, eligibilityTags: d.eligibilityTags });
     });
     return sortDeals(filtered, filters.sortBy);
   }, [deals, filters.dealType, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.sortBy, matchesFilters]);
@@ -416,6 +421,7 @@ const SuvDealsPage = () => {
                                     expirationDate: deal.expirationDate,
                                   }}
                                   details={deal.details}
+                                  eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
                                   onDealClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}
                                 />
                               </Fragment>

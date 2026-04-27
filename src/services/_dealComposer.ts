@@ -26,6 +26,8 @@ const formatMoney = (n: number): string => `$${n.toLocaleString('en-US')}`;
 
 const roundToNearestHundred = (n: number): number => Math.round(n / 100) * 100;
 
+export type EligibilityTag = 'military' | 'firstResponder' | 'collegeGrad' | 'loyalty' | 'conquest';
+
 // ────────────────────────────────────────────────────────────────────────────
 // Lease
 // ────────────────────────────────────────────────────────────────────────────
@@ -103,6 +105,7 @@ export interface ZeroAprSpec {
   /** Default: `'Well-qualified buyers with 700+ credit score'`. */
   targetAudience?: string;
   trims?: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 /** Output shape matches `DEAL_DEFINITIONS` in `zeroAprDealsService.ts`. */
@@ -114,6 +117,7 @@ export interface ZeroAprDealDef {
   programDescription: string;
   targetAudience: string;
   trimsEligible: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 export function zeroAprDeal(spec: ZeroAprSpec): ZeroAprDealDef {
@@ -130,6 +134,7 @@ export function zeroAprDeal(spec: ZeroAprSpec): ZeroAprDealDef {
     programDescription,
     targetAudience: spec.targetAudience ?? 'Well-qualified buyers with 700+ credit score',
     trimsEligible: spec.trims ?? [],
+    eligibilityTags: spec.eligibilityTags,
   };
 }
 
@@ -148,6 +153,7 @@ export interface FinanceSpec {
   programDescription?: string;
   targetAudience?: string;
   trims?: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 /** A single term tier with APR and optional cash back. */
@@ -167,6 +173,7 @@ export interface FinanceTieredSpec {
   programDescription?: string;
   targetAudience?: string;
   trims?: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 /** Output shape matches `FINANCE_DEAL_DEFS` in `cashFinanceDealsService.ts`. */
@@ -183,6 +190,7 @@ export interface FinanceDealDef {
   trimsEligible: string[];
   /** Tiered rate data for deals with multiple terms and/or variable cash back. */
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 export function financeDeal(spec: FinanceSpec): FinanceDealDef {
@@ -203,6 +211,7 @@ export function financeDeal(spec: FinanceSpec): FinanceDealDef {
     programDescription,
     targetAudience: spec.targetAudience ?? 'Well-qualified buyers with approved credit',
     trimsEligible: spec.trims ?? [],
+    eligibilityTags: spec.eligibilityTags,
   };
 }
 
@@ -245,6 +254,7 @@ export function financeDealTiered(spec: FinanceTieredSpec): FinanceDealDef {
     targetAudience: spec.targetAudience ?? 'Well-qualified buyers with approved credit',
     trimsEligible: spec.trims ?? [],
     rateTiers: sortedTiers,
+    eligibilityTags: spec.eligibilityTags,
   };
 }
 
@@ -262,6 +272,7 @@ export interface CashSpec {
   programName?: string;
   programDescription?: string;
   trims?: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 /** Output shape matches `CASH_DEAL_DEFS` in `cashFinanceDealsService.ts`. */
@@ -276,6 +287,7 @@ export interface CashDealDef {
   programName: string;
   programDescription: string;
   trimsEligible: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 /**
@@ -307,5 +319,6 @@ export function cashDeal(spec: CashSpec): CashDealDef {
     programName,
     programDescription,
     trimsEligible: spec.trims ?? [],
+    eligibilityTags: spec.eligibilityTags,
   };
 }

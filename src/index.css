@@ -32,7 +32,7 @@
   --color-black: #000000;
   --color-dark: #222222;           /* Darkest - headers, footers, primary text */
   --color-gray-700: #4a4a4a;       /* Dark text */
-  --color-gray-600: #666666;       /* Secondary text */
+  --color-gray-600: #595959;       /* Secondary text */
   --color-gray-500: #6b6b6b;       /* Muted text - WCAG AA: 5.0:1 on white */
   --color-gray-300: #cdcdcd;       /* Borders */
   --color-gray-200: #e5e5e5;       /* Light borders, dividers */

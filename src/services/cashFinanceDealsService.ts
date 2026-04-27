@@ -7,6 +7,7 @@ import {
   financeDealTiered,
   type CashDealDef,
   type FinanceDealDef,
+  type EligibilityTag,
   type RateTier,
 } from './_dealComposer';
 
@@ -21,6 +22,7 @@ export interface CashDeal {
   programName: string;
   programDescription: string;
   trimsEligible: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 export interface FinanceDeal {
@@ -36,6 +38,7 @@ export interface FinanceDeal {
   trimsEligible: string[];
   /** Tiered rate data for deals with multiple terms and/or variable cash back. */
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 export type Deal = CashDeal | FinanceDeal;
@@ -55,7 +58,7 @@ const CASH_DEAL_DEFS: CashDealDef[] = [
   // Chevrolet
   cashDeal({ make: 'Chevrolet', model: 'Trax', amount: 2000, percentOffMsrp: '8–10%', programName: 'Chevrolet Customer Cash', programDescription: '$1,500 customer cash plus $500 bonus cash on select 2026 Chevrolet Trax models. Cannot be combined with special financing.', trims: ['LS', '1RS', 'LT', 'ACTIV'] }),
   cashDeal({ make: 'Chevrolet', model: 'Equinox', amount: 2500, percentOffMsrp: '7–9%', programName: 'Chevrolet Equinox Cash Allowance', programDescription: 'Customer cash allowance of $2,500 on the 2026 Chevrolet Equinox. Take delivery by expiration date.', trims: ['LS', 'LT', 'RS'] }),
-  cashDeal({ make: 'Chevrolet', model: 'Silverado', amount: 3500, percentOffMsrp: '6–8%', programName: 'Chevrolet Truck Month Cash Back', programDescription: '$3,500 customer cash on select 2026 Silverado 1500 models during Chevy Truck Month.', trims: ['WT', 'Custom', 'LT', 'RST', 'LT Trail Boss'] }),
+  cashDeal({ make: 'Chevrolet', model: 'Silverado', amount: 3500, percentOffMsrp: '6–8%', programName: 'Chevrolet Truck Month Cash Back', programDescription: '$3,500 customer cash on select 2026 Silverado 1500 models during Chevy Truck Month. Additional appreciation offers may be available for military and first responder households.', trims: ['WT', 'Custom', 'LT', 'RST', 'LT Trail Boss'], eligibilityTags: ['military', 'firstResponder'] }),
   cashDeal({ make: 'Chevrolet', model: 'Trailblazer', amount: 1500, programName: 'Chevrolet Trailblazer Cash Back', trims: ['LS', 'LT', 'ACTIV'] }),
   cashDeal({ make: 'Chevrolet', model: 'Colorado', amount: 2500, programName: 'Chevrolet Colorado Customer Cash', trims: ['WT', 'LT', 'Z71'] }),
 
@@ -66,7 +69,7 @@ const CASH_DEAL_DEFS: CashDealDef[] = [
   cashDeal({ make: 'Toyota', model: 'RAV4 Prime', amount: 3500, programName: 'Toyota RAV4 Prime PHEV Cash Back', programDescription: '$3,500 customer cash on the 2026 RAV4 Prime Plug-In Hybrid. Stackable with federal EV tax credit.', trims: ['SE', 'XSE'] }),
 
   // Ford
-  cashDeal({ make: 'Ford', model: 'F-150', amount: 4000, percentOffMsrp: '7–10%', programName: 'Ford Customer Cash', programDescription: '$4,000 customer cash back on select 2026 F-150 models. Additional trade-in assistance available.', trims: ['XL', 'XLT', 'Lariat'] }),
+  cashDeal({ make: 'Ford', model: 'F-150', amount: 4000, percentOffMsrp: '7–10%', programName: 'Ford Customer Cash', programDescription: '$4,000 customer cash back on select 2026 F-150 models. Additional military appreciation and trade-in assistance may be available.', trims: ['XL', 'XLT', 'Lariat'], eligibilityTags: ['military'] }),
   cashDeal({ make: 'Ford', model: 'Mustang', amount: 2000, percentOffMsrp: '5–6%', programName: 'Ford Mustang Cash Offer', programDescription: '$2,000 customer cash back on 2026 Ford Mustang models. Available at participating Ford dealers.', trims: ['EcoBoost', 'GT'] }),
   cashDeal({ make: 'Ford', model: 'Maverick', amount: 1500, programName: 'Ford Maverick Hybrid Cash Back', trims: ['XL', 'XLT', 'Lariat'] }),
   cashDeal({ make: 'Ford', model: 'Escape', amount: 1500, programName: 'Ford Escape Cash Back', trims: ['Active', 'ST-Line', 'Platinum'] }),
@@ -76,7 +79,7 @@ const CASH_DEAL_DEFS: CashDealDef[] = [
   cashDeal({ make: 'Honda', model: 'Pilot', amount: 2000, programName: 'Honda Pilot Customer Cash', trims: ['Sport', 'EX-L', 'Touring'] }),
 
   // Hyundai
-  cashDeal({ make: 'Hyundai', model: 'Tucson', amount: 1500, percentOffMsrp: '4–5%', programName: 'Hyundai Spring Cash Event', programDescription: '$1,500 customer cash on the 2026 Hyundai Tucson. Available through participating Hyundai dealers nationwide.', trims: ['SE', 'SEL', 'N Line', 'Limited'] }),
+  cashDeal({ make: 'Hyundai', model: 'Tucson', amount: 1500, percentOffMsrp: '4–5%', programName: 'Hyundai Spring Cash Event', programDescription: '$1,500 customer cash on the 2026 Hyundai Tucson. College graduate offers may be available through participating Hyundai dealers nationwide.', trims: ['SE', 'SEL', 'N Line', 'Limited'], eligibilityTags: ['collegeGrad'] }),
   cashDeal({ make: 'Hyundai', model: 'Kona', amount: 1000, percentOffMsrp: '3–4%', programName: 'Hyundai Kona Bonus Cash', programDescription: '$1,000 customer cash on the 2026 Hyundai Kona. No trade-in required.', trims: ['SE', 'SEL', 'Limited'] }),
   cashDeal({ make: 'Hyundai', model: 'Santa Fe', amount: 2000, programName: 'Hyundai Santa Fe Hybrid Cash Back', trims: ['SEL Hybrid', 'Limited Hybrid'] }),
   cashDeal({ make: 'Hyundai', model: 'Ioniq 5', amount: 7500, percentOffMsrp: '10–15%', programName: 'Hyundai Ioniq 5 EV Lease Cash', programDescription: 'Up to $7,500 EV lease cash passed through from the federal clean vehicle credit on the 2026 Ioniq 5.', trims: ['SE', 'SEL', 'Limited'] }),
@@ -87,7 +90,7 @@ const CASH_DEAL_DEFS: CashDealDef[] = [
   cashDeal({ make: 'Nissan', model: 'Altima', amount: 1500, programName: 'Nissan Altima Cash Back', trims: ['S', 'SV'] }),
 
   // Kia
-  cashDeal({ make: 'Kia', model: 'Seltos', amount: 1500, percentOffMsrp: '5–6%', programName: 'Kia Customer Cash', programDescription: '$1,500 customer cash on the 2026 Kia Seltos. Available at participating Kia dealers.', trims: ['LX', 'S', 'EX', 'SX'] }),
+  cashDeal({ make: 'Kia', model: 'Seltos', amount: 1500, percentOffMsrp: '5–6%', programName: 'Kia Customer Cash', programDescription: '$1,500 customer cash on the 2026 Kia Seltos. First responder appreciation offers may be available at participating Kia dealers.', trims: ['LX', 'S', 'EX', 'SX'], eligibilityTags: ['firstResponder'] }),
   cashDeal({ make: 'Kia', model: 'K5', amount: 1500, programName: 'Kia K5 Customer Cash', trims: ['LXS', 'GT-Line', 'EX'] }),
   cashDeal({ make: 'Kia', model: 'Sportage Hybrid', amount: 2000, programName: 'Kia Sportage Hybrid Cash Back', trims: ['LX', 'EX'] }),
   cashDeal({ make: 'Kia', model: 'Telluride', amount: 2500, programName: 'Kia Telluride Customer Cash', trims: ['LX', 'S', 'EX'] }),
@@ -105,8 +108,8 @@ const CASH_DEAL_DEFS: CashDealDef[] = [
   cashDeal({ make: 'Jeep', model: 'Grand Cherokee 4xe', amount: 4000, programName: 'Jeep Grand Cherokee 4xe PHEV Cash Back', trims: ['Limited 4xe', 'Overland 4xe'] }),
 
   // Luxury
-  cashDeal({ make: 'BMW', model: '3 Series', amount: 2500, percentOffMsrp: '4–5%', programName: 'BMW Loyalty Credit', programDescription: '$2,500 loyalty credit for current BMW owners purchasing a new 3 Series. Must currently own a BMW vehicle.', trims: ['330i', '330i xDrive'] }),
-  cashDeal({ make: 'Mercedes-Benz', model: 'C-Class', amount: 3000, percentOffMsrp: '5–6%', programName: 'Mercedes-Benz Loyalty Credit', programDescription: '$3,000 loyalty credit for current Mercedes-Benz owners. Must currently own or lease a Mercedes-Benz vehicle.', trims: ['C 300', 'C 300 4MATIC'] }),
+  cashDeal({ make: 'BMW', model: '3 Series', amount: 2500, percentOffMsrp: '4–5%', programName: 'BMW Loyalty Credit', programDescription: '$2,500 loyalty credit for current BMW owners purchasing a new 3 Series. Must currently own a BMW vehicle.', trims: ['330i', '330i xDrive'], eligibilityTags: ['loyalty'] }),
+  cashDeal({ make: 'Mercedes-Benz', model: 'C-Class', amount: 3000, percentOffMsrp: '5–6%', programName: 'Mercedes-Benz Loyalty Credit', programDescription: '$3,000 loyalty credit for current Mercedes-Benz owners. Must currently own or lease a Mercedes-Benz vehicle.', trims: ['C 300', 'C 300 4MATIC'], eligibilityTags: ['loyalty'] }),
   cashDeal({ make: 'Chevrolet', model: 'Silverado 1500 Duramax', amount: 3500, programName: 'Chevrolet Silverado Duramax Cash Back', programDescription: '$3,500 customer cash on the 2026 Silverado 1500 Duramax Turbo-Diesel through GM Financial.', trims: ['LT', 'RST'] }),
 ];
 
@@ -166,9 +169,10 @@ const FINANCE_DEAL_DEFS: FinanceDealDef[] = [
       { term: 84, apr: 5.9, cashBack: 1000 },
     ],
     programName: 'Silverado Truck Month APR + Cash',
-    programDescription: 'Chevrolet Truck Month brings tiered APR plus up to $2,500 bonus cash on select Silverado 1500 models.',
+    programDescription: 'Chevrolet Truck Month brings tiered APR plus up to $2,500 bonus cash on select Silverado 1500 models. Military and first responder appreciation offers may also apply.',
     targetAudience: 'Well-qualified buyers financing through GM Financial',
     trims: ['WT', 'Custom', 'LT', 'RST', 'LT Trail Boss'],
+    eligibilityTags: ['military', 'firstResponder'],
   }),
   financeDealTiered({
     make: 'Chevrolet', model: 'Colorado',
@@ -180,6 +184,7 @@ const FINANCE_DEAL_DEFS: FinanceDealDef[] = [
     ],
     programName: 'Chevrolet Colorado Tiered Finance',
     trims: ['WT', 'LT', 'Z71'],
+    eligibilityTags: ['military'],
   }),
 
   // Toyota — 5 tiered deals
@@ -193,9 +198,10 @@ const FINANCE_DEAL_DEFS: FinanceDealDef[] = [
       { term: 72, apr: 5.49, cashBack: 1000 },
     ],
     programName: 'Toyota Camry APR + Cash Incentive',
-    programDescription: 'Toyota Financial Services tiered APR with up to $2,000 cash back on the 2026 Camry.',
+    programDescription: 'Toyota Financial Services tiered APR with up to $2,000 cash back on the 2026 Camry. College graduate rebates may be available for recent graduates.',
     targetAudience: 'Tier 1+ credit customers through Toyota Financial Services',
     trims: ['LE', 'SE', 'XLE', 'XSE'],
+    eligibilityTags: ['collegeGrad'],
   }),
   financeDealTiered({
     make: 'Toyota', model: 'RAV4',
@@ -305,9 +311,10 @@ const FINANCE_DEAL_DEFS: FinanceDealDef[] = [
       { term: 84, apr: 4.9, cashBack: 1000 },
     ],
     programName: 'Ford F-150 Truck Season APR + Cash',
-    programDescription: 'Ford Truck Season brings tiered APR plus up to $3,000 bonus cash on select F-150 models.',
+    programDescription: 'Ford Truck Season brings tiered APR plus up to $3,000 bonus cash on select F-150 models. Military appreciation offers may be available.',
     targetAudience: 'Well-qualified buyers financing through Ford Credit',
     trims: ['XL', 'XLT', 'Lariat'],
+    eligibilityTags: ['military'],
   }),
   financeDealTiered({
     make: 'Ford', model: 'Escape',
@@ -342,9 +349,10 @@ const FINANCE_DEAL_DEFS: FinanceDealDef[] = [
       { term: 60, apr: 4.9, cashBack: 1000 },
     ],
     programName: 'Hyundai Tucson APR + Cash Savings',
-    programDescription: 'Tiered APR with up to $2,000 cash back on the 2026 Tucson. Includes complimentary maintenance.',
+    programDescription: 'Tiered APR with up to $2,000 cash back on the 2026 Tucson. Includes complimentary maintenance. College graduate offers may be available.',
     targetAudience: 'Well-qualified buyers with 720+ credit score',
     trims: ['SE', 'SEL', 'N Line'],
+    eligibilityTags: ['collegeGrad'],
   }),
   financeDealTiered({
     make: 'Hyundai', model: 'Kona',
@@ -487,6 +495,7 @@ export const getCashDeals = (): CashDeal[] => {
         programName: def.programName,
         programDescription: def.programDescription,
         trimsEligible: def.trimsEligible,
+        eligibilityTags: def.eligibilityTags,
       });
     }
   }
@@ -510,6 +519,7 @@ export const getFinanceDeals = (): FinanceDeal[] => {
         targetAudience: def.targetAudience,
         trimsEligible: def.trimsEligible,
         rateTiers: def.rateTiers,
+        eligibilityTags: def.eligibilityTags,
       });
     }
   }

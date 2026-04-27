@@ -4,8 +4,8 @@ import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getUniqueMakes } from '../../services/vehicleService';
-import { TERM_OPTIONS, parseTermMonths } from '../../utils/dealCalculations';
-import type { CreditTier } from '../../utils/dealCalculations';
+import { ELIGIBILITY_FILTER_OPTIONS, TERM_OPTIONS, matchesEligibilityTags, parseTermMonths } from '../../utils/dealCalculations';
+import type { CreditTier, EligibilityTag } from '../../utils/dealCalculations';
 import './DealsFilterModal.css';
 
 export type DealFilterTab = 'best-deals' | 'all-specials';
@@ -36,6 +36,7 @@ export interface DealsFilterState {
   accolades: Accolade[];
   terms: number[];
   creditTier: CreditTier | null;
+  eligibilityTags?: EligibilityTag[];
   sortBy: SortOption;
 }
 
@@ -94,6 +95,7 @@ const DealsFilterModal = ({
     dueAtSigning: false,
     fuelType: false,
     accolades: false,
+    eligibility: false,
   });
 
   useEffect(() => {
@@ -108,6 +110,7 @@ const DealsFilterModal = ({
         fuelType: prev.fuelType || externalFilters.fuelTypes.length > 0,
         term: prev.term || externalFilters.terms.length > 0,
         accolades: prev.accolades || externalFilters.accolades.length > 0,
+        eligibility: prev.eligibility || (externalFilters.eligibilityTags?.length ?? 0) > 0,
       }));
     }
   }, [isOpen, externalFilters]);
@@ -149,7 +152,7 @@ const DealsFilterModal = ({
     };
   }, [isOpen, onClose]);
 
-  const { leaseDeals, buyingDeals, bodyTypes, makes, fuelTypes, availableTerms, paymentRange, signingRange } = useMemo(() => {
+  const { leaseDeals, buyingDeals, bodyTypes, makes, fuelTypes, availableTerms, eligibilityOptions, paymentRange, signingRange } = useMemo(() => {
     const leaseDealsLocal = getLeaseDeals();
     const zeroAprDeals = getZeroAprDeals();
     const cashDeals = getCashDeals();
@@ -170,6 +173,11 @@ const DealsFilterModal = ({
     for (const d of financeDeals) rawTerms.add(parseTermMonths(d.term));
     for (const d of leaseDealsLocal) rawTerms.add(parseTermMonths(d.term));
     const availableTermValues = TERM_OPTIONS.filter(t => rawTerms.has(t));
+    const rawEligibility = new Set<EligibilityTag>();
+    for (const d of buyingDealsLocal) {
+      d.eligibilityTags?.forEach(tag => rawEligibility.add(tag));
+    }
+    const availableEligibilityValues = ELIGIBILITY_FILTER_OPTIONS.filter(opt => rawEligibility.has(opt.value));
 
     const payments = leaseDealsLocal.map(d => d.monthlyPaymentNum);
     const signings = leaseDealsLocal.map(d => {
@@ -184,6 +192,7 @@ const DealsFilterModal = ({
       makes: uniqueMakes,
       fuelTypes: uniqueFuelTypes,
       availableTerms: availableTermValues,
+      eligibilityOptions: availableEligibilityValues,
       paymentRange: {
         min: payments.length ? Math.min(...payments) : 0,
         max: payments.length ? Math.max(...payments) : 2000,
@@ -246,7 +255,10 @@ const DealsFilterModal = ({
         }).length;
       }
 
-      return buyingDeals.filter(deal => matchesVehicle(deal.vehicle)).length;
+      return buyingDeals.filter(deal => (
+        matchesVehicle(deal.vehicle) &&
+        matchesEligibilityTags(d.eligibilityTags, deal.eligibilityTags)
+      )).length;
     },
     [leaseDeals, buyingDeals],
   );
@@ -272,9 +284,9 @@ const DealsFilterModal = ({
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   }, []);
 
-  const toggleArrayItem = useCallback((field: 'bodyTypes' | 'makes' | 'fuelTypes' | 'accolades', value: string) => {
+  const toggleArrayItem = useCallback((field: 'bodyTypes' | 'makes' | 'fuelTypes' | 'accolades' | 'eligibilityTags', value: string) => {
     setDraft(prev => {
-      const arr = prev[field] as string[];
+      const arr = (prev[field] ?? []) as string[];
       return {
         ...prev,
         [field]: arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value],
@@ -305,8 +317,11 @@ const DealsFilterModal = ({
     for (const ft of fuelTypes) {
       counts[`fuel-${ft}`] = effectiveCount({ ...base, fuelTypes: [ft] });
     }
+    for (const opt of eligibilityOptions) {
+      counts[`eligibility-${opt.value}`] = effectiveCount({ ...base, eligibilityTags: [opt.value] });
+    }
     return counts;
-  }, [effectiveCount, draft, bodyTypes, makes, availableTerms, fuelTypes]);
+  }, [effectiveCount, draft, bodyTypes, makes, availableTerms, fuelTypes, eligibilityOptions]);
 
   const handleClearAll = useCallback(() => {
     setDraft(prev => ({
@@ -322,6 +337,7 @@ const DealsFilterModal = ({
       accolades: [],
       terms: [],
       creditTier: null,
+      eligibilityTags: [],
       sortBy: 'a-z',
     }));
   }, [paymentRange, signingRange]);
@@ -343,6 +359,7 @@ const DealsFilterModal = ({
   const showMonthlyPayment = isLeaseMode;
   const showCashDown = isLeaseMode;
   const showTermLength = isLeaseMode;
+  const showEligibility = !isLeaseMode && eligibilityOptions.length > 0;
 
   const sortOptions = useMemo(() => {
     if (isLeaseMode) {
@@ -414,6 +431,31 @@ const DealsFilterModal = ({
               ))}
             </div>
           </FilterSection>
+
+          {showEligibility && (
+            <FilterSection
+              title="Special Eligibility"
+              expanded={expandedSections.eligibility}
+              onToggle={() => toggleSection('eligibility')}
+            >
+              <div className="deals-filter__chips">
+                {eligibilityOptions.map(opt => {
+                  const count = optionCounts?.[`eligibility-${opt.value}`];
+                  const activeTags = draft.eligibilityTags ?? [];
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={`deals-filter__chip ${activeTags.includes(opt.value) ? 'deals-filter__chip--active' : ''}`}
+                      onClick={() => toggleArrayItem('eligibilityTags', opt.value)}
+                    >
+                      {opt.label}{count != null ? ` (${count})` : ''}
+                    </button>
+                  );
+                })}
+              </div>
+            </FilterSection>
+          )}
 
           {/* Body Style */}
           <FilterSection

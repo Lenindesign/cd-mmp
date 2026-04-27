@@ -11,8 +11,8 @@ import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals } from '../../utils/dealCalculations';
-import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
+import type { EligibilityTag, VehicleOfferSummary } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
@@ -50,6 +50,7 @@ interface UnifiedDeal {
   rating: number;
   incentiveValue?: string;
   percentOffMsrp?: string;
+  eligibilityTags?: EligibilityTag[];
 }
 
 const BODY_TABS: { key: BodyTab; label: string; icon: React.ReactNode; match: (bs: string) => boolean }[] = [
@@ -109,7 +110,7 @@ const CashFinanceBodyStylePage = () => {
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
-    deal?: { term?: string; targetAudience?: string },
+    deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
@@ -130,8 +131,9 @@ const CashFinanceBodyStylePage = () => {
       const dealTier = inferCreditTier(deal.targetAudience);
       if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
     }
+    if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -155,6 +157,7 @@ const CashFinanceBodyStylePage = () => {
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
+      if (!matchesEligibilityTags(draftFilters.eligibilityTags, deal.eligibilityTags)) return false;
       return true;
     }).length;
   }, []);
@@ -177,6 +180,7 @@ const CashFinanceBodyStylePage = () => {
         expirationDate: d.expirationDate, programName: d.programName, programDescription: d.programDescription,
         additionalInfo: [{ icon: 'users', label: 'Target Audience', value: d.targetAudience }, { icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getCashDeals()) {
@@ -193,6 +197,7 @@ const CashFinanceBodyStylePage = () => {
         additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         incentiveValue: d.incentiveValue, percentOffMsrp: d.percentOffMsrp,
+        eligibilityTags: d.eligibilityTags,
       });
     }
     return results;
@@ -208,7 +213,7 @@ const CashFinanceBodyStylePage = () => {
     const filtered = result.filter(d => {
       const term = d.details.find(x => x.label === 'Term')?.value;
       const targetAudience = d.additionalInfo.find(x => x.label === 'Target Audience')?.value;
-      return matchesFilters(d.vehicle, { term, targetAudience });
+      return matchesFilters(d.vehicle, { term, targetAudience, eligibilityTags: d.eligibilityTags });
     });
     return sortDeals(filtered, filters.sortBy);
   }, [deals, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.sortBy, matchesFilters]);
@@ -315,6 +320,7 @@ const CashFinanceBodyStylePage = () => {
         payment={payment}
         pill={pill}
         details={details}
+        eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
         onDealClick={() => setActiveDealId(deal.id)}
       />
     );

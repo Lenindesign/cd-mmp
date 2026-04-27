@@ -453,11 +453,24 @@
 }
 
 .deal-card__payment-expires {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
   color: var(--color-gray-600);
   margin-top: var(--spacing-1);
+}
+
+.deal-card__payment-meta-separator {
+  color: var(--color-gray-400);
+}
+
+.deal-card__payment-eligibility {
+  color: inherit;
+  font: inherit;
 }
 
 /* Label-info tooltip (the "?" icon tooltips) — matches the accolade

@@ -1,6 +1,6 @@
 import { getAllVehicles } from './vehicleService';
 import type { Vehicle } from '../types/vehicle';
-import { EXPIRATION_DATE, zeroAprDeal, type ZeroAprDealDef } from './_dealComposer';
+import { EXPIRATION_DATE, zeroAprDeal, type EligibilityTag, type ZeroAprDealDef } from './_dealComposer';
 
 export interface ZeroAprDeal {
   id: string;
@@ -12,6 +12,7 @@ export interface ZeroAprDeal {
   programDescription: string;
   targetAudience: string;
   trimsEligible: string[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 const CURRENT_MONTH = new Date().toLocaleString('default', { month: 'long' });
@@ -28,11 +29,11 @@ const DEAL_DEFINITIONS: ZeroAprDealDef[] = [
   zeroAprDeal({ make: 'Chevrolet', model: 'Equinox', term: '60 months', programName: 'Chevrolet 0% APR Event', programDescription: 'Get 0% APR financing for up to 60 months on the all-new Chevrolet Equinox through GM Financial. No down payment required for well-qualified buyers.', targetAudience: 'Well-qualified buyers with 720+ credit score', trims: ['LS', 'LT', 'RS'] }),
   zeroAprDeal({ make: 'Chevrolet', model: 'Trax', term: '48 months', programName: 'Chevrolet Spring Sales Event', programDescription: 'Take advantage of 0% APR financing for 48 months on the 2026 Chevrolet Trax through GM Financial.', targetAudience: 'Well-qualified buyers with 700+ credit score', trims: ['LS', '1RS', 'LT', 'ACTIV'] }),
   zeroAprDeal({ make: 'Chevrolet', model: 'Trailblazer', term: '60 months', programName: 'Chevrolet Trailblazer 0% APR', programDescription: '0% APR financing for 60 months on the 2026 Trailblazer through GM Financial.', trims: ['LS', 'LT', 'ACTIV'] }),
-  zeroAprDeal({ make: 'Chevrolet', model: 'Silverado', term: '72 months', programName: 'Chevrolet Truck Month', programDescription: 'Chevrolet Truck Month brings 0% APR for 72 months on select Silverado 1500 models. Plus $1,000 bonus cash.', targetAudience: 'Well-qualified buyers financing through GM Financial', trims: ['WT', 'Custom', 'LT', 'RST'] }),
-  zeroAprDeal({ make: 'Chevrolet', model: 'Colorado', term: '60 months', programName: 'Chevrolet Colorado 0% APR', targetAudience: 'Well-qualified buyers financing through GM Financial', trims: ['WT', 'LT', 'Z71'] }),
+  zeroAprDeal({ make: 'Chevrolet', model: 'Silverado', term: '72 months', programName: 'Chevrolet Truck Month', programDescription: 'Chevrolet Truck Month brings 0% APR for 72 months on select Silverado 1500 models. Plus $1,000 bonus cash. Military and first responder appreciation offers may also apply.', targetAudience: 'Well-qualified buyers financing through GM Financial', trims: ['WT', 'Custom', 'LT', 'RST'], eligibilityTags: ['military', 'firstResponder'] }),
+  zeroAprDeal({ make: 'Chevrolet', model: 'Colorado', term: '60 months', programName: 'Chevrolet Colorado 0% APR', targetAudience: 'Well-qualified buyers financing through GM Financial', trims: ['WT', 'LT', 'Z71'], eligibilityTags: ['military'] }),
 
   // Toyota
-  zeroAprDeal({ make: 'Toyota', model: 'Camry', term: '60 months', programName: 'Toyota Special Finance Offer', programDescription: 'Toyota Financial Services is offering 0% APR for 60 months on the popular Camry sedan. Available at participating dealers.', targetAudience: 'Tier 1+ credit customers through Toyota Financial Services', trims: ['LE', 'SE', 'XLE', 'XSE'] }),
+  zeroAprDeal({ make: 'Toyota', model: 'Camry', term: '60 months', programName: 'Toyota Special Finance Offer', programDescription: 'Toyota Financial Services is offering 0% APR for 60 months on the popular Camry sedan. College graduate rebates may be available at participating dealers.', targetAudience: 'Tier 1+ credit customers through Toyota Financial Services', trims: ['LE', 'SE', 'XLE', 'XSE'], eligibilityTags: ['collegeGrad'] }),
   zeroAprDeal({ make: 'Toyota', model: 'RAV4', term: '48 months', programName: 'Toyota RAV4 Spring Special', programDescription: '0% APR financing for 48 months on America\'s best-selling SUV. Limited-time offer through Toyota Financial Services.', trims: ['LE', 'XLE', 'XLE Premium'] }),
   zeroAprDeal({ make: 'Toyota', model: 'Corolla', term: '60 months', programName: 'Toyota Corolla 0% APR', programDescription: '0% APR for 60 months on the 2026 Corolla through Toyota Financial Services.', targetAudience: 'Tier 1+ credit customers through Toyota Financial Services', trims: ['LE', 'SE'] }),
   zeroAprDeal({ make: 'Toyota', model: 'Highlander', term: '48 months', programName: 'Toyota Highlander 0% APR Offer', trims: ['LE', 'XLE', 'Limited'] }),
@@ -47,7 +48,7 @@ const DEAL_DEFINITIONS: ZeroAprDealDef[] = [
   zeroAprDeal({ make: 'Honda', model: 'Pilot', term: '60 months', programName: 'Honda Pilot 0% APR Special', targetAudience: 'Well-qualified buyers with 720+ credit score', trims: ['Sport', 'EX-L', 'Touring'] }),
 
   // Ford
-  zeroAprDeal({ make: 'Ford', model: 'F-150', term: '72 months', programName: 'Ford Truck Season', programDescription: 'Ford is offering 0% APR for 72 months on select F-150 models during Truck Season. Combined with $500 bonus cash.', targetAudience: 'Well-qualified buyers financing through Ford Credit', trims: ['XL', 'XLT', 'Lariat'] }),
+  zeroAprDeal({ make: 'Ford', model: 'F-150', term: '72 months', programName: 'Ford Truck Season', programDescription: 'Ford is offering 0% APR for 72 months on select F-150 models during Truck Season. Military appreciation offers may be available.', targetAudience: 'Well-qualified buyers financing through Ford Credit', trims: ['XL', 'XLT', 'Lariat'], eligibilityTags: ['military'] }),
   zeroAprDeal({ make: 'Ford', model: 'Escape', term: '60 months', programName: 'Ford Escape 0% APR Offer', targetAudience: 'Well-qualified buyers financing through Ford Credit', trims: ['Active', 'ST-Line', 'Platinum'] }),
   zeroAprDeal({ make: 'Ford', model: 'Mustang Mach-E', term: '60 months', programName: 'Ford Mustang Mach-E 0% APR Event', programDescription: '0% APR financing for 60 months on the 2026 Mustang Mach-E through Ford Credit. Combined with federal EV tax credit eligibility.', targetAudience: 'Well-qualified buyers financing through Ford Credit', trims: ['Select', 'Premium', 'GT'] }),
 
@@ -60,7 +61,7 @@ const DEAL_DEFINITIONS: ZeroAprDealDef[] = [
   zeroAprDeal({ make: 'Hyundai', model: 'Ioniq 5', term: '60 months', programName: 'Hyundai Ioniq 5 0% APR Event', programDescription: '0% APR financing for 60 months on the Ioniq 5 through Hyundai Motor Finance. Plus $7,500 EV tax credit eligibility.', trims: ['SE', 'SEL', 'Limited'] }),
 
   // Kia
-  zeroAprDeal({ make: 'Kia', model: 'Seltos', term: '60 months', programName: 'Kia Spring Clearance', programDescription: '0% APR for 60 months on the versatile Kia Seltos. Available through Kia Finance America at participating dealers.', targetAudience: 'Well-qualified buyers through Kia Finance America', trims: ['LX', 'S', 'EX'] }),
+  zeroAprDeal({ make: 'Kia', model: 'Seltos', term: '60 months', programName: 'Kia Spring Clearance', programDescription: '0% APR for 60 months on the versatile Kia Seltos. First responder appreciation offers may be available through Kia Finance America at participating dealers.', targetAudience: 'Well-qualified buyers through Kia Finance America', trims: ['LX', 'S', 'EX'], eligibilityTags: ['firstResponder'] }),
   zeroAprDeal({ make: 'Kia', model: 'Telluride', term: '60 months', programName: 'Kia Telluride 0% APR', targetAudience: 'Well-qualified buyers with 720+ credit score', trims: ['LX', 'S', 'EX'] }),
   zeroAprDeal({ make: 'Kia', model: 'K5', term: '60 months', programName: 'Kia K5 0% APR Event', trims: ['LXS', 'GT-Line', 'EX'] }),
 
@@ -92,6 +93,7 @@ export const getZeroAprDeals = (): ZeroAprDeal[] => {
         programDescription: def.programDescription,
         targetAudience: def.targetAudience,
         trimsEligible: def.trimsEligible,
+        eligibilityTags: def.eligibilityTags,
       });
     }
   }

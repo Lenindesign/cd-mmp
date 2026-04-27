@@ -19,6 +19,7 @@ import {
 import type { Incentive, GroupAffiliation, RateTier } from '../../services/incentiveAdapter';
 import { getVehicleTrims } from '../../services/trimService';
 import { formatExpiration } from '../../utils/dateUtils';
+import { getEligibilityLabels } from '../../utils/dealCalculations';
 import './IncentivesModal.css';
 
 function buildCashDownData(
@@ -764,6 +765,14 @@ const IncentivesModal = ({
                         </span>
                       </div>
 
+                      {activeIncentive.eligibilityTags && activeIncentive.eligibilityTags.length > 0 && (
+                        <div className="incentives-modal__v5-eligibility-tags" aria-label="Special eligibility">
+                          {getEligibilityLabels(activeIncentive.eligibilityTags).map(label => (
+                            <span key={label} className="incentives-modal__v5-eligibility-tag">{label}</span>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="incentives-modal__v5-expert-tip">
                         <div className="incentives-modal__v5-expert-tip-left">
                           <BadgeCheck size={21} className="incentives-modal__v5-expert-tip-icon" aria-hidden />
@@ -1170,6 +1179,14 @@ const IncentivesModal = ({
                           expires {formatExpiration(activeIncentive.expirationDate)}
                         </span>
                       </div>
+
+                      {activeIncentive.eligibilityTags && activeIncentive.eligibilityTags.length > 0 && (
+                        <div className="incentives-modal__v5-eligibility-tags" aria-label="Special eligibility">
+                          {getEligibilityLabels(activeIncentive.eligibilityTags).map(label => (
+                            <span key={label} className="incentives-modal__v5-eligibility-tag">{label}</span>
+                          ))}
+                        </div>
+                      )}
 
                       <div className="incentives-modal__v5-expert-tip">
                         <div className="incentives-modal__v5-expert-tip-left">

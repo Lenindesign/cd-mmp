@@ -14,6 +14,7 @@
 import { getZeroAprDeals } from './zeroAprDealsService';
 import { getCashDeals, getFinanceDeals } from './cashFinanceDealsService';
 import { getLeaseDeals } from './leaseDealsService';
+import type { EligibilityTag } from './_dealComposer';
 
 // ── Canonical types ─────────────────────────────────────────────────────
 
@@ -50,6 +51,7 @@ export interface Incentive {
   groupAffiliation?: GroupAffiliation;
   /** Tiered rate data for finance deals with multiple terms and/or variable cash back. */
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 export interface VehicleIncentives {
@@ -105,6 +107,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       programName: d.programName,
       programDescription: d.programDescription,
       groupAffiliation: 'everyone',
+      eligibilityTags: d.eligibilityTags,
     });
   }
 
@@ -122,6 +125,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       programName: d.programName,
       programDescription: d.programDescription,
       groupAffiliation: 'everyone',
+      eligibilityTags: d.eligibilityTags,
     });
   }
 
@@ -149,6 +153,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       programDescription: d.programDescription,
       groupAffiliation: 'everyone',
       rateTiers: d.rateTiers,
+      eligibilityTags: d.eligibilityTags,
     });
   }
 

@@ -13,8 +13,8 @@ import { GridAd } from '../../components/GridAd';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { DealCard } from '../../components/DealCard';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
-import type { VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, inferCreditTier, creditTierQualifies, sortDeals, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
+import type { EligibilityTag, VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import IncentivesModal, { getAprRangeLabel } from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
@@ -54,6 +54,7 @@ interface UnifiedDeal {
   incentiveValue?: string;
   percentOffMsrp?: string;
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 
@@ -106,7 +107,7 @@ const FuelTypeDealsPage = () => {
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
-    deal?: { term?: string; targetAudience?: string },
+    deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
@@ -127,8 +128,9 @@ const FuelTypeDealsPage = () => {
       const dealTier = inferCreditTier(deal.targetAudience);
       if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
     }
+    if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -158,6 +160,7 @@ const FuelTypeDealsPage = () => {
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         term: d.term,
         targetAudience: d.targetAudience,
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getFinanceDeals()) {
@@ -178,6 +181,7 @@ const FuelTypeDealsPage = () => {
         term: d.term,
         targetAudience: d.targetAudience,
         rateTiers: d.rateTiers,
+        eligibilityTags: d.eligibilityTags,
       });
     }
     for (const d of getLeaseDeals()) {
@@ -212,6 +216,7 @@ const FuelTypeDealsPage = () => {
         additionalInfo: [{ icon: 'tag', label: 'Eligible Trims', value: d.trimsEligible.join(', ') }],
         rating: getSupabaseRating(d.vehicle.id, getCategory(d.vehicle.bodyStyle), d.vehicle.staffRating),
         incentiveValue: d.incentiveValue, percentOffMsrp: d.percentOffMsrp,
+        eligibilityTags: d.eligibilityTags,
       });
     }
     return results;
@@ -252,6 +257,7 @@ const FuelTypeDealsPage = () => {
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
+      if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
     }).length;
   }, [deals]);
@@ -272,7 +278,7 @@ const FuelTypeDealsPage = () => {
         return true;
       });
     }
-    const filtered = result.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience }));
+    const filtered = result.filter(d => matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience, eligibilityTags: d.eligibilityTags }));
     return sortDeals(filtered, filters.sortBy);
   }, [deals, filters.dealType, filters.monthlyPaymentMin, filters.monthlyPaymentMax, filters.dueAtSigningMin, filters.dueAtSigningMax, filters.sortBy, matchesFilters]);
 
@@ -488,6 +494,7 @@ const FuelTypeDealsPage = () => {
                                     expirationDate: deal.expirationDate,
                                   }}
                                   details={deal.details}
+                                  eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
                                   onDealClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveDealId(deal.id); }}
                                 />
                               </Fragment>

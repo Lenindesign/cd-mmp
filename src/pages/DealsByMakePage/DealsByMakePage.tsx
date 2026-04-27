@@ -17,9 +17,11 @@ import {
   findMatchingIncentiveId,
   sortDeals,
   applyLeaseRangeFilters,
+  getEligibilityLabels,
+  matchesEligibilityTags,
 } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
-import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import type { EligibilityTag, VehicleOfferSummary } from '../../utils/dealCalculations';
 import type { Vehicle } from '../../types/vehicle';
 import type { RateTier } from '../../services/incentiveAdapter';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -68,6 +70,7 @@ interface UnifiedMakeDeal {
   incentiveAmount?: number;
   percentOffMsrp?: string;
   rateTiers?: RateTier[];
+  eligibilityTags?: EligibilityTag[];
 }
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -182,7 +185,7 @@ const DealsByMakePage = () => {
         tenBest?: boolean;
         evOfTheYear?: boolean;
       },
-      deal?: { term?: string; targetAudience?: string },
+      deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
     ) => {
       if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
       if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
@@ -203,9 +206,10 @@ const DealsByMakePage = () => {
         const dealTier = inferCreditTier(deal.targetAudience);
         if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
       }
+      if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
       return true;
     },
-    [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier],
+    [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags],
   );
 
   const toggleOffersPopup = useCallback(
@@ -226,7 +230,7 @@ const DealsByMakePage = () => {
 
     for (const d of getZeroAprDeals()) {
       if (!matchesMake(d.vehicle)) continue;
-      if (!matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience })) continue;
+      if (!matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience, eligibilityTags: d.eligibilityTags })) continue;
       const msrp = parseMsrpMin(d.vehicle.priceRange);
       const months = parseTermMonths(d.term);
       const monthly = calcMonthly(msrp, 0, months);
@@ -244,12 +248,13 @@ const DealsByMakePage = () => {
         term: d.term,
         targetAudience: d.targetAudience,
         aprDisplay: '0%',
+        eligibilityTags: d.eligibilityTags,
       });
     }
 
     for (const d of getFinanceDeals()) {
       if (!matchesMake(d.vehicle)) continue;
-      if (!matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience })) continue;
+      if (!matchesFilters(d.vehicle, { term: d.term, targetAudience: d.targetAudience, eligibilityTags: d.eligibilityTags })) continue;
       const msrp = parseMsrpMin(d.vehicle.priceRange);
       const aprNum = parseFloat(d.apr.replace('%', ''));
       const months = parseTermMonths(d.term);
@@ -270,12 +275,13 @@ const DealsByMakePage = () => {
         targetAudience: d.targetAudience,
         aprDisplay: rangeLabel.replace(/\s*APR$/, ''),
         rateTiers: d.rateTiers,
+        eligibilityTags: d.eligibilityTags,
       });
     }
 
     for (const d of getCashDeals()) {
       if (!matchesMake(d.vehicle)) continue;
-      if (!matchesFilters(d.vehicle)) continue;
+      if (!matchesFilters(d.vehicle, { eligibilityTags: d.eligibilityTags })) continue;
       const msrp = parseMsrpMin(d.vehicle.priceRange);
       const principal = Math.max(msrp - d.incentiveAmount, 1);
       const monthlyAfterCash = calcMonthly(principal, 6.5, 60);
@@ -293,6 +299,7 @@ const DealsByMakePage = () => {
         incentiveValue: d.incentiveValue,
         incentiveAmount: d.incentiveAmount,
         percentOffMsrp: d.percentOffMsrp,
+        eligibilityTags: d.eligibilityTags,
       });
     }
 
@@ -339,6 +346,7 @@ const DealsByMakePage = () => {
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
+      if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
     }).length;
   }, [allDeals]);
@@ -640,6 +648,7 @@ const DealsByMakePage = () => {
                                     expirationDate: deal.expirationDate,
                                   }}
                                   details={details}
+                                  eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
                                   onDealClick={() => setActiveDealId(deal.id)}
                                 />
                               </Fragment>

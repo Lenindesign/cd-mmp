@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, SlidersHorizontal, X } from 'lucide-react';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -88,7 +88,7 @@ const CashFinanceDealsPage = () => {
 
   const matchesFilters = useCallback((
     vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
-    deal?: { term?: string; targetAudience?: string },
+    deal?: { term?: string; targetAudience?: string; eligibilityTags?: import('../../utils/dealCalculations').EligibilityTag[] },
   ) => {
     if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
@@ -109,8 +109,9 @@ const CashFinanceDealsPage = () => {
       const dealTier = inferCreditTier(deal.targetAudience);
       if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
     }
+    if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -434,6 +435,7 @@ const CashFinanceDealsPage = () => {
                                   payment={payment}
                                   pill={pill}
                                   details={details}
+                                  eligibilityLabels={getEligibilityLabels(deal.eligibilityTags)}
                                   onDealClick={() => setActiveDealId(deal.id)}
                                 />
                               </Fragment>
