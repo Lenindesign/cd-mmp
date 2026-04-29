@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, Check, ArrowRight, MapPin } from 'lucide-react';
 import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../services/vehicleService';
@@ -60,6 +60,7 @@ const BuyingPotential = ({
   vehicleName = '2025 Chevrolet Trax',
   vehicleImage = 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png',
 }: BuyingPotentialProps) => {
+  const leftContentRef = useRef<HTMLDivElement | null>(null);
   const [vehicleType, setVehicleType] = useState('New car');
   const [bodyStyle, setBodyStyle] = useState(initialBodyStyle);
   const [bodyStyleOpen, setBodyStyleOpen] = useState(false);
@@ -74,6 +75,7 @@ const BuyingPotential = ({
   const [buyingPower, setBuyingPower] = useState(0);
   const [displayedPower, setDisplayedPower] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
   
   const [vehicleTypeOpen, setVehicleTypeOpen] = useState(false);
   const [creditScoreOpen, setCreditScoreOpen] = useState(false);
@@ -194,6 +196,28 @@ const BuyingPotential = ({
     requestAnimationFrame(animate);
   }, [buyingPower]);
 
+  useEffect(() => {
+    const leftContent = leftContentRef.current;
+    if (!leftContent || typeof ResizeObserver === 'undefined') return;
+
+    const updateContentHeight = () => {
+      const parentStyles = leftContent.parentElement
+        ? getComputedStyle(leftContent.parentElement)
+        : null;
+      const verticalPadding = parentStyles
+        ? parseFloat(parentStyles.paddingTop) + parseFloat(parentStyles.paddingBottom)
+        : 0;
+
+      setContentHeight(Math.ceil(leftContent.getBoundingClientRect().height + verticalPadding));
+    };
+
+    updateContentHeight();
+    const observer = new ResizeObserver(updateContentHeight);
+    observer.observe(leftContent);
+
+    return () => observer.disconnect();
+  }, []);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -209,6 +233,10 @@ const BuyingPotential = ({
       minimumFractionDigits: value > 0 && value < 0.01 ? 2 : 1,
       maximumFractionDigits: 2,
     }).format(value);
+
+  const contentStyle = contentHeight
+    ? ({ '--buying-potential-content-height': `${contentHeight}px` } as CSSProperties)
+    : undefined;
 
   return (
     <section className="buying-potential">
@@ -240,265 +268,267 @@ const BuyingPotential = ({
           </div>
 
           {/* Content - Form on left, Matches on right */}
-          <div className="buying-potential__content">
+          <div className="buying-potential__content" style={contentStyle}>
             {/* Left Side - Calculator Form */}
             <div className="buying-potential__left">
-              {/* Calculator Form */}
-              <div className="buying-potential__form">
-                <div className="buying-potential__row buying-potential__row--single">
-                  {/* Vehicle Type */}
-                  <div className="buying-potential__field">
-                    <label className="buying-potential__label">Looking for</label>
-                    <div className="buying-potential__select-wrapper">
-                      <button
-                        className="buying-potential__select"
-                        onClick={() => {
-                          setVehicleTypeOpen(!vehicleTypeOpen);
-                          setCreditScoreOpen(false);
-                          setLoanTermOpen(false);
-                          setBodyStyleOpen(false);
-                          setStateTaxOpen(false);
-                        }}
-                      >
-                        {vehicleType}
-                        <ChevronDown size={16} />
-                      </button>
-                      {vehicleTypeOpen && (
-                        <ul className="buying-potential__options">
-                          {vehicleTypes.map((type) => (
-                            <li key={type}>
-                              <button
-                                className={`buying-potential__option ${vehicleType === type ? 'active' : ''}`}
-                                onClick={() => {
-                                  setVehicleType(type);
-                                  setVehicleTypeOpen(false);
-                                }}
-                              >
-                                {type}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="buying-potential__row">
-                  {/* Credit Score */}
-                  <div className="buying-potential__field">
-                    <label className="buying-potential__label">Credit score</label>
-                    <div className="buying-potential__select-wrapper">
-                      <button
-                        className="buying-potential__select"
-                        onClick={() => {
-                          setCreditScoreOpen(!creditScoreOpen);
-                          setVehicleTypeOpen(false);
-                          setLoanTermOpen(false);
-                          setBodyStyleOpen(false);
-                          setStateTaxOpen(false);
-                        }}
-                      >
-                        {creditScore}
-                        <ChevronDown size={16} />
-                      </button>
-                      {creditScoreOpen && (
-                        <ul className="buying-potential__options">
-                          {creditScores.map((score) => (
-                            <li key={score}>
-                              <button
-                                className={`buying-potential__option ${creditScore === score ? 'active' : ''}`}
-                                onClick={() => {
-                                  setCreditScore(score);
-                                  setCreditScoreOpen(false);
-                                }}
-                              >
-                                {score}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Loan Term */}
-                  <div className="buying-potential__field">
-                    <label className="buying-potential__label">Loan term</label>
-                    <div className="buying-potential__select-wrapper">
-                      <button
-                        className="buying-potential__select"
-                        onClick={() => {
-                          setLoanTermOpen(!loanTermOpen);
-                          setVehicleTypeOpen(false);
-                          setCreditScoreOpen(false);
-                          setBodyStyleOpen(false);
-                          setStateTaxOpen(false);
-                        }}
-                      >
-                        {loanTerm} months
-                        <ChevronDown size={16} />
-                      </button>
-                      {loanTermOpen && (
-                        <ul className="buying-potential__options">
-                          {loanTerms.map((term) => (
-                            <li key={term}>
-                              <button
-                                className={`buying-potential__option ${loanTerm === term ? 'active' : ''}`}
-                                onClick={() => {
-                                  setLoanTerm(term);
-                                  setLoanTermOpen(false);
-                                }}
-                              >
-                                {term} months ({term / 12} years)
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="buying-potential__row">
-                  {/* Monthly Payment */}
-                  <div className="buying-potential__field">
-                    <label className="buying-potential__label">Monthly payment</label>
-                    <div className="buying-potential__input-wrapper">
-                      <span className="buying-potential__input-prefix">$</span>
-                      <input
-                        type="number"
-                        className="buying-potential__input"
-                        value={monthlyPayment}
-                        onChange={(e) => setMonthlyPayment(Number(e.target.value))}
-                        min={100}
-                        step={50}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Down Payment */}
-                  <div className="buying-potential__field">
-                    <label className="buying-potential__label">Down payment</label>
-                    <div className="buying-potential__input-wrapper">
-                      <span className="buying-potential__input-prefix">$</span>
-                      <input
-                        type="number"
-                        className="buying-potential__input"
-                        value={downPayment}
-                        onChange={(e) => setDownPayment(Number(e.target.value))}
-                        min={0}
-                        step={100}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="buying-potential__row buying-potential__row--single">
-                  <div className="buying-potential__field">
-                    <label className="buying-potential__label">State sales tax</label>
-                    <div className="buying-potential__select-wrapper">
-                      <button
-                        type="button"
-                        className="buying-potential__select"
-                        onClick={() => {
-                          setStateTaxOpen(!stateTaxOpen);
-                          setVehicleTypeOpen(false);
-                          setCreditScoreOpen(false);
-                          setLoanTermOpen(false);
-                          setBodyStyleOpen(false);
-                        }}
-                      >
-                        <span>{selectedStateTax.name}</span>
-                        <span className="buying-potential__select-meta">
-                          {formatPercent(selectedStateTax.rate)}
+              <div ref={leftContentRef} className="buying-potential__left-content">
+                {/* Calculator Form */}
+                <div className="buying-potential__form">
+                  <div className="buying-potential__row buying-potential__row--single">
+                    {/* Vehicle Type */}
+                    <div className="buying-potential__field">
+                      <label className="buying-potential__label">Looking for</label>
+                      <div className="buying-potential__select-wrapper">
+                        <button
+                          className="buying-potential__select"
+                          onClick={() => {
+                            setVehicleTypeOpen(!vehicleTypeOpen);
+                            setCreditScoreOpen(false);
+                            setLoanTermOpen(false);
+                            setBodyStyleOpen(false);
+                            setStateTaxOpen(false);
+                          }}
+                        >
+                          {vehicleType}
                           <ChevronDown size={16} />
-                        </span>
-                      </button>
-                      {stateTaxOpen && (
-                        <ul className="buying-potential__options buying-potential__options--scroll">
-                          {STATE_VEHICLE_TAXES.map((state) => (
-                            <li key={state.code}>
-                              <button
-                                type="button"
-                                className={`buying-potential__option buying-potential__option--with-meta ${selectedStateCode === state.code ? 'active' : ''}`}
-                                onClick={() => {
-                                  setSelectedStateCode(state.code);
-                                  setStateTaxOpen(false);
-                                }}
-                              >
-                                <span>{state.name}</span>
-                                <span>{formatPercent(state.rate)}</span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                        </button>
+                        {vehicleTypeOpen && (
+                          <ul className="buying-potential__options">
+                            {vehicleTypes.map((type) => (
+                              <li key={type}>
+                                <button
+                                  className={`buying-potential__option ${vehicleType === type ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setVehicleType(type);
+                                    setVehicleTypeOpen(false);
+                                  }}
+                                >
+                                  {type}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </div>
-                    <p className="buying-potential__tax-note">
-                      Est. {selectedStateTax.code} tax: <strong>{formatCurrency(estimatedTax)}</strong>. Local taxes and fees may vary.
-                    </p>
                   </div>
-                </div>
 
-                {/* Trade-in Toggle */}
-                <div className="buying-potential__toggle-row">
-                  <label className="buying-potential__toggle">
-                    <input
-                      type="checkbox"
-                      checked={includeTradeIn}
-                      onChange={(e) => setIncludeTradeIn(e.target.checked)}
-                    />
-                    <span className="buying-potential__toggle-slider"></span>
-                  </label>
-                  <span className="buying-potential__toggle-label">Include trade-in</span>
-                </div>
+                  <div className="buying-potential__row">
+                    {/* Credit Score */}
+                    <div className="buying-potential__field">
+                      <label className="buying-potential__label">Credit score</label>
+                      <div className="buying-potential__select-wrapper">
+                        <button
+                          className="buying-potential__select"
+                          onClick={() => {
+                            setCreditScoreOpen(!creditScoreOpen);
+                            setVehicleTypeOpen(false);
+                            setLoanTermOpen(false);
+                            setBodyStyleOpen(false);
+                            setStateTaxOpen(false);
+                          }}
+                        >
+                          {creditScore}
+                          <ChevronDown size={16} />
+                        </button>
+                        {creditScoreOpen && (
+                          <ul className="buying-potential__options">
+                            {creditScores.map((score) => (
+                              <li key={score}>
+                                <button
+                                  className={`buying-potential__option ${creditScore === score ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setCreditScore(score);
+                                    setCreditScoreOpen(false);
+                                  }}
+                                >
+                                  {score}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
 
-                {/* Trade-in Amount Input - Shows when toggle is on */}
-                {includeTradeIn && (
-                  <div className="buying-potential__trade-in-field">
-                    <label className="buying-potential__label">Trade-in amount</label>
-                    <div className="buying-potential__input-wrapper buying-potential__input-wrapper--full">
-                      <span className="buying-potential__input-prefix">$</span>
+                    {/* Loan Term */}
+                    <div className="buying-potential__field">
+                      <label className="buying-potential__label">Loan term</label>
+                      <div className="buying-potential__select-wrapper">
+                        <button
+                          className="buying-potential__select"
+                          onClick={() => {
+                            setLoanTermOpen(!loanTermOpen);
+                            setVehicleTypeOpen(false);
+                            setCreditScoreOpen(false);
+                            setBodyStyleOpen(false);
+                            setStateTaxOpen(false);
+                          }}
+                        >
+                          {loanTerm} months
+                          <ChevronDown size={16} />
+                        </button>
+                        {loanTermOpen && (
+                          <ul className="buying-potential__options">
+                            {loanTerms.map((term) => (
+                              <li key={term}>
+                                <button
+                                  className={`buying-potential__option ${loanTerm === term ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setLoanTerm(term);
+                                    setLoanTermOpen(false);
+                                  }}
+                                >
+                                  {term} months ({term / 12} years)
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="buying-potential__row">
+                    {/* Monthly Payment */}
+                    <div className="buying-potential__field">
+                      <label className="buying-potential__label">Monthly payment</label>
+                      <div className="buying-potential__input-wrapper">
+                        <span className="buying-potential__input-prefix">$</span>
+                        <input
+                          type="number"
+                          className="buying-potential__input"
+                          value={monthlyPayment}
+                          onChange={(e) => setMonthlyPayment(Number(e.target.value))}
+                          min={100}
+                          step={50}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Down Payment */}
+                    <div className="buying-potential__field">
+                      <label className="buying-potential__label">Down payment</label>
+                      <div className="buying-potential__input-wrapper">
+                        <span className="buying-potential__input-prefix">$</span>
+                        <input
+                          type="number"
+                          className="buying-potential__input"
+                          value={downPayment}
+                          onChange={(e) => setDownPayment(Number(e.target.value))}
+                          min={0}
+                          step={100}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="buying-potential__row buying-potential__row--single">
+                    <div className="buying-potential__field">
+                      <label className="buying-potential__label">State sales tax</label>
+                      <div className="buying-potential__select-wrapper">
+                        <button
+                          type="button"
+                          className="buying-potential__select"
+                          onClick={() => {
+                            setStateTaxOpen(!stateTaxOpen);
+                            setVehicleTypeOpen(false);
+                            setCreditScoreOpen(false);
+                            setLoanTermOpen(false);
+                            setBodyStyleOpen(false);
+                          }}
+                        >
+                          <span>{selectedStateTax.name}</span>
+                          <span className="buying-potential__select-meta">
+                            {formatPercent(selectedStateTax.rate)}
+                            <ChevronDown size={16} />
+                          </span>
+                        </button>
+                        {stateTaxOpen && (
+                          <ul className="buying-potential__options buying-potential__options--scroll">
+                            {STATE_VEHICLE_TAXES.map((state) => (
+                              <li key={state.code}>
+                                <button
+                                  type="button"
+                                  className={`buying-potential__option buying-potential__option--with-meta ${selectedStateCode === state.code ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setSelectedStateCode(state.code);
+                                    setStateTaxOpen(false);
+                                  }}
+                                >
+                                  <span>{state.name}</span>
+                                  <span>{formatPercent(state.rate)}</span>
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                      <p className="buying-potential__tax-note">
+                        Est. {selectedStateTax.code} tax: <strong>{formatCurrency(estimatedTax)}</strong>. Local taxes and fees may vary.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Trade-in Toggle */}
+                  <div className="buying-potential__toggle-row">
+                    <label className="buying-potential__toggle">
                       <input
-                        type="number"
-                        className="buying-potential__input"
-                        value={tradeInAmount}
-                        onChange={(e) => setTradeInAmount(Number(e.target.value))}
-                        min={0}
-                        step={100}
-                        placeholder="0"
+                        type="checkbox"
+                        checked={includeTradeIn}
+                        onChange={(e) => setIncludeTradeIn(e.target.checked)}
                       />
-                    </div>
-                    <Link to="/whats-my-car-worth" className="buying-potential__trade-in-link">
-                      Don't know your car's value? Get an estimate →
-                    </Link>
+                      <span className="buying-potential__toggle-slider"></span>
+                    </label>
+                    <span className="buying-potential__toggle-label">Include trade-in</span>
                   </div>
-                )}
-              </div>
 
-              {/* CTA Buttons */}
-              <div className="buying-potential__cta-group">
-                <Link 
-                  to={isUsedMode 
-                    ? `/vehicles?type=used&maxPrice=${buyingPower}&bodyStyle=${bodyStyle}`
-                    : `/vehicles?maxPrice=${buyingPower}&bodyStyle=${bodyStyle}`
-                  }
-                  className="buying-potential__cta buying-potential__cta--primary"
-                >
-                  See All {isUsedMode ? 'Used ' : ''}{categoryLabel} Under {formatCurrency(buyingPower)}
-                  <ArrowRight size={18} />
-                </Link>
-                <button className="buying-potential__cta buying-potential__cta--secondary">
-                  Get Pre-Approved
-                </button>
-              </div>
+                  {/* Trade-in Amount Input - Shows when toggle is on */}
+                  {includeTradeIn && (
+                    <div className="buying-potential__trade-in-field">
+                      <label className="buying-potential__label">Trade-in amount</label>
+                      <div className="buying-potential__input-wrapper buying-potential__input-wrapper--full">
+                        <span className="buying-potential__input-prefix">$</span>
+                        <input
+                          type="number"
+                          className="buying-potential__input"
+                          value={tradeInAmount}
+                          onChange={(e) => setTradeInAmount(Number(e.target.value))}
+                          min={0}
+                          step={100}
+                          placeholder="0"
+                        />
+                      </div>
+                      <Link to="/whats-my-car-worth" className="buying-potential__trade-in-link">
+                        Don't know your car's value? Get an estimate →
+                      </Link>
+                    </div>
+                  )}
+                </div>
 
-              {/* Disclaimer */}
-              <p className="buying-potential__disclaimer">
-                *Rates may vary based on credit history and lender. This calculator provides estimates only. 
-                Actual rates as of December 2025.
-              </p>
+                {/* CTA Buttons */}
+                <div className="buying-potential__cta-group">
+                  <Link 
+                    to={isUsedMode 
+                      ? `/vehicles?type=used&maxPrice=${buyingPower}&bodyStyle=${bodyStyle}`
+                      : `/vehicles?maxPrice=${buyingPower}&bodyStyle=${bodyStyle}`
+                    }
+                    className="buying-potential__cta buying-potential__cta--primary"
+                  >
+                    See All {isUsedMode ? 'Used ' : ''}{categoryLabel} Under {formatCurrency(buyingPower)}
+                    <ArrowRight size={18} />
+                  </Link>
+                  <button className="buying-potential__cta buying-potential__cta--secondary">
+                    Get Pre-Approved
+                  </button>
+                </div>
+
+                {/* Disclaimer */}
+                <p className="buying-potential__disclaimer">
+                  *Rates may vary based on credit history and lender. This calculator provides estimates only. 
+                  Actual rates as of December 2025.
+                </p>
+              </div>
             </div>
 
             {/* Right Side - Vehicle Matches */}
