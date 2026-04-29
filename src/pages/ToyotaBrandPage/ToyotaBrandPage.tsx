@@ -294,21 +294,21 @@ const ToyotaBrandPage = () => {
             </h2>
             <p className="brand-page__footer-cta-count">
               <strong>82</strong>
-              <span>SUV offers available</span>
+              <span>{MAKE} offers available</span>
             </p>
           </div>
           <div className="brand-page__footer-cta-links">
             <Link to={`/${MAKE.toLowerCase()}/deals-incentives`} className="brand-page__footer-cta-link">
               <span className="brand-page__footer-cta-link-main">
                 <span className="brand-page__footer-cta-chip">BUY</span>
-                <span>See 34 SUV Buying Offers</span>
+                <span>See 34 {MAKE} Buying Offers</span>
               </span>
               <span className="brand-page__footer-cta-badge">8 expiring soon!</span>
             </Link>
             <Link to={`/${MAKE.toLowerCase()}/lease-deals`} className="brand-page__footer-cta-link">
               <span className="brand-page__footer-cta-link-main">
                 <span className="brand-page__footer-cta-chip">LEASE</span>
-                <span>See 48 SUV Leasing Offers</span>
+                <span>See 48 {MAKE} Leasing Offers</span>
               </span>
               <span className="brand-page__footer-cta-badge">12 expiring soon!</span>
             </Link>
