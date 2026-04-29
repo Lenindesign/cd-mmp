@@ -68,7 +68,169 @@ export const NewsPage: React.FC = () => {
       <section className="news-page__hero">
         <Link to={heroStory.href} className="news-page__hero-link">
           <div className="news-page__hero-image">
-            <img src={heroStory.image} alt={heroStory.headline} loading="eager" />
+            {/* impeccable-variants-start 93212cd7 */}
+            <div data-impeccable-variants="93212cd7" data-impeccable-variant-count="3" style={{ display: "contents" }}>
+              {/* Original */}
+              <div data-impeccable-variant="original">
+                <img src={heroStory.image} alt={heroStory.headline} loading="eager" />
+              </div>
+              {/* Variants: insert below this line */}
+              <style data-impeccable-css="93212cd7">{`
+                @scope ([data-impeccable-variant="1"]) {
+                  .live-adapt-mobile {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    background: var(--color-dark);
+                  }
+
+                  .live-adapt-mobile img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    object-position: center calc(56% + (var(--p-crop, 0.45) * 12%));
+                    transform: scale(calc(1.01 + (var(--p-crop, 0.45) * 0.04)));
+                  }
+
+                  .live-adapt-mobile__label {
+                    position: absolute;
+                    left: var(--spacing-4);
+                    bottom: var(--spacing-4);
+                    padding: var(--spacing-1) var(--spacing-2);
+                    border-radius: var(--border-radius-sm);
+                    background: rgba(255, 255, 255, 0.9);
+                    color: var(--color-blue-cobalt);
+                    font-family: var(--font-label);
+                    font-size: var(--font-size-xs);
+                    font-weight: var(--font-weight-bold);
+                    letter-spacing: 0.08em;
+                    text-transform: uppercase;
+                  }
+                }
+
+                @scope ([data-impeccable-variant="2"]) {
+                  .live-adapt-tablet {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    display: grid;
+                    grid-template-columns: minmax(88px, calc(14% + (var(--p-rail, 0.4) * 14%))) 1fr;
+                    background: var(--color-gray-100);
+                  }
+
+                  .live-adapt-tablet img {
+                    grid-column: 1 / -1;
+                    grid-row: 1;
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    object-position: center;
+                  }
+
+                  .live-adapt-tablet__rail {
+                    grid-column: 1;
+                    grid-row: 1;
+                    z-index: 1;
+                    display: flex;
+                    align-items: flex-end;
+                    padding: var(--spacing-4);
+                    border-right: 1px solid rgba(0, 0, 0, 0.14);
+                    background: rgba(255, 255, 255, 0.88);
+                  }
+
+                  .live-adapt-tablet__rail span {
+                    writing-mode: vertical-rl;
+                    transform: rotate(180deg);
+                    color: var(--color-blue-cobalt);
+                    font-family: var(--font-label);
+                    font-size: var(--font-size-xs);
+                    font-weight: var(--font-weight-bold);
+                    letter-spacing: 0.14em;
+                    text-transform: uppercase;
+                  }
+                }
+
+                @scope ([data-impeccable-variant="3"]) {
+                  .live-adapt-editorial {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    background: var(--color-gray-100);
+                  }
+
+                  .live-adapt-editorial img {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    object-fit: cover;
+                    object-position: center;
+                    filter: contrast(calc(1 + (var(--p-contrast, 0.35) * 0.16))) saturate(calc(0.94 + (var(--p-contrast, 0.35) * 0.18)));
+                  }
+
+                  .live-adapt-editorial::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(0deg, rgba(27, 95, 138, 0.18), rgba(27, 95, 138, 0) 48%);
+                    pointer-events: none;
+                  }
+
+                  .live-adapt-editorial__caption {
+                    position: absolute;
+                    right: var(--spacing-4);
+                    bottom: var(--spacing-4);
+                    max-width: 260px;
+                    padding: var(--spacing-2) var(--spacing-3);
+                    border-radius: var(--border-radius-md);
+                    border: 1px solid rgba(0, 0, 0, 0.12);
+                    background: rgba(255, 255, 255, 0.92);
+                    color: var(--color-dark);
+                    box-shadow: var(--shadow-sm);
+                    font-family: var(--font-body);
+                    font-size: var(--font-size-xs);
+                    font-weight: var(--font-weight-semibold);
+                    line-height: 1.3;
+                  }
+                }
+              `}</style>
+              <div
+                data-impeccable-variant="1"
+                data-impeccable-params='[{"id":"crop","kind":"range","min":0,"max":1,"step":0.05,"default":0.45,"label":"Mobile crop"}]'
+              >
+                <div className="live-adapt-mobile">
+                  <img src={heroStory.image} alt={heroStory.headline} loading="eager" />
+                  <span className="live-adapt-mobile__label">Phone-safe crop</span>
+                </div>
+              </div>
+              <div
+                data-impeccable-variant="2"
+                data-impeccable-params='[{"id":"rail","kind":"range","min":0,"max":1,"step":0.05,"default":0.4,"label":"Tablet rail"}]'
+                style={{ display: "none" }}
+              >
+                <div className="live-adapt-tablet">
+                  <img src={heroStory.image} alt={heroStory.headline} loading="eager" />
+                  <div className="live-adapt-tablet__rail" aria-hidden="true">
+                    <span>Instrumented test</span>
+                  </div>
+                </div>
+              </div>
+              <div
+                data-impeccable-variant="3"
+                data-impeccable-params='[{"id":"contrast","kind":"range","min":0,"max":1,"step":0.05,"default":0.35,"label":"Editorial contrast"}]'
+                style={{ display: "none" }}
+              >
+                <div className="live-adapt-editorial">
+                  <img src={heroStory.image} alt={heroStory.headline} loading="eager" />
+                  <span className="live-adapt-editorial__caption">Responsive art direction keeps the car readable before the headline takes over.</span>
+                </div>
+              </div>
+            </div>
+            {/* impeccable-variants-end 93212cd7 */}
           </div>
           <div className="news-page__hero-content">
             <span className="news-page__hero-category">{heroStory.category}</span>
@@ -88,29 +250,440 @@ export const NewsPage: React.FC = () => {
       {/* Row 1: Latest Articles */}
       <div className="news-page__rows">
         <div className="container">
-          <section className="news-page__row">
-            <div className="news-page__row-left">
+          {/* impeccable-variants-start 9a27d8e6 */}
+          <div data-impeccable-variants="9a27d8e6" data-impeccable-variant-count="3" style={{ display: "contents" }}>
+            {/* Original */}
+            <div data-impeccable-variant="original">
+              <section className="news-page__row">
+              <div className="news-page__row-left">
               <h2 className="news-page__row-title">Latest Articles</h2>
               <span className="news-page__row-count">{articles.length} stories</span>
               <Link to="/news/all" className="news-page__row-cta">
-                View All <ChevronRight size={14} />
+              View All <ChevronRight size={14} />
               </Link>
-            </div>
-            <div className="news-page__row-cards news-page__row-cards--articles">
+              </div>
+              <div className="news-page__row-cards news-page__row-cards--articles">
               {articles.slice(0, 4).map(story => (
-                <ArticleCard
-                  key={story.id}
-                  imageUrl={story.image}
-                  imageAlt={story.headline}
-                  headline={story.headline}
-                  sponsor={story.category}
-                  href={story.href}
-                  variant="vertical"
-                  aspectRatio="landscape"
-                />
+              <ArticleCard
+              key={story.id}
+              imageUrl={story.image}
+              imageAlt={story.headline}
+              headline={story.headline}
+              sponsor={story.category}
+              href={story.href}
+              variant="vertical"
+              aspectRatio="landscape"
+              />
               ))}
+              </div>
+              </section>
             </div>
-          </section>
+            {/* Variants: insert below this line */}
+            <style data-impeccable-css="9a27d8e6">{`
+              @scope ([data-impeccable-variant="1"]) {
+                .live-delight-desk {
+                  display: grid;
+                  grid-template-columns: minmax(170px, 0.7fr) 2.6fr;
+                  gap: var(--spacing-6);
+                  padding: calc(var(--spacing-5) + (var(--p-air, 0.45) * var(--spacing-3)));
+                  background: var(--color-white);
+                  border: 1px solid var(--color-gray-200);
+                  border-radius: var(--border-radius-lg);
+                  box-shadow: var(--shadow-sm);
+                }
+
+                .live-delight-desk__intro {
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  min-height: 210px;
+                  border-right: 1px solid var(--color-gray-200);
+                  padding-right: var(--spacing-5);
+                }
+
+                .live-delight-desk__label {
+                  color: var(--color-blue-cobalt);
+                  font-family: var(--font-label);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-bold);
+                  letter-spacing: 0.12em;
+                  text-transform: uppercase;
+                }
+
+                .live-delight-desk h2 {
+                  margin: var(--spacing-2) 0;
+                  color: var(--color-dark);
+                  font-family: var(--font-heading);
+                  font-size: var(--font-size-3xl);
+                  font-weight: var(--font-weight-extrabold);
+                  line-height: 0.95;
+                }
+
+                .live-delight-desk__meta {
+                  color: var(--color-gray-600);
+                  font-size: var(--font-size-sm);
+                  font-weight: var(--font-weight-semibold);
+                }
+
+                .live-delight-desk__cta {
+                  display: inline-flex;
+                  align-items: center;
+                  gap: var(--spacing-1);
+                  width: fit-content;
+                  padding: var(--spacing-2) var(--spacing-3);
+                  border: 1px solid var(--color-blue-cobalt);
+                  border-radius: var(--border-radius-full);
+                  color: var(--color-blue-cobalt);
+                  font-family: var(--font-label);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-bold);
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                }
+
+                .live-delight-desk__cards {
+                  display: grid;
+                  grid-template-columns: repeat(4, minmax(0, 1fr));
+                  gap: var(--spacing-4);
+                }
+
+                .live-delight-desk__card {
+                  position: relative;
+                  display: grid;
+                  gap: var(--spacing-3);
+                  color: inherit;
+                }
+
+                .live-delight-desk__image {
+                  position: relative;
+                  overflow: hidden;
+                  border-radius: var(--border-radius-md);
+                  background: var(--color-gray-100);
+                }
+
+                .live-delight-desk__image img {
+                  width: 100%;
+                  aspect-ratio: 16 / 10;
+                  object-fit: cover;
+                  transition: transform var(--transition-normal);
+                }
+
+                .live-delight-desk__card:hover img {
+                  transform: scale(1.04);
+                }
+
+                .live-delight-desk__sponsor {
+                  color: var(--color-gray-600);
+                  font-family: var(--font-label);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-bold);
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                }
+
+                .live-delight-desk__headline {
+                  margin: 0;
+                  color: var(--color-dark);
+                  font-size: var(--font-size-sm);
+                  font-weight: var(--font-weight-extrabold);
+                  line-height: 1.25;
+                }
+
+                @media (max-width: 900px) {
+                  .live-delight-desk {
+                    grid-template-columns: 1fr;
+                  }
+
+                  .live-delight-desk__intro {
+                    min-height: auto;
+                    border-right: 0;
+                    border-bottom: 1px solid var(--color-gray-200);
+                    padding-right: 0;
+                    padding-bottom: var(--spacing-4);
+                  }
+
+                  .live-delight-desk__cards {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                  }
+                }
+              }
+
+              @scope ([data-impeccable-variant="2"]) {
+                .live-delight-strip {
+                  display: grid;
+                  gap: var(--spacing-4);
+                  padding: var(--spacing-5);
+                  background: var(--color-gray-50);
+                  border: 1px solid var(--color-gray-200);
+                  border-radius: var(--border-radius-lg);
+                }
+
+                .live-delight-strip__header {
+                  display: flex;
+                  align-items: end;
+                  justify-content: space-between;
+                  gap: var(--spacing-4);
+                }
+
+                .live-delight-strip__header h2 {
+                  margin: 0;
+                  color: var(--color-dark);
+                  font-size: var(--font-size-2xl);
+                  font-weight: var(--font-weight-extrabold);
+                }
+
+                .live-delight-strip__header span {
+                  color: var(--color-blue-cobalt);
+                  font-family: var(--font-label);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-bold);
+                  letter-spacing: 0.1em;
+                  text-transform: uppercase;
+                }
+
+                .live-delight-strip__list {
+                  display: grid;
+                  grid-template-columns: repeat(4, minmax(0, 1fr));
+                  gap: calc(var(--spacing-3) + (var(--p-gap, 0.35) * var(--spacing-4)));
+                }
+
+                .live-delight-strip__item {
+                  display: grid;
+                  grid-template-rows: auto 1fr;
+                  overflow: hidden;
+                  background: var(--color-white);
+                  border: 1px solid var(--color-gray-200);
+                  border-radius: var(--border-radius-md);
+                  color: inherit;
+                }
+
+                .live-delight-strip__image {
+                  position: relative;
+                }
+
+                .live-delight-strip__image img {
+                  width: 100%;
+                  aspect-ratio: 16 / 10;
+                  object-fit: cover;
+                }
+
+                .live-delight-strip__number {
+                  position: absolute;
+                  left: var(--spacing-2);
+                  top: var(--spacing-2);
+                  display: grid;
+                  place-items: center;
+                  width: 28px;
+                  height: 28px;
+                  background: var(--color-white);
+                  border: 1px solid var(--color-dark);
+                  border-radius: var(--border-radius-full);
+                  color: var(--color-dark);
+                  font-weight: var(--font-weight-extrabold);
+                }
+
+                .live-delight-strip__copy {
+                  display: grid;
+                  gap: var(--spacing-2);
+                  padding: var(--spacing-3);
+                }
+
+                .live-delight-strip__copy span {
+                  color: var(--color-gray-600);
+                  font-family: var(--font-label);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-bold);
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                }
+
+                .live-delight-strip__copy h3 {
+                  margin: 0;
+                  color: var(--color-dark);
+                  font-size: var(--font-size-sm);
+                  font-weight: var(--font-weight-extrabold);
+                  line-height: 1.25;
+                }
+
+                @media (max-width: 900px) {
+                  .live-delight-strip__list {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                  }
+                }
+              }
+
+              @scope ([data-impeccable-variant="3"]) {
+                .live-delight-scanline {
+                  display: grid;
+                  grid-template-columns: 180px 1fr;
+                  gap: var(--spacing-5);
+                  padding: var(--spacing-5);
+                  background:
+                    linear-gradient(90deg, rgba(27, 95, 138, 0.06), transparent 34%),
+                    var(--color-white);
+                  border: 1px solid var(--color-gray-200);
+                  border-radius: var(--border-radius-lg);
+                }
+
+                .live-delight-scanline__rail {
+                  display: grid;
+                  align-content: center;
+                  gap: var(--spacing-3);
+                }
+
+                .live-delight-scanline__rail h2 {
+                  margin: 0;
+                  color: var(--color-dark);
+                  font-size: var(--font-size-2xl);
+                  font-weight: var(--font-weight-extrabold);
+                  line-height: 1;
+                }
+
+                .live-delight-scanline__rail p {
+                  margin: 0;
+                  color: var(--color-gray-600);
+                  font-size: var(--font-size-sm);
+                  line-height: 1.4;
+                }
+
+                .live-delight-scanline__grid {
+                  display: grid;
+                  grid-template-columns: repeat(4, minmax(0, 1fr));
+                  gap: var(--spacing-4);
+                }
+
+                .live-delight-scanline__card {
+                  position: relative;
+                  color: inherit;
+                }
+
+                .live-delight-scanline__card::after {
+                  content: "";
+                  position: absolute;
+                  inset: 0;
+                  background: radial-gradient(circle at 50% 20%, rgba(210, 35, 42, calc(var(--p-signal, 0.3) * 0.18)), transparent 46%);
+                  pointer-events: none;
+                }
+
+                .live-delight-scanline__card img {
+                  width: 100%;
+                  aspect-ratio: 16 / 10;
+                  object-fit: cover;
+                  border-radius: var(--border-radius-md);
+                }
+
+                .live-delight-scanline__card span {
+                  display: block;
+                  margin-top: var(--spacing-3);
+                  color: var(--color-gray-600);
+                  font-family: var(--font-label);
+                  font-size: var(--font-size-xs);
+                  font-weight: var(--font-weight-bold);
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                }
+
+                .live-delight-scanline__card h3 {
+                  margin: var(--spacing-1) 0 0;
+                  color: var(--color-dark);
+                  font-size: var(--font-size-sm);
+                  font-weight: var(--font-weight-extrabold);
+                  line-height: 1.25;
+                }
+
+                @media (max-width: 900px) {
+                  .live-delight-scanline {
+                    grid-template-columns: 1fr;
+                  }
+
+                  .live-delight-scanline__grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                  }
+                }
+              }
+            `}</style>
+            <div
+              data-impeccable-variant="1"
+              data-impeccable-params='[{"id":"air","kind":"range","min":0,"max":1,"step":0.05,"default":0.45,"label":"Editorial air"}]'
+            >
+              <section className="live-delight-desk">
+                <div className="live-delight-desk__intro">
+                  <div>
+                    <span className="live-delight-desk__label">Editor’s desk</span>
+                    <h2>Latest Articles</h2>
+                    <span className="live-delight-desk__meta">{articles.length} stories selected</span>
+                  </div>
+                  <Link to="/news/all" className="live-delight-desk__cta">
+                    View All <ChevronRight size={14} />
+                  </Link>
+                </div>
+                <div className="live-delight-desk__cards">
+                  {articles.slice(0, 4).map(story => (
+                    <Link key={story.id} to={story.href} className="live-delight-desk__card">
+                      <div className="live-delight-desk__image">
+                        <img src={story.image} alt={story.headline} loading="lazy" />
+                      </div>
+                      <div>
+                        <span className="live-delight-desk__sponsor">{story.category}</span>
+                        <h3 className="live-delight-desk__headline">{story.headline}</h3>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            </div>
+            <div
+              data-impeccable-variant="2"
+              data-impeccable-params='[{"id":"gap","kind":"range","min":0,"max":1,"step":0.05,"default":0.35,"label":"Card gap"}]'
+              style={{ display: "none" }}
+            >
+              <section className="live-delight-strip">
+                <div className="live-delight-strip__header">
+                  <h2>Latest Articles</h2>
+                  <span>{articles.length} stories / road-tested picks</span>
+                </div>
+                <div className="live-delight-strip__list">
+                  {articles.slice(0, 4).map((story, index) => (
+                    <Link key={story.id} to={story.href} className="live-delight-strip__item">
+                      <div className="live-delight-strip__image">
+                        <img src={story.image} alt={story.headline} loading="lazy" />
+                        <span className="live-delight-strip__number">{index + 1}</span>
+                      </div>
+                      <div className="live-delight-strip__copy">
+                        <span>{story.category}</span>
+                        <h3>{story.headline}</h3>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            </div>
+            <div
+              data-impeccable-variant="3"
+              data-impeccable-params='[{"id":"signal","kind":"range","min":0,"max":1,"step":0.05,"default":0.3,"label":"Signal mark"}]'
+              style={{ display: "none" }}
+            >
+              <section className="live-delight-scanline">
+                <div className="live-delight-scanline__rail">
+                  <h2>Latest Articles</h2>
+                  <p>{articles.length} new reads from the testing desk, filtered for quick scanning.</p>
+                  <Link to="/news/all" className="news-page__row-cta">
+                    View All <ChevronRight size={14} />
+                  </Link>
+                </div>
+                <div className="live-delight-scanline__grid">
+                  {articles.slice(0, 4).map(story => (
+                    <Link key={story.id} to={story.href} className="live-delight-scanline__card">
+                      <img src={story.image} alt={story.headline} loading="lazy" />
+                      <span>{story.category}</span>
+                      <h3>{story.headline}</h3>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            </div>
+          </div>
+          {/* impeccable-variants-end 9a27d8e6 */}
 
           {/* Row 2: Best SUVs */}
           <section className="news-page__row">

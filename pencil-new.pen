@@ -1,0 +1,320 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "group",
+      "id": "vboUO",
+      "x": -161.61306602019704,
+      "y": 245.5,
+      "name": "Group 7",
+      "children": [
+        {
+          "type": "frame",
+          "id": "MjlXj",
+          "x": 0,
+          "y": 0,
+          "name": "Frame 23",
+          "width": 1078,
+          "fill": "#e9f3e6ff",
+          "cornerRadius": 8,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1
+          },
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "HIuCM",
+              "name": "Frame 21",
+              "width": "fill_container",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1
+              },
+              "gap": 341,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ErzTV",
+                  "name": "Special offers and incentives",
+                  "fill": "#000000ff",
+                  "content": "Special offers and incentives",
+                  "textAlignVertical": "middle",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "x0Zjuz",
+                  "name": "82 SUV offers available",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1
+                  },
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Ko82N",
+                      "name": "82",
+                      "fill": "#166534ff",
+                      "content": "82",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SuvOfferText",
+                      "name": "SUV offers available",
+                      "fill": "#000000ff",
+                      "content": "SUV offers available",
+                      "textAlignVertical": "middle",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FKmS9",
+              "name": "Frame 22",
+              "width": "fill_container",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1
+              },
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xWONl",
+                  "name": "Frame 19",
+                  "opacity": 0.800000011920929,
+                  "width": 499,
+                  "fill": "#ffffffff",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#cdcdcdff"
+                  },
+                  "gap": 142,
+                  "padding": [
+                    8,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QvPYq",
+                      "name": "Frame 18",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1
+                      },
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "I0WtLw",
+                          "name": "Frame 7",
+                          "fill": "#166534ff",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1
+                          },
+                          "gap": 8,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "RbmKd",
+                              "name": "BUY",
+                              "fill": "#ffffffff",
+                              "content": "BUY",
+                              "textAlignVertical": "middle",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "m2oDwT",
+                          "name": "See 34 SUV Buying Offers",
+                          "fill": "#000000ff",
+                          "content": "See 34 SUV Buying Offers",
+                          "textAlignVertical": "middle",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "M6ia6n",
+                      "name": "Frame 16",
+                      "fill": "#f5f5f5ff",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1
+                      },
+                      "gap": 8,
+                      "padding": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "M5abx",
+                          "name": "8 expiring soon!",
+                          "fill": "#000000ff",
+                          "content": "8 expiring soon!",
+                          "textAlignVertical": "middle",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pUKm2",
+                  "name": "Frame 20",
+                  "opacity": 0.800000011920929,
+                  "width": "fill_container",
+                  "fill": "#ffffffff",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#cdcdcdff"
+                  },
+                  "gap": 149,
+                  "padding": [
+                    8,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Zivdn",
+                      "name": "Frame 18",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1
+                      },
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZgGSM",
+                          "name": "Frame 7",
+                          "fill": "#166534ff",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1
+                          },
+                          "gap": 8,
+                          "padding": [
+                            4,
+                            8
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "AzhOp",
+                              "name": "LEASE",
+                              "fill": "#ffffffff",
+                              "content": "LEASE",
+                              "textAlignVertical": "middle",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "LNwnU",
+                          "name": "See 48 SUV Leasing Offers",
+                          "fill": "#000000ff",
+                          "content": "See 48 SUV Leasing Offers",
+                          "textAlignVertical": "middle",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GVOq0",
+                      "name": "Frame 16",
+                      "fill": "#f5f5f5ff",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1
+                      },
+                      "gap": 8,
+                      "padding": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mBdcU",
+                          "name": "12 expiring soon!",
+                          "fill": "#000000ff",
+                          "content": "12 expiring soon!",
+                          "textAlignVertical": "middle",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

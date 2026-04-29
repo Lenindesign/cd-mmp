@@ -62,6 +62,7 @@ const Footer = () => {
         { label: 'Honda Accord (Concept)', path: '/2026/Honda/Accord/concept' },
         { label: 'Honda Accord (Standard)', path: '/2026/Honda/Accord' },
         { label: 'Mazda CX-5', path: '/2026/Mazda/CX-5/concept' },
+        { label: 'Toyota Brand Hub', path: '/brands/toyota' },
         { label: 'Vehicle Ranking', path: '/rankings' },
       ],
     },

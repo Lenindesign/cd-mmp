@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-04-24T23:18:00-07:00",
+  "title": "Design System: Car & Driver Marketplace",
+  "extensions": {
+    "colorMeta": {
+      "cobalt-blue": {
+        "role": "primary",
+        "displayName": "C/D Cobalt Blue",
+        "canonical": "#1B5F8A",
+        "tonalRamp": ["oklch(18% 0.055 240)", "oklch(28% 0.075 240)", "oklch(38% 0.09 240)", "oklch(48% 0.105 240)", "oklch(58% 0.095 240)", "oklch(70% 0.07 240)", "oklch(84% 0.045 240)", "oklch(95% 0.018 240)"]
+      },
+      "cd-red": {
+        "role": "primary",
+        "displayName": "C/D Signal Red",
+        "canonical": "#D2232A",
+        "tonalRamp": ["oklch(18% 0.07 25)", "oklch(30% 0.11 25)", "oklch(42% 0.15 25)", "oklch(54% 0.18 25)", "oklch(66% 0.13 25)", "oklch(76% 0.09 25)", "oklch(88% 0.05 25)", "oklch(96% 0.02 25)"]
+      },
+      "editorial-dark": {
+        "role": "neutral",
+        "displayName": "Editorial Dark",
+        "canonical": "#222222",
+        "tonalRamp": ["#000000", "#222222", "#4a4a4a", "#666666", "#6b6b6b", "#cdcdcd", "#e5e5e5", "#f5f5f5"]
+      },
+      "paper-white": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#222222", "#4a4a4a", "#666666", "#6b6b6b", "#cdcdcd", "#e5e5e5", "#f5f5f5", "#ffffff"]
+      },
+      "c-d-gold": {
+        "role": "secondary",
+        "displayName": "Road-Test Gold",
+        "canonical": "#DBCA8B",
+        "tonalRamp": ["oklch(22% 0.035 95)", "oklch(34% 0.055 95)", "oklch(46% 0.075 95)", "oklch(58% 0.08 95)", "oklch(70% 0.075 95)", "oklch(80% 0.06 95)", "oklch(90% 0.035 95)", "oklch(96% 0.016 95)"]
+      },
+      "success-green": {
+        "role": "tertiary",
+        "displayName": "Verified Green",
+        "canonical": "#26870D",
+        "tonalRamp": ["oklch(18% 0.055 135)", "oklch(30% 0.08 135)", "oklch(42% 0.105 135)", "oklch(54% 0.115 135)", "oklch(66% 0.09 135)", "oklch(78% 0.06 135)", "oklch(90% 0.035 135)", "oklch(96% 0.016 135)"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero vehicle names, major page titles, and editorial lead moments."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles, ranking modules, and comparison headers."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Cards, deal names, modal headings, and component titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explanatory copy, values, helper text, and article summaries."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Badges, nav categories, rating labels, CTA labels, and filter chips."
+      }
+    },
+    "shadows": [
+      {
+        "name": "fine-lift",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.05)",
+        "purpose": "Search fields, small chips, and save controls."
+      },
+      {
+        "name": "card-lift",
+        "value": "0 3px 6px rgba(0, 0, 0, 0.08)",
+        "purpose": "Raised controls and default card response."
+      },
+      {
+        "name": "editorial-overlay",
+        "value": "0 8px 24px rgba(0, 0, 0, 0.12)",
+        "purpose": "Hovered deal cards, dropdowns, popovers, and modal shells."
+      },
+      {
+        "name": "deep-overlay",
+        "value": "0 16px 48px rgba(0, 0, 0, 0.16)",
+        "purpose": "Rare full-screen overlays and high-priority floating panels."
+      }
+    ],
+    "motion": [
+      {
+        "name": "fast-state",
+        "value": "150ms ease",
+        "purpose": "Hovers, focus changes, chips, and small control responses."
+      },
+      {
+        "name": "normal-state",
+        "value": "200ms ease",
+        "purpose": "Image zooms, card hover response, and default interactive transitions."
+      },
+      {
+        "name": "slow-panel",
+        "value": "300ms ease",
+        "purpose": "Modals, drawers, and larger state changes."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile-sm", "value": "480px" },
+      { "name": "tablet", "value": "768px" },
+      { "name": "desktop-sm", "value": "1024px" },
+      { "name": "desktop", "value": "1200px" },
+      { "name": "wide", "value": "1401px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Compact C/D cobalt action button for primary marketplace actions.",
+      "html": "<button class=\"ds-btn-primary\">Subscribe</button>",
+      "css": ".ds-btn-primary { background: var(--color-blue-cobalt, #1B5F8A); color: var(--color-white, #ffffff); padding: 12px; border: 1px solid var(--color-white, #ffffff); border-radius: var(--border-radius-md, 6px); font-family: var(--font-body, Inter, sans-serif); font-size: var(--font-size-xs, 0.75rem); font-weight: var(--font-weight-extrabold, 800); letter-spacing: 0.44px; text-transform: uppercase; cursor: pointer; transition: background-color var(--transition-fast, 150ms ease), outline-color var(--transition-fast, 150ms ease); } .ds-btn-primary:hover { background: var(--color-black, #000000); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-blue-cobalt, #1B5F8A); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet utility action for supporting choices and comparison tools.",
+      "html": "<button class=\"ds-btn-secondary\">Save vehicle</button>",
+      "css": ".ds-btn-secondary { background: var(--color-white, #ffffff); color: var(--color-blue-cobalt, #1B5F8A); padding: 8px 16px; border: 1px solid var(--color-blue-cobalt, #1B5F8A); border-radius: var(--border-radius-sm, 4px); font-family: var(--font-body, Inter, sans-serif); font-size: var(--font-size-sm, 0.75rem); font-weight: var(--font-weight-semibold, 600); letter-spacing: 0.03em; cursor: pointer; transition: background var(--transition-fast, 150ms ease), border-color var(--transition-fast, 150ms ease); } .ds-btn-secondary:hover { background: var(--color-gray-50, #fafafa); border-color: var(--color-blue-dark, #154d70); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-blue-cobalt, #1B5F8A); outline-offset: 2px; }"
+    },
+    {
+      "name": "Header Search Field",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Primary utility search, pill-shaped and quiet until focused.",
+      "html": "<label class=\"ds-search\"><span class=\"ds-search-label\">Search vehicles</span><input class=\"ds-search-input\" placeholder=\"Search vehicles...\" /></label>",
+      "css": ".ds-search { display: flex; align-items: center; height: 37px; max-width: 420px; background: var(--color-white, #ffffff); border: 1px solid var(--color-gray-300, #cdcdcd); border-radius: var(--border-radius-full, 9999px); padding: 0 14px 0 24px; box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05)); transition: border-color var(--transition-fast, 150ms ease); } .ds-search:focus-within { border-color: var(--color-blue-cobalt, #1B5F8A); } .ds-search-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .ds-search-input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--color-black, #000000); font-family: var(--font-body, Inter, sans-serif); font-size: var(--font-size-base, 0.875rem); font-style: italic; letter-spacing: -0.14px; } .ds-search-input::placeholder { color: var(--color-gray-600, #666666); }"
+    },
+    {
+      "name": "Deal Card",
+      "kind": "card",
+      "refersTo": "deal-card",
+      "description": "Editorial vehicle card with image, rating, and factual offer signal.",
+      "html": "<article class=\"ds-deal-card\"><div class=\"ds-deal-image\">2026</div><div class=\"ds-deal-body\"><div><h3>Chevrolet Trax</h3><p>Starting at $20,400</p></div><div class=\"ds-deal-rating\"><strong>10</strong><span>/10</span></div></div><button class=\"ds-deal-cta\">Shop new Trax</button></article>",
+      "css": ".ds-deal-card { width: 280px; overflow: hidden; background: var(--color-white, #ffffff); border: 1px solid var(--color-gray-200, #e5e5e5); border-radius: var(--border-radius-lg, 8px); color: var(--color-dark, #222222); font-family: var(--font-body, Inter, sans-serif); transition: box-shadow var(--transition-fast, 150ms ease); } .ds-deal-card:hover { box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.12)); } .ds-deal-image { display: grid; place-items: center; aspect-ratio: 16 / 10; background: var(--color-gray-100, #f5f5f5); color: var(--color-gray-600, #666666); font-family: var(--font-heading, Inter, sans-serif); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; } .ds-deal-body { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px 8px; } .ds-deal-body h3 { margin: 0; color: var(--color-dark, #222222); font-size: 18px; line-height: 1.2; font-weight: 800; } .ds-deal-body p { margin: 4px 0 0; color: var(--color-gray-600, #666666); font-size: 13px; } .ds-deal-rating { text-align: right; line-height: 1; } .ds-deal-rating strong { font-size: 28px; } .ds-deal-rating span { color: var(--color-gray-500, #6b6b6b); font-weight: 700; } .ds-deal-cta { width: calc(100% - 32px); margin: 0 16px 16px; padding: 10px 12px; border: 0; border-radius: var(--border-radius-md, 6px); background: var(--color-blue-cobalt, #1B5F8A); color: var(--color-white, #ffffff); font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; } .ds-deal-cta:focus-visible { outline: 2px solid var(--color-blue-cobalt, #1B5F8A); outline-offset: 2px; }"
+    },
+    {
+      "name": "Active Chip",
+      "kind": "chip",
+      "refersTo": "chip-active",
+      "description": "Filter chip with strong active state and compact editorial label.",
+      "html": "<button class=\"ds-chip ds-chip-active\">SUVs <span>12</span></button>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 4px; padding: 8px 12px; border: 1px solid var(--color-gray-300, #cdcdcd); border-radius: var(--border-radius-full, 9999px); background: var(--color-white, #ffffff); color: var(--color-gray-600, #666666); font-family: var(--font-heading, Inter, sans-serif); font-size: 12px; font-weight: 600; white-space: nowrap; transition: border-color var(--transition-fast, 150ms ease), color var(--transition-fast, 150ms ease), background var(--transition-fast, 150ms ease); } .ds-chip:hover { border-color: var(--color-gray-500, #6b6b6b); color: var(--color-dark, #222222); } .ds-chip-active { background: var(--color-dark, #222222); border-color: var(--color-dark, #222222); color: var(--color-white, #ffffff); } .ds-chip span { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--border-radius-full, 9999px); background: rgba(255, 255, 255, 0.2); color: inherit; font-size: 11px; font-weight: 700; } .ds-chip:focus-visible { outline: 2px solid var(--color-blue-cobalt, #1B5F8A); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "White field with gray stroke, cobalt focus ring, and compact helper text.",
+      "html": "<label class=\"ds-field\"><span>Email</span><input placeholder=\"you@example.com\" /><small>We will only use this for account updates.</small></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; width: 280px; font-family: var(--font-body, Inter, sans-serif); } .ds-field span { color: var(--color-gray-700, #4a4a4a); font-size: 12px; font-weight: 500; } .ds-field input { height: 44px; padding: 0 16px; border: 1px solid var(--color-gray-300, #cdcdcd); border-radius: var(--border-radius-sm, 4px); background: var(--color-white, #ffffff); color: var(--color-dark, #222222); font-size: 14px; transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease); } .ds-field input:focus { outline: none; border-color: var(--color-blue-cobalt, #1B5F8A); box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.1); } .ds-field input::placeholder { color: var(--color-gray-500, #6b6b6b); } .ds-field small { color: var(--color-gray-500, #6b6b6b); font-size: 12px; line-height: 1.5; }"
+    },
+    {
+      "name": "Masthead Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "White masthead navigation with compact uppercase labels.",
+      "html": "<nav class=\"ds-nav\"><a>Browse all vehicles</a><a>Shop new cars</a><a>Research cars</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 24px; padding: 14px 24px; background: var(--color-white, #ffffff); box-shadow: 0 0 4px rgba(0, 0, 0, 0.25); font-family: var(--font-body, Inter, sans-serif); } .ds-nav a { color: var(--color-black, #000000); font-size: 13px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; text-decoration: none; transition: color var(--transition-fast, 150ms ease); } .ds-nav a:hover { color: var(--color-blue-cobalt, #1B5F8A); } .ds-nav a:focus-visible { outline: 2px solid var(--color-blue-cobalt, #1B5F8A); outline-offset: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Road Test Desk",
+    "overview": "The system should feel like the desk where C/D editors turn test data, pricing, rankings, and road impressions into buying guidance. It is approachable, helpful, and confident: expert enough to carry authority, clear enough to reduce decision fatigue, and restrained enough to avoid sales pressure.\n\nThe visual language is print-informed but not nostalgic. Strong black-and-white structure, C/D red and blue marks, crisp labels, image-led editorial moments, and practical marketplace controls should work together. Shopping components may be dense, but they must never feel like dealer-lot clutter.",
+    "keyCharacteristics": [
+      "Editorial confidence with practical shopping clarity.",
+      "Strong hierarchy, clear labels, and comparison-first information design.",
+      "Refined restraint in component chrome, with color used as a signal.",
+      "Low-pressure CTAs that are useful, not shouty.",
+      "Accessible contrast, visible focus states, and reduced-motion respect."
+    ],
+    "rules": [
+      {
+        "name": "The Signal Rarity Rule",
+        "body": "Blue and red earn attention because they are scarce. Do not flood a screen with multiple competing accent badges, urgency labels, and CTA colors.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Dealer-Lot Rule",
+        "body": "Countdown urgency, fake scarcity, shouty sales graphics, and stacked promotional badges are prohibited.",
+        "section": "colors"
+      },
+      {
+        "name": "The Editor Beside You Rule",
+        "body": "Type should explain and prioritize. Avoid decorative type moves that make shoppers work harder to compare vehicles or deals.",
+        "section": "typography"
+      },
+      {
+        "name": "The Label Discipline Rule",
+        "body": "Uppercase is for short labels and controls only. Never set body copy or long explanations in all caps.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light-Lift Rule",
+        "body": "Surfaces may rise when they are interactive or layered. Static content should rely on borders, spacing, and hierarchy first.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do lead with editorial confidence: make rankings, ratings, and recommendations easy to understand at a glance.",
+      "Do use C/D Cobalt Blue for meaningful action, selected state, and link affordances.",
+      "Do use C/D Signal Red sparingly as a brand or alert mark, not as a generic decoration.",
+      "Do keep deal language factual, specific, and calm.",
+      "Do preserve keyboard focus states, WCAG AA contrast, and reduced-motion respect.",
+      "Do favor borders, spacing, and type hierarchy before adding heavier shadows."
+    ],
+    "donts": [
+      "Don't use dealer-lot clutter, shouty sales graphics, countdown urgency, fake scarcity, stacked badges, or overloaded incentive panels.",
+      "Don't make every CTA primary. Marketplace pages need hierarchy, not a wall of blue buttons.",
+      "Don't use generic SaaS dashboards, soft app-store templates, or luxury-car cliches like black/gold gloss.",
+      "Don't use side-stripe borders greater than 1px as colored accents on cards, callouts, or list items.",
+      "Don't use gradient text, glassmorphism as default chrome, or decorative sparkline-like data marks.",
+      "Don't let badges, offer tags, and labels crowd the vehicle image or obscure the editorial hierarchy."
+    ]
+  }
+}
