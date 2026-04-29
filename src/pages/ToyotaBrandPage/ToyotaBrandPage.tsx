@@ -10,8 +10,9 @@ import {
 import type { Vehicle } from '../../types/vehicle';
 import { getVehicleOffers } from '../../utils/dealCalculations';
 import { VehicleCard } from '../../components/VehicleCard';
+import AdBanner from '../../components/AdBanner';
 import ToyotaIncentives from '../../components/ToyotaIncentives/ToyotaIncentives';
-import TopRankedGlance from '../../components/TopRankedGlance/TopRankedGlance';
+import { DEALS_GRID_BREAKER_AD_URL } from '../../constants/dealsLayout';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import './ToyotaBrandPage.css';
 
@@ -282,7 +283,37 @@ const ToyotaBrandPage = () => {
           </div>
         </header>
 
-        <TopRankedGlance make={MAKE} limit={3} />
+        <div className="brand-page__breaker-ad" role="complementary" aria-label="Advertisement">
+          <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+        </div>
+
+        <section className="brand-page__footer-cta" aria-labelledby="brand-page-offers-title">
+          <div className="brand-page__footer-cta-header">
+            <h2 id="brand-page-offers-title" className="brand-page__footer-cta-title">
+              Special offers and incentives
+            </h2>
+            <p className="brand-page__footer-cta-count">
+              <strong>82</strong>
+              <span>SUV offers available</span>
+            </p>
+          </div>
+          <div className="brand-page__footer-cta-links">
+            <Link to={`/${MAKE.toLowerCase()}/deals-incentives`} className="brand-page__footer-cta-link">
+              <span className="brand-page__footer-cta-link-main">
+                <span className="brand-page__footer-cta-chip">BUY</span>
+                <span>See 34 SUV Buying Offers</span>
+              </span>
+              <span className="brand-page__footer-cta-badge">8 expiring soon!</span>
+            </Link>
+            <Link to={`/${MAKE.toLowerCase()}/lease-deals`} className="brand-page__footer-cta-link">
+              <span className="brand-page__footer-cta-link-main">
+                <span className="brand-page__footer-cta-chip">LEASE</span>
+                <span>See 48 SUV Leasing Offers</span>
+              </span>
+              <span className="brand-page__footer-cta-badge">12 expiring soon!</span>
+            </Link>
+          </div>
+        </section>
 
         <div className="brand-page__featured-row">
           <div className="brand-page__featured-main">
@@ -415,22 +446,6 @@ const ToyotaBrandPage = () => {
         ))}
 
         <ToyotaIncentives />
-
-        <div className="brand-page__footer-cta">
-          <p className="brand-page__footer-cta-count">
-            <strong>{latestByModel.length}</strong> current {MAKE} models in our catalog
-          </p>
-          <div className="brand-page__footer-cta-links">
-            <Link to={`/${MAKE.toLowerCase()}/deals-incentives`} className="brand-page__footer-cta-link">
-              See {MAKE} deals &amp; incentives
-              <ChevronRight size={16} aria-hidden />
-            </Link>
-            <Link to={`/${MAKE.toLowerCase()}/lease-deals`} className="brand-page__footer-cta-link">
-              See {MAKE} lease deals
-              <ChevronRight size={16} aria-hidden />
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   );
