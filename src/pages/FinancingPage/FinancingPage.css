@@ -9,7 +9,7 @@
 /* ---- Calculator section ---- */
 .financing__calculator {
   padding: var(--spacing-10) 0;
-  background: var(--color-gray-50);
+  background: var(--color-white);
 }
 
 /* ---- Value Props ---- */

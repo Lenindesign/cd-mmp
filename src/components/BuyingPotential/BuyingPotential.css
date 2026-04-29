@@ -63,6 +63,13 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
+  min-height: 0;
+}
+
+@media (min-width: 901px) {
+  .buying-potential__content {
+    height: clamp(680px, 72vh, 760px);
+  }
 }
 
 @media (max-width: 900px) {
@@ -76,6 +83,7 @@
   padding: var(--spacing-6) var(--spacing-8);
   display: flex;
   flex-direction: column;
+  min-height: 0;
   border-right: 1px solid var(--color-gray-200);
 }
 
@@ -205,6 +213,7 @@
   background: var(--color-gray-50);
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 /* Vehicle Matches */
@@ -316,10 +325,11 @@
 }
 
 .buying-potential__matches-list {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  max-height: 460px;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: var(--spacing-2);
@@ -648,6 +658,11 @@
   margin: var(--spacing-1) 0 0 0;
 }
 
+.buying-potential__options--scroll {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
 .buying-potential__option {
   width: 100%;
   padding: var(--spacing-2) var(--spacing-4);
@@ -661,9 +676,42 @@
   transition: background-color var(--transition-fast);
 }
 
+.buying-potential__option--with-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.buying-potential__option--with-meta span:last-child,
+.buying-potential__select-meta {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+}
+
+.buying-potential__select-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  flex-shrink: 0;
+}
+
 .buying-potential__option:hover,
 .buying-potential__option.active {
   background: var(--color-gray-100);
+}
+
+.buying-potential__tax-note {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  color: var(--color-gray-600);
+}
+
+.buying-potential__tax-note strong {
+  color: var(--color-black);
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Input */

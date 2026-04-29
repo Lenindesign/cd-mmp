@@ -5,6 +5,7 @@ import { getBuyingPotentialVehicles, type BuyingPotentialVehicle } from '../../s
 import { getAllListings, type Listing } from '../../services/listingsService';
 import { getVehicleOffers, offersToIncentives, findMatchingIncentiveId } from '../../utils/dealCalculations';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
 import IncentivesModal from '../IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../IncentivesModal/IncentivesModal';
 import './BuyingPotential.css';
@@ -68,6 +69,8 @@ const BuyingPotential = ({
   const [loanTerm, setLoanTerm] = useState(60);
   const [includeTradeIn, setIncludeTradeIn] = useState(false);
   const [tradeInAmount, setTradeInAmount] = useState(0);
+  const [selectedStateCode, setSelectedStateCode] = useState(DEFAULT_STATE_VEHICLE_TAX.code);
+  const [estimatedTax, setEstimatedTax] = useState(0);
   const [buyingPower, setBuyingPower] = useState(0);
   const [displayedPower, setDisplayedPower] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -75,6 +78,7 @@ const BuyingPotential = ({
   const [vehicleTypeOpen, setVehicleTypeOpen] = useState(false);
   const [creditScoreOpen, setCreditScoreOpen] = useState(false);
   const [loanTermOpen, setLoanTermOpen] = useState(false);
+  const [stateTaxOpen, setStateTaxOpen] = useState(false);
   const [modalVehicle, setModalVehicle] = useState<{ vehicle: BuyingPotentialVehicle; offer: VehicleOfferSummary } | null>(null);
 
   const handleOfferClick = useCallback((e: React.MouseEvent, vehicle: BuyingPotentialVehicle, offer: VehicleOfferSummary) => {
@@ -104,6 +108,7 @@ const BuyingPotential = ({
     'Poor (300-579)',
   ];
   const loanTerms = [36, 48, 60, 72, 84];
+  const selectedStateTax = STATE_VEHICLE_TAXES.find((state) => state.code === selectedStateCode) ?? DEFAULT_STATE_VEHICLE_TAX;
 
   // Get vehicle matches from database based on buying power and body style
   const vehicleMatches = useMemo<BuyingPotentialVehicle[]>(() => {
@@ -152,10 +157,12 @@ const BuyingPotential = ({
     
     // Using loan formula: P = PMT * [(1 - (1 + r)^-n) / r]
     const loanAmount = monthlyPayment * ((1 - Math.pow(1 + apr, -loanTerm)) / apr);
-    const totalBuyingPower = loanAmount + downPayment + (includeTradeIn ? tradeInAmount : 0);
+    const totalAvailable = loanAmount + downPayment + (includeTradeIn ? tradeInAmount : 0);
+    const preTaxBuyingPower = totalAvailable / (1 + selectedStateTax.rate);
     
-    setBuyingPower(Math.round(totalBuyingPower));
-  }, [monthlyPayment, downPayment, creditScore, loanTerm, includeTradeIn, tradeInAmount]);
+    setBuyingPower(Math.round(preTaxBuyingPower));
+    setEstimatedTax(Math.round(totalAvailable - preTaxBuyingPower));
+  }, [monthlyPayment, downPayment, creditScore, loanTerm, includeTradeIn, tradeInAmount, selectedStateTax.rate]);
 
   // Animate the displayed buying power when it changes
   useEffect(() => {
@@ -195,6 +202,13 @@ const BuyingPotential = ({
       maximumFractionDigits: 0,
     }).format(value);
   };
+
+  const formatPercent = (value: number) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: value > 0 && value < 0.01 ? 2 : 1,
+      maximumFractionDigits: 2,
+    }).format(value);
 
   return (
     <section className="buying-potential">
@@ -243,6 +257,7 @@ const BuyingPotential = ({
                           setCreditScoreOpen(false);
                           setLoanTermOpen(false);
                           setBodyStyleOpen(false);
+                          setStateTaxOpen(false);
                         }}
                       >
                         {vehicleType}
@@ -281,6 +296,7 @@ const BuyingPotential = ({
                           setVehicleTypeOpen(false);
                           setLoanTermOpen(false);
                           setBodyStyleOpen(false);
+                          setStateTaxOpen(false);
                         }}
                       >
                         {creditScore}
@@ -317,6 +333,7 @@ const BuyingPotential = ({
                           setVehicleTypeOpen(false);
                           setCreditScoreOpen(false);
                           setBodyStyleOpen(false);
+                          setStateTaxOpen(false);
                         }}
                       >
                         {loanTerm} months
@@ -374,6 +391,53 @@ const BuyingPotential = ({
                         step={100}
                       />
                     </div>
+                  </div>
+                </div>
+
+                <div className="buying-potential__row buying-potential__row--single">
+                  <div className="buying-potential__field">
+                    <label className="buying-potential__label">State sales tax</label>
+                    <div className="buying-potential__select-wrapper">
+                      <button
+                        type="button"
+                        className="buying-potential__select"
+                        onClick={() => {
+                          setStateTaxOpen(!stateTaxOpen);
+                          setVehicleTypeOpen(false);
+                          setCreditScoreOpen(false);
+                          setLoanTermOpen(false);
+                          setBodyStyleOpen(false);
+                        }}
+                      >
+                        <span>{selectedStateTax.name}</span>
+                        <span className="buying-potential__select-meta">
+                          {formatPercent(selectedStateTax.rate)}
+                          <ChevronDown size={16} />
+                        </span>
+                      </button>
+                      {stateTaxOpen && (
+                        <ul className="buying-potential__options buying-potential__options--scroll">
+                          {STATE_VEHICLE_TAXES.map((state) => (
+                            <li key={state.code}>
+                              <button
+                                type="button"
+                                className={`buying-potential__option buying-potential__option--with-meta ${selectedStateCode === state.code ? 'active' : ''}`}
+                                onClick={() => {
+                                  setSelectedStateCode(state.code);
+                                  setStateTaxOpen(false);
+                                }}
+                              >
+                                <span>{state.name}</span>
+                                <span>{formatPercent(state.rate)}</span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <p className="buying-potential__tax-note">
+                      Est. {selectedStateTax.code} tax: <strong>{formatCurrency(estimatedTax)}</strong>. Local taxes and fees may vary.
+                    </p>
                   </div>
                 </div>
 
