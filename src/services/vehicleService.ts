@@ -190,6 +190,7 @@ export const getPriceRangeStats = (): { min: number; max: number; average: numbe
 // Format vehicle for BuyingPotential component
 export interface BuyingPotentialVehicle {
   name: string;
+  year: number;
   make: string;
   model: string;
   price: number;
@@ -201,6 +202,7 @@ export interface BuyingPotentialVehicle {
 
 export const formatForBuyingPotential = (vehicle: Vehicle): BuyingPotentialVehicle => ({
   name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
+  year: parseInt(vehicle.year, 10),
   make: vehicle.make,
   model: vehicle.model,
   price: vehicle.priceMin,
