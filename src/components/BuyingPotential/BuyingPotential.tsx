@@ -675,9 +675,6 @@ const BuyingPotential = ({
                     See All {isUsedMode ? 'Used ' : ''}{categoryLabel} Under {formatCurrency(buyingPower)}
                     <ArrowRight size={18} />
                   </Link>
-                  <button className="buying-potential__cta buying-potential__cta--secondary">
-                    Get Pre-Approved
-                  </button>
                 </div>
 
                 {/* Disclaimer */}

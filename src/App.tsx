@@ -58,6 +58,7 @@ const LeaseCategoryDispatcher = lazy(() => import('./pages/LeaseCategoryDispatch
 
 // Financing page - lazy loaded
 const FinancingPage = lazy(() => import('./pages/FinancingPage/FinancingPage'));
+const AutoLoanCalculatorPage = lazy(() => import('./pages/AutoLoanCalculatorPage/AutoLoanCalculatorPage'));
 
 // Compare page - lazy loaded (no auth required)
 const ComparePage = lazy(() => import('./pages/ComparePage/ComparePage'));
@@ -178,6 +179,7 @@ function App() {
             {/* Financing / Payment Calculator Page */}
             <Route path="/financing" element={<FinancingPage />} />
             <Route path="/payment-calculator" element={<FinancingPage />} />
+            <Route path="/auto-loan-calculator" element={<AutoLoanCalculatorPage />} />
 
             {/* Deals Pages */}
             <Route path="/deals" element={<DealsHubPage />} />
