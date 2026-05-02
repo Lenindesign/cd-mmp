@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAllVehicles, getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
 import { Button } from '../../components/Button';
 import { Select, TextField } from '../../components/TextField';
+import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
 import HeroOffersB from '../../components/Hero/HeroOffersB';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import '../../components/Hero/Hero.css';
@@ -97,6 +99,16 @@ const parseTerm = (value?: string) => {
   const match = value?.match(/(\d+)/);
   return match ? Number(match[1]) : 60;
 };
+
+const getCombinedMpg = (mpg?: string) => {
+  if (!mpg) return undefined;
+  const values = mpg.split('/').map((item) => Number(item));
+  if (values.some((value) => !Number.isFinite(value))) return undefined;
+  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+};
+
+const getVehicleCardCopy = (vehicle: Vehicle) =>
+  `The ${vehicle.year} ${vehicle.make} ${vehicle.model} keeps this estimate realistic with a starting price under your budget and a ${vehicle.staffRating}/10 C/D rating.`;
 
 const SealCheckIcon = ({ size = 24 }: { size?: number }) => (
   <svg
@@ -223,6 +235,8 @@ const AllInOnePaymentCalculatorPage = () => {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [showIncentiveModal, setShowIncentiveModal] = useState(false);
   const [selectedIncentive, setSelectedIncentive] = useState<Incentive | null>(null);
+  const affordableCarouselRef = useRef<HTMLDivElement>(null);
+  const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
 
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
@@ -397,6 +411,41 @@ const AllInOnePaymentCalculatorPage = () => {
     setTradeInValue(estimatedTradeValue);
     setShowTradeTool(false);
   };
+
+  const scrollAffordableVehicles = (direction: 'previous' | 'next') => {
+    const carousel = affordableCarouselRef.current;
+    if (!carousel) return;
+
+    carousel.scrollBy({
+      left: direction === 'next' ? carousel.clientWidth * 0.9 : -carousel.clientWidth * 0.9,
+      behavior: 'smooth',
+    });
+  };
+
+  const updateAffordableCarouselState = () => {
+    const carousel = affordableCarouselRef.current;
+    if (!carousel) return;
+    const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+
+    setAffordableCarouselState({
+      canScrollPrevious: carousel.scrollLeft > 1,
+      canScrollNext: carousel.scrollLeft < maxScrollLeft - 1,
+    });
+  };
+
+  useEffect(() => {
+    const carousel = affordableCarouselRef.current;
+    if (!carousel) return;
+
+    updateAffordableCarouselState();
+    carousel.addEventListener('scroll', updateAffordableCarouselState, { passive: true });
+    window.addEventListener('resize', updateAffordableCarouselState);
+
+    return () => {
+      carousel.removeEventListener('scroll', updateAffordableCarouselState);
+      window.removeEventListener('resize', updateAffordableCarouselState);
+    };
+  }, [affordableVehicles]);
 
   return (
     <main className="aio-payment">
@@ -602,19 +651,6 @@ const AllInOnePaymentCalculatorPage = () => {
             </ul>
           </article>
 
-          <article className="aio-payment__panel">
-            <span className="aio-payment__eyebrow">Vehicles you can afford</span>
-            <h2>Similar options under this budget</h2>
-            <div className="aio-payment__vehicle-list">
-              {affordableVehicles.map((vehicle) => (
-                <a key={vehicle.id} href={getMarketplaceUrl(condition, vehicle)}>
-                  <span>{vehicle.year} {vehicle.make} {vehicle.model}</span>
-                  <strong>{currency(vehicle.priceMin)}</strong>
-                </a>
-              ))}
-            </div>
-          </article>
-
             </div>
           </section>
 
@@ -702,6 +738,60 @@ const AllInOnePaymentCalculatorPage = () => {
           </Button>
         </aside>
       </div>
+
+      <section className="aio-payment__section aio-payment__vehicle-carousel-section" aria-labelledby="aio-payment-similar-heading">
+        <div className="container">
+          <div className="aio-payment__similar-heading">
+            <span className="aio-payment__similar-line" aria-hidden="true" />
+            <h2 id="aio-payment-similar-heading">Similar Vehicles You Can Afford</h2>
+            <span className="aio-payment__similar-line" aria-hidden="true" />
+          </div>
+          <div className="aio-payment__vehicle-carousel-wrap">
+            <button
+              type="button"
+              className="aio-payment__vehicle-carousel-nav aio-payment__vehicle-carousel-nav--left"
+              aria-label="Previous affordable vehicles"
+              onClick={() => scrollAffordableVehicles('previous')}
+              disabled={!affordableCarouselState.canScrollPrevious}
+            >
+              <ChevronLeft size={24} aria-hidden="true" />
+            </button>
+            <div ref={affordableCarouselRef} className="aio-payment__vehicle-carousel">
+              {affordableVehicles.slice(0, 6).map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  id={vehicle.id}
+                  name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                  slug={vehicle.slug}
+                  image={vehicle.image}
+                  price={currency(vehicle.priceMin)}
+                  priceLabel="Starting at"
+                  rating={vehicle.staffRating}
+                  epaMpg={getCombinedMpg(vehicle.mpg)}
+                  cdSays={getVehicleCardCopy(vehicle)}
+                  editorsChoice={vehicle.editorsChoice}
+                  tenBest={vehicle.tenBest}
+                  evOfTheYear={vehicle.evOfTheYear}
+                  showShopButton
+                  shopButtonText={`Shop New ${vehicle.model}`}
+                  shopButtonVariant="primary"
+                  availableYears={[Number(vehicle.year)]}
+                  modelName={vehicle.model}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="aio-payment__vehicle-carousel-nav aio-payment__vehicle-carousel-nav--right"
+              aria-label="Next affordable vehicles"
+              onClick={() => scrollAffordableVehicles('next')}
+              disabled={!affordableCarouselState.canScrollNext}
+            >
+              <ChevronRight size={24} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </section>
 
       <IncentivesModal
         isOpen={showIncentiveModal}
