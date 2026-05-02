@@ -6,6 +6,8 @@ import { formatExpiration } from '../../utils/dateUtils';
 interface HeroOffersBProps {
   vehicleIncentives: VehicleIncentives;
   onOfferClick: (inc: Incentive) => void;
+  selectedOfferIds?: string[];
+  title?: string;
 }
 
 const stripQualifier = (v: string) =>
@@ -21,7 +23,12 @@ const getChipLabel = (type: Incentive['type']) => {
   }
 };
 
-const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
+const HeroOffersB = ({
+  vehicleIncentives,
+  onOfferClick,
+  selectedOfferIds = [],
+  title = 'SPECIAL OFFERS AND INCENTIVES',
+}: HeroOffersBProps) => {
   const topOffers = useMemo(() => {
     const finance = vehicleIncentives.incentives.find(i => i.type === 'finance');
     const lease = vehicleIncentives.incentives.find(i => i.type === 'lease');
@@ -33,7 +40,7 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
 
   return (
     <div className="hero__offers-b">
-      <h3 className="hero__offers-b-title">SPECIAL OFFERS AND INCENTIVES</h3>
+      <h3 className="hero__offers-b-title">{title}</h3>
       <div className="hero__offers-b-pills">
         {topOffers.map(inc => {
           const value = stripQualifier(inc.value);
@@ -51,7 +58,7 @@ const HeroOffersB = ({ vehicleIncentives, onOfferClick }: HeroOffersBProps) => {
             <button
               key={inc.id}
               type="button"
-              className="hero__offers-b-pill"
+              className={`hero__offers-b-pill ${selectedOfferIds.includes(inc.id) ? 'hero__offers-b-pill--selected' : ''}`}
               onClick={() => onOfferClick(inc)}
             >
               <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>

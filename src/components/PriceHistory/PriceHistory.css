@@ -177,20 +177,20 @@
   justify-content: center;
 }
 
-.price-history__expert-tip-icon svg.lucide {
-  font-size: var(--font-size-sm);
+.price-history__expert-tip-icon svg {
+  display: block;
 }
 
 .price-history__expert-tip-label {
   font-family: var(--font-heading);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-22);
   font-weight: var(--font-weight-bold);
   color: var(--color-badge-certified);
 }
 
 .price-history__expert-tip-text {
   margin: 0;
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
   color: var(--color-black);
   line-height: 1.5;
   text-align: left;

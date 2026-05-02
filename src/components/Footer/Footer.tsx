@@ -43,6 +43,7 @@ const Footer = () => {
         { label: 'Best Cars Lists', path: '/rankings' },
         { label: 'Payment Calculator', path: '/financing' },
         { label: 'Auto Loan Calculator', path: '/auto-loan-calculator' },
+        { label: 'All-in-One Payment Calculator', path: '/auto-loan-calculator/all-in-one' },
         { label: 'Car Finder', path: '/vehicles' },
       ],
     },
