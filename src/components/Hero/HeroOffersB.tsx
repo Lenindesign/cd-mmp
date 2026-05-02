@@ -6,6 +6,7 @@ import { formatExpiration } from '../../utils/dateUtils';
 interface HeroOffersBProps {
   vehicleIncentives: VehicleIncentives;
   onOfferClick: (inc: Incentive) => void;
+  onApplyOffer?: (inc: Incentive) => void;
   selectedOfferIds?: string[];
   title?: string;
 }
@@ -25,7 +26,7 @@ const getChipLabel = (type: Incentive['type']) => {
 
 const HeroOffersB = ({
   vehicleIncentives,
-  onOfferClick,
+  onApplyOffer,
   selectedOfferIds = [],
   title = 'SPECIAL OFFERS AND INCENTIVES',
 }: HeroOffersBProps) => {
@@ -55,16 +56,21 @@ const HeroOffersB = ({
                   return termMatch ? `${value} for ${termMatch[1]} mo.` : value;
                 })();
           return (
-            <button
+            <div
               key={inc.id}
-              type="button"
               className={`hero__offers-b-pill ${selectedOfferIds.includes(inc.id) ? 'hero__offers-b-pill--selected' : ''}`}
-              onClick={() => onOfferClick(inc)}
             >
               <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
               <span className="hero__offers-b-pill-text">{label}</span>
               <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
-            </button>
+              {onApplyOffer && (
+                <span className="hero__offers-b-pill-actions">
+                  <button type="button" className="hero__offers-b-pill-apply" onClick={() => onApplyOffer(inc)}>
+                    {selectedOfferIds.includes(inc.id) ? 'Applied' : 'Apply'}
+                  </button>
+                </span>
+              )}
+            </div>
           );
         })}
       </div>
