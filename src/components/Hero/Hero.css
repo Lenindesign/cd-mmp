@@ -900,7 +900,7 @@
 }
 
 .hero__offers-b-pill--selected {
-  background: unset;
+  background: var(--color-white);
   border: none;
   border-image: none;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-cobalt) 12%, transparent);

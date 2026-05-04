@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Gauge, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, X, Zap } from 'lucide-react';
+import { Gauge, MapPin, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, X, Zap } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
 import './TradeInEstimateModal.css';
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 export type TradeInEstimateCondition = 'rough' | 'average' | 'clean';
 
@@ -63,6 +65,66 @@ const estimateTradeInValue = (vehicleDescription: string, mileage: number, condi
   return Math.max(500, Math.round(estimate / 100) * 100);
 };
 
+const loadGoogleMapsGeocoder = async () => {
+  if (window.google?.maps?.Geocoder) return;
+
+  if (!GOOGLE_MAPS_API_KEY) {
+    throw new Error('Google Maps API key is not configured.');
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const existingScript = document.querySelector<HTMLScriptElement>('script[src*="maps.googleapis.com/maps/api/js"]');
+
+    if (existingScript) {
+      const checkForGoogleMaps = () => {
+        if (window.google?.maps?.Geocoder) {
+          resolve();
+          return;
+        }
+
+        window.setTimeout(checkForGoogleMaps, 100);
+      };
+
+      checkForGoogleMaps();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Unable to load location lookup.'));
+    document.head.appendChild(script);
+  });
+};
+
+const getZipCodeFromCoordinates = async (latitude: number, longitude: number) => {
+  await loadGoogleMapsGeocoder();
+
+  return new Promise<string>((resolve, reject) => {
+    const geocoder = new window.google!.maps!.Geocoder();
+
+    geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
+      if (status !== 'OK' || !results?.length) {
+        reject(new Error('Unable to find ZIP code for this location.'));
+        return;
+      }
+
+      const postalCode = results
+        .flatMap((result) => result.address_components)
+        .find((component) => component.types.includes('postal_code'))?.long_name;
+
+      if (!postalCode) {
+        reject(new Error('Unable to find ZIP code for this location.'));
+        return;
+      }
+
+      resolve(postalCode.replace(/\D/g, '').slice(0, 5));
+    });
+  });
+};
+
 export const TradeInEstimateModal = ({
   isOpen,
   initialVehicle = '',
@@ -75,6 +137,8 @@ export const TradeInEstimateModal = ({
   const [vehicle, setVehicle] = useState(initialVehicle);
   const [mileage, setMileage] = useState(String(initialMileage || ''));
   const [zipCode, setZipCode] = useState('');
+  const [isDetectingZip, setIsDetectingZip] = useState(false);
+  const [zipDetectionError, setZipDetectionError] = useState('');
   const [condition, setCondition] = useState<TradeInEstimateCondition>(initialCondition);
 
   const vehicleSuggestions = useMemo(() => {
@@ -114,7 +178,39 @@ export const TradeInEstimateModal = ({
     () => estimateTradeInValue(vehicle, parsedMileage, condition),
     [condition, parsedMileage, vehicle],
   );
-  const canUseEstimate = estimatedValue > 0 && zipCode.trim().length >= 5;
+  const canUseEstimate = estimatedValue > 0;
+
+  const detectZipCode = () => {
+    if (!navigator.geolocation) {
+      setZipDetectionError('Location detection is not supported. Enter ZIP manually.');
+      return;
+    }
+
+    setIsDetectingZip(true);
+    setZipDetectionError('');
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const detectedZip = await getZipCodeFromCoordinates(position.coords.latitude, position.coords.longitude);
+          setZipCode(detectedZip);
+        } catch {
+          setZipDetectionError('Could not detect ZIP. Enter it manually.');
+        } finally {
+          setIsDetectingZip(false);
+        }
+      },
+      () => {
+        setZipDetectionError('Location permission was not granted. Enter ZIP manually.');
+        setIsDetectingZip(false);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 5 * 60 * 1000,
+      },
+    );
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -256,16 +352,32 @@ export const TradeInEstimateModal = ({
                   step={500}
                 />
               </label>
-              <label className="trade-in-modal__field">
-                <span>ZIP code</span>
+              <div className="trade-in-modal__field">
+                <label htmlFor="trade-in-zip-code">ZIP code <small>(optional)</small></label>
                 <input
+                  id="trade-in-zip-code"
                   type="text"
                   value={zipCode}
                   onChange={(event) => setZipCode(event.target.value.replace(/\D/g, '').slice(0, 5))}
                   placeholder="90210"
                   inputMode="numeric"
+                  aria-describedby={zipDetectionError ? 'trade-in-zip-error' : undefined}
                 />
-              </label>
+                <button
+                  type="button"
+                  className="trade-in-modal__detect-zip"
+                  onClick={detectZipCode}
+                  disabled={isDetectingZip}
+                >
+                  <MapPin size={14} aria-hidden="true" />
+                  {isDetectingZip ? 'Detecting ZIP...' : 'Use my location'}
+                </button>
+                {zipDetectionError && (
+                  <small id="trade-in-zip-error" className="trade-in-modal__field-error">
+                    {zipDetectionError}
+                  </small>
+                )}
+              </div>
             </div>
 
             <fieldset className="trade-in-modal__condition">

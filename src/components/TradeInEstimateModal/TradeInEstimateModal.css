@@ -186,6 +186,20 @@
   color: var(--color-dark);
 }
 
+.trade-in-modal__field > span,
+.trade-in-modal__field > label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-dark);
+}
+
+.trade-in-modal__field > label small {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-500);
+}
+
 .trade-in-modal__field input {
   width: 100%;
   padding: var(--spacing-3) var(--spacing-4);
@@ -202,6 +216,38 @@
   outline: none;
   border-color: var(--color-blue-cobalt);
   box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.14);
+}
+
+.trade-in-modal__detect-zip {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.trade-in-modal__detect-zip:hover:not(:disabled) {
+  color: var(--color-blue-cobalt-dark);
+  text-decoration: underline;
+}
+
+.trade-in-modal__detect-zip:disabled {
+  color: var(--color-gray-500);
+  cursor: wait;
+}
+
+.trade-in-modal__field-error {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-error-dark);
 }
 
 .trade-in-modal__vehicle-match {
