@@ -891,6 +891,7 @@
   container-type: inline-size;
   font: inherit;
   text-align: left;
+  cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 

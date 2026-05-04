@@ -26,6 +26,7 @@ const getChipLabel = (type: Incentive['type']) => {
 
 const HeroOffersB = ({
   vehicleIncentives,
+  onOfferClick,
   onApplyOffer,
   selectedOfferIds = [],
   title = 'SPECIAL OFFERS AND INCENTIVES',
@@ -58,14 +59,30 @@ const HeroOffersB = ({
           return (
             <div
               key={inc.id}
+              role="button"
+              tabIndex={0}
               className={`hero__offers-b-pill ${selectedOfferIds.includes(inc.id) ? 'hero__offers-b-pill--selected' : ''}`}
+              onClick={() => onOfferClick(inc)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onOfferClick(inc);
+                }
+              }}
             >
               <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
               <span className="hero__offers-b-pill-text">{label}</span>
               <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
               {onApplyOffer && (
                 <span className="hero__offers-b-pill-actions">
-                  <button type="button" className="hero__offers-b-pill-apply" onClick={() => onApplyOffer(inc)}>
+                  <button
+                    type="button"
+                    className="hero__offers-b-pill-apply"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onApplyOffer(inc);
+                    }}
+                  >
                     {selectedOfferIds.includes(inc.id) ? 'Applied' : 'Apply'}
                   </button>
                 </span>

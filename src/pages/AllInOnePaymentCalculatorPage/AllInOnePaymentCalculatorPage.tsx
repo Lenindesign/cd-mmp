@@ -940,53 +940,61 @@ const AllInOnePaymentCalculatorPage = () => {
           <p className="aio-payment__summary-subtitle">
             Includes price, tax, fees, trade equity, incentives, down payment, and finance charge.
           </p>
-          <dl className="aio-payment__summary-breakdown">
-            <div className="aio-payment__summary-row--emphasis">
-              <dt>
-                Out-the-door price
-                <span className="aio-payment__info-tooltip" tabIndex={0} aria-label="About out-the-door price estimates">
-                  <Info size={14} aria-hidden="true" />
-                  <span className="aio-payment__info-tooltip-text" role="tooltip">
-                    This is an estimate. Dealer-installed add-ons, documentation fees, protection packages, market adjustments, and other charges can change the final amount due at signing.
+          <div className="aio-payment__summary-groups">
+            <details className="aio-payment__summary-group">
+              <summary>
+                <span>
+                  Out-the-door price
+                  <span className="aio-payment__info-tooltip" tabIndex={0} aria-label="About out-the-door price estimates">
+                    <Info size={14} aria-hidden="true" />
+                    <span className="aio-payment__info-tooltip-text" role="tooltip">
+                      This is an estimate. Dealer-installed add-ons, documentation fees, protection packages, market adjustments, and other charges can change the final amount due at signing.
+                    </span>
                   </span>
                 </span>
-              </dt>
-              <dd>{currency(outTheDoorPrice)}</dd>
-            </div>
-            <div><dt>Vehicle price</dt><dd>{currency(workingPrice)}</dd></div>
-            <div><dt>Sales tax</dt><dd>{currency(salesTax)}</dd></div>
-            <div><dt>Title, registration & fees</dt><dd>{currency(fees)}</dd></div>
+                <strong>{currency(outTheDoorPrice)}</strong>
+              </summary>
+              <dl className="aio-payment__summary-breakdown">
+                <div><dt>Vehicle price</dt><dd>{currency(workingPrice)}</dd></div>
+                <div><dt>Sales tax</dt><dd>{currency(salesTax)}</dd></div>
+                <div><dt>Title, registration & fees</dt><dd>{currency(fees)}</dd></div>
+              </dl>
+            </details>
 
-            <div className="aio-payment__summary-row--emphasis">
-              <dt>After trade & incentives</dt>
-              <dd>{currency(netPriceAfterTradeAndOffers)}</dd>
-            </div>
-            <div><dt>Trade-in value</dt><dd>{tradeInValue > 0 ? `-${currency(tradeInValue)}` : currency(0)}</dd></div>
-            <div><dt>Amount owed on trade</dt><dd>{amountOwed > 0 ? `+${currency(amountOwed)}` : currency(0)}</dd></div>
-            <div><dt>Rebates and incentives</dt><dd>{rebateTotal > 0 ? `-${currency(rebateTotal)}` : currency(0)}</dd></div>
-            <div><dt>Cash due at signing</dt><dd>{cashDueAtSigning > 0 ? `-${currency(cashDueAtSigning)}` : currency(0)}</dd></div>
+            <details className="aio-payment__summary-group">
+              <summary>
+                <span>After trade & incentives</span>
+                <strong>{currency(netPriceAfterTradeAndOffers)}</strong>
+              </summary>
+              <dl className="aio-payment__summary-breakdown">
+                <div><dt>Trade-in value</dt><dd>{tradeInValue > 0 ? `-${currency(tradeInValue)}` : currency(0)}</dd></div>
+                <div><dt>Amount owed on trade</dt><dd>{amountOwed > 0 ? `+${currency(amountOwed)}` : currency(0)}</dd></div>
+                <div><dt>Rebates and incentives</dt><dd>{rebateTotal > 0 ? `-${currency(rebateTotal)}` : currency(0)}</dd></div>
+                <div><dt>Cash due at signing</dt><dd>{cashDueAtSigning > 0 ? `-${currency(cashDueAtSigning)}` : currency(0)}</dd></div>
+              </dl>
+            </details>
 
-            <div className="aio-payment__summary-row--emphasis">
-              <dt>Amount financed</dt>
-              <dd>{currency(totalLoanAmount)}</dd>
-            </div>
-            <div><dt>Estimated payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
-            {startMode === 'monthly' && (
-              <div>
-                <dt>{paymentDelta > 0 ? 'Over target by' : 'Under target by'}</dt>
-                <dd>{currency(Math.abs(paymentDelta))}/mo</dd>
-              </div>
-            )}
-            <div><dt>Finance charge</dt><dd>{currency(totalLoanInterest)}</dd></div>
-            <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
-            <div><dt>Cash + loan payments</dt><dd>{currency(totalPaidFromPocket)}</dd></div>
-            <div className="aio-payment__summary-row--total">
-              <dt>Total after all credits</dt>
-              <dd>{currency(totalCost)}</dd>
-            </div>
-          </dl>
+            <details className="aio-payment__summary-group">
+              <summary>
+                <span>Amount financed</span>
+                <strong>{currency(totalLoanAmount)}</strong>
+              </summary>
+              <dl className="aio-payment__summary-breakdown">
+                <div><dt>Estimated payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
+                {startMode === 'monthly' && (
+                  <div>
+                    <dt>{paymentDelta > 0 ? 'Over target by' : 'Under target by'}</dt>
+                    <dd>{currency(Math.abs(paymentDelta))}/mo</dd>
+                  </div>
+                )}
+                <div><dt>Finance charge</dt><dd>{currency(totalLoanInterest)}</dd></div>
+                <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
+                <div><dt>Cash + loan payments</dt><dd>{currency(totalPaidFromPocket)}</dd></div>
+              </dl>
+            </details>
+          </div>
           <p className="aio-payment__summary-note">
-            Out-the-door price is before trade-in, incentives, and down payment. Total after all credits includes the finance charge.
+            Details are estimates. Expand each group to see how taxes, fees, trade, incentives, and finance charges affect the total.
           </p>
           <Button as="a" href={getMarketplaceUrl(condition, selectedVehicle, selectedYear)} variant="primary" size="large" fullWidth className="aio-payment__marketplace">
             Shop {condition === 'new' ? 'New' : 'Used'} {selectedVehicle.model}

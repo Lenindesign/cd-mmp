@@ -188,7 +188,7 @@
 
 .aio-payment__summary {
   position: sticky;
-  top: calc(var(--header-height) + var(--spacing-6));
+  top: var(--spacing-6);
   align-self: start;
   order: -1;
   background: var(--color-white);
@@ -337,6 +337,75 @@
   font-size: var(--font-size-base);
 }
 
+.aio-payment__summary-groups {
+  display: grid;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+}
+
+.aio-payment__summary-group {
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+}
+
+.aio-payment__summary-group summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  cursor: pointer;
+  list-style: none;
+}
+
+.aio-payment__summary-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.aio-payment__summary-group summary::after {
+  content: '';
+  flex: 0 0 auto;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  border-right: 1.5px solid var(--color-gray-600);
+  border-bottom: 1.5px solid var(--color-gray-600);
+  transform: rotate(45deg);
+  transition: transform var(--transition-fast);
+}
+
+.aio-payment__summary-group[open] summary::after {
+  transform: rotate(225deg);
+}
+
+.aio-payment__summary-group summary span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.aio-payment__summary-group summary strong {
+  margin-left: auto;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.aio-payment__summary-group .aio-payment__summary-breakdown {
+  margin: 0;
+  padding: 0 var(--spacing-3) var(--spacing-3);
+}
+
+.aio-payment__summary-group .aio-payment__summary-breakdown div:first-child {
+  border-top-color: var(--color-gray-200);
+}
+
 .aio-payment__info-tooltip {
   position: relative;
   display: inline-flex;
@@ -397,7 +466,7 @@
 }
 
 .aio-payment__summary-note {
-  margin: calc(var(--spacing-2) * -1) 0 var(--spacing-4);
+  margin: var(--spacing-4) 0 var(--spacing-4);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
   line-height: 1.5;
@@ -935,8 +1004,6 @@
   .aio-payment__summary {
     order: 0;
     margin-top: var(--spacing-10);
-    max-height: calc(100vh - var(--header-height) - var(--spacing-12));
-    overflow-y: auto;
   }
 
   .aio-payment__results {
