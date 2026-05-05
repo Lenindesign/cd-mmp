@@ -174,6 +174,59 @@ const getTaxableAmount = (
   }
 };
 
+const getAffordablePriceFromMonthlyBudget = ({
+  targetMonthlyPayment,
+  apr,
+  termMonths,
+  downPayment,
+  tradeInValue,
+  amountOwed,
+  rebate,
+  taxRule,
+  taxRate,
+  salesTaxOverride,
+  fees,
+}: {
+  targetMonthlyPayment: number;
+  apr: number;
+  termMonths: number;
+  downPayment: number;
+  tradeInValue: number;
+  amountOwed: number;
+  rebate: number;
+  taxRule: TaxableAmountRule;
+  taxRate: number;
+  salesTaxOverride?: number;
+  fees: number;
+}) => {
+  if (targetMonthlyPayment <= 0 || termMonths <= 0) return 0;
+
+  const tradeEquity = tradeInValue - amountOwed;
+  const paymentForPrice = (candidatePrice: number) => {
+    const taxableAmount = getTaxableAmount(candidatePrice, tradeInValue, rebate, taxRule);
+    const salesTax = salesTaxOverride ?? taxableAmount * taxRate;
+    const outTheDoorPrice = candidatePrice + salesTax + fees;
+    const netAfterCredits = Math.max(0, outTheDoorPrice - tradeEquity - rebate);
+    const amountFinanced = Math.max(0, netAfterCredits - downPayment);
+
+    return monthlyPayment(amountFinanced, apr, termMonths);
+  };
+
+  let low = 0;
+  let high = 200000;
+
+  for (let step = 0; step < 32; step += 1) {
+    const mid = (low + high) / 2;
+    if (paymentForPrice(mid) <= targetMonthlyPayment) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+
+  return Math.max(0, Math.floor(low / 100) * 100);
+};
+
 const buildAnnualSchedule = (principal: number, apr: number, termMonths: number, payment: number): YearScheduleRow[] => {
   const monthlyRate = apr / 100 / 12;
   let balance = principal;
@@ -204,7 +257,13 @@ const getMarketplaceUrl = (condition: VehicleCondition, vehicle: Vehicle, year: 
   return `https://www.caranddriver.com/cars-for-sale/${condition}?${params.toString()}`;
 };
 
-const AllInOnePaymentCalculatorPage = () => {
+interface AllInOnePaymentCalculatorPageProps {
+  variant?: 'classic' | 'budget-first' | 'light';
+}
+
+const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentCalculatorPageProps) => {
+  const isBudgetFirstVariant = variant === 'budget-first';
+  const isLightVariant = variant === 'light';
   const vehicles = useMemo(() => getAllVehicles(), []);
   const stateRules = useMemo(() => buildStateRules(), []);
   const defaultVehicle = vehicles.find((vehicle) => vehicle.make === 'Honda' && vehicle.model === 'CR-V') ?? vehicles[0];
@@ -212,7 +271,7 @@ const AllInOnePaymentCalculatorPage = () => {
   const [condition, setCondition] = useState<VehicleCondition>('new');
   const [selectedSlug, setSelectedSlug] = useState(defaultVehicle.slug);
   const [selectedYear, setSelectedYear] = useState(defaultVehicle.year);
-  const [startMode, setStartMode] = useState<PurchaseStartMode>('price');
+  const [startMode, setStartMode] = useState<PurchaseStartMode>(isBudgetFirstVariant || isLightVariant ? 'monthly' : 'price');
   const [price, setPrice] = useState(defaultVehicle.priceMin);
   const [targetMonthlyPayment, setTargetMonthlyPayment] = useState(550);
   const [downPayment, setDownPayment] = useState(4000);
@@ -316,7 +375,20 @@ const AllInOnePaymentCalculatorPage = () => {
   const stateRule = stateRules.find((state) => state.code === stateCode) ?? stateRules[0];
   const fees = feesOverride ? numberInput(feesOverride) : stateRule.titleRegistrationFees;
   const tradeEquity = tradeInValue - amountOwed;
-  const workingPrice = price;
+  const affordableMsrp = getAffordablePriceFromMonthlyBudget({
+    targetMonthlyPayment,
+    apr: activeApr,
+    termMonths: loanTerm,
+    downPayment,
+    tradeInValue,
+    amountOwed,
+    rebate: rebateTotal,
+    taxRule: stateRule.taxRule,
+    taxRate: stateRule.rate,
+    salesTaxOverride: salesTaxOverride ? numberInput(salesTaxOverride) : undefined,
+    fees,
+  });
+  const workingPrice = (isBudgetFirstVariant || isLightVariant) && startMode === 'monthly' ? affordableMsrp : price;
   const taxableAmount = getTaxableAmount(workingPrice, tradeInValue, rebateTotal, stateRule.taxRule);
   const calculatedSalesTax = taxableAmount * stateRule.rate;
   const salesTax = salesTaxOverride ? numberInput(salesTaxOverride) : calculatedSalesTax;
@@ -331,9 +403,10 @@ const AllInOnePaymentCalculatorPage = () => {
   const totalPaidFromPocket = cashDueAtSigning + totalLoanPayments;
   const paymentDelta = estimatedMonthly - targetMonthlyPayment;
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
+  const affordableVehicleBudget = isBudgetFirstVariant || isLightVariant ? workingPrice : price + downPayment + rebateTotal;
   const affordableVehicles = useMemo(
-    () => getVehiclesInBudget(Math.max(0, price + downPayment + rebateTotal), selectedVehicle.bodyStyle).slice(0, 4),
-    [downPayment, price, rebateTotal, selectedVehicle.bodyStyle],
+    () => getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4),
+    [affordableVehicleBudget, selectedVehicle.bodyStyle],
   );
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
@@ -525,6 +598,261 @@ const AllInOnePaymentCalculatorPage = () => {
     return () => observer.disconnect();
   }, []);
 
+  if (isLightVariant) {
+    return (
+      <main className="aio-payment aio-payment--light">
+        <section className="aio-payment__light-hero">
+          <div className="container">
+            <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
+              <Link to="/">Home</Link>
+              <span>/</span>
+              <Link to="/auto-loan-calculator">Auto Loan Calculator</Link>
+              <span>/</span>
+              <span>Light Payment Calculator</span>
+            </nav>
+            <div className="aio-payment__light-hero-grid">
+              <div>
+                <span className="aio-payment__eyebrow">Light calculator</span>
+                <h1>Start with the payment you can live with.</h1>
+                <p>
+                  Get a quick estimate first. Open the sections below only when you want to tune the loan,
+                  vehicle, trade-in, taxes, or incentives.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="aio-payment__light-main" aria-labelledby="aio-payment-light-heading">
+          <div className="container">
+            <div className="aio-payment__light-shell">
+            <div className="aio-payment__light-card">
+              <div className="aio-payment__section-heading">
+                <span className="aio-payment__eyebrow">Step 1</span>
+                <h2 id="aio-payment-light-heading">Choose how you want to start</h2>
+              </div>
+
+              <div className="aio-payment__light-toggle" role="tablist" aria-label="Choose calculator mode">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={startMode === 'monthly'}
+                  className={startMode === 'monthly' ? 'aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'aio-payment__light-toggle-button'}
+                  onClick={() => setStartMode('monthly')}
+                >
+                  I know my monthly budget
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={startMode === 'price'}
+                  className={startMode === 'price' ? 'aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'aio-payment__light-toggle-button'}
+                  onClick={() => setStartMode('price')}
+                >
+                  I know the MSRP
+                </button>
+              </div>
+
+              <div className="aio-payment__light-primary">
+                {startMode === 'monthly' ? (
+                  <TextField
+                    label="Monthly budget"
+                    type="number"
+                    value={targetMonthlyPayment}
+                    min={0}
+                    step={25}
+                    helperText={`Enter 500 for a $500 monthly budget. Current estimate supports about ${currency(affordableMsrp)}.`}
+                    onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
+                  />
+                ) : (
+                  <TextField
+                    label="Vehicle price or MSRP"
+                    type="number"
+                    value={price}
+                    min={0}
+                    step={500}
+                    helperText={`Current estimate is ${currency(estimatedMonthly)}/mo before dealer-specific changes.`}
+                    onChange={(event) => setPrice(numberInput(event.target.value))}
+                  />
+                )}
+              </div>
+
+              <div className="aio-payment__light-assumption-row" aria-label="Current assumptions">
+                <span>{currency(downPayment)} down</span>
+                <span>{loanTerm} months</span>
+                <span>{activeApr.toFixed(1)}% APR</span>
+                <span>{stateRule.code} taxes</span>
+              </div>
+
+              <div className="aio-payment__light-disclosures">
+                <details className="aio-payment__light-disclosure">
+                  <summary>
+                    <span>Loan assumptions</span>
+                    <strong>{currency(downPayment)} down · {loanTerm} months · {activeApr.toFixed(1)}% APR</strong>
+                  </summary>
+                  <div className="aio-payment__light-grid">
+                    <TextField label="Down payment" type="number" value={downPayment} min={0} step={500} onChange={(event) => setDownPayment(numberInput(event.target.value))} />
+                    <TextField
+                      label="Interest rate"
+                      type="number"
+                      value={activeApr}
+                      min={0}
+                      step={0.1}
+                      disabled={selectedFinanceId !== 'custom'}
+                      onChange={(event) => setCustomApr(numberInput(event.target.value))}
+                    />
+                    <Select
+                      label="Loan term"
+                      value={loanTerm}
+                      onChange={(event) => setLoanTerm(numberInput(event.target.value))}
+                      options={termOptions.map((term) => ({ value: String(term), label: `${term} months` }))}
+                    />
+                  </div>
+                </details>
+
+                <details className="aio-payment__light-disclosure">
+                  <summary>
+                    <span>Vehicle</span>
+                    <strong>{selectedYear} {selectedVehicle.make} {selectedVehicle.model}</strong>
+                  </summary>
+                  <div className="aio-payment__light-grid">
+                    <Select
+                      label="New or used"
+                      value={condition}
+                      onChange={(event) => setCondition(event.target.value as VehicleCondition)}
+                      options={[
+                        { value: 'new', label: 'New car' },
+                        { value: 'used', label: 'Used car' },
+                      ]}
+                    />
+                    <Select
+                      label="Year"
+                      value={selectedYear}
+                      onChange={(event) => updateVehicleByParts({ year: event.target.value })}
+                      options={availableYears.map((year) => ({ value: year, label: year }))}
+                    />
+                    <Select
+                      label="Make"
+                      value={selectedVehicle.make}
+                      onChange={(event) => updateVehicleByParts({ make: event.target.value })}
+                      options={availableMakes.map((make) => ({ value: make, label: make }))}
+                    />
+                    <Select
+                      label="Model"
+                      value={selectedVehicle.model}
+                      onChange={(event) => updateVehicleByParts({ model: event.target.value })}
+                      options={availableModels.map((model) => ({ value: model, label: model }))}
+                    />
+                    <Select
+                      label="Trim / style"
+                      value={selectedVehicle.slug}
+                      wrapperClassName="aio-payment__light-field--wide"
+                      onChange={(event) => updateVehicleByParts({ slug: event.target.value })}
+                      options={availableTrimStyles.map((vehicle) => ({
+                        value: vehicle.slug,
+                        label: `${vehicle.trim || vehicle.drivetrain || vehicle.bodyStyle} · ${vehicle.bodyStyle} · ${currency(vehicle.priceMin)}`,
+                      }))}
+                    />
+                  </div>
+                </details>
+
+                <details className="aio-payment__light-disclosure">
+                  <summary>
+                    <span>Trade, tax, and fees</span>
+                    <strong>{currency(tradeEquity)} trade equity · {currency(salesTax + fees)} tax & fees</strong>
+                  </summary>
+                  <div className="aio-payment__light-grid">
+                    <TextField label="Trade-in value" type="number" value={tradeInValue} min={0} step={500} onChange={(event) => setTradeInValue(numberInput(event.target.value))} />
+                    <TextField label="Amount owed on trade" type="number" value={amountOwed} min={0} step={500} onChange={(event) => setAmountOwed(numberInput(event.target.value))} />
+                    <Select
+                      label="Your state"
+                      value={stateCode}
+                      onChange={(event) => setStateCode(event.target.value)}
+                      options={stateRules.map((state) => ({ value: state.code, label: state.name }))}
+                    />
+                    <TextField label="Sales tax" type="number" value={salesTaxOverride || Math.round(calculatedSalesTax)} min={0} onChange={(event) => setSalesTaxOverride(event.target.value)} />
+                    <TextField label="Title, registration, and other fees" type="number" value={feesOverride || stateRule.titleRegistrationFees} min={0} onChange={(event) => setFeesOverride(event.target.value)} />
+                  </div>
+                  <p className="aio-payment__light-note">
+                    {stateRule.name} rule: {TAX_RULE_LABELS[stateRule.taxRule]}. Taxable amount: {currency(taxableAmount)}.
+                  </p>
+                </details>
+
+                {condition === 'new' && (cashIncentives.length > 0 || financeIncentives.length > 0) && (
+                  <details className="aio-payment__light-disclosure">
+                    <summary>
+                      <span>Offers and incentives</span>
+                      <strong>{rebateTotal > 0 ? `${currency(rebateTotal)} applied` : 'None applied'}</strong>
+                    </summary>
+                    <div className="aio-payment__light-offers">
+                      {cashIncentives.map((incentive) => (
+                        <label key={incentive.id} className="aio-payment__light-offer">
+                          <input
+                            type="checkbox"
+                            checked={selectedCashIds.includes(incentive.id)}
+                            onChange={() => toggleCashIncentive(incentive.id)}
+                          />
+                          <span>
+                            <strong>{incentive.title}</strong>
+                            <small>{incentive.value} · {incentive.expirationDate}</small>
+                          </span>
+                        </label>
+                      ))}
+                      {financeIncentives.map((incentive) => (
+                        <button
+                          key={incentive.id}
+                          type="button"
+                          className={selectedFinanceId === incentive.id ? 'aio-payment__light-finance aio-payment__light-finance--active' : 'aio-payment__light-finance'}
+                          onClick={() => setSelectedFinanceId(selectedFinanceId === incentive.id ? 'custom' : incentive.id)}
+                        >
+                          <strong>{incentive.title}</strong>
+                          <span>{incentive.value}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </details>
+                )}
+
+                <details className="aio-payment__light-disclosure">
+                  <summary>
+                    <span>How the estimate breaks down</span>
+                    <strong>{currency(totalLoanAmount)} financed</strong>
+                  </summary>
+                  <dl className="aio-payment__light-breakdown">
+                    <div><dt>Out-the-door estimate</dt><dd>{currency(outTheDoorPrice)}</dd></div>
+                    <div><dt>Amount financed</dt><dd>{currency(totalLoanAmount)}</dd></div>
+                    <div><dt>Estimated monthly payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
+                    <div><dt>Total interest</dt><dd>{currency(totalLoanInterest)}</dd></div>
+                    <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
+                  </dl>
+                </details>
+              </div>
+
+              <div className="aio-payment__light-actions">
+                <Button as="a" href={getMarketplaceUrl(condition, selectedVehicle, selectedYear)} variant="primary" size="large">
+                  Shop {condition === 'new' ? 'New' : 'Used'} {selectedVehicle.model}
+                </Button>
+                <Link to="/auto-loan-calculator/all-in-one" className="aio-payment__light-secondary-link">
+                  Open the full calculator
+                </Link>
+              </div>
+            </div>
+            <aside className="aio-payment__light-result aio-payment__light-result--sticky" aria-live="polite" aria-label="Current payment estimate">
+              <span>{startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}</span>
+              <strong>{startMode === 'monthly' ? currency(affordableMsrp) : `${currency(estimatedMonthly)}/mo`}</strong>
+              <p>
+                {startMode === 'monthly'
+                  ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
+                  : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
+              </p>
+            </aside>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="aio-payment">
       <section className="aio-payment__hero">
@@ -552,11 +880,21 @@ const AllInOnePaymentCalculatorPage = () => {
             <div className="aio-payment__layout">
           <div className="aio-payment__panel">
             <div className="aio-payment__section-heading">
-              <span className="aio-payment__eyebrow">Pre-calculation</span>
-              <h2>{startMode === 'price' ? 'Vehicle, price, trade, incentives, and taxes' : 'Monthly budget, vehicle, trade, incentives, and taxes'}</h2>
+              <span className="aio-payment__eyebrow">{isBudgetFirstVariant ? 'Start here' : 'Pre-calculation'}</span>
+              <h2>
+                {isBudgetFirstVariant
+                  ? 'Choose the number you already know'
+                  : startMode === 'price' ? 'Vehicle, price, trade, incentives, and taxes' : 'Monthly budget, vehicle, trade, incentives, and taxes'}
+              </h2>
+              {isBudgetFirstVariant && (
+                <p>
+                  Enter a monthly budget to find a realistic MSRP, or enter an MSRP to estimate the payment.
+                  Then tune the loan, tax, trade-in, and incentives without leaving the page.
+                </p>
+              )}
             </div>
 
-            <div className="aio-payment__start-mode" role="tablist" aria-label="Choose how to start the estimate">
+            <div className={`aio-payment__start-mode ${isBudgetFirstVariant ? 'aio-payment__start-mode--guided' : ''}`} role="tablist" aria-label="Choose how to start the estimate">
               <button
                 type="button"
                 role="tab"
@@ -564,8 +902,8 @@ const AllInOnePaymentCalculatorPage = () => {
                 className={`aio-payment__start-mode-button ${startMode === 'price' ? 'aio-payment__start-mode-button--active' : ''}`}
                 onClick={() => setStartMode('price')}
               >
-                <span>Monthly payment</span>
-                <strong>Pick a car and calculate the monthly payment.</strong>
+                <span>{isBudgetFirstVariant ? 'I know the MSRP' : 'Monthly payment'}</span>
+                <strong>{isBudgetFirstVariant ? 'Estimate the monthly payment for a specific vehicle price.' : 'Pick a car and calculate the monthly payment.'}</strong>
               </button>
               <button
                 type="button"
@@ -574,10 +912,57 @@ const AllInOnePaymentCalculatorPage = () => {
                 className={`aio-payment__start-mode-button ${startMode === 'monthly' ? 'aio-payment__start-mode-button--active' : ''}`}
                 onClick={() => setStartMode('monthly')}
               >
-                <span>Selected car price</span>
-                <strong>Enter a budget and see how much vehicle it supports.</strong>
+                <span>{isBudgetFirstVariant ? 'I know my budget' : 'Selected car price'}</span>
+                <strong>{isBudgetFirstVariant ? 'Find the MSRP that fits your monthly target.' : 'Enter a budget and see how much vehicle it supports.'}</strong>
               </button>
             </div>
+
+            {isBudgetFirstVariant && (
+              <div className="aio-payment__budget-answer" aria-live="polite">
+                <div>
+                  <span className="aio-payment__budget-label">
+                    {startMode === 'price' ? 'Estimated monthly payment' : 'Budget supports about'}
+                  </span>
+                  <strong>{startMode === 'price' ? `${currency(estimatedMonthly)}/mo` : currency(affordableMsrp)}</strong>
+                  <p>
+                    {startMode === 'price'
+                      ? `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`
+                      : `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`}
+                  </p>
+                </div>
+                <div className="aio-payment__budget-facts" aria-label="Estimate assumptions">
+                  <span>{currency(downPayment)} down</span>
+                  <span>{loanTerm} months</span>
+                  <span>{activeApr.toFixed(1)}% APR</span>
+                </div>
+              </div>
+            )}
+
+            {isBudgetFirstVariant && (
+              <div className="aio-payment__primary-input">
+                {startMode === 'price' ? (
+                  <TextField
+                    label="Vehicle price or MSRP"
+                    type="number"
+                    value={price}
+                    min={0}
+                    step={500}
+                    helperText="Use the negotiated selling price if you already have one."
+                    onChange={(event) => setPrice(numberInput(event.target.value))}
+                  />
+                ) : (
+                  <TextField
+                    label="Monthly budget"
+                    type="number"
+                    value={targetMonthlyPayment}
+                    min={0}
+                    step={25}
+                    helperText={`Try 500 for a $500 monthly budget. This supports about ${currency(affordableMsrp)} before tax and fees.`}
+                    onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
+                  />
+                )}
+              </div>
+            )}
 
             <div className="aio-payment__form-grid">
               <Select
@@ -617,18 +1002,20 @@ const AllInOnePaymentCalculatorPage = () => {
                   label: `${vehicle.trim || vehicle.drivetrain || vehicle.bodyStyle} · ${vehicle.bodyStyle} · ${currency(vehicle.priceMin)}`,
                 }))}
               />
-              {startMode === 'price' ? (
-                <TextField label="Price (MSRP)" type="number" value={price} min={0} step={500} onChange={(event) => setPrice(numberInput(event.target.value))} />
-              ) : (
-                <TextField
-                  label="Target monthly payment"
-                  type="number"
-                  value={targetMonthlyPayment}
-                  min={0}
-                  step={25}
-                  helperText={`${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} estimate: ${currency(estimatedMonthly)}/mo`}
-                  onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
-                />
+              {!isBudgetFirstVariant && (
+                startMode === 'price' ? (
+                  <TextField label="Price (MSRP)" type="number" value={price} min={0} step={500} onChange={(event) => setPrice(numberInput(event.target.value))} />
+                ) : (
+                  <TextField
+                    label="Target monthly payment"
+                    type="number"
+                    value={targetMonthlyPayment}
+                    min={0}
+                    step={25}
+                    helperText={`${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} estimate: ${currency(estimatedMonthly)}/mo`}
+                    onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
+                  />
+                )
               )}
               <TextField label="Down payment" type="number" value={downPayment} min={0} step={500} onChange={(event) => setDownPayment(numberInput(event.target.value))} />
               <TextField label="Trade-in value" type="number" value={tradeInValue} min={0} step={500} onChange={(event) => setTradeInValue(numberInput(event.target.value))} />
@@ -911,9 +1298,9 @@ const AllInOnePaymentCalculatorPage = () => {
 
         <aside ref={summaryRef} className="aio-payment__summary">
           <span className="aio-payment__eyebrow">
-            {startMode === 'price' ? 'Estimated monthly payment' : 'Selected car price'}
+            {startMode === 'price' ? 'Estimated monthly payment' : isBudgetFirstVariant ? 'Budget-supported MSRP' : 'Selected car price'}
           </span>
-          <strong>{startMode === 'price' ? `${currency(estimatedMonthly)}/mo` : currency(workingPrice)}</strong>
+          <strong>{startMode === 'price' ? `${currency(estimatedMonthly)}/mo` : currency(isBudgetFirstVariant ? workingPrice : price)}</strong>
           <div className="aio-payment__summary-highlights">
             {startMode === 'price' ? (
               <div>
@@ -1004,8 +1391,8 @@ const AllInOnePaymentCalculatorPage = () => {
 
       <aside className={`aio-payment__mobile-summary ${showMobileSummary ? 'aio-payment__mobile-summary--visible' : ''}`} aria-label="Compact payment estimate">
         <div>
-          <span>{startMode === 'price' ? 'Estimated monthly payment' : 'Selected car price'}</span>
-          <strong>{startMode === 'price' ? `${currency(estimatedMonthly)}/mo` : currency(workingPrice)}</strong>
+          <span>{startMode === 'price' ? 'Estimated monthly payment' : isBudgetFirstVariant ? 'Budget-supported MSRP' : 'Selected car price'}</span>
+          <strong>{startMode === 'price' ? `${currency(estimatedMonthly)}/mo` : currency(isBudgetFirstVariant ? workingPrice : price)}</strong>
           <small>{currency(totalCost)} total after credits</small>
         </div>
         <Button as="a" href={getMarketplaceUrl(condition, selectedVehicle, selectedYear)} variant="primary" size="large" className="aio-payment__mobile-summary-cta">

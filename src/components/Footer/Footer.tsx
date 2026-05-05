@@ -44,6 +44,8 @@ const Footer = () => {
         { label: 'Payment Calculator', path: '/financing' },
         { label: 'Auto Loan Calculator', path: '/auto-loan-calculator' },
         { label: 'All-in-One Payment Calculator', path: '/auto-loan-calculator/all-in-one' },
+        { label: 'Budget Payment Calculator', path: '/auto-loan-calculator/all-in-one-budget' },
+        { label: 'Light Payment Calculator', path: '/auto-loan-calculator/light' },
         { label: 'Car Finder', path: '/vehicles' },
       ],
     },
