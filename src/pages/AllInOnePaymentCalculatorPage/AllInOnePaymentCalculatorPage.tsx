@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info } from 'lucide-react';
 import { getAllVehicles, getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
@@ -72,6 +72,29 @@ const FAQS = [
   {
     question: 'Can I enter my own rate instead of an incentive?',
     answer: 'Yes. Select custom rate to compare lender, credit union, or dealer-provided financing against manufacturer incentives.',
+  },
+];
+
+const LIGHT_FINANCING_FAQS = [
+  {
+    question: 'How does interest rate impact your monthly payment?',
+    answer: 'The interest rate directly affects how much you pay over the life of the loan. A lower rate means a lower monthly payment and less total interest paid. For example, on a $30,000 loan over 60 months, the difference between a 4% and 7% rate is roughly $45/month, or over $2,700 total.',
+  },
+  {
+    question: 'How does your credit score impact your monthly payment?',
+    answer: 'Your credit score is one of the biggest factors lenders use to determine your interest rate. Borrowers with excellent credit typically qualify for lower rates, while fair credit may see much higher rates. Improving your score before applying can save thousands over the loan term.',
+  },
+  {
+    question: 'What is the usual loan term for an auto loan?',
+    answer: 'The most common auto loan terms are 60 months and 72 months. Shorter terms usually mean higher monthly payments but less total interest. Longer terms lower the payment but increase total cost and the risk of owing more than the vehicle is worth.',
+  },
+  {
+    question: 'How does a trade-in potentially impact your monthly payment?',
+    answer: 'A trade-in reduces the amount you need to finance. If your trade-in is worth $5,000 on a $30,000 vehicle, you would only finance about $25,000 before taxes and fees, which can lower the monthly payment and may reduce taxable value in some states.',
+  },
+  {
+    question: 'How do you calculate monthly car payments?',
+    answer: 'Monthly payments are based on the loan amount, annual interest rate, and loan term. The calculator estimates the amount financed after down payment, trade equity, taxes, fees, and incentives, then applies the selected APR and term.',
   },
 ];
 
@@ -440,6 +463,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     () => getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4),
     [affordableVehicleBudget, selectedVehicle.bodyStyle],
   );
+  const lightAffordableVehicles = useMemo(
+    () => vehicles
+      .filter((vehicle) => vehicle.priceMin <= affordableMsrp)
+      .sort((a, b) => b.priceMin - a.priceMin || b.staffRating - a.staffRating)
+      .slice(0, 8),
+    [affordableMsrp, vehicles],
+  );
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
   const leaseDepreciationCharge = Math.max(0, leaseAdjustedCapCost - leaseResidualValue) / Math.max(1, leaseTerm);
@@ -629,7 +659,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       carousel.removeEventListener('scroll', updateAffordableCarouselState);
       window.removeEventListener('resize', updateAffordableCarouselState);
     };
-  }, [affordableVehicles]);
+  }, [affordableVehicles, lightAffordableVehicles]);
 
   useEffect(() => {
     const summary = summaryRef.current;
@@ -949,6 +979,95 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             </div>
           </div>
         </section>
+
+        {startMode === 'monthly' && lightAffordableVehicles.length > 0 && (
+          <>
+            <section className="aio-payment__light-affordable-section">
+              <div className="container">
+                <section className="aio-payment__light-affordable" aria-labelledby="aio-payment-light-affordable-heading">
+                  <div className="aio-payment__light-affordable-head">
+                    <span className="aio-payment__similar-line" aria-hidden="true" />
+                    <h2 id="aio-payment-light-affordable-heading">Cars Your Budget Can Support</h2>
+                    <span className="aio-payment__similar-line" aria-hidden="true" />
+                  </div>
+                  <p className="aio-payment__light-affordable-copy">
+                    These start at or below about {currency(affordableMsrp)} before tax and fees.
+                  </p>
+                  <div className="aio-payment__vehicle-carousel-wrap aio-payment__vehicle-carousel-wrap--light">
+                    <button
+                      type="button"
+                      className="aio-payment__vehicle-carousel-nav aio-payment__vehicle-carousel-nav--left"
+                      aria-label="Previous affordable vehicles"
+                      onClick={() => scrollAffordableVehicles('previous')}
+                      disabled={!affordableCarouselState.canScrollPrevious}
+                    >
+                      <ChevronLeft size={24} aria-hidden="true" />
+                    </button>
+                    <div ref={affordableCarouselRef} className="aio-payment__vehicle-carousel aio-payment__vehicle-carousel--light">
+                      {lightAffordableVehicles.map((vehicle) => (
+                        <VehicleCard
+                          key={vehicle.id}
+                          id={vehicle.id}
+                          name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                          slug={vehicle.slug}
+                          image={vehicle.image}
+                          price={currency(vehicle.priceMin)}
+                          priceLabel="Starting at"
+                          rating={vehicle.staffRating}
+                          epaMpg={getCombinedMpg(vehicle.mpg)}
+                          cdSays={getVehicleCardCopy(vehicle)}
+                          editorsChoice={vehicle.editorsChoice}
+                          tenBest={vehicle.tenBest}
+                          evOfTheYear={vehicle.evOfTheYear}
+                          showShopButton
+                          shopButtonText={`Shop ${condition === 'new' ? 'New' : 'Used'} ${vehicle.model}`}
+                          shopButtonVariant="primary"
+                          availableYears={[Number(vehicle.year)]}
+                          modelName={vehicle.model}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className="aio-payment__vehicle-carousel-nav aio-payment__vehicle-carousel-nav--right"
+                      aria-label="Next affordable vehicles"
+                      onClick={() => scrollAffordableVehicles('next')}
+                      disabled={!affordableCarouselState.canScrollNext}
+                    >
+                      <ChevronRight size={24} aria-hidden="true" />
+                    </button>
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <section className="aio-payment__light-faq-section" aria-labelledby="aio-payment-light-faq-heading">
+              <div className="container">
+                <h2 id="aio-payment-light-faq-heading" className="aio-payment__faq-heading">FAQs</h2>
+                <div className="aio-payment__faq-list">
+                  {LIGHT_FINANCING_FAQS.map((item, index) => (
+                    <div key={item.question} className={`aio-payment__faq-item ${expandedFaq === index ? 'aio-payment__faq-item--expanded' : ''}`}>
+                      <button
+                        type="button"
+                        className="aio-payment__faq-question"
+                        onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                        aria-expanded={expandedFaq === index}
+                      >
+                        <span className="aio-payment__faq-question-text">{item.question}</span>
+                        {expandedFaq === index ? <ChevronUp size={24} aria-hidden /> : <ChevronDown size={24} aria-hidden />}
+                      </button>
+                      {expandedFaq === index && (
+                        <div className="aio-payment__faq-answer">
+                          <p>{item.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </>
+        )}
 
         {showAiDealAnalysis && (
           <div className="aio-payment__ai-modal" role="dialog" aria-modal="true" aria-labelledby="aio-payment-ai-modal-title">

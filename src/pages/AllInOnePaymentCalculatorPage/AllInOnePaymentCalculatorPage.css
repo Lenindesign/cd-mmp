@@ -757,6 +757,80 @@
   text-transform: uppercase;
 }
 
+.aio-payment__light-affordable-section {
+  padding: var(--spacing-2) 0 var(--spacing-12);
+  background: var(--color-white);
+  overflow: hidden;
+}
+
+.aio-payment__light-faq-section {
+  padding: 0 0 var(--spacing-12);
+  background: var(--color-white);
+}
+
+.aio-payment__light-affordable {
+  display: grid;
+  gap: var(--spacing-5);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.aio-payment__light-affordable-head {
+  display: grid;
+  grid-template-columns: minmax(var(--spacing-12), 1fr) auto minmax(var(--spacing-12), 1fr);
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.aio-payment__light-affordable-head h2 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-condensed);
+  font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-36));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.aio-payment__light-affordable-copy {
+  max-width: 620px;
+  margin: calc(var(--spacing-3) * -1) auto 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  text-align: center;
+}
+
+.aio-payment__vehicle-carousel-wrap--light {
+  min-width: 0;
+  max-width: 100%;
+  padding: 0 var(--spacing-12);
+  overflow: hidden;
+}
+
+.aio-payment__vehicle-carousel.aio-payment__vehicle-carousel--light {
+  width: 100%;
+  max-width: 100%;
+  padding-top: 0;
+}
+
+.aio-payment__vehicle-carousel.aio-payment__vehicle-carousel--light .vehicle-card {
+  flex: 0 0 calc((100% - 2 * var(--spacing-5)) / 3);
+  min-width: 300px;
+}
+
+.aio-payment__vehicle-carousel-wrap--light .aio-payment__vehicle-carousel-nav--left {
+  left: 0;
+}
+
+.aio-payment__vehicle-carousel-wrap--light .aio-payment__vehicle-carousel-nav--right {
+  right: 0;
+}
+
 .aio-payment__light-disclosures {
   display: grid;
   gap: var(--spacing-3);
@@ -1720,6 +1794,16 @@
   min-width: 320px;
 }
 
+.aio-payment__light-affordable-section .aio-payment__vehicle-carousel--light .vehicle-card {
+  flex: 0 0 calc((100% - 2 * var(--spacing-5)) / 3);
+  min-width: 280px;
+  max-width: 360px;
+}
+
+.aio-payment__light-affordable-section .aio-payment__vehicle-carousel--light .vehicle-card__image {
+  aspect-ratio: 16 / 9;
+}
+
 .aio-payment__vehicle-carousel-nav {
   position: absolute;
   top: 50%;
@@ -1998,6 +2082,16 @@
     padding: var(--spacing-4);
   }
 
+  .aio-payment__light-affordable-head {
+    grid-template-columns: minmax(var(--spacing-10), 1fr) auto minmax(var(--spacing-10), 1fr);
+    gap: var(--spacing-2);
+  }
+
+  .aio-payment__light-affordable-head h2 {
+    max-width: 13ch;
+    white-space: normal;
+  }
+
   .aio-payment__light-start-body,
   .aio-payment__light-toggle,
   .aio-payment__light-grid {
@@ -2162,6 +2256,10 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-3);
+    padding: 0;
+  }
+
+  .aio-payment__vehicle-carousel-wrap--light {
     padding: 0;
   }
 
