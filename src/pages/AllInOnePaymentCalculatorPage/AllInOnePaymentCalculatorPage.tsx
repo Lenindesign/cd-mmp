@@ -772,7 +772,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <strong>{selectedYear} {selectedVehicle.make} {selectedVehicle.model}</strong>
                   </summary>
                   <p className="aio-payment__light-disclosure-copy">
-                    Choose a year, make, model, and trim so we can use a realistic starting price and available incentives.
+                    {startMode === 'monthly'
+                      ? 'Choose a year, make, model, and trim so we can compare your budget with a realistic starting price and available incentives.'
+                      : 'Optional: choose a vehicle to apply realistic trim pricing, incentives, AI analysis, and shopping links. If you already know the selling price, enter it above.'}
                   </p>
                   {startMode === 'monthly' && (
                     <p className={`aio-payment__light-budget-note aio-payment__light-budget-note--${budgetFitStatus}`}>
