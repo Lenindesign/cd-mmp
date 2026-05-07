@@ -405,6 +405,35 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const cashDueAtSigning = Math.min(downPayment, netPriceAfterTradeAndOffers);
   const totalPaidFromPocket = cashDueAtSigning + totalLoanPayments;
   const paymentDelta = estimatedMonthly - targetMonthlyPayment;
+  const selectedVehicleTaxableAmount = getTaxableAmount(selectedVehicle.priceMin, tradeInValue, rebateTotal, stateRule.taxRule);
+  const selectedVehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : selectedVehicleTaxableAmount * stateRule.rate;
+  const selectedVehicleOutTheDoorPrice = selectedVehicle.priceMin + selectedVehicleSalesTax + fees;
+  const selectedVehicleNetPrice = Math.max(0, selectedVehicleOutTheDoorPrice - tradeEquity - rebateTotal);
+  const selectedVehicleLoanAmount = Math.max(0, selectedVehicleNetPrice - downPayment);
+  const selectedVehicleMonthly = monthlyPayment(selectedVehicleLoanAmount, activeApr, loanTerm);
+  const selectedVehicleBudgetDelta = selectedVehicleMonthly - targetMonthlyPayment;
+  const budgetFitStatus = selectedVehicleBudgetDelta > 10 ? 'over' : selectedVehicleBudgetDelta < -10 ? 'under' : 'fit';
+  const budgetFitLabel = budgetFitStatus === 'over'
+    ? 'Above target'
+    : budgetFitStatus === 'under'
+      ? 'Under target'
+      : 'On target';
+  const budgetFitHeadline = budgetFitStatus === 'over'
+    ? `About ${currency(selectedVehicleBudgetDelta)}/mo over your target`
+    : budgetFitStatus === 'under'
+      ? `About ${currency(Math.abs(selectedVehicleBudgetDelta))}/mo under your target`
+      : 'Close to your target';
+  const budgetFitCopy = budgetFitStatus === 'over'
+    ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)}. Your current budget supports about ${currency(affordableMsrp)} before tax and fees.`
+    : budgetFitStatus === 'under'
+      ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)} and pencils out near ${currency(selectedVehicleMonthly)}/mo with these assumptions.`
+      : `${selectedVehicle.model} pencils out near ${currency(selectedVehicleMonthly)}/mo with the selected down payment, term, taxes, and fees.`;
+  const lightShopHref = startMode === 'monthly' && budgetFitStatus === 'over'
+    ? `https://www.caranddriver.com/cars-for-sale/${condition}`
+    : getMarketplaceUrl(condition, selectedVehicle, selectedYear);
+  const lightShopLabel = startMode === 'monthly' && budgetFitStatus === 'over'
+    ? `SHOP VEHICLES NEAR ${currency(affordableMsrp)}`
+    : `SHOP ${condition === 'new' ? 'NEW' : 'USED'} ${selectedVehicle.model.toUpperCase()}`;
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
   const affordableVehicleBudget = isBudgetFirstVariant || isLightVariant ? workingPrice : price + downPayment + rebateTotal;
   const affordableVehicles = useMemo(
@@ -739,9 +768,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
                 <details className="aio-payment__light-disclosure">
                   <summary>
-                    <span>Vehicle choice</span>
+                    <span>Vehicle context</span>
                     <strong>{selectedYear} {selectedVehicle.make} {selectedVehicle.model}</strong>
                   </summary>
+                  <p className="aio-payment__light-disclosure-copy">
+                    Choose a year, make, model, and trim so we can use a realistic starting price and available incentives.
+                  </p>
+                  {startMode === 'monthly' && (
+                    <p className={`aio-payment__light-budget-note aio-payment__light-budget-note--${budgetFitStatus}`}>
+                      <strong className="aio-payment__light-budget-status-label">{budgetFitLabel}:</strong> {budgetFitCopy}
+                    </p>
+                  )}
                   <div className="aio-payment__light-grid">
                     <Select
                       label="New or used"
@@ -885,12 +922,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
                     : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
                 </p>
+                {startMode === 'monthly' && (
+                  <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${budgetFitStatus}`}>
+                    <span>{budgetFitLabel}</span>
+                    <strong>{budgetFitHeadline}</strong>
+                    <p>{budgetFitCopy}</p>
+                  </div>
+                )}
               </aside>
               <a
                 className="aio-payment__light-result-shop"
-                href={getMarketplaceUrl(condition, selectedVehicle, selectedYear)}
+                href={lightShopHref}
               >
-                SHOP {condition === 'new' ? 'NEW' : 'USED'} {selectedVehicle.model.toUpperCase()}
+                {lightShopLabel}
               </a>
               <button
                 type="button"

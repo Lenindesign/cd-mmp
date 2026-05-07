@@ -1,0 +1,11 @@
+---
+description: UI visual taste preferences for polished product states
+globs: **/*.{css,tsx}
+alwaysApply: false
+---
+
+# UI Visual Taste
+
+- Do not use red vertical accent strokes, red side borders, or alert-like red rails for normal product guidance, budget states, helper cards, or comparison states.
+- Reserve red for true destructive actions, blocking errors, or urgent validation problems. Even then, prefer restrained text, icons, or contained surfaces over decorative side stripes.
+- Status cards should feel editorial and product-native: neutral surfaces, clear hierarchy, concise copy, and subtle token-based borders or backgrounds.
