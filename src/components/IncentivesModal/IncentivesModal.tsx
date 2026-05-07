@@ -93,6 +93,7 @@ export interface IncentivesModalProps {
   offer?: Partial<IncentiveOfferDetail>;
   allIncentives?: Incentive[];
   selectedIncentiveId?: string;
+  appliedIncentiveIds?: string[];
   initialDropdownOpen?: boolean;
   onCtaClick?: () => void;
   onApplyIncentive?: (incentive: Incentive) => void;
@@ -274,6 +275,7 @@ const IncentivesModal = ({
   initialDropdownOpen: _initialDropdownOpen = false,
   onCtaClick,
   onApplyIncentive,
+  appliedIncentiveIds = [],
   onSubmitForm,
 }: IncentivesModalProps) => {
   const navigate = useNavigate();
@@ -329,6 +331,7 @@ const IncentivesModal = ({
       groupAffiliation: 'everyone' as const,
     };
   })();
+  const activeIncentiveApplied = activeIncentive ? appliedIncentiveIds.includes(activeIncentive.id) : false;
 
   const triggerRef = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -725,9 +728,24 @@ const IncentivesModal = ({
                 {/* LEFT COLUMN: Offer browser + details */}
                 <div className="incentives-modal__v5-col-wrap">
                 <div ref={leftColRef} className="incentives-modal__v5-left">
-                  <h2 id="incentives-modal-title" className="incentives-modal__v5-title">
-                    {vehicleLabel}
-                  </h2>
+                  <div className="incentives-modal__v5-title-row">
+                    <h2 id="incentives-modal-title" className="incentives-modal__v5-title">
+                      {vehicleLabel}
+                    </h2>
+                    {activeIncentive && onApplyIncentive && activeIncentive.type !== 'lease' && (
+                      <button
+                        type="button"
+                        className={activeIncentiveApplied
+                          ? 'incentives-modal__v5-apply-choice incentives-modal__v5-apply-choice--applied'
+                          : 'incentives-modal__v5-apply-choice'}
+                        aria-pressed={activeIncentiveApplied}
+                        onClick={() => onApplyIncentive(activeIncentive)}
+                      >
+                        <span aria-hidden />
+                        {activeIncentiveApplied ? 'Applied to estimate' : 'Apply to estimate'}
+                      </button>
+                    )}
+                  </div>
                   <div className="incentives-modal__v5-msrp-row">
                     <span className="incentives-modal__v5-msrp">{formatMsrp(offer.msrpMin, offer.msrpMax)}</span>
                     <a href={vehicleUrl} className="incentives-modal__v5-read-review" onClick={(e) => { e.preventDefault(); navigate(vehicleUrl); onClose(); }}>
@@ -1092,15 +1110,6 @@ const IncentivesModal = ({
                   )}
 
                   <div className="incentives-modal__v5-cta-sticky">
-                    {activeIncentive && onApplyIncentive && (
-                      <button
-                        type="button"
-                        className="incentives-modal__v5-marketplace-btn"
-                        onClick={() => onApplyIncentive(activeIncentive)}
-                      >
-                        APPLY THIS OFFER
-                      </button>
-                    )}
                     {conversionBPostSubmit === null ? (
                       <button
                         type="button"

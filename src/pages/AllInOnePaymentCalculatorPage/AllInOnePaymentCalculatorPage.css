@@ -737,7 +737,7 @@
   min-height: var(--spacing-11);
   padding: 0 var(--spacing-4);
   background: transparent;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--border-radius-md);
   color: var(--color-gray-600);
   cursor: pointer;
@@ -758,6 +758,7 @@
 
 .aio-payment__light-toggle-button--active {
   background: var(--color-white);
+  border-color: var(--color-blue-cobalt);
   color: var(--color-dark);
   box-shadow: var(--shadow-sm);
 }

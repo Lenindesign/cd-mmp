@@ -632,12 +632,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const applyOfferToEstimate = (incentive: Incentive) => {
     if (incentive.type === 'cash') {
-      setSelectedCashIds((current) => current.includes(incentive.id) ? current : [...current, incentive.id]);
+      setSelectedCashIds((current) => current.includes(incentive.id)
+        ? current.filter((id) => id !== incentive.id)
+        : [...current, incentive.id]);
       return;
     }
 
     if (incentive.type === 'finance') {
-      setSelectedFinanceId(incentive.id);
+      setSelectedFinanceId((current) => current === incentive.id ? 'custom' : incentive.id);
     }
   };
 
@@ -930,9 +932,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         vehicleIncentives={vehicleIncentives}
                         onOfferClick={handleOfferClick}
                         title="Special offers and incentives"
+                        selectedOfferIds={[
+                          ...selectedCashIds,
+                          ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
+                        ]}
                       />
                       <p className="aio-payment__light-offer-help">
-                        Open an offer to review details or apply it to this estimate.
+                        Select an offer to see details, then apply or remove it from this estimate.
                       </p>
                     </div>
                   </details>
@@ -1195,6 +1201,25 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           description="Add your vehicle, mileage, and condition. We’ll apply the estimate to this payment calculation."
           onClose={() => setShowTradeTool(false)}
           onApply={applyTradeToolEstimate}
+        />
+
+        <IncentivesModal
+          isOpen={showIncentiveModal}
+          onClose={() => {
+            setShowIncentiveModal(false);
+            setSelectedIncentive(null);
+          }}
+          variant="conversion-b"
+          offer={incentiveOfferDetail}
+          allIncentives={vehicleIncentives.incentives}
+          selectedIncentiveId={selectedIncentive?.id}
+          appliedIncentiveIds={[
+            ...selectedCashIds,
+            ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
+          ]}
+          onApplyIncentive={(incentive) => {
+            applyOfferToEstimate(incentive);
+          }}
         />
       </main>
     );
@@ -1821,10 +1846,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         offer={incentiveOfferDetail}
         allIncentives={vehicleIncentives.incentives}
         selectedIncentiveId={selectedIncentive?.id}
+        appliedIncentiveIds={[
+          ...selectedCashIds,
+          ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
+        ]}
         onApplyIncentive={(incentive) => {
           applyOfferToEstimate(incentive);
-          setShowIncentiveModal(false);
-          setSelectedIncentive(null);
         }}
       />
     </main>

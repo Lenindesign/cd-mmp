@@ -73,6 +73,11 @@ const HeroOffersB = ({
               <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
               <span className="hero__offers-b-pill-text">{label}</span>
               <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
+              {selectedOfferIds.includes(inc.id) && !onApplyOffer && (
+                <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
+                  Applied
+                </span>
+              )}
               {onApplyOffer && (
                 <span className="hero__offers-b-pill-actions">
                   <button

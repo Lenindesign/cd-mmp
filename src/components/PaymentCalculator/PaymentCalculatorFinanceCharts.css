@@ -13,6 +13,38 @@
   border-top: 1px solid var(--color-gray-200);
 }
 
+.payment-calc-viz__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-5);
+}
+
+.payment-calc-viz__summary div {
+  display: grid;
+  gap: var(--spacing-1);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.payment-calc-viz__summary span {
+  color: var(--color-gray-500);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.payment-calc-viz__summary strong {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight);
+}
+
 .payment-calc-viz__layout {
   display: grid;
   gap: var(--spacing-6);
@@ -21,17 +53,24 @@
 
 @media (min-width: 768px) {
   .payment-calc-viz__layout {
-    grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
     gap: var(--spacing-6) var(--spacing-7);
   }
 
-  .payment-calc-viz__panel--lines:only-child {
+  .payment-calc-viz__panel--lines {
     grid-column: 1 / -1;
     padding-left: 0;
     border-left: none;
   }
 
   .payment-calc-viz__panel--lines:not(:only-child) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .payment-calc-viz__panel--donut:not(:only-child) {
+    grid-column: 2;
+    grid-row: 1;
     padding-left: var(--spacing-6);
     border-left: 1px solid var(--color-gray-200);
   }
@@ -81,6 +120,67 @@
 .payment-calc-viz__donut-wrap {
   position: relative;
   width: 100%;
+  max-width: 180px;
+  margin: 0 auto;
+}
+
+.payment-calc-viz__donut-center {
+  position: absolute;
+  top: 50%;
+  left: 48%;
+  display: grid;
+  gap: 0;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.payment-calc-viz__donut-center strong {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+
+.payment-calc-viz__donut-center span {
+  color: var(--color-gray-500);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.payment-calc-viz__cost-list {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: 0;
+}
+
+.payment-calc-viz__cost-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.payment-calc-viz__cost-list dt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+}
+
+.payment-calc-viz__cost-list dd {
+  margin: 0;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
 }
 
 .payment-calc-viz__tax-link {
@@ -104,7 +204,15 @@
 
 .payment-calc-viz__line-wrap {
   width: 100%;
-  min-height: 280px;
+  min-height: 300px;
+}
+
+.payment-calc-viz__insight {
+  margin: calc(var(--spacing-2) * -1) 0 var(--spacing-3);
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
 }
 
 .payment-calc-viz__legend {
@@ -146,4 +254,10 @@
 
 .payment-calc-viz .recharts-legend-item-text {
   color: var(--color-gray-600);
+}
+
+@media (max-width: 640px) {
+  .payment-calc-viz__summary {
+    grid-template-columns: 1fr;
+  }
 }
