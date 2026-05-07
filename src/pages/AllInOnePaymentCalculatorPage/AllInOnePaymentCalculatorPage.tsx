@@ -885,31 +885,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <span>Offers and incentives</span>
                       <strong>{rebateTotal > 0 ? `${currency(rebateTotal)} applied` : 'None applied'}</strong>
                     </summary>
-                    <div className="aio-payment__light-offers">
-                      {cashIncentives.map((incentive) => (
-                        <label key={incentive.id} className="aio-payment__light-offer">
-                          <input
-                            type="checkbox"
-                            checked={selectedCashIds.includes(incentive.id)}
-                            onChange={() => toggleCashIncentive(incentive.id)}
-                          />
-                          <span>
-                            <strong>{incentive.title}</strong>
-                            <small>{incentive.value} · {incentive.expirationDate}</small>
-                          </span>
-                        </label>
-                      ))}
-                      {financeIncentives.map((incentive) => (
-                        <button
-                          key={incentive.id}
-                          type="button"
-                          className={selectedFinanceId === incentive.id ? 'aio-payment__light-finance aio-payment__light-finance--active' : 'aio-payment__light-finance'}
-                          onClick={() => setSelectedFinanceId(selectedFinanceId === incentive.id ? 'custom' : incentive.id)}
-                        >
-                          <strong>{incentive.title}</strong>
-                          <span>{incentive.value}</span>
-                        </button>
-                      ))}
+                    <div className="aio-payment__light-offers aio-payment__light-offers--hero">
+                      <HeroOffersB
+                        vehicleIncentives={vehicleIncentives}
+                        onOfferClick={handleOfferClick}
+                        title="Special offers and incentives"
+                      />
                     </div>
                   </details>
                 )}

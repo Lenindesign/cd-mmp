@@ -1005,6 +1005,11 @@
   padding: 0 var(--spacing-4) var(--spacing-4);
 }
 
+.aio-payment__light-offers--hero .hero__offers-b {
+  margin-top: 0;
+  width: 100%;
+}
+
 .aio-payment__light-offer,
 .aio-payment__light-finance {
   display: flex;
