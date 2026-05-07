@@ -95,6 +95,7 @@ export interface IncentivesModalProps {
   selectedIncentiveId?: string;
   initialDropdownOpen?: boolean;
   onCtaClick?: () => void;
+  onApplyIncentive?: (incentive: Incentive) => void;
   onSubmitForm?: (data: IncentivesModalFormData) => void;
 }
 
@@ -272,6 +273,7 @@ const IncentivesModal = ({
   selectedIncentiveId,
   initialDropdownOpen: _initialDropdownOpen = false,
   onCtaClick,
+  onApplyIncentive,
   onSubmitForm,
 }: IncentivesModalProps) => {
   const navigate = useNavigate();
@@ -1090,6 +1092,15 @@ const IncentivesModal = ({
                   )}
 
                   <div className="incentives-modal__v5-cta-sticky">
+                    {activeIncentive && onApplyIncentive && (
+                      <button
+                        type="button"
+                        className="incentives-modal__v5-marketplace-btn"
+                        onClick={() => onApplyIncentive(activeIncentive)}
+                      >
+                        APPLY THIS OFFER
+                      </button>
+                    )}
                     {conversionBPostSubmit === null ? (
                       <button
                         type="button"

@@ -330,6 +330,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [selectedIncentive, setSelectedIncentive] = useState<Incentive | null>(null);
   const summaryRef = useRef<HTMLElement>(null);
   const affordableCarouselRef = useRef<HTMLDivElement>(null);
+  const lightAffordableSectionRef = useRef<HTMLElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
 
@@ -447,16 +448,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ? `About ${currency(Math.abs(selectedVehicleBudgetDelta))}/mo under your target`
       : 'Close to your target';
   const budgetFitCopy = budgetFitStatus === 'over'
-    ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)}. Your current budget supports about ${currency(affordableMsrp)} before tax and fees.`
+    ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)}. Your current budget supports about ${currency(affordableMsrp)} before tax and fees. Try a lower trim, larger down payment, longer term, or vehicles below that price range.`
     : budgetFitStatus === 'under'
       ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)} and pencils out near ${currency(selectedVehicleMonthly)}/mo with these assumptions.`
       : `${selectedVehicle.model} pencils out near ${currency(selectedVehicleMonthly)}/mo with the selected down payment, term, taxes, and fees.`;
-  const lightShopHref = startMode === 'monthly' && budgetFitStatus === 'over'
-    ? `https://www.caranddriver.com/cars-for-sale/${condition}`
-    : getMarketplaceUrl(condition, selectedVehicle, selectedYear);
-  const lightShopLabel = startMode === 'monthly' && budgetFitStatus === 'over'
-    ? `SHOP VEHICLES NEAR ${currency(affordableMsrp)}`
-    : `SHOP ${condition === 'new' ? 'NEW' : 'USED'} ${selectedVehicle.model.toUpperCase()}`;
+  const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
+    const vehicleTaxableAmount = getTaxableAmount(vehiclePrice, tradeInValue, rebateTotal, stateRule.taxRule);
+    const vehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : vehicleTaxableAmount * stateRule.rate;
+    const vehicleOutTheDoorPrice = vehiclePrice + vehicleSalesTax + fees;
+    const vehicleNetPrice = Math.max(0, vehicleOutTheDoorPrice - tradeEquity - rebateTotal);
+    const vehicleLoanAmount = Math.max(0, vehicleNetPrice - downPayment);
+
+    return monthlyPayment(vehicleLoanAmount, activeApr, loanTerm);
+  };
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
   const affordableVehicleBudget = isBudgetFirstVariant || isLightVariant ? workingPrice : price + downPayment + rebateTotal;
   const affordableVehicles = useMemo(
@@ -470,6 +474,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       .slice(0, 8),
     [affordableMsrp, vehicles],
   );
+  const shouldScrollToBudgetVehicles = startMode === 'monthly' && budgetFitStatus === 'over' && lightAffordableVehicles.length > 0;
+  const lightShopHref = shouldScrollToBudgetVehicles
+    ? '#aio-payment-light-affordable-heading'
+    : getMarketplaceUrl(condition, selectedVehicle, selectedYear);
+  const lightShopLabel = shouldScrollToBudgetVehicles
+    ? 'SEE CARS IN YOUR BUDGET'
+    : `SHOP ${condition === 'new' ? 'NEW' : 'USED'} ${selectedVehicle.model.toUpperCase()}`;
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
   const leaseDepreciationCharge = Math.max(0, leaseAdjustedCapCost - leaseResidualValue) / Math.max(1, leaseTerm);
@@ -591,12 +602,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     if (next) setSelectedSlug(next.slug);
   };
 
-  const toggleCashIncentive = (id: string) => {
-    setSelectedCashIds((current) => current.includes(id)
-      ? current.filter((item) => item !== id)
-      : [...current, id]);
-  };
-
   const handleOfferClick = (incentive: Incentive) => {
     setSelectedIncentive(incentive);
     setShowIncentiveModal(true);
@@ -604,7 +609,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const applyOfferToEstimate = (incentive: Incentive) => {
     if (incentive.type === 'cash') {
-      toggleCashIncentive(incentive.id);
+      setSelectedCashIds((current) => current.includes(incentive.id) ? current : [...current, incentive.id]);
       return;
     }
 
@@ -691,11 +696,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             </nav>
             <div className="aio-payment__light-hero-grid">
               <div>
-                <span className="aio-payment__eyebrow">Light calculator</span>
-                <h1>Start with the payment you can live with.</h1>
+                <h1>See what your monthly budget can buy.</h1>
                 <p>
-                  Get a quick estimate first. Open the sections below only when you want to tune the loan,
-                  vehicle, trade-in, taxes, or incentives.
+                  Enter a payment target and we’ll estimate the vehicle price range, payment details, and offers that may fit.
                 </p>
               </div>
             </div>
@@ -707,10 +710,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             <div className="aio-payment__light-shell">
             <div className="aio-payment__light-card">
               <div className="aio-payment__section-heading">
-                <span className="aio-payment__eyebrow">Step 1</span>
-                <h2 id="aio-payment-light-heading">Start with the number you know</h2>
+                <h2 id="aio-payment-light-heading">Start your estimate</h2>
                 <p className="aio-payment__light-heading-copy">
-                  Enter a monthly budget or a vehicle price. We’ll estimate the rest, and you can tune the details below.
+                  We’ll calculate the payment first. Then you can refine taxes, trade-in, loan terms, and offers.
                 </p>
               </div>
 
@@ -798,7 +800,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
                 <details className="aio-payment__light-disclosure">
                   <summary>
-                    <span>Vehicle context</span>
+                    <span>Vehicle and offers</span>
                     <strong>{selectedYear} {selectedVehicle.make} {selectedVehicle.model}</strong>
                   </summary>
                   <p className="aio-payment__light-disclosure-copy">
@@ -946,6 +948,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <a
                 className="aio-payment__light-result-shop"
                 href={lightShopHref}
+                onClick={(event) => {
+                  if (!shouldScrollToBudgetVehicles) return;
+                  event.preventDefault();
+                  lightAffordableSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
               >
                 {lightShopLabel}
               </a>
@@ -962,8 +969,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         </section>
 
         {startMode === 'monthly' && lightAffordableVehicles.length > 0 && (
-          <>
-            <section className="aio-payment__light-affordable-section">
+            <section ref={lightAffordableSectionRef} className="aio-payment__light-affordable-section">
               <div className="container">
                 <section className="aio-payment__light-affordable" aria-labelledby="aio-payment-light-affordable-heading">
                   <div className="aio-payment__light-affordable-head">
@@ -994,6 +1000,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           image={vehicle.image}
                           price={currency(vehicle.priceMin)}
                           priceLabel="Starting at"
+                          secondaryPrice={`${currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo`}
+                          secondaryPriceLabel="Est."
                           rating={vehicle.staffRating}
                           epaMpg={getCombinedMpg(vehicle.mpg)}
                           cdSays={getVehicleCardCopy(vehicle)}
@@ -1021,34 +1029,33 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </section>
               </div>
             </section>
-
-            <section className="aio-payment__light-faq-section" aria-labelledby="aio-payment-light-faq-heading">
-              <div className="container">
-                <h2 id="aio-payment-light-faq-heading" className="aio-payment__faq-heading">FAQs</h2>
-                <div className="aio-payment__faq-list">
-                  {LIGHT_FINANCING_FAQS.map((item, index) => (
-                    <div key={item.question} className={`aio-payment__faq-item ${expandedFaq === index ? 'aio-payment__faq-item--expanded' : ''}`}>
-                      <button
-                        type="button"
-                        className="aio-payment__faq-question"
-                        onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                        aria-expanded={expandedFaq === index}
-                      >
-                        <span className="aio-payment__faq-question-text">{item.question}</span>
-                        {expandedFaq === index ? <ChevronUp size={24} aria-hidden /> : <ChevronDown size={24} aria-hidden />}
-                      </button>
-                      {expandedFaq === index && (
-                        <div className="aio-payment__faq-answer">
-                          <p>{item.answer}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-          </>
         )}
+
+        <section className="aio-payment__light-faq-section" aria-labelledby="aio-payment-light-faq-heading">
+          <div className="container">
+            <h2 id="aio-payment-light-faq-heading" className="aio-payment__faq-heading">FAQs</h2>
+            <div className="aio-payment__faq-list">
+              {LIGHT_FINANCING_FAQS.map((item, index) => (
+                <div key={item.question} className={`aio-payment__faq-item ${expandedFaq === index ? 'aio-payment__faq-item--expanded' : ''}`}>
+                  <button
+                    type="button"
+                    className="aio-payment__faq-question"
+                    onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                    aria-expanded={expandedFaq === index}
+                  >
+                    <span className="aio-payment__faq-question-text">{item.question}</span>
+                    {expandedFaq === index ? <ChevronUp size={24} aria-hidden /> : <ChevronDown size={24} aria-hidden />}
+                  </button>
+                  {expandedFaq === index && (
+                    <div className="aio-payment__faq-answer">
+                      <p>{item.answer}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {showAiDealAnalysis && (
           <div className="aio-payment__ai-modal" role="dialog" aria-modal="true" aria-labelledby="aio-payment-ai-modal-title">
@@ -1765,6 +1772,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         offer={incentiveOfferDetail}
         allIncentives={vehicleIncentives.incentives}
         selectedIncentiveId={selectedIncentive?.id}
+        onApplyIncentive={(incentive) => {
+          applyOfferToEstimate(incentive);
+          setShowIncentiveModal(false);
+          setSelectedIncentive(null);
+        }}
       />
     </main>
   );

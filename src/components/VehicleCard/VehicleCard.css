@@ -406,6 +406,24 @@
   white-space: nowrap;
 }
 
+.vehicle-card__price-secondary {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-1);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.vehicle-card__price-secondary span {
+  color: var(--color-gray-500);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+}
+
 /* ============================================
    CTA BUTTONS SECTION
    Now uses <Button> component from design system
