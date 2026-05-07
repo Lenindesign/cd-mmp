@@ -153,8 +153,8 @@ export function PaymentCalculatorFinanceCharts({
             <figure className="payment-calc-viz__figure payment-calc-viz__figure--lines">
               <figcaption className="payment-calc-viz__title">Payments over time</figcaption>
               <div className="payment-calc-viz__line-wrap">
-                <ResponsiveContainer width="100%" height={280}>
-                  <LineChart data={schedule} margin={{ top: 12, right: 8, left: 4, bottom: 28 }}>
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={schedule} margin={{ top: 12, right: 8, left: 4, bottom: 8 }}>
                     <CartesianGrid stroke="var(--color-gray-200)" strokeDasharray="3 3" />
                     <XAxis
                       type="number"
@@ -164,13 +164,6 @@ export function PaymentCalculatorFinanceCharts({
                       tick={{ fontSize: 11, fill: 'var(--color-gray-600)' }}
                       tickLine={false}
                       axisLine={{ stroke: 'var(--color-gray-300)' }}
-                      label={{
-                        value: 'Month',
-                        position: 'insideBottom',
-                        offset: -16,
-                        fontSize: 11,
-                        fill: 'var(--color-gray-600)',
-                      }}
                     />
                     <YAxis
                       tickFormatter={fmtMoneyCompact}
@@ -189,12 +182,6 @@ export function PaymentCalculatorFinanceCharts({
                         }).format(Number(value))
                       }
                       labelFormatter={label => `Month ${label}`}
-                    />
-                    <Legend
-                      layout="horizontal"
-                      align="center"
-                      verticalAlign="bottom"
-                      wrapperStyle={{ fontSize: '0.6875rem', paddingTop: 8 }}
                     />
                     <Line
                       type="monotone"
@@ -225,6 +212,11 @@ export function PaymentCalculatorFinanceCharts({
                     />
                   </LineChart>
                 </ResponsiveContainer>
+                <div className="payment-calc-viz__legend" aria-label="Payments over time legend">
+                  <span><i className="payment-calc-viz__legend-dot payment-calc-viz__legend-dot--balance" />Balance</span>
+                  <span><i className="payment-calc-viz__legend-dot payment-calc-viz__legend-dot--interest" />Interest cumulative</span>
+                  <span><i className="payment-calc-viz__legend-dot payment-calc-viz__legend-dot--payment" />Payment cumulative</span>
+                </div>
               </div>
             </figure>
           </div>

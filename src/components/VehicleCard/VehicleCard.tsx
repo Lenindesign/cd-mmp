@@ -55,6 +55,7 @@ export interface VehicleCardProps {
   priceRange?: string; // For "next-vehicle" variant: "$27,775 - $32,905"
   secondaryPrice?: string;
   secondaryPriceLabel?: string;
+  budgetNote?: string;
   
   // Rating (for new vehicles)
   rating?: number;
@@ -124,6 +125,7 @@ export const VehicleCard = ({
   priceRange,
   secondaryPrice,
   secondaryPriceLabel,
+  budgetNote,
   rating,
   rank,
   badge,
@@ -618,6 +620,7 @@ export const VehicleCard = ({
                 {secondaryPrice}
               </span>
             )}
+            {budgetNote && <span className="vehicle-card__budget-note">{budgetNote}</span>}
           </div>
           <div className="vehicle-card__ctas">
             {/* Multiple CTAs */}

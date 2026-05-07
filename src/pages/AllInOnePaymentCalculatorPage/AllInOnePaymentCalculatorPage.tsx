@@ -138,6 +138,15 @@ const getCombinedMpg = (mpg?: string) => {
 const getVehicleCardCopy = (vehicle: Vehicle) =>
   `The ${vehicle.year} ${vehicle.make} ${vehicle.model} keeps this estimate realistic with a starting price under your budget and a ${vehicle.staffRating}/10 C/D rating.`;
 
+const getBudgetVehicleReason = (vehicle: Vehicle, index: number) => {
+  if (index === 0) return 'Closest to your budget';
+  if (vehicle.tenBest) return '10Best pick';
+  if (vehicle.editorsChoice) return "Editor's Choice";
+  if (vehicle.evOfTheYear) return 'EV award winner';
+  if (vehicle.staffRating >= 8.5) return 'High C/D rating';
+  return 'Fits this estimate';
+};
+
 const SealCheckIcon = ({ size = 24 }: { size?: number }) => (
   <svg
     width={size}
@@ -210,6 +219,7 @@ const getAffordablePriceFromMonthlyBudget = ({
   taxRate,
   salesTaxOverride,
   fees,
+  includeTaxesAndFeesInLoan,
 }: {
   targetMonthlyPayment: number;
   apr: number;
@@ -222,6 +232,7 @@ const getAffordablePriceFromMonthlyBudget = ({
   taxRate: number;
   salesTaxOverride?: number;
   fees: number;
+  includeTaxesAndFeesInLoan: boolean;
 }) => {
   if (targetMonthlyPayment <= 0 || termMonths <= 0) return 0;
 
@@ -229,8 +240,8 @@ const getAffordablePriceFromMonthlyBudget = ({
   const paymentForPrice = (candidatePrice: number) => {
     const taxableAmount = getTaxableAmount(candidatePrice, tradeInValue, rebate, taxRule);
     const salesTax = salesTaxOverride ?? taxableAmount * taxRate;
-    const outTheDoorPrice = candidatePrice + salesTax + fees;
-    const netAfterCredits = Math.max(0, outTheDoorPrice - tradeEquity - rebate);
+    const financedPrice = includeTaxesAndFeesInLoan ? candidatePrice + salesTax + fees : candidatePrice;
+    const netAfterCredits = Math.max(0, financedPrice - tradeEquity - rebate);
     const amountFinanced = Math.max(0, netAfterCredits - downPayment);
 
     return monthlyPayment(amountFinanced, apr, termMonths);
@@ -320,6 +331,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [stateCode, setStateCode] = useState(DEFAULT_STATE_VEHICLE_TAX.code);
   const [salesTaxOverride, setSalesTaxOverride] = useState('');
   const [feesOverride, setFeesOverride] = useState('');
+  const [includeTaxesAndFeesInLoan, setIncludeTaxesAndFeesInLoan] = useState(true);
   const [showTradeTool, setShowTradeTool] = useState(false);
   const [tradeVehicle, setTradeVehicle] = useState('2020 Honda CR-V');
   const [tradeMileage, setTradeMileage] = useState(52000);
@@ -414,25 +426,31 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     taxRate: stateRule.rate,
     salesTaxOverride: salesTaxOverride ? numberInput(salesTaxOverride) : undefined,
     fees,
+    includeTaxesAndFeesInLoan,
   });
   const workingPrice = (isBudgetFirstVariant || isLightVariant) && startMode === 'monthly' ? affordableMsrp : price;
   const taxableAmount = getTaxableAmount(workingPrice, tradeInValue, rebateTotal, stateRule.taxRule);
   const calculatedSalesTax = taxableAmount * stateRule.rate;
   const salesTax = salesTaxOverride ? numberInput(salesTaxOverride) : calculatedSalesTax;
+  const taxesAndFees = salesTax + fees;
   const outTheDoorPrice = workingPrice + salesTax + fees;
-  const netPriceAfterTradeAndOffers = Math.max(0, outTheDoorPrice - tradeEquity - rebateTotal);
+  const netVehiclePriceAfterTradeAndOffers = Math.max(0, workingPrice - tradeEquity - rebateTotal);
+  const financedPurchasePrice = includeTaxesAndFeesInLoan ? outTheDoorPrice : workingPrice;
+  const netPriceAfterTradeAndOffers = Math.max(0, financedPurchasePrice - tradeEquity - rebateTotal);
   const totalLoanAmount = Math.max(0, netPriceAfterTradeAndOffers - downPayment);
   const estimatedMonthly = monthlyPayment(totalLoanAmount, activeApr, loanTerm);
   const totalLoanPayments = estimatedMonthly * loanTerm;
   const totalLoanInterest = Math.max(0, totalLoanPayments - totalLoanAmount);
-  const totalCost = netPriceAfterTradeAndOffers + totalLoanInterest;
-  const cashDueAtSigning = Math.min(downPayment, netPriceAfterTradeAndOffers);
+  const totalCost = netVehiclePriceAfterTradeAndOffers + taxesAndFees + totalLoanInterest;
+  const financedCashDue = Math.min(downPayment, netPriceAfterTradeAndOffers);
+  const upfrontCashDue = Math.min(downPayment, netVehiclePriceAfterTradeAndOffers) + taxesAndFees;
+  const cashDueAtSigning = includeTaxesAndFeesInLoan ? financedCashDue : upfrontCashDue;
   const totalPaidFromPocket = cashDueAtSigning + totalLoanPayments;
   const paymentDelta = estimatedMonthly - targetMonthlyPayment;
   const selectedVehicleTaxableAmount = getTaxableAmount(selectedVehicle.priceMin, tradeInValue, rebateTotal, stateRule.taxRule);
   const selectedVehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : selectedVehicleTaxableAmount * stateRule.rate;
-  const selectedVehicleOutTheDoorPrice = selectedVehicle.priceMin + selectedVehicleSalesTax + fees;
-  const selectedVehicleNetPrice = Math.max(0, selectedVehicleOutTheDoorPrice - tradeEquity - rebateTotal);
+  const selectedVehicleFinancedPrice = includeTaxesAndFeesInLoan ? selectedVehicle.priceMin + selectedVehicleSalesTax + fees : selectedVehicle.priceMin;
+  const selectedVehicleNetPrice = Math.max(0, selectedVehicleFinancedPrice - tradeEquity - rebateTotal);
   const selectedVehicleLoanAmount = Math.max(0, selectedVehicleNetPrice - downPayment);
   const selectedVehicleMonthly = monthlyPayment(selectedVehicleLoanAmount, activeApr, loanTerm);
   const selectedVehicleBudgetDelta = selectedVehicleMonthly - targetMonthlyPayment;
@@ -455,8 +473,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
     const vehicleTaxableAmount = getTaxableAmount(vehiclePrice, tradeInValue, rebateTotal, stateRule.taxRule);
     const vehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : vehicleTaxableAmount * stateRule.rate;
-    const vehicleOutTheDoorPrice = vehiclePrice + vehicleSalesTax + fees;
-    const vehicleNetPrice = Math.max(0, vehicleOutTheDoorPrice - tradeEquity - rebateTotal);
+    const vehicleFinancedPrice = includeTaxesAndFeesInLoan ? vehiclePrice + vehicleSalesTax + fees : vehiclePrice;
+    const vehicleNetPrice = Math.max(0, vehicleFinancedPrice - tradeEquity - rebateTotal);
     const vehicleLoanAmount = Math.max(0, vehicleNetPrice - downPayment);
 
     return monthlyPayment(vehicleLoanAmount, activeApr, loanTerm);
@@ -481,6 +499,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightShopLabel = shouldScrollToBudgetVehicles
     ? 'SEE CARS IN YOUR BUDGET'
     : `SHOP ${condition === 'new' ? 'NEW' : 'USED'} ${selectedVehicle.model.toUpperCase()}`;
+  const lightNextStepCopy = shouldScrollToBudgetVehicles
+    ? `Start with cars near ${currency(affordableMsrp)} or adjust your loan terms.`
+    : startMode === 'monthly'
+      ? 'This vehicle is close enough to compare offers and inventory.'
+      : 'Review the due-at-signing and total cost before you shop.';
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
   const leaseDepreciationCharge = Math.max(0, leaseAdjustedCapCost - leaseResidualValue) / Math.max(1, leaseTerm);
@@ -767,7 +790,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <span><strong>Down</strong>{currency(downPayment)}</span>
                     <span><strong>Term</strong>{loanTerm} months</span>
                     <span><strong>APR</strong>{activeApr.toFixed(1)}%</span>
-                    <span><strong>Taxes</strong>{stateRule.code}</span>
+                    <span><strong>Due today</strong>{currency(cashDueAtSigning)}</span>
                   </div>
                 </div>
               </div>
@@ -875,6 +898,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     />
                     <TextField label="Sales tax" type="number" value={salesTaxOverride || Math.round(calculatedSalesTax)} min={0} onChange={(event) => setSalesTaxOverride(event.target.value)} />
                     <TextField label="Title, registration, and other fees" type="number" value={feesOverride || stateRule.titleRegistrationFees} min={0} onChange={(event) => setFeesOverride(event.target.value)} />
+                    <label className="aio-payment__light-checkbox aio-payment__light-field--wide">
+                      <input
+                        type="checkbox"
+                        checked={includeTaxesAndFeesInLoan}
+                        onChange={(event) => setIncludeTaxesAndFeesInLoan(event.target.checked)}
+                      />
+                      <span>
+                        <strong>Finance taxes and fees</strong>
+                        <small>
+                          {includeTaxesAndFeesInLoan
+                            ? 'Taxes and fees are rolled into the loan amount.'
+                            : 'Taxes and fees are counted in cash due at signing.'}
+                        </small>
+                      </span>
+                    </label>
                   </div>
                   <p className="aio-payment__light-note">
                     {stateRule.name} rule: {TAX_RULE_LABELS[stateRule.taxRule]}. Taxable amount: {currency(taxableAmount)}.
@@ -893,6 +931,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         onOfferClick={handleOfferClick}
                         title="Special offers and incentives"
                       />
+                      <p className="aio-payment__light-offer-help">
+                        Open an offer to review details or apply it to this estimate.
+                      </p>
                     </div>
                   </details>
                 )}
@@ -905,9 +946,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <dl className="aio-payment__light-breakdown">
                     <div><dt>Out-the-door estimate</dt><dd>{currency(outTheDoorPrice)}</dd></div>
                     <div><dt>Amount financed</dt><dd>{currency(totalLoanAmount)}</dd></div>
+                    <div><dt>Due at signing</dt><dd>{currency(cashDueAtSigning)}</dd></div>
                     <div><dt>Estimated monthly payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
                     <div><dt>Total interest</dt><dd>{currency(totalLoanInterest)}</dd></div>
                     <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
+                    <div><dt>Total cost</dt><dd>{currency(totalCost)}</dd></div>
                   </dl>
                 </details>
               </div>
@@ -944,6 +987,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <p>{budgetFitCopy}</p>
                   </div>
                 )}
+                <p className="aio-payment__light-next-step">{lightNextStepCopy}</p>
+                <div className="aio-payment__light-result-facts" aria-label="Estimate totals">
+                  <span><strong>Due today</strong>{currency(cashDueAtSigning)}</span>
+                  <span><strong>Total cost</strong>{currency(totalCost)}</span>
+                </div>
               </aside>
               <a
                 className="aio-payment__light-result-shop"
@@ -991,7 +1039,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <ChevronLeft size={24} aria-hidden="true" />
                     </button>
                     <div ref={affordableCarouselRef} className="aio-payment__vehicle-carousel aio-payment__vehicle-carousel--light">
-                      {lightAffordableVehicles.map((vehicle) => (
+                      {lightAffordableVehicles.map((vehicle, index) => (
                         <VehicleCard
                           key={vehicle.id}
                           id={vehicle.id}
@@ -1002,6 +1050,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           priceLabel="Starting at"
                           secondaryPrice={`${currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo`}
                           secondaryPriceLabel="Est."
+                          budgetNote={getBudgetVehicleReason(vehicle, index)}
                           rating={vehicle.staffRating}
                           epaMpg={getCombinedMpg(vehicle.mpg)}
                           cdSays={getVehicleCardCopy(vehicle)}
