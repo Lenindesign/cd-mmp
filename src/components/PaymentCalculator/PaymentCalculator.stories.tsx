@@ -13,7 +13,7 @@ const meta: Meta<typeof PaymentCalculator> = {
 
 ## Overview
 
-An interactive payment estimator that lets shoppers model finance, lease, and cash scenarios for any vehicle. Adjustable inputs for down payment, trade-in, credit score, and loan term update the monthly/total cost in real time.
+Distilled **Finance / Lease / Cash** estimate: shared price and trade-in, finance rate from **credit tier** (plus optional promo APR), one **primary CTA**.
 
 ---
 
@@ -32,9 +32,9 @@ An interactive payment estimator that lets shoppers model finance, lease, and ca
 
 | Tab | What It Shows |
 |-----|---------------|
-| Finance | Monthly payment based on APR, term, down payment, and trade-in |
-| Lease | Estimated monthly lease payment |
-| Cash | Total out-of-pocket after trade-in |
+| Finance | Amortized loan: monthly payment, interest, total out-of-pocket |
+| Lease | Up-front (synced with Finance down), residual (MSRP-based), lease APR slider (MF × 2400), optional MF field in details |
+| Cash | Vehicle price minus trade-in (excl. taxes/fees) |
 
 ---
 
@@ -42,10 +42,12 @@ An interactive payment estimator that lets shoppers model finance, lease, and ca
 
 | Input | Type | Description |
 |-------|------|-------------|
-| Down Payment | Slider | Percentage of MSRP (0–50%) |
-| Credit Score | Dropdown | Tier-based APR lookup |
-| Loan Term | Select | 36, 48, 60, 72, or 84 months |
-| Trade-In | Text | Dollar value of trade-in vehicle |
+| Vehicle price | Slider | |
+| Down / up-front | Slider | Single value shared between Finance down and Lease up-front |
+| Credit tier | Select | Sets APR (finance) |
+| Loan term | Pills | |
+| Lease: residual, APR→MF, term | Sliders / pills | MF optional in “Money factor” disclosure |
+| Trade-in | Slider | Always visible |
         `,
       },
     },
@@ -76,6 +78,16 @@ An interactive payment estimator that lets shoppers model finance, lease, and ca
         category: 'Deal',
       },
     },
+    make: {
+      description: 'Make (CTA: SHOP MAKE MODEL)',
+      control: 'text',
+      table: { type: { summary: 'string' }, category: 'Vehicle' },
+    },
+    model: {
+      description: 'Model (CTA)',
+      control: 'text',
+      table: { type: { summary: 'string' }, category: 'Vehicle' },
+    },
   },
 };
 
@@ -86,6 +98,8 @@ export const Default: Story = {
   args: {
     msrp: 21895,
     vehicleName: '2025 Chevrolet Trax',
+    make: 'Chevrolet',
+    model: 'Trax',
   },
   parameters: {
     docs: {
@@ -100,6 +114,8 @@ export const WithSpecialAPR: Story = {
   args: {
     msrp: 21895,
     vehicleName: '2025 Chevrolet Trax',
+    make: 'Chevrolet',
+    model: 'Trax',
     bestApr: 0,
   },
   parameters: {
@@ -115,6 +131,8 @@ export const LuxuryVehicle: Story = {
   args: {
     msrp: 89500,
     vehicleName: '2025 Porsche Cayenne',
+    make: 'Porsche',
+    model: 'Cayenne',
   },
   parameters: {
     docs: {
@@ -129,6 +147,8 @@ export const Truck: Story = {
   args: {
     msrp: 45000,
     vehicleName: '2025 Ford F-150',
+    make: 'Ford',
+    model: 'F-150',
     bestApr: 3.9,
   },
   parameters: {

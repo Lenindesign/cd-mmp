@@ -196,6 +196,8 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
             <PaymentCalculator
               msrp={vehicle.priceMin}
               vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+              make={vehicle.make}
+              model={vehicle.model}
             />
             <TradeInPrompt
               vehicleName={`${vehicle.make} ${vehicle.model}`}

@@ -1,0 +1,672 @@
+.lvb-ai {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(27, 95, 138, 0.34), transparent 34rem),
+    linear-gradient(180deg, #07090c 0%, #111821 42%, #f5f5f5 42%, #f5f5f5 100%);
+  color: var(--color-white);
+}
+
+.lvb-ai__hero {
+  padding: var(--spacing-8) 0 var(--spacing-12);
+}
+
+.lvb-ai__breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-8);
+  color: rgba(255, 255, 255, 0.58);
+  font-size: var(--font-size-sm);
+}
+
+.lvb-ai__breadcrumb a {
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+}
+
+.lvb-ai__breadcrumb a:hover {
+  color: var(--color-white);
+}
+
+.lvb-ai__hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+  gap: var(--spacing-10);
+  align-items: end;
+}
+
+.lvb-ai__eyebrow,
+.lvb-ai__section-title span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-blue-cobalt-light);
+  font-family: var(--font-label);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lvb-ai__hero h1 {
+  max-width: 680px;
+  margin: var(--spacing-3) 0 var(--spacing-4);
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.lvb-ai__hero p {
+  max-width: 680px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: var(--font-size-lg);
+  line-height: 1.55;
+}
+
+.lvb-ai__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
+}
+
+.lvb-ai__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--spacing-12);
+  padding: 0 var(--spacing-5);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.lvb-ai__button--primary {
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+}
+
+.lvb-ai__button--primary:hover {
+  background: var(--color-blue-cobalt-dark);
+}
+
+.lvb-ai__button--ghost {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--color-white);
+}
+
+.lvb-ai__button--ghost:hover {
+  border-color: rgba(255, 255, 255, 0.58);
+}
+
+.lvb-ai__hero-preview {
+  padding: var(--spacing-5);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+}
+
+.lvb-ai__score-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 132px;
+  height: 132px;
+  margin-bottom: var(--spacing-5);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, #111821 58%, transparent 59%),
+    conic-gradient(var(--color-blue-cobalt-light) calc(var(--score, 78) * 1%), rgba(255, 255, 255, 0.16) 0);
+}
+
+.lvb-ai__score-ring span {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 0.9;
+}
+
+.lvb-ai__score-ring small {
+  max-width: 86px;
+  margin-top: var(--spacing-1);
+  color: rgba(255, 255, 255, 0.66);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lvb-ai__preview-bars {
+  display: flex;
+  align-items: end;
+  gap: var(--spacing-2);
+  height: 96px;
+  margin-top: var(--spacing-5);
+}
+
+.lvb-ai__preview-bars i {
+  flex: 1;
+  background: linear-gradient(180deg, var(--color-blue-cobalt-light), rgba(96, 165, 250, 0.18));
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+}
+
+.lvb-ai__dashboard {
+  padding: 0 0 var(--spacing-12);
+  color: var(--color-dark);
+}
+
+.lvb-ai__dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
+  gap: var(--spacing-6);
+  align-items: start;
+}
+
+.lvb-ai__inputs,
+.lvb-ai__sticky,
+.lvb-ai__chart-card,
+.lvb-ai__advisor article {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.lvb-ai__inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+}
+
+.lvb-ai__section-title {
+  margin-bottom: var(--spacing-1);
+}
+
+.lvb-ai__section-title h2 {
+  margin: var(--spacing-1) 0 0;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  letter-spacing: -0.04em;
+}
+
+.lvb-ai__input-section {
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.lvb-ai__input-section summary {
+  padding: var(--spacing-4);
+  background: var(--color-gray-50);
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.lvb-ai__form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+}
+
+.lvb-ai__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.lvb-ai__field span {
+  color: var(--color-gray-600);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lvb-ai__field input,
+.lvb-ai__field select {
+  min-height: var(--spacing-11);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+}
+
+.lvb-ai__field input:focus,
+.lvb-ai__field select:focus {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.lvb-ai__input-wrap {
+  position: relative;
+}
+
+.lvb-ai__input-wrap em {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gray-500);
+  font-style: normal;
+  font-size: var(--font-size-xs);
+}
+
+.lvb-ai__sticky {
+  position: sticky;
+  top: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  padding: var(--spacing-5);
+}
+
+.lvb-ai__recommendation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-5);
+  align-items: center;
+  padding-bottom: var(--spacing-5);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.lvb-ai__recommendation h2 {
+  margin: var(--spacing-1) 0 var(--spacing-2);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.lvb-ai__recommendation p {
+  margin: 0;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+.lvb-ai__deal-score {
+  display: grid;
+  place-items: center;
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  background: var(--color-gray-100);
+  color: var(--color-blue-cobalt);
+}
+
+.lvb-ai__deal-score strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-4xl);
+  line-height: 1;
+}
+
+.lvb-ai__deal-score span {
+  max-width: 80px;
+  color: var(--color-gray-600);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lvb-ai__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-3);
+}
+
+.lvb-ai__metric {
+  padding: var(--spacing-4);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+}
+
+.lvb-ai__metric span {
+  color: var(--color-gray-500);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lvb-ai__metric strong {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+}
+
+.lvb-ai__metric p {
+  margin: var(--spacing-1) 0 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+}
+
+.lvb-ai__ai-brief {
+  display: grid;
+  gap: var(--spacing-5);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
+  scroll-margin-top: var(--spacing-8);
+}
+
+.lvb-ai__ai-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-4);
+  align-items: start;
+}
+
+.lvb-ai__ai-head span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.lvb-ai__ai-head p {
+  max-width: 34rem;
+  margin: var(--spacing-2) 0 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.lvb-ai__ai-head button {
+  min-height: var(--spacing-10);
+  padding: 0 var(--spacing-4);
+  background: var(--color-dark);
+  border: 0;
+  border-radius: var(--border-radius-md);
+  color: var(--color-white);
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.lvb-ai__analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.lvb-ai__analysis-block {
+  padding: var(--spacing-5);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-lg);
+}
+
+.lvb-ai__analysis-block--feature {
+  background: rgba(27, 95, 138, 0.08);
+  border: 1px solid rgba(27, 95, 138, 0.18);
+}
+
+.lvb-ai__analysis-block h3 {
+  margin: 0 0 var(--spacing-2);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+}
+
+.lvb-ai__analysis-block--feature h3 {
+  color: var(--color-blue-cobalt);
+}
+
+.lvb-ai__analysis-block p {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+}
+
+.lvb-ai__analysis-block--feature p {
+  color: var(--color-gray-700);
+  font-size: var(--font-size-md);
+}
+
+.lvb-ai__visuals {
+  padding: var(--spacing-12) 0;
+  background: #0d1219;
+  color: var(--color-white);
+}
+
+.lvb-ai__visuals .lvb-ai__section-title h2 {
+  color: var(--color-white);
+}
+
+.lvb-ai__chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-5);
+  margin-top: var(--spacing-6);
+}
+
+.lvb-ai__chart-card {
+  padding: var(--spacing-5);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--color-white);
+  box-shadow: none;
+}
+
+.lvb-ai__chart-card--wide {
+  grid-column: 1 / -1;
+}
+
+.lvb-ai__chart-card h3 {
+  margin: 0 0 var(--spacing-4);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+}
+
+.lvb-ai__chart-card p {
+  margin: var(--spacing-3) 0 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.lvb-ai__horizon-cards {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.lvb-ai__horizon-card {
+  padding: var(--spacing-4);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--border-radius-lg);
+}
+
+.lvb-ai__horizon-card > span {
+  display: block;
+  color: rgba(255, 255, 255, 0.58);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lvb-ai__horizon-card > strong {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  letter-spacing: -0.035em;
+}
+
+.lvb-ai__horizon-card dl {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: var(--spacing-3) 0 0;
+}
+
+.lvb-ai__horizon-card dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lvb-ai__horizon-card dt {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: var(--font-size-xs);
+}
+
+.lvb-ai__horizon-card dd {
+  margin: 0;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.lvb-ai__factor-list {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.lvb-ai__factor-list div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-2);
+}
+
+.lvb-ai__factor-list span,
+.lvb-ai__factor-list strong {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.lvb-ai__factor-list i {
+  grid-column: 1 / -1;
+  height: var(--spacing-2);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+}
+
+.lvb-ai__factor-list b {
+  display: block;
+  height: 100%;
+  background: var(--color-blue-cobalt-light);
+}
+
+.lvb-ai__factor-list small {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.lvb-ai__advisor {
+  padding: var(--spacing-12) 0;
+  background: var(--color-gray-100);
+  color: var(--color-dark);
+}
+
+.lvb-ai__advisor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.lvb-ai__advisor article {
+  padding: var(--spacing-5);
+}
+
+.lvb-ai__advisor svg {
+  color: var(--color-blue-cobalt);
+}
+
+.lvb-ai__advisor h2 {
+  margin: var(--spacing-3) 0 var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+}
+
+.lvb-ai__advisor p,
+.lvb-ai__advisor li {
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+}
+
+.lvb-ai__advisor ul {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: var(--spacing-3) 0 0;
+  padding-left: var(--spacing-5);
+}
+
+@media (max-width: 1100px) {
+  .lvb-ai__hero-grid,
+  .lvb-ai__dashboard-grid,
+  .lvb-ai__advisor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lvb-ai__sticky {
+    position: static;
+  }
+
+  .lvb-ai__advisor-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .lvb-ai__hero {
+    padding-top: var(--spacing-6);
+  }
+
+  .lvb-ai__hero h1 {
+    font-size: clamp(2rem, 9vw, 2.75rem);
+  }
+
+  .lvb-ai__form-grid,
+  .lvb-ai__metrics,
+  .lvb-ai__analysis-grid,
+  .lvb-ai__chart-grid,
+  .lvb-ai__advisor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lvb-ai__recommendation {
+    grid-template-columns: 1fr;
+  }
+
+  .lvb-ai__ai-head {
+    grid-template-columns: 1fr;
+  }
+}
