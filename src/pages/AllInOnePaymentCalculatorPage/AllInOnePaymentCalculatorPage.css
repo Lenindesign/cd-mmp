@@ -711,7 +711,7 @@
   width: 100%;
   padding: 0 var(--spacing-5);
   background: var(--color-blue-cobalt);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-sm);
   font-family: var(--font-heading);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
@@ -740,7 +740,7 @@
   padding: 0 var(--spacing-4);
   background: var(--color-white);
   border: 1px solid var(--color-blue-cobalt);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-sm);
   color: var(--color-blue-cobalt);
   cursor: pointer;
   font-family: var(--font-heading);
@@ -1039,7 +1039,7 @@
   padding: 0 var(--spacing-6);
   border: 2px solid var(--color-white);
   border-radius: var(--border-radius-md);
-  background: var(--color-blue-cobalt-dark);
+  background-color: var(--color-primary-1);
   color: var(--color-white);
   font-family: var(--font-heading);
   font-size: var(--font-size-base);

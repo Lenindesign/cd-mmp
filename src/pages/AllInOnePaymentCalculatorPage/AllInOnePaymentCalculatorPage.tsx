@@ -441,9 +441,9 @@ interface AllInOnePaymentCalculatorPageProps {
 const LIGHT_WIZARD_STEP_META = [
   { label: 'Payment goal', short: 'Goal', hint: 'Choose whether you’re starting from a monthly budget or a vehicle price.' },
   { label: 'Loan setup', short: 'Loan', hint: 'Set down payment, APR, and how long you’ll finance.' },
-  { label: 'Vehicle & costs', short: 'Vehicle', hint: 'Pick the vehicle, then add trade-in, taxes, and fees.' },
-  { label: 'Offers', short: 'Offers', hint: 'Apply cash or finance incentives when they’re available.' },
-  { label: 'Review', short: 'Review', hint: 'Confirm the estimate breakdown, then browse vehicles that fit your numbers.' },
+  { label: 'Vehicle', short: 'Vehicle', hint: 'Pick year, make, model, and trim so we can apply realistic pricing and incentives.' },
+  { label: 'Trade, taxes & fees', short: 'Trade', hint: 'Add trade-in equity, your state, sales tax, title and registration, and whether tax rolls into the loan.' },
+  { label: 'Review', short: 'Review', hint: 'Apply available offers, confirm the estimate breakdown, then browse vehicles that fit your numbers.' },
 ] as const;
 
 const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentCalculatorPageProps) => {
@@ -892,7 +892,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </h1>
                 <p>
                   {isLightStepsVariant
-                    ? 'Move through payment goal, loan terms, vehicle details, offers, and a full review—with your estimate updating as you go.'
+                    ? 'Move through payment goal, loan terms, vehicle, trade and taxes, then review offers and totals—with your estimate updating as you go.'
                     : 'Enter a payment target and we’ll estimate the vehicle price range, payment details, and offers that may fit.'}
                 </p>
               </div>
@@ -1024,10 +1024,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 )}
 
                 {(!isLightStepsVariant || lightWizardStep === 3) && (
-                <>
                 <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                   <summary>
-                    <span>Vehicle and offers</span>
+                    <span>Vehicle</span>
                     <strong>{selectedYear} {selectedVehicle.make} {selectedVehicle.model}</strong>
                   </summary>
                   <p className="aio-payment__light-disclosure-copy">
@@ -1080,7 +1079,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     />
                   </div>
                 </details>
+                )}
 
+                {(!isLightStepsVariant || lightWizardStep === 4) && (
                 <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                   <summary>
                     <span>Trade, taxes &amp; fees</span>
@@ -1122,11 +1123,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     {stateRule.name} rule: {TAX_RULE_LABELS[stateRule.taxRule]}. Taxable amount: {currency(taxableAmount)}.
                   </p>
                 </details>
-                </>
                 )}
 
-                {(!isLightStepsVariant || lightWizardStep === 4) &&
-                  (condition === 'new' && (cashIncentives.length > 0 || financeIncentives.length > 0) ? (
+                {(!isLightStepsVariant || lightWizardStep === 5) && (
+                <>
+                {condition === 'new' && (cashIncentives.length > 0 || financeIncentives.length > 0) ? (
                   <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                     <summary>
                       <span>Offers and incentives</span>
@@ -1150,12 +1151,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 ) : isLightStepsVariant ? (
                   <div className="aio-payment__light-wizard-empty" role="status">
                     <p className="aio-payment__light-wizard-empty-copy">
-                      No manufacturer incentives apply for this vehicle configuration, or you chose used. Continue to review your estimate.
+                      No manufacturer incentives apply for this vehicle configuration, or you chose used. See the estimate breakdown below.
                     </p>
                   </div>
-                ) : null)}
-
-                {(!isLightStepsVariant || lightWizardStep === 5) && (
+                ) : null}
                 <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                   <summary>
                     <span>Estimate breakdown</span>
@@ -1171,6 +1170,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <div><dt>Total cost</dt><dd>{currency(totalCost)}</dd></div>
                   </dl>
                 </details>
+                </>
                 )}
               </div>
 
