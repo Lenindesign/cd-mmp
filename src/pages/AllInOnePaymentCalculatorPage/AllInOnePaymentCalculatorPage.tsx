@@ -10,6 +10,7 @@ import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
 import HeroOffersB from '../../components/Hero/HeroOffersB';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import TradeInEstimateModal from '../../components/TradeInEstimateModal';
+import { estimateTradeInValue } from '../../utils/tradeInEstimate';
 import { PaymentCalculatorFinanceCharts } from '../../components/PaymentCalculator/PaymentCalculatorFinanceCharts';
 import { DEFAULT_BODY_STYLES } from '../../components/BodyStyleSelector';
 import '../../components/Hero/Hero.css';
@@ -729,15 +730,31 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [showMobileSummary, setShowMobileSummary] = useState(false);
   const [lightWizardStep, setLightWizardStep] = useState(1);
   const lightVehicleBodyStyleHeadingId = useId();
+  const lightBreakdownHeadingId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
   const [lightBrowseBodyStyle, setLightBrowseBodyStyle] = useState('SUV');
+  const [lightHeroAmountTick, setLightHeroAmountTick] = useState<'up' | 'down' | null>(null);
+  const lightHeroAmountPrevRef = useRef<{ mode: PurchaseStartMode; amount: number } | null>(null);
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
     [defaultVehicle, selectedSlug, vehicles],
   );
   const selectedVehicleStyle = selectedVehicle.trim || selectedVehicle.drivetrain || selectedVehicle.bodyStyle;
+
+  const showLightTradeEstimateCard =
+    isLightStepsVariant &&
+    lightWizardStep === 4 &&
+    lightVehicleStepMode === 'known' &&
+    Boolean(selectedVehicle.model?.trim());
+
+  const lightTradePlanningEstimate = useMemo(() => {
+    const vehicleLine = `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`;
+    return estimateTradeInValue(vehicleLine, tradeMileage, tradeCondition);
+  }, [selectedYear, selectedVehicle.make, selectedVehicle.model, tradeMileage, tradeCondition]);
+
+  const lightTradeEstimateDisplayAmount = tradeInValue > 0 ? tradeInValue : lightTradePlanningEstimate;
 
   const availableYears = useMemo(
     () => condition === 'used'
@@ -912,6 +929,24 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   };
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
   const affordableVehicleBudget = isBudgetFirstVariant || isLightVariant ? workingPrice : price + downPayment + rebateTotal;
+
+  useEffect(() => {
+    const amount = startMode === 'monthly' ? affordableMsrp : estimatedMonthly;
+    const prev = lightHeroAmountPrevRef.current;
+    lightHeroAmountPrevRef.current = { mode: startMode, amount };
+
+    if (!prev || prev.mode !== startMode) {
+      return;
+    }
+    if (prev.amount === amount || Number.isNaN(amount)) {
+      return;
+    }
+
+    setLightHeroAmountTick(amount > prev.amount ? 'up' : 'down');
+    const timer = window.setTimeout(() => setLightHeroAmountTick(null), 480);
+    return () => window.clearTimeout(timer);
+  }, [startMode, affordableMsrp, estimatedMonthly]);
+
   const affordableVehicles = useMemo(
     () => getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4),
     [affordableVehicleBudget, selectedVehicle.bodyStyle],
@@ -1712,6 +1747,33 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           onChange={(event) => setAmountOwed(numberInput(event.target.value))}
                           wrapperClassName="aio-payment__light-trade-step__field-with-action"
                         />
+                        {showLightTradeEstimateCard ? (
+                          <aside
+                            className={`aio-payment__light-trade-estimate-card aio-payment__light-trade-estimate-card--full-row${selectedVehicle.image ? ' aio-payment__light-trade-estimate-card--split' : ''}`}
+                            aria-label="Estimated trade-in value for your selected vehicle"
+                          >
+                            {selectedVehicle.image ? (
+                              <div className="aio-payment__light-trade-estimate-card__media">
+                                <img
+                                  className="aio-payment__light-trade-estimate-card__image"
+                                  src={selectedVehicle.image}
+                                  alt=""
+                                  loading="lazy"
+                                />
+                              </div>
+                            ) : null}
+                            <div className="aio-payment__light-trade-estimate-card__body">
+                              <p className="aio-payment__light-trade-estimate-card__eyebrow">Estimated trade-in value</p>
+                              <p className="aio-payment__light-trade-estimate-card__value">
+                                {currency(lightTradeEstimateDisplayAmount)}
+                              </p>
+                              <p className="aio-payment__light-trade-estimate-card__note">
+                                This is a quick planning estimate. A dealer appraisal can adjust for trim, options, history,
+                                and local demand.
+                              </p>
+                            </div>
+                          </aside>
+                        ) : null}
                       </div>
                       <div className="aio-payment__light-trade-step__row aio-payment__light-trade-step__row--3">
                         <Select
@@ -1849,30 +1911,35 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <span>Estimate breakdown</span>
                     <strong>{currency(totalLoanAmount)} financed</strong>
                   </summary>
-                  <dl className="aio-payment__light-breakdown">
-                    <div><dt>Out-the-door estimate</dt><dd>{currency(outTheDoorPrice)}</dd></div>
-                    {tradeEquity !== 0 && (
-                      <div>
-                        <dt>{tradeEquity > 0 ? 'Trade equity (net)' : 'Trade balance rolled in'}</dt>
-                        <dd>{tradeEquity > 0 ? `-${currency(tradeEquity)}` : `+${currency(Math.abs(tradeEquity))}`}</dd>
+                  <div className="aio-payment__light-breakdown-card">
+                    <h3 className="aio-payment__light-breakdown-card__title" id={lightBreakdownHeadingId}>
+                      Your estimate breakdown
+                    </h3>
+                    <dl className="aio-payment__light-breakdown" aria-labelledby={lightBreakdownHeadingId}>
+                      <div><dt>Out-the-door estimate</dt><dd>{currency(outTheDoorPrice)}</dd></div>
+                      {tradeEquity !== 0 && (
+                        <div>
+                          <dt>{tradeEquity > 0 ? 'Trade equity (net)' : 'Trade balance rolled in'}</dt>
+                          <dd>{tradeEquity > 0 ? `-${currency(tradeEquity)}` : `+${currency(Math.abs(tradeEquity))}`}</dd>
+                        </div>
+                      )}
+                      {rebateTotal > 0 && (
+                        <div>
+                          <dt>Rebates and incentives</dt>
+                          <dd>-{currency(rebateTotal)}</dd>
+                        </div>
+                      )}
+                      <div><dt>Amount financed</dt><dd>{currency(totalLoanAmount)}</dd></div>
+                      <div><dt>Due at signing</dt><dd>{currency(cashDueAtSigning)}</dd></div>
+                      <div><dt>Estimated monthly payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
+                      <div><dt>Total interest</dt><dd>{currency(totalLoanInterest)}</dd></div>
+                      <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
+                      <div className="aio-payment__light-breakdown__total">
+                        <dt>Total cost</dt>
+                        <dd>{currency(totalCost)}</dd>
                       </div>
-                    )}
-                    {rebateTotal > 0 && (
-                      <div>
-                        <dt>Rebates and incentives</dt>
-                        <dd>-{currency(rebateTotal)}</dd>
-                      </div>
-                    )}
-                    <div><dt>Amount financed</dt><dd>{currency(totalLoanAmount)}</dd></div>
-                    <div><dt>Due at signing</dt><dd>{currency(cashDueAtSigning)}</dd></div>
-                    <div><dt>Estimated monthly payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
-                    <div><dt>Total interest</dt><dd>{currency(totalLoanInterest)}</dd></div>
-                    <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
-                    <div className="aio-payment__light-breakdown__total">
-                      <dt>Total cost</dt>
-                      <dd>{currency(totalCost)}</dd>
-                    </div>
-                  </dl>
+                    </dl>
+                  </div>
                   <div className="aio-payment__light-estimate-email">
                     <p className="aio-payment__light-estimate-email__lede">
                       Send this estimate to your inbox—your email app opens with the numbers filled in.
@@ -2001,7 +2068,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <span className="aio-payment__light-result-eyebrow">
                     {startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}
                   </span>
-                  <strong className="aio-payment__light-result-amount">
+                  <strong
+                    className={`aio-payment__light-result-amount${lightHeroAmountTick === 'up' ? ' aio-payment__light-result-amount--tick-up' : ''}${lightHeroAmountTick === 'down' ? ' aio-payment__light-result-amount--tick-down' : ''}`}
+                  >
                     {startMode === 'monthly' ? currency(affordableMsrp) : `${currency(estimatedMonthly)}/mo`}
                   </strong>
                   <p className="aio-payment__light-result-lede">
@@ -2049,7 +2118,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </strong>
                   </div>
                   <div className="aio-payment__light-result-metric">
-                    <span className="aio-payment__light-result-metric-label">Due today</span>
+                    <span className="aio-payment__light-result-metric-label">Down payment</span>
                     <strong className="aio-payment__light-result-metric-value">{currency(cashDueAtSigning)}</strong>
                   </div>
                   <div className="aio-payment__light-result-metric">
