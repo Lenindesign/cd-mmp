@@ -62,6 +62,7 @@ const AutoLoanCalculatorPage = lazy(() => import('./pages/AutoLoanCalculatorPage
 const AllInOnePaymentCalculatorPage = lazy(() => import('./pages/AllInOnePaymentCalculatorPage/AllInOnePaymentCalculatorPage'));
 const AllInOnePaymentCalculatorBudgetPage = lazy(() => import('./pages/AllInOnePaymentCalculatorPage/AllInOnePaymentCalculatorBudgetPage'));
 const AllInOnePaymentCalculatorLightPage = lazy(() => import('./pages/AllInOnePaymentCalculatorPage/AllInOnePaymentCalculatorLightPage'));
+const AllInOnePaymentCalculatorLightStepsPage = lazy(() => import('./pages/AllInOnePaymentCalculatorPage/AllInOnePaymentCalculatorLightStepsPage'));
 const LeaseVsBuyAIPage = lazy(() => import('./pages/LeaseVsBuyAIPage/LeaseVsBuyAIPage'));
 
 // Compare page - lazy loaded (no auth required)
@@ -187,6 +188,7 @@ function App() {
             <Route path="/auto-loan-calculator/all-in-one" element={<AllInOnePaymentCalculatorPage />} />
             <Route path="/auto-loan-calculator/all-in-one-budget" element={<AllInOnePaymentCalculatorBudgetPage />} />
             <Route path="/auto-loan-calculator/light" element={<AllInOnePaymentCalculatorLightPage />} />
+            <Route path="/auto-loan-calculator/light-steps" element={<AllInOnePaymentCalculatorLightStepsPage />} />
             <Route path="/auto-loan-calculator/lease-vs-buy-ai" element={<LeaseVsBuyAIPage />} />
 
             {/* Deals Pages */}

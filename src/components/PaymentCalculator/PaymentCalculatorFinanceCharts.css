@@ -124,10 +124,24 @@
   margin: 0 auto;
 }
 
+/* Center label is a sibling after the chart; it would paint on top of the tooltip.
+   Raise the chart subtree (Recharts portals tooltip into .recharts-wrapper).
+   ResponsiveContainer sometimes omits .recharts-responsive-container when sizes are static. */
+.payment-calc-viz__donut-wrap > .recharts-responsive-container,
+.payment-calc-viz__donut-wrap > .recharts-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.payment-calc-viz__donut-wrap .recharts-tooltip-wrapper {
+  z-index: 10;
+}
+
 .payment-calc-viz__donut-center {
   position: absolute;
   top: 50%;
   left: 48%;
+  z-index: 1;
   display: grid;
   gap: 0;
   text-align: center;

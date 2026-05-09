@@ -51,7 +51,7 @@
 .text-field__select:focus {
   outline: none;
   border-color: var(--color-blue-cobalt);
-  box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
 }
 
 .text-field__input::placeholder,
@@ -121,7 +121,7 @@
 .text-field--error .text-field__input:focus,
 .text-field--error .text-field__textarea:focus,
 .text-field--error .text-field__select:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-error) 10%, transparent);
 }
 
 /* Helper/Error Text */

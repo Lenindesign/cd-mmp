@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, RotateCcw, TrendingUp } from 'lucide-react';
 import { getAllVehicles, getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
@@ -104,6 +104,25 @@ const currency = (value: number) =>
 const numberInput = (value: string) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+};
+
+/** Light calculator primary controls — shared slider + field pattern */
+const LIGHT_MONTHLY_BUDGET_MIN = 100;
+const LIGHT_MONTHLY_BUDGET_MAX = 2000;
+const LIGHT_MONTHLY_BUDGET_STEP = 25;
+
+const LIGHT_VEHICLE_PRICE_MIN = 5000;
+const LIGHT_VEHICLE_PRICE_MAX = 120000;
+const LIGHT_VEHICLE_PRICE_STEP = 500;
+
+const clampLightMonthlyBudget = (value: number) => {
+  const stepped = Math.round(value / LIGHT_MONTHLY_BUDGET_STEP) * LIGHT_MONTHLY_BUDGET_STEP;
+  return Math.min(LIGHT_MONTHLY_BUDGET_MAX, Math.max(LIGHT_MONTHLY_BUDGET_MIN, stepped));
+};
+
+const clampLightVehiclePrice = (value: number) => {
+  const stepped = Math.round(value / LIGHT_VEHICLE_PRICE_STEP) * LIGHT_VEHICLE_PRICE_STEP;
+  return Math.min(LIGHT_VEHICLE_PRICE_MAX, Math.max(LIGHT_VEHICLE_PRICE_MIN, stepped));
 };
 
 const monthlyPayment = (principal: number, apr: number, termMonths: number) => {
@@ -292,13 +311,145 @@ const getMarketplaceUrl = (condition: VehicleCondition, vehicle: Vehicle, year: 
   return `https://www.caranddriver.com/cars-for-sale/${condition}?${params.toString()}`;
 };
 
-interface AllInOnePaymentCalculatorPageProps {
-  variant?: 'classic' | 'budget-first' | 'light';
+interface LightMonthlyBudgetFieldProps {
+  affordableMsrp: number;
+  targetMonthlyPayment: number;
+  onBudgetChange: (value: number) => void;
 }
+
+interface LightVehiclePriceFieldProps {
+  price: number;
+  estimatedMonthly: number;
+  onPriceChange: (value: number) => void;
+}
+
+function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: LightVehiclePriceFieldProps) {
+  const inputId = useId();
+  const helperId = `${inputId}-helper`;
+  const clamped = clampLightVehiclePrice(price);
+  const sliderPct =
+    ((clamped - LIGHT_VEHICLE_PRICE_MIN) / (LIGHT_VEHICLE_PRICE_MAX - LIGHT_VEHICLE_PRICE_MIN)) * 100;
+
+  return (
+    <div className="aio-payment__light-monthly-budget">
+      <div className="aio-payment__light-monthly-budget-header">
+        <label className="aio-payment__light-monthly-budget-label" htmlFor={inputId}>
+          Vehicle price
+        </label>
+        <p className="aio-payment__light-monthly-budget-summary" aria-live="polite">
+          <span className="aio-payment__light-monthly-budget-summary-amount">{currency(price)}</span>
+        </p>
+      </div>
+      <div className="aio-payment__light-monthly-budget-input-wrap">
+        <input
+          id={inputId}
+          type="number"
+          className="aio-payment__light-monthly-budget-input"
+          min={LIGHT_VEHICLE_PRICE_MIN}
+          max={LIGHT_VEHICLE_PRICE_MAX}
+          step={LIGHT_VEHICLE_PRICE_STEP}
+          value={price}
+          aria-describedby={helperId}
+          onChange={(event) => onPriceChange(numberInput(event.target.value))}
+          onBlur={(event) => onPriceChange(clampLightVehiclePrice(numberInput(event.currentTarget.value)))}
+        />
+      </div>
+      <div className="aio-payment__light-monthly-budget-slider-wrap">
+        <input
+          type="range"
+          className="aio-payment__light-monthly-budget-slider"
+          style={{ '--aio-light-budget-pct': `${sliderPct}%` } as CSSProperties}
+          min={LIGHT_VEHICLE_PRICE_MIN}
+          max={LIGHT_VEHICLE_PRICE_MAX}
+          step={LIGHT_VEHICLE_PRICE_STEP}
+          value={clamped}
+          onChange={(event) => onPriceChange(clampLightVehiclePrice(numberInput(event.target.value)))}
+          aria-label="Adjust vehicle price"
+        />
+        <div className="aio-payment__light-monthly-budget-ticks" aria-hidden="true">
+          <span>{currency(LIGHT_VEHICLE_PRICE_MIN)}</span>
+          <span>{currency(LIGHT_VEHICLE_PRICE_MAX)}</span>
+        </div>
+      </div>
+      <p id={helperId} className="aio-payment__light-monthly-budget-helper">
+        Estimated payment: {currency(estimatedMonthly)}/mo before dealer-specific changes.
+      </p>
+    </div>
+  );
+}
+
+function LightMonthlyBudgetField({ affordableMsrp, targetMonthlyPayment, onBudgetChange }: LightMonthlyBudgetFieldProps) {
+  const inputId = useId();
+  const helperId = `${inputId}-helper`;
+  const clamped = Math.min(LIGHT_MONTHLY_BUDGET_MAX, Math.max(LIGHT_MONTHLY_BUDGET_MIN, targetMonthlyPayment));
+  const sliderPct =
+    ((clamped - LIGHT_MONTHLY_BUDGET_MIN) / (LIGHT_MONTHLY_BUDGET_MAX - LIGHT_MONTHLY_BUDGET_MIN)) * 100;
+
+  return (
+    <div className="aio-payment__light-monthly-budget">
+      <div className="aio-payment__light-monthly-budget-header">
+        <label className="aio-payment__light-monthly-budget-label" htmlFor={inputId}>
+          Monthly budget
+        </label>
+        <p className="aio-payment__light-monthly-budget-summary" aria-live="polite">
+          <span className="aio-payment__light-monthly-budget-summary-amount">{currency(targetMonthlyPayment)}</span>
+          <span className="aio-payment__light-monthly-budget-summary-suffix">/mo</span>
+        </p>
+      </div>
+      <div className="aio-payment__light-monthly-budget-input-wrap">
+        <input
+          id={inputId}
+          type="number"
+          className="aio-payment__light-monthly-budget-input"
+          min={LIGHT_MONTHLY_BUDGET_MIN}
+          max={LIGHT_MONTHLY_BUDGET_MAX}
+          step={LIGHT_MONTHLY_BUDGET_STEP}
+          value={targetMonthlyPayment}
+          aria-describedby={helperId}
+          onChange={(event) => onBudgetChange(numberInput(event.target.value))}
+          onBlur={(event) => onBudgetChange(clampLightMonthlyBudget(numberInput(event.currentTarget.value)))}
+        />
+      </div>
+      <div className="aio-payment__light-monthly-budget-slider-wrap">
+        <input
+          type="range"
+          className="aio-payment__light-monthly-budget-slider"
+          style={{ '--aio-light-budget-pct': `${sliderPct}%` } as CSSProperties}
+          min={LIGHT_MONTHLY_BUDGET_MIN}
+          max={LIGHT_MONTHLY_BUDGET_MAX}
+          step={LIGHT_MONTHLY_BUDGET_STEP}
+          value={clamped}
+          onChange={(event) => onBudgetChange(clampLightMonthlyBudget(numberInput(event.target.value)))}
+          aria-label="Adjust monthly budget"
+        />
+        <div className="aio-payment__light-monthly-budget-ticks" aria-hidden="true">
+          <span>{currency(LIGHT_MONTHLY_BUDGET_MIN)}</span>
+          <span>{currency(LIGHT_MONTHLY_BUDGET_MAX)}</span>
+        </div>
+      </div>
+      <p id={helperId} className="aio-payment__light-monthly-budget-helper">
+        We estimate a vehicle price near {currency(affordableMsrp)} before tax and fees.
+      </p>
+    </div>
+  );
+}
+
+interface AllInOnePaymentCalculatorPageProps {
+  variant?: 'classic' | 'budget-first' | 'light' | 'light-steps';
+}
+
+const LIGHT_WIZARD_STEP_META = [
+  { label: 'Payment goal', short: 'Goal', hint: 'Choose whether you’re starting from a monthly budget or a vehicle price.' },
+  { label: 'Loan setup', short: 'Loan', hint: 'Set down payment, APR, and how long you’ll finance.' },
+  { label: 'Vehicle & costs', short: 'Vehicle', hint: 'Pick the vehicle, then add trade-in, taxes, and fees.' },
+  { label: 'Offers', short: 'Offers', hint: 'Apply cash or finance incentives when they’re available.' },
+  { label: 'Review', short: 'Review', hint: 'Confirm the estimate breakdown, then browse vehicles that fit your numbers.' },
+] as const;
 
 const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentCalculatorPageProps) => {
   const isBudgetFirstVariant = variant === 'budget-first';
-  const isLightVariant = variant === 'light';
+  const isLightStepsVariant = variant === 'light-steps';
+  const isLightVariant = variant === 'light' || isLightStepsVariant;
   const vehicles = useMemo(() => getAllVehicles(), []);
   const stateRules = useMemo(() => buildStateRules(), []);
   const defaultVehicle = vehicles.find((vehicle) => vehicle.make === 'Honda' && vehicle.model === 'CR-V') ?? vehicles[0];
@@ -345,6 +496,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightAffordableSectionRef = useRef<HTMLElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
+  const [lightWizardStep, setLightWizardStep] = useState(1);
 
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
@@ -485,13 +637,24 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     () => getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4),
     [affordableVehicleBudget, selectedVehicle.bodyStyle],
   );
-  const lightAffordableVehicles = useMemo(
-    () => vehicles
-      .filter((vehicle) => vehicle.priceMin <= affordableMsrp)
+  const lightAffordableBudgetCeiling = startMode === 'monthly' ? affordableMsrp : Math.max(0, price);
+  const lightAffordableVehicles = useMemo(() => {
+    const ceiling = lightAffordableBudgetCeiling;
+    const strict = vehicles
+      .filter((vehicle) => vehicle.priceMin <= ceiling)
       .sort((a, b) => b.priceMin - a.priceMin || b.staffRating - a.staffRating)
-      .slice(0, 8),
-    [affordableMsrp, vehicles],
-  );
+      .slice(0, 8);
+    if (strict.length > 0) return strict;
+
+    const relaxedCeiling = Math.max(ceiling * 1.12, ceiling + 3500, 22000);
+    const relaxed = vehicles
+      .filter((vehicle) => vehicle.priceMin <= relaxedCeiling)
+      .sort((a, b) => b.staffRating - a.staffRating || b.priceMin - a.priceMin)
+      .slice(0, 8);
+    if (relaxed.length > 0) return relaxed;
+
+    return [...vehicles].sort((a, b) => b.staffRating - a.staffRating).slice(0, 8);
+  }, [lightAffordableBudgetCeiling, vehicles]);
   const shouldScrollToBudgetVehicles = startMode === 'monthly' && budgetFitStatus === 'over' && lightAffordableVehicles.length > 0;
   const lightShopHref = shouldScrollToBudgetVehicles
     ? '#aio-payment-light-affordable-heading'
@@ -709,7 +872,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   if (isLightVariant) {
     return (
-      <main className="aio-payment aio-payment--light">
+      <main className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}`}>
         <section className="aio-payment__light-hero">
           <div className="container">
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
@@ -717,13 +880,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <span>/</span>
               <Link to="/auto-loan-calculator">Auto Loan Calculator</Link>
               <span>/</span>
-              <span>Light Payment Calculator</span>
+              <span>{isLightStepsVariant ? 'Step-by-step estimate' : 'Light Payment Calculator'}</span>
             </nav>
             <div className="aio-payment__light-hero-grid">
               <div>
-                <h1>See what your monthly budget can buy.</h1>
+                <span className="aio-payment__eyebrow">Auto loan calculator</span>
+                <h1>
+                  {isLightStepsVariant
+                    ? 'Estimate your payment in five guided steps.'
+                    : 'See what your monthly budget can buy.'}
+                </h1>
                 <p>
-                  Enter a payment target and we’ll estimate the vehicle price range, payment details, and offers that may fit.
+                  {isLightStepsVariant
+                    ? 'Move through payment goal, loan terms, vehicle details, offers, and a full review—with your estimate updating as you go.'
+                    : 'Enter a payment target and we’ll estimate the vehicle price range, payment details, and offers that may fit.'}
                 </p>
               </div>
             </div>
@@ -734,13 +904,53 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           <div className="container">
             <div className="aio-payment__light-shell">
             <div className="aio-payment__light-card">
-              <div className="aio-payment__section-heading">
-                <h2 id="aio-payment-light-heading">Start your estimate</h2>
-                <p className="aio-payment__light-heading-copy">
-                  We’ll calculate the payment first. Then you can refine taxes, trade-in, loan terms, and offers.
-                </p>
-              </div>
+              {isLightStepsVariant && (
+                <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
+                  <ol className="aio-payment__light-wizard-steps">
+                    {LIGHT_WIZARD_STEP_META.map((stepMeta, index) => {
+                      const stepNumber = index + 1;
+                      const isDone = lightWizardStep > stepNumber;
+                      const isCurrent = lightWizardStep === stepNumber;
+                      return (
+                        <li key={stepMeta.label} className="aio-payment__light-wizard-step">
+                          <button
+                            type="button"
+                            className={`aio-payment__light-wizard-dot${isCurrent ? ' aio-payment__light-wizard-dot--current' : ''}${isDone ? ' aio-payment__light-wizard-dot--done' : ''}`}
+                            disabled={stepNumber > lightWizardStep}
+                            aria-current={isCurrent ? 'step' : undefined}
+                            aria-label={`${stepMeta.label}${isDone ? ', completed' : ''}${isCurrent ? ', current step' : ''}`}
+                            onClick={() => {
+                              if (stepNumber <= lightWizardStep) setLightWizardStep(stepNumber);
+                            }}
+                          >
+                            <span className="aio-payment__light-wizard-dot-ring" aria-hidden="true">
+                              {isDone ? <Check size={14} strokeWidth={2.25} aria-hidden="true" /> : stepNumber}
+                            </span>
+                            <span className="aio-payment__light-wizard-dot-label">{stepMeta.short}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </nav>
+              )}
+              {isLightStepsVariant ? (
+                <div className="aio-payment__section-heading aio-payment__section-heading--wizard">
+                  <h2 id="aio-payment-light-heading">
+                    Step {lightWizardStep} of 5 — {LIGHT_WIZARD_STEP_META[lightWizardStep - 1].label}
+                  </h2>
+                  <p className="aio-payment__light-heading-copy">{LIGHT_WIZARD_STEP_META[lightWizardStep - 1].hint}</p>
+                </div>
+              ) : (
+                <div className="aio-payment__section-heading">
+                  <h2 id="aio-payment-light-heading">Start your estimate</h2>
+                  <p className="aio-payment__light-heading-copy">
+                    We’ll calculate the payment first. Then you can refine taxes, trade-in, loan terms, and offers.
+                  </p>
+                </div>
+              )}
 
+              {(!isLightStepsVariant || lightWizardStep === 1) && (
               <div className="aio-payment__light-start-panel">
                 <div className="aio-payment__light-toggle" role="tablist" aria-label="Choose calculator mode">
                   <button
@@ -750,7 +960,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     className={startMode === 'monthly' ? 'aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'aio-payment__light-toggle-button'}
                     onClick={() => setStartMode('monthly')}
                   >
-                    Monthly budget
+                    <span className="aio-payment__light-toggle-button-title">Start with monthly budget</span>
+                    <span className="aio-payment__light-toggle-button-copy">Tell us what you can pay each month.</span>
                   </button>
                   <button
                     type="button"
@@ -759,46 +970,34 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     className={startMode === 'price' ? 'aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'aio-payment__light-toggle-button'}
                     onClick={() => setStartMode('price')}
                   >
-                    Vehicle price
+                    <span className="aio-payment__light-toggle-button-title">Start with vehicle price</span>
+                    <span className="aio-payment__light-toggle-button-copy">Know the sticker? Start there.</span>
                   </button>
                 </div>
 
                 <div className="aio-payment__light-start-body">
                   <div className="aio-payment__light-primary">
                     {startMode === 'monthly' ? (
-                      <TextField
-                        label="Monthly budget"
-                        type="number"
-                        value={targetMonthlyPayment}
-                        min={0}
-                        step={25}
-                        helperText={`We estimate a vehicle price near ${currency(affordableMsrp)} before tax and fees.`}
-                        onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
+                      <LightMonthlyBudgetField
+                        affordableMsrp={affordableMsrp}
+                        targetMonthlyPayment={targetMonthlyPayment}
+                        onBudgetChange={setTargetMonthlyPayment}
                       />
                     ) : (
-                      <TextField
-                        label="Vehicle price"
-                        type="number"
-                        value={price}
-                        min={0}
-                        step={500}
-                        helperText={`Estimated payment: ${currency(estimatedMonthly)}/mo before dealer-specific changes.`}
-                        onChange={(event) => setPrice(numberInput(event.target.value))}
+                      <LightVehiclePriceField
+                        price={price}
+                        estimatedMonthly={estimatedMonthly}
+                        onPriceChange={setPrice}
                       />
                     )}
                   </div>
-
-                  <div className="aio-payment__light-assumption-row" aria-label="Current assumptions">
-                    <span><strong>Down</strong>{currency(downPayment)}</span>
-                    <span><strong>Term</strong>{loanTerm} months</span>
-                    <span><strong>APR</strong>{activeApr.toFixed(1)}%</span>
-                    <span><strong>Due today</strong>{currency(cashDueAtSigning)}</span>
-                  </div>
                 </div>
               </div>
+              )}
 
               <div className="aio-payment__light-disclosures">
-                <details className="aio-payment__light-disclosure">
+                {(!isLightStepsVariant || lightWizardStep === 2) && (
+                <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                   <summary>
                     <span>Loan terms</span>
                     <strong>{currency(downPayment)} down · {loanTerm} months · {activeApr.toFixed(1)}% APR</strong>
@@ -822,8 +1021,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     />
                   </div>
                 </details>
+                )}
 
-                <details className="aio-payment__light-disclosure">
+                {(!isLightStepsVariant || lightWizardStep === 3) && (
+                <>
+                <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                   <summary>
                     <span>Vehicle and offers</span>
                     <strong>{selectedYear} {selectedVehicle.make} {selectedVehicle.model}</strong>
@@ -879,7 +1081,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </div>
                 </details>
 
-                <details className="aio-payment__light-disclosure">
+                <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                   <summary>
                     <span>Trade, taxes &amp; fees</span>
                     <strong>{currency(tradeEquity)} trade equity · {currency(salesTax + fees)} tax & fees</strong>
@@ -920,9 +1122,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     {stateRule.name} rule: {TAX_RULE_LABELS[stateRule.taxRule]}. Taxable amount: {currency(taxableAmount)}.
                   </p>
                 </details>
+                </>
+                )}
 
-                {condition === 'new' && (cashIncentives.length > 0 || financeIncentives.length > 0) && (
-                  <details className="aio-payment__light-disclosure">
+                {(!isLightStepsVariant || lightWizardStep === 4) &&
+                  (condition === 'new' && (cashIncentives.length > 0 || financeIncentives.length > 0) ? (
+                  <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                     <summary>
                       <span>Offers and incentives</span>
                       <strong>{rebateTotal > 0 ? `${currency(rebateTotal)} applied` : 'None applied'}</strong>
@@ -942,9 +1147,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </p>
                     </div>
                   </details>
-                )}
+                ) : isLightStepsVariant ? (
+                  <div className="aio-payment__light-wizard-empty" role="status">
+                    <p className="aio-payment__light-wizard-empty-copy">
+                      No manufacturer incentives apply for this vehicle configuration, or you chose used. Continue to review your estimate.
+                    </p>
+                  </div>
+                ) : null)}
 
-                <details className="aio-payment__light-disclosure">
+                {(!isLightStepsVariant || lightWizardStep === 5) && (
+                <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                   <summary>
                     <span>Estimate breakdown</span>
                     <strong>{currency(totalLoanAmount)} financed</strong>
@@ -959,9 +1171,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <div><dt>Total cost</dt><dd>{currency(totalCost)}</dd></div>
                   </dl>
                 </details>
+                )}
               </div>
 
-              {totalLoanAmount > 0 && loanTerm > 0 && (
+              {(!isLightStepsVariant || lightWizardStep === 5) && (
+                <>
+              {totalLoanAmount > 0 && loanTerm > 0 && !isLightStepsVariant && (
                 <div className="aio-payment__light-charts">
                   <PaymentCalculatorFinanceCharts
                     loanPrincipal={totalLoanAmount}
@@ -973,30 +1188,125 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </div>
               )}
 
+              {!isLightStepsVariant && (
               <Link to="/auto-loan-calculator/all-in-one" className="aio-payment__light-secondary-link">
                 Open the full calculator
               </Link>
+              )}
+                </>
+              )}
+
+              {isLightStepsVariant && (
+                <div className="aio-payment__light-wizard-actions">
+                  <button
+                    type="button"
+                    className="aio-payment__light-wizard-back-link"
+                    disabled={lightWizardStep <= 1}
+                    onClick={() => setLightWizardStep((s) => Math.max(1, s - 1))}
+                  >
+                    <ArrowLeft size={18} strokeWidth={2} aria-hidden="true" />
+                    Back
+                  </button>
+                  <div className="aio-payment__light-wizard-actions-right">
+                    <button
+                      type="button"
+                      className="aio-payment__light-wizard-start-over"
+                      onClick={() => setLightWizardStep(1)}
+                    >
+                      <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
+                      Start over
+                    </button>
+                    {lightWizardStep < 5 ? (
+                      <button
+                        type="button"
+                        className="aio-payment__light-wizard-primary"
+                        onClick={() => setLightWizardStep((s) => Math.min(5, s + 1))}
+                      >
+                        Continue
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="aio-payment__light-wizard-primary"
+                        onClick={() => lightAffordableSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                        disabled={lightAffordableVehicles.length === 0}
+                      >
+                        See cars in your budget
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="aio-payment__light-result-stack aio-payment__light-result--sticky">
               <aside className="aio-payment__light-result" aria-live="polite" aria-label="Current payment estimate">
-                <span>{startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}</span>
-                <strong>{startMode === 'monthly' ? currency(affordableMsrp) : `${currency(estimatedMonthly)}/mo`}</strong>
-                <p>
-                  {startMode === 'monthly'
-                    ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
-                    : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
-                </p>
+                <div className="aio-payment__light-result-hero">
+                  <span className="aio-payment__light-result-eyebrow">
+                    {startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}
+                  </span>
+                  <strong className="aio-payment__light-result-amount">
+                    {startMode === 'monthly' ? currency(affordableMsrp) : `${currency(estimatedMonthly)}/mo`}
+                  </strong>
+                  <p className="aio-payment__light-result-lede">
+                    {startMode === 'monthly'
+                      ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
+                      : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
+                  </p>
+                  <p className="aio-payment__light-result-terms" aria-label="Current loan term and rate">
+                    <span>
+                      <strong>Term</strong> {loanTerm} months
+                    </span>
+                    <span className="aio-payment__light-result-terms-sep" aria-hidden="true">
+                      ·
+                    </span>
+                    <span>
+                      <strong>APR</strong> {activeApr.toFixed(1)}%
+                    </span>
+                  </p>
+                </div>
                 {startMode === 'monthly' && (
                   <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${budgetFitStatus}`}>
-                    <span>{budgetFitLabel}</span>
-                    <strong>{budgetFitHeadline}</strong>
-                    <p>{budgetFitCopy}</p>
+                    <div
+                      className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${budgetFitStatus === 'over' ? 'alert' : 'success'}`}
+                      aria-hidden="true"
+                    >
+                      {budgetFitStatus === 'over' ? (
+                        <AlertTriangle size={16} strokeWidth={2.25} />
+                      ) : (
+                        <Check size={14} strokeWidth={3} />
+                      )}
+                    </div>
+                    <div className="aio-payment__light-budget-fit-text">
+                      <span className="aio-payment__light-budget-fit-label">{budgetFitLabel}</span>
+                      <strong className="aio-payment__light-budget-fit-headline">{budgetFitHeadline}</strong>
+                      <p className="aio-payment__light-budget-fit-copy">{budgetFitCopy}</p>
+                    </div>
                   </div>
                 )}
-                <p className="aio-payment__light-next-step">{lightNextStepCopy}</p>
-                <div className="aio-payment__light-result-facts" aria-label="Estimate totals">
-                  <span><strong>Due today</strong>{currency(cashDueAtSigning)}</span>
-                  <span><strong>Total cost</strong>{currency(totalCost)}</span>
+                <div className="aio-payment__light-result-metrics" aria-label="Estimate totals">
+                  <div className="aio-payment__light-result-metric">
+                    <span className="aio-payment__light-result-metric-label">Monthly</span>
+                    <strong className="aio-payment__light-result-metric-value">
+                      {currency(estimatedMonthly)}
+                      <span className="aio-payment__light-result-metric-suffix">/mo</span>
+                    </strong>
+                  </div>
+                  <div className="aio-payment__light-result-metric">
+                    <span className="aio-payment__light-result-metric-label">Due today</span>
+                    <strong className="aio-payment__light-result-metric-value">{currency(cashDueAtSigning)}</strong>
+                  </div>
+                  <div className="aio-payment__light-result-metric">
+                    <span className="aio-payment__light-result-metric-label">Financed</span>
+                    <strong className="aio-payment__light-result-metric-value">{currency(totalLoanAmount)}</strong>
+                  </div>
+                  <div className="aio-payment__light-result-metric">
+                    <span className="aio-payment__light-result-metric-label">Total cost</span>
+                    <strong className="aio-payment__light-result-metric-value">{currency(totalCost)}</strong>
+                  </div>
+                </div>
+                <div className="aio-payment__light-result-footer">
+                  <TrendingUp className="aio-payment__light-result-footer-icon" size={18} strokeWidth={2} aria-hidden="true" />
+                  <p className="aio-payment__light-result-footer-copy">{lightNextStepCopy}</p>
                 </div>
               </aside>
               <a
@@ -1022,17 +1332,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           </div>
         </section>
 
-        {startMode === 'monthly' && lightAffordableVehicles.length > 0 && (
+        {lightAffordableVehicles.length > 0 && (
             <section ref={lightAffordableSectionRef} className="aio-payment__light-affordable-section">
               <div className="container">
                 <section className="aio-payment__light-affordable" aria-labelledby="aio-payment-light-affordable-heading">
                   <div className="aio-payment__light-affordable-head">
                     <span className="aio-payment__similar-line" aria-hidden="true" />
-                    <h2 id="aio-payment-light-affordable-heading">Cars Your Budget Can Support</h2>
+                    <h2 id="aio-payment-light-affordable-heading">
+                      {startMode === 'monthly' ? 'Cars Your Budget Can Support' : 'Vehicles Near Your Price'}
+                    </h2>
                     <span className="aio-payment__similar-line" aria-hidden="true" />
                   </div>
                   <p className="aio-payment__light-affordable-copy">
-                    These start at or below about {currency(affordableMsrp)} before tax and fees.
+                    {startMode === 'monthly'
+                      ? `These start at or below about ${currency(affordableMsrp)} before tax and fees.`
+                      : `These start at or below about ${currency(price)} before tax and fees.`}
                   </p>
                   <div className="aio-payment__vehicle-carousel-wrap aio-payment__vehicle-carousel-wrap--light">
                     <button
