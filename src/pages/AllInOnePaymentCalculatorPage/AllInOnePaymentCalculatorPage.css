@@ -735,8 +735,8 @@
   font-family: var(--font-heading);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
-  letter-spacing: normal;
-  text-transform: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   text-decoration: none;
   color: var(--color-white);
   transition: background var(--transition-fast), transform var(--transition-fast);
@@ -766,8 +766,8 @@
   font-family: var(--font-heading);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
-  letter-spacing: normal;
-  text-transform: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 
@@ -874,6 +874,8 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
+  letter-spacing: normal;
+  text-transform: none;
   text-decoration: none;
   transition:
     background var(--transition-fast),
@@ -1141,6 +1143,8 @@
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--color-gray-600);
   line-height: 1.25;
   word-break: break-word;

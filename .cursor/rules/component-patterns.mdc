@@ -128,3 +128,15 @@ Key route groups:
 8. Responsive: mobile-first, breakpoints at 480px, 768px, 1024px, 1200px
 9. Accessibility: semantic HTML, ARIA labels, keyboard support, focus states
 10. Animations: use `--transition-fast` for hovers, `--transition-normal` for interactions
+
+## Button and interactive label capitalization
+
+Use **sentence case** for actionable UI: buttons, pills, segmented toggles, link-style controls, and primary CTAs (capitalize the first word and proper nouns only). Examples: **Continue**, **Switch to advanced mode**, **Guided steps**.
+
+Reserve **all caps** for intentional **eyebrows / kickers** only—short overlines with tight tracking (e.g. step indicators like “Step 4 of 5”, category labels). Pair with `letter-spacing` (≈0.08–0.14em) when using caps; do not use all caps for full sentences.
+
+**Exception — payment calculator sidebar:** The primary full-width shop link (`.aio-payment__light-result-shop`) and the outline **AI deal** button (`.aio-payment__light-ai-button`) use **all caps** with **`letter-spacing: 0.04em`** (aligned with `.btn`) for the sticky summary column. Keep JSX copy in **sentence case**; CSS handles `text-transform: uppercase`.
+
+The shared **`Button`** component (`.btn`) currently applies `text-transform: uppercase` for legacy consistency across older surfaces. **Do not extend that pattern** to new pills, toggles, or finance flows—use **`text-transform: none`** in CSS plus sentence-case copy. Migrating `.btn` to sentence case is a separate, site-wide decision.
+
+Never rely on CSS `capitalize` for correct casing—it mishandles brand names and fine-grained title case. Prefer sentence case in JSX; use **`text-transform: uppercase`** in CSS only where this doc allows it (e.g. `.aio-payment__light-result-shop`, `.aio-payment__light-ai-button`, `.btn`, eyebrows).

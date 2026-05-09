@@ -939,8 +939,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     ? '#aio-payment-light-affordable-heading'
     : getMarketplaceUrl(condition, selectedVehicle, selectedYear);
   const lightShopLabel = shouldScrollToBudgetVehicles
-    ? 'SEE CARS IN YOUR BUDGET'
-    : `SHOP ${condition === 'new' ? 'NEW' : 'USED'} ${selectedVehicle.model.toUpperCase()}`;
+    ? 'See cars in your budget'
+    : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedVehicle.model}`;
   const lightNextStepCopy = shouldScrollToBudgetVehicles
     ? `Start with cars near ${currency(affordableMsrp)} or adjust your loan terms.`
     : startMode === 'monthly'
