@@ -452,7 +452,8 @@
 
 .aio-payment__light-hero-grid {
   display: grid;
-  max-width: 760px;
+  width: 100%;
+  max-width: none;
 }
 
 .aio-payment__light-hero h1 {
@@ -518,8 +519,10 @@
 .aio-payment__light-result-amount {
   display: block;
   margin: 0;
+  width: 100%;
+  min-width: 0;
   font-family: var(--font-heading);
-  font-size: clamp(var(--font-size-3xl), 4.5cqi, var(--font-size-4xl));
+  font-size: clamp(var(--font-size-3xl), min(18cqi, var(--font-size-5xl)), var(--font-size-5xl));
   font-weight: var(--font-weight-extrabold);
   letter-spacing: -0.03em;
   line-height: 1;
@@ -781,6 +784,76 @@
   padding: var(--spacing-8) 0 var(--spacing-12);
 }
 
+/* Stepper above main grid — same max-width + horizontal padding as .container */
+.aio-payment__light-wizard-strip {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--max-width-container);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+}
+
+.aio-payment__light-wizard-strip .aio-payment__light-wizard-track {
+  margin: 0;
+  padding: 0 0 var(--spacing-5);
+}
+
+.aio-payment__light-wizard-steps-shell {
+  position: relative;
+  z-index: 0;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.aio-payment__light-wizard-steps-shell::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  /* Half dot + extra so endpoints hit circle centers when columns are wider than the ring (labels). */
+  left: calc(var(--spacing-10) / 2 + var(--spacing-5));
+  right: calc(var(--spacing-10) / 2 + var(--spacing-5));
+  top: calc(var(--spacing-4) + var(--spacing-5));
+  height: 2px;
+  background: var(--color-gray-200);
+  border-radius: var(--border-radius-full);
+  pointer-events: none;
+}
+
+/* Connector sits on the shell so it isn’t covered by the white panel */
+.aio-payment__light-wizard-strip .aio-payment__light-wizard-track::before {
+  display: none;
+}
+
+/* Full-width flex so steps use the panel edge-to-edge (matches reference spacing) */
+.aio-payment__light-wizard-strip .aio-payment__light-wizard-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aio-payment__light-wizard-strip .aio-payment__light-wizard-step {
+  flex: 0 0 auto;
+}
+
+.aio-payment__light-wizard-strip .aio-payment__light-wizard-dot {
+  width: auto;
+  align-items: center;
+}
+
 .aio-payment__light-mode-toggle {
   display: flex;
   flex-wrap: wrap;
@@ -886,6 +959,8 @@
 }
 
 .aio-payment__light-card {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 900px;
   padding: var(--spacing-6);
   display: flex;
@@ -999,6 +1074,17 @@
   opacity: 0.55;
 }
 
+.aio-payment__light-wizard-dot:not(:disabled):hover .aio-payment__light-wizard-dot-ring {
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 55%, var(--color-gray-300));
+  transform: scale(1.05);
+}
+
+.aio-payment__light-wizard-dot--done:not(:disabled):hover .aio-payment__light-wizard-dot-ring {
+  border-color: var(--color-blue-cobalt-dark);
+  background: var(--color-blue-cobalt-dark);
+  transform: scale(1.05);
+}
+
 .aio-payment__light-wizard-dot-ring {
   position: relative;
   z-index: 1;
@@ -1018,7 +1104,8 @@
     border-color var(--transition-fast),
     background var(--transition-fast),
     color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    box-shadow var(--transition-fast),
+    transform var(--transition-normal);
 }
 
 .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
@@ -1045,14 +1132,14 @@
 }
 
 .aio-payment__light-wizard-dot--done .aio-payment__light-wizard-dot-ring {
-  border-color: var(--color-dark-bg);
-  background: var(--color-dark-bg);
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
 .aio-payment__light-wizard-dot-label {
   font-family: var(--font-body);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-600);
   line-height: 1.25;
@@ -1064,12 +1151,723 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.aio-payment__section-heading--wizard .aio-payment__light-heading-copy {
-  margin-top: var(--spacing-3);
+.aio-payment__section-heading .aio-payment__light-wizard-step-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+  margin: 0 0 var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-blue-cobalt);
 }
 
-.aio-payment--light-steps .aio-payment__light-card .aio-payment__section-heading--wizard h2 {
-  font-size: var(--font-size-2xl);
+.aio-payment__light-wizard-step-eyebrow-muted {
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.14em;
+}
+
+.aio-payment__light-wizard-step-eyebrow-progress {
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: inherit;
+}
+
+.aio-payment__section-heading--wizard .aio-payment__light-wizard-step-eyebrow + h2 {
+  margin-top: 0;
+}
+
+/* Light wizard — loan step (sliders + term chips) */
+.aio-payment__light-loan-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding-bottom: var(--spacing-2);
+}
+
+.aio-payment__light-loan-step__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.aio-payment__light-loan-step__field--terms {
+  gap: var(--spacing-3);
+}
+
+.aio-payment__light-loan-step__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-2) var(--spacing-4);
+}
+
+.aio-payment__light-loan-step__label {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-dark);
+  cursor: default;
+}
+
+label.aio-payment__light-loan-step__label {
+  cursor: pointer;
+}
+
+.aio-payment__light-loan-step__value {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(var(--font-size-lg), 2.4vw, var(--font-size-xl));
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-dark-bg);
+}
+
+.aio-payment__light-loan-step__input-wrap {
+  width: 100%;
+}
+
+.aio-payment__light-loan-step__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-dark);
+  background-color: var(--color-neutrals-8);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-lg);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-loan-step__input::-webkit-outer-spin-button,
+.aio-payment__light-loan-step__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.aio-payment__light-loan-step__input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.aio-payment__light-loan-step__input:focus {
+  outline: none;
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
+}
+
+.aio-payment__light-loan-step__slider-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding-top: var(--spacing-0-5);
+}
+
+.aio-payment__light-loan-step__slider {
+  --aio-light-loan-pct: 24%;
+
+  width: 100%;
+  height: var(--spacing-6);
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.aio-payment__light-loan-step__slider:focus {
+  outline: none;
+}
+
+.aio-payment__light-loan-step__slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-loan-step__slider:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-loan-step__slider::-webkit-slider-runnable-track {
+  height: var(--spacing-1-5);
+  border-radius: var(--border-radius-full);
+  background: linear-gradient(
+    to right,
+    var(--color-blue-cobalt) 0%,
+    var(--color-blue-cobalt) var(--aio-light-loan-pct),
+    var(--color-gray-200) var(--aio-light-loan-pct),
+    var(--color-gray-200) 100%
+  );
+}
+
+.aio-payment__light-loan-step__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  margin-top: calc((var(--spacing-1-5) - var(--spacing-4)) / 2);
+  background: var(--color-white);
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.aio-payment__light-loan-step__slider::-moz-range-track {
+  height: var(--spacing-1-5);
+  border-radius: var(--border-radius-full);
+  background: var(--color-gray-200);
+}
+
+.aio-payment__light-loan-step__slider::-moz-range-progress {
+  height: var(--spacing-1-5);
+  border-radius: var(--border-radius-full);
+  background: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-loan-step__slider::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  background: var(--color-white);
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.aio-payment__light-loan-step__ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.aio-payment__light-loan-step__locked {
+  margin: 0;
+  max-width: 42rem;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-loan-step__terms-label {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-dark);
+}
+
+.aio-payment__light-loan-step__chips {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  width: 100%;
+}
+
+.aio-payment__light-loan-step__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--spacing-10);
+  padding: 0 var(--spacing-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-loan-step__chip:hover {
+  border-color: var(--color-gray-400);
+}
+
+.aio-payment__light-loan-step__chip:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-loan-step__chip--active {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Light wizard — vehicle step (path cards, new/used toggles, starting price) */
+.aio-payment__light-vehicle-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  padding: var(--spacing-1) 0 var(--spacing-2);
+}
+
+.aio-payment__light-vehicle-step__path-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.aio-payment__light-vehicle-step__path {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  margin: 0;
+  padding: var(--spacing-5);
+  text-align: left;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__path:hover {
+  border-color: color-mix(in srgb, var(--color-gray-200) 65%, var(--color-blue-cobalt) 35%);
+}
+
+.aio-payment__light-vehicle-step__path:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-vehicle-step__path--selected {
+  border-color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-white) 88%, var(--color-blue-cobalt) 12%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 35%, transparent);
+}
+
+.aio-payment__light-vehicle-step__path-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  border-radius: var(--border-radius-full);
+  flex-shrink: 0;
+}
+
+.aio-payment__light-vehicle-step__path-icon--car {
+  color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-white) 70%, var(--color-blue-cobalt) 30%);
+}
+
+.aio-payment__light-vehicle-step__path-icon--help {
+  color: var(--color-gray-600);
+  background: var(--color-gray-100);
+}
+
+.aio-payment__light-vehicle-step__path--selected .aio-payment__light-vehicle-step__path-icon--help {
+  color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-gray-100) 55%, var(--color-blue-cobalt) 45%);
+}
+
+.aio-payment__light-vehicle-step__path-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-dark);
+}
+
+.aio-payment__light-vehicle-step__path-copy {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-vehicle-step__budget-note {
+  margin: 0;
+}
+
+.aio-payment__light-vehicle-step__nu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.aio-payment__light-vehicle-step__nu-label {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.aio-payment__light-vehicle-step__nu-row {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+.aio-payment__light-vehicle-step__nu-btn {
+  flex: 1 1 0;
+  min-height: var(--spacing-11);
+  margin: 0;
+  padding: 0 var(--spacing-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__nu-btn:hover:not(.aio-payment__light-vehicle-step__nu-btn--active) {
+  border-color: var(--color-gray-300);
+  background: var(--color-gray-50);
+}
+
+.aio-payment__light-vehicle-step__nu-btn:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-vehicle-step__nu-btn--active {
+  border-color: var(--color-primary-1);
+  background-color: var(--color-primary-1);
+  color: var(--color-white);
+}
+
+.aio-payment__light-vehicle-step__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.aio-payment__light-vehicle-step__ymm-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-4);
+}
+
+@media (min-width: 768px) {
+  .aio-payment__light-vehicle-step__ymm-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.aio-payment__light-vehicle-step__browse {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.aio-payment__light-vehicle-step__body-style-label {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.aio-payment__light-vehicle-step__body-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-3);
+}
+
+@media (min-width: 640px) {
+  .aio-payment__light-vehicle-step__body-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.aio-payment__light-vehicle-step__body-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: var(--spacing-4) var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__body-tile:hover {
+  border-color: color-mix(in srgb, var(--color-gray-200) 65%, var(--color-blue-cobalt) 35%);
+}
+
+.aio-payment__light-vehicle-step__body-tile:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-vehicle-step__body-tile--selected {
+  border-color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-white) 88%, var(--color-blue-cobalt) 12%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 35%, transparent);
+}
+
+.aio-payment__light-vehicle-step__body-tile-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: var(--spacing-20);
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.aio-payment__light-vehicle-step__body-tile-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.aio-payment__light-vehicle-step__body-tile-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-vehicle-step__body-tile-from {
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-vehicle-step__browse-hint {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-vehicle-step__price-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
+}
+
+.aio-payment__light-vehicle-step__price-meta {
+  min-width: 0;
+}
+
+.aio-payment__light-vehicle-step__price-kicker {
+  display: block;
+  margin-bottom: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-vehicle-step__price-vehicle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.aio-payment__light-vehicle-step__price-value {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(var(--font-size-xl), 2.5vw, var(--font-size-2xl));
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+  line-height: 1.1;
+}
+
+@media (max-width: 639px) {
+  .aio-payment__light-vehicle-step__path-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Light wizard — trade / taxes step (guided layout) */
+.aio-payment__light-trade-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  padding: var(--spacing-1) 0 var(--spacing-2);
+}
+
+.aio-payment__light-trade-step__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+.aio-payment__light-trade-step__row {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.aio-payment__light-trade-step__row--2 {
+  grid-template-columns: 1fr;
+}
+
+.aio-payment__light-trade-step__row--3 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .aio-payment__light-trade-step__row--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .aio-payment__light-trade-step__row--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.aio-payment__light-trade-step__field-with-action {
+  min-width: 0;
+}
+
+.aio-payment__light-trade-step__finance-box {
+  padding: var(--spacing-5);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
+}
+
+.aio-payment__light-trade-step__switch {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: opacity var(--transition-fast);
+}
+
+.aio-payment__light-trade-step__switch:hover {
+  opacity: 0.92;
+}
+
+.aio-payment__light-trade-step__switch:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+}
+
+.aio-payment__light-trade-step__switch-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 1.625rem;
+  margin-top: 0;
+  border-radius: var(--border-radius-full);
+  background: var(--color-gray-300);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-trade-step__switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.625rem - 4px);
+  height: calc(1.625rem - 4px);
+  border-radius: var(--border-radius-full);
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast);
+}
+
+.aio-payment__light-trade-step__switch--on .aio-payment__light-trade-step__switch-track {
+  background: var(--color-primary-1);
+}
+
+.aio-payment__light-trade-step__switch--on .aio-payment__light-trade-step__switch-thumb {
+  transform: translateX(calc(3rem - 1.625rem));
+}
+
+.aio-payment__light-trade-step__switch-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.aio-payment__light-trade-step__switch-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.aio-payment__light-trade-step__switch-desc {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-trade-step__tax-note {
+  margin: var(--spacing-4) 0 0;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-gray-600);
+}
+
+.aio-payment__section-heading--wizard .aio-payment__light-heading-copy {
+  margin-top: var(--spacing-3);
 }
 
 .aio-payment__light-wizard-empty {
@@ -1173,6 +1971,37 @@
   outline-offset: 2px;
 }
 
+.aio-payment__light-wizard-skip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-11);
+  margin: 0;
+  padding: 0 var(--spacing-2);
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.aio-payment__light-wizard-skip:hover {
+  color: var(--color-blue-cobalt-dark);
+  text-decoration: underline;
+  text-underline-offset: var(--spacing-1);
+}
+
+.aio-payment__light-wizard-skip:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
 .aio-payment__light-wizard-primary {
   display: inline-flex;
   align-items: center;
@@ -1207,8 +2036,12 @@
   outline-offset: 4px;
 }
 
+.aio-payment__light-wizard-primary--with-trailing-icon {
+  gap: var(--spacing-2);
+}
+
 @media (max-width: 767px) {
-  .aio-payment__light-wizard-steps {
+  .aio-payment__light-wizard-strip .aio-payment__light-wizard-steps {
     min-width: 480px;
   }
 }
@@ -1216,6 +2049,8 @@
 .aio-payment__light-start-panel {
   display: grid;
   gap: var(--spacing-5);
+  width: 100%;
+  min-width: 0;
   padding: 0;
   background: transparent;
   border: 0;
@@ -1227,6 +2062,8 @@
   grid-template-columns: 1fr;
   gap: var(--spacing-5);
   align-items: start;
+  width: 100%;
+  min-width: 0;
 }
 
 .aio-payment__light-toggle {
@@ -1296,6 +2133,8 @@
 }
 
 .aio-payment__light-primary {
+  width: 100%;
+  min-width: 0;
   max-width: none;
 }
 
@@ -1305,6 +2144,8 @@
   flex-direction: column;
   gap: var(--spacing-3);
   width: 100%;
+  min-width: 0;
+  max-width: none;
 }
 
 .aio-payment__light-monthly-budget-header {
@@ -1313,6 +2154,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--spacing-2) var(--spacing-4);
+  width: 100%;
 }
 
 .aio-payment__light-monthly-budget-label {
@@ -1351,11 +2193,14 @@
 
 .aio-payment__light-monthly-budget-input-wrap {
   width: 100%;
+  min-width: 0;
 }
 
 .aio-payment__light-monthly-budget-input {
   box-sizing: border-box;
+  display: block;
   width: 100%;
+  max-width: none;
   height: 44px;
   padding: 0 var(--spacing-4);
   font-family: var(--font-body);
@@ -1389,13 +2234,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
+  width: 100%;
+  min-width: 0;
   padding-top: var(--spacing-0-5);
 }
 
 .aio-payment__light-monthly-budget-slider {
   --aio-light-budget-pct: 24%;
 
+  display: block;
+  box-sizing: border-box;
   width: 100%;
+  max-width: none;
   height: var(--spacing-6);
   margin: 0;
   -webkit-appearance: none;
@@ -1643,6 +2493,201 @@
   line-height: var(--line-height-normal);
 }
 
+/* Guided steps — warmer, airier shell (friendlier “wizard” feel) */
+.aio-payment--light-steps .aio-payment__light-card {
+  max-width: none;
+  padding: var(--spacing-8) var(--spacing-7);
+  gap: var(--spacing-7);
+  border-radius: var(--border-radius-xl);
+  border-color: color-mix(in srgb, var(--color-gray-200) 72%, var(--color-warm-canvas) 28%);
+  background: color-mix(in srgb, var(--color-white) 90%, var(--color-warm-canvas) 10%);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--color-white) 88%, var(--color-gray-100) 12%),
+    0 14px 42px color-mix(in srgb, var(--color-dark-bg) 5.5%, transparent);
+}
+
+.aio-payment--light-steps .aio-payment__light-shell {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+}
+
+.aio-payment--light-steps .aio-payment__light-result-hero {
+  width: 100%;
+  min-width: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-amount {
+  font-size: clamp(var(--font-size-3xl), min(20cqi, var(--font-size-4xl)), var(--font-size-4xl));
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-strip .aio-payment__light-wizard-track {
+  margin: 0;
+  padding: 0 0 var(--spacing-6);
+  border-bottom-color: color-mix(in srgb, var(--color-gray-200) 78%, var(--color-blue-cobalt) 8%);
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-steps-shell::before {
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-blue-cobalt) 35%, var(--color-gray-200) 65%) 0%,
+    var(--color-gray-200) 50%,
+    color-mix(in srgb, var(--color-blue-cobalt) 22%, var(--color-gray-200) 78%) 100%
+  );
+  opacity: 0.9;
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-strip .aio-payment__light-wizard-steps {
+  gap: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-steps {
+  gap: var(--spacing-3);
+}
+
+.aio-payment--light-steps .aio-payment__section-heading--wizard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  margin-bottom: 0;
+}
+
+/* Tighter tie-in from intro copy to step-1 mode cards (card row-gap would otherwise feel too loose). */
+.aio-payment--light-steps .aio-payment__section-heading--wizard + .aio-payment__light-start-panel {
+  margin-top: calc(var(--spacing-4) - var(--spacing-7));
+}
+
+.aio-payment--light-steps .aio-payment__section-heading--wizard .aio-payment__light-wizard-step-eyebrow {
+  margin: 0;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.12em;
+  color: var(--color-gray-600);
+}
+
+.aio-payment--light-steps .aio-payment__section-heading--wizard .aio-payment__light-wizard-step-eyebrow-muted {
+  color: var(--color-gray-500);
+  font-weight: var(--font-weight-medium);
+}
+
+.aio-payment--light-steps .aio-payment__section-heading--wizard h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(var(--font-size-2xl), 2.6vw, var(--font-size-3xl));
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--color-dark-bg);
+}
+
+.aio-payment--light-steps .aio-payment__section-heading--wizard .aio-payment__light-heading-copy {
+  margin: 0;
+  max-width: 38rem;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.55;
+  color: var(--color-gray-600);
+}
+
+.aio-payment--light-steps .aio-payment__light-result-eyebrow {
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.aio-payment--light-steps .aio-payment__light-disclosures {
+  gap: var(--spacing-4);
+}
+
+/* Step 1 (etc.): wrapper is empty but still sat between start panel and actions, doubling card row-gap. */
+.aio-payment--light-steps .aio-payment__light-disclosures:not(:has(> *)) {
+  display: none;
+}
+
+.aio-payment--light-steps .aio-payment__light-disclosures:not(:has(> *)) + .aio-payment__light-wizard-actions {
+  margin-top: calc(var(--spacing-3) - var(--spacing-7));
+}
+
+.aio-payment--light-steps .aio-payment__light-disclosure {
+  border-color: color-mix(in srgb, var(--color-gray-200) 82%, var(--color-warm-canvas) 18%);
+  background: color-mix(in srgb, var(--color-white) 94%, var(--color-warm-canvas) 6%);
+  border-radius: var(--border-radius-xl);
+}
+
+.aio-payment--light-steps .aio-payment__light-disclosure summary {
+  padding: var(--spacing-5) var(--spacing-5);
+}
+
+.aio-payment--light-steps .aio-payment__light-loan-step {
+  gap: var(--spacing-7);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step {
+  gap: var(--spacing-7);
+}
+
+.aio-payment--light-steps .aio-payment__light-trade-step {
+  gap: var(--spacing-6);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step__path--selected {
+  border-width: 2px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 45%, transparent),
+    0 10px 28px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn:not(.aio-payment__light-vehicle-step__nu-btn--active) {
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 52%, var(--color-gray-200) 48%);
+  color: var(--color-dark);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn.aio-payment__light-vehicle-step__nu-btn--active {
+  color: var(--color-white);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn:hover:not(.aio-payment__light-vehicle-step__nu-btn--active) {
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 65%, var(--color-gray-200) 35%);
+  background: color-mix(in srgb, var(--color-white) 92%, var(--color-blue-cobalt) 8%);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step__price-value {
+  color: var(--color-primary-1);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step .text-field__input,
+.aio-payment--light-steps .aio-payment__light-vehicle-step .text-field__select {
+  background: color-mix(in srgb, var(--color-gray-100) 52%, var(--color-white) 48%);
+  border-color: var(--color-gray-200);
+}
+
+.aio-payment--light-steps .aio-payment__light-trade-step .text-field__input,
+.aio-payment--light-steps .aio-payment__light-trade-step .text-field__select {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-200);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step .text-field__input:focus,
+.aio-payment--light-steps .aio-payment__light-vehicle-step .text-field__select:focus,
+.aio-payment--light-steps .aio-payment__light-trade-step .text-field__input:focus,
+.aio-payment--light-steps .aio-payment__light-trade-step .text-field__select:focus {
+  background: var(--color-white);
+  border-color: color-mix(in srgb, var(--color-gray-200) 40%, var(--color-blue-cobalt) 60%);
+}
+
+.aio-payment--light-steps .aio-payment__light-loan-step__chip {
+  min-height: var(--spacing-11);
+  padding: 0 var(--spacing-5);
+  border-radius: var(--border-radius-full);
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-actions {
+  padding-top: var(--spacing-4);
+  margin-top: 0;
+  border-top-color: color-mix(in srgb, var(--color-gray-200) 80%, var(--color-warm-canvas) 20%);
+}
+
 .aio-payment__light-budget-note {
   margin: 0 var(--spacing-4) var(--spacing-3);
   padding: var(--spacing-3);
@@ -1653,6 +2698,14 @@
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
+}
+
+/* Light vehicle step: undo .aio-payment__light-budget-note horizontal margins so the note aligns with path cards. */
+.aio-payment__light-budget-note.aio-payment__light-vehicle-step__budget-note {
+  box-sizing: border-box;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .aio-payment__light-budget-note--over {
@@ -2921,6 +3974,10 @@
   }
 
   .aio-payment__light-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-shell {
     grid-template-columns: 1fr;
   }
 
