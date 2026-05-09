@@ -45,7 +45,7 @@ const Footer = () => {
         { label: 'Auto Loan Calculator', path: '/auto-loan-calculator' },
         { label: 'All-in-One Payment Calculator', path: '/auto-loan-calculator/all-in-one' },
         { label: 'Budget Payment Calculator', path: '/auto-loan-calculator/all-in-one-budget' },
-        { label: 'Light Payment Calculator', path: '/auto-loan-calculator/light' },
+        { label: 'Advanced payment calculator', path: '/auto-loan-calculator/light' },
         { label: 'Step-by-step payment estimate', path: '/auto-loan-calculator/light-steps' },
         { label: 'AI Lease vs Buy Analyzer', path: '/auto-loan-calculator/lease-vs-buy-ai' },
         { label: 'Car Finder', path: '/vehicles' },

@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, RotateCcw, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, ListOrdered, Mail, RotateCcw, SlidersHorizontal, TrendingUp } from 'lucide-react';
 import { getAllVehicles, getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
@@ -497,6 +497,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
   const [lightWizardStep, setLightWizardStep] = useState(1);
+  const [lightEstimateEmail, setLightEstimateEmail] = useState('');
+  const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
 
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
@@ -715,6 +717,52 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     negotiatedDiscount < selectedVehicle.priceMin * 0.02 ? 'The current price is close to MSRP. Ask for a real selling-price discount before discussing payment.' : '',
     rebateTotal === 0 && condition === 'new' ? 'No rebate is applied. Ask whether regional cash, loyalty, conquest, or captive-finance programs are available.' : '',
   ].filter(Boolean);
+
+  const handleSendLightEstimateEmail = () => {
+    const trimmed = lightEstimateEmail.trim();
+    if (!trimmed) {
+      setLightEstimateEmailError('Enter an email address.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setLightEstimateEmailError('Enter a valid email address.');
+      return;
+    }
+    setLightEstimateEmailError(undefined);
+    const subject = `Payment estimate — ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`;
+    const lines: string[] = [
+      'Payment estimate (Car and Driver Marketplace — auto loan calculator)',
+      '',
+      `Vehicle: ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`,
+      `Out-the-door estimate: ${currency(outTheDoorPrice)}`,
+    ];
+    if (tradeEquity !== 0) {
+      const tradeLabel = tradeEquity > 0 ? 'Trade equity (net)' : 'Trade balance rolled in';
+      const tradeVal = tradeEquity > 0 ? `-${currency(tradeEquity)}` : `+${currency(Math.abs(tradeEquity))}`;
+      lines.push(`${tradeLabel}: ${tradeVal}`);
+    }
+    if (rebateTotal > 0) {
+      lines.push(`Rebates and incentives: -${currency(rebateTotal)}`);
+    }
+    lines.push(
+      `Amount financed: ${currency(totalLoanAmount)}`,
+      `Due at signing: ${currency(cashDueAtSigning)}`,
+      `Estimated monthly payment: ${currency(estimatedMonthly)}/mo`,
+      `Total interest: ${currency(totalLoanInterest)}`,
+      `Total loan payments: ${currency(totalLoanPayments)}`,
+      `Total cost: ${currency(totalCost)}`,
+      '',
+      `Loan: ${loanTerm} months · APR ${activeApr.toFixed(1)}%`,
+      `State: ${stateRule.name} (${stateCode})`,
+      `Generated: ${new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}`,
+    );
+    let body = lines.join('\n');
+    const maxLen = 1800;
+    if (body.length > maxLen) {
+      body = `${body.slice(0, maxLen)}\n…`;
+    }
+    window.location.href = `mailto:${encodeURIComponent(trimmed)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
   const incentiveOfferDetail = useMemo(() => {
     if (!selectedIncentive) return undefined;
 
@@ -880,11 +928,38 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <span>/</span>
               <Link to="/auto-loan-calculator">Auto Loan Calculator</Link>
               <span>/</span>
-              <span>{isLightStepsVariant ? 'Step-by-step estimate' : 'Light Payment Calculator'}</span>
+              <span>{isLightStepsVariant ? 'Guided steps' : 'Advanced mode'}</span>
             </nav>
             <div className="aio-payment__light-hero-grid">
               <div>
-                <span className="aio-payment__eyebrow">Auto loan calculator</span>
+                <div className="aio-payment__light-hero-eyebrow-row">
+                  <span className="aio-payment__eyebrow">Auto loan calculator</span>
+                  <div className="aio-payment__light-mode-toggle aio-payment__light-mode-toggle--hero" role="group" aria-label="Calculator layout">
+                    {isLightStepsVariant ? (
+                      <>
+                        <span className="aio-payment__light-mode-toggle-pill aio-payment__light-mode-toggle-pill--current">
+                          <ListOrdered size={16} strokeWidth={2.25} aria-hidden="true" />
+                          Guided steps
+                        </span>
+                        <Link to="/auto-loan-calculator/light" className="aio-payment__light-mode-toggle-action">
+                          <SlidersHorizontal size={16} strokeWidth={2.25} aria-hidden="true" />
+                          Switch to advanced mode
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="/auto-loan-calculator/light-steps" className="aio-payment__light-mode-toggle-action">
+                          <ListOrdered size={16} strokeWidth={2.25} aria-hidden="true" />
+                          Switch to guided steps
+                        </Link>
+                        <span className="aio-payment__light-mode-toggle-pill aio-payment__light-mode-toggle-pill--current">
+                          <SlidersHorizontal size={16} strokeWidth={2.25} aria-hidden="true" />
+                          Advanced mode
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
                 <h1>
                   {isLightStepsVariant
                     ? 'Estimate your payment in five guided steps.'
@@ -893,7 +968,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 <p>
                   {isLightStepsVariant
                     ? 'Move through payment goal, loan terms, vehicle, trade and taxes, then review offers and totals—with your estimate updating as you go.'
-                    : 'Enter a payment target and we’ll estimate the vehicle price range, payment details, and offers that may fit.'}
+                    : 'Advanced mode shows loan, vehicle, trade, offers, and breakdown together on one page. Enter a payment target and we’ll estimate price range, payment details, and offers that may fit.'}
                 </p>
               </div>
             </div>
@@ -943,9 +1018,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </div>
               ) : (
                 <div className="aio-payment__section-heading">
-                  <h2 id="aio-payment-light-heading">Start your estimate</h2>
+                  <h2 id="aio-payment-light-heading">Advanced estimate</h2>
                   <p className="aio-payment__light-heading-copy">
-                    We’ll calculate the payment first. Then you can refine taxes, trade-in, loan terms, and offers.
+                    All sections stay open so you can jump between budget, loan, vehicle, trade, incentives, and totals in any order.
                   </p>
                 </div>
               )}
@@ -1162,13 +1237,67 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </summary>
                   <dl className="aio-payment__light-breakdown">
                     <div><dt>Out-the-door estimate</dt><dd>{currency(outTheDoorPrice)}</dd></div>
+                    {tradeEquity !== 0 && (
+                      <div>
+                        <dt>{tradeEquity > 0 ? 'Trade equity (net)' : 'Trade balance rolled in'}</dt>
+                        <dd>{tradeEquity > 0 ? `-${currency(tradeEquity)}` : `+${currency(Math.abs(tradeEquity))}`}</dd>
+                      </div>
+                    )}
+                    {rebateTotal > 0 && (
+                      <div>
+                        <dt>Rebates and incentives</dt>
+                        <dd>-{currency(rebateTotal)}</dd>
+                      </div>
+                    )}
                     <div><dt>Amount financed</dt><dd>{currency(totalLoanAmount)}</dd></div>
                     <div><dt>Due at signing</dt><dd>{currency(cashDueAtSigning)}</dd></div>
                     <div><dt>Estimated monthly payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
                     <div><dt>Total interest</dt><dd>{currency(totalLoanInterest)}</dd></div>
                     <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
-                    <div><dt>Total cost</dt><dd>{currency(totalCost)}</dd></div>
+                    <div className="aio-payment__light-breakdown__total">
+                      <dt>Total cost</dt>
+                      <dd>{currency(totalCost)}</dd>
+                    </div>
                   </dl>
+                  <div className="aio-payment__light-estimate-email">
+                    <p className="aio-payment__light-estimate-email__lede">
+                      Send this estimate to your inbox—your email app opens with the numbers filled in.
+                    </p>
+                    <form
+                      className="aio-payment__light-estimate-email__row"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        handleSendLightEstimateEmail();
+                      }}
+                    >
+                      <TextField
+                        label="Email address"
+                        type="email"
+                        name="light-estimate-email"
+                        autoComplete="email"
+                        inputMode="email"
+                        placeholder="you@example.com"
+                        value={lightEstimateEmail}
+                        onChange={(event) => {
+                          setLightEstimateEmail(event.target.value);
+                          setLightEstimateEmailError(undefined);
+                        }}
+                        error={lightEstimateEmailError}
+                        wrapperClassName="aio-payment__light-estimate-email__field"
+                      />
+                      <Button
+                        type="submit"
+                        variant="outline"
+                        size="medium"
+                        iconLeft={<Mail size={18} strokeWidth={2} aria-hidden="true" />}
+                      >
+                        Send estimate
+                      </Button>
+                    </form>
+                    <p className="aio-payment__light-estimate-email__note">
+                      Nothing is transmitted from this site; your device opens mail with a draft you can send or save.
+                    </p>
+                  </div>
                 </details>
                 </>
                 )}

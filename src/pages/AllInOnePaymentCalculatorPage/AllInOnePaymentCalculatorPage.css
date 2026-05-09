@@ -405,11 +405,28 @@
 }
 
 .aio-payment__light-hero .aio-payment__eyebrow {
-  margin-bottom: var(--spacing-3);
   color: var(--color-white);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.14em;
   opacity: 0.95;
+}
+
+.aio-payment__light-hero-eyebrow-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3) var(--spacing-6);
+  margin-bottom: var(--spacing-3);
+}
+
+.aio-payment__light-hero-eyebrow-row .aio-payment__eyebrow {
+  margin-bottom: 0;
+}
+
+.aio-payment__light-hero .aio-payment__light-mode-toggle--hero {
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .aio-payment__light-breadcrumb {
@@ -764,6 +781,97 @@
   padding: var(--spacing-8) 0 var(--spacing-12);
 }
 
+.aio-payment__light-mode-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--spacing-3);
+}
+
+.aio-payment__light-mode-toggle-pill,
+.aio-payment__light-mode-toggle-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-10);
+  padding: 0 var(--spacing-4);
+  border-radius: var(--border-radius-full);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  text-decoration: none;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-mode-toggle-pill {
+  border: 1px solid var(--color-gray-300);
+  background: var(--color-gray-50);
+  color: var(--color-gray-600);
+  cursor: default;
+}
+
+.aio-payment__light-mode-toggle-pill--current {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-badge-finance-bg);
+  color: var(--color-blue-cobalt-dark);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 18%, transparent);
+}
+
+.aio-payment__light-mode-toggle-action {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-mode-toggle-action:hover,
+.aio-payment__light-mode-toggle-action:focus-visible {
+  background: color-mix(in srgb, var(--color-blue-cobalt) 8%, var(--color-white));
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 22%, transparent);
+  color: var(--color-blue-cobalt-dark);
+  text-decoration: none;
+}
+
+.aio-payment__light-mode-toggle-action:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-pill {
+  border-color: color-mix(in srgb, var(--color-white) 38%, transparent);
+  background: color-mix(in srgb, var(--color-white) 10%, transparent);
+  color: color-mix(in srgb, var(--color-white) 92%, transparent);
+}
+
+.aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-pill--current {
+  border: 1px solid var(--color-white);
+  background: var(--color-white);
+  color: var(--color-blue-cobalt-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-action {
+  color: var(--color-white);
+  border-color: transparent;
+}
+
+.aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-action:hover,
+.aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-action:focus-visible {
+  background: color-mix(in srgb, var(--color-white) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-white) 38%, transparent);
+  color: var(--color-white);
+}
+
+.aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-action:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
+}
+
 .aio-payment__light-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
@@ -811,6 +919,21 @@
 }
 
 /* Light calculator — 5-step wizard */
+@keyframes aio-payment__light-wizard-dot-ring-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px var(--color-white),
+      0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 14%, var(--color-white));
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px var(--color-white),
+      0 0 0 7px color-mix(in srgb, var(--color-blue-cobalt) 16%, var(--color-white)),
+      0 0 0 12px color-mix(in srgb, var(--color-blue-cobalt) 8%, var(--color-white));
+  }
+}
+
 .aio-payment__light-wizard-track {
   position: relative;
   padding: var(--spacing-2) 0 var(--spacing-5);
@@ -823,6 +946,7 @@
 .aio-payment__light-wizard-track::before {
   content: '';
   position: absolute;
+  z-index: 0;
   left: 8%;
   right: 8%;
   top: calc(var(--spacing-2) + var(--spacing-5));
@@ -876,6 +1000,8 @@
 }
 
 .aio-payment__light-wizard-dot-ring {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -897,9 +1023,25 @@
 
 .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
   border-color: var(--color-blue-cobalt);
-  background: var(--color-badge-finance-bg);
+  /* Opaque fill so the connector line does not show through (--color-badge-finance-bg is translucent) */
+  background: color-mix(in srgb, var(--color-blue-cobalt) 14%, var(--color-white));
   color: var(--color-blue-cobalt);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 18%, transparent);
+  box-shadow:
+    0 0 0 2px var(--color-white),
+    0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 14%, var(--color-white));
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast);
+  animation: aio-payment__light-wizard-dot-ring-pulse 2.2s ease-in-out infinite;
+  will-change: box-shadow;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
+    animation: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 12%, var(--color-white));
+  }
 }
 
 .aio-payment__light-wizard-dot--done .aio-payment__light-wizard-dot-ring {
@@ -1784,6 +1926,65 @@
   color: var(--color-dark);
   font-family: var(--font-heading);
   font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-breakdown .aio-payment__light-breakdown__total {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  align-items: baseline;
+  padding-top: var(--spacing-4);
+  padding-bottom: var(--spacing-1);
+  margin-top: var(--spacing-2);
+  border-top: 2px solid color-mix(in srgb, var(--color-blue-cobalt) 22%, var(--color-gray-200));
+}
+
+.aio-payment__light-breakdown .aio-payment__light-breakdown__total dt {
+  color: var(--color-dark-bg);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-breakdown .aio-payment__light-breakdown__total dd {
+  color: var(--color-blue-cobalt);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+}
+
+.aio-payment__light-estimate-email {
+  margin-top: var(--spacing-5);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__light-estimate-email__lede {
+  margin: 0 0 var(--spacing-3);
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.aio-payment__light-estimate-email__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  align-items: flex-end;
+}
+
+.aio-payment__light-estimate-email__field {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.aio-payment__light-estimate-email__note {
+  margin: var(--spacing-3) 0 0;
+  color: var(--color-gray-500);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.45;
 }
 
 .aio-payment__light-charts {
