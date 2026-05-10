@@ -2623,6 +2623,14 @@ label.aio-payment__light-loan-step__label {
   overflow: hidden;
 }
 
+.aio-payment--light-steps .aio-payment__light-affordable-section {
+  padding-top: var(--spacing-4);
+}
+
+.aio-payment--light-steps .aio-payment__light-affordable {
+  gap: var(--spacing-4);
+}
+
 .aio-payment__light-affordable-head {
   display: grid;
   grid-template-columns: minmax(var(--spacing-12), 1fr) auto minmax(var(--spacing-12), 1fr);
@@ -2765,7 +2773,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-main {
-  padding: clamp(var(--spacing-6), 2vw, var(--spacing-8)) 0 clamp(var(--spacing-16), 7vw, var(--spacing-20));
+  padding: clamp(var(--spacing-6), 2vw, var(--spacing-8)) 0 clamp(var(--spacing-6), 3vw, var(--spacing-10));
 }
 
 .aio-payment--light-steps .aio-payment__light-shell {
@@ -4507,7 +4515,7 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-main {
-    padding: var(--spacing-3) 0 var(--spacing-10);
+    padding: var(--spacing-3) 0 var(--spacing-6);
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-steps-shell {

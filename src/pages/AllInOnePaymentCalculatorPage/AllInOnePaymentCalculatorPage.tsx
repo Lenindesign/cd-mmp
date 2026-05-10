@@ -50,6 +50,7 @@ interface LightAffordableDealCard {
 
 const CUSTOM_RATE_TERMS = [12, 24, 36, 48, 60, 72, 84];
 const USED_YEAR_OPTIONS = Array.from({ length: 11 }, (_, index) => String(2026 - index));
+const LIGHT_AFFORDABLE_DEAL_CARD_LIMIT = 9;
 
 const TAX_RULE_LABELS: Record<TaxableAmountRule, string> = {
   'full-price': 'Tax full price',
@@ -965,25 +966,26 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const affordableVehicles = getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4);
   const lightAffordableBudgetCeiling = startMode === 'monthly' ? affordableMsrp : Math.max(0, price);
-  const lightAffordableVehicles = (() => {
+  const lightAffordableDealCards = (() => {
     const ceiling = lightAffordableBudgetCeiling;
     const strict = vehicles
       .filter((vehicle) => vehicle.priceMin <= ceiling)
-      .sort((a, b) => b.priceMin - a.priceMin || b.staffRating - a.staffRating)
-      .slice(0, 8);
-    if (strict.length > 0) return strict;
+      .sort((a, b) => b.priceMin - a.priceMin || b.staffRating - a.staffRating);
 
     const relaxedCeiling = Math.max(ceiling * 1.12, ceiling + 3500, 22000);
     const relaxed = vehicles
       .filter((vehicle) => vehicle.priceMin <= relaxedCeiling)
-      .sort((a, b) => b.staffRating - a.staffRating || b.priceMin - a.priceMin)
-      .slice(0, 8);
-    if (relaxed.length > 0) return relaxed;
+      .sort((a, b) => b.staffRating - a.staffRating || b.priceMin - a.priceMin);
 
-    return [...vehicles].sort((a, b) => b.staffRating - a.staffRating).slice(0, 8);
-  })();
-  const lightAffordableDealCards = lightAffordableVehicles
-    .map((vehicle) => {
+    const fallback = [...vehicles].sort((a, b) => b.staffRating - a.staffRating);
+    const seenVehicleSlugs = new Set<string>();
+    const candidateVehicles = [...strict, ...relaxed, ...fallback].filter((vehicle) => {
+      if (seenVehicleSlugs.has(vehicle.slug)) return false;
+      seenVehicleSlugs.add(vehicle.slug);
+      return true;
+    });
+
+    return candidateVehicles.map((vehicle) => {
       const offers = getVehicleOffers(vehicle.make, vehicle.model);
       const primaryOffer = offers[0];
       const primaryIncentive = getVehicleIncentives(vehicle.make, vehicle.model).incentives[0];
@@ -995,7 +997,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         primaryIncentive,
       };
     })
-    .filter((item): item is LightAffordableDealCard => Boolean(item.primaryOffer && item.primaryIncentive));
+    .filter((item): item is LightAffordableDealCard => Boolean(item.primaryOffer && item.primaryIncentive))
+    .slice(0, LIGHT_AFFORDABLE_DEAL_CARD_LIMIT);
+  })();
   const shouldScrollToBudgetVehicles =
     (!lightHasVehicleSelection || (startMode === 'monthly' && budgetFitStatus === 'over')) &&
     lightAffordableDealCards.length > 0;
@@ -1385,13 +1389,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </div>
                 <h1>
                   {isLightStepsVariant
-                    ? 'Estimate your payment in five guided steps.'
-                    : 'See what your monthly budget can buy.'}
+                    ? 'Estimate your car payment before you shop.'
+                    : 'Fine-tune your car payment estimate.'}
                 </h1>
                 <p>
                   {isLightStepsVariant
                     ? 'Five quick steps, one live estimate. Just the numbers you need before you shop.'
-                    : 'Advanced mode shows loan, vehicle, trade, offers, and breakdown together on one page. Enter a payment target and we’ll estimate price range, payment details, and offers that may fit.'}
+                    : 'Adjust budget, loan terms, vehicle price, trade-in, offers, and payment details together on one page.'}
                 </p>
               </div>
             </div>
@@ -2091,14 +2095,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     Back
                   </button>
                   <div className="aio-payment__light-wizard-actions-right">
-                    <button
-                      type="button"
-                      className="aio-payment__light-wizard-start-over"
-                      onClick={handleLightStartOver}
-                    >
-                      <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
-                      Start over
-                    </button>
+                    {lightWizardStep === 5 && (
+                      <button
+                        type="button"
+                        className="aio-payment__light-wizard-start-over"
+                        onClick={handleLightStartOver}
+                      >
+                        <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
+                        Start over
+                      </button>
+                    )}
                     {lightWizardStep === 3 && (
                       <button
                         type="button"
