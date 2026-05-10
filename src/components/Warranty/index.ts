@@ -1,5 +1,5 @@
-export { default, defaultWarrantyItems } from './Warranty';
-
+export { default } from './Warranty';
+export { defaultWarrantyItems } from './defaultWarrantyItems';
 
 
 

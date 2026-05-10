@@ -336,5 +336,89 @@
       "Panoramic Roof"
     ],
     "slug": "2026/Fiat/500"
+  },
+  {
+    "id": "nhtsa-2025-toyota-prius",
+    "year": "2025",
+    "make": "Toyota",
+    "model": "Prius",
+    "bodyStyle": "Hatchback",
+    "imageSource": "2025 Toyota Prius",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6736957ca044ac0008cbef57/009-2025-toyota-prius-limited-fwd-side-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/673695791d14ea00080a7013/008-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6736955fa044ac0008cbef56/001-2025-toyota-prius-limited-fwd-interior.jpg"
+    ],
+    "priceRange": "$24,500 - $30,100",
+    "priceMin": 24500,
+    "priceMax": 30100,
+    "staffRating": 8.7,
+    "communityRating": 8.5,
+    "reviewCount": 324,
+    "fuelType": "Hybrid",
+    "drivetrain": "FWD",
+    "transmission": "CVT",
+    "mpg": "57/56",
+    "horsepower": 196,
+    "seatingCapacity": 5,
+    "features": [
+      "Toyota Safety Sense 3.0",
+      "Bi-Tone Roof",
+      "Solar Roof Panel"
+    ],
+    "slug": "2025/Toyota/Prius",
+    "condition": "used",
+    "nhtsaSafetyVehicleId": 20258,
+    "nhtsaSafetyDescription": "2025 Toyota PRIUS 5 HB AWD",
+    "tags": [
+      "used",
+      "nhtsa-tested",
+      "safety-fixture"
+    ]
+  },
+  {
+    "id": "nhtsa-2025-honda-civic-hatchback",
+    "year": "2025",
+    "make": "Honda",
+    "model": "Civic Hatchback",
+    "bodyStyle": "Hatchback",
+    "imageSource": "2024 Honda Civic Hatchback",
+    "image": null,
+    "priceRange": "$21,500 - $27,000",
+    "priceMin": 21500,
+    "priceMax": 27000,
+    "staffRating": 8.7,
+    "communityRating": 8.5,
+    "reviewCount": 210,
+    "fuelType": "Gas",
+    "drivetrain": "FWD",
+    "transmission": "CVT",
+    "mpg": "31/38",
+    "horsepower": 180,
+    "seatingCapacity": 5,
+    "features": [
+      "Honda Sensing",
+      "Wireless Charging",
+      "Bose Audio"
+    ],
+    "slug": "2025/Honda/Civic-Hatchback",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-287-1648742553.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-6533-1648742564.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-honda-civic-sport-380-1648742556.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/cdb010124tenbest-cars-lo-656f33f352136.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2023-honda-civic-type-r-01-656e0b1ba2f52.jpeg",
+      "https://hips.hearstapps.com/hmg-prod/images/371331-2022-honda-civic-e-hev-1674587328.jpg"
+    ],
+    "condition": "used",
+    "nhtsaSafetyVehicleId": 20116,
+    "nhtsaSafetyDescription": "2025 Honda Civic Hatchback 5 HB FWD",
+    "tags": [
+      "used",
+      "nhtsa-tested",
+      "safety-fixture"
+    ]
   }
 ]

@@ -9,6 +9,8 @@ interface PaymentCalculatorProps {
   model?: string;
   bestApr?: number;
   onGetDeal?: () => void;
+  onEstimateTradeIn?: () => void;
+  tradeInEstimate?: { value: number; appliedAt: number } | null;
 }
 
 const CREDIT_TIERS = [
@@ -43,7 +45,16 @@ function ctaLabel(make: string | undefined, model: string | undefined, vehicleNa
   return 'SHOP NOW';
 }
 
-const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal }: PaymentCalculatorProps) => {
+const PaymentCalculator = ({
+  msrp,
+  vehicleName,
+  make,
+  model,
+  bestApr,
+  onGetDeal,
+  onEstimateTradeIn,
+  tradeInEstimate,
+}: PaymentCalculatorProps) => {
   const [tab, setTab] = useState<CalcTab>('finance');
 
   const priceFloor = Math.max(5000, Math.round(msrp * 0.75));
@@ -62,6 +73,14 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
   const [tradeIn, setTradeIn] = useState(0);
   const [termMonths, setTermMonths] = useState(60);
   const [creditTier, setCreditTier] = useState('excellent');
+  const tradeInMax = Math.round(vehiclePrice * 0.6);
+
+  useEffect(() => {
+    if (tradeInEstimate == null) return;
+
+    const roundedEstimate = Math.round(tradeInEstimate.value / 100) * 100;
+    setTradeIn(clamp(roundedEstimate, 0, tradeInMax));
+  }, [tradeInEstimate, tradeInMax]);
 
   const [leaseTermMonths, setLeaseTermMonths] = useState(36);
   const [residualPct, setResidualPct] = useState(58);
@@ -226,17 +245,22 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
                       id="pc-trade"
                       type="range"
                       min={0}
-                      max={Math.round(vehiclePrice * 0.6)}
+                      max={tradeInMax}
                       step={100}
                       value={tradeIn}
                       onChange={handleSlider(setTradeIn)}
                       className="payment-calc__slider"
-                      style={getRangeInputStyle(tradeIn, 0, Math.round(vehiclePrice * 0.6))}
+                      style={getRangeInputStyle(tradeIn, 0, tradeInMax)}
                     />
                     <div className="payment-calc__ticks">
                       <span>$0</span>
-                      <span>{fmt(vehiclePrice * 0.6)}</span>
+                      <span>{fmt(tradeInMax)}</span>
                     </div>
+                    {onEstimateTradeIn && (
+                      <button type="button" className="payment-calc__inline-action" onClick={onEstimateTradeIn}>
+                        Calculate your trade-in
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

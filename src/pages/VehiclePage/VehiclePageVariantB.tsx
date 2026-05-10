@@ -89,6 +89,18 @@ const VehiclePageVariantB = ({ variant }: VehiclePageVariantBProps) => {
     }
   }, [vehicle]);
 
+  // Get accurate trim data from service
+  const trimData = useMemo(() => {
+    if (!vehicle) return [];
+    return getVehicleTrims(vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax);
+  }, [vehicle]);
+
+  // Get recommended trim name
+  const recommendedTrimName = useMemo(() => {
+    if (!vehicle) return '';
+    return getRecommendedTrimName(vehicle.make, vehicle.model);
+  }, [vehicle]);
+
   if (!vehicle) {
     return (
       <div className="vehicle-page vehicle-page--not-found">
@@ -119,16 +131,6 @@ const VehiclePageVariantB = ({ variant }: VehiclePageVariantBProps) => {
     tenBest: vehicle.tenBest,
     evOfTheYear: vehicle.evOfTheYear,
   };
-
-  // Get accurate trim data from service
-  const trimData = useMemo(() => {
-    return getVehicleTrims(vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax);
-  }, [vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax]);
-
-  // Get recommended trim name
-  const recommendedTrimName = useMemo(() => {
-    return getRecommendedTrimName(vehicle.make, vehicle.model);
-  }, [vehicle.make, vehicle.model]);
 
   // Select Pricing CTA variant based on prop
   const PricingCTAComponent = {
@@ -335,6 +337,7 @@ const VehiclePageVariantB = ({ variant }: VehiclePageVariantBProps) => {
             model={vehicle.model}
             year={vehicle.year}
             bodyStyle={vehicle.bodyStyle}
+            nhtsaSafetyVehicleId={vehicle.nhtsaSafetyVehicleId}
           />
         </section>
         
@@ -364,4 +367,3 @@ const VehiclePageVariantB = ({ variant }: VehiclePageVariantBProps) => {
 };
 
 export default VehiclePageVariantB;
-

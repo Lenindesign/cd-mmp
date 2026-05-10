@@ -1347,6 +1347,7 @@ const VehiclePageConcept = () => {
               model={vehicle.model}
               year={vehicle.year}
               bodyStyle={vehicle.bodyStyle}
+              nhtsaSafetyVehicleId={vehicle.nhtsaSafetyVehicleId}
             />
           </div>
         </div>
@@ -1437,4 +1438,3 @@ const VehiclePageConcept = () => {
 };
 
 export default VehiclePageConcept;
-

@@ -27,6 +27,7 @@ import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import PaymentCalculator from '../../components/PaymentCalculator';
 import TradeInPrompt from '../../components/TradeInPrompt';
+import TradeInEstimateModal from '../../components/TradeInEstimateModal';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import './VehiclePage.css';
@@ -40,6 +41,8 @@ interface VehiclePageProps {
 const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProps) => {
   const params = useParams<{ year: string; make: string; model: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTradeInModalOpen, setIsTradeInModalOpen] = useState(false);
+  const [calculatorTradeInEstimate, setCalculatorTradeInEstimate] = useState<{ value: number; appliedAt: number } | null>(null);
   
   // Use props if provided (for home page), otherwise use URL params
   const year = defaultYear || params.year;
@@ -87,6 +90,18 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     }
   }, [vehicle]);
 
+  // Get accurate trim data from service
+  const trimData = useMemo(() => {
+    if (!vehicle) return [];
+    return getVehicleTrims(vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax);
+  }, [vehicle]);
+
+  // Get recommended trim name
+  const recommendedTrimName = useMemo(() => {
+    if (!vehicle) return '';
+    return getRecommendedTrimName(vehicle.make, vehicle.model);
+  }, [vehicle]);
+
   if (!vehicle) {
     return (
       <div className="vehicle-page vehicle-page--not-found">
@@ -123,16 +138,6 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     fuelType: vehicle.fuelType,
     drivetrain: vehicle.drivetrain,
   };
-
-  // Get accurate trim data from service
-  const trimData = useMemo(() => {
-    return getVehicleTrims(vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax);
-  }, [vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax]);
-
-  // Get recommended trim name
-  const recommendedTrimName = useMemo(() => {
-    return getRecommendedTrimName(vehicle.make, vehicle.model);
-  }, [vehicle.make, vehicle.model]);
 
   // SEO structured data
   const structuredData = createVehicleStructuredData({
@@ -198,10 +203,13 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
               make={vehicle.make}
               model={vehicle.model}
+              onEstimateTradeIn={() => setIsTradeInModalOpen(true)}
+              tradeInEstimate={calculatorTradeInEstimate}
             />
             <TradeInPrompt
               vehicleName={`${vehicle.make} ${vehicle.model}`}
               msrp={vehicle.priceMin}
+              onEstimateTradeIn={() => setIsTradeInModalOpen(true)}
             />
             <FuelEconomy
               year={parseInt(vehicle.year)}
@@ -331,6 +339,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
             model={vehicle.model}
             year={vehicle.year}
             bodyStyle={vehicle.bodyStyle}
+            nhtsaSafetyVehicleId={vehicle.nhtsaSafetyVehicleId}
           />
         </section>
         
@@ -377,6 +386,12 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         vehicleImage={vehicle.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg'}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+      />
+      <TradeInEstimateModal
+        isOpen={isTradeInModalOpen}
+        description={`Add your current vehicle, mileage, and condition. We will apply the estimate to this ${vehicle.make} ${vehicle.model} payment calculation.`}
+        onClose={() => setIsTradeInModalOpen(false)}
+        onApply={(estimate) => setCalculatorTradeInEstimate({ value: estimate.value, appliedAt: Date.now() })}
       />
     </>
   );

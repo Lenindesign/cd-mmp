@@ -971,7 +971,7 @@ export const vehicleImageFor = (vehicleName: string): string => {
   for (const key of keysBySpecificity) {
     if (name.includes(key)) return vehicleImageMap[key];
   }
-  return 'https://d2kde5ohu8qb21.cloudfront.net/files/6812b286427f560008656f60/2026-toyota-camry-nightshade-001.jpg';
+  return '';
 };
 
 export default vehicleImageFor;
@@ -1022,5 +1022,4 @@ export const parseVehicleName = (vehicleName: string): { year: string; make: str
     model: encodeURIComponent(model)
   };
 };
-
 

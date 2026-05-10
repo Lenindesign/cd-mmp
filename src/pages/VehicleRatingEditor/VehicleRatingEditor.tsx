@@ -624,7 +624,6 @@ const VehicleRatingEditor = () => {
                               src={vehicle.image || ''}
                               alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                               aspectRatio="4/3"
-                              fallbackSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f5f5f7' width='400' height='300'/%3E%3Cpath fill='%2386868b' d='M160 140h80l10-30h-100zM130 140v30h140v-30h-20v15h-100v-15z'/%3E%3Ccircle fill='%23a0a0a0' cx='155' cy='170' r='15'/%3E%3Ccircle fill='%23a0a0a0' cx='245' cy='170' r='15'/%3E%3Ctext x='200' y='230' text-anchor='middle' fill='%2386868b' font-family='system-ui' font-size='14' font-weight='500'%3ENo Image%3C/text%3E%3C/svg%3E"
                             />
                           </div>
                         </Link>
@@ -723,4 +722,3 @@ const VehicleRatingEditor = () => {
 };
 
 export default VehicleRatingEditor;
-

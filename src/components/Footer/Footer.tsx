@@ -13,6 +13,7 @@ const Footer = () => {
       links: [
         { label: 'Car Rankings', path: '/rankings' },
         { label: 'SUV Rankings', path: '/rankings' },
+        { label: 'SUV Rankings Incentive Nav', path: '/rankings/suv?variant=incentive-subnav' },
         { label: 'Truck Rankings', path: '/rankings' },
         { label: 'Buying Deals', path: BEST_BUYING_DEALS_PATH },
         { label: 'Lease Deals', path: '/deals/lease' },
@@ -175,8 +176,6 @@ const Footer = () => {
 };
 
 export default Footer;
-
-
 
 
 

@@ -1,6 +1,6 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, ChevronDown, Bookmark } from 'lucide-react';
 import { getAllVehicles } from '../../services/vehicleService';
 import { getVehicleOffers } from '../../utils/dealCalculations';
@@ -9,9 +9,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { VehicleCard } from '../../components/VehicleCard';
 import { SEO } from '../../components/SEO';
 import AdSidebar from '../../components/AdSidebar';
+import AdBanner from '../../components/AdBanner';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
+import { DEALS_GRID_BREAKER_AD_URL } from '../../constants/dealsLayout';
+import type { Vehicle } from '../../types/vehicle';
 import './RankingsPage.css';
 
 // Body style icons
@@ -29,7 +32,7 @@ const BODY_STYLE_ICONS: Record<string, string> = {
 const BODY_STYLE_CONFIG: Record<string, {
   title: string;
   description: string;
-  subcategories: { id: string; name: string; filter: (v: any) => boolean }[];
+  subcategories: { id: string; name: string; filter: (v: Vehicle) => boolean }[];
 }> = {
   suv: {
     title: 'Best SUVs',
@@ -94,6 +97,31 @@ const BODY_STYLE_CONFIG: Record<string, {
     ],
   },
 };
+
+const BODY_STYLE_OFFER_LABELS: Record<string, string> = {
+  suv: 'SUV',
+  sedan: 'Sedan',
+  truck: 'Truck',
+  coupe: 'Coupe',
+  convertible: 'Convertible',
+  wagon: 'Wagon',
+  hatchback: 'Hatchback',
+};
+
+const BODY_STYLE_BUYING_DEAL_PATHS: Record<string, string> = {
+  suv: '/deals/suv',
+  truck: '/deals/truck',
+};
+
+const RANKINGS_OFFER_COUNTS = {
+  buying: 34,
+  leasing: 48,
+  total: 82,
+  buyingExpiringSoon: 8,
+  leasingExpiringSoon: 12,
+};
+
+const RANKINGS_INCENTIVE_SUBNAV_VARIANT = 'incentive-subnav';
 
 // Helper to calculate combined MPG
 const getCombinedMpg = (mpg?: string): number | undefined => {
@@ -196,6 +224,7 @@ const YearSelector: React.FC = () => {
 const RankingsPage = () => {
   const { bodyStyle, subcategory } = useParams<{ bodyStyle: string; subcategory?: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   const { user, isAuthenticated: isAuthContextAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
 
@@ -213,6 +242,14 @@ const RankingsPage = () => {
 
   // Get config for current body style
   const config = bodyStyle ? BODY_STYLE_CONFIG[bodyStyle.toLowerCase()] : null;
+  const bodyStyleKey = bodyStyle?.toLowerCase() ?? '';
+  const offerBodyStyleLabel = BODY_STYLE_OFFER_LABELS[bodyStyleKey] ?? 'Vehicle';
+  const buyingOffersPath = BODY_STYLE_BUYING_DEAL_PATHS[bodyStyleKey] ?? '/deals/best-buying-deals';
+  const leasingOffersPath = bodyStyleKey ? `/deals/lease/${bodyStyleKey}` : '/deals/lease';
+  const rankingsVariant = useMemo(() => {
+    return new URLSearchParams(location.search).get('variant');
+  }, [location.search]);
+  const showIncentiveSubnavVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_INCENTIVE_SUBNAV_VARIANT;
 
   // Check if a vehicle is saved
   const isVehicleSaved = (vehicleName: string) => {
@@ -228,7 +265,7 @@ const RankingsPage = () => {
       setShowSignInModal(true);
       return;
     }
-    
+
     const isSaved = isVehicleSaved(vehicle.name);
     if (isSaved) {
       const savedVehicle = user?.savedVehicles?.find(v => v.name === vehicle.name);
@@ -245,21 +282,21 @@ const RankingsPage = () => {
   };
 
   // Get vehicle rating helper
-  const getVehicleRating = (vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
+  const getVehicleRating = useCallback((vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
-  };
+  }, [getSupabaseRating]);
 
   // Get all vehicles for this body style
   const allVehicles = useMemo(() => {
     if (!bodyStyle) return [];
-    
+
     const vehicles = getAllVehicles()
       .filter(v => v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase())
       .filter(v => parseInt(v.year) >= 2026); // Include 2026+ vehicles
-    
+
     // Sort by rating
     return vehicles.sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
-  }, [bodyStyle, getSupabaseRating]);
+  }, [bodyStyle, getVehicleRating]);
 
   // Get subcategory vehicles if subcategory is specified
   const subcategoryConfig = subcategory && config
@@ -291,21 +328,21 @@ const RankingsPage = () => {
       cdSays: generateCdSays(vehicle.year, vehicle.make, vehicle.model),
       modelName: vehicle.model,
     }));
-  }, [displayVehicles, getSupabaseRating]);
+  }, [displayVehicles, getVehicleRating]);
 
   // Get top vehicle and count for each body style category (for landing page)
   const categoryData = useMemo(() => {
-    const result: Record<string, { 
+    const result: Record<string, {
       topVehicle: { name: string; year: string; image: string } | null;
       count: number;
     }> = {};
-    
+
     Object.keys(BODY_STYLE_CONFIG).forEach((key) => {
       const vehicles = getAllVehicles()
         .filter(v => v.bodyStyle.toLowerCase() === key.toLowerCase())
         .filter(v => parseInt(v.year) >= 2026)
         .sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
-      
+
       result[key] = {
         topVehicle: vehicles.length > 0 ? {
           name: `${vehicles[0].make} ${vehicles[0].model}`,
@@ -315,9 +352,9 @@ const RankingsPage = () => {
         count: vehicles.length,
       };
     });
-    
+
     return result;
-  }, [getSupabaseRating]);
+  }, [getVehicleRating]);
 
   // Calculate total vehicles ranked
   const totalVehiclesRanked = useMemo(() => {
@@ -328,7 +365,7 @@ const RankingsPage = () => {
   // Must be before early return to maintain hook order
   const subcategoryVehicles = useMemo(() => {
     if (!config || subcategory) return null; // Don't compute if no config or on a subcategory page
-    
+
     return config.subcategories.map((sub) => {
       const filtered = allVehicles
         .filter(sub.filter)
@@ -349,14 +386,14 @@ const RankingsPage = () => {
           cdSays: generateCdSays(vehicle.year, vehicle.make, vehicle.model),
           modelName: vehicle.model,
         }));
-      
+
       return {
         ...sub,
         vehicles: filtered,
         totalCount: allVehicles.filter(sub.filter).length,
       };
     }).filter(sub => sub.vehicles.length > 0);
-  }, [allVehicles, config, subcategory, getSupabaseRating]);
+  }, [allVehicles, config, subcategory, getVehicleRating]);
 
   // Top 3 vehicles per body style for the landing page rows
   const topByBodyStyle = useMemo(() => {
@@ -392,14 +429,57 @@ const RankingsPage = () => {
         vehicles,
       };
     }).filter(row => row.vehicles.length > 0);
-  }, [getSupabaseRating]);
+  }, [getVehicleRating]);
+
+  const subnavPillsRef = useRef<HTMLDivElement>(null);
+  const [showSubnavScrollArrow, setShowSubnavScrollArrow] = useState(false);
+
+  const updateSubnavScrollArrow = useCallback(() => {
+    const subnavPills = subnavPillsRef.current;
+
+    if (!showIncentiveSubnavVariant || !subnavPills) {
+      setShowSubnavScrollArrow(false);
+      return;
+    }
+
+    const remainingScroll = subnavPills.scrollWidth - subnavPills.clientWidth - subnavPills.scrollLeft;
+    setShowSubnavScrollArrow(remainingScroll > 1);
+  }, [showIncentiveSubnavVariant]);
+
+  useEffect(() => {
+    if (!showIncentiveSubnavVariant) {
+      const animationFrameId = window.requestAnimationFrame(updateSubnavScrollArrow);
+      return () => window.cancelAnimationFrame(animationFrameId);
+    }
+
+    const subnavPills = subnavPillsRef.current;
+    if (!subnavPills) {
+      const animationFrameId = window.requestAnimationFrame(updateSubnavScrollArrow);
+      return () => window.cancelAnimationFrame(animationFrameId);
+    }
+
+    subnavPills.addEventListener('scroll', updateSubnavScrollArrow, { passive: true });
+    window.addEventListener('resize', updateSubnavScrollArrow);
+
+    const resizeObserver = new ResizeObserver(updateSubnavScrollArrow);
+    resizeObserver.observe(subnavPills);
+
+    const animationFrameId = window.requestAnimationFrame(updateSubnavScrollArrow);
+
+    return () => {
+      subnavPills.removeEventListener('scroll', updateSubnavScrollArrow);
+      window.removeEventListener('resize', updateSubnavScrollArrow);
+      resizeObserver.disconnect();
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [showIncentiveSubnavVariant, subcategoryVehicles, updateSubnavScrollArrow]);
 
   // If no config found, show landing page with body-style rows
   if (!config) {
     return (
       <div className="rankings-page">
         <SEO title="Rankings | Car and Driver" />
-        
+
         {shouldShowOneTap && (
           <GoogleOneTap
             pageType="rankings"
@@ -410,7 +490,7 @@ const RankingsPage = () => {
           <div className="container">
             <div className="rankings-page__hero-content">
               <div className="rankings-page__hero-badge">
-                <img 
+                <img
                   src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
                   alt="10Best"
                   className="rankings-page__hero-icon"
@@ -419,7 +499,7 @@ const RankingsPage = () => {
               </div>
               <h1 className="rankings-page__title">Find Your Perfect Car</h1>
               <p className="rankings-page__description">
-                Every vehicle tested, rated, and ranked by our expert editors. 
+                Every vehicle tested, rated, and ranked by our expert editors.
                 From fuel-efficient commuters to powerful sports cars, discover the best in every category.
               </p>
               <div className="rankings-page__hero-stats">
@@ -540,11 +620,11 @@ const RankingsPage = () => {
 
   return (
     <div className="rankings-page">
-      <SEO 
+      <SEO
         title={`${pageTitle} | Car and Driver Rankings`}
         description={config.description}
       />
-      
+
       {/* Google One Tap for non-authenticated users */}
       {shouldShowOneTap && (
         <GoogleOneTap
@@ -558,8 +638,8 @@ const RankingsPage = () => {
         <div className="container">
           <div className="rankings-page__hero-content">
             <div className="rankings-page__hero-badge">
-              <img 
-                src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" 
+              <img
+                src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
                 alt="10Best"
                 className="rankings-page__hero-icon"
               />
@@ -576,92 +656,148 @@ const RankingsPage = () => {
 
       {/* Subcategory Anchor Navigation - only show on main body style page */}
       {!subcategory && config && (
-        <div className="rankings-page__subnav rankings-page__subnav--sticky">
+        <div className={`rankings-page__subnav rankings-page__subnav--sticky${showIncentiveSubnavVariant ? ' rankings-page__subnav--has-actions' : ''}${showIncentiveSubnavVariant && showSubnavScrollArrow ? ' rankings-page__subnav--can-scroll' : ''}`}>
           <div className="container">
-            <div className="rankings-page__subnav-pills">
+            <div className="rankings-page__subnav-pills" ref={showIncentiveSubnavVariant ? subnavPillsRef : undefined}>
               {subcategoryVehicles && subcategoryVehicles.length > 0 && subcategoryVehicles.map((sub) => (
-                <a 
-                  key={sub.id} 
+                <a
+                  key={sub.id}
                   href={`#${sub.id}`}
                   className="rankings-page__subnav-pill"
                 >
                   {sub.name.replace('Best ', '')}
                 </a>
               ))}
-              {subcategoryVehicles && subcategoryVehicles.length > 0 && (
+              {subcategoryVehicles && subcategoryVehicles.length > 0 && !showIncentiveSubnavVariant && (
                 <div className="rankings-page__subnav-divider"></div>
               )}
-              {Object.entries(BODY_STYLE_CONFIG)
-                .filter(([key]) => key !== bodyStyle?.toLowerCase())
-                .map(([key, value]) => (
-                  <Link 
-                    key={key} 
-                    to={`/rankings/${key}`}
-                    className="rankings-page__subnav-pill rankings-page__subnav-pill--body-style"
-                  >
-                    {BODY_STYLE_ICONS[key] && (
-                      <img 
-                        src={BODY_STYLE_ICONS[key]} 
-                        alt="" 
-                        className="rankings-page__subnav-pill-icon"
-                      />
-                    )}
-                    {value.title}
-                  </Link>
-                ))}
+              {!showIncentiveSubnavVariant && (
+                Object.entries(BODY_STYLE_CONFIG)
+                  .filter(([key]) => key !== bodyStyle?.toLowerCase())
+                  .map(([key, value]) => (
+                    <Link
+                      key={key}
+                      to={`/rankings/${key}`}
+                      className="rankings-page__subnav-pill rankings-page__subnav-pill--body-style"
+                    >
+                      {BODY_STYLE_ICONS[key] && (
+                        <img
+                          src={BODY_STYLE_ICONS[key]}
+                          alt=""
+                          className="rankings-page__subnav-pill-icon"
+                        />
+                      )}
+                      {value.title}
+                    </Link>
+                  ))
+              )}
             </div>
+            {showIncentiveSubnavVariant && showSubnavScrollArrow && (
+              <button
+                className="rankings-page__subnav-scroll-btn rankings-page__subnav-scroll-btn--actions"
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  subnavPillsRef.current?.scrollBy({ left: 200, behavior: 'smooth' });
+                }}
+                aria-label="Scroll categories right"
+              >
+                <ChevronRight size={18} />
+              </button>
+            )}
+            {showIncentiveSubnavVariant && (
+              <div className="rankings-page__subnav-offers" aria-label={`${offerBodyStyleLabel} offers`}>
+                <Link to={buyingOffersPath} className="rankings-page__subnav-pill rankings-page__subnav-pill--offer">
+                  <span className="rankings-page__subnav-offer-chip">BUY</span>
+                  <span className="rankings-page__subnav-offer-count">{RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Offers</span>
+                </Link>
+                <Link to={leasingOffersPath} className="rankings-page__subnav-pill rankings-page__subnav-pill--offer">
+                  <span className="rankings-page__subnav-offer-chip">LEASE</span>
+                  <span className="rankings-page__subnav-offer-count">{RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Offers</span>
+                </Link>
+              </div>
+            )}
             {/* Scroll indicator button */}
-            <button 
-              className="rankings-page__subnav-scroll-btn"
-              onClick={(e) => {
-                const container = e.currentTarget.parentElement;
-                const pills = container?.querySelector('.rankings-page__subnav-pills');
-                if (pills) {
-                  pills.scrollBy({ left: 200, behavior: 'smooth' });
-                }
-              }}
-              aria-label="Scroll right"
-            >
-              <ChevronRight size={18} />
-            </button>
+            {!showIncentiveSubnavVariant && (
+              <button
+                className="rankings-page__subnav-scroll-btn"
+                onClick={(e) => {
+                  const container = e.currentTarget.parentElement;
+                  const pills = container?.querySelector('.rankings-page__subnav-pills');
+                  if (pills) {
+                    pills.scrollBy({ left: 200, behavior: 'smooth' });
+                  }
+                }}
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={18} />
+              </button>
+            )}
           </div>
         </div>
       )}
 
-      <div className="container">
-        <div className="rankings-page__toyota-cta">
-          <p className="rankings-page__toyota-cta-count">
-            <strong>82</strong> Toyota deals available
-          </p>
-          <div className="rankings-page__toyota-cta-links">
-            <Link to="/toyota/deals-incentives" className="rankings-page__toyota-cta-link">
-              <strong>34</strong> Buying Deals
-              <ChevronRight size={16} aria-hidden />
-            </Link>
-            <Link to="/toyota/lease-deals" className="rankings-page__toyota-cta-link">
-              <strong>48</strong> Leasing Deals
-              <ChevronRight size={16} aria-hidden />
-            </Link>
+      {!subcategory && config && (
+        <div className="rankings-page__subnav-breaker" role="complementary" aria-label="Advertisement">
+          <div className="container rankings-page__subnav-breaker-inner">
+            <AdBanner
+              imageUrl={DEALS_GRID_BREAKER_AD_URL}
+              altText="Advertisement"
+              hideHeader
+              hideLine
+              mobileCompact
+            />
           </div>
         </div>
-      </div>
+      )}
+
+      {!showIncentiveSubnavVariant && (
+        <div className="container">
+          <section className="rankings-page__offers-cta" aria-labelledby="rankings-page-offers-title">
+            <div className="rankings-page__offers-cta-header">
+              <h2 id="rankings-page-offers-title" className="rankings-page__offers-cta-title">
+                Special offers and incentives
+              </h2>
+              <p className="rankings-page__offers-cta-count">
+                <strong>{RANKINGS_OFFER_COUNTS.total}</strong>
+                <span>{offerBodyStyleLabel} offers available</span>
+              </p>
+            </div>
+            <div className="rankings-page__offers-cta-links">
+              <Link to={buyingOffersPath} className="rankings-page__offers-cta-link">
+                <span className="rankings-page__offers-cta-link-main">
+                  <span className="rankings-page__offers-cta-chip">BUY</span>
+                  <span>See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Offers</span>
+                </span>
+                <span className="rankings-page__offers-cta-badge">{RANKINGS_OFFER_COUNTS.buyingExpiringSoon} expiring soon!</span>
+              </Link>
+              <Link to={leasingOffersPath} className="rankings-page__offers-cta-link">
+                <span className="rankings-page__offers-cta-link-main">
+                  <span className="rankings-page__offers-cta-chip">LEASE</span>
+                  <span>See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Offers</span>
+                </span>
+                <span className="rankings-page__offers-cta-badge">{RANKINGS_OFFER_COUNTS.leasingExpiringSoon} expiring soon!</span>
+              </Link>
+            </div>
+          </section>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="rankings-page__content">
         <div className="container">
           <div className="rankings-page__layout">
             <div className="rankings-page__main">
-              
+
               {/* MAIN BODY STYLE PAGE: Show top 3 from each subcategory */}
               {!subcategory && subcategoryVehicles && subcategoryVehicles.map((sub) => (
-                <section 
-                  key={sub.id} 
-                  id={sub.id} 
+                <section
+                  key={sub.id}
+                  id={sub.id}
                   className="rankings-page__subcategory-section"
                 >
                   <div className="rankings-page__subcategory-header">
                     <h2 className="rankings-page__subcategory-title">{sub.name}</h2>
-                    <Link 
+                    <Link
                       to={`/rankings/${bodyStyle}/${sub.id}`}
                       className="rankings-page__subcategory-more"
                     >
@@ -669,7 +805,7 @@ const RankingsPage = () => {
                       <ChevronRight size={18} />
                     </Link>
                   </div>
-                  
+
                   {/* #1 Hero Card */}
                   {sub.vehicles.length >= 1 && (
                     <div className="rankings-page__hero-card rankings-page__hero-card--subcategory">
@@ -697,8 +833,8 @@ const RankingsPage = () => {
                           >
                             <Bookmark size={18} fill={isVehicleSaved(`${sub.vehicles[0].year} ${sub.vehicles[0].name}`) ? 'currentColor' : 'none'} />
                           </button>
-                          <img 
-                            src={sub.vehicles[0].image} 
+                          <img
+                            src={sub.vehicles[0].image}
                             alt={sub.vehicles[0].name}
                             className="rankings-page__hero-card-image"
                           />
@@ -726,7 +862,7 @@ const RankingsPage = () => {
                                 <div className="rankings-page__hero-card-badges">
                                   {sub.vehicles[0].tenBest && (
                                     <div className="rankings-page__hero-card-badge-item">
-                                      <img 
+                                      <img
                                         src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
                                         alt="10Best"
                                         className="rankings-page__hero-card-badge"
@@ -736,7 +872,7 @@ const RankingsPage = () => {
                                   )}
                                   {sub.vehicles[0].editorsChoice && (
                                     <div className="rankings-page__hero-card-badge-item">
-                                      <img 
+                                      <img
                                         src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE"
                                         alt="Editor's Choice"
                                         className="rankings-page__hero-card-badge"
@@ -826,8 +962,8 @@ const RankingsPage = () => {
                           >
                             <Bookmark size={18} fill={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'currentColor' : 'none'} />
                           </button>
-                          <img 
-                            src={formattedVehicles[0].image} 
+                          <img
+                            src={formattedVehicles[0].image}
                             alt={formattedVehicles[0].name}
                             className="rankings-page__hero-card-image"
                           />
@@ -855,7 +991,7 @@ const RankingsPage = () => {
                                 <div className="rankings-page__hero-card-badges">
                                   {formattedVehicles[0].tenBest && (
                                     <div className="rankings-page__hero-card-badge-item">
-                                      <img 
+                                      <img
                                         src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
                                         alt="10Best"
                                         className="rankings-page__hero-card-badge"
@@ -865,7 +1001,7 @@ const RankingsPage = () => {
                                   )}
                                   {formattedVehicles[0].editorsChoice && (
                                     <div className="rankings-page__hero-card-badge-item">
-                                      <img 
+                                      <img
                                         src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE"
                                         alt="Editor's Choice"
                                         className="rankings-page__hero-card-badge"
@@ -894,7 +1030,7 @@ const RankingsPage = () => {
                   {/* Full Rankings List */}
                   <section className="rankings-page__full-list">
                     <h2 className="rankings-page__section-title">
-                      <img 
+                      <img
                         src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
                         alt="10Best"
                         className="rankings-page__section-icon"
@@ -935,7 +1071,7 @@ const RankingsPage = () => {
               {/* Empty State */}
               {((subcategory && formattedVehicles.length === 0) || (!subcategory && (!subcategoryVehicles || subcategoryVehicles.length === 0))) && (
                 <div className="rankings-page__empty">
-                  <img 
+                  <img
                     src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
                     alt="10Best"
                     className="rankings-page__empty-icon"
@@ -963,7 +1099,7 @@ const RankingsPage = () => {
           <div className="rankings-page__related-header">
             <h2 className="rankings-page__section-title">Explore Other Rankings</h2>
             <div className="rankings-page__carousel-controls">
-              <button 
+              <button
                 className="rankings-page__carousel-btn rankings-page__carousel-btn--prev"
                 onClick={() => {
                   const container = document.querySelector('.rankings-page__related-carousel');
@@ -973,7 +1109,7 @@ const RankingsPage = () => {
               >
                 <ChevronLeft size={20} />
               </button>
-              <button 
+              <button
                 className="rankings-page__carousel-btn rankings-page__carousel-btn--next"
                 onClick={() => {
                   const container = document.querySelector('.rankings-page__related-carousel');
@@ -987,15 +1123,15 @@ const RankingsPage = () => {
           </div>
           <div className="rankings-page__related-carousel">
             {Object.entries(BODY_STYLE_CONFIG).map(([key, value]) => (
-              <Link 
-                key={key} 
-                to={`/rankings/${key}`} 
+              <Link
+                key={key}
+                to={`/rankings/${key}`}
                 className={`rankings-page__related-card ${key === bodyStyle?.toLowerCase() ? 'rankings-page__related-card--active' : ''}`}
               >
                 {BODY_STYLE_ICONS[key] && (
-                  <img 
-                    src={BODY_STYLE_ICONS[key]} 
-                    alt="" 
+                  <img
+                    src={BODY_STYLE_ICONS[key]}
+                    alt=""
                     className="rankings-page__related-icon"
                   />
                 )}
@@ -1025,4 +1161,3 @@ const RankingsPage = () => {
 };
 
 export default RankingsPage;
-

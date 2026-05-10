@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { FileText, Wrench, Shield, Calendar } from 'lucide-react';
-import Warranty, { defaultWarrantyItems } from './Warranty';
+import Warranty from './Warranty';
+import { defaultWarrantyItems } from './defaultWarrantyItems';
 
 const meta: Meta<typeof Warranty> = {
   title: 'Molecules/Warranty',

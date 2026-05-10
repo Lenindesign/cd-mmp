@@ -10,11 +10,14 @@ export interface VehicleInventoryItem {
   model: string;
   trim: string;
   price: number;
+  msrp?: number;
   mileage?: number; // For used vehicles
   vin?: string;
+  stockNumber?: string;
   exteriorColor?: string;
   interiorColor?: string;
   isNew: boolean;
+  dealerUrl?: string;
 }
 
 // Common trim levels by brand
@@ -133,7 +136,12 @@ export interface DealerWithScore extends Dealer {
   dealScore: DealScore;
   lowestPrice: number;
   highestPrice: number;
+  lowestMsrp?: number;
+  highestMsrp?: number;
   inventoryCount: number;
+  inventorySource?: 'estimated' | 'live';
+  inventorySourceName?: string;
+  inventoryUpdatedAt?: string;
 }
 
 export type SortOption = 'bestDeal' | 'distance' | 'price' | 'rating';
@@ -1407,4 +1415,3 @@ export function getPriceRange(lowestPrice: number, highestPrice: number): string
   }
   return `${formatPrice(lowestPrice)} - ${formatPrice(highestPrice)}`;
 }
-

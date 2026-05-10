@@ -37,7 +37,9 @@ storybook-static
 # AI assistant & tooling working directories
 .agents/
 .claude/
+.codex/
 .continue/
+.playwright-cli/
 .kiro/
 screenshots/
 skills-lock.json

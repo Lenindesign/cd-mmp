@@ -22,6 +22,7 @@ interface GoogleMapViewProps {
   onDealerSelect?: (dealer: DealerWithScore) => void;
   onDealerHover?: (dealer: DealerWithScore | null) => void;
   apiKey?: string;
+  mapId?: string;
   vehicleImage?: string;
   vehicleImages?: string[]; // Array of images for slideshow
   vehicleName?: string;
@@ -49,7 +50,7 @@ const MapContent = ({
   // Update map center when center prop changes
   useEffect(() => {
     if (map) {
-      map.panTo(center);
+      map.panTo({ lat: center.lat, lng: center.lng });
     }
   }, [map, center.lat, center.lng]);
 
@@ -94,6 +95,7 @@ const GoogleMapView = ({
   onDealerSelect,
   onDealerHover,
   apiKey,
+  mapId,
   vehicleImage,
   vehicleImages,
   vehicleName,
@@ -103,9 +105,10 @@ const GoogleMapView = ({
   isDealerDetailOpen = false,
   onCloseDealerDetail,
 }: GoogleMapViewProps) => {
-  const [mapError] = useState<string | null>(null);
+  const [mapError, setMapError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const resolvedMapId = mapId?.trim() || 'DEMO_MAP_ID';
 
   // Track fullscreen state
   useEffect(() => {
@@ -158,43 +161,23 @@ const GoogleMapView = ({
     };
   }, []);
 
-  // If no API key, show static map image fallback
+  // If no API key, show a deterministic fallback instead of fake dealer pins.
   if (!apiKey) {
     return (
-      <div className="google-map-view google-map-view--static">
-        <img 
-          src={`https://maps.googleapis.com/maps/api/staticmap?center=${center.lat},${center.lng}&zoom=11&size=800x600&scale=2&maptype=roadmap&key=`}
-          alt="Map"
-          className="google-map-view__static-fallback"
-          onError={(e) => {
-            // If static map fails (no key), show OpenStreetMap embed
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            target.parentElement?.classList.add('google-map-view--osm');
-          }}
-        />
+      <div
+        className="google-map-view google-map-view--static google-map-view--no-key"
+        role="region"
+        aria-label="Dealer map unavailable"
+      >
         <iframe
           className="google-map-view__osm-fallback"
           src={`https://www.openstreetmap.org/export/embed.html?bbox=${center.lng - 0.15},${center.lat - 0.1},${center.lng + 0.15},${center.lat + 0.1}&layer=mapnik&marker=${center.lat},${center.lng}`}
           style={{ border: 0, width: '100%', height: '100%' }}
-          title="Map"
+          title="Map preview"
         />
-        {/* Dealer markers overlay */}
-        <div className="google-map-view__markers-overlay">
-          {dealers.slice(0, 5).map((dealer, index) => (
-            <div 
-              key={dealer.id}
-              className="google-map-view__static-marker"
-              style={{
-                position: 'absolute',
-                left: `${20 + (index * 15)}%`,
-                top: `${30 + (index % 3) * 20}%`,
-              }}
-              onClick={() => onDealerSelect?.(dealer)}
-            >
-              <div className="google-map-view__marker-number">{index + 1}</div>
-            </div>
-          ))}
+        <div className="google-map-view__fallback-notice">
+          <strong>Map unavailable right now</strong>
+          <span>Dealer listings are still available on the left.</span>
         </div>
       </div>
     );
@@ -213,12 +196,18 @@ const GoogleMapView = ({
     <div className="google-map-view">
       <APIProvider 
         apiKey={apiKey}
+        libraries={['places', 'marker']}
         onLoad={() => console.log('Google Maps API loaded')}
+        onError={(error) => {
+          console.error('Google Maps API failed to load:', error);
+          setMapError('Check the Google Maps API key, billing, referrer restrictions, and enabled Maps JavaScript API.');
+        }}
       >
         <Map
           defaultCenter={center}
           defaultZoom={11}
-          mapId="dealer-locator-map"
+          mapId={resolvedMapId}
+          reuseMaps
           gestureHandling="greedy"
           disableDefaultUI={false}
           zoomControl={true}

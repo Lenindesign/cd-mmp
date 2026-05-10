@@ -426,7 +426,6 @@ function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: Ligh
         <label htmlFor={inputId}>
           Vehicle price
         </label>
-        <span aria-live="polite">{currency(price)}</span>
       </div>
       <input
         id={inputId}
@@ -473,7 +472,6 @@ function LightMonthlyBudgetField({ affordableMsrp, targetMonthlyPayment, onBudge
         <label htmlFor={inputId}>
           Monthly budget
         </label>
-        <span aria-live="polite">{currency(targetMonthlyPayment)}/mo</span>
       </div>
       <input
         id={inputId}
@@ -760,6 +758,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightWizardStepPrevRef = useRef(lightWizardStep);
   const lightVehicleBodyStyleHeadingId = useId();
   const lightBreakdownHeadingId = useId();
+  const lightEstimateTotalsId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
@@ -767,6 +766,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightBrowseBodyStyle, setLightBrowseBodyStyle] = useState('SUV');
   const [lightAffordableOffersSlug, setLightAffordableOffersSlug] = useState<string | null>(null);
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
+  const [showLightMobileTotals, setShowLightMobileTotals] = useState(false);
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
     [defaultVehicle, selectedSlug, vehicles],
@@ -1347,7 +1347,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const lightWizardStepMeta = LIGHT_WIZARD_STEP_META[lightWizardStep - 1];
     const lightLoanTermChips = [...new Set(termOptions)].sort((a, b) => a - b);
     return (
-      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}`}>
+      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
         <section className="aio-payment__light-hero">
           <div className="container">
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
@@ -1366,22 +1366,22 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <>
                         <span className="aio-payment__light-mode-toggle-pill aio-payment__light-mode-toggle-pill--current">
                           <ListOrdered size={16} strokeWidth={2.25} aria-hidden="true" />
-                          Guided steps
+                          <span className="aio-payment__light-mode-toggle-label">Guided steps</span>
                         </span>
                         <Link to="/auto-loan-calculator/light" className="aio-payment__light-mode-toggle-action">
                           <SlidersHorizontal size={16} strokeWidth={2.25} aria-hidden="true" />
-                          Switch to advanced mode
+                          <span className="aio-payment__light-mode-toggle-label">Switch to advanced mode</span>
                         </Link>
                       </>
                     ) : (
                       <>
                         <Link to="/auto-loan-calculator/light-steps" className="aio-payment__light-mode-toggle-action">
                           <ListOrdered size={16} strokeWidth={2.25} aria-hidden="true" />
-                          Switch to guided steps
+                          <span className="aio-payment__light-mode-toggle-label">Switch to guided steps</span>
                         </Link>
                         <span className="aio-payment__light-mode-toggle-pill aio-payment__light-mode-toggle-pill--current">
                           <SlidersHorizontal size={16} strokeWidth={2.25} aria-hidden="true" />
-                          Advanced mode
+                          <span className="aio-payment__light-mode-toggle-label">Advanced mode</span>
                         </span>
                       </>
                     )}
@@ -2141,19 +2141,59 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             <div className="payment-calc__aside aio-payment__light-result-stack aio-payment__light-result--sticky">
               <aside className="payment-calc__aside-inner" aria-label="Current payment estimate">
                 <div className="payment-calc__result aio-payment__light-result">
-                  <div className="payment-calc__result-hero aio-payment__light-result-hero">
-                    <p className="payment-calc__result-kicker">
-                      {startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}
-                    </p>
-                    <p className="payment-calc__result-big aio-payment__light-result-amount" aria-live="polite">
-                      {startMode === 'monthly' ? currency(affordableMsrp) : currency(estimatedMonthly)}
-                      {startMode !== 'monthly' && <span className="payment-calc__mo">/mo</span>}
-                    </p>
-                    <p className="payment-calc__muted aio-payment__light-result-lede">
-                      {startMode === 'monthly'
-                        ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
-                        : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
-                    </p>
+                  <div className="aio-payment__light-sticky-summary">
+                    <div className="payment-calc__result-hero aio-payment__light-result-hero">
+                      <p className="payment-calc__result-kicker">
+                        {startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}
+                      </p>
+                      <p className="payment-calc__result-big aio-payment__light-result-amount" aria-live="polite">
+                        {startMode === 'monthly' ? currency(affordableMsrp) : currency(estimatedMonthly)}
+                        {startMode !== 'monthly' && <span className="payment-calc__mo">/mo</span>}
+                      </p>
+                      <p className="payment-calc__muted aio-payment__light-result-lede">
+                        {startMode === 'monthly'
+                          ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
+                          : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
+                      </p>
+                    </div>
+                    <div className={`aio-payment__light-result-details ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
+                      <button
+                        type="button"
+                        className="aio-payment__light-result-details-toggle"
+                        aria-expanded={showLightMobileTotals}
+                        aria-controls={lightEstimateTotalsId}
+                        onClick={() => setShowLightMobileTotals((isOpen) => !isOpen)}
+                      >
+                        Estimate totals
+                        {showLightMobileTotals ? (
+                          <ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" />
+                        ) : (
+                          <ChevronUp size={18} strokeWidth={2.25} aria-hidden="true" />
+                        )}
+                      </button>
+                      <dl id={lightEstimateTotalsId} className="payment-calc__sum aio-payment__light-result-metrics" aria-label="Estimate totals">
+                        <div className="payment-calc__sum-row">
+                          <dt>Rate &amp; term</dt>
+                          <dd>{activeApr.toFixed(1)}% APR · {loanTerm} mo</dd>
+                        </div>
+                        <div className="payment-calc__sum-row">
+                          <dt>Monthly</dt>
+                          <dd>{currency(estimatedMonthly)}/mo</dd>
+                        </div>
+                        <div className="payment-calc__sum-row">
+                          <dt>Due at signing</dt>
+                          <dd>{currency(cashDueAtSigning)}</dd>
+                        </div>
+                        <div className="payment-calc__sum-row">
+                          <dt>Amount financed</dt>
+                          <dd>{currency(totalLoanAmount)}</dd>
+                        </div>
+                        <div className="payment-calc__sum-row">
+                          <dt>Total cost</dt>
+                          <dd>{currency(totalCost)}</dd>
+                        </div>
+                      </dl>
+                    </div>
                   </div>
                 {startMode === 'monthly' && (
                   <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${visibleBudgetFitStatus}`}>
@@ -2174,28 +2214,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
                   </div>
                 )}
-                <dl className="payment-calc__sum aio-payment__light-result-metrics" aria-label="Estimate totals">
-                  <div className="payment-calc__sum-row">
-                    <dt>Rate &amp; term</dt>
-                    <dd>{activeApr.toFixed(1)}% APR · {loanTerm} mo</dd>
-                  </div>
-                  <div className="payment-calc__sum-row">
-                    <dt>Monthly</dt>
-                    <dd>{currency(estimatedMonthly)}/mo</dd>
-                  </div>
-                  <div className="payment-calc__sum-row">
-                    <dt>Due at signing</dt>
-                    <dd>{currency(cashDueAtSigning)}</dd>
-                  </div>
-                  <div className="payment-calc__sum-row">
-                    <dt>Amount financed</dt>
-                    <dd>{currency(totalLoanAmount)}</dd>
-                  </div>
-                  <div className="payment-calc__sum-row">
-                    <dt>Total cost</dt>
-                    <dd>{currency(totalCost)}</dd>
-                  </div>
-                </dl>
                 <div className="aio-payment__light-result-footer">
                   <TrendingUp className="aio-payment__light-result-footer-icon" size={18} strokeWidth={2} aria-hidden="true" />
                   <p className="aio-payment__light-result-footer-copy">{lightNextStepCopy}</p>

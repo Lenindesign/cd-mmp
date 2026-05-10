@@ -47,6 +47,12 @@ export type Transmission = 'Automatic' | 'Manual' | 'CVT';
 export type VehicleOwnership = 'own' | 'want' | 'previously_owned' | 'leased';
 
 /**
+ * Inventory condition used by fixture data.
+ * Omitted values are treated as current/new model-year vehicles.
+ */
+export type VehicleCondition = 'new' | 'used';
+
+/**
  * Body style category for filtering (broader groupings)
  */
 export type BodyStyleCategory =
@@ -159,6 +165,15 @@ export interface Vehicle {
   
   /** URL slug for routing (e.g., "2026/Toyota/Camry") */
   slug: string;
+
+  /** Whether this fixture represents a current/new or used model-year vehicle */
+  condition?: VehicleCondition;
+
+  /** NHTSA vehicle id used to verify available safety rating coverage */
+  nhtsaSafetyVehicleId?: number;
+
+  /** NHTSA vehicle description returned by the SafetyRatings lookup */
+  nhtsaSafetyDescription?: string;
   
   /** Whether vehicle is featured/promoted */
   featured?: boolean;
@@ -339,5 +354,4 @@ export interface VehicleStats {
   averagePrice: number;
   averageRating: number;
 }
-
 

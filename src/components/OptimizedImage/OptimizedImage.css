@@ -54,7 +54,7 @@
 }
 
 /* ============================================
-   ERROR STATE - Image Placeholder Fallback
+   ERROR STATE - TEXT-ONLY FALLBACK
    ============================================ */
 
 .optimized-image--error {
@@ -70,18 +70,16 @@
   background-color: var(--color-apple-bg-tertiary);
 }
 
-.optimized-image__error-icon {
+.optimized-image__error-text {
+  padding: var(--spacing-2) var(--spacing-3);
   color: var(--color-apple-text-tertiary);
-  width: var(--spacing-16);
-  height: var(--spacing-16);
-  opacity: 0.7;
-}
-
-/* Smaller icon for small containers */
-.optimized-image[style*="width: 150px"] .optimized-image__error-icon,
-.optimized-image[style*="width: 100px"] .optimized-image__error-icon {
-  width: var(--spacing-8);
-  height: var(--spacing-8);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 /* ============================================

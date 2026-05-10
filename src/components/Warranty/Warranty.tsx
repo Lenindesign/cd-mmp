@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { FileText, Wrench, Shield, Calendar, AlertTriangle, CheckCircle, ChevronDown, ChevronUp, ExternalLink, Loader2, MessageSquareWarning, Flame, Car, Users, TrendingDown, TrendingUp, Minus, Info, Star, ShieldCheck, Camera } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { AlertTriangle, CheckCircle, ChevronDown, ChevronUp, ExternalLink, Loader2, MessageSquareWarning, Flame, Car, Users, TrendingDown, TrendingUp, Minus, Info, Star, ShieldCheck, Camera } from 'lucide-react';
 import { 
   getRecalls, 
   getComplaints,
   getComplaintsSummary,
   getReliabilityContext,
+  getSafetyRatings,
   getVehicleSafetyRatings,
   parseStarRating,
   formatRecallDate, 
@@ -12,17 +13,21 @@ import {
   getRecallSeverity, 
   type NHTSARecall,
   type NHTSASafetyRating,
-  type ComplaintsSummary,
-  type ReliabilityContext
+  type ComplaintsSummary
 } from '../../services/nhtsaService';
 import CrashTestModal from './CrashTestModal';
 import './Warranty.css';
 
-interface WarrantyItem {
+export interface WarrantyItem {
   icon: React.ReactNode;
   title: string;
   coverage: string;
   description: string;
+}
+
+interface AsyncData<T> {
+  key: string;
+  data: T | null;
 }
 
 interface WarrantyProps {
@@ -32,6 +37,7 @@ interface WarrantyProps {
   model?: string;
   year?: number | string;
   bodyStyle?: string;
+  nhtsaSafetyVehicleId?: number;
 }
 
 const Warranty = ({ 
@@ -40,65 +46,65 @@ const Warranty = ({
   make,
   model,
   year,
-  bodyStyle = 'SUV'
+  bodyStyle = 'SUV',
+  nhtsaSafetyVehicleId,
 }: WarrantyProps) => {
-  const [recalls, setRecalls] = useState<NHTSARecall[]>([]);
-  const [complaintsSummary, setComplaintsSummary] = useState<ComplaintsSummary | null>(null);
-  const [safetyRatings, setSafetyRatings] = useState<NHTSASafetyRating | null>(null);
-  const [reliabilityContext, setReliabilityContext] = useState<ReliabilityContext | null>(null);
-  const [isLoadingRecalls, setIsLoadingRecalls] = useState(false);
-  const [isLoadingComplaints, setIsLoadingComplaints] = useState(false);
-  const [isLoadingSafety, setIsLoadingSafety] = useState(false);
+  const vehicleKey = make && model && year ? `${year}|${make}|${model}|${nhtsaSafetyVehicleId || 'lookup'}` : '';
+  const [recallsState, setRecallsState] = useState<AsyncData<NHTSARecall[]>>({ key: '', data: null });
+  const [complaintsState, setComplaintsState] = useState<AsyncData<ComplaintsSummary>>({ key: '', data: null });
+  const [safetyState, setSafetyState] = useState<AsyncData<NHTSASafetyRating>>({ key: '', data: null });
   const [expandedRecall, setExpandedRecall] = useState<string | null>(null);
   const [expandedComplaint, setExpandedComplaint] = useState<number | null>(null);
   const [showAllRecalls, setShowAllRecalls] = useState(false);
   const [isCrashTestModalOpen, setIsCrashTestModalOpen] = useState(false);
 
+  const recalls = recallsState.key === vehicleKey ? recallsState.data || [] : [];
+  const complaintsSummary = complaintsState.key === vehicleKey ? complaintsState.data : null;
+  const safetyRatings = safetyState.key === vehicleKey ? safetyState.data : null;
+  const isLoadingRecalls = Boolean(vehicleKey && recallsState.key !== vehicleKey);
+  const isLoadingComplaints = Boolean(vehicleKey && complaintsState.key !== vehicleKey);
+  const isLoadingSafety = Boolean(vehicleKey && safetyState.key !== vehicleKey);
+
   // Fetch recalls, complaints, and safety ratings when vehicle info is available
   useEffect(() => {
-    if (make && model && year) {
-      // Fetch recalls
-      setIsLoadingRecalls(true);
-      getRecalls(make, model, year)
-        .then(data => {
-          setRecalls(data);
-        })
-        .finally(() => {
-          setIsLoadingRecalls(false);
-        });
+    if (!make || !model || !year || !vehicleKey) return;
+    let cancelled = false;
 
-      // Fetch complaints
-      setIsLoadingComplaints(true);
-      getComplaints(make, model, year)
-        .then(data => {
-          const summary = getComplaintsSummary(data);
-          setComplaintsSummary(summary);
-        })
-        .finally(() => {
-          setIsLoadingComplaints(false);
-        });
+    getRecalls(make, model, year).then(data => {
+      if (!cancelled) {
+        setRecallsState({ key: vehicleKey, data });
+      }
+    });
 
-      // Fetch safety ratings
-      setIsLoadingSafety(true);
-      getVehicleSafetyRatings(make, model, year)
-        .then(data => {
-          setSafetyRatings(data);
-        })
-        .finally(() => {
-          setIsLoadingSafety(false);
-        });
-    }
-  }, [make, model, year]);
+    getComplaints(make, model, year).then(data => {
+      if (!cancelled) {
+        setComplaintsState({ key: vehicleKey, data: getComplaintsSummary(data) });
+      }
+    });
 
-  // Calculate reliability context when data is loaded
-  useEffect(() => {
+    const safetyRequest = nhtsaSafetyVehicleId
+      ? getSafetyRatings(nhtsaSafetyVehicleId)
+      : getVehicleSafetyRatings(make, model, year);
+
+    safetyRequest.then(data => {
+      if (!cancelled) {
+        setSafetyState({ key: vehicleKey, data });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [make, model, year, vehicleKey, nhtsaSafetyVehicleId]);
+
+  const reliabilityContext = useMemo(() => {
     if (!isLoadingRecalls && !isLoadingComplaints && make) {
       const complaintCount = complaintsSummary?.totalComplaints || 0;
       const recallCount = recalls.length;
-      const context = getReliabilityContext(complaintCount, recallCount, bodyStyle, make);
-      setReliabilityContext(context);
+      return getReliabilityContext(complaintCount, recallCount, bodyStyle, make);
     }
-  }, [isLoadingRecalls, isLoadingComplaints, complaintsSummary, recalls, bodyStyle, make]);
+    return null;
+  }, [isLoadingRecalls, isLoadingComplaints, complaintsSummary, recalls.length, bodyStyle, make]);
 
   const toggleRecall = (campaignNumber: string) => {
     setExpandedRecall(prev => prev === campaignNumber ? null : campaignNumber);
@@ -161,6 +167,54 @@ const Warranty = ({
     }
   };
 
+  const formatRatingLabel = (rating: string) => {
+    return rating.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
+  const getComparisonLabel = (comparison: 'below' | 'average' | 'above') => {
+    if (comparison === 'below') return 'Below segment avg';
+    if (comparison === 'above') return 'Above segment avg';
+    return 'Near segment avg';
+  };
+
+  const getSafetyStatus = () => {
+    if (isLoadingSafety) return 'Checking NHTSA';
+    if (!safetyRatings) return 'Not available';
+    const stars = parseStarRating(safetyRatings.OverallRating);
+    if (stars === null) return 'Not tested yet';
+    return `${stars}/5 overall`;
+  };
+
+  const getSafetySummary = () => {
+    if (isLoadingSafety) return 'Crash-test ratings are loading.';
+    if (!safetyRatings) return 'NHTSA has not published crash-test data for this vehicle yet.';
+    const stars = parseStarRating(safetyRatings.OverallRating);
+    if (stars === null) return 'NHTSA has not completed an overall crash-test rating for this vehicle yet.';
+    return `NHTSA reports a ${stars}-star overall crash-test rating.`;
+  };
+
+  const getSafetyBadge = () => {
+    const stars = parseStarRating(safetyRatings?.OverallRating || '');
+    if (stars === null) {
+      return {
+        label: 'Pending',
+        className: 'warranty__safety-badge--pending',
+      };
+    }
+    return {
+      label: `${stars} ★`,
+      className: stars === 5
+        ? 'warranty__safety-badge--excellent'
+        : stars === 4
+          ? 'warranty__safety-badge--good'
+          : 'warranty__safety-badge--average',
+    };
+  };
+
+  const formatSummaryCopy = (summary: string) => {
+    return summary.replace(/\bsuvs\b/g, 'SUVs');
+  };
+
   // Get comparison icon
   const getComparisonIcon = (comparison: 'below' | 'average' | 'above') => {
     switch (comparison) {
@@ -180,30 +234,47 @@ const Warranty = ({
         {/* NHTSA Data Section */}
         {(make && model && year) && (
           <div className="warranty__nhtsa">
-            {/* Reliability Summary Header */}
             {reliabilityContext && !isLoading && (
-              <div className="warranty__reliability">
-                <div className="warranty__reliability-header">
-                  <div className="warranty__reliability-score">
-                    <span className="warranty__reliability-label">NHTSA Reliability</span>
-                    <span className={`warranty__reliability-rating ${getRatingColorClass(reliabilityContext.overallRating)}`}>
-                      {reliabilityContext.overallRating.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              <section className="warranty__summary" aria-label="NHTSA ownership snapshot">
+                <div className="warranty__summary-copy">
+                  <span className="warranty__summary-eyebrow">NHTSA ownership snapshot</span>
+                  <h3 className="warranty__summary-title">
+                    Ownership confidence:
+                    <span className={`warranty__summary-rating ${getRatingColorClass(reliabilityContext.overallRating)}`}>
+                      {formatRatingLabel(reliabilityContext.overallRating)}
                     </span>
-                  </div>
-                  <div className="warranty__reliability-info">
+                  </h3>
+                  <p className="warranty__summary-text">
+                    {formatSummaryCopy(reliabilityContext.summary)} {getSafetySummary()}
+                  </p>
+                  <div className="warranty__summary-source">
                     <Info size={16} />
-                    <span>Based on owner complaints and recalls vs. segment average</span>
+                    <span>Based on NHTSA recalls, owner complaints, and crash-test data when available.</span>
                   </div>
                 </div>
-                
-                <p className="warranty__reliability-summary">
-                  {reliabilityContext.summary}
-                </p>
-              </div>
+
+                <div className="warranty__summary-facts" aria-label="NHTSA key facts">
+                  <div className={`warranty__fact ${hasRecalls ? 'warranty__fact--warning' : 'warranty__fact--success'}`}>
+                    <span className="warranty__fact-label">Open recalls</span>
+                    <strong>{recalls.length}</strong>
+                    <span>{hasRecalls ? 'Review before buying' : 'None reported'}</span>
+                  </div>
+                  <div className="warranty__fact">
+                    <span className="warranty__fact-label">Owner complaints</span>
+                    <strong>{complaintsSummary?.totalComplaints || 0}</strong>
+                    <span>{getComparisonLabel(reliabilityContext.complaintsVsAverage)}</span>
+                  </div>
+                  <div className="warranty__fact">
+                    <span className="warranty__fact-label">Crash tests</span>
+                    <strong>{getSafetyStatus()}</strong>
+                    <span>NHTSA overall rating</span>
+                  </div>
+                </div>
+              </section>
             )}
 
-            {/* Two Column Layout for Recalls and Complaints */}
-            <div className="warranty__nhtsa-grid">
+            <div className="warranty__detail-layout">
+              <div className="warranty__detail-main">
               {/* Recalls Column */}
               <div className="warranty__recalls">
                 <div className="warranty__recalls-header">
@@ -225,31 +296,14 @@ const Warranty = ({
                   )}
                 </div>
 
-                {/* Progress Bar for Recalls */}
+                {/* Segment benchmark */}
                 {reliabilityContext && !isLoadingRecalls && (
-                  <div className="warranty__metric-inline">
-                    <div className="warranty__metric-inline-header">
-                      <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.recallsVsAverage}`}>
-                        {getComparisonIcon(reliabilityContext.recallsVsAverage)}
-                        {reliabilityContext.recallsVsAverage === 'below' ? 'Below Avg' : 
-                         reliabilityContext.recallsVsAverage === 'above' ? 'Above Avg' : 'Average'}
-                      </span>
-                    </div>
-                    <div className="warranty__reliability-bar">
-                      <div 
-                        className={`warranty__reliability-bar-fill warranty__reliability-bar-fill--${reliabilityContext.recallsRating}`}
-                        style={{ width: `${Math.min(reliabilityContext.recallsPercentile, 100)}%` }}
-                      />
-                      <div 
-                        className="warranty__reliability-bar-marker"
-                        style={{ left: '50%' }}
-                        title="Segment Average"
-                      />
-                    </div>
-                    <div className="warranty__reliability-metric-footer">
-                      <span>{recalls.length} issued</span>
-                      <span className="warranty__reliability-avg">Avg: {reliabilityContext.segmentAvgRecalls}</span>
-                    </div>
+                  <div className="warranty__benchmark">
+                    <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.recallsVsAverage}`}>
+                      {getComparisonIcon(reliabilityContext.recallsVsAverage)}
+                      {getComparisonLabel(reliabilityContext.recallsVsAverage)}
+                    </span>
+                    <span>{recalls.length} issued, segment avg: {reliabilityContext.segmentAvgRecalls}</span>
                   </div>
                 )}
 
@@ -374,31 +428,14 @@ const Warranty = ({
                   )}
                 </div>
 
-                {/* Progress Bar for Complaints */}
+                {/* Segment benchmark */}
                 {reliabilityContext && !isLoadingComplaints && (
-                  <div className="warranty__metric-inline">
-                    <div className="warranty__metric-inline-header">
-                      <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.complaintsVsAverage}`}>
-                        {getComparisonIcon(reliabilityContext.complaintsVsAverage)}
-                        {reliabilityContext.complaintsVsAverage === 'below' ? 'Below Avg' : 
-                         reliabilityContext.complaintsVsAverage === 'above' ? 'Above Avg' : 'Average'}
-                      </span>
-                    </div>
-                    <div className="warranty__reliability-bar">
-                      <div 
-                        className={`warranty__reliability-bar-fill warranty__reliability-bar-fill--${reliabilityContext.complaintsRating}`}
-                        style={{ width: `${Math.min(reliabilityContext.complaintsPercentile, 100)}%` }}
-                      />
-                      <div 
-                        className="warranty__reliability-bar-marker"
-                        style={{ left: '50%' }}
-                        title="Segment Average"
-                      />
-                    </div>
-                    <div className="warranty__reliability-metric-footer">
-                      <span>{complaintsSummary?.totalComplaints || 0} reported</span>
-                      <span className="warranty__reliability-avg">Avg: {reliabilityContext.segmentAvgComplaints}</span>
-                    </div>
+                  <div className="warranty__benchmark">
+                    <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.complaintsVsAverage}`}>
+                      {getComparisonIcon(reliabilityContext.complaintsVsAverage)}
+                      {getComparisonLabel(reliabilityContext.complaintsVsAverage)}
+                    </span>
+                    <span>{complaintsSummary?.totalComplaints || 0} reported, segment avg: {reliabilityContext.segmentAvgComplaints}</span>
                   </div>
                 )}
 
@@ -508,17 +545,19 @@ const Warranty = ({
                   </div>
                 )}
               </div>
+              </div>
 
               {/* Safety Ratings Column */}
+              <aside className="warranty__detail-aside">
               <div className="warranty__safety">
                 <div className="warranty__safety-header">
                   <h3 className="warranty__safety-title">
                     <ShieldCheck size={20} />
-                    Crash Test Ratings
+                    Crash Test Status
                   </h3>
                   {!isLoadingSafety && safetyRatings && (
-                    <div className={`warranty__safety-badge warranty__safety-badge--${parseStarRating(safetyRatings.OverallRating) === 5 ? 'excellent' : parseStarRating(safetyRatings.OverallRating) === 4 ? 'good' : 'average'}`}>
-                      {parseStarRating(safetyRatings.OverallRating) || '—'} ★
+                    <div className={`warranty__safety-badge ${getSafetyBadge().className}`}>
+                      {getSafetyBadge().label}
                     </div>
                   )}
                 </div>
@@ -647,6 +686,7 @@ const Warranty = ({
                   </div>
                 )}
               </div>
+              </aside>
             </div>
 
             <p className="warranty__nhtsa-disclaimer">
@@ -695,30 +735,3 @@ const Warranty = ({
 };
 
 export default Warranty;
-
-export const defaultWarrantyItems: WarrantyItem[] = [
-  {
-    icon: <FileText size={28} />,
-    title: 'Basic Warranty',
-    coverage: '3 Years / 36,000 Miles',
-    description: 'Bumper-to-bumper limited warranty covering most vehicle components.',
-  },
-  {
-    icon: <Wrench size={28} />,
-    title: 'Powertrain Warranty',
-    coverage: '5 Years / 60,000 Miles',
-    description: 'Covers engine, transmission, and drivetrain components.',
-  },
-  {
-    icon: <Shield size={28} />,
-    title: 'Corrosion Warranty',
-    coverage: '6 Years / 100,000 Miles',
-    description: 'Protection against rust-through corrosion on body panels.',
-  },
-  {
-    icon: <Calendar size={28} />,
-    title: 'Complimentary Maintenance',
-    coverage: 'First Visit',
-    description: 'Includes first scheduled maintenance service at no additional cost.',
-  },
-];

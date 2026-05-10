@@ -9,11 +9,13 @@ import type { OfferData } from './MakeOfferModal';
 import PostLeadSubmissionOverlay from './PostLeadSubmissionOverlay';
 import type { PostLeadSubmissionVariant } from './PostLeadSubmissionOverlay';
 import { getDealersForVehicle, sortDealers, type DealerWithScore, type SortOption, type VehicleInventoryItem } from '../../services/dealerService';
+import { applyLiveInventoryToDealers, fetchLiveInventoryForVehicle, type LiveInventoryResponse } from '../../services/liveInventoryService';
 import { useGooglePlacesAutocomplete, type PlacePrediction } from '../../hooks/useGooglePlacesAutocomplete';
 import './DealerLocatorMap.css';
 
 // Get API key from environment variable
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+const GOOGLE_MAPS_MAP_ID = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
 
 export interface DealerLocatorMapProps {
   vehicle: VehicleInfo;
@@ -76,6 +78,7 @@ const DealerLocatorMap = ({
     variant: PostLeadSubmissionVariant;
     dealer: DealerWithScore | null;
   } | null>(null);
+  const [liveInventory, setLiveInventory] = useState<LiveInventoryResponse | null>(null);
 
   // Google Places Autocomplete hook
   const {
@@ -91,9 +94,35 @@ const DealerLocatorMap = ({
     debounceMs: 300,
   });
 
+  useEffect(() => {
+    let cancelled = false;
+
+    setLiveInventory(null);
+    fetchLiveInventoryForVehicle({
+      make: vehicle.make,
+      model: vehicle.model,
+      year: vehicle.year,
+    })
+      .then((inventory) => {
+        if (!cancelled) {
+          setLiveInventory(inventory);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setLiveInventory(null);
+        }
+        console.warn('Live inventory unavailable:', error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [vehicle.make, vehicle.model, vehicle.year]);
+
   // Get dealers data based on search location (NOT map view center)
-  const dealers = useMemo(() => {
-    const allDealers = getDealersForVehicle(
+  const baseDealers = useMemo(() => {
+    return getDealersForVehicle(
       vehicle.make,
       vehicle.model,
       searchLocation.lat,
@@ -103,8 +132,12 @@ const DealerLocatorMap = ({
       vehicle.priceMin,
       vehicle.priceMax
     );
-    return sortDealers(allDealers, sortBy).slice(0, maxResults);
-  }, [vehicle.make, vehicle.model, vehicle.msrp, vehicle.priceMin, vehicle.priceMax, searchLocation.lat, searchLocation.lng, sortBy, maxResults]);
+  }, [vehicle.make, vehicle.model, vehicle.msrp, vehicle.priceMin, vehicle.priceMax, searchLocation.lat, searchLocation.lng]);
+
+  const dealers = useMemo(() => {
+    const dealersWithLiveInventory = applyLiveInventoryToDealers(baseDealers, liveInventory);
+    return sortDealers(dealersWithLiveInventory, sortBy).slice(0, maxResults);
+  }, [baseDealers, liveInventory, sortBy, maxResults]);
 
   // Center map on the #1 Best Deal dealer on initial load
   const [hasInitializedCenter, setHasInitializedCenter] = useState(false);
@@ -461,6 +494,7 @@ const DealerLocatorMap = ({
             onDealerSelect={handleDealerSelect}
             onDealerHover={handleMapMarkerHover}
             apiKey={GOOGLE_MAPS_API_KEY}
+            mapId={GOOGLE_MAPS_MAP_ID}
             vehicleImage={vehicle.image}
             vehicleImages={vehicle.galleryImages}
             vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
@@ -664,4 +698,3 @@ const DealerLocatorMap = ({
 };
 
 export default DealerLocatorMap;
-

@@ -780,5 +780,89 @@
       "Active Aerodynamics"
     ],
     "slug": "2026/Lamborghini/Revuelto"
+  },
+  {
+    "id": "nhtsa-2025-ford-mustang",
+    "year": "2025",
+    "make": "Ford",
+    "model": "Mustang",
+    "bodyStyle": "Coupe",
+    "imageSource": "2025 Ford Mustang",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c7f8c0aa4a0002763d55/002-2025-ford-mustang-gtd-front-three-quarter-action.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c7f8c0aa4a0002763d55/002-2025-ford-mustang-gtd-front-three-quarter-action.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c8a27e5bb30002cbff7f/012-2025-ford-mustang-gtd.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c82fd9517400023d6d68/005-2025-ford-mustang-gtd.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/68c9c8a47e5bb30002cbff81/013-2025-ford-mustang-gtd.jpg"
+    ],
+    "priceRange": "$26,600 - $70,900",
+    "priceMin": 26600,
+    "priceMax": 70900,
+    "staffRating": 8.8,
+    "communityRating": 8.7,
+    "reviewCount": 246,
+    "fuelType": "Gas",
+    "drivetrain": "RWD",
+    "transmission": "Manual",
+    "mpg": "15/24",
+    "horsepower": 486,
+    "seatingCapacity": 4,
+    "features": [
+      "MagneRide Suspension",
+      "SYNC 4",
+      "Track Apps"
+    ],
+    "slug": "2025/Ford/Mustang",
+    "condition": "used",
+    "nhtsaSafetyVehicleId": 20340,
+    "nhtsaSafetyDescription": "2025 Ford Mustang C RWD",
+    "tags": [
+      "used",
+      "nhtsa-tested",
+      "safety-fixture"
+    ]
+  },
+  {
+    "id": "nhtsa-2022-chevrolet-camaro",
+    "year": "2022",
+    "make": "Chevrolet",
+    "model": "Camaro",
+    "bodyStyle": "Coupe",
+    "imageSource": "2024 Chevrolet Camaro",
+    "image": null,
+    "priceRange": "$15,900 - $43,900",
+    "priceMin": 15900,
+    "priceMax": 43900,
+    "staffRating": 8.5,
+    "communityRating": 8.3,
+    "reviewCount": 235,
+    "fuelType": "Gas",
+    "drivetrain": "RWD",
+    "transmission": "Manual",
+    "mpg": "16/24",
+    "horsepower": 455,
+    "seatingCapacity": 4,
+    "features": [
+      "Magnetic Ride Control",
+      "Performance Data Recorder",
+      "Brembo Brakes"
+    ],
+    "slug": "2022/Chevrolet/Camaro",
+    "galleryImages": [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-1-647e1933c6c20.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-111-1539790974.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-2-0t-1le-6mt-123-1539790979.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-camaro-ss-collectors-edition-647e05dd3008a.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2019-chevrolet-camaro-1544717268.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-chevrolet-camaro-z28-6452f1ee4d5ee.jpg"
+    ],
+    "condition": "used",
+    "nhtsaSafetyVehicleId": 16064,
+    "nhtsaSafetyDescription": "2022 Chevrolet Camaro C RWD",
+    "tags": [
+      "used",
+      "nhtsa-tested",
+      "safety-fixture"
+    ]
   }
 ]

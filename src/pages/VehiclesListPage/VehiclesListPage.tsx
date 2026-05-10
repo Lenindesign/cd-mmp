@@ -1,7 +1,7 @@
-import { Fragment, useState, useMemo, useRef } from 'react';
+import { Fragment, useState, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, ChevronDown, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
-import { getAllVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
+import { getAllVehicles, getNewVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
 import { LIFESTYLES, getVehicleLifestyles, type Lifestyle } from '../../services/lifestyleService';
@@ -161,7 +161,8 @@ const VehiclesListPage = () => {
   const maxMileage = searchParams.get('maxMileage') || '';
   const sortBy = searchParams.get('sort') || 'price-low';
   
-  const allVehicles = getAllVehicles();
+  const allVehicles = useMemo(() => getAllVehicles(), []);
+  const newVehicles = useMemo(() => getNewVehicles(), []);
   const allListings = useMemo(() => getAllListings(), []);
   const makes = inventoryType === 'new' ? getUniqueMakes() : getUniqueMakesFromListings();
   const bodyStyles = getUniqueBodyStyles();
@@ -170,19 +171,19 @@ const VehiclesListPage = () => {
   const { getRating: getSupabaseRating } = useSupabaseRatings();
 
   // Helper to get vehicle rating (uses Supabase in production, JSON in dev)
-  const getVehicleRatingForVehicle = (vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
+  const getVehicleRatingForVehicle = useCallback((vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
-  };
+  }, [getSupabaseRating]);
 
   // Helper to get vehicle rating by make/model for ranking sort (used for listings)
-  const getVehicleRating = (make: string, model: string): number => {
+  const getVehicleRating = useCallback((make: string, model: string): number => {
     const vehicle = allVehicles.find(
       v => v.make.toLowerCase() === make.toLowerCase() && 
            v.model.toLowerCase() === model.toLowerCase()
     );
     if (!vehicle) return 0;
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
-  };
+  }, [allVehicles, getSupabaseRating]);
 
   // Mileage ranges for used cars
   const mileageRanges = [
@@ -211,7 +212,7 @@ const VehiclesListPage = () => {
   const filteredVehicles = useMemo(() => {
     if (inventoryType !== 'new') return [];
     
-    let result = [...allVehicles];
+    let result = [...newVehicles];
     
     // Search filter
     if (searchQuery) {
@@ -275,7 +276,7 @@ const VehiclesListPage = () => {
     }
     
     return result;
-  }, [inventoryType, allVehicles, searchQuery, selectedMake, selectedBodyStyle, selectedLifestyle, sortBy]);
+  }, [inventoryType, newVehicles, searchQuery, selectedMake, selectedBodyStyle, selectedLifestyle, sortBy, getVehicleRatingForVehicle]);
 
   // Filter and sort USED listings
   const filteredListings = useMemo(() => {
@@ -761,4 +762,3 @@ const VehiclesListPage = () => {
 };
 
 export default VehiclesListPage;
-

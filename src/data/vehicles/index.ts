@@ -48,6 +48,9 @@ interface RawVehicle {
   cargoSpace?: number;
   features?: string[];
   slug: string;
+  condition?: Vehicle['condition'];
+  nhtsaSafetyVehicleId?: number;
+  nhtsaSafetyDescription?: string;
   featured?: boolean;
   award?: string;
   editorsChoice?: boolean;
@@ -89,6 +92,9 @@ function processVehicle(raw: RawVehicle): Vehicle {
     cargoSpace: raw.cargoSpace,
     features: raw.features,
     slug: raw.slug,
+    condition: raw.condition,
+    nhtsaSafetyVehicleId: raw.nhtsaSafetyVehicleId,
+    nhtsaSafetyDescription: raw.nhtsaSafetyDescription,
     featured: raw.featured,
     award: raw.award,
     editorsChoice: raw.editorsChoice,
@@ -145,5 +151,4 @@ export const vehicleStats = {
 
 // Default export
 export default vehicleDatabase;
-
 

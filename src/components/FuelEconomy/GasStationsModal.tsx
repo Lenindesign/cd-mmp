@@ -4,6 +4,7 @@ import { APIProvider, Map, AdvancedMarker, InfoWindow, useMap } from '@vis.gl/re
 import './GasStationsModal.css';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+const GOOGLE_MAPS_MAP_ID = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
 
 interface Station {
   id: string;
@@ -419,11 +420,12 @@ const GasStationsModal = ({ isOpen, onClose, vehicleName, isElectric = false }: 
 
                 {/* Map */}
                 <div className="gas-stations-modal__map">
-                  <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+                  <APIProvider apiKey={GOOGLE_MAPS_API_KEY} libraries={['places', 'marker']}>
                     <Map
                       defaultCenter={userLocation}
                       defaultZoom={13}
-                      mapId="gas-stations-map"
+                      mapId={GOOGLE_MAPS_MAP_ID}
+                      reuseMaps
                       gestureHandling="greedy"
                       disableDefaultUI={false}
                       zoomControl={true}
@@ -484,4 +486,3 @@ const GasStationsModal = ({ isOpen, onClose, vehicleName, isElectric = false }: 
 };
 
 export default GasStationsModal;
-

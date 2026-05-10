@@ -90,6 +90,9 @@ const DealerCard = ({
             <span className="dealer-card__inventory">
               {dealer.inventoryCount} in stock · {formatPrice(dealer.lowestPrice)}
             </span>
+            {dealer.inventorySource === 'live' && (
+              <span className="dealer-card__live-badge">Live</span>
+            )}
             <span className="dealer-card__rating-distance">
               {renderStars(dealer.rating)} · {formatDistance(dealer.distance || 0)}
             </span>
@@ -142,6 +145,9 @@ const DealerCard = ({
           <span className="dealer-card__inventory-count">
             {dealer.inventoryCount} {vehicleModel} in stock
           </span>
+          {dealer.inventorySource === 'live' && (
+            <span className="dealer-card__live-badge">Live inventory</span>
+          )}
         </div>
         
         <div className="dealer-card__price-row">
@@ -206,4 +212,3 @@ const DealerCard = ({
 };
 
 export default DealerCard;
-

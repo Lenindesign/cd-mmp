@@ -12,8 +12,22 @@ export type { Vehicle };
 // Re-export category arrays
 export { suvs, sedans, trucks, coupes, hatchbacks, convertibles, wagons };
 
+const CURRENT_MODEL_YEAR = 2026;
+
+const isNewVehicle = (vehicle: Vehicle): boolean => {
+  return vehicle.condition !== 'used' && parseInt(vehicle.year, 10) >= CURRENT_MODEL_YEAR;
+};
+
+const getNewVehicleDatabase = (): Vehicle[] => vehicleDatabase.filter(isNewVehicle);
+
 // Get all vehicles
 export const getAllVehicles = (): Vehicle[] => vehicleDatabase;
+
+// Get current/new model-year vehicles
+export const getNewVehicles = (): Vehicle[] => getNewVehicleDatabase();
+
+// Get used model-year vehicles
+export const getUsedVehicles = (): Vehicle[] => vehicleDatabase.filter(v => v.condition === 'used' || parseInt(v.year, 10) < CURRENT_MODEL_YEAR);
 
 // Get vehicle by ID
 export const getVehicleById = (id: string): Vehicle | undefined => {
@@ -37,27 +51,27 @@ export const getVehiclesByBodyStyle = (bodyStyle: string): Vehicle[] => {
 
 // Get vehicles within price range
 export const getVehiclesInPriceRange = (minPrice: number, maxPrice: number): Vehicle[] => {
-  return vehicleDatabase.filter(v => v.priceMin >= minPrice && v.priceMax <= maxPrice);
+  return getNewVehicleDatabase().filter(v => v.priceMin >= minPrice && v.priceMax <= maxPrice);
 };
 
 // Get vehicles under a certain price
 export const getVehiclesUnderPrice = (maxPrice: number): Vehicle[] => {
-  return vehicleDatabase.filter(v => v.priceMin <= maxPrice).sort((a, b) => a.priceMin - b.priceMin);
+  return getNewVehicleDatabase().filter(v => v.priceMin <= maxPrice).sort((a, b) => a.priceMin - b.priceMin);
 };
 
 // Get featured vehicles
 export const getFeaturedVehicles = (): Vehicle[] => {
-  return vehicleDatabase.filter(v => v.featured);
+  return getNewVehicleDatabase().filter(v => v.featured);
 };
 
 // Get vehicles with award
 export const getVehiclesWithAward = (): Vehicle[] => {
-  return vehicleDatabase.filter(v => v.award);
+  return getNewVehicleDatabase().filter(v => v.award);
 };
 
 // Get top rated vehicles
 export const getTopRatedVehicles = (limit: number = 10): Vehicle[] => {
-  return [...vehicleDatabase]
+  return [...getNewVehicleDatabase()]
     .sort((a, b) => b.staffRating - a.staffRating)
     .slice(0, limit);
 };
@@ -65,7 +79,7 @@ export const getTopRatedVehicles = (limit: number = 10): Vehicle[] => {
 // Get similar vehicles (same body style, similar price)
 export const getSimilarVehicles = (vehicle: Vehicle, limit: number = 6): Vehicle[] => {
   const priceRange = 10000; // $10k range
-  return vehicleDatabase
+  return getNewVehicleDatabase()
     .filter(v => 
       v.id !== vehicle.id &&
       v.bodyStyle === vehicle.bodyStyle &&
@@ -78,7 +92,7 @@ export const getSimilarVehicles = (vehicle: Vehicle, limit: number = 6): Vehicle
 // Get competitor vehicles (different makes, same body style, similar price)
 export const getCompetitorVehicles = (vehicle: Vehicle, limit: number = 6): Vehicle[] => {
   const priceRange = 15000; // $15k range
-  return vehicleDatabase
+  return getNewVehicleDatabase()
     .filter(v => 
       v.id !== vehicle.id &&
       v.make !== vehicle.make &&
@@ -101,7 +115,7 @@ export const searchVehicles = (query: string): Vehicle[] => {
 
 // Get vehicles for "vehicles in your budget" feature
 export const getVehiclesInBudget = (budget: number, bodyStyle?: string): Vehicle[] => {
-  return vehicleDatabase
+  return getNewVehicleDatabase()
     .filter(v => {
       const inBudget = v.priceMin <= budget;
       const matchesBodyStyle = !bodyStyle || v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase();
@@ -112,7 +126,7 @@ export const getVehiclesInBudget = (budget: number, bodyStyle?: string): Vehicle
 
 // Get ranking vehicles (for "Where This Vehicle Ranks" component)
 export const getRankingVehicles = (bodyStyle: string, limit: number = 10, maxPrice?: number): Vehicle[] => {
-  return vehicleDatabase
+  return getNewVehicleDatabase()
     .filter(v => {
       const matchesBodyStyle = v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase();
       const matchesPrice = !maxPrice || v.priceMin <= maxPrice;
@@ -125,7 +139,7 @@ export const getRankingVehicles = (bodyStyle: string, limit: number = 10, maxPri
 // Get subcompact SUVs (SUVs under $35,000)
 export const getSubcompactSUVs = (limit: number = 10): Vehicle[] => {
   const SUBCOMPACT_MAX_PRICE = 35000;
-  return vehicleDatabase
+  return getNewVehicleDatabase()
     .filter(v => v.bodyStyle === 'SUV' && v.priceMin <= SUBCOMPACT_MAX_PRICE)
     .sort((a, b) => b.staffRating - a.staffRating)
     .slice(0, limit);
@@ -399,7 +413,7 @@ export const getMarketSpeedVehicles = (
 
   // Get similar vehicles by body style and price range
   const priceRange = 15000;
-  const similarVehicles = vehicleDatabase
+  const similarVehicles = getNewVehicleDatabase()
     .filter(v => 
       v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase() &&
       Math.abs(v.priceMin - currentMsrp) <= priceRange &&
@@ -495,6 +509,8 @@ export const getCurrentVehicleRank = (
 // Default export
 export default {
   getAllVehicles,
+  getNewVehicles,
+  getUsedVehicles,
   getVehicleById,
   getVehicleBySlug,
   getVehiclesByMake,
@@ -520,4 +536,3 @@ export default {
   getMarketSpeedVehicles,
   getCurrentVehicleRank,
 };
-

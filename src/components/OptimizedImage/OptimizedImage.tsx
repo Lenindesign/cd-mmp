@@ -34,57 +34,19 @@ type ImageLoadState = {
   fallbackFailed: boolean;
 };
 
+const isSvgImageSource = (value?: string) => {
+  if (!value) return false;
+
+  const normalized = value.trim().toLowerCase();
+  return normalized.startsWith('data:image/svg') || /\.svg(?:[?#]|$)/.test(normalized);
+};
+
 const supportsNativeLazyLoading = () => (
   typeof HTMLImageElement !== 'undefined' && 'loading' in HTMLImageElement.prototype
 );
 
 const shouldLoadImmediately = () => (
   supportsNativeLazyLoading() || typeof IntersectionObserver === 'undefined'
-);
-
-// Image placeholder icon SVG component
-const ImagePlaceholderIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg 
-    className={className}
-    width="64" 
-    height="64" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <rect 
-      x="3" 
-      y="5" 
-      width="18" 
-      height="14" 
-      rx="2" 
-      stroke="currentColor" 
-      strokeWidth="1.5"
-      fill="none"
-    />
-    <circle 
-      cx="8.5" 
-      cy="10.5" 
-      r="1.5" 
-      fill="currentColor"
-    />
-    <path 
-      d="M21 15L16 10L11 15" 
-      stroke="currentColor" 
-      strokeWidth="1.5" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <path 
-      d="M14 18L10 14L3 21" 
-      stroke="currentColor" 
-      strokeWidth="1.5" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-  </svg>
 );
 
 /**
@@ -125,9 +87,10 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   loading = 'lazy',
   ...props
 }) => {
+  const safeFallbackSrc = isSvgImageSource(fallbackSrc) ? undefined : fallbackSrc;
   const [imageLoadState, setImageLoadState] = useState<ImageLoadState>(() => ({
     src,
-    fallbackSrc,
+    fallbackSrc: safeFallbackSrc,
     isLoaded: false,
     hasError: false,
     fallbackFailed: false,
@@ -136,18 +99,18 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const imgRef = useRef<HTMLImageElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const imageStateMatchesProps = imageLoadState.src === src && imageLoadState.fallbackSrc === fallbackSrc;
+  const imageStateMatchesProps = imageLoadState.src === src && imageLoadState.fallbackSrc === safeFallbackSrc;
   const isLoaded = imageStateMatchesProps ? imageLoadState.isLoaded : false;
   const hasError = imageStateMatchesProps ? imageLoadState.hasError : false;
   const fallbackFailed = imageStateMatchesProps ? imageLoadState.fallbackFailed : false;
 
   const updateImageLoadState = (patch: Partial<Omit<ImageLoadState, 'src' | 'fallbackSrc'>>) => {
     setImageLoadState((current) => {
-      const currentState = current.src === src && current.fallbackSrc === fallbackSrc
+      const currentState = current.src === src && current.fallbackSrc === safeFallbackSrc
         ? current
         : {
             src,
-            fallbackSrc,
+            fallbackSrc: safeFallbackSrc,
             isLoaded: false,
             hasError: false,
             fallbackFailed: false,
@@ -187,13 +150,13 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   }, [isInView]);
 
   useEffect(() => {
-    if (!fallbackDelayMs || !fallbackSrc || isLoaded || hasError) return;
+    if (!fallbackDelayMs || !safeFallbackSrc || isLoaded || hasError) return;
 
     const timeout = window.setTimeout(() => {
       setImageLoadState((current) => {
         if (
           current.src !== src ||
-          current.fallbackSrc !== fallbackSrc ||
+          current.fallbackSrc !== safeFallbackSrc ||
           current.isLoaded ||
           current.hasError
         ) {
@@ -209,7 +172,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     }, fallbackDelayMs);
 
     return () => window.clearTimeout(timeout);
-  }, [fallbackDelayMs, fallbackSrc, hasError, isLoaded, src]);
+  }, [fallbackDelayMs, safeFallbackSrc, hasError, isLoaded, src]);
 
   const handleLoad = () => {
     updateImageLoadState({ isLoaded: true });
@@ -217,7 +180,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   };
 
   const handleError = () => {
-    if (!hasError && fallbackSrc) {
+    if (!hasError && safeFallbackSrc) {
       updateImageLoadState({
         hasError: true,
         isLoaded: false,
@@ -233,10 +196,11 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   };
 
   // Check if we should show error state
-  const usingFallback = hasError && Boolean(fallbackSrc) && !fallbackFailed;
-  const imageSrc = usingFallback ? fallbackSrc : src;
+  const usingFallback = hasError && Boolean(safeFallbackSrc) && !fallbackFailed;
+  const imageSrc = usingFallback ? safeFallbackSrc : src;
   const showErrorState = !src || (hasError && !usingFallback);
   const shouldRenderImage = (isInView || loading === 'eager') && Boolean(imageSrc) && !showErrorState;
+  const missingImageLabel = alt ? `Missing image for ${alt}` : 'Missing image';
 
   return (
     <div
@@ -247,10 +211,10 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         backgroundColor: showPlaceholder ? placeholderColor : undefined,
       }}
     >
-      {/* Error fallback with icon */}
+      {/* Error fallback */}
       {showErrorState && (
-        <div className="optimized-image__error-fallback">
-          <ImagePlaceholderIcon className="optimized-image__error-icon" />
+        <div className="optimized-image__error-fallback" role="img" aria-label={missingImageLabel}>
+          <span className="optimized-image__error-text">Missing image</span>
         </div>
       )}
 

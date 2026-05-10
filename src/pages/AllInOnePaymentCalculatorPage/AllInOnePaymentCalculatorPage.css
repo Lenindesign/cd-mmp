@@ -671,6 +671,18 @@
   margin-top: var(--spacing-4);
 }
 
+.aio-payment__light-sticky-summary {
+  display: contents;
+}
+
+.aio-payment__light-result-details {
+  width: 100%;
+}
+
+.aio-payment__light-result-details-toggle {
+  display: none;
+}
+
 .aio-payment__light-result-metric {
   display: flex;
   flex-direction: column;
@@ -2829,6 +2841,13 @@ label.aio-payment__light-loan-step__label {
   gap: var(--spacing-3);
 }
 
+.aio-payment--light .aio-payment__light-estimator-input.payment-calc__input {
+  min-height: var(--spacing-16);
+  padding: var(--spacing-4) var(--spacing-5);
+  font-size: clamp(var(--font-size-xl), 2vw, var(--font-size-2xl));
+  line-height: 1.15;
+}
+
 .aio-payment--light-steps .aio-payment__light-estimator-helper {
   margin-top: 0;
 }
@@ -2867,6 +2886,30 @@ label.aio-payment__light-loan-step__label {
   border-radius: 0;
   box-shadow: none;
   color: var(--color-gray-700);
+}
+
+.aio-payment--light-steps .aio-payment__light-result-hero {
+  order: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-budget-fit {
+  order: 1;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-details {
+  order: 2;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-footer {
+  order: 3;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-shop {
+  order: 4;
+}
+
+.aio-payment--light-steps .aio-payment__light-ai-button {
+  order: 5;
 }
 
 .aio-payment--light-steps .aio-payment__light-result-amount.payment-calc__result-big {
@@ -4496,9 +4539,168 @@ label.aio-payment__light-loan-step__label {
   }
 }
 
+@media (max-width: 768px) {
+  .aio-payment.aio-payment--light-steps {
+    padding-bottom: calc(var(--spacing-28) + env(safe-area-inset-bottom));
+  }
+
+  .aio-payment.aio-payment--light-steps.aio-payment--light-mobile-totals-open {
+    padding-bottom: calc(20rem + env(safe-area-inset-bottom));
+  }
+
+  .aio-payment--light-steps .aio-payment__mobile-summary {
+    display: none;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-sticky-summary {
+    position: fixed;
+    right: var(--spacing-4);
+    bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom));
+    left: var(--spacing-4);
+    z-index: 40;
+    display: grid;
+    width: auto;
+    background: color-mix(in srgb, var(--color-white) 96%, transparent);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--spacing-2);
+    box-shadow: 0 10px 32px color-mix(in srgb, var(--color-black) 18%, transparent);
+    overflow: hidden;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-hero {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--spacing-1) var(--spacing-4);
+    width: 100%;
+    min-height: var(--spacing-18);
+    padding: var(--spacing-3) var(--spacing-4);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-hero .payment-calc__result-kicker {
+    grid-column: 1;
+    margin: 0;
+    font-size: var(--font-size-xs);
+    line-height: 1;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-amount.payment-calc__result-big {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    margin: 0;
+    font-size: clamp(1.875rem, 6vw, 2.5rem);
+    line-height: 0.95;
+    white-space: nowrap;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-lede.payment-calc__muted {
+    grid-column: 1;
+    max-width: 34ch;
+    font-size: var(--font-size-sm);
+    line-height: 1.3;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details {
+    border-top: 1px solid var(--color-gray-200);
+    background: color-mix(in srgb, var(--color-gray-50) 72%, var(--color-white) 28%);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+    width: 100%;
+    min-height: var(--spacing-11);
+    padding: 0 var(--spacing-4);
+    color: var(--color-gray-700);
+    background: transparent;
+    border: 0;
+    font-family: var(--font-heading);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details-toggle svg {
+    flex: 0 0 auto;
+    color: var(--color-blue-cobalt);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details:not(.aio-payment__light-result-details--open) .aio-payment__light-result-metrics {
+    display: none;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details--open .aio-payment__light-result-metrics.payment-calc__sum {
+    display: grid;
+    width: 100%;
+    max-width: none;
+    padding: 0 var(--spacing-4) var(--spacing-3);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row {
+    padding: var(--spacing-2) 0;
+    font-size: var(--font-size-sm);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row dd {
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 720px) {
   .aio-payment {
     padding-bottom: calc(var(--spacing-20) + env(safe-area-inset-bottom));
+  }
+
+  .aio-payment__light-hero-eyebrow-row {
+    flex-wrap: nowrap;
+    gap: var(--spacing-3);
+  }
+
+  .aio-payment__light-hero .aio-payment__light-mode-toggle--hero {
+    flex-wrap: nowrap;
+    gap: var(--spacing-1);
+    margin-left: auto;
+  }
+
+  .aio-payment__light-hero .aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-pill,
+  .aio-payment__light-hero .aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-action {
+    justify-content: center;
+    width: var(--spacing-10);
+    min-width: var(--spacing-10);
+    height: var(--spacing-10);
+    min-height: var(--spacing-10);
+    padding: 0;
+  }
+
+  .aio-payment__light-hero .aio-payment__light-mode-toggle--hero .aio-payment__light-mode-toggle-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .aio-payment__light-hero .aio-payment__light-mode-toggle--hero svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
   }
 
   .aio-payment__hero,
@@ -4604,6 +4806,10 @@ label.aio-payment__light-loan-step__label {
   .aio-payment__light-toggle,
   .aio-payment__light-grid {
     grid-template-columns: 1fr;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-toggle.payment-calc__tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .aio-payment--light-steps .aio-payment__light-result-metrics {

@@ -4,12 +4,13 @@ import './TradeInPrompt.css';
 interface TradeInPromptProps {
   vehicleName: string;
   msrp: number;
+  onEstimateTradeIn?: () => void;
 }
 
 const fmt = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 
-const TradeInPrompt = ({ vehicleName, msrp }: TradeInPromptProps) => {
+const TradeInPrompt = ({ vehicleName, msrp, onEstimateTradeIn }: TradeInPromptProps) => {
   const estimatedPayment = Math.round(msrp / 60);
 
   return (
@@ -26,7 +27,7 @@ const TradeInPrompt = ({ vehicleName, msrp }: TradeInPromptProps) => {
               Get your car's value using the same Black Book® data dealers use.
             </p>
           </div>
-          <button type="button" className="trade-in-prompt__cta">
+          <button type="button" className="trade-in-prompt__cta" onClick={onEstimateTradeIn}>
             Get Your Estimate
             <ArrowRight size={16} />
           </button>

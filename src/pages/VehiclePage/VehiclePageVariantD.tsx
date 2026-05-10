@@ -88,6 +88,18 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
     }
   }, [vehicle]);
 
+  // Get accurate trim data from service
+  const trimData = useMemo(() => {
+    if (!vehicle) return [];
+    return getVehicleTrims(vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax);
+  }, [vehicle]);
+
+  // Get recommended trim name
+  const recommendedTrimName = useMemo(() => {
+    if (!vehicle) return '';
+    return getRecommendedTrimName(vehicle.make, vehicle.model);
+  }, [vehicle]);
+
   if (!vehicle) {
     return (
       <div className="vehicle-page vehicle-page--not-found">
@@ -118,16 +130,6 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
     tenBest: vehicle.tenBest,
     evOfTheYear: vehicle.evOfTheYear,
   };
-
-  // Get accurate trim data from service
-  const trimData = useMemo(() => {
-    return getVehicleTrims(vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax);
-  }, [vehicle.make, vehicle.model, vehicle.priceMin, vehicle.priceMax]);
-
-  // Get recommended trim name
-  const recommendedTrimName = useMemo(() => {
-    return getRecommendedTrimName(vehicle.make, vehicle.model);
-  }, [vehicle.make, vehicle.model]);
 
   return (
     <>
@@ -321,6 +323,7 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
             model={vehicle.model}
             year={vehicle.year}
             bodyStyle={vehicle.bodyStyle}
+            nhtsaSafetyVehicleId={vehicle.nhtsaSafetyVehicleId}
           />
         </section>
         

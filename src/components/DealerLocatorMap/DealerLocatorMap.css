@@ -551,6 +551,9 @@
 }
 
 .dealer-card__inventory-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
   margin-top: var(--spacing-1);
 }
 
@@ -559,6 +562,22 @@
   font-size: var(--font-size-sm);
   color: var(--color-success);
   font-weight: var(--font-weight-medium);
+}
+
+.dealer-card__live-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 2px var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-transform: uppercase;
 }
 
 .dealer-card__price-row {
@@ -1009,11 +1028,21 @@
 }
 
 .bottom-sheet__inventory-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   font-family: var(--font-heading);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   color: var(--color-blue-cobalt);
   white-space: nowrap;
+}
+
+.bottom-sheet__inventory-price small {
+  color: var(--color-gray-500);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
 }
 
 .bottom-sheet__inventory-offer {
@@ -1036,6 +1065,17 @@
 
 .bottom-sheet__inventory-offer:hover {
   background: var(--color-success);
+  color: var(--color-white);
+}
+
+.bottom-sheet__inventory-offer--secondary {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+}
+
+.bottom-sheet__inventory-offer--secondary:hover {
+  background: var(--color-blue-cobalt);
   color: var(--color-white);
 }
 
@@ -1973,12 +2013,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-}
-
-.google-map-view__static-fallback {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background: var(--color-gray-200);
 }
 
 .google-map-view__osm-fallback {
@@ -1987,42 +2022,48 @@
   height: 100%;
 }
 
+.google-map-view--no-key .google-map-view__osm-fallback {
+  display: block;
+  filter: grayscale(0.2);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
 .google-map-view--static.google-map-view--osm .google-map-view__osm-fallback {
   display: block;
 }
 
-.google-map-view__markers-overlay {
+.google-map-view__fallback-notice {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-}
-
-.google-map-view__static-marker {
-  width: 32px;
-  height: 32px;
-  background: var(--color-blue-cobalt);
-  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
   display: flex;
+  width: min(320px, calc(100% - var(--spacing-8)));
+  transform: translate(-50%, -50%);
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  pointer-events: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow-md);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  text-align: center;
 }
 
-.google-map-view__static-marker:hover {
-  transform: scale(1.15);
-}
-
-.google-map-view__marker-number {
-  color: white;
+.google-map-view__fallback-notice strong {
   font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
+}
+
+.google-map-view__fallback-notice span {
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
 }
 
 /* ---- Custom Dealer Markers ---- */
@@ -2717,4 +2758,3 @@
     padding: var(--spacing-3);
   }
 }
-

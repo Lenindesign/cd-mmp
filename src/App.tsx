@@ -39,6 +39,8 @@ const RankingsPage = lazy(() => import('./pages/RankingsPage/RankingsPage'));
 
 // Brand hub pages - lazy loaded
 const ToyotaBrandPage = lazy(() => import('./pages/ToyotaBrandPage/ToyotaBrandPage'));
+const HondaBrandPage = lazy(() => import('./pages/HondaBrandPage/HondaBrandPage'));
+const BrandHubRoutePage = lazy(() => import('./pages/BrandHubPage/BrandHubRoutePage'));
 
 // Deals pages - lazy loaded
 const DealsHubPage = lazy(() => import('./pages/DealsHubPage/DealsHubPage'));
@@ -172,6 +174,8 @@ function App() {
             
             {/* Brand Hub Pages */}
             <Route path="/brands/toyota" element={<ToyotaBrandPage />} />
+            <Route path="/brands/honda" element={<HondaBrandPage />} />
+            <Route path="/brands/:brandSlug" element={<BrandHubRoutePage />} />
 
             {/* Rankings Pages */}
             <Route path="/rankings" element={<RankingsPage />} />

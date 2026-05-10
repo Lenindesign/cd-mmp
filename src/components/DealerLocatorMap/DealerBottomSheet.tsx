@@ -137,6 +137,9 @@ export const DealerDetailContent = ({
                     </span>
                     <span className="bottom-sheet__inventory-meta">
                       {item.exteriorColor}
+                      {item.stockNumber && (
+                        <> · Stock {item.stockNumber}</>
+                      )}
                       {!item.isNew && item.mileage && (
                         <> · {item.mileage.toLocaleString()} mi</>
                       )}
@@ -144,9 +147,22 @@ export const DealerDetailContent = ({
                   </div>
                   <span className="bottom-sheet__inventory-price">
                     {formatPrice(item.price)}
+                    {item.msrp && item.msrp !== item.price && (
+                      <small>MSRP {formatPrice(item.msrp)}</small>
+                    )}
                   </span>
                 </div>
                 <div className="bottom-sheet__inventory-actions">
+                  {item.dealerUrl && (
+                    <a
+                      className="bottom-sheet__inventory-offer bottom-sheet__inventory-offer--secondary"
+                      href={item.dealerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View Details
+                    </a>
+                  )}
                   <button
                     className="bottom-sheet__inventory-offer"
                     onClick={() => onMakeOffer?.(dealer, item)}
@@ -316,4 +332,3 @@ const DealerBottomSheet = ({
 };
 
 export default DealerBottomSheet;
-

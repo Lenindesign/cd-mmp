@@ -379,5 +379,46 @@
       "https://hips.hearstapps.com/hmg-prod/images/howwetest-1585841171.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/testingmatters-01-1614202289.jpg"
     ]
+  },
+  {
+    "id": "nhtsa-2025-subaru-outback",
+    "year": "2025",
+    "make": "Subaru",
+    "model": "Outback",
+    "bodyStyle": "Wagon",
+    "imageSource": "2025 Subaru Outback",
+    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6765a89ef8cccb0008e6cf9d/004-2025-subaru-outback-touring-xt.jpg",
+    "galleryImages": [
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6765a8c25cfefc0008c0802c/022-2025-subaru-outback-touring-xt.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6765a8b0821dc500082c23b4/012-2025-subaru-outback-touring-xt.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6765a8c4f8cccb0008e6cfa0/023-2025-subaru-outback-touring-xt.jpg",
+      "https://d2kde5ohu8qb21.cloudfront.net/files/6765a8ca5cfefc0008c08031/026-2025-subaru-outback-touring-xt.jpg"
+    ],
+    "priceRange": "$24,800 - $35,400",
+    "priceMin": 24800,
+    "priceMax": 35400,
+    "staffRating": 8.6,
+    "communityRating": 8.4,
+    "reviewCount": 310,
+    "fuelType": "Gas",
+    "drivetrain": "AWD",
+    "transmission": "CVT",
+    "mpg": "26/33",
+    "horsepower": 182,
+    "seatingCapacity": 5,
+    "features": [
+      "EyeSight",
+      "Symmetrical AWD",
+      "Harman Kardon Audio"
+    ],
+    "slug": "2025/Subaru/Outback",
+    "condition": "used",
+    "nhtsaSafetyVehicleId": 20026,
+    "nhtsaSafetyDescription": "2025 Subaru Outback SW AWD",
+    "tags": [
+      "used",
+      "nhtsa-tested",
+      "safety-fixture"
+    ]
   }
 ]

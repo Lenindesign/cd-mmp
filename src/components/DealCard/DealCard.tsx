@@ -6,7 +6,6 @@ import { OptimizedImage } from '../OptimizedImage';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { formatExpiration } from '../../utils/dateUtils';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
-import { vehicleImageFor } from '../../utils/vehicleImages';
 import './DealCard.css';
 
 /* ------------------------------------------------------------------ */
@@ -92,53 +91,6 @@ export interface DealCardProps {
     | { type: 'toggle'; to: string; label: string };
 }
 
-const escapeSvgText = (value: string) =>
-  value.replace(/[&<>"']/g, (char) => {
-    switch (char) {
-      case '&':
-        return '&amp;';
-      case '<':
-        return '&lt;';
-      case '>':
-        return '&gt;';
-      case '"':
-        return '&quot;';
-      case "'":
-        return '&apos;';
-      default:
-        return char;
-    }
-  });
-
-const getDealCardFallbackImage = (vehicleName: string, badge?: string) => {
-  const title = escapeSvgText(vehicleName);
-  const kicker = escapeSvgText(badge || 'Vehicle');
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="${title}">
-      <defs>
-        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#f7f8f8"/>
-          <stop offset="100%" stop-color="#e8ecef"/>
-        </linearGradient>
-      </defs>
-      <rect width="800" height="500" fill="url(#bg)"/>
-      <path d="M132 312h536c24 0 44 20 44 44v16H88v-16c0-24 20-44 44-44Z" fill="#d8e2e8"/>
-      <path d="M194 286c42-66 86-102 158-102h116c68 0 119 35 160 102H194Z" fill="#ffffff"/>
-      <path d="M244 286c34-42 64-64 111-64h104c42 0 77 22 107 64H244Z" fill="#c8d7e0"/>
-      <path d="M181 315h438c34 0 64 22 74 54H107c10-32 40-54 74-54Z" fill="#1f638f"/>
-      <circle cx="229" cy="372" r="45" fill="#f7f8f8"/>
-      <circle cx="229" cy="372" r="23" fill="#53616a"/>
-      <circle cx="571" cy="372" r="45" fill="#f7f8f8"/>
-      <circle cx="571" cy="372" r="23" fill="#53616a"/>
-      <rect x="306" y="132" width="188" height="36" rx="18" fill="#1f638f" opacity="0.12"/>
-      <text x="400" y="157" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="3" fill="#1f638f">${kicker.toUpperCase()}</text>
-      <text x="400" y="445" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800" fill="#1f2328">${title}</text>
-    </svg>
-  `;
-
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-};
-
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
@@ -170,9 +122,10 @@ const DealCard: React.FC<DealCardProps> = ({
   secondaryCta,
 }) => {
   const vehiclePath = `/${vehicleSlug}`;
-  const generatedFallback = vehicleImageFor(vehicleName);
-  const primaryImage = vehicleImage || vehicleImageFallback || generatedFallback;
-  const fallbackSrc = getDealCardFallbackImage(vehicleName, imageBadge || dealTypeTag);
+  const primaryImage = vehicleImage || vehicleImageFallback || '';
+  const fallbackSrc = vehicleImage && vehicleImageFallback && vehicleImageFallback !== vehicleImage
+    ? vehicleImageFallback
+    : undefined;
 
   const defaultSecondaryCta = secondaryCta === undefined
     ? { type: 'link' as const, to: vehiclePath, label: `Shop New ${vehicleModel}` }
@@ -204,7 +157,6 @@ const DealCard: React.FC<DealCardProps> = ({
             className="deal-card__image"
             wrapperClassName="deal-card__optimized-image"
             loading={imageLoading}
-            fallbackDelayMs={1600}
           />
         </Link>
 
