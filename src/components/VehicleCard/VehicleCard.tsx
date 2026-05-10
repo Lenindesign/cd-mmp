@@ -47,6 +47,7 @@ export interface VehicleCardProps {
   name: string;
   slug: string;
   image: string;
+  imageFallback?: string;
   bodyStyle?: string;
   
   // Pricing
@@ -119,6 +120,7 @@ export const VehicleCard = ({
   name,
   slug,
   image,
+  imageFallback,
   bodyStyle,
   price,
   priceLabel = 'Starting at',
@@ -166,6 +168,7 @@ export const VehicleCard = ({
   
   // Extract model name from the full name (e.g., "Mazda CX-30" -> "CX-30")
   const displayModelName = modelName || name.split(' ').slice(1).join(' ') || name;
+  const vehiclePath = `/${slug}`;
   
   // Check if vehicle is saved
   const isSaved = user?.savedVehicles?.some(v => v.name === name) || false;
@@ -495,27 +498,28 @@ export const VehicleCard = ({
 
   // Standard Card Layout (original)
   return (
-    <Link
-      to={`/${slug}`}
+    <article
       className={`vehicle-card ${isCurrentVehicle ? 'vehicle-card--current' : ''} ${isUsedCar ? 'vehicle-card--used' : ''}`}
     >
-      {/* Card Content - Header Section (Above Image) */}
-      <div className="vehicle-card__content vehicle-card__content--top">
-        <div className="vehicle-card__header">
-          <div className="vehicle-card__name-wrapper">
-            <h3 className="vehicle-card__name" title={name}>{name}</h3>
-          </div>
-          {rating && (
-            <div className="vehicle-card__rating">
-              <div className="vehicle-card__rating-row">
-                <span className="vehicle-card__rating-score">{rating}</span>
-                <span className="vehicle-card__rating-max">/10</span>
-              </div>
-              <span className="vehicle-card__rating-label">C/D RATING</span>
+      <Link to={vehiclePath} className="vehicle-card__title-link" aria-label={`Learn more about ${name}`}>
+        {/* Card Content - Header Section (Above Image) */}
+        <div className="vehicle-card__content vehicle-card__content--top">
+          <div className="vehicle-card__header">
+            <div className="vehicle-card__name-wrapper">
+              <h3 className="vehicle-card__name" title={name}>{name}</h3>
             </div>
-          )}
+            {rating && (
+              <div className="vehicle-card__rating">
+                <div className="vehicle-card__rating-row">
+                  <span className="vehicle-card__rating-score">{rating}</span>
+                  <span className="vehicle-card__rating-max">/10</span>
+                </div>
+                <span className="vehicle-card__rating-label">C/D RATING</span>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </Link>
 
       {/* Card Image */}
       <div className="vehicle-card__image">
@@ -581,12 +585,14 @@ export const VehicleCard = ({
           </div>
         )}
 
-
-        <OptimizedImage 
-          src={image} 
-          alt={name}
-          aspectRatio="16/10"
-        />
+        <Link to={vehiclePath} className="vehicle-card__image-link" aria-label={`View ${name}`}>
+          <OptimizedImage
+            src={image}
+            alt={name}
+            aspectRatio="16/10"
+            fallbackSrc={imageFallback}
+          />
+        </Link>
       </div>
 
       {/* Card Content - Below Image */}
@@ -685,9 +691,9 @@ export const VehicleCard = ({
           <div className="vehicle-card__cd-says-row">
             <span className="vehicle-card__cd-says-label">C/D SAYS: </span>
             <span className="vehicle-card__cd-says-text">{cdSays}</span>
-            <span className="vehicle-card__cd-says-link">
+            <Link to={vehiclePath} className="vehicle-card__cd-says-link">
               Learn More
-            </span>
+            </Link>
           </div>
         )}
 
@@ -755,9 +761,8 @@ export const VehicleCard = ({
         itemName={name}
         itemImage={image}
       />
-    </Link>
+    </article>
   );
 };
 
 export default VehicleCard;
-

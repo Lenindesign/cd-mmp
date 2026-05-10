@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { getRangeInputStyle } from '../../utils/rangeInputStyle';
 import './PaymentCalculator.css';
 
 interface PaymentCalculatorProps {
@@ -208,6 +209,7 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
                       value={vehiclePrice}
                       onChange={e => setVehiclePrice(Number(e.target.value))}
                       className="payment-calc__slider"
+                      style={getRangeInputStyle(vehiclePrice, priceFloor, priceCeiling)}
                     />
                     <div className="payment-calc__ticks">
                       <span>{fmt(priceFloor)}</span>
@@ -229,6 +231,7 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
                       value={tradeIn}
                       onChange={handleSlider(setTradeIn)}
                       className="payment-calc__slider"
+                      style={getRangeInputStyle(tradeIn, 0, Math.round(vehiclePrice * 0.6))}
                     />
                     <div className="payment-calc__ticks">
                       <span>$0</span>
@@ -273,6 +276,7 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
                       value={downPayment}
                       onChange={handleSlider(setDownPayment)}
                       className="payment-calc__slider"
+                      style={getRangeInputStyle(downPayment, 0, Math.round(vehiclePrice * 0.5))}
                     />
                     <div className="payment-calc__ticks">
                       <span>$0</span>
@@ -323,6 +327,7 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
                     value={downPayment}
                     onChange={handleSlider(setDownPayment)}
                     className="payment-calc__slider"
+                    style={getRangeInputStyle(downPayment, 0, Math.round(vehiclePrice * 0.5))}
                   />
                   <div className="payment-calc__ticks">
                     <span>$0</span>
@@ -348,6 +353,7 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
                     value={residualPct}
                     onChange={e => setResidualPct(Number(e.target.value))}
                     className="payment-calc__slider"
+                    style={getRangeInputStyle(residualPct, 40, 72)}
                   />
                   <div className="payment-calc__ticks">
                     <span>40%</span>
@@ -369,6 +375,7 @@ const PaymentCalculator = ({ msrp, vehicleName, make, model, bestApr, onGetDeal 
                   value={clamp(leaseAprFromMf, 0, 15)}
                   onChange={e => handleLeaseAprSlider(Number(e.target.value))}
                   className="payment-calc__slider"
+                  style={getRangeInputStyle(clamp(leaseAprFromMf, 0, 15), 0, 15)}
                   aria-describedby="pc-lease-apr-hint"
                 />
                 <div className="payment-calc__ticks">

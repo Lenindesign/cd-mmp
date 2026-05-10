@@ -11,6 +11,7 @@
 @import './styles/mobile-modal-shell.css';
 @import './styles/active-filter-pills.css';
 @import './styles/faq-section.css';
+@import './styles/range-input.css';
 
 :root {
   /* ============================================

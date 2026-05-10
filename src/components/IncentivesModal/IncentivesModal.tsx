@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,10 +16,11 @@ import {
   MapPin,
   Navigation,
 } from 'lucide-react';
-import type { Incentive, GroupAffiliation, RateTier } from '../../services/incentiveAdapter';
+import type { Incentive, GroupAffiliation } from '../../services/incentiveAdapter';
 import { getVehicleTrims } from '../../services/trimService';
 import { formatExpiration } from '../../utils/dateUtils';
 import { getEligibilityLabels } from '../../utils/dealCalculations';
+import { buildAprTable, getAprRangeLabel, getUniformCashBack, hasTieredCashBack } from './incentivesModalUtils';
 import './IncentivesModal.css';
 
 function buildCashDownData(
@@ -180,91 +181,6 @@ const getEligibilityInfo = (inc: Incentive): { label: string; restricted: boolea
     description: inc.eligibility || meta.description,
   };
 };
-
-
-
-/** Row shape for the APR table — now includes optional cash back. */
-export interface AprTableRow {
-  term: number;
-  apr: number;
-  cashBack?: number;
-}
-
-export function getAprRangeLabel(active: { value: string; title: string; terms?: string; rateTiers?: RateTier[] }): string {
-  const rows = buildAprTable(active);
-  const rates = rows.map(r => r.apr);
-  const lo = Math.min(...rates);
-  const hi = Math.max(...rates);
-  if (lo === hi) return active.value;
-  return `${lo}% - ${hi}% APR`;
-}
-
-/**
- * Build the APR table rows for a finance incentive.
- * If the incentive has rateTiers (tiered deal), use that data directly.
- * Otherwise, fall back to parsing the text and generating synthetic rows.
- */
-export function buildAprTable(incentive: { value: string; title: string; terms?: string; rateTiers?: RateTier[] }): AprTableRow[] {
-  // If we have explicit tier data, use it directly
-  if (incentive.rateTiers && incentive.rateTiers.length > 0) {
-    return incentive.rateTiers.map(tier => ({
-      term: tier.term,
-      apr: tier.apr,
-      cashBack: tier.cashBack,
-    }));
-  }
-
-  // Legacy fallback: parse text and generate synthetic rows
-  const text = `${incentive.value} ${incentive.title} ${incentive.terms ?? ''}`;
-  const aprMatch = text.match(/([\d.]+)%/);
-  const apr = aprMatch ? parseFloat(aprMatch[1]) : 0;
-
-  const termNumbers: number[] = [];
-  const rangeMatch = text.match(/(\d+)\s*[-–]\s*(\d+)\s*month/i);
-  const singleMatch = text.match(/(\d+)\s*month/i);
-  if (rangeMatch) {
-    const lo = parseInt(rangeMatch[1], 10);
-    const hi = parseInt(rangeMatch[2], 10);
-    for (const t of [24, 36, 48, 60, 72, 84]) {
-      if (t >= lo && t <= hi) termNumbers.push(t);
-    }
-  } else if (singleMatch) {
-    termNumbers.push(parseInt(singleMatch[1], 10));
-  }
-
-  if (termNumbers.length === 0) termNumbers.push(36, 48, 60, 72);
-
-  const spreadByTerm: Record<number, number> = {
-    24: -0.5, 36: 0, 48: 0.3, 60: 0.6, 72: 1.0, 84: 1.4,
-  };
-
-  return termNumbers.map(t => ({
-    term: t,
-    apr: Math.round((apr + (spreadByTerm[t] ?? 0)) * 100) / 100,
-  }));
-}
-
-/**
- * Checks if cash back varies by term (needs 3-column table) or is uniform (can show as badge).
- */
-export function hasTieredCashBack(rows: AprTableRow[]): boolean {
-  const cashBacks = rows.map(r => r.cashBack ?? 0).filter(c => c > 0);
-  if (cashBacks.length === 0) return false;
-  const uniqueValues = new Set(cashBacks);
-  return uniqueValues.size > 1;
-}
-
-/**
- * Get uniform cash back amount if all rows have the same value (for badge display).
- */
-export function getUniformCashBack(rows: AprTableRow[]): number | null {
-  const cashBacks = rows.map(r => r.cashBack ?? 0).filter(c => c > 0);
-  if (cashBacks.length === 0) return null;
-  const uniqueValues = new Set(cashBacks);
-  if (uniqueValues.size === 1) return cashBacks[0];
-  return null;
-}
-
 const IncentivesModal = ({
   isOpen,
   onClose,
@@ -272,14 +188,13 @@ const IncentivesModal = ({
   offer: offerProp,
   allIncentives,
   selectedIncentiveId,
-  initialDropdownOpen: _initialDropdownOpen = false,
   onCtaClick,
   onApplyIncentive,
   appliedIncentiveIds = [],
   onSubmitForm,
 }: IncentivesModalProps) => {
   const navigate = useNavigate();
-  const offer: IncentiveOfferDetail = { ...DEFAULT_OFFER, ...offerProp };
+  const offer = useMemo<IncentiveOfferDetail>(() => ({ ...DEFAULT_OFFER, ...offerProp }), [offerProp]);
   const vehicleLabel = `${offer.year} ${offer.make} ${offer.model}`;
   const ctaLabel = `GET THIS DEAL ON THE ${offer.make.toUpperCase()} ${offer.model.toUpperCase()}`;
   const vehicleUrl = offer.slug ? `/${offer.slug}` : `/vehicles?make=${encodeURIComponent(offer.make)}&model=${encodeURIComponent(offer.model)}`;
@@ -289,28 +204,17 @@ const IncentivesModal = ({
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
-  const [activeIncentiveId, setActiveIncentiveId] = useState<string | null>(null);
   const [conversionBPostSubmit, setConversionBPostSubmit] = useState<'dealer' | 'no-dealer' | null>(null);
   const conversionBFormRef = useRef<HTMLFormElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const leftFadeRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setConversionBPostSubmit(null);
-    }
-  }, [isOpen]);
+  const handleClose = useCallback(() => {
+    setConversionBPostSubmit(null);
+    onClose();
+  }, [onClose]);
 
-  useEffect(() => {
-    if (isOpen) {
-      if (selectedIncentiveId) {
-        setActiveIncentiveId(selectedIncentiveId);
-      } else if (allIncentives && allIncentives.length > 0) {
-        setActiveIncentiveId(allIncentives[0].id);
-      }
-    }
-  }, [isOpen, selectedIncentiveId, allIncentives]);
-
+  const activeIncentiveId = selectedIncentiveId ?? allIncentives?.[0]?.id ?? null;
   const activeIncentive: Incentive | null = allIncentives?.find(i => i.id === activeIncentiveId) ?? (() => {
     if (allIncentives && allIncentives.length > 0) return null;
     const isLease = /lease/i.test(offer.offerHeadline ?? '');
@@ -347,7 +251,7 @@ const IncentivesModal = ({
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Escape') { handleClose(); return; }
       if (e.key !== 'Tab' || !dialogRef.current) return;
       const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -376,7 +280,7 @@ const IncentivesModal = ({
         triggerRef.current?.focus({ preventScroll: true });
       }
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -419,8 +323,8 @@ const IncentivesModal = ({
       setConversionBPostSubmit(match);
       return;
     }
-    onClose();
-  }, [firstName, lastName, email, phone, message, vehicleLabel, onSubmitForm, onClose, variant, offer]);
+    handleClose();
+  }, [firstName, lastName, email, phone, message, vehicleLabel, onSubmitForm, handleClose, variant, offer]);
 
   /** Sticky CTA sits outside the <form>; validate the real form node then submit via React state (same as onSubmit). */
   const handleConversionBContactClick = useCallback(() => {
@@ -459,7 +363,7 @@ const IncentivesModal = ({
     } else {
       navigate(vehicleUrl);
     }
-    onClose();
+    handleClose();
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -507,7 +411,7 @@ const IncentivesModal = ({
   );
 
   const modalTree = (
-    <div className="incentives-modal__overlay cd-mobile-modal__overlay" onClick={onClose}>
+    <div className="incentives-modal__overlay cd-mobile-modal__overlay" onClick={handleClose}>
       <div
         ref={dialogRef}
         className={`incentives-modal incentives-modal--${variant} cd-mobile-modal__panel`}
@@ -516,7 +420,7 @@ const IncentivesModal = ({
         aria-modal="true"
         aria-labelledby="incentives-modal-title"
       >
-        <button type="button" className="incentives-modal__close" onClick={onClose} aria-label="Close">
+        <button type="button" className="incentives-modal__close" onClick={handleClose} aria-label="Close">
           <X size={24} />
         </button>
 
@@ -539,7 +443,7 @@ const IncentivesModal = ({
               <button type="button" className="incentives-modal__cta" onClick={handleCta}>
                 {ctaLabel}
               </button>
-              <button type="button" className="incentives-modal__secondary-link" onClick={onClose}>
+              <button type="button" className="incentives-modal__secondary-link" onClick={handleClose}>
                 View Full Vehicle Details
               </button>
             </>
@@ -645,7 +549,7 @@ const IncentivesModal = ({
               >
                 REQUEST INFO FROM DEALER
               </button>
-              <button type="button" className="incentives-modal__secondary-link" onClick={onClose}>
+              <button type="button" className="incentives-modal__secondary-link" onClick={handleClose}>
                 View Full Vehicle Details
               </button>
             </>
@@ -748,7 +652,7 @@ const IncentivesModal = ({
                   </div>
                   <div className="incentives-modal__v5-msrp-row">
                     <span className="incentives-modal__v5-msrp">{formatMsrp(offer.msrpMin, offer.msrpMax)}</span>
-                    <a href={vehicleUrl} className="incentives-modal__v5-read-review" onClick={(e) => { e.preventDefault(); navigate(vehicleUrl); onClose(); }}>
+                    <a href={vehicleUrl} className="incentives-modal__v5-read-review" onClick={(e) => { e.preventDefault(); navigate(vehicleUrl); handleClose(); }}>
                       Read Review
                     </a>
                   </div>
@@ -935,15 +839,15 @@ const IncentivesModal = ({
                           <>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
-                              <p className="incentives-modal__v5-key-section-text">{offer.make} US Special Lease Rates</p>
+                              <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                             </div>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
-                              <p className="incentives-modal__v5-key-section-text">[Eligibility] Residents residing in qualifying regions of the United States.; [Qualification] O.A.C. New and unregistered vehicles only are eligible.</p>
+                              <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules || activeIncentive.eligibility || offer.whoQualifies}</p>
                             </div>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                              <p className="incentives-modal__v5-key-section-text">Lease for 24 months at 10,000 miles/year with $1,879 due at signing.</p>
+                              <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms || activeIncentive.value}</p>
                             </div>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
@@ -951,7 +855,9 @@ const IncentivesModal = ({
                             </div>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
-                              <p className="incentives-modal__v5-key-section-text">This offer expires January 2, 2026. Manufacturer deals change monthly—once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.</p>
+                              <p className="incentives-modal__v5-key-section-text">
+                                This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
+                              </p>
                             </div>
                           </>
                         )}
@@ -1119,7 +1025,7 @@ const IncentivesModal = ({
                         CONTACT DEALER
                       </button>
                     ) : (
-                      <button type="button" className="incentives-modal__v5-submit" onClick={onClose}>
+                      <button type="button" className="incentives-modal__v5-submit" onClick={handleClose}>
                         Done
                       </button>
                     )}
@@ -1127,11 +1033,11 @@ const IncentivesModal = ({
                       type="button"
                       className="incentives-modal__v5-marketplace-btn"
                       onClick={() => {
-                        onClose();
+                        handleClose();
                         navigate(vehicleUrl);
                       }}
                     >
-                      SHOP NEW TRAX
+                      SHOP NEW {offer.model.toUpperCase()}
                     </button>
                   </div>
                 </div>
@@ -1162,7 +1068,7 @@ const IncentivesModal = ({
                       </h2>
                       <div className="incentives-modal__v5-msrp-row">
                         <span className="incentives-modal__v5-msrp">{formatMsrp(offer.msrpMin, offer.msrpMax)}</span>
-                        <a href={vehicleUrl} className="incentives-modal__v5-read-review" onClick={(e) => { e.preventDefault(); navigate(vehicleUrl); onClose(); }}>
+                        <a href={vehicleUrl} className="incentives-modal__v5-read-review" onClick={(e) => { e.preventDefault(); navigate(vehicleUrl); handleClose(); }}>
                           Read Review
                         </a>
                       </div>

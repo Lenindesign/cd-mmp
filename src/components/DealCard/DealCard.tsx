@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Info, ChevronRight } from 'lucide-react';
 import SavingsText from '../SavingsText';
+import { OptimizedImage } from '../OptimizedImage';
 import { EDITORS_CHOICE_BADGE_URL, TEN_BEST_BADGE_URL } from '../../constants/badges';
 import { formatExpiration } from '../../utils/dateUtils';
 import type { VehicleOfferSummary } from '../../utils/dealCalculations';
+import { vehicleImageFor } from '../../utils/vehicleImages';
 import './DealCard.css';
 
 /* ------------------------------------------------------------------ */
@@ -38,6 +40,8 @@ export interface DealCardProps {
   slug: string;
   vehicleName: string;
   vehicleImage: string;
+  vehicleImageFallback?: string;
+  imageLoading?: React.ImgHTMLAttributes<HTMLImageElement>['loading'];
   vehicleSlug: string;
   vehicleMake: string;
   vehicleModel: string;
@@ -88,6 +92,53 @@ export interface DealCardProps {
     | { type: 'toggle'; to: string; label: string };
 }
 
+const escapeSvgText = (value: string) =>
+  value.replace(/[&<>"']/g, (char) => {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&apos;';
+      default:
+        return char;
+    }
+  });
+
+const getDealCardFallbackImage = (vehicleName: string, badge?: string) => {
+  const title = escapeSvgText(vehicleName);
+  const kicker = escapeSvgText(badge || 'Vehicle');
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="${title}">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f7f8f8"/>
+          <stop offset="100%" stop-color="#e8ecef"/>
+        </linearGradient>
+      </defs>
+      <rect width="800" height="500" fill="url(#bg)"/>
+      <path d="M132 312h536c24 0 44 20 44 44v16H88v-16c0-24 20-44 44-44Z" fill="#d8e2e8"/>
+      <path d="M194 286c42-66 86-102 158-102h116c68 0 119 35 160 102H194Z" fill="#ffffff"/>
+      <path d="M244 286c34-42 64-64 111-64h104c42 0 77 22 107 64H244Z" fill="#c8d7e0"/>
+      <path d="M181 315h438c34 0 64 22 74 54H107c10-32 40-54 74-54Z" fill="#1f638f"/>
+      <circle cx="229" cy="372" r="45" fill="#f7f8f8"/>
+      <circle cx="229" cy="372" r="23" fill="#53616a"/>
+      <circle cx="571" cy="372" r="45" fill="#f7f8f8"/>
+      <circle cx="571" cy="372" r="23" fill="#53616a"/>
+      <rect x="306" y="132" width="188" height="36" rx="18" fill="#1f638f" opacity="0.12"/>
+      <text x="400" y="157" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="3" fill="#1f638f">${kicker.toUpperCase()}</text>
+      <text x="400" y="445" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800" fill="#1f2328">${title}</text>
+    </svg>
+  `;
+
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+};
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
@@ -96,6 +147,8 @@ const DealCard: React.FC<DealCardProps> = ({
   slug,
   vehicleName,
   vehicleImage,
+  vehicleImageFallback,
+  imageLoading = 'lazy',
   vehicleSlug,
   vehicleModel,
   rating,
@@ -117,6 +170,9 @@ const DealCard: React.FC<DealCardProps> = ({
   secondaryCta,
 }) => {
   const vehiclePath = `/${vehicleSlug}`;
+  const generatedFallback = vehicleImageFor(vehicleName);
+  const primaryImage = vehicleImage || vehicleImageFallback || generatedFallback;
+  const fallbackSrc = getDealCardFallbackImage(vehicleName, imageBadge || dealTypeTag);
 
   const defaultSecondaryCta = secondaryCta === undefined
     ? { type: 'link' as const, to: vehiclePath, label: `Shop New ${vehicleModel}` }
@@ -139,86 +195,94 @@ const DealCard: React.FC<DealCardProps> = ({
       </div>
 
       {/* Image */}
-      <Link to={vehiclePath} className="deal-card__image-link">
-        <div className="deal-card__image-container">
-          <img src={vehicleImage} alt={vehicleName} className="deal-card__image" loading="lazy" />
+      <div className="deal-card__image-container">
+        <Link to={vehiclePath} className="deal-card__image-link" aria-label={`View ${vehicleName}`}>
+          <OptimizedImage
+            src={primaryImage}
+            fallbackSrc={fallbackSrc}
+            alt={vehicleName}
+            className="deal-card__image"
+            wrapperClassName="deal-card__optimized-image"
+            loading={imageLoading}
+            fallbackDelayMs={1600}
+          />
+        </Link>
 
-          {dealTypeTag && (
-            <span className="deal-card__deal-type-tag">{dealTypeTag}</span>
-          )}
+        {dealTypeTag && (
+          <span className="deal-card__deal-type-tag">{dealTypeTag}</span>
+        )}
 
+        <button
+          type="button"
+          className={`deal-card__save ${isSaved ? 'deal-card__save--saved' : ''}`}
+          onClick={onSaveClick}
+          aria-label={isSaved ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <Heart size={16} fill={isSaved ? 'currentColor' : 'none'} />
+        </button>
+
+        {offers.length > 1 && (
           <button
             type="button"
-            className={`deal-card__save ${isSaved ? 'deal-card__save--saved' : ''}`}
-            onClick={onSaveClick}
-            aria-label={isSaved ? 'Remove from favorites' : 'Add to favorites'}
+            className="deal-card__offers-tag"
+            onClick={onToggleOffersPopup}
+            aria-expanded={offersPopupOpen}
+            aria-controls={`${slug}-offers-popup`}
           >
-            <Heart size={16} fill={isSaved ? 'currentColor' : 'none'} />
+            {offers.length} Offers Available
           </button>
+        )}
 
-          {offers.length > 1 && (
-            <button
-              type="button"
-              className="deal-card__offers-tag"
-              onClick={onToggleOffersPopup}
-              aria-expanded={offersPopupOpen}
-              aria-controls={`${slug}-offers-popup`}
-            >
-              {offers.length} Offers Available
-            </button>
-          )}
-
-          {offersPopupOpen && (
-            <div className="deal-card__offers-popup" id={`${slug}-offers-popup`} role="region" aria-label={`${offers.length} available offers`}>
-              <div className="deal-card__offers-popup-header">
-                <strong>{offers.length} Available Offers</strong>
-                <button
-                  type="button"
-                  className="deal-card__offers-popup-close"
-                  onClick={onCloseOffersPopup}
-                  aria-label="Close offers"
-                >
-                  &times;
-                </button>
-              </div>
-              <ul className="deal-card__offers-popup-list">
-                {offers.map((o, idx) => (
-                  <li key={idx} className="deal-card__offers-popup-item">
-                    <span className={`deal-card__offers-popup-type deal-card__offers-popup-type--${o.type}`}>
-                      {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
-                    </span>
-                    <span className="deal-card__offers-popup-label">{o.label}</span>
-                    <span className="deal-card__offers-popup-exp">
-                      expires {formatExpiration(o.expires)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+        {offersPopupOpen && (
+          <div className="deal-card__offers-popup" id={`${slug}-offers-popup`} role="region" aria-label={`${offers.length} available offers`}>
+            <div className="deal-card__offers-popup-header">
+              <strong>{offers.length} Available Offers</strong>
+              <button
+                type="button"
+                className="deal-card__offers-popup-close"
+                onClick={onCloseOffersPopup}
+                aria-label="Close offers"
+              >
+                &times;
+              </button>
             </div>
-          )}
+            <ul className="deal-card__offers-popup-list">
+              {offers.map((o, idx) => (
+                <li key={idx} className="deal-card__offers-popup-item">
+                  <span className={`deal-card__offers-popup-type deal-card__offers-popup-type--${o.type}`}>
+                    {o.type === 'zero-apr' ? '0% APR' : o.type === 'cash' ? 'Cash' : o.type === 'finance' ? 'Buy' : 'Lease'}
+                  </span>
+                  <span className="deal-card__offers-popup-label">{o.label}</span>
+                  <span className="deal-card__offers-popup-exp">
+                    expires {formatExpiration(o.expires)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-          {imageBadge && (
-            <span className="deal-card__image-badge">{imageBadge}</span>
-          )}
+        {imageBadge && (
+          <span className="deal-card__image-badge">{imageBadge}</span>
+        )}
 
-          {(editorsChoice || tenBest) && (
-            <div className="deal-card__badges">
-              {tenBest && (
-                <span className="deal-card__badge" aria-label="10Best winner">
-                  <img src={TEN_BEST_BADGE_URL} alt="" aria-hidden="true" className="deal-card__badge-img" />
-                  <span className="deal-card__badge-tip" role="tooltip">10Best</span>
-                </span>
-              )}
-              {editorsChoice && (
-                <span className="deal-card__badge" aria-label="Editors' Choice">
-                  <img src={EDITORS_CHOICE_BADGE_URL} alt="" aria-hidden="true" className="deal-card__badge-img" />
-                  <span className="deal-card__badge-tip" role="tooltip">Editors' Choice</span>
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      </Link>
+        {(editorsChoice || tenBest) && (
+          <div className="deal-card__badges">
+            {tenBest && (
+              <span className="deal-card__badge" aria-label="10Best winner">
+                <img src={TEN_BEST_BADGE_URL} alt="" aria-hidden="true" className="deal-card__badge-img" />
+                <span className="deal-card__badge-tip" role="tooltip">10Best</span>
+              </span>
+            )}
+            {editorsChoice && (
+              <span className="deal-card__badge" aria-label="Editors' Choice">
+                <img src={EDITORS_CHOICE_BADGE_URL} alt="" aria-hidden="true" className="deal-card__badge-img" />
+                <span className="deal-card__badge-tip" role="tooltip">Editors' Choice</span>
+              </span>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Body */}
       <div className="deal-card__body">

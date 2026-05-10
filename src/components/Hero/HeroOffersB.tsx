@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
-import { getAprRangeLabel } from '../IncentivesModal/IncentivesModal';
+import { getAprRangeLabel } from '../IncentivesModal/incentivesModalUtils';
 import { formatExpiration } from '../../utils/dateUtils';
 
 interface HeroOffersBProps {

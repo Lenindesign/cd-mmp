@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, Info, ListOrdered, Mail, RotateCcw, SkipForward, SlidersHorizontal, TrendingUp } from 'lucide-react';
 import { getAllVehicles, getRankingVehicles, getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
@@ -7,13 +7,17 @@ import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/state
 import { Button } from '../../components/Button';
 import { Select, TextField } from '../../components/TextField';
 import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
+import DealCard, { type DealCardPayment } from '../../components/DealCard/DealCard';
 import HeroOffersB from '../../components/Hero/HeroOffersB';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import TradeInEstimateModal from '../../components/TradeInEstimateModal';
 import { estimateTradeInValue } from '../../utils/tradeInEstimate';
+import { getVehicleOffers, type VehicleOfferSummary } from '../../utils/dealCalculations';
+import { getRangeInputStyle } from '../../utils/rangeInputStyle';
 import { PaymentCalculatorFinanceCharts } from '../../components/PaymentCalculator/PaymentCalculatorFinanceCharts';
 import { DEFAULT_BODY_STYLES } from '../../components/BodyStyleSelector';
 import '../../components/Hero/Hero.css';
+import '../../components/PaymentEstimator/PaymentEstimator.css';
 import './AllInOnePaymentCalculatorPage.css';
 
 type VehicleCondition = 'new' | 'used';
@@ -35,6 +39,13 @@ interface YearScheduleRow {
   principal: number;
   interest: number;
   endBalance: number;
+}
+
+interface LightAffordableDealCard {
+  vehicle: Vehicle;
+  offers: VehicleOfferSummary[];
+  primaryOffer: VehicleOfferSummary;
+  primaryIncentive: Incentive;
 }
 
 const CUSTOM_RATE_TERMS = [12, 24, 36, 48, 60, 72, 84];
@@ -183,13 +194,48 @@ const getCombinedMpg = (mpg?: string) => {
 const getVehicleCardCopy = (vehicle: Vehicle) =>
   `The ${vehicle.year} ${vehicle.make} ${vehicle.model} keeps this estimate realistic with a starting price under your budget and a ${vehicle.staffRating}/10 C/D rating.`;
 
-const getBudgetVehicleReason = (vehicle: Vehicle, index: number) => {
-  if (index === 0) return 'Closest to your budget';
-  if (vehicle.tenBest) return '10Best pick';
-  if (vehicle.editorsChoice) return "Editor's Choice";
-  if (vehicle.evOfTheYear) return 'EV award winner';
-  if (vehicle.staffRating >= 8.5) return 'High C/D rating';
-  return 'Fits this estimate';
+const getLightDealTypeTag = (offerType: VehicleOfferSummary['type']) => {
+  switch (offerType) {
+    case 'lease':
+      return 'Lease';
+    case 'cash':
+      return 'Cash';
+    case 'finance':
+    case 'zero-apr':
+      return 'Buy';
+    default:
+      return 'Special';
+  }
+};
+
+const getLightDealPayment = (offer: VehicleOfferSummary): DealCardPayment => {
+  if (offer.type === 'lease') {
+    return {
+      amount: offer.label.match(/\$[\d,]+/)?.[0] ?? offer.label,
+      period: '/mo lease',
+      savings: { type: 'plain', text: 'Lease special' },
+      expirationDate: offer.expires,
+    };
+  }
+
+  if (offer.type === 'finance' || offer.type === 'zero-apr') {
+    const amount = offer.label.match(/[\d.]+%/)?.[0] ?? offer.label.split(/\s+/)[0] ?? offer.label;
+    const term = offer.label.replace(amount, '').trim();
+
+    return {
+      amount,
+      period: 'APR',
+      savings: { type: 'plain', text: term || 'Low-rate offer' },
+      expirationDate: offer.expires,
+    };
+  }
+
+  return {
+    amount: offer.label.match(/\$[\d,]+/)?.[0] ?? offer.label,
+    period: 'Cash Back',
+    savings: { type: 'plain', text: 'Manufacturer cash' },
+    expirationDate: offer.expires,
+  };
 };
 
 const SealCheckIcon = ({ size = 24 }: { size?: number }) => (
@@ -224,6 +270,11 @@ const getFinanceRateForTerm = (incentive: Incentive | undefined, term: number) =
 const getTierCashBack = (incentive: Incentive | undefined, term: number) => {
   const tier = incentive?.rateTiers?.find((item) => item.term === term);
   return tier?.cashBack ?? 0;
+};
+
+const getPreferredScrollBehavior = (): ScrollBehavior => {
+  if (typeof window === 'undefined') return 'auto';
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 };
 
 const buildStateRules = (): StateTaxRule[] =>
@@ -367,51 +418,43 @@ function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: Ligh
   const inputId = useId();
   const helperId = `${inputId}-helper`;
   const clamped = clampLightVehiclePrice(price);
-  const sliderPct =
-    ((clamped - LIGHT_VEHICLE_PRICE_MIN) / (LIGHT_VEHICLE_PRICE_MAX - LIGHT_VEHICLE_PRICE_MIN)) * 100;
 
   return (
-    <div className="aio-payment__light-monthly-budget">
-      <div className="aio-payment__light-monthly-budget-header">
-        <label className="aio-payment__light-monthly-budget-label" htmlFor={inputId}>
+    <div className="payment-calc__field payment-calc__field--full aio-payment__light-estimator-field">
+      <div className="payment-calc__row-label aio-payment__light-estimator-row-label">
+        <label htmlFor={inputId}>
           Vehicle price
         </label>
-        <p className="aio-payment__light-monthly-budget-summary" aria-live="polite">
-          <span className="aio-payment__light-monthly-budget-summary-amount">{currency(price)}</span>
-        </p>
+        <span aria-live="polite">{currency(price)}</span>
       </div>
-      <div className="aio-payment__light-monthly-budget-input-wrap">
-        <input
-          id={inputId}
-          type="number"
-          className="aio-payment__light-monthly-budget-input"
-          min={LIGHT_VEHICLE_PRICE_MIN}
-          max={LIGHT_VEHICLE_PRICE_MAX}
-          step={LIGHT_VEHICLE_PRICE_STEP}
-          value={price}
-          aria-describedby={helperId}
-          onChange={(event) => onPriceChange(numberInput(event.target.value))}
-          onBlur={(event) => onPriceChange(clampLightVehiclePrice(numberInput(event.currentTarget.value)))}
-        />
+      <input
+        id={inputId}
+        type="number"
+        className="payment-calc__input aio-payment__light-estimator-input"
+        min={LIGHT_VEHICLE_PRICE_MIN}
+        max={LIGHT_VEHICLE_PRICE_MAX}
+        step={LIGHT_VEHICLE_PRICE_STEP}
+        value={price}
+        aria-describedby={helperId}
+        onChange={(event) => onPriceChange(numberInput(event.target.value))}
+        onBlur={(event) => onPriceChange(clampLightVehiclePrice(numberInput(event.currentTarget.value)))}
+      />
+      <input
+        type="range"
+        className="payment-calc__slider"
+        min={LIGHT_VEHICLE_PRICE_MIN}
+        max={LIGHT_VEHICLE_PRICE_MAX}
+        step={LIGHT_VEHICLE_PRICE_STEP}
+        value={clamped}
+        onChange={(event) => onPriceChange(clampLightVehiclePrice(numberInput(event.target.value)))}
+        aria-label="Adjust vehicle price"
+        style={getRangeInputStyle(clamped, LIGHT_VEHICLE_PRICE_MIN, LIGHT_VEHICLE_PRICE_MAX)}
+      />
+      <div className="payment-calc__ticks" aria-hidden="true">
+        <span>{currency(LIGHT_VEHICLE_PRICE_MIN)}</span>
+        <span>{currency(LIGHT_VEHICLE_PRICE_MAX)}</span>
       </div>
-      <div className="aio-payment__light-monthly-budget-slider-wrap">
-        <input
-          type="range"
-          className="aio-payment__light-monthly-budget-slider"
-          style={{ '--aio-light-budget-pct': `${sliderPct}%` } as CSSProperties}
-          min={LIGHT_VEHICLE_PRICE_MIN}
-          max={LIGHT_VEHICLE_PRICE_MAX}
-          step={LIGHT_VEHICLE_PRICE_STEP}
-          value={clamped}
-          onChange={(event) => onPriceChange(clampLightVehiclePrice(numberInput(event.target.value)))}
-          aria-label="Adjust vehicle price"
-        />
-        <div className="aio-payment__light-monthly-budget-ticks" aria-hidden="true">
-          <span>{currency(LIGHT_VEHICLE_PRICE_MIN)}</span>
-          <span>{currency(LIGHT_VEHICLE_PRICE_MAX)}</span>
-        </div>
-      </div>
-      <p id={helperId} className="aio-payment__light-monthly-budget-helper">
+      <p id={helperId} className="payment-calc__note payment-calc__note--inline aio-payment__light-estimator-helper">
         Estimated payment: {currency(estimatedMonthly)}/mo before dealer-specific changes.
       </p>
     </div>
@@ -422,52 +465,43 @@ function LightMonthlyBudgetField({ affordableMsrp, targetMonthlyPayment, onBudge
   const inputId = useId();
   const helperId = `${inputId}-helper`;
   const clamped = Math.min(LIGHT_MONTHLY_BUDGET_MAX, Math.max(LIGHT_MONTHLY_BUDGET_MIN, targetMonthlyPayment));
-  const sliderPct =
-    ((clamped - LIGHT_MONTHLY_BUDGET_MIN) / (LIGHT_MONTHLY_BUDGET_MAX - LIGHT_MONTHLY_BUDGET_MIN)) * 100;
 
   return (
-    <div className="aio-payment__light-monthly-budget">
-      <div className="aio-payment__light-monthly-budget-header">
-        <label className="aio-payment__light-monthly-budget-label" htmlFor={inputId}>
+    <div className="payment-calc__field payment-calc__field--full aio-payment__light-estimator-field">
+      <div className="payment-calc__row-label aio-payment__light-estimator-row-label">
+        <label htmlFor={inputId}>
           Monthly budget
         </label>
-        <p className="aio-payment__light-monthly-budget-summary" aria-live="polite">
-          <span className="aio-payment__light-monthly-budget-summary-amount">{currency(targetMonthlyPayment)}</span>
-          <span className="aio-payment__light-monthly-budget-summary-suffix">/mo</span>
-        </p>
+        <span aria-live="polite">{currency(targetMonthlyPayment)}/mo</span>
       </div>
-      <div className="aio-payment__light-monthly-budget-input-wrap">
-        <input
-          id={inputId}
-          type="number"
-          className="aio-payment__light-monthly-budget-input"
-          min={LIGHT_MONTHLY_BUDGET_MIN}
-          max={LIGHT_MONTHLY_BUDGET_MAX}
-          step={LIGHT_MONTHLY_BUDGET_STEP}
-          value={targetMonthlyPayment}
-          aria-describedby={helperId}
-          onChange={(event) => onBudgetChange(numberInput(event.target.value))}
-          onBlur={(event) => onBudgetChange(clampLightMonthlyBudget(numberInput(event.currentTarget.value)))}
-        />
+      <input
+        id={inputId}
+        type="number"
+        className="payment-calc__input aio-payment__light-estimator-input"
+        min={LIGHT_MONTHLY_BUDGET_MIN}
+        max={LIGHT_MONTHLY_BUDGET_MAX}
+        step={LIGHT_MONTHLY_BUDGET_STEP}
+        value={targetMonthlyPayment}
+        aria-describedby={helperId}
+        onChange={(event) => onBudgetChange(numberInput(event.target.value))}
+        onBlur={(event) => onBudgetChange(clampLightMonthlyBudget(numberInput(event.currentTarget.value)))}
+      />
+      <input
+        type="range"
+        className="payment-calc__slider"
+        min={LIGHT_MONTHLY_BUDGET_MIN}
+        max={LIGHT_MONTHLY_BUDGET_MAX}
+        step={LIGHT_MONTHLY_BUDGET_STEP}
+        value={clamped}
+        onChange={(event) => onBudgetChange(clampLightMonthlyBudget(numberInput(event.target.value)))}
+        aria-label="Adjust monthly budget"
+        style={getRangeInputStyle(clamped, LIGHT_MONTHLY_BUDGET_MIN, LIGHT_MONTHLY_BUDGET_MAX)}
+      />
+      <div className="payment-calc__ticks" aria-hidden="true">
+        <span>{currency(LIGHT_MONTHLY_BUDGET_MIN)}</span>
+        <span>{currency(LIGHT_MONTHLY_BUDGET_MAX)}</span>
       </div>
-      <div className="aio-payment__light-monthly-budget-slider-wrap">
-        <input
-          type="range"
-          className="aio-payment__light-monthly-budget-slider"
-          style={{ '--aio-light-budget-pct': `${sliderPct}%` } as CSSProperties}
-          min={LIGHT_MONTHLY_BUDGET_MIN}
-          max={LIGHT_MONTHLY_BUDGET_MAX}
-          step={LIGHT_MONTHLY_BUDGET_STEP}
-          value={clamped}
-          onChange={(event) => onBudgetChange(clampLightMonthlyBudget(numberInput(event.target.value)))}
-          aria-label="Adjust monthly budget"
-        />
-        <div className="aio-payment__light-monthly-budget-ticks" aria-hidden="true">
-          <span>{currency(LIGHT_MONTHLY_BUDGET_MIN)}</span>
-          <span>{currency(LIGHT_MONTHLY_BUDGET_MAX)}</span>
-        </div>
-      </div>
-      <p id={helperId} className="aio-payment__light-monthly-budget-helper">
+      <p id={helperId} className="payment-calc__note payment-calc__note--inline aio-payment__light-estimator-helper">
         We estimate a vehicle price near {currency(affordableMsrp)} before tax and fees.
       </p>
     </div>
@@ -487,9 +521,9 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
   {
     label: 'Payment goal',
     short: 'Goal',
-    hint: 'Start with what you know best—a monthly budget or a vehicle price—and we’ll build from there.',
+    hint: 'Start with a monthly budget or vehicle price, then we’ll build the estimate from there.',
     panelTitle: 'Choose your starting point',
-    panelIntro: 'Start with what you know best—a monthly budget or a vehicle price—and we’ll build from there.',
+    panelIntro: 'Start with a monthly budget or vehicle price, then we’ll build the estimate from there.',
   },
   {
     label: 'Loan setup',
@@ -501,10 +535,10 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
   {
     label: 'Vehicle',
     short: 'Vehicle',
-    hint: 'Pick a year, make, and trim so incentives and pricing feel real—not generic.',
+    hint: 'Pick a year, make, and trim so incentives and pricing feel real, not generic.',
     panelTitle: 'Pick a vehicle',
     panelIntro:
-      'Know exactly what you want, or just have a body style in mind? Either works — or skip and refine later.',
+      'Know exactly what you want, or just have a body style in mind? Either works. You can also skip this and refine it later.',
     panelEyebrowSuffix: ' · OPTIONAL',
   },
   {
@@ -550,110 +584,102 @@ function LightLoanTermsStepPanel({
   const downId = useId();
   const aprId = useId();
   const downClamped = clampLightDownPayment(downPayment);
-  const downPct =
-    ((downClamped - LIGHT_DOWN_PAYMENT_MIN) / (LIGHT_DOWN_PAYMENT_MAX - LIGHT_DOWN_PAYMENT_MIN)) * 100;
   const aprSliderValue = aprLocked ? activeApr : clampLightAprSlider(customApr);
-  const aprPct =
-    ((aprSliderValue - LIGHT_APR_SLIDER_MIN) / (LIGHT_APR_SLIDER_MAX - LIGHT_APR_SLIDER_MIN)) * 100;
 
   return (
-    <div className="aio-payment__light-loan-step">
-      <div className="aio-payment__light-loan-step__field">
-        <div className="aio-payment__light-loan-step__head">
-          <label className="aio-payment__light-loan-step__label" htmlFor={downId}>
+    <div className="payment-calc__section payment-calc__section--pad aio-payment__light-loan-step">
+      <div className="payment-calc__field payment-calc__field--full">
+        <div className="payment-calc__row-label">
+          <label htmlFor={downId}>
             Down payment
           </label>
-          <p className="aio-payment__light-loan-step__value" aria-live="polite">
+          <span aria-live="polite">
             {currency(downClamped)}
-          </p>
+          </span>
         </div>
-        <div className="aio-payment__light-loan-step__input-wrap">
-          <input
-            id={downId}
-            type="number"
-            className="aio-payment__light-loan-step__input"
-            min={LIGHT_DOWN_PAYMENT_MIN}
-            max={LIGHT_DOWN_PAYMENT_MAX}
-            step={LIGHT_DOWN_PAYMENT_STEP}
-            value={downPayment}
-            onChange={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.target.value)))}
-            onBlur={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.currentTarget.value)))}
-          />
-        </div>
-        <div className="aio-payment__light-loan-step__slider-wrap">
-          <input
-            type="range"
-            className="aio-payment__light-loan-step__slider"
-            style={{ '--aio-light-loan-pct': `${downPct}%` } as CSSProperties}
-            min={LIGHT_DOWN_PAYMENT_MIN}
-            max={LIGHT_DOWN_PAYMENT_MAX}
-            step={LIGHT_DOWN_PAYMENT_STEP}
-            value={downClamped}
-            onChange={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.target.value)))}
-            aria-label="Adjust down payment"
-          />
+        <input
+          id={downId}
+          type="number"
+          className="payment-calc__input"
+          min={LIGHT_DOWN_PAYMENT_MIN}
+          max={LIGHT_DOWN_PAYMENT_MAX}
+          step={LIGHT_DOWN_PAYMENT_STEP}
+          value={downPayment}
+          onChange={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.target.value)))}
+          onBlur={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.currentTarget.value)))}
+        />
+        <input
+          type="range"
+          className="payment-calc__slider"
+          min={LIGHT_DOWN_PAYMENT_MIN}
+          max={LIGHT_DOWN_PAYMENT_MAX}
+          step={LIGHT_DOWN_PAYMENT_STEP}
+          value={downClamped}
+          onChange={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.target.value)))}
+          aria-label="Adjust down payment"
+          style={getRangeInputStyle(downClamped, LIGHT_DOWN_PAYMENT_MIN, LIGHT_DOWN_PAYMENT_MAX)}
+        />
+        <div className="payment-calc__ticks" aria-hidden="true">
+          <span>{currency(LIGHT_DOWN_PAYMENT_MIN)}</span>
+          <span>{currency(LIGHT_DOWN_PAYMENT_MAX)}</span>
         </div>
       </div>
 
-      <div className="aio-payment__light-loan-step__field">
-        <div className="aio-payment__light-loan-step__head">
+      <div className="payment-calc__field payment-calc__field--full">
+        <div className="payment-calc__row-label">
           {aprLocked ? (
-            <span className="aio-payment__light-loan-step__label">Interest rate (APR)</span>
+            <span>Interest rate (APR)</span>
           ) : (
-            <label className="aio-payment__light-loan-step__label" htmlFor={aprId}>
+            <label htmlFor={aprId}>
               Interest rate (APR)
             </label>
           )}
-          <p className="aio-payment__light-loan-step__value" aria-live="polite">
+          <span aria-live="polite">
             {activeApr.toFixed(2)}%
-          </p>
+          </span>
         </div>
         {!aprLocked ? (
           <>
-            <div className="aio-payment__light-loan-step__input-wrap">
-              <input
-                id={aprId}
-                type="number"
-                className="aio-payment__light-loan-step__input"
-                min={LIGHT_APR_SLIDER_MIN}
-                max={LIGHT_APR_SLIDER_MAX}
-                step={LIGHT_APR_SLIDER_STEP}
-                value={customApr}
-                onChange={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.target.value)))}
-                onBlur={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.currentTarget.value)))}
-              />
-            </div>
-            <div className="aio-payment__light-loan-step__slider-wrap">
-              <input
-                type="range"
-                className="aio-payment__light-loan-step__slider"
-                style={{ '--aio-light-loan-pct': `${aprPct}%` } as CSSProperties}
-                min={LIGHT_APR_SLIDER_MIN}
-                max={LIGHT_APR_SLIDER_MAX}
-                step={LIGHT_APR_SLIDER_STEP}
-                value={aprSliderValue}
-                onChange={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.target.value)))}
-                aria-label="Adjust interest rate"
-              />
-              <div className="aio-payment__light-loan-step__ticks" aria-hidden="true">
-                <span>0%</span>
-                <span>20%</span>
-              </div>
+            <input
+              id={aprId}
+              type="number"
+              className="payment-calc__input"
+              min={LIGHT_APR_SLIDER_MIN}
+              max={LIGHT_APR_SLIDER_MAX}
+              step={LIGHT_APR_SLIDER_STEP}
+              value={customApr}
+              onChange={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.target.value)))}
+              onBlur={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.currentTarget.value)))}
+            />
+            <input
+              type="range"
+              className="payment-calc__slider"
+              min={LIGHT_APR_SLIDER_MIN}
+              max={LIGHT_APR_SLIDER_MAX}
+              step={LIGHT_APR_SLIDER_STEP}
+              value={aprSliderValue}
+              onChange={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.target.value)))}
+              aria-label="Adjust interest rate"
+              style={getRangeInputStyle(aprSliderValue, LIGHT_APR_SLIDER_MIN, LIGHT_APR_SLIDER_MAX)}
+            />
+            <div className="payment-calc__ticks" aria-hidden="true">
+              <span>0%</span>
+              <span>20%</span>
             </div>
           </>
         ) : (
-          <p className="aio-payment__light-loan-step__locked">
+          <p className="payment-calc__note payment-calc__note--inline">
             APR follows the selected finance offer. Choose &quot;Custom rate&quot; in review to edit.
           </p>
         )}
       </div>
 
-      <div className="aio-payment__light-loan-step__field aio-payment__light-loan-step__field--terms">
-        <p className="aio-payment__light-loan-step__terms-label" id={`${downId}-terms`}>
+      <div className="payment-calc__field payment-calc__field--full">
+        <p className="payment-calc__lab" id={`${downId}-terms`}>
           Loan term
         </p>
         <div
-          className="aio-payment__light-loan-step__chips"
+          className="payment-calc__terms"
           role="group"
           aria-labelledby={`${downId}-terms`}
           aria-label="Loan term in months"
@@ -662,7 +688,7 @@ function LightLoanTermsStepPanel({
             <button
               key={months}
               type="button"
-              className={`aio-payment__light-loan-step__chip${loanTerm === months ? ' aio-payment__light-loan-step__chip--active' : ''}`}
+              className={`payment-calc__pill${loanTerm === months ? ' payment-calc__pill--on' : ''}`}
               onClick={() => onLoanTermChange(months)}
             >
               {months} mo
@@ -726,27 +752,32 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const summaryRef = useRef<HTMLElement>(null);
   const affordableCarouselRef = useRef<HTMLDivElement>(null);
   const lightAffordableSectionRef = useRef<HTMLElement>(null);
+  const lightWizardPanelRef = useRef<HTMLDivElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
   const [lightWizardStep, setLightWizardStep] = useState(1);
+  const lightWizardStepPrevRef = useRef(lightWizardStep);
   const lightVehicleBodyStyleHeadingId = useId();
   const lightBreakdownHeadingId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
+  const [lightKnownVehicleSelected, setLightKnownVehicleSelected] = useState(() => !isLightStepsVariant);
   const [lightBrowseBodyStyle, setLightBrowseBodyStyle] = useState('SUV');
-  const [lightHeroAmountTick, setLightHeroAmountTick] = useState<'up' | 'down' | null>(null);
-  const lightHeroAmountPrevRef = useRef<{ mode: PurchaseStartMode; amount: number } | null>(null);
+  const [lightAffordableOffersSlug, setLightAffordableOffersSlug] = useState<string | null>(null);
+  const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
     [defaultVehicle, selectedSlug, vehicles],
   );
+  const lightHasVehicleSelection = !isLightStepsVariant || lightVehicleStepMode === 'browsing' || lightKnownVehicleSelected;
   const selectedVehicleStyle = selectedVehicle.trim || selectedVehicle.drivetrain || selectedVehicle.bodyStyle;
 
   const showLightTradeEstimateCard =
     isLightStepsVariant &&
     lightWizardStep === 4 &&
     lightVehicleStepMode === 'known' &&
+    lightKnownVehicleSelected &&
     Boolean(selectedVehicle.model?.trim());
 
   const lightTradePlanningEstimate = useMemo(() => {
@@ -822,6 +853,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : { make: selectedVehicle.make, model: selectedVehicle.model, totalSavings: 0, incentives: [] },
     [condition, selectedVehicle.make, selectedVehicle.model],
   );
+  const activeVehicleIncentives = lightDealModalVehicle
+    ? getVehicleIncentives(lightDealModalVehicle.make, lightDealModalVehicle.model)
+    : vehicleIncentives;
   const incentives = vehicleIncentives.incentives;
   const cashIncentives = useMemo(() => incentives.filter((incentive) => incentive.type === 'cash'), [incentives]);
   const financeIncentives = useMemo(() => incentives.filter((incentive) => incentive.type === 'finance'), [incentives]);
@@ -838,13 +872,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     () => (selectedFinance ? getFinanceTermOptions(selectedFinance) : CUSTOM_RATE_TERMS),
     [selectedFinance],
   );
-
-  useEffect(() => {
-    if (!isLightStepsVariant || lightWizardStep !== 2) return;
-    if (termOptions.length > 0 && !termOptions.includes(loanTerm)) {
-      setLoanTerm(termOptions.includes(60) ? 60 : termOptions[0]);
-    }
-  }, [isLightStepsVariant, lightWizardStep, loanTerm, termOptions]);
 
   const incentiveApr = getFinanceRateForTerm(selectedFinance, loanTerm);
   const activeApr = selectedFinance ? incentiveApr ?? customApr : customApr;
@@ -875,11 +902,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const taxableAmount = getTaxableAmount(workingPrice, tradeInValue, rebateTotal, stateRule.taxRule);
   const calculatedSalesTax = taxableAmount * stateRule.rate;
   const salesTax = salesTaxOverride ? numberInput(salesTaxOverride) : calculatedSalesTax;
-  const lightTradeSalesTaxPercent = useMemo(() => {
+  const lightTradeSalesTaxPercent = (() => {
     const taxDollars = salesTaxOverride ? numberInput(salesTaxOverride) : calculatedSalesTax;
     if (taxableAmount <= 0) return stateRule.rate * 100;
     return (taxDollars / taxableAmount) * 100;
-  }, [calculatedSalesTax, salesTaxOverride, stateRule.rate, taxableAmount]);
+  })();
   const taxesAndFees = salesTax + fees;
   const outTheDoorPrice = workingPrice + salesTax + fees;
   const netVehiclePriceAfterTradeAndOffers = Math.max(0, workingPrice - tradeEquity - rebateTotal);
@@ -914,10 +941,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ? `About ${currency(Math.abs(selectedVehicleBudgetDelta))}/mo under your target`
       : 'Close to your target';
   const budgetFitCopy = budgetFitStatus === 'over'
-    ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)}. Your current budget supports about ${currency(affordableMsrp)} before tax and fees. Try a lower trim, larger down payment, longer term, or vehicles below that price range.`
+    ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)}. Your budget supports about ${currency(affordableMsrp)} before tax and fees. Try a lower trim, more cash down, a longer term, or vehicles below that range.`
     : budgetFitStatus === 'under'
-      ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)} and pencils out near ${currency(selectedVehicleMonthly)}/mo with these assumptions.`
-      : `${selectedVehicle.model} pencils out near ${currency(selectedVehicleMonthly)}/mo with the selected down payment, term, taxes, and fees.`;
+      ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)} and estimates near ${currency(selectedVehicleMonthly)}/mo with these assumptions.`
+      : `${selectedVehicle.model} estimates near ${currency(selectedVehicleMonthly)}/mo with your selected down payment, term, taxes, and fees.`;
+  const visibleBudgetFitStatus = lightHasVehicleSelection ? budgetFitStatus : 'fit';
+  const visibleBudgetFitLabel = lightHasVehicleSelection ? budgetFitLabel : 'Pick a vehicle';
+  const visibleBudgetFitHeadline = lightHasVehicleSelection ? budgetFitHeadline : 'Choose a vehicle to compare';
+  const visibleBudgetFitCopy = lightHasVehicleSelection
+    ? budgetFitCopy
+    : `Your budget supports about ${currency(affordableMsrp)} before tax and fees. Choose a vehicle or browse by body style to compare it with your target.`;
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
     const vehicleTaxableAmount = getTaxableAmount(vehiclePrice, tradeInValue, rebateTotal, stateRule.taxRule);
     const vehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : vehicleTaxableAmount * stateRule.rate;
@@ -930,29 +963,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
   const affordableVehicleBudget = isBudgetFirstVariant || isLightVariant ? workingPrice : price + downPayment + rebateTotal;
 
-  useEffect(() => {
-    const amount = startMode === 'monthly' ? affordableMsrp : estimatedMonthly;
-    const prev = lightHeroAmountPrevRef.current;
-    lightHeroAmountPrevRef.current = { mode: startMode, amount };
-
-    if (!prev || prev.mode !== startMode) {
-      return;
-    }
-    if (prev.amount === amount || Number.isNaN(amount)) {
-      return;
-    }
-
-    setLightHeroAmountTick(amount > prev.amount ? 'up' : 'down');
-    const timer = window.setTimeout(() => setLightHeroAmountTick(null), 480);
-    return () => window.clearTimeout(timer);
-  }, [startMode, affordableMsrp, estimatedMonthly]);
-
-  const affordableVehicles = useMemo(
-    () => getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4),
-    [affordableVehicleBudget, selectedVehicle.bodyStyle],
-  );
+  const affordableVehicles = getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4);
   const lightAffordableBudgetCeiling = startMode === 'monthly' ? affordableMsrp : Math.max(0, price);
-  const lightAffordableVehicles = useMemo(() => {
+  const lightAffordableVehicles = (() => {
     const ceiling = lightAffordableBudgetCeiling;
     const strict = vehicles
       .filter((vehicle) => vehicle.priceMin <= ceiling)
@@ -968,19 +981,37 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     if (relaxed.length > 0) return relaxed;
 
     return [...vehicles].sort((a, b) => b.staffRating - a.staffRating).slice(0, 8);
-  }, [lightAffordableBudgetCeiling, vehicles]);
-  const shouldScrollToBudgetVehicles = startMode === 'monthly' && budgetFitStatus === 'over' && lightAffordableVehicles.length > 0;
+  })();
+  const lightAffordableDealCards = lightAffordableVehicles
+    .map((vehicle) => {
+      const offers = getVehicleOffers(vehicle.make, vehicle.model);
+      const primaryOffer = offers[0];
+      const primaryIncentive = getVehicleIncentives(vehicle.make, vehicle.model).incentives[0];
+
+      return {
+        vehicle,
+        offers,
+        primaryOffer,
+        primaryIncentive,
+      };
+    })
+    .filter((item): item is LightAffordableDealCard => Boolean(item.primaryOffer && item.primaryIncentive));
+  const shouldScrollToBudgetVehicles =
+    (!lightHasVehicleSelection || (startMode === 'monthly' && budgetFitStatus === 'over')) &&
+    lightAffordableDealCards.length > 0;
   const lightShopHref = shouldScrollToBudgetVehicles
     ? '#aio-payment-light-affordable-heading'
     : getMarketplaceUrl(condition, selectedVehicle, selectedYear);
   const lightShopLabel = shouldScrollToBudgetVehicles
     ? 'See cars in your budget'
     : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedVehicle.model}`;
-  const lightNextStepCopy = shouldScrollToBudgetVehicles
-    ? `Start with cars near ${currency(affordableMsrp)} or adjust your loan terms.`
-    : startMode === 'monthly'
-      ? 'This vehicle is close enough to compare offers and inventory.'
-      : 'Review the due-at-signing and total cost before you shop.';
+  const lightNextStepCopy = !lightHasVehicleSelection
+    ? `Choose a vehicle or start with cars near ${currency(lightAffordableBudgetCeiling)}.`
+    : shouldScrollToBudgetVehicles
+      ? `Start with cars near ${currency(affordableMsrp)} or choose a vehicle to compare.`
+      : startMode === 'monthly'
+        ? 'This vehicle is close enough to compare offers and inventory.'
+        : 'Review the due-at-signing and total cost before you shop.';
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
   const leaseDepreciationCharge = Math.max(0, leaseAdjustedCapCost - leaseResidualValue) / Math.max(1, leaseTerm);
@@ -1041,9 +1072,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       return;
     }
     setLightEstimateEmailError(undefined);
-    const subject = `Payment estimate — ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`;
+    const subject = `Payment estimate: ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`;
     const lines: string[] = [
-      'Payment estimate (Car and Driver Marketplace — auto loan calculator)',
+      'Payment estimate (Car and Driver Marketplace auto loan calculator)',
       '',
       `Vehicle: ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`,
       `Out-the-door estimate: ${currency(outTheDoorPrice)}`,
@@ -1071,7 +1102,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     let body = lines.join('\n');
     const maxLen = 1800;
     if (body.length > maxLen) {
-      body = `${body.slice(0, maxLen)}\n…`;
+      body = `${body.slice(0, maxLen)}\n...`;
     }
     const mailtoHref = `mailto:${encodeURIComponent(trimmed)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     const mailLink = document.createElement('a');
@@ -1081,15 +1112,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   };
   const incentiveOfferDetail = useMemo(() => {
     if (!selectedIncentive) return undefined;
+    const modalVehicle = lightDealModalVehicle ?? selectedVehicle;
+    const modalYear = lightDealModalVehicle?.year ?? selectedYear;
 
     return {
-      year: parseInt(selectedYear, 10),
-      make: selectedVehicle.make,
-      model: selectedVehicle.model,
-      slug: selectedVehicle.slug,
-      imageUrl: selectedVehicle.image,
-      msrpMin: selectedVehicle.priceMin,
-      msrpMax: selectedVehicle.priceMax,
+      year: parseInt(modalYear, 10),
+      make: modalVehicle.make,
+      model: modalVehicle.model,
+      slug: modalVehicle.slug,
+      imageUrl: modalVehicle.image,
+      msrpMin: modalVehicle.priceMin,
+      msrpMax: modalVehicle.priceMax,
       offerHeadline: selectedIncentive.title,
       whatItMeans: selectedIncentive.description,
       yourSavings: selectedIncentive.terms || selectedIncentive.description,
@@ -1098,42 +1131,25 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       dontWaitText: `This offer expires ${selectedIncentive.expirationDate}. Manufacturer deals change monthly, so confirm availability before you shop.`,
       expirationDate: selectedIncentive.expirationDate,
     };
-  }, [selectedIncentive, selectedVehicle, selectedYear]);
+  }, [lightDealModalVehicle, selectedIncentive, selectedVehicle, selectedYear]);
 
-  useEffect(() => {
-    setPrice(selectedVehicle.priceMin);
-    setLeaseMsrp(selectedVehicle.priceMin);
-    setBuyoutPrice(Math.round(selectedVehicle.priceMin * 0.58));
+  const applySelectedVehicle = useCallback((vehicle: Vehicle, options?: { selectedYear?: string }) => {
+    setSelectedSlug(vehicle.slug);
+    setSelectedYear(options?.selectedYear ?? vehicle.year);
+    setPrice(vehicle.priceMin);
+    setLeaseMsrp(vehicle.priceMin);
+    setBuyoutPrice(Math.round(vehicle.priceMin * 0.58));
     setSelectedCashIds([]);
     setSelectedFinanceId('custom');
     setLoanTerm(60);
-  }, [selectedVehicle.slug, selectedVehicle.priceMin]);
-
-  useEffect(() => {
-    if (condition === 'used') {
-      setSelectedCashIds([]);
-      setSelectedFinanceId('custom');
-      return;
-    }
-
-    setSelectedYear(selectedVehicle.year);
-  }, [condition, selectedVehicle.year]);
-
-  useEffect(() => {
-    if (!selectedFinance) return;
-    const nextTerm = getFinanceTermOptions(selectedFinance)[0] ?? 60;
-    setLoanTerm(nextTerm);
-    const nextApr = getFinanceRateForTerm(selectedFinance, nextTerm);
-    if (nextApr !== null) setCustomApr(nextApr);
-  }, [selectedFinance]);
+  }, []);
 
   const updateVehicleByParts = (partial: Partial<Pick<Vehicle, 'year' | 'make' | 'model' | 'slug'>>) => {
+    setLightKnownVehicleSelected(true);
     const year = partial.year ?? selectedYear;
     const make = partial.make ?? selectedVehicle.make;
     const model = partial.model ?? selectedVehicle.model;
     const exactSlug = partial.slug;
-
-    if (partial.year) setSelectedYear(partial.year);
 
     const next = exactSlug
       ? vehicles.find((vehicle) => vehicle.slug === exactSlug)
@@ -1149,10 +1165,31 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         ?? vehicles.find((vehicle) => condition === 'used' || vehicle.year === year)
         ?? selectedVehicle;
 
-    if (next) setSelectedSlug(next.slug);
+    if (next) {
+      if (condition === 'used') {
+        applySelectedVehicle(next, { selectedYear: year });
+      } else {
+        applySelectedVehicle(next);
+      }
+    }
   };
 
-  const applyBrowseBodyStyle = useCallback((bodyStyle: string) => {
+  const handleLightStartOver = () => {
+    setLightWizardStep(1);
+    setLightVehicleStepMode('known');
+    setLightKnownVehicleSelected(false);
+    setLightAffordableOffersSlug(null);
+    setLightDealModalVehicle(null);
+    setSelectedCashIds([]);
+    setSelectedFinanceId('custom');
+  };
+
+  const applyBrowseBodyStyle = useCallback((bodyStyle: string, overrides?: {
+    condition?: VehicleCondition;
+    selectedYear?: string;
+  }) => {
+    const nextCondition = overrides?.condition ?? condition;
+    const nextSelectedYear = overrides?.selectedYear ?? selectedYear;
     const ranked =
       bodyStyle === 'EV'
         ? [...vehicles]
@@ -1163,27 +1200,29 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     if (ranked.length === 0) return;
     const sorted = [...ranked].sort((a, b) => Number(b.year) - Number(a.year));
     const pick =
-      (condition === 'used'
+      (nextCondition === 'used'
         ? sorted.find((vehicle) => USED_YEAR_OPTIONS.includes(vehicle.year))
-        : sorted.find((vehicle) => vehicle.year === selectedYear))
+        : sorted.find((vehicle) => vehicle.year === nextSelectedYear))
       ?? sorted[0];
-    setSelectedSlug(pick.slug);
-    setSelectedYear(pick.year);
-  }, [condition, selectedYear, vehicles]);
+    applySelectedVehicle(pick);
+  }, [applySelectedVehicle, condition, selectedYear, vehicles]);
 
-  useEffect(() => {
-    if (!isLightStepsVariant || lightWizardStep !== 3 || lightVehicleStepMode !== 'browsing') return;
-    applyBrowseBodyStyle(lightBrowseBodyStyle);
-  }, [
-    applyBrowseBodyStyle,
-    condition,
-    isLightStepsVariant,
-    lightBrowseBodyStyle,
-    lightVehicleStepMode,
-    lightWizardStep,
-  ]);
+  const handleVehicleConditionChange = (nextCondition: VehicleCondition) => {
+    setCondition(nextCondition);
+    setSelectedCashIds([]);
+    setSelectedFinanceId('custom');
 
-  const handleLightTradeSalesTaxPercentChange = useCallback((raw: string) => {
+    if (lightVehicleStepMode === 'browsing') {
+      applyBrowseBodyStyle(lightBrowseBodyStyle, { condition: nextCondition });
+      return;
+    }
+
+    if (nextCondition === 'new') {
+      setSelectedYear(selectedVehicle.year);
+    }
+  };
+
+  const handleLightTradeSalesTaxPercentChange = (raw: string) => {
     if (raw.trim() === '') {
       setSalesTaxOverride('');
       return;
@@ -1192,7 +1231,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const pct = numberInput(raw);
     const dollars = Math.round(taxableAmount * (pct / 100));
     setSalesTaxOverride(String(dollars));
-  }, [taxableAmount]);
+  };
 
   const handleOfferClick = (incentive: Incentive) => {
     setSelectedIncentive(incentive);
@@ -1208,7 +1247,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     }
 
     if (incentive.type === 'finance') {
-      setSelectedFinanceId((current) => current === incentive.id ? 'custom' : incentive.id);
+      if (selectedFinanceId === incentive.id) {
+        setSelectedFinanceId('custom');
+        return;
+      }
+
+      const nextTerm = getFinanceTermOptions(incentive)[0] ?? 60;
+      setLoanTerm(nextTerm);
+      const nextApr = getFinanceRateForTerm(incentive, nextTerm);
+      if (nextApr !== null) setCustomApr(nextApr);
+      setSelectedFinanceId(incentive.id);
     }
   };
 
@@ -1231,7 +1279,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
     carousel.scrollBy({
       left: direction === 'next' ? carousel.clientWidth * 0.9 : -carousel.clientWidth * 0.9,
-      behavior: 'smooth',
+      behavior: getPreferredScrollBehavior(),
     });
   };
 
@@ -1258,7 +1306,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       carousel.removeEventListener('scroll', updateAffordableCarouselState);
       window.removeEventListener('resize', updateAffordableCarouselState);
     };
-  }, [affordableVehicles, lightAffordableVehicles]);
+  }, [affordableVehicleBudget, lightAffordableBudgetCeiling, lightAffordableDealCards.length, selectedVehicle.bodyStyle, vehicles]);
 
   useEffect(() => {
     const summary = summaryRef.current;
@@ -1276,11 +1324,26 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const previousStep = lightWizardStepPrevRef.current;
+    lightWizardStepPrevRef.current = lightWizardStep;
+    if (!isLightStepsVariant || previousStep === lightWizardStep) return;
+
+    const panel = lightWizardPanelRef.current;
+    const heading = panel?.querySelector<HTMLElement>('#aio-payment-light-heading');
+    if (!panel || !heading) return;
+
+    panel.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
+    window.requestAnimationFrame(() => {
+      heading.focus({ preventScroll: true });
+    });
+  }, [isLightStepsVariant, lightWizardStep]);
+
   if (isLightVariant) {
     const lightWizardStepMeta = LIGHT_WIZARD_STEP_META[lightWizardStep - 1];
     const lightLoanTermChips = [...new Set(termOptions)].sort((a, b) => a - b);
     return (
-      <main className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}`}>
+      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}`}>
         <section className="aio-payment__light-hero">
           <div className="container">
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
@@ -1327,7 +1390,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </h1>
                 <p>
                   {isLightStepsVariant
-                    ? 'Five quick steps, one live estimate. Nothing fancy—just the numbers you need before you shop.'
+                    ? 'Five quick steps, one live estimate. Just the numbers you need before you shop.'
                     : 'Advanced mode shows loan, vehicle, trade, offers, and breakdown together on one page. Enter a payment target and we’ll estimate price range, payment details, and offers that may fit.'}
                 </p>
               </div>
@@ -1336,43 +1399,43 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         </section>
 
         <section className="aio-payment__light-main" aria-labelledby="aio-payment-light-heading">
-          {isLightStepsVariant ? (
-            <div className="aio-payment__light-wizard-strip">
-              <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
-                <div className="aio-payment__light-wizard-steps-shell">
-                  <ol className="aio-payment__light-wizard-steps">
-                  {LIGHT_WIZARD_STEP_META.map((stepMeta, index) => {
-                    const stepNumber = index + 1;
-                    const isDone = lightWizardStep > stepNumber;
-                    const isCurrent = lightWizardStep === stepNumber;
-                    return (
-                      <li key={stepMeta.label} className="aio-payment__light-wizard-step">
-                        <button
-                          type="button"
-                          className={`aio-payment__light-wizard-dot${isCurrent ? ' aio-payment__light-wizard-dot--current' : ''}${isDone ? ' aio-payment__light-wizard-dot--done' : ''}`}
-                          disabled={stepNumber > lightWizardStep}
-                          aria-current={isCurrent ? 'step' : undefined}
-                          aria-label={`${stepMeta.label}${isDone ? ', completed' : ''}${isCurrent ? ', current step' : ''}`}
-                          onClick={() => {
-                            if (stepNumber <= lightWizardStep) setLightWizardStep(stepNumber);
-                          }}
-                        >
-                          <span className="aio-payment__light-wizard-dot-ring" aria-hidden="true">
-                            {isDone ? <Check size={14} strokeWidth={2.25} aria-hidden="true" /> : stepNumber}
-                          </span>
-                          <span className="aio-payment__light-wizard-dot-label">{stepMeta.short}</span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                  </ol>
-                </div>
-              </nav>
-            </div>
-          ) : null}
           <div className="container">
             <div className="aio-payment__light-shell">
-              <div className="aio-payment__light-card">
+              {isLightStepsVariant ? (
+                <div className="aio-payment__light-wizard-strip">
+                  <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
+                    <div className="aio-payment__light-wizard-steps-shell">
+                      <ol className="aio-payment__light-wizard-steps">
+                        {LIGHT_WIZARD_STEP_META.map((stepMeta, index) => {
+                          const stepNumber = index + 1;
+                          const isDone = lightWizardStep > stepNumber;
+                          const isCurrent = lightWizardStep === stepNumber;
+                          return (
+                            <li key={stepMeta.label} className="aio-payment__light-wizard-step">
+                              <button
+                                type="button"
+                                className={`aio-payment__light-wizard-dot${isCurrent ? ' aio-payment__light-wizard-dot--current' : ''}${isDone ? ' aio-payment__light-wizard-dot--done' : ''}`}
+                                disabled={stepNumber > lightWizardStep}
+                                aria-current={isCurrent ? 'step' : undefined}
+                                aria-label={`${stepMeta.label}${isDone ? ', completed' : ''}${isCurrent ? ', current step' : ''}`}
+                                onClick={() => {
+                                  if (stepNumber <= lightWizardStep) setLightWizardStep(stepNumber);
+                                }}
+                              >
+                                <span className="aio-payment__light-wizard-dot-ring" aria-hidden="true">
+                                  {isDone ? <Check size={14} strokeWidth={2.25} aria-hidden="true" /> : stepNumber}
+                                </span>
+                                <span className="aio-payment__light-wizard-dot-label">{stepMeta.short}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </div>
+                  </nav>
+                </div>
+              ) : null}
+              <div className="aio-payment__light-card" ref={isLightStepsVariant ? lightWizardPanelRef : undefined}>
               {isLightStepsVariant ? (
                 <div className="aio-payment__section-heading aio-payment__section-heading--wizard">
                   <p className="aio-payment__light-wizard-step-eyebrow">
@@ -1385,7 +1448,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </span>
                     ) : null}
                   </p>
-                  <h2 id="aio-payment-light-heading">
+                  <h2 id="aio-payment-light-heading" tabIndex={-1}>
                     {lightWizardStepMeta.panelTitle ?? lightWizardStepMeta.label}
                   </h2>
                   <p className="aio-payment__light-heading-copy">
@@ -1403,26 +1466,26 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
               {(!isLightStepsVariant || lightWizardStep === 1) && (
               <div className="aio-payment__light-start-panel">
-                <div className="aio-payment__light-toggle" role="tablist" aria-label="Choose calculator mode">
+                <div className="payment-calc__tabs payment-calc__tabs--two aio-payment__light-toggle" role="tablist" aria-label="Choose calculator mode">
                   <button
                     type="button"
                     role="tab"
                     aria-selected={startMode === 'monthly'}
-                    className={startMode === 'monthly' ? 'aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'aio-payment__light-toggle-button'}
+                    className={startMode === 'monthly' ? 'payment-calc__tab payment-calc__tab--on' : 'payment-calc__tab'}
                     onClick={() => setStartMode('monthly')}
                   >
-                    <span className="aio-payment__light-toggle-button-title">Start with monthly budget</span>
-                    <span className="aio-payment__light-toggle-button-copy">Tell us what you can pay each month.</span>
+                    <span className="payment-calc__tab-name">Monthly budget</span>
+                    <span className="payment-calc__tab-amt">{currency(targetMonthlyPayment)}/mo</span>
                   </button>
                   <button
                     type="button"
                     role="tab"
                     aria-selected={startMode === 'price'}
-                    className={startMode === 'price' ? 'aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'aio-payment__light-toggle-button'}
+                    className={startMode === 'price' ? 'payment-calc__tab payment-calc__tab--on' : 'payment-calc__tab'}
                     onClick={() => setStartMode('price')}
                   >
-                    <span className="aio-payment__light-toggle-button-title">Start with vehicle price</span>
-                    <span className="aio-payment__light-toggle-button-copy">Know the sticker? Start there.</span>
+                    <span className="payment-calc__tab-name">Vehicle price</span>
+                    <span className="payment-calc__tab-amt">{currency(price)}</span>
                   </button>
                 </div>
 
@@ -1529,8 +1592,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </button>
                     </div>
                     {startMode === 'monthly' && (
-                      <p className={`aio-payment__light-budget-note aio-payment__light-budget-note--${budgetFitStatus} aio-payment__light-vehicle-step__budget-note`}>
-                        <strong className="aio-payment__light-budget-status-label">{budgetFitLabel}:</strong> {budgetFitCopy}
+                      <p className={`aio-payment__light-budget-note aio-payment__light-budget-note--${visibleBudgetFitStatus} aio-payment__light-vehicle-step__budget-note`}>
+                        <strong className="aio-payment__light-budget-status-label">{visibleBudgetFitLabel}:</strong> {visibleBudgetFitCopy}
                       </p>
                     )}
                     <div className="aio-payment__light-vehicle-step__nu">
@@ -1545,7 +1608,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               ? 'aio-payment__light-vehicle-step__nu-btn aio-payment__light-vehicle-step__nu-btn--active'
                               : 'aio-payment__light-vehicle-step__nu-btn'
                           }
-                          onClick={() => setCondition('new')}
+                          onClick={() => handleVehicleConditionChange('new')}
                         >
                           New Car
                         </button>
@@ -1558,7 +1621,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               ? 'aio-payment__light-vehicle-step__nu-btn aio-payment__light-vehicle-step__nu-btn--active'
                               : 'aio-payment__light-vehicle-step__nu-btn'
                           }
-                          onClick={() => setCondition('used')}
+                          onClick={() => handleVehicleConditionChange('used')}
                         >
                           Used Car
                         </button>
@@ -1569,28 +1632,32 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <div className="aio-payment__light-vehicle-step__ymm-row">
                           <Select
                             label="Year"
-                            value={selectedYear}
+                            value={lightKnownVehicleSelected ? selectedYear : ''}
                             onChange={(event) => updateVehicleByParts({ year: event.target.value })}
+                            placeholder="Select year"
                             options={availableYears.map((year) => ({ value: year, label: year }))}
                           />
                           <Select
                             label="Make"
-                            value={selectedVehicle.make}
+                            value={lightKnownVehicleSelected ? selectedVehicle.make : ''}
                             onChange={(event) => updateVehicleByParts({ make: event.target.value })}
+                            placeholder="Select make"
                             options={availableMakes.map((make) => ({ value: make, label: make }))}
                           />
                           <Select
                             label="Model"
-                            value={selectedVehicle.model}
+                            value={lightKnownVehicleSelected ? selectedVehicle.model : ''}
                             onChange={(event) => updateVehicleByParts({ model: event.target.value })}
+                            placeholder="Select model"
                             options={availableModels.map((model) => ({ value: model, label: model }))}
                           />
                         </div>
                         <Select
                           label="Trim / style"
-                          value={selectedVehicle.slug}
+                          value={lightKnownVehicleSelected ? selectedVehicle.slug : ''}
                           wrapperClassName="aio-payment__light-field--wide"
                           onChange={(event) => updateVehicleByParts({ slug: event.target.value })}
+                          placeholder="Select trim or style"
                           options={availableTrimStyles.map((vehicle) => ({
                             value: vehicle.slug,
                             label: `${vehicle.trim || vehicle.drivetrain || vehicle.bodyStyle} · ${vehicle.bodyStyle} · ${currency(vehicle.priceMin)}`,
@@ -1655,10 +1722,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <p className="aio-payment__light-vehicle-step__price-vehicle">
                           {lightVehicleStepMode === 'browsing'
                             ? lightBrowseSelectionLabel
-                            : `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
+                            : lightKnownVehicleSelected
+                              ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`
+                              : 'Choose a vehicle'}
                         </p>
                       </div>
-                      <p className="aio-payment__light-vehicle-step__price-value">{currency(selectedVehicle.priceMin)}</p>
+                      <p className="aio-payment__light-vehicle-step__price-value">
+                        {lightVehicleStepMode === 'known' && !lightKnownVehicleSelected
+                          ? 'Not selected'
+                          : currency(selectedVehicle.priceMin)}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -1683,7 +1756,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <Select
                       label="New or used"
                       value={condition}
-                      onChange={(event) => setCondition(event.target.value as VehicleCondition)}
+                      onChange={(event) => handleVehicleConditionChange(event.target.value as VehicleCondition)}
                       options={[
                         { value: 'new', label: 'New car' },
                         { value: 'used', label: 'Used car' },
@@ -1942,7 +2015,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </div>
                   <div className="aio-payment__light-estimate-email">
                     <p className="aio-payment__light-estimate-email__lede">
-                      Send this estimate to your inbox—your email app opens with the numbers filled in.
+                      Send this estimate to your inbox. Your email app opens with the numbers filled in.
                     </p>
                     <form
                       className="aio-payment__light-estimate-email__row"
@@ -2021,10 +2094,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <button
                       type="button"
                       className="aio-payment__light-wizard-start-over"
-                      onClick={() => {
-                        setLightWizardStep(1);
-                        setLightVehicleStepMode('known');
-                      }}
+                      onClick={handleLightStartOver}
                     >
                       <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
                       Start over
@@ -2052,8 +2122,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <button
                         type="button"
                         className="aio-payment__light-wizard-primary"
-                        onClick={() => lightAffordableSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                        disabled={lightAffordableVehicles.length === 0}
+                        onClick={() => lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' })}
+                        disabled={lightAffordableDealCards.length === 0}
                       >
                         See cars in your budget
                       </button>
@@ -2062,117 +2132,108 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </div>
               )}
             </div>
-            <div className="aio-payment__light-result-stack aio-payment__light-result--sticky">
-              <aside className="aio-payment__light-result" aria-live="polite" aria-label="Current payment estimate">
-                <div className="aio-payment__light-result-hero">
-                  <span className="aio-payment__light-result-eyebrow">
-                    {startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}
-                  </span>
-                  <strong
-                    className={`aio-payment__light-result-amount${lightHeroAmountTick === 'up' ? ' aio-payment__light-result-amount--tick-up' : ''}${lightHeroAmountTick === 'down' ? ' aio-payment__light-result-amount--tick-down' : ''}`}
-                  >
-                    {startMode === 'monthly' ? currency(affordableMsrp) : `${currency(estimatedMonthly)}/mo`}
-                  </strong>
-                  <p className="aio-payment__light-result-lede">
-                    {startMode === 'monthly'
-                      ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
-                      : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
-                  </p>
-                  <p className="aio-payment__light-result-terms" aria-label="Current loan term and rate">
-                    <span>
-                      <strong>Term</strong> {loanTerm} months
-                    </span>
-                    <span className="aio-payment__light-result-terms-sep" aria-hidden="true">
-                      ·
-                    </span>
-                    <span>
-                      <strong>APR</strong> {activeApr.toFixed(1)}%
-                    </span>
-                  </p>
-                </div>
+            <div className="payment-calc__aside aio-payment__light-result-stack aio-payment__light-result--sticky">
+              <aside className="payment-calc__aside-inner" aria-label="Current payment estimate">
+                <div className="payment-calc__result aio-payment__light-result">
+                  <div className="payment-calc__result-hero aio-payment__light-result-hero">
+                    <p className="payment-calc__result-kicker">
+                      {startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}
+                    </p>
+                    <p className="payment-calc__result-big aio-payment__light-result-amount" aria-live="polite">
+                      {startMode === 'monthly' ? currency(affordableMsrp) : currency(estimatedMonthly)}
+                      {startMode !== 'monthly' && <span className="payment-calc__mo">/mo</span>}
+                    </p>
+                    <p className="payment-calc__muted aio-payment__light-result-lede">
+                      {startMode === 'monthly'
+                        ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
+                        : `Based on ${currency(workingPrice)} MSRP, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
+                    </p>
+                  </div>
                 {startMode === 'monthly' && (
-                  <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${budgetFitStatus}`}>
+                  <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${visibleBudgetFitStatus}`}>
                     <div
-                      className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${budgetFitStatus === 'over' ? 'alert' : 'success'}`}
+                      className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${visibleBudgetFitStatus === 'over' ? 'alert' : 'success'}`}
                       aria-hidden="true"
                     >
-                      {budgetFitStatus === 'over' ? (
+                      {visibleBudgetFitStatus === 'over' ? (
                         <AlertTriangle size={16} strokeWidth={2.25} />
                       ) : (
                         <Check size={14} strokeWidth={3} />
                       )}
                     </div>
                     <div className="aio-payment__light-budget-fit-text">
-                      <span className="aio-payment__light-budget-fit-label">{budgetFitLabel}</span>
-                      <strong className="aio-payment__light-budget-fit-headline">{budgetFitHeadline}</strong>
-                      <p className="aio-payment__light-budget-fit-copy">{budgetFitCopy}</p>
+                      <span className="aio-payment__light-budget-fit-label">{visibleBudgetFitLabel}</span>
+                      <strong className="aio-payment__light-budget-fit-headline">{visibleBudgetFitHeadline}</strong>
+                      <p className="aio-payment__light-budget-fit-copy">{visibleBudgetFitCopy}</p>
                     </div>
                   </div>
                 )}
-                <div className="aio-payment__light-result-metrics" aria-label="Estimate totals">
-                  <div className="aio-payment__light-result-metric">
-                    <span className="aio-payment__light-result-metric-label">Monthly</span>
-                    <strong className="aio-payment__light-result-metric-value">
-                      {currency(estimatedMonthly)}
-                      <span className="aio-payment__light-result-metric-suffix">/mo</span>
-                    </strong>
+                <dl className="payment-calc__sum aio-payment__light-result-metrics" aria-label="Estimate totals">
+                  <div className="payment-calc__sum-row">
+                    <dt>Rate &amp; term</dt>
+                    <dd>{activeApr.toFixed(1)}% APR · {loanTerm} mo</dd>
                   </div>
-                  <div className="aio-payment__light-result-metric">
-                    <span className="aio-payment__light-result-metric-label">Down payment</span>
-                    <strong className="aio-payment__light-result-metric-value">{currency(cashDueAtSigning)}</strong>
+                  <div className="payment-calc__sum-row">
+                    <dt>Monthly</dt>
+                    <dd>{currency(estimatedMonthly)}/mo</dd>
                   </div>
-                  <div className="aio-payment__light-result-metric">
-                    <span className="aio-payment__light-result-metric-label">Financed</span>
-                    <strong className="aio-payment__light-result-metric-value">{currency(totalLoanAmount)}</strong>
+                  <div className="payment-calc__sum-row">
+                    <dt>Due at signing</dt>
+                    <dd>{currency(cashDueAtSigning)}</dd>
                   </div>
-                  <div className="aio-payment__light-result-metric">
-                    <span className="aio-payment__light-result-metric-label">Total cost</span>
-                    <strong className="aio-payment__light-result-metric-value">{currency(totalCost)}</strong>
+                  <div className="payment-calc__sum-row">
+                    <dt>Amount financed</dt>
+                    <dd>{currency(totalLoanAmount)}</dd>
                   </div>
-                </div>
+                  <div className="payment-calc__sum-row">
+                    <dt>Total cost</dt>
+                    <dd>{currency(totalCost)}</dd>
+                  </div>
+                </dl>
                 <div className="aio-payment__light-result-footer">
                   <TrendingUp className="aio-payment__light-result-footer-icon" size={18} strokeWidth={2} aria-hidden="true" />
                   <p className="aio-payment__light-result-footer-copy">{lightNextStepCopy}</p>
                 </div>
+                <a
+                  className="payment-calc__cta aio-payment__light-result-shop"
+                  href={lightShopHref}
+                  onClick={(event) => {
+                    if (!shouldScrollToBudgetVehicles) return;
+                    event.preventDefault();
+                    lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
+                  }}
+                >
+                  {lightShopLabel}
+                </a>
+                <button
+                  type="button"
+                  className="payment-calc__cta payment-calc__cta--secondary aio-payment__light-ai-button"
+                  onClick={() => setShowAiDealAnalysis(true)}
+                >
+                  Generate AI deal analysis
+                </button>
+                </div>
               </aside>
-              <a
-                className="aio-payment__light-result-shop"
-                href={lightShopHref}
-                onClick={(event) => {
-                  if (!shouldScrollToBudgetVehicles) return;
-                  event.preventDefault();
-                  lightAffordableSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-              >
-                {lightShopLabel}
-              </a>
-              <button
-                type="button"
-                className="aio-payment__light-ai-button"
-                onClick={() => setShowAiDealAnalysis(true)}
-              >
-                Generate AI deal analysis
-              </button>
             </div>
             </div>
           </div>
         </section>
 
-        {lightAffordableVehicles.length > 0 && (
+        {lightAffordableDealCards.length > 0 && (
             <section ref={lightAffordableSectionRef} className="aio-payment__light-affordable-section">
               <div className="container">
                 <section className="aio-payment__light-affordable" aria-labelledby="aio-payment-light-affordable-heading">
                   <div className="aio-payment__light-affordable-head">
                     <span className="aio-payment__similar-line" aria-hidden="true" />
                     <h2 id="aio-payment-light-affordable-heading">
-                      {startMode === 'monthly' ? 'Cars Your Budget Can Support' : 'Vehicles Near Your Price'}
+                      {startMode === 'monthly' ? 'Deals Your Budget Can Support' : 'Deals Near Your Price'}
                     </h2>
                     <span className="aio-payment__similar-line" aria-hidden="true" />
                   </div>
                   <p className="aio-payment__light-affordable-copy">
                     {startMode === 'monthly'
-                      ? `These start at or below about ${currency(affordableMsrp)} before tax and fees.`
-                      : `These start at or below about ${currency(price)} before tax and fees.`}
+                      ? `These pair active offers with vehicles starting near ${currency(affordableMsrp)} before tax and fees.`
+                      : `These pair active offers with vehicles starting near ${currency(price)} before tax and fees.`}
                   </p>
                   <div className="aio-payment__vehicle-carousel-wrap aio-payment__vehicle-carousel-wrap--light">
                     <button
@@ -2184,30 +2245,51 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     >
                       <ChevronLeft size={24} aria-hidden="true" />
                     </button>
-                    <div ref={affordableCarouselRef} className="aio-payment__vehicle-carousel aio-payment__vehicle-carousel--light">
-                      {lightAffordableVehicles.map((vehicle, index) => (
-                        <VehicleCard
+                    <div ref={affordableCarouselRef} className="aio-payment__vehicle-carousel aio-payment__vehicle-carousel--light aio-payment__vehicle-carousel--deals" role="list">
+                      {lightAffordableDealCards.map(({ vehicle, offers, primaryOffer, primaryIncentive }) => (
+                        <DealCard
                           key={vehicle.id}
-                          id={vehicle.id}
-                          name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                           slug={vehicle.slug}
-                          image={vehicle.image}
-                          price={currency(vehicle.priceMin)}
-                          priceLabel="Starting at"
-                          secondaryPrice={`${currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo`}
-                          secondaryPriceLabel="Est."
-                          budgetNote={getBudgetVehicleReason(vehicle, index)}
+                          vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                          vehicleImage={vehicle.image}
+                          vehicleImageFallback={vehicle.galleryImages?.find((image) => image !== vehicle.image)}
+                          imageLoading="eager"
+                          vehicleSlug={vehicle.slug}
+                          vehicleMake={vehicle.make}
+                          vehicleModel={vehicle.model}
                           rating={vehicle.staffRating}
-                          epaMpg={getCombinedMpg(vehicle.mpg)}
-                          cdSays={getVehicleCardCopy(vehicle)}
+                          dealTypeTag={getLightDealTypeTag(primaryOffer.type)}
+                          imageBadge={vehicle.bodyStyle}
                           editorsChoice={vehicle.editorsChoice}
                           tenBest={vehicle.tenBest}
-                          evOfTheYear={vehicle.evOfTheYear}
-                          showShopButton
-                          shopButtonText={`Shop ${condition === 'new' ? 'New' : 'Used'} ${vehicle.model}`}
-                          shopButtonVariant="primary"
-                          availableYears={[Number(vehicle.year)]}
-                          modelName={vehicle.model}
+                          isSaved={false}
+                          onSaveClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                          }}
+                          offers={offers}
+                          offersPopupOpen={lightAffordableOffersSlug === vehicle.slug}
+                          onToggleOffersPopup={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            setLightAffordableOffersSlug((current) => current === vehicle.slug ? null : vehicle.slug);
+                          }}
+                          onCloseOffersPopup={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            setLightAffordableOffersSlug(null);
+                          }}
+                          payment={getLightDealPayment(primaryOffer)}
+                          details={[
+                            { label: 'Est. payment', value: `${currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo` },
+                            { label: 'Starts at', value: currency(vehicle.priceMin) },
+                          ]}
+                          onDealClick={(event) => {
+                            event.preventDefault();
+                            setLightDealModalVehicle(vehicle);
+                            setSelectedIncentive(primaryIncentive);
+                            setShowIncentiveModal(true);
+                          }}
                         />
                       ))}
                     </div>
@@ -2348,25 +2430,32 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           onClose={() => {
             setShowIncentiveModal(false);
             setSelectedIncentive(null);
+            setLightDealModalVehicle(null);
           }}
           variant="conversion-b"
           offer={incentiveOfferDetail}
-          allIncentives={vehicleIncentives.incentives}
+          allIncentives={activeVehicleIncentives.incentives}
           selectedIncentiveId={selectedIncentive?.id}
-          appliedIncentiveIds={[
-            ...selectedCashIds,
-            ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
-          ]}
+          appliedIncentiveIds={lightDealModalVehicle
+            ? []
+            : [
+                ...selectedCashIds,
+                ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
+              ]}
           onApplyIncentive={(incentive) => {
+            if (lightDealModalVehicle) {
+              applySelectedVehicle(lightDealModalVehicle);
+              setLightDealModalVehicle(null);
+            }
             applyOfferToEstimate(incentive);
           }}
         />
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="aio-payment">
+    <div className="aio-payment">
       <section className="aio-payment__hero">
         <div className="container">
           <div className="aio-payment__hero-content">
@@ -2480,7 +2569,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <Select
                 label="New or used"
                 value={condition}
-                onChange={(event) => setCondition(event.target.value as VehicleCondition)}
+                onChange={(event) => handleVehicleConditionChange(event.target.value as VehicleCondition)}
                 options={[
                   { value: 'new', label: 'New car' },
                   { value: 'used', label: 'Used car' },
@@ -2981,6 +3070,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         onClose={() => {
           setShowIncentiveModal(false);
           setSelectedIncentive(null);
+          setLightDealModalVehicle(null);
         }}
         variant="conversion-b"
         offer={incentiveOfferDetail}
@@ -2994,7 +3084,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           applyOfferToEstimate(incentive);
         }}
       />
-    </main>
+    </div>
   );
 };
 

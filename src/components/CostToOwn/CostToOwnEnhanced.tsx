@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Info, ChevronDown, TrendingDown, TrendingUp, Minus, Lightbulb, ChevronRight } from 'lucide-react';
+import { getRangeInputStyle } from '../../utils/rangeInputStyle';
 import './CostToOwnEnhanced.css';
 
 interface CostCategory {
@@ -443,6 +444,7 @@ const CostToOwnEnhanced = ({
                       step="1000"
                       value={annualMiles}
                       onChange={(e) => setAnnualMiles(Number(e.target.value))}
+                      style={getRangeInputStyle(annualMiles, 5000, 25000)}
                     />
                     <span>{annualMiles.toLocaleString()} mi/year</span>
                   </div>
@@ -455,6 +457,7 @@ const CostToOwnEnhanced = ({
                       step="0.10"
                       value={gasPrice}
                       onChange={(e) => setGasPrice(Number(e.target.value))}
+                      style={getRangeInputStyle(gasPrice, 2.5, 5.5)}
                     />
                     <span>${gasPrice.toFixed(2)}/gal</span>
                   </div>
@@ -512,4 +515,3 @@ const CostToOwnEnhanced = ({
 };
 
 export default CostToOwnEnhanced;
-

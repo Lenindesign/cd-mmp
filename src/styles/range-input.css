@@ -1,0 +1,75 @@
+input[type='range'] {
+  --range-progress: 0%;
+  --range-fill: var(--color-blue-cobalt);
+  --range-track: var(--color-gray-200);
+  --range-thumb-size: 24px;
+  --range-track-height: 8px;
+
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: var(--range-thumb-size);
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type='range']:focus {
+  outline: none;
+}
+
+input[type='range']:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--range-fill);
+  outline-offset: 2px;
+}
+
+input[type='range']:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--range-fill);
+  outline-offset: 2px;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: var(--range-track-height);
+  border-radius: var(--border-radius-full);
+  background: linear-gradient(
+    to right,
+    var(--range-fill) 0%,
+    var(--range-fill) var(--range-progress),
+    var(--range-track) var(--range-progress),
+    var(--range-track) 100%
+  );
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: var(--range-thumb-size);
+  height: var(--range-thumb-size);
+  margin-top: calc((var(--range-track-height) - var(--range-thumb-size)) / 2);
+  background: var(--color-white);
+  border: 3px solid var(--range-fill);
+  border-radius: var(--border-radius-full);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+input[type='range']::-moz-range-track {
+  height: var(--range-track-height);
+  border-radius: var(--border-radius-full);
+  background: var(--range-track);
+}
+
+input[type='range']::-moz-range-progress {
+  height: var(--range-track-height);
+  border-radius: var(--border-radius-full);
+  background: var(--range-fill);
+}
+
+input[type='range']::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--range-thumb-size);
+  height: var(--range-thumb-size);
+  background: var(--color-white);
+  border: 3px solid var(--range-fill);
+  border-radius: var(--border-radius-full);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
