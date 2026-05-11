@@ -85,7 +85,7 @@
   font-size: clamp(32px, 5vw, 48px);
   font-weight: var(--font-weight-extrabold);
   line-height: 1.1;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
   color: var(--color-white);
 }
 
@@ -337,7 +337,7 @@
   font-family: var(--font-heading);
   font-size: clamp(var(--font-size-36), 5vw, var(--font-size-5xl));
   font-weight: var(--font-weight-extrabold);
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
   line-height: 0.95;
 }
 
@@ -481,7 +481,7 @@
   font-family: var(--font-heading);
   font-size: var(--aio-light-page-title);
   font-weight: var(--font-weight-extrabold);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: var(--line-height-snug);
 }
 
@@ -546,7 +546,7 @@
   font-family: var(--font-heading);
   font-size: var(--aio-light-display);
   font-weight: var(--font-weight-extrabold);
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   line-height: 1;
   color: var(--color-blue-cobalt);
 }
@@ -652,7 +652,7 @@
   font-size: var(--aio-light-body);
   font-weight: var(--aio-light-heading-weight);
   line-height: var(--line-height-tight);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--color-dark);
 }
 
@@ -708,7 +708,7 @@
   font-family: var(--font-heading);
   font-size: var(--aio-light-stat);
   font-weight: var(--aio-light-heading-weight);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: var(--line-height-tight);
   color: var(--color-dark-bg);
 }
@@ -1107,7 +1107,7 @@
   color: var(--color-dark-bg);
   font-size: var(--aio-light-step-heading);
   font-weight: var(--aio-light-heading-weight);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .aio-payment__light-heading-copy {
@@ -1120,21 +1120,6 @@
 }
 
 /* Light calculator — 5-step wizard */
-@keyframes aio-payment__light-wizard-dot-ring-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 2px var(--color-white),
-      0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 14%, var(--color-white));
-  }
-  50% {
-    box-shadow:
-      0 0 0 2px var(--color-white),
-      0 0 0 7px color-mix(in srgb, var(--color-blue-cobalt) 16%, var(--color-white)),
-      0 0 0 12px color-mix(in srgb, var(--color-blue-cobalt) 8%, var(--color-white));
-  }
-}
-
 .aio-payment__light-wizard-track {
   position: relative;
   padding: var(--spacing-2) 0 var(--spacing-5);
@@ -1202,13 +1187,13 @@
 
 .aio-payment__light-wizard-dot:not(:disabled):hover .aio-payment__light-wizard-dot-ring {
   border-color: color-mix(in srgb, var(--color-blue-cobalt) 55%, var(--color-gray-300));
-  transform: scale(1.05);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 10%, var(--color-white));
 }
 
 .aio-payment__light-wizard-dot--done:not(:disabled):hover .aio-payment__light-wizard-dot-ring {
   border-color: var(--color-blue-cobalt-dark);
   background: var(--color-blue-cobalt-dark);
-  transform: scale(1.05);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 10%, var(--color-white));
 }
 
 .aio-payment__light-wizard-dot-ring {
@@ -1230,8 +1215,7 @@
     border-color var(--transition-fast),
     background var(--transition-fast),
     color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-normal);
+    box-shadow var(--transition-fast);
 }
 
 .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
@@ -1246,8 +1230,6 @@
     border-color var(--transition-fast),
     background var(--transition-fast),
     color var(--transition-fast);
-  animation: aio-payment__light-wizard-dot-ring-pulse 2.2s ease-in-out infinite;
-  will-change: box-shadow;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1967,7 +1949,7 @@ label.aio-payment__light-loan-step__label {
   font-family: var(--font-heading);
   font-size: var(--aio-light-stat);
   font-weight: var(--aio-light-heading-weight);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: var(--line-height-tight);
   color: var(--color-dark);
 }
@@ -2360,7 +2342,7 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--aio-light-body);
   font-weight: var(--aio-light-heading-weight);
   line-height: var(--line-height-tight);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--color-dark);
 }
 
@@ -2437,7 +2419,7 @@ label.aio-payment__light-loan-step__label {
   font-family: var(--font-heading);
   font-size: var(--aio-light-loan-figure);
   font-weight: var(--aio-light-heading-weight);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: 1;
   color: var(--color-blue-cobalt);
 }
@@ -2793,8 +2775,8 @@ label.aio-payment__light-loan-step__label {
   grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
-  border-radius: var(--spacing-2);
-  box-shadow: none;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 12px 34px color-mix(in srgb, var(--color-black) 4%, transparent);
   overflow: visible;
 }
 
@@ -2861,9 +2843,9 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside {
   gap: 0;
   min-height: 100%;
-  background: var(--color-gray-50);
+  background: color-mix(in srgb, var(--color-gray-50) 72%, var(--color-white) 28%);
   border: 0;
-  border-left: 1px solid var(--color-gray-200);
+  border-left: 1px solid color-mix(in srgb, var(--color-gray-200) 72%, var(--color-white) 28%);
   border-radius: 0;
   box-shadow: none;
 }
@@ -2953,14 +2935,9 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-wizard-steps-shell::before {
   top: calc(var(--spacing-7) + var(--spacing-5));
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--color-blue-cobalt) 35%, var(--color-gray-200) 65%) 0%,
-    var(--color-gray-200) 50%,
-    color-mix(in srgb, var(--color-blue-cobalt) 22%, var(--color-gray-200) 78%) 100%
-  );
-  opacity: 0.9;
+  height: 2px;
+  background: color-mix(in srgb, var(--color-gray-300) 50%, var(--color-gray-200) 50%);
+  opacity: 1;
 }
 
 .aio-payment--light-steps .aio-payment__light-wizard-strip .aio-payment__light-wizard-steps {
@@ -3003,7 +2980,7 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--aio-light-step-heading);
   font-weight: var(--font-weight-extrabold);
   line-height: 1.12;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--color-dark-bg);
 }
 
@@ -3392,7 +3369,7 @@ label.aio-payment__light-loan-step__label {
   font-family: var(--font-heading);
   font-size: var(--aio-light-panel-heading);
   font-weight: var(--aio-light-heading-weight);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: var(--line-height-tight);
   color: var(--color-dark);
 }
@@ -3590,7 +3567,7 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-dark);
   font-family: var(--font-heading);
   font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
   line-height: 1;
 }
 
@@ -3640,7 +3617,7 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-blue-cobalt);
   font-family: var(--font-heading);
   font-size: var(--font-size-2xl);
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
 .aio-payment__ai-modal-summary p,
@@ -4572,10 +4549,10 @@ label.aio-payment__light-loan-step__label {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--spacing-1) var(--spacing-4);
+    gap: 0 var(--spacing-4);
     width: 100%;
-    min-height: var(--spacing-18);
-    padding: var(--spacing-3) var(--spacing-4);
+    min-height: var(--spacing-14);
+    padding: var(--spacing-2) var(--spacing-4);
     background: transparent;
     border: 0;
     border-radius: 0;
@@ -4591,7 +4568,7 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment--light-steps .aio-payment__light-result-amount.payment-calc__result-big {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1;
     justify-self: end;
     margin: 0;
     font-size: clamp(1.875rem, 6vw, 2.5rem);
@@ -4600,10 +4577,7 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-result-lede.payment-calc__muted {
-    grid-column: 1;
-    max-width: 34ch;
-    font-size: var(--font-size-sm);
-    line-height: 1.3;
+    display: none;
   }
 
   .aio-payment--light-steps .aio-payment__light-result-details {

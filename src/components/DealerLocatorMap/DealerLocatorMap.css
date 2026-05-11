@@ -453,6 +453,7 @@
 
 /* ---- Dealer Card ---- */
 .dealer-card {
+  position: relative;
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
@@ -539,6 +540,12 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.dealer-card:not(.dealer-card--compact):not(.dealer-card--best-deal) .dealer-card__header {
+  min-height: 28px;
+  padding-left: 36px;
+  align-items: center;
 }
 
 .dealer-card__name {

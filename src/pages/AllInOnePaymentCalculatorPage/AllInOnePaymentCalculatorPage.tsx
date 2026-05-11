@@ -120,6 +120,11 @@ const numberInput = (value: string) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const currencyInput = (value: string) => {
+  const parsed = Number(value.replace(/[^\d.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 const formatLightTradeSalesTaxPercent = (percent: number): string => {
   const rounded = Math.round(percent * 1000) / 1000;
   if (Math.abs(rounded - Math.round(rounded)) < 1e-6) return String(Math.round(rounded));
@@ -429,15 +434,13 @@ function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: Ligh
       </div>
       <input
         id={inputId}
-        type="number"
+        type="text"
+        inputMode="numeric"
         className="payment-calc__input aio-payment__light-estimator-input"
-        min={LIGHT_VEHICLE_PRICE_MIN}
-        max={LIGHT_VEHICLE_PRICE_MAX}
-        step={LIGHT_VEHICLE_PRICE_STEP}
-        value={price}
+        value={currency(price)}
         aria-describedby={helperId}
-        onChange={(event) => onPriceChange(numberInput(event.target.value))}
-        onBlur={(event) => onPriceChange(clampLightVehiclePrice(numberInput(event.currentTarget.value)))}
+        onChange={(event) => onPriceChange(currencyInput(event.target.value))}
+        onBlur={(event) => onPriceChange(clampLightVehiclePrice(currencyInput(event.currentTarget.value)))}
       />
       <input
         type="range"
@@ -475,15 +478,13 @@ function LightMonthlyBudgetField({ affordableMsrp, targetMonthlyPayment, onBudge
       </div>
       <input
         id={inputId}
-        type="number"
+        type="text"
+        inputMode="numeric"
         className="payment-calc__input aio-payment__light-estimator-input"
-        min={LIGHT_MONTHLY_BUDGET_MIN}
-        max={LIGHT_MONTHLY_BUDGET_MAX}
-        step={LIGHT_MONTHLY_BUDGET_STEP}
-        value={targetMonthlyPayment}
+        value={currency(targetMonthlyPayment)}
         aria-describedby={helperId}
-        onChange={(event) => onBudgetChange(numberInput(event.target.value))}
-        onBlur={(event) => onBudgetChange(clampLightMonthlyBudget(numberInput(event.currentTarget.value)))}
+        onChange={(event) => onBudgetChange(currencyInput(event.target.value))}
+        onBlur={(event) => onBudgetChange(clampLightMonthlyBudget(currencyInput(event.currentTarget.value)))}
       />
       <input
         type="range"
@@ -1360,7 +1361,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             <div className="aio-payment__light-hero-grid">
               <div>
                 <div className="aio-payment__light-hero-eyebrow-row">
-                  <span className="aio-payment__eyebrow">Auto loan calculator</span>
+                  <span className="aio-payment__eyebrow">
+                    {isLightStepsVariant ? 'What can I afford?' : 'Auto loan calculator'}
+                  </span>
                   <div className="aio-payment__light-mode-toggle aio-payment__light-mode-toggle--hero" role="group" aria-label="Calculator layout">
                     {isLightStepsVariant ? (
                       <>
@@ -1389,12 +1392,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </div>
                 <h1>
                   {isLightStepsVariant
-                    ? 'Estimate your car payment before you shop.'
+                    ? 'See what your monthly budget can really buy.'
                     : 'Fine-tune your car payment estimate.'}
                 </h1>
                 <p>
                   {isLightStepsVariant
-                    ? 'Five quick steps, one live estimate. Just the numbers you need before you shop.'
+                    ? 'The budget-first car payment calculator. Answer one question at a time and watch your numbers update live.'
                     : 'Adjust budget, loan terms, vehicle price, trade-in, offers, and payment details together on one page.'}
                 </p>
               </div>
@@ -2185,8 +2188,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           <dd>{currency(cashDueAtSigning)}</dd>
                         </div>
                         <div className="payment-calc__sum-row">
-                          <dt>Amount financed</dt>
-                          <dd>{currency(totalLoanAmount)}</dd>
+                          <dt>Down payment</dt>
+                          <dd>{currency(downPayment)}</dd>
                         </div>
                         <div className="payment-calc__sum-row">
                           <dt>Total cost</dt>

@@ -240,6 +240,50 @@
   border-radius: 2px;
 }
 
+.payment-calc__trade-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--spacing-2);
+  background: var(--color-gray-50);
+}
+
+.payment-calc__trade-summary > div {
+  min-width: 0;
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.payment-calc__trade-summary-label,
+.payment-calc__trade-summary-meta {
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  color: var(--color-gray-500);
+}
+
+.payment-calc__trade-summary-label {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.payment-calc__trade-summary strong {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  color: var(--color-black);
+}
+
+.payment-calc__trade-summary-value {
+  flex: 0 0 auto;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--color-blue-cobalt);
+}
+
 .payment-calc__details {
   margin-top: 0;
   border: 1px solid var(--color-gray-200);

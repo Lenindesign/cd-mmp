@@ -10,7 +10,14 @@ interface PaymentCalculatorProps {
   bestApr?: number;
   onGetDeal?: () => void;
   onEstimateTradeIn?: () => void;
-  tradeInEstimate?: { value: number; appliedAt: number } | null;
+  tradeInEstimate?: {
+    vehicle?: string;
+    mileage?: number;
+    zipCode?: string;
+    condition?: string;
+    value: number;
+    appliedAt: number;
+  } | null;
 }
 
 const CREDIT_TIERS = [
@@ -23,11 +30,16 @@ const CREDIT_TIERS = [
 
 const FINANCE_TERM_OPTIONS = [36, 48, 60, 72, 84];
 const LEASE_TERM_OPTIONS = [24, 36, 39, 48];
+const MIN_TRADE_IN_SLIDER_MAX = 50000;
+const TRADE_IN_MAX_PRICE_MULTIPLIER = 1.25;
 
 const fmt = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+const roundUpToHundred = (n: number) => Math.ceil(n / 100) * 100;
+const formatCondition = (value?: string) =>
+  value ? value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, ' ') : '';
 
 type CalcTab = 'finance' | 'lease' | 'cash';
 
@@ -73,7 +85,14 @@ const PaymentCalculator = ({
   const [tradeIn, setTradeIn] = useState(0);
   const [termMonths, setTermMonths] = useState(60);
   const [creditTier, setCreditTier] = useState('excellent');
-  const tradeInMax = Math.round(vehiclePrice * 0.6);
+  const tradeInMax = Math.max(
+    MIN_TRADE_IN_SLIDER_MAX,
+    roundUpToHundred(vehiclePrice * TRADE_IN_MAX_PRICE_MULTIPLIER),
+  );
+
+  useEffect(() => {
+    setTradeIn(p => clamp(p, 0, tradeInMax));
+  }, [tradeInMax]);
 
   useEffect(() => {
     if (tradeInEstimate == null) return;
@@ -107,7 +126,7 @@ const PaymentCalculator = ({
       return {
         monthly: m,
         totalInterest: 0,
-        financeTotalOutOfPocket: vehiclePrice - tradeIn,
+        financeTotalOutOfPocket: downPayment + principal,
       };
     }
     const payment =
@@ -175,6 +194,13 @@ const PaymentCalculator = ({
     tab === 'finance' ? monthly : tab === 'lease' ? leaseMonthly : cashOutOfPocket;
   const heroMonthly = tab !== 'cash';
   const shopText = ctaLabel(make, model, vehicleName);
+  const tradeVehicleName = tradeInEstimate?.vehicle?.trim();
+  const tradeMeta = [
+    typeof tradeInEstimate?.mileage === 'number' && tradeInEstimate.mileage > 0
+      ? `${tradeInEstimate.mileage.toLocaleString()} mi`
+      : '',
+    formatCondition(tradeInEstimate?.condition),
+  ].filter(Boolean).join(' · ');
 
   return (
     <section id="payment-calculator" className="payment-calc">
@@ -258,8 +284,18 @@ const PaymentCalculator = ({
                     </div>
                     {onEstimateTradeIn && (
                       <button type="button" className="payment-calc__inline-action" onClick={onEstimateTradeIn}>
-                        Calculate your trade-in
+                        {tradeVehicleName ? 'Change trade-in' : 'Calculate your trade-in'}
                       </button>
+                    )}
+                    {tradeInEstimate && (
+                      <div className="payment-calc__trade-summary" aria-live="polite">
+                        <div>
+                          <span className="payment-calc__trade-summary-label">Applied trade-in</span>
+                          <strong>{tradeVehicleName || 'Selected vehicle'}</strong>
+                          {tradeMeta && <span className="payment-calc__trade-summary-meta">{tradeMeta}</span>}
+                        </div>
+                        <span className="payment-calc__trade-summary-value">{fmt(tradeIn)}</span>
+                      </div>
                     )}
                   </div>
                 </div>

@@ -27,7 +27,7 @@ import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import PaymentCalculator from '../../components/PaymentCalculator';
 import TradeInPrompt from '../../components/TradeInPrompt';
-import TradeInEstimateModal from '../../components/TradeInEstimateModal';
+import TradeInEstimateModal, { type TradeInEstimateCondition } from '../../components/TradeInEstimateModal';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import './VehiclePage.css';
@@ -38,11 +38,20 @@ interface VehiclePageProps {
   defaultModel?: string;
 }
 
+interface CalculatorTradeInEstimate {
+  vehicle: string;
+  mileage: number;
+  zipCode: string;
+  condition: TradeInEstimateCondition;
+  value: number;
+  appliedAt: number;
+}
+
 const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProps) => {
   const params = useParams<{ year: string; make: string; model: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeInModalOpen, setIsTradeInModalOpen] = useState(false);
-  const [calculatorTradeInEstimate, setCalculatorTradeInEstimate] = useState<{ value: number; appliedAt: number } | null>(null);
+  const [calculatorTradeInEstimate, setCalculatorTradeInEstimate] = useState<CalculatorTradeInEstimate | null>(null);
   
   // Use props if provided (for home page), otherwise use URL params
   const year = defaultYear || params.year;
@@ -389,9 +398,12 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
       />
       <TradeInEstimateModal
         isOpen={isTradeInModalOpen}
+        initialVehicle={calculatorTradeInEstimate?.vehicle}
+        initialMileage={calculatorTradeInEstimate?.mileage}
+        initialCondition={calculatorTradeInEstimate?.condition}
         description={`Add your current vehicle, mileage, and condition. We will apply the estimate to this ${vehicle.make} ${vehicle.model} payment calculation.`}
         onClose={() => setIsTradeInModalOpen(false)}
-        onApply={(estimate) => setCalculatorTradeInEstimate({ value: estimate.value, appliedAt: Date.now() })}
+        onApply={(estimate) => setCalculatorTradeInEstimate({ ...estimate, appliedAt: Date.now() })}
       />
     </>
   );
