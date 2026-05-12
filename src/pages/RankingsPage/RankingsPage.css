@@ -109,7 +109,7 @@
   font-weight: var(--font-weight-extrabold);
   line-height: 1.1;
   margin: 0 0 var(--spacing-4) 0;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: -0.5px;
 }
 

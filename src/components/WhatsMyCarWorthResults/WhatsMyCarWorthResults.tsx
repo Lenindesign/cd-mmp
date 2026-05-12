@@ -264,7 +264,7 @@ const WhatsMyCarWorthResults = ({
   const faqs = [
     {
       question: 'How accurate is the estimate?',
-      answer: 'Our estimates are based on real-time market data from Black Book, the industry standard for vehicle valuation. While actual offers may vary based on local market conditions and vehicle inspection, our estimates provide a reliable baseline.',
+      answer: 'Our estimates are based on real-time market data from Black Book, the industry standard for vehicle valuation. While actual appraisals may vary based on local market conditions and vehicle inspection, our estimates provide a reliable baseline.',
     },
     {
       question: "What factors affect my car's value?",
@@ -576,7 +576,7 @@ const WhatsMyCarWorthResults = ({
             <div className="newsletter__content">
               <h2 className="newsletter__title">Stay Updated on Car Values</h2>
               <p className="newsletter__subtitle">
-                Get weekly updates on market trends, pricing insights, and exclusive dealer offers.
+                Get weekly updates on market trends, pricing insights, and exclusive dealer estimates.
               </p>
               <form className="newsletter__form">
                 <input
@@ -659,7 +659,7 @@ const WhatsMyCarWorthResults = ({
             Use Your {formatPrice(tradeEstimate.mid)} Trade-In at These Dealers
           </h2>
           <p className="local-dealers__subtitle">
-            Confirm your value in person • No obligation • Most offers honored same day
+            Confirm your value in person • No obligation • Most estimates honored same day
           </p>
         </div>
 

@@ -44,14 +44,14 @@ const defaultWhatsNew = [
   'Several options deleted including Winter/Summer Mat Package, cargo area organizer, premium carpeted floor mats, and highway safety kit',
 ];
 
-const defaultVerdict = `The 2025 Chevrolet Trax stands out as one of the most affordable new vehicles on the market while still offering a surprisingly spacious interior and modern technology. Its attractively low price makes it an excellent choice for first-time buyers or anyone seeking practical, no-frills transportation.`;
+const defaultVerdict = `The 2025 Chevrolet Trax stands out as one of the most affordable new vehicles on the market while still delivering a surprisingly spacious interior and modern technology. Its attractively low price makes it an excellent choice for first-time buyers or anyone seeking practical, no-frills transportation.`;
 
 const defaultContent = `As one of the most affordable subcompact SUVs on the market, the Chevrolet Trax delivers a high level of value with both style and grace. The Trax's appeal starts with its sharp exterior styling, a theme that continues into its quiet and well-equipped cabin. With heaps of rear legroom for adult passengers and a capacious cargo area for recreational equipment, the Trax's utility is undeniable. So, too, is its pleasant ride quality and surprisingly nimble handling. By deftly blending all those characteristics in a package that costs less than some upscale riding lawnmowers, the Trax is about as good as it gets when it comes to bang for your buck.`;
 
 const defaultAdditionalSections: ContentSection[] = [
   {
     title: 'Pricing and Which One to Buy',
-    content: `The Chevy Trax offers some promising extras without coming close to breaking the bank. The LT is the sweet spot between affordability and features. It comes with a big 11.0-inch infotainment touchscreen and remote start, and we'd spend the extra cash for the optional heated front seats and steering wheel. Wireless Apple CarPlay and Android Auto are also standard on LT and up, which makes navigation and playing music from your smartphone a breeze.`,
+    content: `The Chevy Trax includes some promising extras without coming close to breaking the bank. The LT is the sweet spot between affordability and features. It comes with a big 11.0-inch infotainment touchscreen and remote start, and we'd spend the extra cash for the optional heated front seats and steering wheel. Wireless Apple CarPlay and Android Auto are also standard on LT and up, which makes navigation and playing music from your smartphone a breeze.`,
   },
   {
     title: 'Engine, Transmission, and Performance',
@@ -71,7 +71,7 @@ const defaultAdditionalSections: ContentSection[] = [
   },
   {
     title: 'Infotainment and Connectivity',
-    content: `Chevy gives the Trax LS and 1RS trims an 8.0-inch infotainment touchscreen as standard equipment, which is already a larger unit than what was previously offered on the fanciest version of the previous generation. An 11.0-inch infotainment touchscreen comes on trims LT and up and includes an 8.0-inch digital gauge cluster. Connectivity features include wireless Apple CarPlay and Android Auto, an available wireless phone charger, and a Wi-Fi hotspot.`,
+    content: `Chevy gives the Trax LS and 1RS trims an 8.0-inch infotainment touchscreen as standard equipment, which is already a larger unit than what was previously available on the fanciest version of the previous generation. An 11.0-inch infotainment touchscreen comes on trims LT and up and includes an 8.0-inch digital gauge cluster. Connectivity features include wireless Apple CarPlay and Android Auto, an available wireless phone charger, and a Wi-Fi hotspot.`,
   },
   {
     title: 'Safety and Driver-Assistance Features',
@@ -79,7 +79,7 @@ const defaultAdditionalSections: ContentSection[] = [
   },
   {
     title: 'Warranty and Maintenance Coverage',
-    content: `Chevy's basic warranty package is just that, basic, but so is the coverage of its competitors. The Kia Soul and its corporate cousin, the Hyundai Kona, both offer longer protection plans. Chevy also provides one free dealer maintenance visit within the first year of ownership, which is a nice perk. The limited warranty covers three years or 36,000 miles, the powertrain warranty covers five years or 60,000 miles, and complimentary maintenance is covered for the first visit.`,
+    content: `Chevy's basic warranty package is just that, basic, but so is the coverage of its competitors. The Kia Soul and its corporate cousin, the Hyundai Kona, both provide longer protection plans. Chevy also provides one free dealer maintenance visit within the first year of ownership, which is a nice perk. The limited warranty covers three years or 36,000 miles, the powertrain warranty covers five years or 60,000 miles, and complimentary maintenance is covered for the first visit.`,
   },
 ];
 

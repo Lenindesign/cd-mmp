@@ -24,9 +24,9 @@ export const ELIGIBILITY_FILTER_OPTIONS: { value: import('../services/_dealCompo
 const ELIGIBILITY_LABELS: Record<import('../services/_dealComposer').EligibilityTag, string> = {
   military: 'Military eligible',
   firstResponder: 'First responder bonus',
-  collegeGrad: 'College grad offer',
-  loyalty: 'Loyalty offer',
-  conquest: 'Conquest offer',
+  collegeGrad: 'College grad deal',
+  loyalty: 'Loyalty deal',
+  conquest: 'Conquest deal',
 };
 
 export function getEligibilityLabels(tags?: import('../services/_dealComposer').EligibilityTag[]): string[] {
@@ -135,7 +135,7 @@ export function buildSavingsText(
   const tooltipMap: Record<string, string> = {
     'zero-apr': `Comparison based on the median payment for similar ${bodyStyle}s financed at the avg. market rate of ${AVG_MARKET_APR}% over ${AVG_LOAN_TERM} months. This deal's 0% APR eliminates interest entirely.`,
     'cash': `Comparison based on the median payment for similar ${bodyStyle}s at ${AVG_MARKET_APR}% over ${AVG_LOAN_TERM} months. Cash back is applied before financing, lowering the principal.`,
-    'finance': `Comparison based on the median payment for similar ${bodyStyle}s at the avg. market rate of ${AVG_MARKET_APR}% over ${AVG_LOAN_TERM} months. This deal offers a below-market rate.`,
+    'finance': `Comparison based on the median payment for similar ${bodyStyle}s at the avg. market rate of ${AVG_MARKET_APR}% over ${AVG_LOAN_TERM} months. This deal includes a below-market rate.`,
     'lease': `Comparison based on the median lease payment estimate for similar ${bodyStyle}s with a 36-month term and 12,000 annual mile lease.`,
   };
 

@@ -911,7 +911,7 @@ const WhatsMyCarWorth = ({
                 className="whats-my-car-worth__action-btn"
                 iconLeft={<CheckCircle size={18} />}
               >
-                GET DEALER OFFERS
+                GET DEALER ESTIMATES
               </Button>
               <Button 
                 variant="outline"
@@ -948,4 +948,3 @@ const WhatsMyCarWorth = ({
 };
 
 export default WhatsMyCarWorth;
-

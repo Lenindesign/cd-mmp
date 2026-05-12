@@ -64,7 +64,7 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
     <div className="hero__offers">
       <div className="hero__offers-header">
         <div className="hero__offers-header-left">
-          <h3 className="hero__offers-title">SPECIAL OFFERS AND INCENTIVES</h3>
+          <h3 className="hero__offers-title">SPECIAL DEALS AND INCENTIVES</h3>
           <span className="hero__offers-savings">
             Up to <strong>${vehicleIncentives.totalSavings.toLocaleString()}</strong> in savings
           </span>
@@ -78,7 +78,7 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
           value={offersTab}
           onChange={setOffersTab}
           variant="segmented"
-          ariaLabel="Offer type"
+          ariaLabel="Deal type"
         />
       </div>
 
@@ -115,7 +115,7 @@ const HeroOffersA = ({ vehicleIncentives, priceRange, onOfferClick, onViewAllCli
           className="hero__offers-view-all"
           onClick={onViewAllClick}
         >
-          View all {vehicleIncentives.incentives.length} offers →
+          View all {vehicleIncentives.incentives.length} deals →
         </button>
       )}
     </div>

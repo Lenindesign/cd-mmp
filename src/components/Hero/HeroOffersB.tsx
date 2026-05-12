@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 import { getAprRangeLabel } from '../IncentivesModal/incentivesModalUtils';
 import { formatExpiration } from '../../utils/dateUtils';
@@ -14,6 +15,20 @@ interface HeroOffersBProps {
 const stripQualifier = (v: string) =>
   v.replace(/^(as low as|up to|starting at)\s+/i, '');
 
+const slugify = (value: string) =>
+  value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+const formatDealCount = (count: number, label: 'Buy' | 'Lease') =>
+  `${count} ${label} ${count === 1 ? 'Deal' : 'Deals'}`;
+
+const renderDealCount = (count: number, label: 'Buy' | 'Lease') => (
+  <>
+    <span className="hero__offers-b-deal-link-number">{count}</span>
+    <span className="hero__offers-b-deal-link-label">
+      {label} {count === 1 ? 'Deal' : 'Deals'}
+    </span>
+  </>
+);
 
 const getChipLabel = (type: Incentive['type']) => {
   switch (type) {
@@ -29,7 +44,7 @@ const HeroOffersB = ({
   onOfferClick,
   onApplyOffer,
   selectedOfferIds = [],
-  title = 'SPECIAL OFFERS AND INCENTIVES',
+  title = 'SPECIAL DEALS AND INCENTIVES',
 }: HeroOffersBProps) => {
   const topOffers = useMemo(() => {
     const finance = vehicleIncentives.incentives.find(i => i.type === 'finance');
@@ -38,11 +53,49 @@ const HeroOffersB = ({
     return [finance, lease, cash].filter(Boolean) as Incentive[];
   }, [vehicleIncentives]);
 
+  const dealCounts = useMemo(() => {
+    return {
+      buy: vehicleIncentives.incentives.filter(i => i.type === 'finance' || i.type === 'cash').length,
+      lease: vehicleIncentives.incentives.filter(i => i.type === 'lease').length,
+    };
+  }, [vehicleIncentives]);
+
+  const dealLinks = useMemo(() => {
+    const makeSlug = slugify(vehicleIncentives.make);
+    const modelSlug = slugify(vehicleIncentives.model);
+    return {
+      buy: `/${makeSlug}/${modelSlug}/deals-incentives`,
+      lease: `/${makeSlug}/${modelSlug}/lease-deals`,
+    };
+  }, [vehicleIncentives.make, vehicleIncentives.model]);
+
   if (topOffers.length === 0) return null;
 
   return (
     <div className="hero__offers-b">
-      <h3 className="hero__offers-b-title">{title}</h3>
+      <div className="hero__offers-b-header">
+        <h3 className="hero__offers-b-title">{title}</h3>
+        <nav className="hero__offers-b-deal-links" aria-label="Browse deal pages">
+          {dealCounts.buy > 0 && (
+            <Link
+              to={dealLinks.buy}
+              className="hero__offers-b-deal-link"
+              aria-label={`View ${formatDealCount(dealCounts.buy, 'Buy').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
+            >
+              {renderDealCount(dealCounts.buy, 'Buy')}
+            </Link>
+          )}
+          {dealCounts.lease > 0 && (
+            <Link
+              to={dealLinks.lease}
+              className="hero__offers-b-deal-link"
+              aria-label={`View ${formatDealCount(dealCounts.lease, 'Lease').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
+            >
+              {renderDealCount(dealCounts.lease, 'Lease')}
+            </Link>
+          )}
+        </nav>
+      </div>
       <div className="hero__offers-b-pills">
         {topOffers.map(inc => {
           const value = stripQualifier(inc.value);

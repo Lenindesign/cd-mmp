@@ -27,7 +27,7 @@ const summarizeOffer = (offer: { type: string; label: string }): string => {
     case 'lease':
       return offer.label;
     default:
-      return 'Special offer';
+      return 'Special deal';
   }
 };
 
@@ -72,7 +72,7 @@ const TopRankedGlance = ({
     <section className="top-ranked-glance">
       <div className="top-ranked-glance__header">
         <h2 className="top-ranked-glance__title">
-          {make} Deals, Incentives and Special Offers
+          {make} Deals and Incentives
         </h2>
         <Link to={resolvedDealsPath} className="top-ranked-glance__see-all">
           See all {make} deals
@@ -111,7 +111,7 @@ const TopRankedGlance = ({
 
                 {offers.length > 1 && (
                   <span className="top-ranked-glance__more-offers">
-                    +{offers.length - 1} more offer{offers.length - 1 > 1 ? 's' : ''}
+                    +{offers.length - 1} more deal{offers.length - 1 > 1 ? 's' : ''}
                   </span>
                 )}
               </div>

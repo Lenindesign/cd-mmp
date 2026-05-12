@@ -33,6 +33,7 @@ const GLOBAL_DEFAULTS: DealsFilterState = {
   monthlyPaymentMin: 0,
   monthlyPaymentMax: 1500,
   makes: [],
+  models: [],
   dueAtSigningMin: 0,
   dueAtSigningMax: 5000,
   fuelTypes: [],
@@ -83,6 +84,16 @@ export function useActiveFilterPills(
     for (const mk of filters.makes) {
       if (defaultMakes.has(mk)) continue;
       result.push({ id: `make-${mk}`, label: mk, onRemove: () => setFilters(f => ({ ...f, makes: f.makes.filter(x => x !== mk) })) });
+    }
+
+    const defaultModels = new Set(defaults.models ?? []);
+    for (const model of filters.models ?? []) {
+      if (defaultModels.has(model)) continue;
+      result.push({
+        id: `model-${model}`,
+        label: model,
+        onRemove: () => setFilters(f => ({ ...f, models: (f.models ?? []).filter(x => x !== model) })),
+      });
     }
 
     const defaultFuelTypes = new Set(defaults.fuelTypes);

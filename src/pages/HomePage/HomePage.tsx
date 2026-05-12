@@ -162,7 +162,7 @@ const HomePage = () => {
         <section id="pricing">
           <TrimSelector 
             trims={trimData}
-            subtitle="The LT trim offers the best balance of features and value, making it our recommended choice for most buyers."
+            subtitle="The LT trim provides the best balance of features and value, making it our recommended choice for most buyers."
             vehicleName="2025 Chevrolet Trax"
           />
         </section>
@@ -206,4 +206,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-

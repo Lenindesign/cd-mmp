@@ -119,11 +119,12 @@ const DealsHubPage = () => {
   }, []);
 
   const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    vehicle: { bodyStyle: string; make: string; model: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
     deal?: { term?: string; targetAudience?: string },
   ) => {
     if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
     if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
     if (filters.accolades.length > 0) {
       const hasMatch = filters.accolades.some(a => {
@@ -142,7 +143,7 @@ const DealsHubPage = () => {
       if (!creditTierQualifies(dealTier, filters.creditTier)) return false;
     }
     return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
+  }, [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier]);
 
   const categories = useMemo(() => {
     const { zeroAprDeals, financeDeals, cashDeals, leaseDeals } = rawData;
@@ -335,7 +336,7 @@ const DealsHubPage = () => {
             dealHeadline: `${d.incentiveValue} Cash Back`,
             whatItMeans: 'Customer cash from the manufacturer lowers your out-the-door price or down payment.',
             savingsNote: `${d.percentOffMsrp} off MSRP on many builds; confirm with your dealer.`,
-            whoQualifies: 'Retail buyers; see brand program rules for stackability with finance offers.',
+            whoQualifies: 'Retail buyers; see brand program rules for stackability with finance deals.',
             estimatedMonthly: d.incentiveValue,
             savingsVsAvg,
             savingsTooltip,
@@ -367,7 +368,7 @@ const DealsHubPage = () => {
       { title: 'Buying Deals', description: '0% APR, cash back, special low-rate financing, and below-market rates - save thousands when you buy.', href: BEST_BUYING_DEALS_PATH, count: filteredZeroApr.length + filteredFinance.length + filteredCash.length, deals: [...toMiniZeroApr(filteredZeroApr), ...toMiniFinance(filteredFinance), ...toMiniCash(filteredCash)].slice(0, 3) },
       { title: 'Lease Deals', description: 'Drive a new car for less with low monthly payments and flexible terms.', href: '/deals/lease', count: filteredLease.length, deals: toMiniLease(filteredLease) },
       { title: 'Best SUV Deals', description: 'Top incentives on SUVs and crossovers - from subcompact to full-size.', href: '/deals/suv', count: suvDeals.length, deals: toMiniMixed(suvDeals) },
-      { title: 'Best Truck Deals', description: 'The best current offers on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, deals: toMiniMixed(truckDeals) },
+      { title: 'Best Truck Deals', description: 'The best current deals on light-duty and mid-size pickup trucks.', href: '/deals/truck', count: truckDeals.length, deals: toMiniMixed(truckDeals) },
       { title: 'Deals by Fuel Type', description: 'Shop by powertrain - hybrid, electric, plug-in hybrid, diesel, and gas deals.', href: '/deals/fuel-type', count: allFuelTypeCount, deals: [...toMiniMixed(fuelTypePurchaseDeals), ...toMiniLease(fuelTypeLeaseDeals)].slice(0, 3) },
       { title: 'Buying by Body Style', description: 'Purchase deals organized by SUV, sedan, truck, coupe, and more.', href: '/deals/cash-finance-body-style', count: filteredFinance.length + filteredCash.length, deals: [...filteredFinance, ...filteredCash].slice(0, 3).map(d => (d.type === 'cash' ? toMiniCash([d])[0] : toMiniFinance([d])[0])) },
     ];
@@ -406,7 +407,7 @@ const DealsHubPage = () => {
           yourSavings: activeDeal.savingsNote,
           whoQualifies: activeDeal.whoQualifies,
           eligibleTrims: activeDeal.trimsEligible,
-          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This deal expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDeal.programName,
           expirationDate: activeDeal.expirationDate,
         };
@@ -421,7 +422,7 @@ const DealsHubPage = () => {
     <div className="deals-hub">
       <SEO
         title={`Best New Car Deals for ${month} ${year}`}
-        description={`Find the best new car deals, incentives, and offers for ${month} ${year}. Compare 0% APR financing, cash back, lease specials, and more from Car and Driver.`}
+        description={`Find the best new car deals and incentives for ${month} ${year}. Compare 0% APR financing, cash back, lease specials, and more from Car and Driver.`}
         canonical={`${BASE_URL}/deals`}
         keywords={['new car deals', 'car incentives', `car deals ${month} ${year}`, '0% APR', 'cash back', 'lease specials', 'best car deals']}
         structuredData={createBreadcrumbStructuredData([

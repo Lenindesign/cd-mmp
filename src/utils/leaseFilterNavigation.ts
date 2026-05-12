@@ -33,7 +33,12 @@ const slugify = (value: string): string =>
  * range-only, or term-only changes) so the caller keeps filters in place.
  */
 export function resolveLeaseFilterDestination(applied: DealsFilterState): LeaseFilterDestination | null {
-  const { makes, bodyTypes, fuelTypes } = applied;
+  const { makes, models, bodyTypes, fuelTypes } = applied;
+  const modelCount = models?.length ?? 0;
+
+  if (modelCount > 0) {
+    return { path: '/deals/lease', carryFilters: true };
+  }
 
   if (makes.length === 1 && bodyTypes.length === 0 && fuelTypes.length === 0) {
     return { path: `/deals/lease/${slugify(makes[0])}`, carryFilters: false };

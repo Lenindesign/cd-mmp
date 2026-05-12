@@ -90,7 +90,7 @@ function buildActiveOffer(deal: LeaseByMakeModelDeal | null): Partial<IncentiveO
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This deal expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
   };
 
   return {
@@ -147,6 +147,7 @@ const LeaseByMakeModelPage = () => {
       vehicle: {
         bodyStyle: string;
         make: string;
+        model: string;
         fuelType: string;
         editorsChoice?: boolean;
         tenBest?: boolean;
@@ -156,6 +157,7 @@ const LeaseByMakeModelPage = () => {
     ) => {
       if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
       if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+      if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
       if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
       if (filters.accolades.length > 0) {
         const hasMatch = filters.accolades.some((a) => {
@@ -175,7 +177,7 @@ const LeaseByMakeModelPage = () => {
       }
       return true;
     },
-    [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier],
+    [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier],
   );
 
   const toggleOffersPopup = useCallback(
@@ -204,6 +206,7 @@ const LeaseByMakeModelPage = () => {
       const v = deal.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
       if (draftFilters.terms.length > 0 && deal.term) {
         if (!draftFilters.terms.includes(parseTermMonths(deal.term))) return false;
@@ -452,7 +455,7 @@ const LeaseByMakeModelPage = () => {
                   <div className="mm-lease__grid">
                     <div className="mm-lease__empty-state">
                       <p className="mm-lease__empty-state-text">
-                        There are currently no active {makeName} {modelName} lease offers. Check back soon or explore
+                        There are currently no active {makeName} {modelName} lease deals. Check back soon or explore
                         other lease deals.
                       </p>
                       <Link to="/lease-deals" className="mm-lease__empty-state-link">
@@ -509,7 +512,7 @@ const LeaseByMakeModelPage = () => {
                   <div className="mm-lease__links-grid mm-lease__links-grid--two">
                     <Link to={`/${makeParam}/lease-deals`} className="mm-lease__link-card">
                       <h3>{makeName} Lease Deals</h3>
-                      <p>See every lease offer we track for {makeName}</p>
+                      <p>See every lease deal we track for {makeName}</p>
                     </Link>
                     <Link to={`/${mmpYear}/${makeParam}/${modelParam}`} className="mm-lease__link-card">
                       <h3>

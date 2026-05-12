@@ -181,19 +181,19 @@ const DealCard: React.FC<DealCardProps> = ({
             aria-expanded={offersPopupOpen}
             aria-controls={`${slug}-offers-popup`}
           >
-            {offers.length} Offers Available
+            {offers.length} Deals Available
           </button>
         )}
 
         {offersPopupOpen && (
-          <div className="deal-card__offers-popup" id={`${slug}-offers-popup`} role="region" aria-label={`${offers.length} available offers`}>
+          <div className="deal-card__offers-popup" id={`${slug}-offers-popup`} role="region" aria-label={`${offers.length} available deals`}>
             <div className="deal-card__offers-popup-header">
-              <strong>{offers.length} Available Offers</strong>
+              <strong>{offers.length} Available Deals</strong>
               <button
                 type="button"
                 className="deal-card__offers-popup-close"
                 onClick={onCloseOffersPopup}
-                aria-label="Close offers"
+                aria-label="Close deals"
               >
                 &times;
               </button>

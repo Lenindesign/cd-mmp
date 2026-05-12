@@ -8,10 +8,7 @@ import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimServ
 import Hero from '../../components/Hero';
 import QuickSpecs from '../../components/QuickSpecs';
 import FuelEconomy from '../../components/FuelEconomy';
-import CostToOwn from '../../components/CostToOwn';
 import PriceHistory from '../../components/PriceHistory';
-import TargetPriceRange from '../../components/TargetPriceRange';
-import Incentives from '../../components/Incentives';
 import BuyingPotential from '../../components/BuyingPotential';
 import AdSidebar from '../../components/AdSidebar';
 import TrimSelector from '../../components/TrimSelector';
@@ -131,7 +128,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     make: vehicle.make,
     model: vehicle.model,
     year: parseInt(vehicle.year),
-    tagline: `The ${vehicle.make} ${vehicle.model} offers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features and value'}. A compelling choice in the ${vehicle.bodyStyle.toLowerCase()} segment.`,
+    tagline: `The ${vehicle.make} ${vehicle.model}delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features and value'}. A compelling choice in the ${vehicle.bodyStyle.toLowerCase()} segment.`,
     rating: supabaseRating,
     priceRange: vehicle.priceRange,
     image: vehicle.image,
@@ -205,7 +202,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}
               highs={vehicle.features?.slice(0, 5) || undefined}
               year={parseInt(vehicle.year)}
-              verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment, offering ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${supabaseRating}/10, it delivers good value for its class.`}
+              verdict={`The ${vehicle.year} ${vehicle.make} ${vehicle.model} is a solid choice in the ${vehicle.bodyStyle.toLowerCase()} segment with ${vehicle.fuelType?.toLowerCase() || 'efficient'} power and a starting price of ${vehicle.priceRange}. With a staff rating of ${supabaseRating}/10, it delivers good value for its class.`}
             />
             <PaymentCalculator
               msrp={vehicle.priceMin}
@@ -240,11 +237,6 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         {/* Content with Sidebar - Part 2 */}
         <div className="content-with-sidebar content-with-sidebar--no-bottom-padding">
           <div className="content-main">
-            <CostToOwn 
-              vehicleName={`${vehicle.make} ${vehicle.model}`}
-              msrp={vehicle.priceMin}
-              fuelType={vehicle.fuelType}
-            />
             <PriceHistory
               vehicleYear={parseInt(vehicle.year)}
               make={vehicle.make}
@@ -278,17 +270,6 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
                   depreciationPercent: 22.5
                 },
               ]}
-            />
-            <TargetPriceRange 
-              msrp={vehicle.priceMin}
-              vehicleName={`${vehicle.make} ${vehicle.model}`}
-            />
-            <Incentives 
-              make={vehicle.make} 
-              model={vehicle.model}
-              msrp={vehicle.priceMin}
-              bodyStyle={vehicle.bodyStyle}
-              fuelType={vehicle.fuelType}
             />
           </div>
           <AdSidebar />
@@ -336,7 +317,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         <section id="pricing">
           <TrimSelector 
             trims={trimData}
-            subtitle={`The ${recommendedTrimName} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
+            subtitle={`The ${recommendedTrimName} trim provides the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
             vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
           />
         </section>

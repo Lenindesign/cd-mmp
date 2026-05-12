@@ -221,7 +221,7 @@ const TrimComparisonModal = ({ isOpen, onClose, trims, vehicleName }: TrimCompar
       points.push({
         icon: 'value',
         title: 'Most Affordable',
-        description: `At ${recommendedTrim.price}, this is the lowest-priced option while still offering essential features.`
+      description: `At ${recommendedTrim.price}, this is the lowest-priced option while still including essential features.`
       });
     } else if (pricePosition < sortedByPrice.length / 2) {
       const savings = highestPrice - recommendedPrice;
@@ -234,7 +234,7 @@ const TrimComparisonModal = ({ isOpen, onClose, trims, vehicleName }: TrimCompar
       points.push({
         icon: 'value',
         title: 'Premium Without the Premium Price',
-        description: `Gets you top-tier features at ${recommendedTrim.price}, offering better value than the highest trim.`
+      description: `Gets you top-tier features at ${recommendedTrim.price}, with better value than the highest trim.`
       });
     }
 
@@ -455,4 +455,3 @@ const TrimComparisonModal = ({ isOpen, onClose, trims, vehicleName }: TrimCompar
 };
 
 export default TrimComparisonModal;
-

@@ -147,7 +147,7 @@ function buildActiveOffer(deal: BuyingLandingDeal | null): Partial<IncentiveOffe
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This deal expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
   };
 
   if (deal.dealType === 'cash') {
@@ -211,6 +211,7 @@ const BuyingLandingPage = () => {
       vehicle: {
         bodyStyle: string;
         make: string;
+        model: string;
         fuelType: string;
         editorsChoice?: boolean;
         tenBest?: boolean;
@@ -220,6 +221,7 @@ const BuyingLandingPage = () => {
     ) => {
       if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
       if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+      if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
       if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
       if (filters.accolades.length > 0) {
         const hasMatch = filters.accolades.some((a) => {
@@ -240,7 +242,7 @@ const BuyingLandingPage = () => {
       if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
       return true;
     },
-    [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags],
+    [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags],
   );
 
   const toggleOffersPopup = useCallback(
@@ -357,6 +359,7 @@ const BuyingLandingPage = () => {
       const v = d.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
       if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
@@ -426,8 +429,8 @@ const BuyingLandingPage = () => {
   const pageTitle = `Best ${displayLabel} Deals & Incentives for ${month} ${year}`;
   const pageDescription =
     category.kind === 'make'
-      ? `Find the best ${displayLabel} deals, 0% APR offers, cash-back incentives, and low-rate financing for ${month} ${year}. Compare offers from Car and Driver.`
-      : `Find the best ${displayLabel.toLowerCase()} deals for ${month} ${year}. Compare 0% APR, cash-back, and low-rate financing offers on ${displayLabel.toLowerCase()} vehicles from Car and Driver.`;
+      ? `Find the best ${displayLabel} deals, 0% APR deals, cash-back incentives, and low-rate financing for ${month} ${year}. Compare deals from Car and Driver.`
+      : `Find the best ${displayLabel.toLowerCase()} deals for ${month} ${year}. Compare 0% APR, cash-back, and low-rate financing deals on ${displayLabel.toLowerCase()} vehicles from Car and Driver.`;
   const BASE_URL = 'https://www.caranddriver.com';
   const canonicalPath = `${BASE_URL}/deals/best-buying-deals/${slugify(category.label)}`;
 
@@ -531,7 +534,7 @@ const BuyingLandingPage = () => {
                   <div className="buying-landing__grid">
                     <div className="buying-landing__empty-state">
                       <p className="buying-landing__empty-state-text">
-                        There are currently no active {displayLabel.toLowerCase()} buying offers. Check back soon or browse all deals.
+                        There are currently no active {displayLabel.toLowerCase()} buying deals. Check back soon or browse all deals.
                       </p>
                       <Link to="/deals" className="buying-landing__empty-state-link">
                         Browse All Deals
@@ -694,12 +697,12 @@ const BuyingLandingPage = () => {
                   <div className="buying-landing__links-grid">
                     <Link to="/deals" className="buying-landing__link-card">
                       <h3>All Deals</h3>
-                      <p>Browse every manufacturer incentive and offer</p>
+                      <p>Browse every manufacturer incentive and deal</p>
                     </Link>
                     {crossLinks.map(({ to, label }) => (
                       <Link key={to} to={to} className="buying-landing__link-card">
                         <h3>{label}</h3>
-                        <p>View incentive offers and terms</p>
+                        <p>View incentive deals and terms</p>
                       </Link>
                     ))}
                   </div>

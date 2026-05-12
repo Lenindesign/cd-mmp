@@ -88,7 +88,7 @@ const Incentives = ({
   if (leasePayment) descriptionParts.push(`lease deals starting at ${leasePayment}/month`);
   if (totalSavings > 0) descriptionParts.push(`up to ${formatCurrency(totalSavings)} in combined cash incentives`);
   const descriptionSentence = descriptionParts.length > 0
-    ? `, offering ${descriptionParts.join(', ').replace(/,([^,]*)$/, ', and$1')}.`
+    ? `, including ${descriptionParts.join(', ').replace(/,([^,]*)$/, ', and$1')}.`
     : '.';
 
   if (incentives.length === 0) {
@@ -128,7 +128,7 @@ const Incentives = ({
               <div className="incentives__urgency-content">
                 <div className="incentives__urgency-text">
                   <Clock size={18} />
-                  <p>Don't miss out on <strong>up to {formatCurrency(totalSavings)}</strong> in savings. Act before these offers expire.</p>
+                  <p>Don't miss out on <strong>up to {formatCurrency(totalSavings)}</strong> in savings. Act before these deals expire.</p>
                 </div>
                 <Button variant="primary" className="incentives__urgency-cta">
                   Claim Your Incentive Now
@@ -241,7 +241,7 @@ const Incentives = ({
 
           {/* Source Attribution */}
           <div className="incentives__source">
-            <p>Incentive data sourced from manufacturer websites and verified through Edmunds, KBB, and dealer networks. Offers may vary by region and dealer participation.</p>
+            <p>Incentive data sourced from manufacturer websites and verified through Edmunds, KBB, and dealer networks. Deals may vary by region and dealer participation.</p>
           </div>
         </div>
       </div>

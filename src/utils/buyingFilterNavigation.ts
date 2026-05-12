@@ -29,7 +29,12 @@ const slugify = (value: string): string =>
  * falls back to the generic buying hub with filters carried via router state.
  */
 export function resolveBuyingFilterDestination(applied: DealsFilterState): BuyingFilterDestination | null {
-  const { makes, bodyTypes, fuelTypes } = applied;
+  const { makes, models, bodyTypes, fuelTypes } = applied;
+  const modelCount = models?.length ?? 0;
+
+  if (modelCount > 0) {
+    return { path: BEST_BUYING_DEALS_PATH, carryFilters: true };
+  }
 
   if (makes.length === 1 && bodyTypes.length === 0 && fuelTypes.length === 0) {
     return { path: `${BEST_BUYING_DEALS_PATH}/${slugify(makes[0])}`, carryFilters: false };

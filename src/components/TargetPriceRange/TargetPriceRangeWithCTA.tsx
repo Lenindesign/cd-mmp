@@ -120,7 +120,7 @@ const MarketplaceCTAV1C = ({ model, location }: { model: string; location: strin
         <h3 className="tpr-marketplace__expert-title">Ready to see what's available near you?</h3>
         <p className="tpr-marketplace__expert-text">
           Compare prices from {inventoryData.totalListings}+ {model} listings in the {location} area. 
-          Our nationwide dealer network offers competitive pricing on certified and inspected vehicles.
+          Our nationwide dealer network provides competitive pricing on certified and inspected vehicles.
         </p>
         <div className="tpr-marketplace__expert-actions">
           <button className="tpr-marketplace__btn tpr-marketplace__btn--primary">
@@ -636,4 +636,3 @@ const TargetPriceRangeWithCTA = ({
 };
 
 export default TargetPriceRangeWithCTA;
-

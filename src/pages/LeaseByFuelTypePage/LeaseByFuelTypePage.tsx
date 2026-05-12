@@ -94,7 +94,7 @@ function buildActiveOffer(deal: LeaseByFuelTypeDeal | null): Partial<IncentiveOf
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This deal expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
     offerHeadline: `Lease for ${deal.monthlyPayment}/month`,
     whatItMeans: `Instead of buying, you're renting the car for ${deal.term}. Your monthly payment is just ${deal.monthlyPayment} with ${deal.dueAtSigning} due at signing.`,
     yourSavings: `${deal.monthlyPayment}/mo is significantly lower than a typical purchase payment. ${deal.dueAtSigning} due at signing. Includes ${deal.mileageAllowance} mileage allowance.`,
@@ -171,6 +171,7 @@ const LeaseByFuelTypePage = () => {
       vehicle: {
         bodyStyle: string;
         make: string;
+        model: string;
         fuelType: string;
         editorsChoice?: boolean;
         tenBest?: boolean;
@@ -180,6 +181,7 @@ const LeaseByFuelTypePage = () => {
     ) => {
       if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
       if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+      if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
       if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
       if (filters.accolades.length > 0) {
         const hasMatch = filters.accolades.some((a) => {
@@ -199,7 +201,7 @@ const LeaseByFuelTypePage = () => {
       }
       return true;
     },
-    [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier],
+    [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier],
   );
 
   const toggleOffersPopup = useCallback(
@@ -233,6 +235,7 @@ const LeaseByFuelTypePage = () => {
         const v = deal.vehicle;
         if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
         if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+        if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
         if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
         if (draftFilters.terms.length > 0 && deal.term) {
           if (!draftFilters.terms.includes(parseTermMonths(deal.term))) return false;
@@ -411,7 +414,7 @@ const LeaseByFuelTypePage = () => {
           `${fuelTypeName} lease specials`,
           `car lease deals ${month} ${year}`,
           'new car lease',
-          'manufacturer lease offers',
+          'manufacturer lease deals',
         ]}
         structuredData={[
           createBreadcrumbStructuredData([
@@ -494,7 +497,7 @@ const LeaseByFuelTypePage = () => {
                   <div className="fuel-type-lease__grid">
                     <div className="fuel-type-lease__empty-state">
                       <p className="fuel-type-lease__empty-state-text">
-                        There are currently no active {fuelTypeName} lease offers. Check back soon or browse all lease deals.
+                        There are currently no active {fuelTypeName} lease deals. Check back soon or browse all lease deals.
                       </p>
                       <Link to="/lease-deals" className="fuel-type-lease__empty-state-link">
                         Browse Lease Deals
@@ -555,7 +558,7 @@ const LeaseByFuelTypePage = () => {
                     {makeLinks.map(({ to, label }) => (
                       <Link key={to} to={to} className="fuel-type-lease__link-card">
                         <h3>{label}</h3>
-                        <p>View lease offers and terms for this make</p>
+                        <p>View lease deals and terms for this make</p>
                       </Link>
                     ))}
                   </div>

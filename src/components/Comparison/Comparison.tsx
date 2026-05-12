@@ -157,7 +157,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     rating: 8.0,
     image: 'https://d2kde5ohu8qb21.cloudfront.net/files/6658e659f31254000921b1fa/16-2025-honda-hr-v-sport-front-view.jpg',
     slug: '2025/Honda/HR-V',
-    review: 'The Honda HR-V offers a spacious interior and excellent fuel economy, making it a practical choice for daily commuters.',
+    review: 'The Honda HR-V has a spacious interior and excellent fuel economy, making it a practical choice for daily commuters.',
     hasEditorChoice: false,
   },
   {
@@ -183,7 +183,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     rating: 8.0,
     image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67fe9c57961d350008c4017f/007-2025-hyundai-kona-front-three-quarter.jpg',
     slug: '2025/Hyundai/Kona',
-    review: 'The Kona stands out with its bold styling and tech-forward cabin, offering good value in a compact package.',
+    review: 'The Kona stands out with its bold styling and tech-forward cabin, delivering good value in a compact package.',
     hasEditorChoice: true,
   },
   {
@@ -196,7 +196,7 @@ export const defaultCompetitors: CompetitorVehicle[] = [
     rating: 7.5,
     image: 'https://d2kde5ohu8qb21.cloudfront.net/files/668c500afc8dbb0009e48f26/005-2025-kia-seltos-1-6l-turbo-front-view-motion.jpg',
     slug: '2025/Kia/Seltos',
-    review: 'The Seltos offers a turbocharged engine option and a feature-rich interior at a competitive price point.',
+    review: 'The Seltos includes a turbocharged engine option and a feature-rich interior at a competitive price point.',
     hasEditorChoice: false,
   },
 ];

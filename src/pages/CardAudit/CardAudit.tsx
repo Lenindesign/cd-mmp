@@ -18,7 +18,7 @@ const formatVehicleForCard = (vehicle: typeof vehicleDatabase[0]) => ({
   tenBest: vehicle.tenBest,
   evOfTheYear: vehicle.evOfTheYear,
   epaMpg: vehicle.mpg ? parseInt(vehicle.mpg.split('/')[0]) : undefined,
-  cdSays: `The ${vehicle.make} ${vehicle.model} offers ${vehicle.horsepower}hp and ${vehicle.mpg} MPG with ${vehicle.drivetrain} drivetrain.`,
+  cdSays: `The ${vehicle.make} ${vehicle.model} combines ${vehicle.horsepower}hp and ${vehicle.mpg} MPG with ${vehicle.drivetrain} drivetrain.`,
   availableYears: [parseInt(vehicle.year), parseInt(vehicle.year) - 1, parseInt(vehicle.year) - 2],
 });
 
@@ -966,4 +966,3 @@ const CardAudit = () => {
 };
 
 export default CardAudit;
-

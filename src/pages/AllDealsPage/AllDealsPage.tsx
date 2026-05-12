@@ -255,6 +255,7 @@ const AllDealsPage = () => {
       else if (f.dealType === 'finance') { if (d.dealType === 'lease') return false; }
       if (f.bodyTypes.length > 0 && !f.bodyTypes.includes(d.bodyStyle)) return false;
       if (f.makes.length > 0 && !f.makes.includes(d.make)) return false;
+      if ((f.models?.length ?? 0) > 0 && !f.models?.includes(d.model)) return false;
       if (f.fuelTypes.length > 0 && !f.fuelTypes.includes(d.fuelType)) return false;
       if (f.accolades.length > 0) {
         const hasMatch = f.accolades.some(a => {
@@ -329,7 +330,7 @@ const AllDealsPage = () => {
           yourSavings: activeDeal.savingsNote,
           whoQualifies: activeDeal.whoQualifies,
           eligibleTrims: activeDeal.trimsEligible,
-          dontWaitText: `This offer expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This deal expires ${formatExpiration(activeDeal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDeal.programName,
           expirationDate: activeDeal.expirationDate,
         };
@@ -342,9 +343,9 @@ const AllDealsPage = () => {
     <div className="all-deals">
       <SEO
         title={`All Car Deals & Incentives for ${month} ${year}`}
-        description={`Browse every current car deal, incentive, and offer for ${month} ${year}. 0% APR, finance rates, and lease specials - all in one place.`}
+        description={`Browse every current car deal and incentive for ${month} ${year}. 0% APR, finance rates, and lease specials - all in one place.`}
         canonical={`${BASE_URL}/deals/all`}
-        keywords={['all car deals', 'car incentives', `car deals ${month} ${year}`, 'new car offers']}
+        keywords={['all car deals', 'car incentives', `car deals ${month} ${year}`, 'new car deals']}
         structuredData={createBreadcrumbStructuredData([
           { name: 'Home', url: BASE_URL },
           { name: 'Deals', url: `${BASE_URL}/deals` },
@@ -503,7 +504,7 @@ const AllDealsPage = () => {
           ) : (
             <div className="all-deals__empty-state">
               <p className="all-deals__empty-state-text">
-                There are currently no active {emptyDealsCategory} offers. Check back soon or explore other available deals.
+                There are currently no active {emptyDealsCategory} deals. Check back soon or explore other available deals.
               </p>
               <Link to="/deals" className="all-deals__empty-state-link">
                 Browse All Deals

@@ -106,7 +106,7 @@ function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferD
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This deal expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
   };
 
   if (deal.dealType === 'lease') {
@@ -181,6 +181,7 @@ const DealsByMakePage = () => {
       vehicle: {
         bodyStyle: string;
         make: string;
+        model: string;
         fuelType: string;
         editorsChoice?: boolean;
         tenBest?: boolean;
@@ -190,6 +191,7 @@ const DealsByMakePage = () => {
     ) => {
       if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
       if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+      if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
       if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
       if (filters.accolades.length > 0) {
         const hasMatch = filters.accolades.some((a) => {
@@ -210,7 +212,7 @@ const DealsByMakePage = () => {
       if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
       return true;
     },
-    [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags],
+    [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags],
   );
 
   const toggleOffersPopup = useCallback(
@@ -346,6 +348,7 @@ const DealsByMakePage = () => {
       const v = d.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
       if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
@@ -404,7 +407,7 @@ const DealsByMakePage = () => {
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
 
   const pageTitle = `Best ${makeName} Deals & Incentives for ${month} ${year}`;
-  const pageDescription = `Find the best ${makeName} deals, incentives, and offers for ${month} ${year}. Compare financing rates, lease specials, and more from Car and Driver.`;
+  const pageDescription = `Find the best ${makeName} deals and incentives for ${month} ${year}. Compare financing rates, lease specials, and more from Car and Driver.`;
   const BASE_URL = 'https://www.caranddriver.com';
   const canonicalPath = makeParam ? `${BASE_URL}/${makeParam}/deals-incentives` : BASE_URL;
 
@@ -503,7 +506,7 @@ const DealsByMakePage = () => {
                   <div className="make-deals__grid">
                     <div className="make-deals__empty-state">
                       <p className="make-deals__empty-state-text">
-                        There are currently no active {makeName} offers. Check back soon or explore other available deals.
+                        There are currently no active {makeName} deals. Check back soon or explore other available deals.
                       </p>
                       <Link to="/deals" className="make-deals__empty-state-link">
                         Browse All Deals
@@ -683,7 +686,7 @@ const DealsByMakePage = () => {
                     {modelLinks.map(({ to, label }) => (
                       <Link key={to} to={to} className="make-deals__link-card">
                         <h3>{label}</h3>
-                        <p>View incentives and offers for this model</p>
+                        <p>View incentives and deals for this model</p>
                       </Link>
                     ))}
                   </div>

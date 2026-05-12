@@ -43,7 +43,7 @@ const generateNewCarAdvice = (vehicle: VehicleInventoryData) => {
     tips: [
       isAgedInventory 
         ? `Use inventory age as your entry point. Ask how long the specific ${model} has been on the lot and focus on units at **40+ days**, where dealers are most likely to move on price.`
-        : `Ask about specific units that have been on the lot longest. These offer the best negotiating leverage.`,
+        : `Ask about specific units that have been on the lot longest. These can provide the best negotiating leverage.`,
       hasIncentive 
         ? `The **$${formatNumber(cashIncentive)} cash incentive** should be treated as a given, not the negotiation. Apply it first, then push for additional dealer discount.`
         : `Check for manufacturer incentives or dealer cash that can be stacked on top of your negotiated price.`,

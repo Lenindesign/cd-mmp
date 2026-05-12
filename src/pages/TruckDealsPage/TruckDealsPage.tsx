@@ -54,9 +54,9 @@ interface UnifiedDeal {
 }
 
 const FAQ_DATA = [
-  { question: 'What types of truck deals are available?', answer: 'Truck deals include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers adjust these offers monthly based on inventory levels and sales targets.' },
-  { question: 'Are truck deals as good as sedan or SUV deals?', answer: 'Trucks are in high demand, so incentives can be smaller than sedans. However, manufacturers still offer competitive deals, especially on outgoing model years or well-stocked trims. Monitoring deals monthly helps you catch the best offers.' },
-  { question: 'Can I combine truck incentives?', answer: 'Some manufacturers allow stacking loyalty, military, or first-responder bonuses with a finance or lease offer. However, cash-back and special APR typically cannot be combined. Ask the dealer to compare both scenarios for your situation.' },
+  { question: 'What types of truck deals are available?', answer: 'Truck deals include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers adjust these deals monthly based on inventory levels and sales targets.' },
+  { question: 'Are truck deals as good as sedan or SUV deals?', answer: 'Trucks are in high demand, so incentives can be smaller than sedans. However, manufacturers still run competitive deals, especially on outgoing model years or well-stocked trims. Monitoring deals monthly helps you catch the best deals.' },
+  { question: 'Can I combine truck incentives?', answer: 'Some manufacturers allow stacking loyalty, military, or first-responder bonuses with a finance or lease deal. However, cash-back and special APR typically cannot be combined. Ask the dealer to compare both scenarios for your situation.' },
   { question: 'When is the best time to buy a truck?', answer: 'End of model year (August–October), holiday weekends, and the end of each quarter often bring the strongest deals. That said, great truck incentives can appear any month, so check this page regularly.' },
   { question: 'Do these deals apply to heavy-duty trucks?', answer: 'Most deals listed here apply to light-duty pickups (1500 series). Heavy-duty trucks (2500/3500) sometimes have separate incentive programs with different terms. Check the "Eligible Trims" section of each deal for specifics.' },
 ];
@@ -102,10 +102,11 @@ const TruckDealsPage = () => {
   const clearAllFilters = useCallback(() => setFilters(DEFAULT_FILTERS), []);
 
   const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    vehicle: { bodyStyle: string; make: string; model: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
     deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
     if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
     if (filters.accolades.length > 0) {
       const hasMatch = filters.accolades.some(a => {
@@ -125,7 +126,7 @@ const TruckDealsPage = () => {
     }
     if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
+  }, [filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -221,6 +222,7 @@ const TruckDealsPage = () => {
       const v = d.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
       if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
@@ -258,11 +260,11 @@ const TruckDealsPage = () => {
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
           offerHeadline: activeDealObj.dealText,
-          whatItMeans: `This ${activeDealObj.dealType} offer from the manufacturer could save you significantly on your next truck purchase.`,
+          whatItMeans: `This ${activeDealObj.dealType} deal from the manufacturer could save you significantly on your next truck purchase.`,
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This deal expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };
@@ -274,7 +276,7 @@ const TruckDealsPage = () => {
 
   return (
     <div className="truck-deals-page">
-      <SEO title={pageTitle} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on pickup trucks. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/truck`} keywords={['truck deals', 'pickup truck deals', `truck deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best truck incentives', 'truck lease deals', 'truck cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Truck Deals', url: `${BASE_URL}/deals/truck` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
+      <SEO title={pageTitle} description={`Find the best truck deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease deals on pickup trucks. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/truck`} keywords={['truck deals', 'pickup truck deals', `truck deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best truck incentives', 'truck lease deals', 'truck cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'Truck Deals', url: `${BASE_URL}/deals/truck` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
       <div className="truck-deals-page__hero">
         <div className="container">
           <div className="truck-deals-page__hero-content">
@@ -343,7 +345,7 @@ const TruckDealsPage = () => {
                     {deals.length === 0 && (
                       <div className="truck-deals-page__empty-state">
                         <p className="truck-deals-page__empty-state-text">
-                          There are currently no active truck offers. Check back soon or explore other available deals.
+                          There are currently no active truck deals. Check back soon or explore other available deals.
                         </p>
                         <Link to="/deals" className="truck-deals-page__empty-state-link">
                           Browse All Deals
@@ -353,7 +355,7 @@ const TruckDealsPage = () => {
                     {deals.length > 0 && filteredDeals.length === 0 && (
                       <div className="truck-deals-page__empty-state">
                         <p className="truck-deals-page__empty-state-text">
-                          No truck deals match your filters. Try adjusting filters or clear them to see all offers.
+                          No truck deals match your filters. Try adjusting filters or clear them to see all deals.
                         </p>
                         <button type="button" className="truck-deals-page__empty-state-link" onClick={clearAllFilters}>
                           Clear all filters

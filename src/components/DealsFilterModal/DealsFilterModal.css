@@ -167,6 +167,14 @@
   margin-top: var(--spacing-3);
 }
 
+.deals-filter__helper-text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  color: var(--color-gray-500);
+}
+
 /* ── Location / Zip ── */
 .deals-filter__zip-input-wrap {
   border: 1.5px solid var(--color-gray-200);
@@ -296,6 +304,29 @@
   flex-direction: column;
 }
 
+.deals-filter__make-list {
+  --deals-filter-checkbox-size: 20px;
+  --deals-filter-model-toggle-size: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.deals-filter__make-group {
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.deals-filter__make-group:last-child {
+  border-bottom: none;
+}
+
+.deals-filter__make-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--deals-filter-checkbox-size) var(--deals-filter-model-toggle-size);
+  column-gap: var(--spacing-3);
+  align-items: center;
+  padding: var(--spacing-3) 0;
+}
+
 .deals-filter__checkbox-row {
   display: flex;
   align-items: center;
@@ -313,14 +344,79 @@
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   color: var(--color-dark);
+  min-width: 0;
+}
+
+.deals-filter__make-label {
+  display: block;
+  line-height: 1.35;
+  cursor: pointer;
 }
 
 .deals-filter__checkbox {
-  width: 20px;
-  height: 20px;
+  width: var(--deals-filter-checkbox-size, 20px);
+  height: var(--deals-filter-checkbox-size, 20px);
   accent-color: var(--color-blue-cobalt);
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.deals-filter__make-model-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--deals-filter-model-toggle-size);
+  height: var(--deals-filter-model-toggle-size);
+  color: var(--color-gray-500);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.deals-filter__make-model-toggle:hover {
+  color: var(--color-dark);
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-200);
+}
+
+.deals-filter__make-model-toggle:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-1);
+}
+
+.deals-filter__nested-count {
+  display: inline-block;
+  margin-left: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-blue-cobalt);
+}
+
+.deals-filter__nested-model-list {
+  margin: calc(var(--spacing-1) * -1) 0 var(--spacing-2);
+  padding: var(--spacing-1) 0 var(--spacing-2);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-md);
+}
+
+.deals-filter__nested-model-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--deals-filter-checkbox-size) var(--deals-filter-model-toggle-size);
+  column-gap: var(--spacing-3);
+  justify-content: stretch;
+  padding: var(--spacing-2) 0 var(--spacing-2) var(--spacing-6);
+}
+
+.deals-filter__nested-model-row::after {
+  content: '';
+  width: var(--deals-filter-model-toggle-size);
+  height: 1px;
+}
+
+.deals-filter__nested-model-row .deals-filter__checkbox-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
 }
 
 /* ── Radio list (sort) ── */

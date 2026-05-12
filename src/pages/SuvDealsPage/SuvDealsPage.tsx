@@ -52,10 +52,10 @@ interface UnifiedDeal {
 }
 
 const FAQ_DATA = [
-  { question: 'What types of SUV deals are available?', answer: 'SUV deals typically include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers rotate these offers monthly, so the best deal depends on your purchase timeline and financial situation.' },
-  { question: 'Are SUV deals different from sedan or truck deals?', answer: 'The types of incentives are similar, but SUVs often have different dollar amounts and terms. Popular SUVs may have smaller incentives due to high demand, while slower-selling models may offer more aggressive deals to move inventory.' },
-  { question: 'Can I combine multiple SUV incentives?', answer: 'It depends on the manufacturer. Some allow stacking loyalty bonuses or military discounts with a finance or lease offer, but you typically cannot combine cash-back with special APR financing. Always ask the dealer to calculate both scenarios.' },
-  { question: 'When is the best time to buy an SUV?', answer: 'End of model year (August–October) and holiday weekends often bring the best deals. However, manufacturers can offer strong incentives any month. Monitoring deals monthly, like on this page, ensures you catch the best offers.' },
+  { question: 'What types of SUV deals are available?', answer: 'SUV deals typically include 0% APR financing, cash-back rebates, special finance rates, and lease specials. Manufacturers rotate these deals monthly, so the best deal depends on your purchase timeline and financial situation.' },
+  { question: 'Are SUV deals different from sedan or truck deals?', answer: 'The types of incentives are similar, but SUVs often have different dollar amounts and terms. Popular SUVs may have smaller incentives due to high demand, while slower-selling models may run more aggressive deals to move inventory.' },
+  { question: 'Can I combine multiple SUV incentives?', answer: 'It depends on the manufacturer. Some allow stacking loyalty bonuses or military discounts with a finance or lease deal, but you typically cannot combine cash-back with special APR financing. Always ask the dealer to calculate both scenarios.' },
+  { question: 'When is the best time to buy an SUV?', answer: 'End of model year (August–October) and holiday weekends often bring the best deals. However, manufacturers can run strong incentives any month. Monitoring deals monthly, like on this page, ensures you catch the best deals.' },
   { question: 'Do these deals apply to hybrid and electric SUVs?', answer: 'Some deals apply to hybrid and plug-in hybrid trims, but electric SUVs often have separate incentive programs. Check the "Eligible Trims" section of each deal for specifics, and remember that federal and state EV tax credits may also apply.' },
 ];
 
@@ -100,10 +100,11 @@ const SuvDealsPage = () => {
   const clearAllFilters = useCallback(() => setFilters(DEFAULT_FILTERS), []);
 
   const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    vehicle: { bodyStyle: string; make: string; model: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
     deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
     if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
     if (filters.accolades.length > 0) {
       const hasMatch = filters.accolades.some(a => {
@@ -123,7 +124,7 @@ const SuvDealsPage = () => {
     }
     if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
+  }, [filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -216,6 +217,7 @@ const SuvDealsPage = () => {
       const v = d.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
       return true;
     }).length;
@@ -256,11 +258,11 @@ const SuvDealsPage = () => {
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
           offerHeadline: activeDealObj.dealText,
-          whatItMeans: `This ${activeDealObj.dealType} offer from the manufacturer could save you significantly on your next SUV purchase.`,
+          whatItMeans: `This ${activeDealObj.dealType} deal from the manufacturer could save you significantly on your next SUV purchase.`,
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This deal expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
         };
@@ -272,7 +274,7 @@ const SuvDealsPage = () => {
 
   return (
     <div className="suv-deals-page">
-      <SEO title={pageTitle} description={`Find the best SUV deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease offers on SUVs and crossovers. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/suv`} keywords={['SUV deals', 'crossover deals', `SUV deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best SUV incentives', 'SUV lease deals', 'SUV cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'SUV Deals', url: `${BASE_URL}/deals/suv` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
+      <SEO title={pageTitle} description={`Find the best SUV deals for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, cash-back, finance, and lease deals on SUVs and crossovers. Expert ratings from Car and Driver.`} canonical={`${BASE_URL}/deals/suv`} keywords={['SUV deals', 'crossover deals', `SUV deals ${CURRENT_MONTH} ${CURRENT_YEAR}`, 'best SUV incentives', 'SUV lease deals', 'SUV cash back']} structuredData={[createBreadcrumbStructuredData([{ name: 'Home', url: BASE_URL }, { name: 'Deals', url: `${BASE_URL}/deals` }, { name: 'SUV Deals', url: `${BASE_URL}/deals/suv` }]), createFAQStructuredData(FAQ_DATA)]} noIndex={deals.length === 0} />
       <div className="suv-deals-page__hero">
         <div className="container">
           <div className="suv-deals-page__hero-content">
@@ -341,7 +343,7 @@ const SuvDealsPage = () => {
                     {deals.length === 0 && (
                       <div className="suv-deals-page__empty-state">
                         <p className="suv-deals-page__empty-state-text">
-                          There are currently no active SUV offers. Check back soon or explore other available deals.
+                          There are currently no active SUV deals. Check back soon or explore other available deals.
                         </p>
                         <Link to="/deals" className="suv-deals-page__empty-state-link">
                           Browse All Deals
@@ -351,7 +353,7 @@ const SuvDealsPage = () => {
                     {deals.length > 0 && filteredDeals.length === 0 && (
                       <div className="suv-deals-page__empty-state">
                         <p className="suv-deals-page__empty-state-text">
-                          No SUV deals match your filters. Try adjusting filters or clear them to see all offers.
+                          No SUV deals match your filters. Try adjusting filters or clear them to see all deals.
                         </p>
                         <button type="button" className="suv-deals-page__empty-state-link" onClick={clearAllFilters}>
                           Clear all filters

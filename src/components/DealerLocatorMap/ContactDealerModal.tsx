@@ -47,14 +47,14 @@ const DEFAULT_DEAL_DETAILS: ContactDealerDealDetails = {
   dueAtSigning: 2718,
   termMonths: 36,
   ourTakeRating: '5/5 Excellent',
-  ourTakeText: "This lease deal offers exceptional value relative to the vehicle's MSRP.",
+  ourTakeText: "This lease deal delivers exceptional value relative to the vehicle's MSRP.",
   keyDetails: [
     { label: 'Term', value: '36 months' },
     { label: 'Due at signing', value: '$2,718' },
     { label: 'Mileage allowance', value: '12,000 miles/year' },
     { label: 'Lifetime cost', value: '$10,348' },
     { label: 'Eligible trims', value: 'Sport' },
-    { label: 'Offer ends', value: 'Mar. 30, 2026' },
+    { label: 'Deal ends', value: 'Mar. 30, 2026' },
   ],
   comparisonLabel: '$233/mo lower than similar cars',
 };
@@ -76,7 +76,7 @@ const ContactDealerModal = ({
   const [message, setMessage] = useState('');
 
   const vehicleLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
-  const prefillMessage = `I would like more information about available offers for the New ${vehicleLabel}.`;
+  const prefillMessage = `I would like more information about available deals for the New ${vehicleLabel}.`;
 
   useEffect(() => {
     if (isOpen && variant === 'form') {
@@ -150,7 +150,7 @@ const ContactDealerModal = ({
           {variant === 'default' && (
             <>
               <p className="contact-dealer-modal__intro">
-                Get in touch with a dealer about this vehicle. They can answer questions, share current offers, and schedule a test drive.
+                Get in touch with a dealer about this vehicle. They can answer questions, share current deals, and schedule a test drive.
               </p>
             </>
           )}
@@ -288,7 +288,7 @@ const ContactDealerModal = ({
               )}
 
               <div className="contact-dealer-modal__edmunds-key-details">
-                <h3 className="contact-dealer-modal__edmunds-key-heading">Key offer details</h3>
+                <h3 className="contact-dealer-modal__edmunds-key-heading">Key deal details</h3>
                 <dl className="contact-dealer-modal__edmunds-dl">
                   {dealDetails.keyDetails?.map((row, i) => (
                     <div key={i} className="contact-dealer-modal__edmunds-dl-row">

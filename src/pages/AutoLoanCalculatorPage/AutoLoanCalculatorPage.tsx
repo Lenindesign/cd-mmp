@@ -8,9 +8,9 @@ type CreditTier = 'excellent' | 'good' | 'fair' | 'poor';
 
 const CREDIT_TIERS: Array<{ id: CreditTier; label: string; description: string; baseLow: number; baseMid: number; baseHigh: number }> = [
   { id: 'excellent', label: 'Excellent 780+', description: 'Prime borrowers with deep credit history.', baseLow: 5.2, baseMid: 5.9, baseHigh: 6.8 },
-  { id: 'good', label: 'Good 700-779', description: 'Solid credit with generally competitive offers.', baseLow: 5.9, baseMid: 6.6, baseHigh: 7.4 },
+  { id: 'good', label: 'Good 700-779', description: 'Solid credit with generally competitive deals.', baseLow: 5.9, baseMid: 6.6, baseHigh: 7.4 },
   { id: 'fair', label: 'Fair 660-699', description: 'More lender variance and higher approval friction.', baseLow: 8.4, baseMid: 9.8, baseHigh: 11.7 },
-  { id: 'poor', label: 'Poor <660', description: 'Directional only; real offers vary widely.', baseLow: 12.5, baseMid: 14.2, baseHigh: 18.5 },
+  { id: 'poor', label: 'Poor <660', description: 'Directional only; real deals vary widely.', baseLow: 12.5, baseMid: 14.2, baseHigh: 18.5 },
 ];
 
 const STATE_FEES = [

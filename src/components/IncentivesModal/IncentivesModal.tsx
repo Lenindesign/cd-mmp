@@ -115,12 +115,12 @@ const DEFAULT_OFFER: IncentiveOfferDetail = {
   whatItMeans:
     "Special APR through Honda Financial means more of your payment goes toward the car. On a typical $35,000 loan, this could save you thousands compared to standard rates.",
   yourSavings:
-    "On a $35,000 loan over 60 months, you'd save approximately $2,800 in interest vs. the average 6.5% rate. Lease offers from $369/mo also available.",
+    "On a $35,000 loan over 60 months, you'd save approximately $2,800 in interest vs. the average 6.5% rate. Lease deals from $369/mo also available.",
   whoQualifies: 'Well-qualified buyers. Credit approval required through Honda Financial Services.',
   eligibleTrims: ['EX', 'EX-L', 'LX', 'Sport', 'Hybrid Sport'],
   dontWaitText:
-    "This offer expires January 2, 2026. Honda incentives change monthly, so lock in your rate before it's gone.",
-  eventLabel: 'Honda CR-V Current Offers',
+    "This deal expires January 2, 2026. Honda incentives change monthly, so lock in your rate before it's gone.",
+  eventLabel: 'Honda CR-V Current Deals',
   expirationDate: 'January 2, 2026',
 };
 
@@ -153,9 +153,9 @@ const getOfferRowChipLabel = (type: Incentive['type']): string =>
 
 const EXPERT_TIPS: Record<Incentive['type'], string> = {
   finance: "Low-rate financing deals can beat cash rebates if you qualify. Always compare the total interest saved versus the rebate you\u2019re giving up before deciding.",
-  cash: "Cash incentives (loyalty discounts, cash-back offers) can lower the purchase price significantly. That\u2019s especially valuable if you\u2019re paying up front or securing financing outside the dealership.",
+  cash: "Cash incentives (loyalty discounts, cash-back deals) can lower the purchase price significantly. That\u2019s especially valuable if you\u2019re paying up front or securing financing outside the dealership.",
   lease: "Lease incentives work best if you prefer lower monthly payments and driving a new car every few years, but pay close attention to mileage limits and end-of-lease fees to avoid surprises.",
-  special: "Special incentives like military, college grad, or loyalty bonuses can stack with other offers\u2014ask the dealer which programs you qualify for to maximize your savings.",
+  special: "Special incentives like military, college grad, or loyalty bonuses can stack with other deals. Ask the dealer which programs you qualify for to maximize your savings.",
 };
 
 const getExpertTip = (inc: Incentive): string => EXPERT_TIPS[inc.type] ?? (inc.terms || inc.description);
@@ -315,7 +315,7 @@ const IncentivesModal = ({
   const submitLead = useCallback(() => {
     const resolvedMessage =
       message.trim() ||
-      `I would like more information about available offers for the New ${vehicleLabel}.`;
+      `I would like more information about available deals for the New ${vehicleLabel}.`;
     onSubmitForm?.({ firstName, lastName, email, phone, message: resolvedMessage });
 
     if (variant === 'conversion-b') {
@@ -485,7 +485,7 @@ const IncentivesModal = ({
               )}
 
               <div className="incentives-modal__form-block">
-                <h3 className="incentives-modal__form-title">Contact a dealer about this offer</h3>
+                <h3 className="incentives-modal__form-title">Contact a dealer about this deal</h3>
                 <form
                   id="incentives-modal-form-complete"
                   onSubmit={handleFormSubmit}
@@ -573,10 +573,10 @@ const IncentivesModal = ({
               </div>
 
               <div className="incentives-modal__key-details">
-                <h3 className="incentives-modal__key-heading">Key offer details</h3>
+                <h3 className="incentives-modal__key-heading">Key deal details</h3>
                 <dl className="incentives-modal__key-dl">
                   <div className="incentives-modal__key-row">
-                    <dt>Offer</dt>
+                    <dt>Deal</dt>
                     <dd>{offer.offerHeadline}</dd>
                   </div>
                   <div className="incentives-modal__key-row">
@@ -730,7 +730,7 @@ const IncentivesModal = ({
                         );
                       })()}
 
-                      {/* APR Rate Table for finance offers */}
+                      {/* APR Rate Table for finance deals */}
                       {activeIncentive.type === 'finance' && (() => {
                         const rows = buildAprTable(activeIncentive);
                         const showCashBackColumn = hasTieredCashBack(rows);
@@ -782,12 +782,12 @@ const IncentivesModal = ({
                       })()}
 
                       <div className="incentives-modal__v5-key-details">
-                        <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
+                        <h3 className="incentives-modal__v5-key-heading">Key deal details</h3>
 
                         {activeIncentive.type === 'lease' ? (
                           <>
                             <div className="incentives-modal__v5-key-section">
-                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
+                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS DEAL?</h4>
                               <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                             </div>
 
@@ -831,14 +831,14 @@ const IncentivesModal = ({
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
                               <p className="incentives-modal__v5-key-section-text">
-                                This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
+                                This deal expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
                               </p>
                             </div>
                           </>
                         ) : (
                           <>
                             <div className="incentives-modal__v5-key-section">
-                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
+                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS DEAL?</h4>
                               <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                             </div>
                             <div className="incentives-modal__v5-key-section">
@@ -856,7 +856,7 @@ const IncentivesModal = ({
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
                               <p className="incentives-modal__v5-key-section-text">
-                                This offer expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
+                                This deal expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
                               </p>
                             </div>
                           </>
@@ -928,7 +928,7 @@ const IncentivesModal = ({
                         />
                         <label className="incentives-modal__v5-message-label">MESSAGE</label>
                         <textarea
-                          value={message || `I would like more information about available offers for the New ${vehicleLabel}.`}
+                          value={message || `I would like more information about available deals for the New ${vehicleLabel}.`}
                           onChange={(e) => setMessage(e.target.value)}
                           rows={3}
                           aria-label="Message"
@@ -1198,9 +1198,9 @@ const IncentivesModal = ({
                       })()}
 
                       <div className="incentives-modal__v5-key-details">
-                        <h3 className="incentives-modal__v5-key-heading">Key offer details</h3>
+                        <h3 className="incentives-modal__v5-key-heading">Key deal details</h3>
                         <div className="incentives-modal__v5-key-section">
-                          <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
+                          <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS DEAL?</h4>
                           <p className="incentives-modal__v5-key-section-text">{offer.make} US Special Lease Rates</p>
                         </div>
                         <div className="incentives-modal__v5-key-section">
@@ -1217,7 +1217,7 @@ const IncentivesModal = ({
                         </div>
                         <div className="incentives-modal__v5-key-section">
                           <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
-                          <p className="incentives-modal__v5-key-section-text">This offer expires January 2, 2026. Manufacturer deals change monthly—once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.</p>
+                          <p className="incentives-modal__v5-key-section-text">This deal expires January 2, 2026. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.</p>
                         </div>
                       </div>
 

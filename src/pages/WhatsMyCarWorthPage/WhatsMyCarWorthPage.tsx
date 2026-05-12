@@ -137,7 +137,7 @@ const WhatsMyCarWorthPage = () => {
           <div className="whats-my-car-worth-page__info-card whats-my-car-worth-page__info-card--highlight">
             <h3 className="whats-my-car-worth-page__info-title">Ready to Sell?</h3>
             <p className="whats-my-car-worth-page__info-text">
-              Once you know your car's value, explore trade-in offers from dealers in your area 
+              Once you know your car's value, explore trade-in estimates from dealers in your area
               or list it for sale on our marketplace.
             </p>
             <a href="/vehicles" className="whats-my-car-worth-page__cta-link">
@@ -153,8 +153,8 @@ const WhatsMyCarWorthPage = () => {
           <div className="whats-my-car-worth-page__faq-item">
             <h4>How accurate is the estimate?</h4>
             <p>
-              Our estimates are based on real-time market data from Black Book, the industry 
-              standard for vehicle valuation. While actual offers may vary based on local market 
+              Our estimates are based on real-time market data from Black Book, the industry
+              standard for vehicle valuation. While actual appraisals may vary based on local market
               conditions and vehicle inspection, our estimates provide a reliable baseline.
             </p>
           </div>
@@ -187,4 +187,3 @@ const WhatsMyCarWorthPage = () => {
 };
 
 export default WhatsMyCarWorthPage;
-

@@ -705,14 +705,14 @@ const RankingsPage = () => {
               </button>
             )}
             {showIncentiveSubnavVariant && (
-              <div className="rankings-page__subnav-offers" aria-label={`${offerBodyStyleLabel} offers`}>
+              <div className="rankings-page__subnav-offers" aria-label={`${offerBodyStyleLabel} deals`}>
                 <Link to={buyingOffersPath} className="rankings-page__subnav-pill rankings-page__subnav-pill--offer">
                   <span className="rankings-page__subnav-offer-chip">BUY</span>
-                  <span className="rankings-page__subnav-offer-count">{RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Offers</span>
+                  <span className="rankings-page__subnav-offer-count">{RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Deals</span>
                 </Link>
                 <Link to={leasingOffersPath} className="rankings-page__subnav-pill rankings-page__subnav-pill--offer">
                   <span className="rankings-page__subnav-offer-chip">LEASE</span>
-                  <span className="rankings-page__subnav-offer-count">{RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Offers</span>
+                  <span className="rankings-page__subnav-offer-count">{RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Deals</span>
                 </Link>
               </div>
             )}
@@ -755,25 +755,25 @@ const RankingsPage = () => {
           <section className="rankings-page__offers-cta" aria-labelledby="rankings-page-offers-title">
             <div className="rankings-page__offers-cta-header">
               <h2 id="rankings-page-offers-title" className="rankings-page__offers-cta-title">
-                Special offers and incentives
+                Special deals and incentives
               </h2>
               <p className="rankings-page__offers-cta-count">
                 <strong>{RANKINGS_OFFER_COUNTS.total}</strong>
-                <span>{offerBodyStyleLabel} offers available</span>
+                <span>{offerBodyStyleLabel} deals available</span>
               </p>
             </div>
             <div className="rankings-page__offers-cta-links">
               <Link to={buyingOffersPath} className="rankings-page__offers-cta-link">
                 <span className="rankings-page__offers-cta-link-main">
                   <span className="rankings-page__offers-cta-chip">BUY</span>
-                  <span>See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Offers</span>
+                  <span>See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Deals</span>
                 </span>
                 <span className="rankings-page__offers-cta-badge">{RANKINGS_OFFER_COUNTS.buyingExpiringSoon} expiring soon!</span>
               </Link>
               <Link to={leasingOffersPath} className="rankings-page__offers-cta-link">
                 <span className="rankings-page__offers-cta-link-main">
                   <span className="rankings-page__offers-cta-chip">LEASE</span>
-                  <span>See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Offers</span>
+                  <span>See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Deals</span>
                 </span>
                 <span className="rankings-page__offers-cta-badge">{RANKINGS_OFFER_COUNTS.leasingExpiringSoon} expiring soon!</span>
               </Link>

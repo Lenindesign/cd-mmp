@@ -71,7 +71,7 @@ export function leaseDeal(spec: LeaseSpec): LeaseDealDef {
   const dueNum = spec.dueAtSigning ?? roundToNearestHundred(spec.monthly * 10);
   const monthlyStr = formatMoney(spec.monthly);
   const dueStr = formatMoney(dueNum);
-  const programName = spec.programName ?? `${spec.make} ${spec.model} Lease Offer`;
+  const programName = spec.programName ?? `${spec.make} ${spec.model} Lease Deal`;
   const programDescription =
     spec.programDescription ??
     `Lease a 2026 ${spec.make} ${spec.model} for ${term} at ${monthlyStr}/mo with ${dueStr} due at signing. ${mileage} allowance.`;
@@ -122,7 +122,7 @@ export interface ZeroAprDealDef {
 
 export function zeroAprDeal(spec: ZeroAprSpec): ZeroAprDealDef {
   const term = spec.term ?? '60 months';
-  const programName = spec.programName ?? `${spec.make} ${spec.model} 0% APR Offer`;
+  const programName = spec.programName ?? `${spec.make} ${spec.model} 0% APR Deal`;
   const programDescription =
     spec.programDescription ??
     `0% APR financing for ${term} on the 2026 ${spec.make} ${spec.model}. Available to well-qualified buyers at participating dealers.`;

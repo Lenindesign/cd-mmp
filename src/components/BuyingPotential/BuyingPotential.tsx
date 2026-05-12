@@ -282,7 +282,7 @@ const BuyingPotential = ({
                 Auto Loan Calculator
               </h2>
               <p className="buying-potential__description">
-                Estimate your buying power with payment, credit, tax, and trade-in details. Then browse matching vehicles, compare offers, or start pre-approval.
+                Estimate your buying power with payment, credit, tax, and trade-in details. Then browse matching vehicles, compare deals, or start pre-approval.
               </p>
             </div>
             <div className="buying-potential__header-right">
@@ -683,7 +683,7 @@ const BuyingPotential = ({
                                   </button>
                                   {offers.length > 1 && (
                                     <span className="buying-potential__match-more">
-                                      +{offers.length - 1} more offer{offers.length - 1 > 1 ? 's' : ''}
+                                      +{offers.length - 1} more deal{offers.length - 1 > 1 ? 's' : ''}
                                     </span>
                                   )}
                                 </>

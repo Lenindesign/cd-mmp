@@ -143,7 +143,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       type: 'finance',
       title: `${d.apr} APR for ${d.term}${cashBackSuffix}`,
       description: hasTieredCashBack
-        ? `A below-market ${d.apr} rate from the manufacturer plus cash back that varies by term. Shorter terms typically offer higher cash back.`
+        ? `A below-market ${d.apr} rate from the manufacturer plus cash back that varies by term. Shorter terms typically include higher cash back.`
         : `A below-market ${d.apr} rate from the manufacturer lowers your monthly payment and total cost compared to standard financing.`,
       value: `${d.apr} APR`,
       expirationDate: d.expirationDate,

@@ -72,8 +72,8 @@ const DEFAULT_TAX_RULE_BY_STATE: Record<string, TaxableAmountRule> = {
 
 const FAQS = [
   {
-    question: 'Should I take a cash rebate or a low APR offer?',
-    answer: 'Compare total loan cost, not just monthly payment. A rebate lowers principal, while a low APR lowers interest. The better offer depends on loan size, term, and how much cash you apply up front.',
+    question: 'Should I take a cash rebate or a low APR deal?',
+    answer: 'Compare total loan cost, not just monthly payment. A rebate lowers principal, while a low APR lowers interest. The better deal depends on loan size, term, and how much cash you apply up front.',
   },
   {
     question: 'Does my trade-in lower sales tax?',
@@ -231,7 +231,7 @@ const getLightDealPayment = (offer: VehicleOfferSummary): DealCardPayment => {
     return {
       amount,
       period: 'APR',
-      savings: { type: 'plain', text: term || 'Low-rate offer' },
+      savings: { type: 'plain', text: term || 'Low-rate deal' },
       expirationDate: offer.expires,
     };
   }
@@ -552,9 +552,9 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
   {
     label: 'Review',
     short: 'Review',
-    hint: 'Stack on any offers, peek at the breakdown, then jump to cars that fit.',
+    hint: 'Stack on any deals, peek at the breakdown, then jump to cars that fit.',
     panelTitle: 'Review your estimate',
-    panelIntro: 'Stack on any offers, peek at the breakdown, then jump to cars that fit.',
+    panelIntro: 'Stack on any deals, peek at the breakdown, then jump to cars that fit.',
   },
 ];
 
@@ -669,7 +669,7 @@ function LightLoanTermsStepPanel({
           </>
         ) : (
           <p className="payment-calc__note payment-calc__note--inline">
-            APR follows the selected finance offer. Choose &quot;Custom rate&quot; in review to edit.
+            APR follows the selected finance deal. Choose &quot;Custom rate&quot; in review to edit.
           </p>
         )}
       </div>
@@ -1015,7 +1015,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     : shouldScrollToBudgetVehicles
       ? `Start with cars near ${currency(affordableMsrp)} or choose a vehicle to compare.`
       : startMode === 'monthly'
-        ? 'This vehicle is close enough to compare offers and inventory.'
+        ? 'This vehicle is close enough to compare deals and inventory.'
         : 'Review the due-at-signing and total cost before you shop.';
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
@@ -1053,12 +1053,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const aiBestOfferPath = lowAprVsCash
     ? lowAprVsCash.totalDelta > 0
       ? `${financeIncentives[0].title} looks stronger than cash back by about ${currency(Math.abs(lowAprVsCash.totalDelta))} over the compared terms.`
-      : `${cashIncentives[0].title} looks stronger than the low-APR offer by about ${currency(Math.abs(lowAprVsCash.totalDelta))} over the compared terms.`
+      : `${cashIncentives[0].title} looks stronger than the low-APR deal by about ${currency(Math.abs(lowAprVsCash.totalDelta))} over the compared terms.`
     : selectedFinance
       ? `${selectedFinance.title} is active. Keep it only if the dealer preserves the negotiated price and does not add fee markup.`
       : cashIncentives[0]
         ? `${cashIncentives[0].title} is the best visible incentive to pressure-test against your own financing.`
-        : 'No active manufacturer offer is selected. Treat dealer discount, APR, and fees as the main negotiation levers.';
+        : 'No active manufacturer deal is selected. Treat dealer discount, APR, and fees as the main negotiation levers.';
   const aiDealerFlags = [
     activeApr > 8 ? `${activeApr.toFixed(1)}% APR is high enough to shop a bank or credit union quote before the dealer visit.` : '',
     fees > 900 ? `${currency(fees)} in title, registration, and fees deserves an itemized quote.` : '',
@@ -1133,7 +1133,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       yourSavings: selectedIncentive.terms || selectedIncentive.description,
       whoQualifies: selectedIncentive.eligibility || 'All qualified buyers. See dealer for details.',
       eligibleTrims: ['Base', 'Sport', 'Premium'],
-      dontWaitText: `This offer expires ${selectedIncentive.expirationDate}. Manufacturer deals change monthly, so confirm availability before you shop.`,
+      dontWaitText: `This deal expires ${selectedIncentive.expirationDate}. Manufacturer deals change monthly, so confirm availability before you shop.`,
       expirationDate: selectedIncentive.expirationDate,
     };
   }, [lightDealModalVehicle, selectedIncentive, selectedVehicle, selectedYear]);
@@ -1398,7 +1398,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 <p>
                   {isLightStepsVariant
                     ? 'The budget-first car payment calculator. Answer one question at a time and watch your numbers update live.'
-                    : 'Adjust budget, loan terms, vehicle price, trade-in, offers, and payment details together on one page.'}
+                    : 'Adjust budget, loan terms, vehicle price, trade-in, deals, and payment details together on one page.'}
                 </p>
               </div>
             </div>
@@ -1961,21 +1961,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 {condition === 'new' && (cashIncentives.length > 0 || financeIncentives.length > 0) ? (
                   <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                     <summary>
-                      <span>Offers and incentives</span>
+                      <span>Deals and incentives</span>
                       <strong>{rebateTotal > 0 ? `${currency(rebateTotal)} applied` : 'None applied'}</strong>
                     </summary>
                     <div className="aio-payment__light-offers aio-payment__light-offers--hero">
                       <HeroOffersB
                         vehicleIncentives={vehicleIncentives}
                         onOfferClick={handleOfferClick}
-                        title="Special offers and incentives"
+                        title="Special deals and incentives"
                         selectedOfferIds={[
                           ...selectedCashIds,
                           ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
                         ]}
                       />
                       <p className="aio-payment__light-offer-help">
-                        Select an offer to see details, then apply or remove it from this estimate.
+                        Select a deal to see details, then apply or remove it from this estimate.
                       </p>
                     </div>
                   </details>
@@ -2259,8 +2259,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </div>
                   <p className="aio-payment__light-affordable-copy">
                     {startMode === 'monthly'
-                      ? `These pair active offers with vehicles starting near ${currency(affordableMsrp)} before tax and fees.`
-                      : `These pair active offers with vehicles starting near ${currency(price)} before tax and fees.`}
+                      ? `These pair active deals with vehicles starting near ${currency(affordableMsrp)} before tax and fees.`
+                      : `These pair active deals with vehicles starting near ${currency(price)} before tax and fees.`}
                   </p>
                   <div className="aio-payment__vehicle-carousel-wrap aio-payment__vehicle-carousel-wrap--light">
                     <button
@@ -2397,7 +2397,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
               <div className="aio-payment__ai-modal-grid">
                 <section>
-                  <h3>Best offer path</h3>
+                  <h3>Best deal path</h3>
                   <p>{aiBestOfferPath}</p>
                   <p>
                     Current out-the-door estimate is {currency(outTheDoorPrice)}. The financeable amount after trade,
@@ -2430,7 +2430,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <h3>Best possible deal</h3>
                   <p>
                     A strong version of this deal combines a selling price near {currency(aiTargetPrice)}, fees under
-                    {currency(Math.min(fees, 800))}, and either the best APR offer or cash rebate without dealer add-ons.
+                    {currency(Math.min(fees, 800))}, and either the best APR deal or cash rebate without dealer add-ons.
                   </p>
                   <p>
                     If the dealer cannot preserve that structure, compare similar {selectedVehicle.model} listings or use
@@ -2666,7 +2666,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   vehicleIncentives={offerModuleIncentives}
                   onOfferClick={handleOfferClick}
                   onApplyOffer={applyOfferToEstimate}
-                  title={`${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} offers and incentives`}
+                  title={`${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} deals and incentives`}
                   selectedOfferIds={[
                     ...selectedCashIds,
                     ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
@@ -2948,7 +2948,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               </>
             )}
             <div>
-              <span>Total after trade & offers</span>
+              <span>Total after trade & deals</span>
               <strong>{currency(totalCost)}</strong>
             </div>
           </div>

@@ -115,7 +115,7 @@ const faqs = [
   },
   {
     question: 'Is it better to trade in your car or sell it yourself?',
-    answer: 'Trading in is more convenient and can offer tax benefits, while selling privately typically yields a higher price but requires more time and effort.',
+    answer: 'Trading in is more convenient and can include tax benefits, while selling privately typically yields a higher price but requires more time and effort.',
   },
   {
     question: "Does my location affect my car's value?",
@@ -201,7 +201,7 @@ const WhatsMyCarWorthResultsV2 = ({
         price: v.priceMin,
         image: v.image,
         mpg: `${24 + i * 2}-${32 + i * 2}`,
-        editorNote: `The ${v.year} ${v.make} ${v.model} offers excellent value with refined handling and a comfortable interior.`,
+        editorNote: `The ${v.year} ${v.make} ${v.model} delivers excellent value with refined handling and a comfortable interior.`,
       }));
   }, []);
 
@@ -319,7 +319,7 @@ const WhatsMyCarWorthResultsV2 = ({
           <strong>We're Sorry...</strong>
           <p>
             We couldn't find any participating dealers near your location that have
-            vehicles to offer for your trade-in.
+            vehicles available for your trade-in.
           </p>
         </div>
       </section>

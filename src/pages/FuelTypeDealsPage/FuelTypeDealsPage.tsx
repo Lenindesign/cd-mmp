@@ -60,11 +60,11 @@ interface UnifiedDeal {
 
 
 const FAQ_DATA = [
-  { question: 'Are there special deals on electric vehicles?', answer: 'Yes. Many manufacturers offer special incentives on EVs including reduced APR financing, lease specials, and cash rebates. Additionally, federal tax credits of up to $7,500 and various state incentives may apply on top of manufacturer deals.' },
-  { question: 'Do hybrid vehicles get the same deals as gas models?', answer: 'Hybrid trims sometimes qualify for the same manufacturer incentives as their gas counterparts, but they may also have separate hybrid-specific offers. Check the "Eligible Trims" section of each deal to confirm.' },
+  { question: 'Are there special deals on electric vehicles?', answer: 'Yes. Many manufacturers run special incentives on EVs including reduced APR financing, lease specials, and cash rebates. Additionally, federal tax credits of up to $7,500 and various state incentives may apply on top of manufacturer deals.' },
+  { question: 'Do hybrid vehicles get the same deals as gas models?', answer: 'Hybrid trims sometimes qualify for the same manufacturer incentives as their gas counterparts, but they may also have separate hybrid-specific deals. Check the "Eligible Trims" section of each deal to confirm.' },
   { question: 'Can I combine fuel-type incentives with other deals?', answer: 'It depends on the manufacturer. Some allow stacking EV tax credits with manufacturer financing, while others require choosing between different incentives and special APR. Always ask the dealer to run both scenarios.' },
   { question: 'When do EV and hybrid deals change?', answer: 'Manufacturer incentives typically rotate monthly. Federal tax credits are set by legislation and change less frequently. We update this page as new deals become available.' },
-  { question: 'Are diesel vehicle deals common?', answer: 'Diesel deals are less common than gas or hybrid offers since fewer manufacturers sell diesel passenger vehicles in the US. When available, they tend to appear on trucks and SUVs.' },
+  { question: 'Are diesel vehicle deals common?', answer: 'Diesel deals are less common than gas or hybrid deals since fewer manufacturers sell diesel passenger vehicles in the US. When available, they tend to appear on trucks and SUVs.' },
 ];
 
 const DEFAULT_FILTERS: DealsFilterState = {
@@ -107,11 +107,12 @@ const FuelTypeDealsPage = () => {
   // the user's page context and was flagged in the 2026-04-18 audit.
 
   const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    vehicle: { bodyStyle: string; make: string; model: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
     deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
     if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
     if (filters.accolades.length > 0) {
       const hasMatch = filters.accolades.some(a => {
@@ -131,7 +132,7 @@ const FuelTypeDealsPage = () => {
     }
     if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
+  }, [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -257,6 +258,7 @@ const FuelTypeDealsPage = () => {
       const v = d.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
       if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
@@ -306,7 +308,7 @@ const FuelTypeDealsPage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This deal expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
@@ -323,7 +325,7 @@ const FuelTypeDealsPage = () => {
         return {
           ...base,
           offerHeadline: activeDealObj.dealText,
-          whatItMeans: `This ${activeDealObj.dealType} offer could save you significantly on your next ${activeDealObj.fuelType.toLowerCase()} vehicle.`,
+        whatItMeans: `This ${activeDealObj.dealType} deal could save you significantly on your next ${activeDealObj.fuelType.toLowerCase()} vehicle.`,
           yourSavings: `Check the deal details for specific savings on the ${v.make} ${v.model}.`,
           whoQualifies: activeDealObj.additionalInfo.find(i => i.label === 'Target Audience')?.value || 'Well-qualified buyers with approved credit.',
         };
@@ -337,7 +339,7 @@ const FuelTypeDealsPage = () => {
     <div className="fuel-deals">
       <SEO
         title={pageTitle}
-        description={`Find the best deals on gas, hybrid, electric, and diesel vehicles for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, finance, and lease offers by fuel type.`}
+        description={`Find the best deals on gas, hybrid, electric, and diesel vehicles for ${CURRENT_MONTH} ${CURRENT_YEAR}. Compare 0% APR, finance, and lease deals by fuel type.`}
         canonical={`${BASE_URL}/deals/fuel-type`}
         keywords={['fuel type deals', 'electric vehicle deals', 'hybrid deals', 'EV incentives', `vehicle deals ${CURRENT_MONTH} ${CURRENT_YEAR}`]}
         structuredData={[
@@ -421,7 +423,7 @@ const FuelTypeDealsPage = () => {
                   <div className="fuel-deals__grid">
                     <div className="fuel-deals__empty-state">
                       <p className="fuel-deals__empty-state-text">
-                        There are currently no active fuel type offers. Check back soon or explore other available deals.
+                        There are currently no active fuel type deals. Check back soon or explore other available deals.
                       </p>
                       <Link to="/deals" className="fuel-deals__empty-state-link">
                         Browse All Deals

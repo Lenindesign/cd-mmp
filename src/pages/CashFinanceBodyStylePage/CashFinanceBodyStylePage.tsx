@@ -64,10 +64,10 @@ const BODY_TABS: { key: BodyTab; label: string; icon: React.ReactNode; match: (b
 ];
 
 const FAQ_DATA = [
-  { question: 'What types of finance deals are available by body style?', answer: 'Manufacturers offer special APR and financing terms across all body styles, including SUVs, sedans, trucks, coupes, and hatchbacks. Rates and terms vary by model and often by trim level.' },
-  { question: 'Do SUVs get better finance offers than sedans?', answer: 'It depends on market demand and manufacturer strategy. Popular models may have less aggressive APR promotions, while slower-selling vehicles sometimes get stronger financing incentives regardless of body style.' },
-  { question: 'Can I stack other discounts with a finance offer?', answer: 'Some manufacturers allow loyalty, conquest, or military incentives alongside a promotional APR. Terms vary by brand, so ask the dealer which programs you qualify for and how they affect your payment.' },
-  { question: 'How often do these deals change?', answer: 'Manufacturer incentives typically rotate monthly. We update this page as new deals become available, so check back at the start of each month for the latest offers.' },
+  { question: 'What types of finance deals are available by body style?', answer: 'Manufacturers run special APR and financing terms across all body styles, including SUVs, sedans, trucks, coupes, and hatchbacks. Rates and terms vary by model and often by trim level.' },
+  { question: 'Do SUVs get better finance deals than sedans?', answer: 'It depends on market demand and manufacturer strategy. Popular models may have less aggressive APR promotions, while slower-selling vehicles sometimes get stronger financing incentives regardless of body style.' },
+  { question: 'Can I stack other discounts with a finance deal?', answer: 'Some manufacturers allow loyalty, conquest, or military incentives alongside a promotional APR. Terms vary by brand, so ask the dealer which programs you qualify for and how they affect your payment.' },
+  { question: 'How often do these deals change?', answer: 'Manufacturer incentives typically rotate monthly. We update this page as new deals become available, so check back at the start of each month for the latest deals.' },
   { question: 'Are truck finance deals different from car deals?', answer: 'Promotional APRs and terms follow similar patterns, but loan amounts and monthly payments often differ because trucks can carry higher MSRPs. Compare the rate, term, and payment on the specific vehicle you are considering.' },
 ];
 
@@ -110,11 +110,12 @@ const CashFinanceBodyStylePage = () => {
   const clearAllFilters = useCallback(() => navigate('/deals/all'), [navigate]);
 
   const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    vehicle: { bodyStyle: string; make: string; model: string; fuelType?: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
     deal?: { term?: string; targetAudience?: string; eligibilityTags?: EligibilityTag[] },
   ) => {
     if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
     if (filters.fuelTypes.length > 0 && vehicle.fuelType && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
     if (filters.accolades.length > 0) {
       const hasMatch = filters.accolades.some(a => {
@@ -134,7 +135,7 @@ const CashFinanceBodyStylePage = () => {
     }
     if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
+  }, [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -157,6 +158,7 @@ const CashFinanceBodyStylePage = () => {
       const v = deal.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
       if (!matchesEligibilityTags(draftFilters.eligibilityTags, deal.eligibilityTags)) return false;
       return true;
@@ -252,7 +254,7 @@ const CashFinanceBodyStylePage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This deal expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: (activeDealObj.additionalInfo.find(i => i.label === 'Eligible Trims')?.value || '').split(', ').filter(Boolean),
@@ -434,7 +436,7 @@ const CashFinanceBodyStylePage = () => {
                   <div className="cfbs-deals__grid">
                     <div className="cfbs-deals__empty-state">
                       <p className="cfbs-deals__empty-state-text">
-                        There are currently no active {emptyBodyCategory} offers. Check back soon or explore other available deals.
+                        There are currently no active {emptyBodyCategory} deals. Check back soon or explore other available deals.
                       </p>
                       <Link to="/deals" className="cfbs-deals__empty-state-link">
                         Browse All Deals

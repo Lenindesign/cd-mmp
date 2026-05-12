@@ -258,7 +258,7 @@ export const formatForComparison = (vehicle: Vehicle): ComparisonVehicle => ({
   rating: vehicle.staffRating,
   image: vehicle.image,
   slug: vehicle.slug,
-  review: `The ${vehicle.make} ${vehicle.model} offers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features'}.`,
+  review: `The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features'}.`,
   hasEditorChoice: vehicle.award === "Editor's Choice" || vehicle.staffRating >= 9,
 });
 

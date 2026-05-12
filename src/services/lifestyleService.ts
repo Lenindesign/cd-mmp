@@ -311,7 +311,7 @@ export const getLifestyleDescription = (lifestyle: Lifestyle): string => {
     case 'Commuter':
       return 'Efficient and practical vehicles for daily driving';
     case 'Value':
-      return 'Affordable vehicles that offer great bang for your buck';
+      return 'Affordable vehicles that deliver great bang for your buck';
     default:
       return '';
   }
@@ -325,4 +325,3 @@ export default {
   getLifestyleIcon,
   getLifestyleDescription,
 };
-

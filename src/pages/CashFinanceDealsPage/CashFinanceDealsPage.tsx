@@ -31,7 +31,7 @@ import './CashFinanceDealsPage.css';
 const FAQ_DATA = [
   {
     question: 'How do special finance rates work?',
-    answer: 'Special finance rates are below-market APR (Annual Percentage Rate) offers provided through the manufacturer\'s captive finance company, such as GM Financial, Toyota Financial Services, or Ford Credit. These rates are subsidized by the manufacturer, meaning you pay less interest over the life of your loan compared to a typical bank or credit union loan.',
+    answer: 'Special finance rates are below-market APR (Annual Percentage Rate) deals provided through the manufacturer\'s captive finance company, such as GM Financial, Toyota Financial Services, or Ford Credit. These rates are subsidized by the manufacturer, meaning you pay less interest over the life of your loan compared to a typical bank or credit union loan.',
   },
   {
     question: 'How does Car and Driver rate these vehicles?',
@@ -39,7 +39,7 @@ const FAQ_DATA = [
   },
   {
     question: 'Do these deals apply to all trims and configurations?',
-    answer: 'Not always. Most incentives apply to specific trims or configurations, which we list under "Additional Details" for each deal. Higher trims (like luxury or performance variants) may have different offers or no incentive at all. Additionally, inventory at your local dealer determines what\'s available to purchase with these incentives. Contact your dealer to confirm eligible stock.',
+    answer: 'Not always. Most incentives apply to specific trims or configurations, which we list under "Additional Details" for each deal. Higher trims (like luxury or performance variants) may have different deals or no incentive at all. Additionally, inventory at your local dealer determines what\'s available to purchase with these incentives. Contact your dealer to confirm eligible stock.',
   },
 ];
 
@@ -88,11 +88,12 @@ const CashFinanceDealsPage = () => {
   const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
   const matchesFilters = useCallback((
-    vehicle: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
+    vehicle: { bodyStyle: string; make: string; model: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean },
     deal?: { term?: string; targetAudience?: string; eligibilityTags?: import('../../utils/dealCalculations').EligibilityTag[] },
   ) => {
     if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
     if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+    if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
     if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
     if (filters.accolades.length > 0) {
       const hasMatch = filters.accolades.some(a => {
@@ -112,7 +113,7 @@ const CashFinanceDealsPage = () => {
     }
     if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
     return true;
-  }, [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
+  }, [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -137,6 +138,7 @@ const CashFinanceDealsPage = () => {
       const v = deal.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType)) return false;
       return true;
     }).length;
@@ -203,7 +205,7 @@ const CashFinanceDealsPage = () => {
           year: parseInt(v.year, 10), make: v.make, model: v.model, slug: v.slug, imageUrl: v.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
+          dontWaitText: `This deal expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
           eventLabel: activeDealObj.programName,
           expirationDate: activeDealObj.expirationDate,
           eligibleTrims: activeDealObj.trimsEligible,
@@ -236,7 +238,7 @@ const CashFinanceDealsPage = () => {
     <div className="cf-deals-page">
       <SEO
         title={`${pageTitle}: Find the Best Car Deals Right Now`}
-        description={`Find the best new car finance deals and special financing offers for ${month} ${year}. Expert ratings and reviews from Car and Driver help you get the best value.`}
+        description={`Find the best new car finance deals and special financing deals for ${month} ${year}. Expert ratings and reviews from Car and Driver help you get the best value.`}
         canonical={`${BASE_URL}/deals/cash-finance`}
         keywords={['finance deals', `car deals ${month} ${year}`, 'new car incentives', 'special financing', 'low APR car deals']}
         structuredData={[
@@ -266,8 +268,8 @@ const CashFinanceDealsPage = () => {
             </nav>
             <h1 className="cf-deals-page__title">{pageTitle}</h1>
             <p className="cf-deals-page__description">
-              Manufacturers offer special finance rates to move inventory, and those savings go directly to you.
-              We've combined the best current offers with Car and Driver's expert ratings so you can find not just
+              Manufacturers run special finance rates to move inventory, and those savings go directly to you.
+              We've combined the best current deals with Car and Driver's expert ratings so you can find not just
               a good price, but a great car at a great price.
             </p>
           </div>
@@ -321,7 +323,7 @@ const CashFinanceDealsPage = () => {
                   <div className="cf-deals-page__grid">
                     <div className="cf-deals-page__empty-state">
                       <p className="cf-deals-page__empty-state-text">
-                        There are currently no active finance or cash offers. Check back soon or explore other available deals.
+                        There are currently no active finance or cash deals. Check back soon or explore other available deals.
                       </p>
                       <Link to="/deals" className="cf-deals-page__empty-state-link">
                         Browse All Deals

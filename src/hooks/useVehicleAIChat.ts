@@ -69,7 +69,7 @@ function generateResponse(query: string, ctx: VehicleContext[]): string {
       const best = withCargo[0];
       return `For families, the **${best.name}** stands out with ${best.seatingCapacity || 'ample'} seats and ${best.cargoSpace ? `**${best.cargoSpace} cu ft** of cargo space` : 'generous cargo room'}. ` +
         (best.mpg ? `It also delivers **${best.mpg} mpg**, which helps on long road trips. ` : '') +
-        `Starting at **$${best.priceMin.toLocaleString()}**, it offers strong value for family needs. ` +
+        `Starting at **$${best.priceMin.toLocaleString()}**, it delivers strong value for family needs. ` +
         (ctx.length > 1 ? `Among your selections, ${names.join(' and ')} are all worth considering, but the ${best.make} ${best.model} edges ahead for family practicality.` : '');
     }
     return `Among ${names.join(' and ')}, look for the one with the most seating and cargo space for family road trips. All are solid choices depending on your budget and size requirements.`;
@@ -93,7 +93,7 @@ function generateResponse(query: string, ctx: VehicleContext[]): string {
     const topRated = [...ctx].sort((a, b) => b.staffRating - a.staffRating)[0];
     const suvs = ctx.filter(v => v.bodyStyle === 'SUV' || v.bodyStyle === 'Truck');
     return `Safety is a top priority. The **${topRated.name}** earns our highest C/D rating at **${topRated.staffRating.toFixed(1)}/10**, which factors in safety performance. ` +
-      (suvs.length > 0 ? `${suvs.map(v => `The **${v.name}**`).join(' and ')} ${suvs.length === 1 ? 'offers' : 'offer'} the added peace of mind that comes with a larger vehicle footprint. ` : '') +
+      (suvs.length > 0 ? `${suvs.map(v => `The **${v.name}**`).join(' and ')} ${suvs.length === 1 ? 'provides' : 'provide'} the added peace of mind that comes with a larger vehicle footprint. ` : '') +
       `All modern vehicles in this comparison come with standard safety tech like automatic emergency braking, lane-keeping assist, and adaptive cruise control. Check NHTSA and IIHS ratings for detailed crash-test scores.`;
   }
 
@@ -103,9 +103,9 @@ function generateResponse(query: string, ctx: VehicleContext[]): string {
     if (best.cargoSpace) {
       return `The **${best.name}** leads in cargo space with **${best.cargoSpace} cu ft**, making it the best choice for hauling gear. ` +
         (sorted.length > 1 && sorted[1].cargoSpace ? `The **${sorted[1].name}** follows with **${sorted[1].cargoSpace} cu ft**. ` : '') +
-        `Body style matters here — ${best.bodyStyle === 'SUV' ? 'SUVs' : best.bodyStyle === 'Truck' ? 'trucks' : `${best.bodyStyle.toLowerCase()}s`} naturally offer more versatile cargo configurations.`;
+        `Body style matters here: ${best.bodyStyle === 'SUV' ? 'SUVs' : best.bodyStyle === 'Truck' ? 'trucks' : `${best.bodyStyle.toLowerCase()}s`} naturally provide more versatile cargo configurations.`;
     }
-    return `Among ${names.join(' and ')}, SUVs and trucks generally offer the most cargo space. Check the detailed specs above for exact measurements.`;
+    return `Among ${names.join(' and ')}, SUVs and trucks generally provide the most cargo space. Check the detailed specs above for exact measurements.`;
   }
 
   if (q.includes('fast') || q.includes('speed') || q.includes('power') || q.includes('performance') || q.includes('horse') || q.includes('quick') || q.includes('accelerat')) {
@@ -139,13 +139,13 @@ function generateResponse(query: string, ctx: VehicleContext[]): string {
         `${awdVehicles[0].bodyStyle === 'SUV' ? 'The higher ground clearance of an SUV also helps in deep snow. ' : ''}` +
         `Remember that good winter tires matter more than drivetrain — even an AWD vehicle needs proper tires for ice and packed snow.`;
     }
-    return `None of your selected vehicles come standard with AWD/4WD in the base trim, but many offer it as an option. For serious winter driving, look for available AWD packages and invest in dedicated winter tires.`;
+    return `None of your selected vehicles come standard with AWD/4WD in the base trim, but many include it as an option. For serious winter driving, look for available AWD packages and invest in dedicated winter tires.`;
   }
 
   if (q.includes('electric') || q.includes('ev') || q.includes('hybrid') || q.includes('plug') || q.includes('charg') || q.includes('battery')) {
     const evs = ctx.filter(v => v.fuelType === 'Electric' || v.fuelType === 'Hybrid' || v.fuelType === 'Plug-in Hybrid');
     if (evs.length > 0) {
-      return `Among your selections, ${evs.map(v => `the **${v.name}** (${v.fuelType})`).join(' and ')} ${evs.length === 1 ? 'offers' : 'offer'} electrified powertrains. ` +
+      return `Among your selections, ${evs.map(v => `the **${v.name}** (${v.fuelType})`).join(' and ')} ${evs.length === 1 ? 'includes' : 'include'} electrified powertrains. ` +
         (evs[0].fuelType === 'Electric' ? `As a full EV, the ${evs[0].make} ${evs[0].model} produces zero tailpipe emissions and typically has lower running costs. ` : `Hybrid technology gives you improved fuel economy without range anxiety. `) +
         `Consider your daily driving distance and charging infrastructure when deciding between electric, hybrid, and gas powertrains.`;
     }

@@ -850,7 +850,7 @@ const MyAccount: React.FC = () => {
                                 <span className="my-account__newsletter-checkmark">
                                   <CheckCircle2 size={20} />
                                 </span>
-                                <span className="my-account__newsletter-label">Subscribe to Car and Driver Deals & Offers</span>
+                                <span className="my-account__newsletter-label">Subscribe to Car and Driver Deals</span>
                               </label>
                               <label className="my-account__newsletter-option">
                                 <input 
@@ -1284,7 +1284,7 @@ const MyAccount: React.FC = () => {
                         }}
                         className="my-account__subscription-checkbox"
                       />
-                      <span className="my-account__subscription-label">Subscribe to Car and Driver Deals & Offers</span>
+                      <span className="my-account__subscription-label">Subscribe to Car and Driver Deals</span>
                     </label>
                     <label className="my-account__subscription-option">
                       <input 

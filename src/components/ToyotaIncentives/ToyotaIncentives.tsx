@@ -40,7 +40,7 @@ const mapOfferToPayment = (offer: { type: string; label: string; expires: string
     return {
       amount,
       period: term || 'Financing',
-      savings: { type: 'plain' as const, text: 'Low-rate offer' },
+      savings: { type: 'plain' as const, text: 'Low-rate deal' },
       expirationDate: offer.expires,
     };
   }
@@ -48,7 +48,7 @@ const mapOfferToPayment = (offer: { type: string; label: string; expires: string
   return {
     amount: offer.label,
     period: 'Manufacturer cash',
-    savings: { type: 'plain' as const, text: 'Cash back offer' },
+    savings: { type: 'plain' as const, text: 'Cash back deal' },
     expirationDate: offer.expires,
   };
 };
@@ -92,7 +92,7 @@ const ToyotaIncentives = () => {
           <div>
             <h2 className="toyota-incentives__title">Toyota Incentives</h2>
             <p className="toyota-incentives__subtitle">
-              Discover the most attractive Toyota offers, including cash back, special APR, and lease deals for top models.
+              Discover the most attractive Toyota deals, including cash back, special APR, and lease deals for top models.
             </p>
           </div>
           <button

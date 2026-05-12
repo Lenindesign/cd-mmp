@@ -350,7 +350,7 @@ const BrandHubPage = ({
       {sections.length > 0 && (
         <nav
           className={`brand-page__subnav${showSubnavScrollArrow ? ' brand-page__subnav--can-scroll' : ''}`}
-          aria-label={`${make} vehicle categories and offers`}
+          aria-label={`${make} vehicle categories and deals`}
         >
           <div className="container">
             <div className="brand-page__subnav-pills" ref={subnavPillsRef}>
@@ -381,17 +381,17 @@ const BrandHubPage = ({
                 <ChevronRight size={18} aria-hidden />
               </button>
             )}
-            <div className="brand-page__subnav-offers" aria-label={`${make} offers`}>
+            <div className="brand-page__subnav-offers" aria-label={`${make} deals`}>
               {offerCounts.buying > 0 && (
                 <Link to={`/${makeSlug}/deals-incentives`} className="brand-page__subnav-pill brand-page__subnav-pill--offer">
                   <span className="brand-page__subnav-offer-chip">BUY</span>
-                  <span className="brand-page__subnav-offer-count">{offerCounts.buying} {make} Offers</span>
+                  <span className="brand-page__subnav-offer-count">{offerCounts.buying} {make} Deals</span>
                 </Link>
               )}
               {offerCounts.leasing > 0 && (
                 <Link to={`/${makeSlug}/lease-deals`} className="brand-page__subnav-pill brand-page__subnav-pill--offer">
                   <span className="brand-page__subnav-offer-chip">LEASE</span>
-                  <span className="brand-page__subnav-offer-count">{offerCounts.leasing} {make} Offers</span>
+                  <span className="brand-page__subnav-offer-count">{offerCounts.leasing} {make} Deals</span>
                 </Link>
               )}
             </div>
@@ -407,11 +407,11 @@ const BrandHubPage = ({
         <section className="brand-page__footer-cta" aria-labelledby="brand-page-offers-title">
           <div className="brand-page__footer-cta-header">
             <h2 id="brand-page-offers-title" className="brand-page__footer-cta-title">
-              Special offers and incentives
+              Special deals and incentives
             </h2>
             <p className="brand-page__footer-cta-count">
               <strong>{totalOffers}</strong>
-              <span>{make} offers available</span>
+              <span>{make} deals available</span>
             </p>
           </div>
           <div className="brand-page__footer-cta-links">
@@ -419,7 +419,7 @@ const BrandHubPage = ({
               <Link to={`/${makeSlug}/deals-incentives`} className="brand-page__footer-cta-link">
                 <span className="brand-page__footer-cta-link-main">
                   <span className="brand-page__footer-cta-chip">BUY</span>
-                  <span>See {offerCounts.buying} {make} Buying Offers</span>
+                  <span>See {offerCounts.buying} {make} Buying Deals</span>
                 </span>
                 <span className="brand-page__footer-cta-badge">{buyingBadge}</span>
               </Link>
@@ -428,7 +428,7 @@ const BrandHubPage = ({
               <Link to={`/${makeSlug}/lease-deals`} className="brand-page__footer-cta-link">
                 <span className="brand-page__footer-cta-link-main">
                   <span className="brand-page__footer-cta-chip">LEASE</span>
-                  <span>See {offerCounts.leasing} {make} Leasing Offers</span>
+                  <span>See {offerCounts.leasing} {make} Leasing Deals</span>
                 </span>
                 <span className="brand-page__footer-cta-badge">{leasingBadge}</span>
               </Link>
@@ -497,7 +497,7 @@ const BrandHubPage = ({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                EXPLORE OFFERS
+                EXPLORE DEALS
                 <ExternalLink size={14} aria-hidden />
               </a>
             </aside>

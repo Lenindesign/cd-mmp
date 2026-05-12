@@ -30,6 +30,7 @@ export interface DealsFilterState {
   monthlyPaymentMin: number;
   monthlyPaymentMax: number;
   makes: string[];
+  models?: string[];
   dueAtSigningMin: number;
   dueAtSigningMax: number;
   fuelTypes: string[];
@@ -97,6 +98,7 @@ const DealsFilterModal = ({
     accolades: false,
     eligibility: false,
   });
+  const [expandedMakeModels, setExpandedMakeModels] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (isOpen) {
@@ -218,6 +220,39 @@ const DealsFilterModal = ({
     return 'lease';
   }, [draft.dealType, dealPageType]);
 
+  const modelOptionsByMake = useMemo(() => {
+    const sourceDeals = selectedSide === 'lease' ? leaseDeals : buyingDeals;
+    const grouped = new Map<string, Set<string>>();
+    for (const deal of sourceDeals) {
+      const { make, model } = deal.vehicle;
+      if (!grouped.has(make)) grouped.set(make, new Set());
+      grouped.get(make)?.add(model);
+    }
+
+    return Object.fromEntries(
+      Array.from(grouped.entries()).map(([make, modelsForMake]) => [
+        make,
+        Array.from(modelsForMake).sort((a, b) => a.localeCompare(b)),
+      ]),
+    ) as Record<string, string[]>;
+  }, [selectedSide, leaseDeals, buyingDeals]);
+
+  const availableModels = useMemo(
+    () => Object.values(modelOptionsByMake).flat(),
+    [modelOptionsByMake],
+  );
+
+  useEffect(() => {
+    const validModels = new Set(availableModels);
+    setDraft(prev => {
+      const selectedModels = prev.models ?? [];
+      if (selectedModels.length === 0) return prev;
+      const nextModels = selectedModels.filter(model => validModels.has(model));
+      if (nextModels.length === selectedModels.length) return prev;
+      return { ...prev, models: nextModels };
+    });
+  }, [availableModels]);
+
   /**
    * Cross-scope result counter used for the in-modal preview. Mirrors the
    * shared predicate logic each page applies, but operates on whichever pool
@@ -228,9 +263,10 @@ const DealsFilterModal = ({
    */
   const getScopedCount = useCallback(
     (d: DealsFilterState, side: 'lease' | 'buy'): number => {
-      const matchesVehicle = (v: { bodyStyle: string; make: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean }) => {
+      const matchesVehicle = (v: { bodyStyle: string; make: string; model: string; fuelType: string; editorsChoice?: boolean; tenBest?: boolean; evOfTheYear?: boolean }) => {
         if (d.bodyTypes.length > 0 && !d.bodyTypes.includes(v.bodyStyle)) return false;
         if (d.makes.length > 0 && !d.makes.includes(v.make)) return false;
+        if ((d.models?.length ?? 0) > 0 && !d.models?.includes(v.model)) return false;
         if (d.fuelTypes.length > 0 && !d.fuelTypes.includes(v.fuelType)) return false;
         if (d.accolades.length > 0) {
           const hasMatch = d.accolades.some(a => {
@@ -284,7 +320,7 @@ const DealsFilterModal = ({
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   }, []);
 
-  const toggleArrayItem = useCallback((field: 'bodyTypes' | 'makes' | 'fuelTypes' | 'accolades' | 'eligibilityTags', value: string) => {
+  const toggleArrayItem = useCallback((field: 'bodyTypes' | 'makes' | 'models' | 'fuelTypes' | 'accolades' | 'eligibilityTags', value: string) => {
     setDraft(prev => {
       const arr = (prev[field] ?? []) as string[];
       return {
@@ -292,6 +328,17 @@ const DealsFilterModal = ({
         [field]: arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value],
       };
     });
+  }, []);
+
+  const toggleMake = useCallback((make: string) => {
+    setDraft(prev => ({
+      ...prev,
+      makes: prev.makes.includes(make) ? prev.makes.filter(v => v !== make) : [...prev.makes, make],
+    }));
+  }, []);
+
+  const toggleMakeModels = useCallback((make: string) => {
+    setExpandedMakeModels(prev => ({ ...prev, [make]: !prev[make] }));
   }, []);
 
   const toggleTerm = useCallback((term: number) => {
@@ -309,7 +356,12 @@ const DealsFilterModal = ({
       counts[`body-${bt}`] = effectiveCount({ ...base, bodyTypes: [bt] });
     }
     for (const m of makes) {
-      counts[`make-${m}`] = effectiveCount({ ...base, makes: [m] });
+      counts[`make-${m}`] = effectiveCount({ ...base, makes: [m], models: [] });
+    }
+    for (const [make, modelsForMake] of Object.entries(modelOptionsByMake)) {
+      for (const model of modelsForMake) {
+        counts[`model-${make}-${model}`] = effectiveCount({ ...base, makes: [make], models: [model] });
+      }
     }
     for (const t of availableTerms) {
       counts[`term-${t}`] = effectiveCount({ ...base, terms: [t] });
@@ -321,7 +373,7 @@ const DealsFilterModal = ({
       counts[`eligibility-${opt.value}`] = effectiveCount({ ...base, eligibilityTags: [opt.value] });
     }
     return counts;
-  }, [effectiveCount, draft, bodyTypes, makes, availableTerms, fuelTypes, eligibilityOptions]);
+  }, [effectiveCount, draft, bodyTypes, makes, modelOptionsByMake, availableTerms, fuelTypes, eligibilityOptions]);
 
   const handleClearAll = useCallback(() => {
     setDraft(prev => ({
@@ -331,6 +383,7 @@ const DealsFilterModal = ({
       monthlyPaymentMin: paymentRange.min,
       monthlyPaymentMax: paymentRange.max,
       makes: [],
+      models: [],
       dueAtSigningMin: signingRange.min,
       dueAtSigningMax: signingRange.max,
       fuelTypes: [],
@@ -486,19 +539,70 @@ const DealsFilterModal = ({
             expanded={expandedSections.make}
             onToggle={() => toggleSection('make')}
           >
-            <div className="deals-filter__checkbox-list">
+            <div className="deals-filter__make-list">
               {makes.map(m => {
                 const count = optionCounts?.[`make-${m}`];
+                const modelsForMake = modelOptionsByMake[m] ?? [];
+                const hasModels = modelsForMake.length > 0;
+                const selectedModels = draft.models ?? [];
+                const selectedModelCount = modelsForMake.filter(model => selectedModels.includes(model)).length;
+                const expanded = Boolean(expandedMakeModels[m]);
+                const makeSlug = m.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                const makeInputId = `filter-make-${makeSlug}`;
+                const makeModelsId = `filter-make-models-${makeSlug}`;
                 return (
-                  <label key={m} className="deals-filter__checkbox-row">
-                    <span className="deals-filter__checkbox-label">{m}{count != null ? ` (${count})` : ''}</span>
-                    <input
-                      type="checkbox"
-                      className="deals-filter__checkbox"
-                      checked={draft.makes.includes(m)}
-                      onChange={() => toggleArrayItem('makes', m)}
-                    />
-                  </label>
+                  <div key={m} className="deals-filter__make-group">
+                    <div className="deals-filter__make-row">
+                      <label htmlFor={makeInputId} className="deals-filter__checkbox-label deals-filter__make-label">
+                        {m}{count != null ? ` (${count})` : ''}
+                        {selectedModelCount > 0 && (
+                          <span className="deals-filter__nested-count">
+                            {selectedModelCount} model{selectedModelCount === 1 ? '' : 's'}
+                          </span>
+                        )}
+                      </label>
+                      <input
+                        id={makeInputId}
+                        type="checkbox"
+                        className="deals-filter__checkbox"
+                        checked={draft.makes.includes(m)}
+                        onChange={() => toggleMake(m)}
+                      />
+                      {hasModels && (
+                        <button
+                          type="button"
+                          className="deals-filter__make-model-toggle"
+                          aria-expanded={expanded}
+                          aria-controls={makeModelsId}
+                          onClick={() => toggleMakeModels(m)}
+                        >
+                          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          <span className="sr-only">{expanded ? 'Hide' : 'Show'} {m} models</span>
+                        </button>
+                      )}
+                    </div>
+                    {expanded && hasModels && (
+                      <div
+                        id={makeModelsId}
+                        className="deals-filter__nested-model-list"
+                      >
+                        {modelsForMake.map(model => {
+                          const modelCount = optionCounts?.[`model-${m}-${model}`];
+                          return (
+                            <label key={model} className="deals-filter__checkbox-row deals-filter__nested-model-row">
+                              <span className="deals-filter__checkbox-label">{model}{modelCount != null ? ` (${modelCount})` : ''}</span>
+                              <input
+                                type="checkbox"
+                                className="deals-filter__checkbox"
+                                checked={selectedModels.includes(model)}
+                                onChange={() => toggleArrayItem('models', model)}
+                              />
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>

@@ -21,10 +21,10 @@ export const ZERO_APR_FAQ: FaqItem[] = [
   {
     question: 'What cars are 0% financing right now?',
     answer:
-      '0% APR offers are real, but they usually apply only to certain new models, trims, and loan terms for a limited time. The list changes month to month, so the right way to shop is to check the exact model year, term length, and ZIP-code availability instead of assuming an entire brand has 0% financing.\n\nA strong 0% offer is not just about the rate. Shoppers should also check whether the deal applies to the trim they actually want, whether inventory is available nearby, and whether taking the offer means giving up cash rebates or other incentives.',
+      '0% APR deals are real, but they usually apply only to certain new models, trims, and loan terms for a limited time. The list changes month to month, so the right way to shop is to check the exact model year, term length, and ZIP-code availability instead of assuming an entire brand has 0% financing.\n\nA strong 0% deal is not just about the rate. Shoppers should also check whether the deal applies to the trim they actually want, whether inventory is available nearby, and whether taking the deal means giving up cash rebates or other incentives.',
     bullets: [
       'Filter by model, trim, and term, not just by brand.',
-      'Confirm whether the offer is national, regional, or dealer specific.',
+      'Confirm whether the deal is national, regional, or dealer specific.',
       'Check whether bonus cash can be combined with the 0% APR program.',
       'Look at real inventory before building your budget around an ad.',
     ],
@@ -32,18 +32,18 @@ export const ZERO_APR_FAQ: FaqItem[] = [
   {
     question: 'Can I get 0% interest on a car loan?',
     answer:
-      'Yes, but usually only if you have excellent credit and the vehicle qualifies for a manufacturer-backed promotional offer. Most 0% APR deals are aimed at well-qualified buyers and often come with shorter terms, such as 36 or 48 months, rather than the longest loan options.\n\nBefore assuming you qualify, check your credit, read the fine print, and ask whether the offer must be financed through the manufacturer\u2019s captive lender. Even a real 0% deal may not be the best fit if the required monthly payment is too high for your budget.',
+      'Yes, but usually only if you have excellent credit and the vehicle qualifies for a manufacturer-backed promotional deal. Most 0% APR deals are aimed at well-qualified buyers and often come with shorter terms, such as 36 or 48 months, rather than the longest loan options.\n\nBefore assuming you qualify, check your credit, read the fine print, and ask whether the deal must be financed through the manufacturer\u2019s captive lender. Even a real 0% deal may not be the best fit if the required monthly payment is too high for your budget.',
     bullets: [
-      'Expect top-tier credit requirements on most 0% offers.',
+      'Expect top-tier credit requirements on most 0% deals.',
       'Read the term length, residency rules, and model restrictions carefully.',
       'Ask whether you must finance through the manufacturer\u2019s lender to get the promo.',
-      'Compare the 0% offer against a rebate or low-APR alternative.',
+      'Compare the 0% deal against a rebate or low-APR alternative.',
     ],
   },
   {
     question: 'Are 0% car deals really free?',
     answer:
-      'A 0% APR car loan does mean you are not paying finance charges on the amount borrowed, so the interest itself is effectively free. But that does not automatically make the deal the cheapest overall option, because many 0% offers require shorter terms, stronger credit, or giving up a cash rebate.\n\nThe real comparison is total cost. On a large loan, 0% APR can save a shopper thousands in interest, but a rebate plus standard financing can still win if the cash offer is large enough or if the shorter 0% term makes the monthly payment too aggressive.',
+      'A 0% APR car loan does mean you are not paying finance charges on the amount borrowed, so the interest itself is effectively free. But that does not automatically make the deal the cheapest overall option, because many 0% deals require shorter terms, stronger credit, or giving up a cash rebate.\n\nThe real comparison is total cost. On a large loan, 0% APR can save a shopper thousands in interest, but a rebate plus standard financing can still win if the cash deal is large enough or if the shorter 0% term makes the monthly payment too aggressive.',
     bullets: [
       'Compare total loan cost, not just the APR shown in the ad.',
       'Check whether 0% financing replaces cash back or bonus cash.',
@@ -56,7 +56,7 @@ export const ZERO_APR_FAQ: FaqItem[] = [
     answer:
       'Sometimes, but the 0% rate itself is usually a manufacturer program rather than something the dealer invents. What you can often negotiate is the selling price, dealer fees, trade-in value, add-ons, and which incentive structure makes the most sense for your budget.\n\nIn practice, the best move is to negotiate the vehicle price first and then compare two versions of the deal side by side: one with 0% APR and one with the best available rebate or discount. That makes it much easier to see which deal is actually stronger.',
     bullets: [
-      'Negotiate the out-the-door price separately from the financing offer.',
+      'Negotiate the out-the-door price separately from the financing deal.',
       'Ask for side-by-side quotes: 0% APR versus rebate plus standard rate.',
       'Be careful with products and add-ons that raise the financed amount.',
       'Confirm that the promotional rate still applies after the final terms are set.',
@@ -76,12 +76,12 @@ export const ZERO_APR_FAQ: FaqItem[] = [
   {
     question: 'Which cars have the lowest interest rates right now?',
     answer:
-      'The lowest-rate vehicles are usually the same models backed by manufacturer subvented financing, sometimes at 0% APR and sometimes at 0.9% or 1.9% for longer terms. The best low-rate offer changes frequently, so shoppers should look at the exact model, trim, and loan term rather than only the brand name.\n\nA near-zero APR deal can actually be more practical than forcing a 0% offer if it comes with a longer term, more available inventory, or the ability to keep a rebate. The better deal is the one with the lower total cost and the payment that still fits your budget.',
+      'The lowest-rate vehicles are usually the same models backed by manufacturer subvented financing, sometimes at 0% APR and sometimes at 0.9% or 1.9% for longer terms. The best low-rate deal changes frequently, so shoppers should look at the exact model, trim, and loan term rather than only the brand name.\n\nA near-zero APR deal can actually be more practical than forcing a 0% deal if it comes with a longer term, more available inventory, or the ability to keep a rebate. The better deal is the one with the lower total cost and the payment that still fits your budget.',
     bullets: [
       'Check loan term length, not just the APR headline.',
-      'Compare 0%, 0.9%, and 1.9% offers on the exact trim you want.',
+      'Compare 0%, 0.9%, and 1.9% deals on the exact trim you want.',
       'Verify whether low APR can be combined with bonus cash.',
-      'Make sure the offer is available in your ZIP code and on in-stock vehicles.',
+      'Make sure the deal is available in your ZIP code and on in-stock vehicles.',
     ],
   },
 ];
@@ -90,7 +90,7 @@ export const BEST_BUYING_FAQ: FaqItem[] = [
   {
     question: 'What does a $1,000 car rebate mean?',
     answer:
-      'A $1,000 car rebate usually means the manufacturer, government, or another incentive program is offering $1,000 in savings if you meet the eligibility rules. In some cases the money comes off the transaction at the dealership, while in others you claim the benefit later.\n\nThe important nuance is what kind of rebate it is. Customer cash, dealer cash, EV rebates, and tax credits all work differently, and some stack with other offers while others replace special financing or lease programs.',
+      'A $1,000 car rebate usually means the manufacturer, government, or another incentive program gives you $1,000 in savings if you meet the eligibility rules. In some cases the money comes off the transaction at the dealership, while in others you claim the benefit later.\n\nThe important nuance is what kind of rebate it is. Customer cash, dealer cash, EV rebates, and tax credits all work differently, and some stack with other deals while others replace special financing or lease programs.',
     bullets: [
       'Ask whether the rebate is applied at point of sale or claimed later.',
       'Confirm whether it stacks with dealer discounts, low APR financing, or lease specials.',
@@ -125,7 +125,7 @@ export const BEST_BUYING_FAQ: FaqItem[] = [
     answer:
       'There is no universal score required to buy a $30,000 car. Approval depends on the full deal: your credit score, income, current debts, down payment, trade-in equity, and the lender\u2019s own rules. Better credit usually means lower rates and more flexibility, but buyers with average credit can still get approved.\n\nThe more important question is whether the payment fits your budget at the rate you actually qualify for. A buyer with weaker credit may still get the car, but the higher APR can make the same vehicle much less affordable month to month.',
     bullets: [
-      'Check your credit before shopping so you know which offers are realistic.',
+      'Check your credit before shopping so you know which deals are realistic.',
       'Compare lender preapprovals instead of relying only on dealer-arranged financing.',
       'A bigger down payment can improve approval odds and reduce the payment.',
       'Watch the APR as closely as the monthly payment.',
@@ -137,7 +137,7 @@ export const BEST_BUYING_FAQ: FaqItem[] = [
       'The best time to shop is usually when dealers or manufacturers are trying to move inventory. That often means end of month, end of quarter, holiday weekends, and especially the point when outgoing model-year vehicles are still on the lot and need help selling.\n\nTiming helps, but inventory matters just as much. A model with too much stock usually gets better incentives than a hot-selling vehicle with tight supply, even if you shop on a traditionally strong car-buying weekend.',
     bullets: [
       'Watch for model-year changeovers and aging inventory.',
-      'Compare end-of-month offers against end-of-quarter offers on the same vehicle.',
+      'Compare end-of-month deals against end-of-quarter deals on the same vehicle.',
       'Do not wait for a perfect date if the pricing already works for your budget.',
       'Confirm whether the incentive expires before you can actually take delivery.',
     ],
@@ -159,7 +159,7 @@ export const LEASE_FAQ: FaqItem[] = [
   {
     question: 'Can you lease a car with no money down?',
     answer:
-      'Yes, you can lease a car with no money down, but that usually means more of the upfront cost gets pushed into the monthly payment. In many offers, taxes, registration, acquisition fees, or even the first payment are still due at signing unless the ad specifically says everything is rolled in.\n\nA zero-down lease can help preserve cash and may be safer than putting a large amount upfront if the vehicle is stolen or totaled early in the term. But it is not automatically the cheapest option, so the smarter comparison is total lease cost over the full term, not just what is due on day one.',
+      'Yes, you can lease a car with no money down, but that usually means more of the upfront cost gets pushed into the monthly payment. In many deals, taxes, registration, acquisition fees, or even the first payment are still due at signing unless the ad specifically says everything is rolled in.\n\nA zero-down lease can help preserve cash and may be safer than putting a large amount upfront if the vehicle is stolen or totaled early in the term. But it is not automatically the cheapest option, so the smarter comparison is total lease cost over the full term, not just what is due on day one.',
     bullets: [
       'Verify whether "$0 down" also means "$0 due at signing."',
       'Compare total paid over the full 24- or 36-month term, not just the headline payment.',
@@ -186,7 +186,7 @@ export const LEASE_FAQ: FaqItem[] = [
       'Check the amount due at signing before comparing monthly payments.',
       'Confirm mileage allowance, taxes, registration, and dealer fees.',
       'Expect payments to rise quickly on higher trims or popular option packages.',
-      'Remember that lease offers change by ZIP code, inventory, and month.',
+      'Remember that lease deals change by ZIP code, inventory, and month.',
     ],
   },
   {

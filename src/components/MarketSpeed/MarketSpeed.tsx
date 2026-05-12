@@ -62,7 +62,7 @@ const MarketSpeed = ({
         <div className="market-speed__header">
           <h2 className="market-speed__title">How Fast Does {model} Sell?</h2>
           <p className="market-speed__description">
-            Explore how quickly the {vehicleName} is moving off lots. Navigate to your state or city for more detailed insights on local {make} {model} availability and offers.
+            Explore how quickly the {vehicleName} is moving off lots. Navigate to your state or city for more detailed insights on local {make} {model} availability and deals.
           </p>
         </div>
 

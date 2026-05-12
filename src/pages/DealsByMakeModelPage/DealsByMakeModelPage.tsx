@@ -106,7 +106,7 @@ function buildActiveOffer(deal: UnifiedMakeDeal | null): Partial<IncentiveOfferD
     expirationDate: deal.expirationDate,
     eventLabel: deal.programName,
     eligibleTrims: deal.trimsEligible,
-    dontWaitText: `This offer expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly - once it's gone, there's no guarantee it'll come back.`,
+    dontWaitText: `This deal expires ${formatExpiration(deal.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
   };
 
   if (deal.dealType === 'lease') {
@@ -189,6 +189,7 @@ const DealsByMakeModelPage = () => {
       vehicle: {
         bodyStyle: string;
         make: string;
+        model: string;
         fuelType: string;
         editorsChoice?: boolean;
         tenBest?: boolean;
@@ -198,6 +199,7 @@ const DealsByMakeModelPage = () => {
     ) => {
       if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(vehicle.bodyStyle)) return false;
       if (filters.makes.length > 0 && !filters.makes.includes(vehicle.make)) return false;
+      if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(vehicle.model)) return false;
       if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(vehicle.fuelType)) return false;
       if (filters.accolades.length > 0) {
         const hasMatch = filters.accolades.some((a) => {
@@ -218,7 +220,7 @@ const DealsByMakeModelPage = () => {
       if (!matchesEligibilityTags(filters.eligibilityTags, deal?.eligibilityTags)) return false;
       return true;
     },
-    [filters.bodyTypes, filters.makes, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags],
+    [filters.bodyTypes, filters.makes, filters.models, filters.fuelTypes, filters.accolades, filters.terms, filters.creditTier, filters.eligibilityTags],
   );
 
   const toggleOffersPopup = useCallback(
@@ -354,6 +356,7 @@ const DealsByMakeModelPage = () => {
       const v = d.vehicle;
       if (draftFilters.bodyTypes.length > 0 && !draftFilters.bodyTypes.includes(v.bodyStyle)) return false;
       if (draftFilters.makes.length > 0 && !draftFilters.makes.includes(v.make)) return false;
+      if ((draftFilters.models?.length ?? 0) > 0 && !draftFilters.models?.includes(v.model)) return false;
       if (draftFilters.fuelTypes.length > 0 && !draftFilters.fuelTypes.includes(v.fuelType || '')) return false;
       if (!matchesEligibilityTags(draftFilters.eligibilityTags, d.eligibilityTags)) return false;
       return true;
@@ -398,7 +401,7 @@ const DealsByMakeModelPage = () => {
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
 
   const pageTitle = `Best ${makeName} ${modelName} Deals & Incentives for ${month} ${year}`;
-  const pageDescription = `Find the best ${makeName} ${modelName} deals, incentives, and offers for ${month} ${year}. Compare financing rates, lease specials, and more from Car and Driver.`;
+  const pageDescription = `Find the best ${makeName} ${modelName} deals and incentives for ${month} ${year}. Compare financing rates, lease specials, and more from Car and Driver.`;
   const BASE_URL = 'https://www.caranddriver.com';
   const canonicalPath =
     makeParam && modelParam ? `${BASE_URL}/${makeParam}/${modelParam}/deals-incentives` : BASE_URL;
@@ -511,7 +514,7 @@ const DealsByMakeModelPage = () => {
                   <div className="mm-deals__grid">
                     <div className="mm-deals__empty-state">
                       <p className="mm-deals__empty-state-text">
-                        There are currently no active {makeName} {modelName} offers. Check back soon or explore other
+                        There are currently no active {makeName} {modelName} deals. Check back soon or explore other
                         available deals.
                       </p>
                       <Link to="/deals" className="mm-deals__empty-state-link">

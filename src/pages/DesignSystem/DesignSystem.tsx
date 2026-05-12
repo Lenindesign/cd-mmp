@@ -339,7 +339,7 @@ const DesignSystem = () => {
             <div className="design-system__type-example">
               <span className="design-system__type-label">Body - Regular</span>
               <p style={{ fontSize: '16px', fontWeight: 400, lineHeight: 1.5, margin: 0 }}>
-                The Kia Telluride is a three-row SUV that offers spacious seating for up to eight passengers.
+                The Kia Telluride is a three-row SUV with spacious seating for up to eight passengers.
               </p>
             </div>
           </div>
@@ -628,6 +628,5 @@ const DesignSystem = () => {
 };
 
 export default DesignSystem;
-
 
 

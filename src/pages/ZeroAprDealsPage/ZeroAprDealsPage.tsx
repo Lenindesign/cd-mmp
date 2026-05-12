@@ -289,6 +289,7 @@ const ZeroAprDealsPage = () => {
       const v = d.vehicle;
       if (f.bodyTypes.length > 0 && !f.bodyTypes.includes(v.bodyStyle)) return false;
       if (f.makes.length > 0 && !f.makes.includes(v.make)) return false;
+      if ((f.models?.length ?? 0) > 0 && !f.models?.includes(v.model)) return false;
       if (f.fuelTypes.length > 0 && !f.fuelTypes.includes(v.fuelType)) return false;
       if (f.accolades.length > 0) {
         const hasMatch = f.accolades.some(a => {
@@ -430,7 +431,7 @@ const ZeroAprDealsPage = () => {
           : `At ${activeDealObj.aprDisplay} instead of 6.5%, you could save $1,500–$3,000 in interest over the loan term.`,
         whoQualifies: activeDealObj.targetAudience || 'All buyers',
         eligibleTrims: activeDealObj.trimsEligible,
-        dontWaitText: `This offer expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
+        dontWaitText: `This deal expires ${formatExpiration(activeDealObj.expirationDate)}. Manufacturer deals change monthly. Once it's gone, there's no guarantee it'll come back.`,
         eventLabel: activeDealObj.programName,
         expirationDate: activeDealObj.expirationDate,
       }
@@ -460,8 +461,8 @@ const ZeroAprDealsPage = () => {
     : makeName
     ? `Find the best ${makeName} buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, and cash-back rebates on every new ${makeName}. Expert ratings from Car and Driver.`
     : isZeroPercentOnlyRoute
-    ? `Browse every current 0% APR financing offer for ${month} ${year}. Pay no interest on your auto loan, paired with Car and Driver expert ratings.`
-    : `Find the best buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, cash-back rebates, and special offers on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`;
+    ? `Browse every current 0% APR financing deal for ${month} ${year}. Pay no interest on your auto loan, paired with Car and Driver expert ratings.`
+    : `Find the best buying deals for ${month} ${year}. Compare 0% APR, low-rate financing, cash-back rebates, and special deals on new cars, SUVs, and trucks. Expert ratings from Car and Driver.`;
 
   const seoCanonical = bodyStyleName || fuelTypeName || makeName
     ? `${BASE_URL}${BEST_BUYING_DEALS_PATH}/${categorySlug}`
@@ -554,8 +555,8 @@ const ZeroAprDealsPage = () => {
             <h1 className="zero-apr-page__title">{pageTitleMain}<br />{pageTitleDate}</h1>
             <p className="zero-apr-page__description">
               {isZeroPercentOnlyRoute
-                ? 'These manufacturer-backed offers charge no interest on your auto loan, so every payment goes toward paying off the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
-                : 'Manufacturer-subsidized financing\u2014cash-back deals or low financing rates\u2014is one of the best deals a car shopper can find. These offers can save you thousands over the life of your loan.'}
+                ? 'These manufacturer-backed deals charge no interest on your auto loan, so every payment goes toward paying off the vehicle. Compare terms and C/D ratings to find the right 0% APR deal.'
+                : 'Manufacturer-subsidized financing\u2014cash-back deals or low financing rates\u2014is one of the best deals a car shopper can find. These deals can save you thousands over the life of your loan.'}
             </p>
           </div>
         </div>
@@ -613,8 +614,8 @@ const ZeroAprDealsPage = () => {
                     <div className="zero-apr-page__empty-state">
                       <p className="zero-apr-page__empty-state-text">
                         {isZeroPercentOnlyRoute
-                          ? 'There are currently no active 0% APR offers. Browse all APR and financing deals or check back soon.'
-                          : 'There are currently no active APR financing offers. Check back soon or explore other available deals.'}
+                          ? 'There are currently no active 0% APR deals. Browse all APR and financing deals or check back soon.'
+                          : 'There are currently no active APR financing deals. Check back soon or explore other available deals.'}
                       </p>
                       {isZeroPercentOnlyRoute ? (
                         <Link to={BEST_BUYING_DEALS_PATH} className="zero-apr-page__empty-state-link">

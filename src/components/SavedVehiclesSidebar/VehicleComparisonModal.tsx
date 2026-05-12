@@ -235,7 +235,7 @@ const VehicleComparisonModal = ({ isOpen, onClose, vehicles }: VehicleComparison
     if (seats.some(s => s > 0) && new Set(seats.filter(s => s > 0)).size > 1) {
       const maxI = seats.indexOf(Math.max(...seats));
       const minI = seats.indexOf(Math.min(...seats.filter(s => s > 0)));
-      if (maxI !== minI) parts.push(`The most significant difference is seating capacity: the **${names[maxI]}** offers ${seats[maxI]} seats, while the **${names[minI]}** is a ${seats[minI]}-seat vehicle.`);
+      if (maxI !== minI) parts.push(`The most significant difference is seating capacity: the **${names[maxI]}** has ${seats[maxI]} seats, while the **${names[minI]}** is a ${seats[minI]}-seat vehicle.`);
     }
 
     const prices = vehicleData.map(v => v.details?.priceMin || 0);
@@ -259,7 +259,7 @@ const VehicleComparisonModal = ({ isOpen, onClose, vehicles }: VehicleComparison
     const mpgs = vehicleData.map(v => { const m = v.details?.mpg?.match(/(\d+)\/(\d+)/); return m ? (parseInt(m[1]) + parseInt(m[2])) / 2 : 0; });
     if (mpgs.filter(m => m > 0).length >= 2) {
       const bestI = mpgs.indexOf(Math.max(...mpgs));
-      parts.push(`The **${names[bestI]}** offers the best fuel economy at **${vehicleData[bestI].details?.mpg} mpg**.`);
+      parts.push(`The **${names[bestI]}** returns the best fuel economy at **${vehicleData[bestI].details?.mpg} mpg**.`);
     }
 
     return parts.join(' ') || `Compare the ${names.join(' and ')} across pricing, performance, and features.`;
@@ -602,4 +602,3 @@ const VehicleComparisonModal = ({ isOpen, onClose, vehicles }: VehicleComparison
 };
 
 export default VehicleComparisonModal;
-

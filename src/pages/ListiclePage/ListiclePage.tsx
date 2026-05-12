@@ -48,7 +48,7 @@ const listicleItems: ListicleItem[] = [
     title: '2025 Lexus GX',
     subtitle: 'Luxury Meets Off-Road Capability',
     image: 'https://hips.hearstapps.com/hmg-prod/images/2025-lexus-gx-3-672b608154c3f.jpg?crop=0.563xw:0.562xh;0.201xw,0.178xh',
-    description: 'The completely redesigned 2025 Lexus GX has captured the attention of luxury SUV shoppers with its bold new look and impressive off-road credentials. Built on Toyota\'s body-on-frame platform, it offers genuine capability while maintaining the refinement Lexus is known for. The twin-turbo V-6 delivers 349 horsepower, and the available Overtrail trim adds serious off-road hardware.',
+    description: 'The completely redesigned 2025 Lexus GX has captured the attention of luxury SUV shoppers with its bold new look and impressive off-road credentials. Built on Toyota\'s body-on-frame platform, it delivers genuine capability while maintaining the refinement Lexus is known for. The twin-turbo V-6 delivers 349 horsepower, and the available Overtrail trim adds serious off-road hardware.',
     specs: [
       { label: 'Starting Price', value: '$64,250' },
       { label: 'Engine', value: '3.4L Twin-Turbo V-6' },
@@ -61,7 +61,7 @@ const listicleItems: ListicleItem[] = [
     title: '2024 Chevrolet Trax',
     subtitle: 'Budget-Friendly and Feature-Rich',
     image: 'https://hips.hearstapps.com/hmg-prod/images/2024-chevrolet-trax-activ-2764-65395a7ebd8af.jpg?crop=0.614xw:0.518xh;0.303xw,0.395xh',
-    description: 'The all-new Chevrolet Trax has been a revelation in the subcompact SUV segment. With a starting price under $22,000 and a surprisingly spacious interior, it offers tremendous value. The redesign brought modern styling, a larger footprint, and more standard features than many competitors costing thousands more.',
+    description: 'The all-new Chevrolet Trax has been a revelation in the subcompact SUV segment. With a starting price under $22,000 and a surprisingly spacious interior, it delivers tremendous value. The redesign brought modern styling, a larger footprint, and more standard features than many competitors costing thousands more.',
     specs: [
       { label: 'Starting Price', value: '$21,495' },
       { label: 'Engine', value: '1.2L Turbo 3-Cyl' },
@@ -74,7 +74,7 @@ const listicleItems: ListicleItem[] = [
     title: '2025 Genesis GV80',
     subtitle: 'Korean Luxury Refined',
     image: 'https://hips.hearstapps.com/hmg-prod/images/2025-genesis-gv80-149-6642229d26dcf.jpg?crop=0.741xw:0.625xh;0.177xw,0.161xh',
-    description: 'Genesis continues to impress with the updated GV80, which now offers a coupe-like roofline variant alongside the standard model. The interior rivals German competitors at a lower price point, and the available twin-turbo V-6 provides ample power. Advanced driver-assistance features come standard.',
+    description: 'Genesis continues to impress with the updated GV80, which now adds a coupe-like roofline variant alongside the standard model. The interior rivals German competitors at a lower price point, and the available twin-turbo V-6 provides ample power. Advanced driver-assistance features come standard.',
     specs: [
       { label: 'Starting Price', value: '$59,050' },
       { label: 'Engine', value: '2.5L Turbo I-4 / 3.5L Twin-Turbo V-6' },
@@ -126,7 +126,7 @@ const listicleItems: ListicleItem[] = [
     title: '2023 Honda CR-V',
     subtitle: 'The Reliable Benchmark',
     image: 'https://hips.hearstapps.com/hmg-prod/images/2023-honda-crv-exl-131-647e04fc82add.jpg?crop=0.481xw:0.406xh;0.284xw,0.406xh',
-    description: 'The Honda CR-V continues to be a top choice for compact SUV shoppers, and for good reason. The latest generation offers more interior space, improved fuel economy with the hybrid option, and Honda\'s reputation for reliability. It\'s the sensible choice that doesn\'t sacrifice style or features.',
+    description: 'The Honda CR-V continues to be a top choice for compact SUV shoppers, and for good reason. The latest generation brings more interior space, improved fuel economy with the hybrid option, and Honda\'s reputation for reliability. It\'s the sensible choice that doesn\'t sacrifice style or features.',
     specs: [
       { label: 'Starting Price', value: '$32,450' },
       { label: 'Engine', value: '1.5L Turbo / Hybrid' },
@@ -139,7 +139,7 @@ const listicleItems: ListicleItem[] = [
     title: '2024 Toyota Land Cruiser',
     subtitle: 'The Legend Returns',
     image: 'https://hips.hearstapps.com/hmg-prod/images/2024-toyota-land-cruiser-133-6616f43f7f474.jpg?crop=0.605xw:0.510xh;0.0816xw,0.314xh',
-    description: 'After a brief hiatus from the U.S. market, the Land Cruiser is back with a more accessible price point and retro-inspired styling. Built on the same platform as the Lexus GX, it offers serious off-road capability with a more utilitarian character. The hybrid powertrain provides surprising efficiency for such a capable vehicle.',
+    description: 'After a brief hiatus from the U.S. market, the Land Cruiser is back with a more accessible price point and retro-inspired styling. Built on the same platform as the Lexus GX, it delivers serious off-road capability with a more utilitarian character. The hybrid powertrain provides surprising efficiency for such a capable vehicle.',
     specs: [
       { label: 'Starting Price', value: '$57,345' },
       { label: 'Engine', value: '2.4L Turbo Hybrid' },

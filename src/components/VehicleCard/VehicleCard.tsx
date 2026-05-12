@@ -677,7 +677,7 @@ export const VehicleCard = ({
             className="vehicle-card__incentive-btn"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onIncentiveClick?.(e); }}
           >
-            {incentiveCount} {incentiveCount === 1 ? 'OFFER' : 'OFFERS'} AVAILABLE
+            {incentiveCount} {incentiveCount === 1 ? 'DEAL' : 'DEALS'} AVAILABLE
           </button>
         )}
 

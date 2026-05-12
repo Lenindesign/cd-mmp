@@ -1271,7 +1271,7 @@ const VehiclePageConcept = () => {
               trims={vehicleTrims}
               vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
               title="Compare Trims"
-              subtitle={`The ${vehicleTrims.find(t => t.recommended)?.name || vehicleTrims[0]?.name} trim offers the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
+              subtitle={`The ${vehicleTrims.find(t => t.recommended)?.name || vehicleTrims[0]?.name} trim provides the best balance of features and value for the ${vehicle.make} ${vehicle.model}.`}
             />
           </div>
         </div>

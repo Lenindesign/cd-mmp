@@ -76,7 +76,7 @@ const QuickSpecs = ({ specs }: QuickSpecsProps) => {
                       <X size={16} />
                     </button>
                     <p className="quick-specs__tooltip-text">
-                      Specifications shown here indicate a range of offerings based on different trims. Click the <a href="#pricing" className="quick-specs__tooltip-link">See all specs</a> link to view specifications for each trim.
+                      Specifications shown here reflect different trim configurations. Click the <a href="#pricing" className="quick-specs__tooltip-link">See all specs</a> link to view specifications for each trim.
                     </p>
                   </div>
                 )}
@@ -181,7 +181,6 @@ const QuickSpecs = ({ specs }: QuickSpecsProps) => {
 };
 
 export default QuickSpecs;
-
 
 
 
