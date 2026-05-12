@@ -45,6 +45,7 @@ import {
   SIDEBAR_AFTER_BREAK_PROPS,
 } from '../../constants/dealsLayout';
 import { chunkArray } from '../../utils/chunkArray';
+import { toTitleCase } from '../../utils/textCase';
 import './BuyingLandingPage.css';
 
 type CategoryKind = 'make' | 'bodyStyle' | 'fuelType';
@@ -94,13 +95,6 @@ const DEFAULT_FILTERS: DealsFilterState = {
 
 function slugify(value: string): string {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
-function toTitleCase(value: string): string {
-  return value
-    .split(' ')
-    .map((w) => (w.toUpperCase() === 'SUV' ? 'SUV' : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
-    .join(' ');
 }
 
 /**
@@ -427,6 +421,7 @@ const BuyingLandingPage = () => {
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
 
   const pageTitle = `Best ${displayLabel} Deals & Incentives for ${month} ${year}`;
+  const heroTitle = toTitleCase(pageTitle);
   const pageDescription =
     category.kind === 'make'
       ? `Find the best ${displayLabel} deals, 0% APR deals, cash-back incentives, and low-rate financing for ${month} ${year}. Compare deals from Car and Driver.`
@@ -476,7 +471,7 @@ const BuyingLandingPage = () => {
               <span className="buying-landing__breadcrumb-sep">/</span>
               <span>{displayLabel} Deals</span>
             </nav>
-            <h1 className="buying-landing__title">{pageTitle}</h1>
+            <h1 className="buying-landing__title">{heroTitle}</h1>
             <p className="buying-landing__description">{pageDescription}</p>
           </div>
         </div>

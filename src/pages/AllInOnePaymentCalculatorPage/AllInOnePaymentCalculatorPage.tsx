@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, Info, ListOrdered, Mail, RotateCcw, SkipForward, SlidersHorizontal, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, Info, Mail, RotateCcw, SkipForward, TrendingUp } from 'lucide-react';
 import { getAllVehicles, getRankingVehicles, getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
@@ -14,6 +14,7 @@ import TradeInEstimateModal from '../../components/TradeInEstimateModal';
 import { estimateTradeInValue } from '../../utils/tradeInEstimate';
 import { getVehicleOffers, type VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getRangeInputStyle } from '../../utils/rangeInputStyle';
+import { toTitleCase } from '../../utils/textCase';
 import { PaymentCalculatorFinanceCharts } from '../../components/PaymentCalculator/PaymentCalculatorFinanceCharts';
 import { DEFAULT_BODY_STYLES } from '../../components/BodyStyleSelector';
 import '../../components/Hero/Hero.css';
@@ -1347,6 +1348,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   if (isLightVariant) {
     const lightWizardStepMeta = LIGHT_WIZARD_STEP_META[lightWizardStep - 1];
     const lightLoanTermChips = [...new Set(termOptions)].sort((a, b) => a - b);
+    const lightHeroHeadline = toTitleCase(
+      isLightStepsVariant
+        ? 'See what your monthly budget can really buy.'
+        : 'Fine-tune your car payment estimate.',
+    );
     return (
       <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
         <section className="aio-payment__light-hero">
@@ -1360,41 +1366,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             </nav>
             <div className="aio-payment__light-hero-grid">
               <div>
-                <div className="aio-payment__light-hero-eyebrow-row">
-                  <span className="aio-payment__eyebrow">
-                    {isLightStepsVariant ? 'What can I afford?' : 'Auto loan calculator'}
-                  </span>
-                  <div className="aio-payment__light-mode-toggle aio-payment__light-mode-toggle--hero" role="group" aria-label="Calculator layout">
-                    {isLightStepsVariant ? (
-                      <>
-                        <span className="aio-payment__light-mode-toggle-pill aio-payment__light-mode-toggle-pill--current">
-                          <ListOrdered size={16} strokeWidth={2.25} aria-hidden="true" />
-                          <span className="aio-payment__light-mode-toggle-label">Guided steps</span>
-                        </span>
-                        <Link to="/auto-loan-calculator/light" className="aio-payment__light-mode-toggle-action">
-                          <SlidersHorizontal size={16} strokeWidth={2.25} aria-hidden="true" />
-                          <span className="aio-payment__light-mode-toggle-label">Switch to advanced mode</span>
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link to="/auto-loan-calculator/light-steps" className="aio-payment__light-mode-toggle-action">
-                          <ListOrdered size={16} strokeWidth={2.25} aria-hidden="true" />
-                          <span className="aio-payment__light-mode-toggle-label">Switch to guided steps</span>
-                        </Link>
-                        <span className="aio-payment__light-mode-toggle-pill aio-payment__light-mode-toggle-pill--current">
-                          <SlidersHorizontal size={16} strokeWidth={2.25} aria-hidden="true" />
-                          <span className="aio-payment__light-mode-toggle-label">Advanced mode</span>
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <h1>
-                  {isLightStepsVariant
-                    ? 'See what your monthly budget can really buy.'
-                    : 'Fine-tune your car payment estimate.'}
-                </h1>
+                <h1>{lightHeroHeadline}</h1>
                 <p>
                   {isLightStepsVariant
                     ? 'The budget-first car payment calculator. Answer one question at a time and watch your numbers update live.'

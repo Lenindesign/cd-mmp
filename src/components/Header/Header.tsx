@@ -1,20 +1,23 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Search, Menu, X, User, LogOut, Bookmark, Car, GitCompare, ChevronDown } from 'lucide-react';
-import { searchVehicles, getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
+import { searchVehicles, type Vehicle } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAvatarImageUrl, getUserInitials } from '../../utils/avatarUtils';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
 import { Button } from '../Button';
-import ExitIntentModal from '../ExitIntentModal';
 import { SavedVehiclesSidebar } from '../SavedVehiclesSidebar';
 import './Header.css';
 
 // Key for tracking if welcome tooltip has been shown
 const WELCOME_TOOLTIP_SHOWN_KEY = 'cd_welcome_tooltip_shown';
 
-const Header = () => {
+interface HeaderProps {
+  onAccountPromptOpen?: () => void;
+}
+
+const Header = ({ onAccountPromptOpen }: HeaderProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, signOut } = useAuth();
@@ -23,7 +26,6 @@ const Header = () => {
   const [suggestions, setSuggestions] = useState<Vehicle[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
-  const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSavedSidebar, setShowSavedSidebar] = useState(false);
   const [showWelcomeTooltip, setShowWelcomeTooltip] = useState(false);
@@ -90,27 +92,17 @@ const Header = () => {
     localStorage.setItem(WELCOME_TOOLTIP_SHOWN_KEY, 'true');
   };
   
-  // Fallback placeholder image for vehicles without images
-  const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
-
-  // Extract current vehicle from URL if on a vehicle page
-  const currentVehicle = useMemo(() => {
-    // Match URL pattern: /:year/:make/:model or /:year/:make/:model/variant
-    const match = location.pathname.match(/^\/(\d{4})\/([^/]+)\/([^/]+)/);
-    if (match) {
-      const [, year, make, model] = match;
-      const slug = `${year}/${make}/${model}`;
-      return getVehicleBySlug(slug);
-    }
-    return null;
-  }, [location.pathname]);
-  
-  // Get vehicle image with fallback
-  const currentVehicleImage = currentVehicle?.image || (currentVehicle ? PLACEHOLDER_IMAGE : undefined);
-  
   // Helper to get vehicle rating (uses Supabase in production)
   const getVehicleRating = (vehicle: Vehicle): number => {
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
+  };
+
+  const handleAccountPromptOpen = () => {
+    if (onAccountPromptOpen) {
+      onAccountPromptOpen();
+      return;
+    }
+    navigate('/sign-up');
   };
 
   const isNavActive = (href: string, children?: { href: string }[]): boolean => {
@@ -355,7 +347,7 @@ const Header = () => {
               <Button 
                 variant="primary"
                 size="small"
-                onClick={() => setIsSubscribeModalOpen(true)}
+                onClick={handleAccountPromptOpen}
                 className="header__subscribe-btn"
               >
                 Subscribe
@@ -542,15 +534,6 @@ const Header = () => {
           </ul>
         </nav>
       </div>
-
-      {/* Subscribe Modal - This is the ONLY modal with exit intent enabled */}
-      <ExitIntentModal 
-        isOpen={isSubscribeModalOpen}
-        onClose={() => setIsSubscribeModalOpen(false)}
-        vehicleName={currentVehicle ? `${currentVehicle.year} ${currentVehicle.make} ${currentVehicle.model}` : undefined}
-        vehicleImage={currentVehicleImage}
-        enableExitIntent={true}
-      />
 
       {/* Saved Vehicles Sidebar */}
       <SavedVehiclesSidebar

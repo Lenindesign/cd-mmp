@@ -1,12 +1,14 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ExitIntentModal from './components/ExitIntentModal';
 import ScrollToTop from './components/ScrollToTop';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { AuthProvider } from './contexts/AuthContext';
 import { CarFinderProvider, useCarFinder } from './contexts/CarFinderContext';
 import { CarFinderChat } from './components/CarFinderChat';
+import { getVehicleBySlug } from './services/vehicleService';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from './constants/dealRoutes';
 import './App.css';
 
@@ -124,7 +126,16 @@ const CarFinderChatGate = () => {
 
 function App() {
   const location = useLocation();
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
+  const currentVehicle = useMemo(() => {
+    const match = location.pathname.match(/^\/(\d{4})\/([^/]+)\/([^/]+)/);
+    if (!match) return null;
+    const [, year, make, model] = match;
+    return getVehicleBySlug(`${year}/${make}/${model}`);
+  }, [location.pathname]);
+
+  const openAccountModal = () => setIsAccountModalOpen(true);
 
   return (
     <AuthProvider>
@@ -138,7 +149,7 @@ function App() {
         <ScrollToTop />
         
         {/* Only show Header/Footer for non-onboarding pages */}
-        {!isOnboardingPage && <Header />}
+        {!isOnboardingPage && <Header onAccountPromptOpen={openAccountModal} />}
         
         <main id="main-content">
           <Suspense fallback={<PageLoader />}>
@@ -284,7 +295,17 @@ function App() {
           </Suspense>
         </main>
         
-        {!isOnboardingPage && <Footer />}
+        {!isOnboardingPage && <Footer onAccountPromptOpen={openAccountModal} />}
+
+        {!isOnboardingPage && (
+          <ExitIntentModal
+            isOpen={isAccountModalOpen}
+            onClose={() => setIsAccountModalOpen(false)}
+            vehicleName={currentVehicle ? `${currentVehicle.year} ${currentVehicle.make} ${currentVehicle.model}` : undefined}
+            vehicleImage={currentVehicle?.image}
+            enableExitIntent={false}
+          />
+        )}
         
         {/* AI Car Finder Chat - only when user enables it from footer */}
         <CarFinderChatGate />

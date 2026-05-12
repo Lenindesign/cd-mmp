@@ -5,7 +5,11 @@ import { Button } from '../Button';
 import { useCarFinder } from '../../contexts/CarFinderContext';
 import './Footer.css';
 
-const Footer = () => {
+interface FooterProps {
+  onAccountPromptOpen?: () => void;
+}
+
+const Footer = ({ onAccountPromptOpen }: FooterProps) => {
   const { carFinderEnabled, toggleCarFinder } = useCarFinder();
   const footerLinks = [
     {
@@ -158,6 +162,15 @@ const Footer = () => {
                 <Sparkles size={14} aria-hidden />
                 {carFinderEnabled ? 'Hide Find My Car' : 'Find My Car'}
               </button>
+              {onAccountPromptOpen && (
+                <button
+                  type="button"
+                  className="footer__legal-link footer__legal-link--button"
+                  onClick={onAccountPromptOpen}
+                >
+                  Create Account
+                </button>
+              )}
               <a href="#" className="footer__legal-link">Privacy Policy</a>
               <a href="#" className="footer__legal-link">Terms of Use</a>
               <a href="#" className="footer__legal-link">Cookie Policy</a>
@@ -176,7 +189,6 @@ const Footer = () => {
 };
 
 export default Footer;
-
 
 
 

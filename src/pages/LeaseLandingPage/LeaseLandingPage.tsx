@@ -38,6 +38,7 @@ import {
   SIDEBAR_AFTER_BREAK_PROPS,
 } from '../../constants/dealsLayout';
 import { chunkArray } from '../../utils/chunkArray';
+import { toTitleCase } from '../../utils/textCase';
 import './LeaseLandingPage.css';
 
 type CategoryKind = 'make' | 'bodyStyle' | 'fuelType';
@@ -79,13 +80,6 @@ const DEFAULT_FILTERS: DealsFilterState = {
 
 function slugify(value: string): string {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
-function toTitleCase(value: string): string {
-  return value
-    .split(' ')
-    .map((w) => (w.toUpperCase() === 'SUV' ? 'SUV' : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
-    .join(' ');
 }
 
 /**
@@ -410,6 +404,7 @@ const LeaseLandingPage = () => {
   };
 
   const pageTitle = `Best ${displayLabel} Lease Deals for ${month} ${year}`;
+  const heroTitle = toTitleCase(pageTitle);
   const pageDescription =
     category.kind === 'make'
       ? `Find the best ${displayLabel} lease deals for ${month} ${year}. Compare monthly payments, terms, and manufacturer lease specials from Car and Driver.`
@@ -457,7 +452,7 @@ const LeaseLandingPage = () => {
               <span className="lease-landing__breadcrumb-sep">/</span>
               <span>{displayLabel} Lease Deals</span>
             </nav>
-            <h1 className="lease-landing__title">{pageTitle}</h1>
+            <h1 className="lease-landing__title">{heroTitle}</h1>
             <p className="lease-landing__description">{pageDescription}</p>
           </div>
         </div>
