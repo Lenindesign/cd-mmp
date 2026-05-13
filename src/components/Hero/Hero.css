@@ -892,7 +892,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 22px;
-  color: var(--color-badge-special-text);
+  color: var(--color-white);
   letter-spacing: 0;
   line-height: 1;
   text-decoration: none;
@@ -905,10 +905,9 @@
   justify-content: center;
   min-height: 22px;
   padding: 4px 10px;
-  border: 1px solid var(--color-badge-special-text);
   border-radius: 4px;
-  background-color: transparent;
-  color: var(--color-badge-special-text);
+  background-color: var(--color-badge-special-text);
+  color: var(--color-white);
   font-family: var(--font-heading);
   font-size: 11px;
   font-weight: 700;
@@ -916,24 +915,19 @@
   letter-spacing: 0.3px;
   text-transform: uppercase;
   white-space: nowrap;
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .hero__offers-b-deal-link:hover,
 .hero__offers-b-deal-link:focus-visible {
-  color: var(--color-success-dark);
+  color: var(--color-white);
   text-decoration: none;
   transform: translateY(-1px);
 }
 
 .hero__offers-b-deal-link:hover .hero__offers-b-deal-link-badge,
 .hero__offers-b-deal-link:focus-visible .hero__offers-b-deal-link-badge {
-  border-color: var(--color-success);
-  background-color: color-mix(in srgb, var(--color-success) 8%, transparent);
-  color: var(--color-success-dark);
+  background-color: var(--color-success);
 }
 
 .hero__offers-b-deal-link:focus-visible {
