@@ -9,12 +9,31 @@ export interface User {
   name?: string;
   location?: string;
   userType?: 'buyer' | 'enthusiast' | 'both';
+  budgetPreferences?: BudgetPreferences;
   savedVehicles?: SavedVehicle[];
   newsletterSubscriptions?: string[];
   avatar?: string;
   banner?: string;
   createdAt: string;
   onboardingCompleted: boolean;
+}
+
+export type BudgetCreditScoreBand =
+  | 'Excellent (740-850)'
+  | 'Good (670-739)'
+  | 'Fair (580-669)'
+  | 'Poor (300-579)';
+
+export interface BudgetPreferences {
+  monthlyPayment: number;
+  downPayment: number;
+  loanTerm: number;
+  creditScore: BudgetCreditScoreBand;
+  bodyStyle: string;
+  stateCode?: string;
+  includeTradeIn?: boolean;
+  tradeInAmount?: number;
+  updatedAt?: string;
 }
 
 export interface SavedVehicle {
@@ -48,5 +67,4 @@ export interface OnboardingData {
   vehicles?: SavedVehicle[];
   newsletters?: string[];
 }
-
 

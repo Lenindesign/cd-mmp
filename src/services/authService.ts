@@ -78,6 +78,7 @@ export const setUserFromGoogle = (googleUser: { id: string; email: string; name?
       name: existingUser.name || googleUser.name,
       location: existingUser.location,
       userType: existingUser.userType,
+      budgetPreferences: existingUser.budgetPreferences,
       avatar: existingUser.avatar || googleUser.picture,
       banner: existingUser.banner,
       createdAt: existingUser.createdAt,
@@ -198,6 +199,7 @@ export const signIn = async (credentials: SignInCredentials): Promise<User> => {
     name: user.name,
     location: user.location,
     userType: user.userType,
+    budgetPreferences: user.budgetPreferences,
     avatar: user.avatar,
     banner: user.banner,
     createdAt: user.createdAt,
@@ -244,6 +246,7 @@ export const updateUser = async (updates: Partial<User>): Promise<User> => {
     name: updatedDbUser.name,
     location: updatedDbUser.location,
     userType: updatedDbUser.userType,
+    budgetPreferences: updatedDbUser.budgetPreferences,
     avatar: updatedDbUser.avatar,
     banner: updatedDbUser.banner,
     createdAt: updatedDbUser.createdAt,
@@ -545,5 +548,4 @@ export default {
   removeSavedVehicle,
   socialSignIn,
 };
-
 

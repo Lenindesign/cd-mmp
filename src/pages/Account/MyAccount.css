@@ -239,6 +239,199 @@
 }
 
 /* ============================================
+   MY BUDGET
+   ============================================ */
+
+.my-account__budget-card {
+  border: 1px solid var(--color-gray-200);
+}
+
+.my-account__budget-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-5);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
+  margin-bottom: var(--spacing-4);
+}
+
+.my-account__budget-title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.my-account__budget-icon {
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-blue-cobalt);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.my-account__budget-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-1);
+}
+
+.my-account__budget-subtitle {
+  max-width: 62ch;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+.my-account__budget-result {
+  min-width: 180px;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  text-align: right;
+}
+
+.my-account__budget-result span,
+.my-account__budget-field span,
+.my-account__budget-meta,
+.my-account__vehicle-section-note {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+}
+
+.my-account__budget-result span,
+.my-account__budget-field span {
+  display: block;
+  margin-bottom: var(--spacing-1);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: var(--font-weight-medium);
+}
+
+.my-account__budget-result strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  color: var(--color-dark);
+  line-height: 1;
+}
+
+.my-account__budget-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.my-account__budget-field input,
+.my-account__budget-field select {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--spacing-3);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.my-account__budget-field input:focus,
+.my-account__budget-field select:focus {
+  outline: none;
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
+}
+
+.my-account__budget-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  margin-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.my-account__budget-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-gray-700);
+}
+
+.my-account__budget-meta-item svg {
+  color: var(--color-blue-cobalt);
+}
+
+.my-account__budget-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+}
+
+.my-account__budget-link,
+.my-account__budget-save,
+.my-account__vehicle-section-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.my-account__budget-link,
+.my-account__vehicle-section-link {
+  color: var(--color-blue-cobalt);
+  background: var(--color-white);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.my-account__budget-link:hover,
+.my-account__vehicle-section-link:hover {
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+}
+
+.my-account__budget-save {
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.my-account__budget-save:hover:not(:disabled) {
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
+}
+
+.my-account__budget-save:disabled {
+  color: var(--color-gray-600);
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-200);
+  cursor: default;
+}
+
+/* ============================================
    PROFILE COMPLETION
    ============================================ */
 
@@ -1154,6 +1347,33 @@
   letter-spacing: 0.5px;
 }
 
+.my-account__vehicle-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.my-account__vehicle-section-heading .my-account__vehicle-section-title {
+  margin-bottom: var(--spacing-1);
+}
+
+.my-account__vehicle-section-note {
+  margin: 0;
+}
+
+.my-account__vehicle-section-link {
+  flex-shrink: 0;
+}
+
+.my-account__affordable-section {
+  padding: var(--spacing-4);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+}
+
 .my-account__vehicle-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1176,6 +1396,10 @@
 .my-account__vehicle-card:hover {
   border-color: var(--color-blue-cobalt);
   box-shadow: var(--shadow-lg);
+}
+
+.my-account__vehicle-card--affordable {
+  box-shadow: var(--shadow-sm);
 }
 
 /* Unsave/Remove Button - positioned on image */
@@ -1275,6 +1499,40 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.my-account__vehicle-image-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  text-align: center;
+}
+
+.my-account__budget-no-matches {
+  padding: var(--spacing-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.my-account__budget-no-matches h4 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-1);
+}
+
+.my-account__budget-no-matches p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
 }
 
 /* Card Footer - Price and CTA */
@@ -1382,6 +1640,25 @@
 .my-account__vehicle-cta:hover {
   background: var(--color-blue-cobalt);
   color: var(--color-white);
+}
+
+.my-account__vehicle-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+}
+
+.my-account__vehicle-cta--save {
+  color: var(--color-dark);
+  border-color: var(--color-gray-300);
+}
+
+.my-account__vehicle-cta--save:hover,
+.my-account__vehicle-cta--saved {
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+  border-color: var(--color-blue-cobalt);
 }
 
 /* Legacy content styles (for backwards compatibility) */
@@ -2116,6 +2393,32 @@
 
   .my-account__vehicle-grid {
     grid-template-columns: 1fr;
+  }
+
+  .my-account__budget-header,
+  .my-account__budget-meta,
+  .my-account__vehicle-section-heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .my-account__budget-result {
+    min-width: 0;
+    text-align: left;
+  }
+
+  .my-account__budget-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .my-account__budget-actions {
+    width: 100%;
+  }
+
+  .my-account__budget-link,
+  .my-account__budget-save,
+  .my-account__vehicle-section-link {
+    width: 100%;
   }
 
   .my-account__article-card,

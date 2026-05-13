@@ -1,14 +1,11 @@
 import {
-  useCallback,
-  useEffect,
   useMemo,
-  useRef,
   useState,
   type FormEvent,
   type ReactNode,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import {
   getAllVehicles,
   getVehiclesByMake,
@@ -260,51 +257,10 @@ const BrandHubPage = ({
     [brandPath, make],
   );
 
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const firstSectionId = sections[0]?.id ?? 'cars';
-  const subnavPillsRef = useRef<HTMLDivElement>(null);
-  const [showSubnavScrollArrow, setShowSubnavScrollArrow] = useState(false);
-
-  const updateSubnavScrollArrow = useCallback(() => {
-    const subnavPills = subnavPillsRef.current;
-    if (!subnavPills) {
-      setShowSubnavScrollArrow(false);
-      return;
-    }
-
-    const remainingScroll = subnavPills.scrollWidth - subnavPills.clientWidth - subnavPills.scrollLeft;
-    setShowSubnavScrollArrow(remainingScroll > 1);
-  }, []);
-
-  useEffect(() => {
-    const subnavPills = subnavPillsRef.current;
-    if (!subnavPills) {
-      const animationFrameId = window.requestAnimationFrame(updateSubnavScrollArrow);
-      return () => window.cancelAnimationFrame(animationFrameId);
-    }
-
-    subnavPills.addEventListener('scroll', updateSubnavScrollArrow, { passive: true });
-    window.addEventListener('resize', updateSubnavScrollArrow);
-
-    const resizeObserver = new ResizeObserver(updateSubnavScrollArrow);
-    resizeObserver.observe(subnavPills);
-
-    const animationFrameId = window.requestAnimationFrame(updateSubnavScrollArrow);
-
-    return () => {
-      subnavPills.removeEventListener('scroll', updateSubnavScrollArrow);
-      window.removeEventListener('resize', updateSubnavScrollArrow);
-      resizeObserver.disconnect();
-      window.cancelAnimationFrame(animationFrameId);
-    };
-  }, [sections, updateSubnavScrollArrow]);
-
-  const totalOffers = offerCounts.total ?? offerCounts.buying + offerCounts.leasing;
   const buyingBadge = offerCounts.buyingBadge ?? 'Available now';
   const leasingBadge = offerCounts.leasingBadge ?? 'Available now';
+  const heroBuyingBadge = buyingBadge.replace(/!+$/, '');
+  const heroLeasingBadge = leasingBadge.replace(/!+$/, '');
 
   return (
     <div className="brand-page">
@@ -333,108 +289,43 @@ const BrandHubPage = ({
             </nav>
             <h1 className="brand-page__title">{make}</h1>
             <p className="brand-page__description">{description}</p>
-            {sections.length > 0 && (
-              <button
-                type="button"
-                className="brand-page__browse"
-                onClick={() => scrollToSection(firstSectionId)}
-              >
-                Browse vehicles
-                <ChevronRight size={16} aria-hidden />
-              </button>
+            {(offerCounts.buying > 0 || offerCounts.leasing > 0) && (
+              <div className="brand-page__hero-offers" aria-label={`${make} deals and incentives`}>
+                {offerCounts.buying > 0 && (
+                  <Link to={`/${makeSlug}/deals-incentives`} className="brand-page__hero-offer-link">
+                    <span className="brand-page__hero-offer-main">
+                      <span className="brand-page__hero-offer-chip">BUY</span>
+                      <span className="brand-page__hero-offer-copy">
+                        <span>See {offerCounts.buying} {make} Buying Deals</span>
+                        <span className="brand-page__hero-offer-badge">{heroBuyingBadge}</span>
+                      </span>
+                    </span>
+                  </Link>
+                )}
+                {offerCounts.buying > 0 && offerCounts.leasing > 0 && (
+                  <span className="brand-page__hero-offers-divider" aria-hidden="true" />
+                )}
+                {offerCounts.leasing > 0 && (
+                  <Link to={`/${makeSlug}/lease-deals`} className="brand-page__hero-offer-link">
+                    <span className="brand-page__hero-offer-main">
+                      <span className="brand-page__hero-offer-chip">LEASE</span>
+                      <span className="brand-page__hero-offer-copy">
+                        <span>See {offerCounts.leasing} {make} Leasing Deals</span>
+                        <span className="brand-page__hero-offer-badge">{heroLeasingBadge}</span>
+                      </span>
+                    </span>
+                  </Link>
+                )}
+              </div>
             )}
           </div>
         </div>
       </header>
 
-      {sections.length > 0 && (
-        <nav
-          className={`brand-page__subnav${showSubnavScrollArrow ? ' brand-page__subnav--can-scroll' : ''}`}
-          aria-label={`${make} vehicle categories and deals`}
-        >
-          <div className="container">
-            <div className="brand-page__subnav-pills" ref={subnavPillsRef}>
-              {sections.map(section => (
-                <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  className="brand-page__subnav-pill"
-                  onClick={event => {
-                    event.preventDefault();
-                    scrollToSection(section.id);
-                  }}
-                >
-                  {section.title}
-                </a>
-              ))}
-            </div>
-            {showSubnavScrollArrow && (
-              <button
-                className="brand-page__subnav-scroll-btn"
-                type="button"
-                onClick={event => {
-                  event.currentTarget.blur();
-                  subnavPillsRef.current?.scrollBy({ left: 200, behavior: 'smooth' });
-                }}
-                aria-label={`Scroll ${make} categories right`}
-              >
-                <ChevronRight size={18} aria-hidden />
-              </button>
-            )}
-            <div className="brand-page__subnav-offers" aria-label={`${make} deals`}>
-              {offerCounts.buying > 0 && (
-                <Link to={`/${makeSlug}/deals-incentives`} className="brand-page__subnav-pill brand-page__subnav-pill--offer">
-                  <span className="brand-page__subnav-offer-chip">BUY</span>
-                  <span className="brand-page__subnav-offer-count">{offerCounts.buying} {make} Deals</span>
-                </Link>
-              )}
-              {offerCounts.leasing > 0 && (
-                <Link to={`/${makeSlug}/lease-deals`} className="brand-page__subnav-pill brand-page__subnav-pill--offer">
-                  <span className="brand-page__subnav-offer-chip">LEASE</span>
-                  <span className="brand-page__subnav-offer-count">{offerCounts.leasing} {make} Deals</span>
-                </Link>
-              )}
-            </div>
-          </div>
-        </nav>
-      )}
-
       <div className="container">
         <div className="brand-page__breaker-ad" role="complementary" aria-label="Advertisement">
-          <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" />
+          <AdBanner imageUrl={DEALS_GRID_BREAKER_AD_URL} altText="Advertisement" hideHeader hideLine />
         </div>
-
-        <section className="brand-page__footer-cta" aria-labelledby="brand-page-offers-title">
-          <div className="brand-page__footer-cta-header">
-            <h2 id="brand-page-offers-title" className="brand-page__footer-cta-title">
-              Special deals and incentives
-            </h2>
-            <p className="brand-page__footer-cta-count">
-              <strong>{totalOffers}</strong>
-              <span>{make} deals available</span>
-            </p>
-          </div>
-          <div className="brand-page__footer-cta-links">
-            {offerCounts.buying > 0 && (
-              <Link to={`/${makeSlug}/deals-incentives`} className="brand-page__footer-cta-link">
-                <span className="brand-page__footer-cta-link-main">
-                  <span className="brand-page__footer-cta-chip">BUY</span>
-                  <span>See {offerCounts.buying} {make} Buying Deals</span>
-                </span>
-                <span className="brand-page__footer-cta-badge">{buyingBadge}</span>
-              </Link>
-            )}
-            {offerCounts.leasing > 0 && (
-              <Link to={`/${makeSlug}/lease-deals`} className="brand-page__footer-cta-link">
-                <span className="brand-page__footer-cta-link-main">
-                  <span className="brand-page__footer-cta-chip">LEASE</span>
-                  <span>See {offerCounts.leasing} {make} Leasing Deals</span>
-                </span>
-                <span className="brand-page__footer-cta-badge">{leasingBadge}</span>
-              </Link>
-            )}
-          </div>
-        </section>
 
         <div className="brand-page__featured-row">
           <div className="brand-page__featured-main">

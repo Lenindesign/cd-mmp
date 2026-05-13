@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Bookmark, Car, Clock, ChevronRight, Search, Plus, Trash2, MapPin, Star, GitCompare, Check } from 'lucide-react';
+import { X, Bookmark, Car, Clock, ChevronRight, Search, Plus, Trash2, MapPin, Star, GitCompare, Check, Wallet } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { vehicleDatabase } from '../../data/vehicles';
+import { getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
 import { clearRecentlyViewed } from '../../services/recentlyViewedService';
+import { calculateBudgetSummary, formatBudgetCurrency, getBudgetPreferences } from '../../utils/budgetPreferences';
 import { OptimizedImage } from '../OptimizedImage';
 import { Button } from '../Button';
 import { DealerMapModal } from '../DealerLocatorMap';
@@ -29,17 +31,13 @@ interface RecentlyViewedVehicle {
 
 const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onClose }) => {
   const { user, addSavedVehicle, removeSavedVehicle } = useAuth();
-  const [activeTab, setActiveTab] = useState<'recently-viewed' | 'want' | 'own'>('recently-viewed');
+  const [activeTab, setActiveTab] = useState<'recently-viewed' | 'want' | 'budget'>('recently-viewed');
   const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedVehicle[]>([]);
   
   // Add vehicle search state
-  const [showAddVehicle, setShowAddVehicle] = useState(false);
   const [showAddVehicleWant, setShowAddVehicleWant] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [searchQueryWant, setSearchQueryWant] = useState('');
-  const [searchResults, setSearchResults] = useState<typeof vehicleDatabase>([]);
   const [searchResultsWant, setSearchResultsWant] = useState<typeof vehicleDatabase>([]);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const searchInputWantRef = useRef<HTMLInputElement>(null);
   
   // Dealer map modal state
@@ -139,22 +137,38 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
 
   // Get cars I want from user's saved vehicles
   const carsIWant = user?.savedVehicles?.filter(v => v.ownership === 'want') || [];
-  const carsIOwn = user?.savedVehicles?.filter(v => v.ownership === 'own') || [];
+  const budgetPreferences = useMemo(() => getBudgetPreferences(user?.budgetPreferences), [user?.budgetPreferences]);
+  const budgetSummary = useMemo(() => calculateBudgetSummary(budgetPreferences), [budgetPreferences]);
+  const budgetMatches = useMemo(
+    () => getVehiclesInBudget(budgetSummary.buyingPower, budgetPreferences.bodyStyle),
+    [budgetSummary.buyingPower, budgetPreferences.bodyStyle]
+  );
+  const budgetPreviewVehicles = budgetMatches.slice(0, 3);
+  const budgetMatchUrl = `/vehicles?maxPrice=${budgetSummary.buyingPower}&bodyStyle=${encodeURIComponent(budgetPreferences.bodyStyle)}`;
+  const getBudgetVehicleName = (vehicle: Vehicle) => `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  const getSavedBudgetVehicle = (vehicle: Vehicle) => {
+    const vehicleName = getBudgetVehicleName(vehicle);
+    return user?.savedVehicles?.find((savedVehicle) => (
+      savedVehicle.name === vehicleName ||
+      savedVehicle.id === vehicle.id ||
+      savedVehicle.id === vehicle.slug ||
+      savedVehicle.id === `want-${vehicle.id}`
+    ));
+  };
+  const handleToggleBudgetVehicleSave = (vehicle: Vehicle) => {
+    const savedVehicle = getSavedBudgetVehicle(vehicle);
 
-  // Handle search input change for "Cars I Own"
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    if (query.length >= 2) {
-      const results = vehicleDatabase.filter(v => {
-        const searchStr = `${v.year} ${v.make} ${v.model}`.toLowerCase();
-        return searchStr.includes(query.toLowerCase());
-      }).slice(0, 6);
-      setSearchResults(results);
-    } else {
-      setSearchResults([]);
+    if (savedVehicle) {
+      removeSavedVehicle(savedVehicle.id);
+      return;
     }
+
+    addSavedVehicle({
+      id: `want-${vehicle.id}`,
+      name: getBudgetVehicleName(vehicle),
+      ownership: 'want',
+      savedAt: new Date().toISOString(),
+    });
   };
 
   // Handle search input change for "Cars I Want"
@@ -173,19 +187,6 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
     }
   };
 
-  // Handle adding a vehicle to "Cars I Own"
-  const handleAddVehicle = (vehicle: typeof vehicleDatabase[0]) => {
-    addSavedVehicle({
-      id: `own-${vehicle.id}`,
-      name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
-      ownership: 'own',
-      savedAt: new Date().toISOString()
-    });
-    setSearchQuery('');
-    setSearchResults([]);
-    setShowAddVehicle(false);
-  };
-
   // Handle adding a vehicle to "Cars I Want"
   const handleAddVehicleWant = (vehicle: typeof vehicleDatabase[0]) => {
     addSavedVehicle({
@@ -198,13 +199,6 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
     setSearchResultsWant([]);
     setShowAddVehicleWant(false);
   };
-
-  // Focus search input when showing add vehicle
-  useEffect(() => {
-    if (showAddVehicle && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [showAddVehicle]);
 
   // Focus search input when showing add vehicle for "Cars I Want"
   useEffect(() => {
@@ -289,7 +283,7 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
   const tabs = [
     { id: 'recently-viewed' as const, label: 'Recently Viewed', icon: <Clock size={16} />, count: recentlyViewed.length },
     { id: 'want' as const, label: 'Cars I Want', icon: <Bookmark size={16} />, count: carsIWant.length },
-    { id: 'own' as const, label: 'Cars I Own', icon: <Car size={16} />, count: carsIOwn.length },
+    { id: 'budget' as const, label: 'My Budget', icon: <Wallet size={16} />, count: budgetMatches.length },
   ];
 
   return (
@@ -761,157 +755,74 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
             </div>
           )}
 
-          {/* Cars I Own */}
-          {activeTab === 'own' && (
+          {/* My Budget */}
+          {activeTab === 'budget' && (
             <div className="saved-sidebar__section">
-              {carsIOwn.length > 0 && (
-                <>
-                  <div className="saved-sidebar__section-header">
-                    <span className="saved-sidebar__section-title">
-                      Cars I Own ({carsIOwn.length})
-                    </span>
+              <div className="saved-sidebar__budget-panel saved-sidebar__budget-panel--tab" aria-label="My budget">
+                <div className="saved-sidebar__budget-header">
+                  <div className="saved-sidebar__budget-title-wrap">
+                    <Wallet size={18} className="saved-sidebar__budget-icon" />
+                    <span className="saved-sidebar__budget-title">My Budget</span>
                   </div>
-                  <div className="saved-sidebar__vehicles">
-                    {carsIOwn.map((vehicle) => {
-                      const details = getVehicleDetails(vehicle.name);
+                  <Link
+                    to="/account?tab=profile#my-budget"
+                    className="saved-sidebar__budget-edit"
+                    onClick={onClose}
+                  >
+                    Edit
+                  </Link>
+                </div>
+                <div className="saved-sidebar__budget-summary">
+                  <div>
+                    <span className="saved-sidebar__budget-label">
+                      {formatBudgetCurrency(budgetPreferences.monthlyPayment)}/mo budget
+                    </span>
+                    <strong>{formatBudgetCurrency(budgetSummary.buyingPower)}</strong>
+                  </div>
+                  <span className="saved-sidebar__budget-count">
+                    {budgetMatches.length} {budgetPreferences.bodyStyle} match{budgetMatches.length === 1 ? '' : 'es'}
+                  </span>
+                </div>
+                {budgetPreviewVehicles.length > 0 ? (
+                  <div className="saved-sidebar__budget-preview" aria-label="Cars I can afford">
+                    {budgetPreviewVehicles.map((vehicle) => {
+                      const isSaved = Boolean(getSavedBudgetVehicle(vehicle));
                       return (
-                        <Link
-                          key={vehicle.id}
-                          to={details ? `/${details.slug}` : '/vehicles'}
-                          className="saved-sidebar__vehicle"
-                          onClick={onClose}
-                        >
-                          <div className="saved-sidebar__vehicle-image">
-                            {details?.image ? (
-                              <OptimizedImage
-                                src={details.image}
-                                alt={vehicle.name}
-                                width={80}
-                                height={60}
-                              />
-                            ) : (
-                              <div className="saved-sidebar__vehicle-placeholder">
-                                <Car size={24} />
-                              </div>
-                            )}
-                          </div>
-                          <div className="saved-sidebar__vehicle-info">
-                            <span className="saved-sidebar__vehicle-name">{vehicle.name}</span>
-                            <div className="saved-sidebar__vehicle-meta">
-                              {details && (
-                                <span className="saved-sidebar__vehicle-price">
-                                  ${details.priceMin.toLocaleString()}
-                                </span>
-                              )}
-                              {details?.staffRating && (
-                                <span className="saved-sidebar__vehicle-rating">
-                                  <Star size={12} fill="currentColor" />
-                                  <span>{details.staffRating.toFixed(1)}</span>
-                                  <span className="saved-sidebar__vehicle-rating-label">C/D</span>
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            className="saved-sidebar__vehicle-unsave"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeSavedVehicle(vehicle.id);
-                            }}
-                            aria-label="Remove from saved"
-                            title="Remove from saved"
+                        <div key={vehicle.id} className="saved-sidebar__budget-preview-item">
+                          <Link
+                            to={`/${vehicle.slug}`}
+                            className="saved-sidebar__budget-preview-main"
+                            onClick={onClose}
                           >
-                            <Bookmark size={18} fill="currentColor" />
+                            <span>{getBudgetVehicleName(vehicle)}</span>
+                            <strong>{formatBudgetCurrency(vehicle.priceMin)}</strong>
+                          </Link>
+                          <button
+                            type="button"
+                            className={`saved-sidebar__budget-save ${isSaved ? 'saved-sidebar__budget-save--saved' : ''}`}
+                            onClick={() => handleToggleBudgetVehicleSave(vehicle)}
+                            aria-label={isSaved ? `Remove ${getBudgetVehicleName(vehicle)} from Cars I Want` : `Save ${getBudgetVehicleName(vehicle)} to Cars I Want`}
+                            title={isSaved ? 'Saved to Cars I Want' : 'Save to Cars I Want'}
+                          >
+                            <Bookmark size={15} fill={isSaved ? 'currentColor' : 'none'} />
                           </button>
-                        </Link>
+                        </div>
                       );
                     })}
                   </div>
-                </>
-              )}
-
-              {carsIOwn.length === 0 && !showAddVehicle && (
-                <div className="saved-sidebar__empty">
-                  <Car size={48} className="saved-sidebar__empty-icon" />
-                  <h3 className="saved-sidebar__empty-title">No vehicles added</h3>
-                  <p className="saved-sidebar__empty-desc">
-                    Use the "Add a Vehicle" button below to add cars you own.
+                ) : (
+                  <p className="saved-sidebar__budget-empty">
+                    No matches yet. Edit your budget to widen the search.
                   </p>
-                </div>
-              )}
-
-              {/* Add Vehicle Search - placed at bottom */}
-              {showAddVehicle ? (
-                <div className="saved-sidebar__add-vehicle">
-                  <div className="saved-sidebar__search-wrapper">
-                    <Search size={18} className="saved-sidebar__search-icon" />
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      className="saved-sidebar__search-input"
-                      placeholder="Search by year, make, or model..."
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                    />
-                    <button 
-                      className="saved-sidebar__search-close"
-                      onClick={() => {
-                        setShowAddVehicle(false);
-                        setSearchQuery('');
-                        setSearchResults([]);
-                      }}
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                  
-                  {searchResults.length > 0 && (
-                    <div className="saved-sidebar__search-results">
-                      {searchResults.map((vehicle) => (
-                        <button
-                          key={vehicle.id}
-                          className="saved-sidebar__search-result"
-                          onClick={() => handleAddVehicle(vehicle)}
-                        >
-                          <div className="saved-sidebar__search-result-image">
-                            <OptimizedImage
-                              src={vehicle.image}
-                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                              width={60}
-                              height={45}
-                            />
-                          </div>
-                          <div className="saved-sidebar__search-result-info">
-                            <span className="saved-sidebar__search-result-name">
-                              {vehicle.year} {vehicle.make} {vehicle.model}
-                            </span>
-                            <span className="saved-sidebar__search-result-price">
-                              ${vehicle.priceMin.toLocaleString()} - ${vehicle.priceMax.toLocaleString()}
-                            </span>
-                          </div>
-                          <Plus size={18} className="saved-sidebar__search-result-add" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {searchQuery.length >= 2 && searchResults.length === 0 && (
-                    <div className="saved-sidebar__search-no-results">
-                      No vehicles found for "{searchQuery}"
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Button 
-                  variant="outline"
-                  className="saved-sidebar__add-btn"
-                  onClick={() => setShowAddVehicle(true)}
-                  iconLeft={<Plus size={18} />}
+                )}
+                <Link
+                  to={budgetMatchUrl}
+                  className="saved-sidebar__budget-link"
+                  onClick={onClose}
                 >
-                  Add a Vehicle
-                </Button>
-              )}
+                  View Cars I Can Afford <ChevronRight size={14} />
+                </Link>
+              </div>
             </div>
           )}
         </div>
@@ -958,4 +869,3 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
 };
 
 export default SavedVehiclesSidebar;
-

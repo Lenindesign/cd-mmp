@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { 
   User, 
@@ -15,12 +15,27 @@ import {
   Blend,
   Crosshair,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  Wallet,
+  Gauge
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { vehicleDatabase } from '../../data/vehicles';
+import { getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
+import type { BudgetCreditScoreBand, BudgetPreferences } from '../../types/auth';
 import { getAvatarImageUrl, getUserInitials } from '../../utils/avatarUtils';
 import { getBannerImageUrl } from '../../utils/bannerUtils';
+import {
+  BUDGET_BODY_STYLE_OPTIONS,
+  BUDGET_CREDIT_SCORE_OPTIONS,
+  BUDGET_LOAN_TERM_OPTIONS,
+  BUDGET_STATE_OPTIONS,
+  DEFAULT_BUDGET_PREFERENCES,
+  calculateBudgetSummary,
+  formatBudgetCurrency,
+  getBudgetPreferences,
+  isBudgetPreferenceComplete,
+} from '../../utils/budgetPreferences';
 import EditProfileModal from '../../components/EditProfileModal';
 import Tabs from '../../components/Tabs/Tabs';
 import './MyAccount.css';
@@ -161,6 +176,20 @@ const MyAccount: React.FC = () => {
   const [modalFilteredVehicles, setModalFilteredVehicles] = useState(vehicleSuggestions);
   const modalInputRef = React.useRef<HTMLInputElement>(null);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const accountBudgetPreferences = useMemo(() => getBudgetPreferences(user?.budgetPreferences), [user?.budgetPreferences]);
+  const [budgetForm, setBudgetForm] = useState<BudgetPreferences>(DEFAULT_BUDGET_PREFERENCES);
+  const accountBudgetSummary = useMemo(() => calculateBudgetSummary(accountBudgetPreferences), [accountBudgetPreferences]);
+  const budgetFormSummary = useMemo(() => calculateBudgetSummary(budgetForm), [budgetForm]);
+  const affordableVehicles = useMemo(
+    () => getVehiclesInBudget(accountBudgetSummary.buyingPower, accountBudgetPreferences.bodyStyle).slice(0, 4),
+    [accountBudgetSummary.buyingPower, accountBudgetPreferences.bodyStyle]
+  );
+  const budgetFormMatchCount = useMemo(
+    () => getVehiclesInBudget(budgetFormSummary.buyingPower, budgetForm.bodyStyle).length,
+    [budgetFormSummary.buyingPower, budgetForm.bodyStyle]
+  );
+  const budgetFormMatchesUrl = `/vehicles?maxPrice=${budgetFormSummary.buyingPower}&bodyStyle=${encodeURIComponent(budgetForm.bodyStyle)}`;
+  const accountBudgetMatchesUrl = `/vehicles?maxPrice=${accountBudgetSummary.buyingPower}&bodyStyle=${encodeURIComponent(accountBudgetPreferences.bodyStyle)}`;
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -238,6 +267,12 @@ const MyAccount: React.FC = () => {
     }
   }, [showAddVehicleModal]);
 
+  useEffect(() => {
+    if (user) {
+      setBudgetForm(getBudgetPreferences(user.budgetPreferences));
+    }
+  }, [user?.budgetPreferences, user?.id]);
+
   // Handle opening the add vehicle modal
   const handleOpenAddVehicleModal = (type: 'want' | 'own') => {
     setAddVehicleType(type);
@@ -284,6 +319,19 @@ const MyAccount: React.FC = () => {
     }
   };
 
+  const handleBudgetFormChange = <K extends keyof BudgetPreferences>(key: K, value: BudgetPreferences[K]) => {
+    setBudgetForm((current) => ({ ...current, [key]: value }));
+  };
+
+  const handleSaveBudget = async () => {
+    await updateUser({
+      budgetPreferences: {
+        ...budgetForm,
+        updatedAt: new Date().toISOString(),
+      },
+    });
+  };
+
   if (!user) {
     return null;
   }
@@ -301,10 +349,11 @@ const MyAccount: React.FC = () => {
   // Calculate profile completion
   const getProfileCompletion = () => {
     let completed = 0;
-    const total = 4;
+    const total = 5;
     
     if (user.name) completed++;
     if (user.userType) completed++;
+    if (isBudgetPreferenceComplete(user.budgetPreferences)) completed++;
     if (user.savedVehicles && user.savedVehicles.length > 0) completed++;
     if (user.newsletterSubscriptions && user.newsletterSubscriptions.length > 0) completed++;
     
@@ -322,7 +371,7 @@ const MyAccount: React.FC = () => {
   const onboardingSteps = [
     { step: 1, label: 'Tell us about yourself', completed: !!user.name, path: '/onboarding/step-1' },
     { step: 2, label: 'Your interests', completed: !!user.userType, path: '/onboarding/step-2' },
-    { step: 3, label: 'Your vehicles', completed: !!(user.savedVehicles && user.savedVehicles.length > 0), path: '/onboarding/step-3' },
+    { step: 3, label: 'Your vehicles and budget', completed: !!(user.savedVehicles && user.savedVehicles.length > 0) || isBudgetPreferenceComplete(user.budgetPreferences), path: '/onboarding/step-3' },
     { step: 4, label: 'Newsletter preferences', completed: !!(user.newsletterSubscriptions && user.newsletterSubscriptions.length > 0), path: '/onboarding/step-4' },
   ];
 
@@ -388,6 +437,46 @@ const MyAccount: React.FC = () => {
   // Separate vehicles by ownership
   const carsIWant = user.savedVehicles?.filter(v => v.ownership === 'want') || [];
   const carsIOwn = user.savedVehicles?.filter(v => v.ownership === 'own' || v.ownership === 'previously_owned') || [];
+  const budgetFormIsDirty = JSON.stringify({
+    monthlyPayment: budgetForm.monthlyPayment,
+    downPayment: budgetForm.downPayment,
+    loanTerm: budgetForm.loanTerm,
+    creditScore: budgetForm.creditScore,
+    bodyStyle: budgetForm.bodyStyle,
+    stateCode: budgetForm.stateCode,
+  }) !== JSON.stringify({
+    monthlyPayment: accountBudgetPreferences.monthlyPayment,
+    downPayment: accountBudgetPreferences.downPayment,
+    loanTerm: accountBudgetPreferences.loanTerm,
+    creditScore: accountBudgetPreferences.creditScore,
+    bodyStyle: accountBudgetPreferences.bodyStyle,
+    stateCode: accountBudgetPreferences.stateCode,
+  });
+  const getAffordableVehicleName = (vehicle: Vehicle) => `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  const getSavedAffordableVehicle = (vehicle: Vehicle) => {
+    const vehicleName = getAffordableVehicleName(vehicle);
+    return user.savedVehicles?.find((savedVehicle) => (
+      savedVehicle.name === vehicleName ||
+      savedVehicle.id === vehicle.id ||
+      savedVehicle.id === vehicle.slug ||
+      savedVehicle.id === `want-${vehicle.id}`
+    ));
+  };
+  const handleToggleAffordableVehicleSave = async (vehicle: Vehicle) => {
+    const savedVehicle = getSavedAffordableVehicle(vehicle);
+
+    if (savedVehicle) {
+      await handleRemoveVehicle(savedVehicle.id);
+      return;
+    }
+
+    await addSavedVehicle({
+      id: `want-${vehicle.id}`,
+      name: getAffordableVehicleName(vehicle),
+      ownership: 'want',
+      savedAt: new Date().toISOString(),
+    });
+  };
 
   // Toggle ownership - available for future use
   const _handleToggleOwnership = async (vehicleId: string, newOwnership: 'own' | 'want') => {
@@ -505,6 +594,114 @@ const MyAccount: React.FC = () => {
                     <div className="my-account__field-row">
                       <span className="my-account__field-value">{user.location || '—'}</span>
                       <button className="my-account__field-edit">Edit</button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* My Budget Card */}
+                <div id="my-budget" className="my-account__card my-account__budget-card">
+                  <div className="my-account__budget-header">
+                    <div className="my-account__budget-title-group">
+                      <div className="my-account__budget-icon">
+                        <Wallet size={22} />
+                      </div>
+                      <div>
+                        <h3 className="my-account__budget-title">My Budget</h3>
+                        <p className="my-account__budget-subtitle">
+                          Save the payment range you want us to use for personalized vehicle matches.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="my-account__budget-result" aria-live="polite">
+                      <span>Budget Supports About</span>
+                      <strong>{formatBudgetCurrency(budgetFormSummary.buyingPower)}</strong>
+                    </div>
+                  </div>
+
+                  <div className="my-account__budget-fields">
+                    <label className="my-account__budget-field">
+                      <span>Monthly Budget</span>
+                      <input
+                        type="number"
+                        min={0}
+                        step={25}
+                        value={budgetForm.monthlyPayment}
+                        onChange={(event) => handleBudgetFormChange('monthlyPayment', Number(event.target.value))}
+                      />
+                    </label>
+                    <label className="my-account__budget-field">
+                      <span>Down Payment</span>
+                      <input
+                        type="number"
+                        min={0}
+                        step={500}
+                        value={budgetForm.downPayment}
+                        onChange={(event) => handleBudgetFormChange('downPayment', Number(event.target.value))}
+                      />
+                    </label>
+                    <label className="my-account__budget-field">
+                      <span>Loan Term</span>
+                      <select
+                        value={budgetForm.loanTerm}
+                        onChange={(event) => handleBudgetFormChange('loanTerm', Number(event.target.value))}
+                      >
+                        {BUDGET_LOAN_TERM_OPTIONS.map((term) => (
+                          <option key={term} value={term}>{term} months</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="my-account__budget-field">
+                      <span>Credit Range</span>
+                      <select
+                        value={budgetForm.creditScore}
+                        onChange={(event) => handleBudgetFormChange('creditScore', event.target.value as BudgetCreditScoreBand)}
+                      >
+                        {BUDGET_CREDIT_SCORE_OPTIONS.map((score) => (
+                          <option key={score} value={score}>{score}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="my-account__budget-field">
+                      <span>Body Style</span>
+                      <select
+                        value={budgetForm.bodyStyle}
+                        onChange={(event) => handleBudgetFormChange('bodyStyle', event.target.value)}
+                      >
+                        {BUDGET_BODY_STYLE_OPTIONS.map((style) => (
+                          <option key={style} value={style}>{style}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="my-account__budget-field">
+                      <span>Tax State</span>
+                      <select
+                        value={budgetForm.stateCode}
+                        onChange={(event) => handleBudgetFormChange('stateCode', event.target.value)}
+                      >
+                        {BUDGET_STATE_OPTIONS.map((state) => (
+                          <option key={state.code} value={state.code}>{state.name}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <div className="my-account__budget-meta">
+                    <div className="my-account__budget-meta-item">
+                      <Gauge size={16} />
+                      <span>{budgetFormMatchCount} {budgetForm.bodyStyle} match{budgetFormMatchCount === 1 ? '' : 'es'} under {formatBudgetCurrency(budgetFormSummary.buyingPower)}</span>
+                    </div>
+                    <div className="my-account__budget-actions">
+                      <Link to={budgetFormMatchesUrl} className="my-account__budget-link">
+                        View Matches
+                      </Link>
+                      <button
+                        type="button"
+                        className="my-account__budget-save"
+                        onClick={handleSaveBudget}
+                        disabled={!budgetFormIsDirty}
+                      >
+                        {budgetFormIsDirty ? 'Save Budget' : 'Budget Saved'}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -976,6 +1173,70 @@ const MyAccount: React.FC = () => {
                 {/* Vehicles Section */}
                 <div className="my-account__card">
                   <h2 className="my-account__section-title">Vehicles in My Garage</h2>
+
+                  {/* Cars I Can Afford */}
+                  <div className="my-account__vehicle-section my-account__affordable-section">
+                    <div className="my-account__vehicle-section-heading">
+                      <div>
+                        <h3 className="my-account__vehicle-section-title">Cars I Can Afford</h3>
+                        <p className="my-account__vehicle-section-note">
+                          Based on your {formatBudgetCurrency(accountBudgetPreferences.monthlyPayment)}/mo budget.
+                        </p>
+                      </div>
+                      <Link to={accountBudgetMatchesUrl} className="my-account__vehicle-section-link">
+                        View All Matches
+                      </Link>
+                    </div>
+                    {affordableVehicles.length > 0 ? (
+                      <div className="my-account__vehicle-grid">
+                        {affordableVehicles.map((vehicle) => (
+                          <div key={vehicle.id} className="my-account__vehicle-card my-account__vehicle-card--affordable">
+                            <div className="my-account__vehicle-header">
+                              <h4 className="my-account__vehicle-name">{vehicle.year} {vehicle.make} {vehicle.model}</h4>
+                              <div className="my-account__vehicle-rating-box">
+                                <span className="my-account__vehicle-rating-score">
+                                  {vehicle.staffRating}<span>/10</span>
+                                </span>
+                                <span className="my-account__vehicle-rating-label">C/D Rating</span>
+                              </div>
+                            </div>
+                            <div className="my-account__vehicle-image">
+                              {vehicle.image ? (
+                                <img src={vehicle.image} alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} />
+                              ) : (
+                                <div className="my-account__vehicle-image-missing">Image unavailable</div>
+                              )}
+                            </div>
+                            <div className="my-account__vehicle-footer-section">
+                              <div className="my-account__vehicle-price">
+                                <span className="my-account__vehicle-price-label">Starting At</span>
+                                <span className="my-account__vehicle-price-value">
+                                  {formatBudgetCurrency(vehicle.priceMin)}
+                                </span>
+                              </div>
+                              <div className="my-account__vehicle-actions">
+                                <button
+                                  type="button"
+                                  className={`my-account__vehicle-cta my-account__vehicle-cta--save ${getSavedAffordableVehicle(vehicle) ? 'my-account__vehicle-cta--saved' : ''}`}
+                                  onClick={() => handleToggleAffordableVehicleSave(vehicle)}
+                                >
+                                  {getSavedAffordableVehicle(vehicle) ? 'Saved' : 'Save'}
+                                </button>
+                                <Link to={`/${vehicle.slug}`} className="my-account__vehicle-cta">
+                                  View
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="my-account__budget-no-matches">
+                        <h4>No matches at this budget yet</h4>
+                        <p>Raise the monthly budget, add a down payment, or choose a different body style.</p>
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Cars I Want */}
                   <div className="my-account__vehicle-section">

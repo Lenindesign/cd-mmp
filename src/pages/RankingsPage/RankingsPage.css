@@ -76,7 +76,7 @@
 .rankings-page__hero-content {
   position: relative;
   z-index: 1;
-  max-width: 800px;
+  max-width: 900px;
 }
 
 .rankings-page__hero-badge {
@@ -261,15 +261,237 @@
   margin: 0;
 }
 
-.rankings-page__count {
-  font-family: var(--font-body);
-  font-size: var(--font-size-base);
-  color: var(--color-gray-400);
-  margin: 0;
+.rankings-page__body-style-subnav {
+  position: relative;
+  z-index: 20;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
-.rankings-page__count strong {
+.rankings-page__body-style-subnav-inner {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) 0;
+}
+
+.rankings-page__body-style-subnav-track {
+  display: flex;
+  gap: var(--spacing-4);
+  min-width: 0;
+  padding: 2px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.rankings-page__body-style-subnav-track::-webkit-scrollbar {
+  display: none;
+}
+
+.rankings-page__body-style-subnav-card {
+  display: grid;
+  box-sizing: border-box;
+  flex: 0 0 108px;
+  grid-template-rows: 13px 30px 13px;
+  align-content: center;
+  justify-items: center;
+  row-gap: 3px;
+  width: 108px;
+  height: 90px;
+  min-height: 90px;
+  padding: var(--spacing-2);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-black);
+  text-decoration: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.rankings-page__body-style-subnav-card:hover,
+.rankings-page__body-style-subnav-card:focus-visible {
+  background: color-mix(in srgb, var(--color-blue-cobalt) 5%, var(--color-white));
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 4px 14px rgba(27, 95, 138, 0.14);
+  text-decoration: none;
+  transform: none;
+}
+
+.rankings-page__body-style-subnav-card:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.rankings-page__body-style-subnav-card--active {
+  background: color-mix(in srgb, var(--color-blue-cobalt) 5%, var(--color-white));
+  border-color: var(--color-blue-cobalt);
+}
+
+.rankings-page__body-style-subnav-card--has-model {
+  padding-block: var(--spacing-2);
+}
+
+.rankings-page__body-style-subnav-model {
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.rankings-page__body-style-subnav-model--empty {
+  visibility: hidden;
+}
+
+.rankings-page__body-style-subnav-icon {
+  width: 84px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.rankings-page__body-style-subnav-card--has-model .rankings-page__body-style-subnav-icon {
+  width: 88px;
+  height: 27px;
+}
+
+.rankings-page__body-style-subnav-icon--flip-x {
+  transform: scaleX(-1);
+}
+
+.rankings-page__body-style-subnav-label {
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.rankings-page__body-style-subnav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.rankings-page__body-style-subnav-btn:hover,
+.rankings-page__body-style-subnav-btn:focus-visible {
+  background: var(--color-gray-100);
+  color: var(--color-black);
+}
+
+.rankings-page__hero-offers {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-5);
+  width: fit-content;
+  max-width: 100%;
+  margin-top: var(--spacing-6);
+}
+
+.rankings-page__hero-offers-divider {
+  display: block;
+  flex-shrink: 0;
+  width: 1px;
+  height: 46px;
+  background: color-mix(in srgb, var(--color-white) 34%, transparent);
+}
+
+.rankings-page__hero-offer-link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  min-width: 0;
+  gap: 0;
+  min-height: 58px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--color-white);
+  text-decoration: none;
+  box-shadow: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.rankings-page__hero-offer-link:hover,
+.rankings-page__hero-offer-link:focus-visible {
+  opacity: 0.86;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.rankings-page__hero-offer-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-white) 82%, transparent);
+  outline-offset: 3px;
+}
+
+.rankings-page__hero-offer-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.rankings-page__hero-offer-copy {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.rankings-page__hero-offer-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 48px;
+  padding: 5px 11px;
+  border-radius: var(--border-radius-sm);
+  background: var(--color-success);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.rankings-page__hero-offer-badge {
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  color: color-mix(in srgb, var(--color-white) 82%, transparent);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-style: italic;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
 }
 
 /* Subcategory Navigation */
@@ -1652,6 +1874,49 @@
     font-size: var(--font-size-3xl);
   }
 
+  .rankings-page__body-style-subnav-inner {
+    grid-template-columns: 32px minmax(0, 1fr) 32px;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) 0;
+  }
+
+  .rankings-page__body-style-subnav-card {
+    flex-basis: 108px;
+    width: 108px;
+    height: 90px;
+    min-height: 90px;
+    padding: var(--spacing-2);
+  }
+
+  .rankings-page__body-style-subnav-icon {
+    width: 84px;
+    height: 34px;
+  }
+
+  .rankings-page__body-style-subnav-label {
+    font-size: 11px;
+  }
+
+  .rankings-page__body-style-subnav-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .rankings-page__hero-offers {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-5);
+  }
+
+  .rankings-page__hero-offers-divider {
+    display: none;
+  }
+
+  .rankings-page__hero-offer-link {
+    min-height: 62px;
+  }
+
   .rankings-page__grid {
     grid-template-columns: 1fr;
   }
@@ -1709,6 +1974,16 @@
 
   .rankings-page__description {
     font-size: var(--font-size-base);
+  }
+
+  .rankings-page__hero-offer-link {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .rankings-page__hero-offer-main {
+    align-items: center;
   }
 
   .rankings-page__section-title {

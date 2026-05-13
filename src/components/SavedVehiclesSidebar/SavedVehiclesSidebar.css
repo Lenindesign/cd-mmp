@@ -113,6 +113,177 @@
   margin: 0;
 }
 
+.saved-sidebar__budget-panel {
+  margin: var(--spacing-4) var(--spacing-5);
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.saved-sidebar__budget-panel--tab {
+  margin: 0;
+}
+
+.saved-sidebar__budget-header,
+.saved-sidebar__budget-summary,
+.saved-sidebar__budget-preview-main,
+.saved-sidebar__budget-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.saved-sidebar__budget-header {
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
+.saved-sidebar__budget-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.saved-sidebar__budget-icon {
+  color: var(--color-blue-cobalt);
+}
+
+.saved-sidebar__budget-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.saved-sidebar__budget-edit,
+.saved-sidebar__budget-link {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  text-decoration: none;
+}
+
+.saved-sidebar__budget-summary {
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.saved-sidebar__budget-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.saved-sidebar__budget-label,
+.saved-sidebar__budget-count,
+.saved-sidebar__budget-empty {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+}
+
+.saved-sidebar__budget-summary strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  color: var(--color-dark);
+}
+
+.saved-sidebar__budget-count {
+  flex-shrink: 0;
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-full);
+  font-weight: var(--font-weight-bold);
+}
+
+.saved-sidebar__budget-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-3);
+}
+
+.saved-sidebar__budget-preview-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.saved-sidebar__budget-preview-main {
+  flex: 1;
+  min-width: 0;
+  gap: var(--spacing-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-dark);
+  text-decoration: none;
+}
+
+.saved-sidebar__budget-preview-item:last-child {
+  border-bottom: none;
+}
+
+.saved-sidebar__budget-preview-main span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-sidebar__budget-preview-main strong {
+  flex-shrink: 0;
+  color: var(--color-dark);
+}
+
+.saved-sidebar__budget-save {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-gray-500);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.saved-sidebar__budget-save:hover,
+.saved-sidebar__budget-save--saved {
+  color: var(--color-blue-cobalt);
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-200);
+}
+
+.saved-sidebar__budget-empty {
+  margin: var(--spacing-3) 0 0;
+}
+
+.saved-sidebar__budget-link {
+  justify-content: flex-start;
+  gap: var(--spacing-1);
+  width: fit-content;
+  margin-top: var(--spacing-3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.saved-sidebar__budget-edit:hover,
+.saved-sidebar__budget-link:hover,
+.saved-sidebar__budget-preview-main:hover span {
+  color: var(--color-dark);
+}
+
 /* Content Area */
 .saved-sidebar__content {
   flex: 1;
@@ -847,5 +1018,9 @@
     width: var(--spacing-16);
     height: var(--spacing-12);
   }
-}
 
+  .saved-sidebar__budget-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

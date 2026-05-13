@@ -28,6 +28,9 @@ const BODY_STYLE_ICONS: Record<string, string> = {
   hatchback: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/crossovers-1585158793.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*',
 };
 
+const SEDAN_TILE_IMAGE = 'https://tpc.googlesyndication.com/simgad/2269585553418629614?';
+const CROSSOVER_TILE_IMAGE = 'https://tpc.googlesyndication.com/simgad/1343272272197513191?';
+
 // Body style configuration with subcategories
 const BODY_STYLE_CONFIG: Record<string, {
   title: string;
@@ -106,6 +109,16 @@ const BODY_STYLE_OFFER_LABELS: Record<string, string> = {
   convertible: 'Convertible',
   wagon: 'Wagon',
   hatchback: 'Hatchback',
+};
+
+const BODY_STYLE_NAV_LABELS: Record<string, string> = {
+  suv: 'SUVs',
+  sedan: 'Sedans',
+  truck: 'Pickup Trucks',
+  coupe: 'Coupes',
+  convertible: 'Convertibles',
+  wagon: 'Wagons',
+  hatchback: 'Hatchbacks',
 };
 
 const BODY_STYLE_BUYING_DEAL_PATHS: Record<string, string> = {
@@ -250,6 +263,56 @@ const RankingsPage = () => {
     return new URLSearchParams(location.search).get('variant');
   }, [location.search]);
   const showIncentiveSubnavVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_INCENTIVE_SUBNAV_VARIANT;
+  const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant);
+  const bodyStyleNavRef = useRef<HTMLDivElement>(null);
+  const bodyStyleNavItems = useMemo(() => {
+    const rankingItems = Object.entries(BODY_STYLE_CONFIG).map(([key, value]) => ({
+      key,
+      label: BODY_STYLE_NAV_LABELS[key] ?? value.title.replace(/^Best\s+/, ''),
+      title: value.title,
+      icon: key === 'sedan' ? SEDAN_TILE_IMAGE : BODY_STYLE_ICONS[key],
+      imageClassName: key === 'sedan' ? 'rankings-page__body-style-subnav-icon--flip-x' : undefined,
+      modelLabel: key === 'sedan' ? 'Accord Hybrid' : undefined,
+      path: `/rankings/${key}`,
+    }));
+    const sedanIndex = rankingItems.findIndex((item) => item.key === 'sedan');
+    const crossoverItem = {
+      key: 'crossover',
+      label: 'Crossovers',
+      title: 'Crossovers',
+      icon: CROSSOVER_TILE_IMAGE,
+      imageClassName: 'rankings-page__body-style-subnav-icon--flip-x',
+      modelLabel: 'Nissan Rogue',
+      path: '/rankings/suv',
+    };
+    const navItemsWithCrossovers = sedanIndex >= 0
+      ? [
+          ...rankingItems.slice(0, sedanIndex + 1),
+          crossoverItem,
+          ...rankingItems.slice(sedanIndex + 1),
+        ]
+      : [...rankingItems, crossoverItem];
+
+    return [
+      ...navItemsWithCrossovers,
+      {
+        key: 'used-cars',
+        label: 'Used Cars',
+        title: 'Used Cars',
+        icon: BODY_STYLE_ICONS.sedan,
+        imageClassName: undefined,
+        modelLabel: undefined,
+        path: '/vehicles?type=used&sort=price-low',
+      },
+    ];
+  }, []);
+
+  const scrollBodyStyleNav = useCallback((direction: 'left' | 'right') => {
+    bodyStyleNavRef.current?.scrollBy({
+      left: direction === 'left' ? -360 : 360,
+      behavior: 'smooth',
+    });
+  }, []);
 
   // Check if a vehicle is saved
   const isVehicleSaved = (vehicleName: string) => {
@@ -647,12 +710,78 @@ const RankingsPage = () => {
             </div>
             <h1 className="rankings-page__title">{pageTitle}</h1>
             <p className="rankings-page__description">{config.description}</p>
-            <p className="rankings-page__count">
-              <strong>{allVehicles.length}</strong> vehicles ranked
-            </p>
+            {showHeroIncentiveRow && (
+              <div className="rankings-page__hero-offers" aria-label={`${offerBodyStyleLabel} deals and incentives`}>
+                <Link to={buyingOffersPath} className="rankings-page__hero-offer-link">
+                  <span className="rankings-page__hero-offer-main">
+                    <span className="rankings-page__hero-offer-chip">BUY</span>
+                    <span className="rankings-page__hero-offer-copy">
+                      <span>See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Deals</span>
+                      <span className="rankings-page__hero-offer-badge">{RANKINGS_OFFER_COUNTS.buyingExpiringSoon} expiring soon</span>
+                    </span>
+                  </span>
+                </Link>
+                <span className="rankings-page__hero-offers-divider" aria-hidden="true"></span>
+                <Link to={leasingOffersPath} className="rankings-page__hero-offer-link">
+                  <span className="rankings-page__hero-offer-main">
+                    <span className="rankings-page__hero-offer-chip">LEASE</span>
+                    <span className="rankings-page__hero-offer-copy">
+                      <span>See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Deals</span>
+                      <span className="rankings-page__hero-offer-badge">{RANKINGS_OFFER_COUNTS.leasingExpiringSoon} expiring soon</span>
+                    </span>
+                  </span>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      <nav className="rankings-page__body-style-subnav" aria-label="Body style rankings">
+        <div className="container rankings-page__body-style-subnav-inner">
+          <button
+            type="button"
+            className="rankings-page__body-style-subnav-btn rankings-page__body-style-subnav-btn--prev"
+            onClick={() => scrollBodyStyleNav('left')}
+            aria-label="Scroll body styles left"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <div className="rankings-page__body-style-subnav-track" ref={bodyStyleNavRef}>
+            {bodyStyleNavItems.map((item) => (
+              <Link
+                key={item.key}
+                to={item.path}
+                className={`rankings-page__body-style-subnav-card${item.modelLabel ? ' rankings-page__body-style-subnav-card--has-model' : ''}${item.key === bodyStyleKey ? ' rankings-page__body-style-subnav-card--active' : ''}`}
+                aria-current={item.key === bodyStyleKey ? 'page' : undefined}
+              >
+                <span
+                  className={`rankings-page__body-style-subnav-model${item.modelLabel ? '' : ' rankings-page__body-style-subnav-model--empty'}`}
+                  aria-hidden={item.modelLabel ? undefined : true}
+                >
+                  {item.modelLabel || '\u00A0'}
+                </span>
+                {item.icon && (
+                  <img
+                    src={item.icon}
+                    alt=""
+                    className={`rankings-page__body-style-subnav-icon${item.imageClassName ? ` ${item.imageClassName}` : ''}`}
+                  />
+                )}
+                <span className="rankings-page__body-style-subnav-label">{item.label}</span>
+              </Link>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="rankings-page__body-style-subnav-btn rankings-page__body-style-subnav-btn--next"
+            onClick={() => scrollBodyStyleNav('right')}
+            aria-label="Scroll body styles right"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+      </nav>
 
       {/* Subcategory Anchor Navigation - only show on main body style page */}
       {!subcategory && config && (
@@ -668,29 +797,6 @@ const RankingsPage = () => {
                   {sub.name.replace('Best ', '')}
                 </a>
               ))}
-              {subcategoryVehicles && subcategoryVehicles.length > 0 && !showIncentiveSubnavVariant && (
-                <div className="rankings-page__subnav-divider"></div>
-              )}
-              {!showIncentiveSubnavVariant && (
-                Object.entries(BODY_STYLE_CONFIG)
-                  .filter(([key]) => key !== bodyStyle?.toLowerCase())
-                  .map(([key, value]) => (
-                    <Link
-                      key={key}
-                      to={`/rankings/${key}`}
-                      className="rankings-page__subnav-pill rankings-page__subnav-pill--body-style"
-                    >
-                      {BODY_STYLE_ICONS[key] && (
-                        <img
-                          src={BODY_STYLE_ICONS[key]}
-                          alt=""
-                          className="rankings-page__subnav-pill-icon"
-                        />
-                      )}
-                      {value.title}
-                    </Link>
-                  ))
-              )}
             </div>
             {showIncentiveSubnavVariant && showSubnavScrollArrow && (
               <button
@@ -716,22 +822,6 @@ const RankingsPage = () => {
                 </Link>
               </div>
             )}
-            {/* Scroll indicator button */}
-            {!showIncentiveSubnavVariant && (
-              <button
-                className="rankings-page__subnav-scroll-btn"
-                onClick={(e) => {
-                  const container = e.currentTarget.parentElement;
-                  const pills = container?.querySelector('.rankings-page__subnav-pills');
-                  if (pills) {
-                    pills.scrollBy({ left: 200, behavior: 'smooth' });
-                  }
-                }}
-                aria-label="Scroll right"
-              >
-                <ChevronRight size={18} />
-              </button>
-            )}
           </div>
         </div>
       )}
@@ -750,7 +840,7 @@ const RankingsPage = () => {
         </div>
       )}
 
-      {!showIncentiveSubnavVariant && (
+      {!showIncentiveSubnavVariant && !showHeroIncentiveRow && (
         <div className="container">
           <section className="rankings-page__offers-cta" aria-labelledby="rankings-page-offers-title">
             <div className="rankings-page__offers-cta-header">
