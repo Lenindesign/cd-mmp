@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, Info, Mail, RotateCcw, SkipForward, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, CreditCard, Info, Mail, RotateCcw, SkipForward, TrendingUp } from 'lucide-react';
 import { getAllVehicles, getRankingVehicles, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
@@ -46,6 +46,23 @@ interface LightAffordableDealCard {
   offers: VehicleOfferSummary[];
   primaryOffer: VehicleOfferSummary;
   primaryIncentive: Incentive;
+}
+
+type LightReviewAdviceId = 'extra-down' | 'lower-apr' | 'incentive-compare';
+
+interface LightReviewAdviceOption {
+  id: LightReviewAdviceId;
+  title: string;
+  body: string;
+  savingsLabel: string;
+  monthlyDelta: number;
+  totalDelta: number;
+  loanPrincipal: number;
+  financeApr: number;
+  termMonths: number;
+  monthlyPayment: number;
+  totalInterest: number;
+  totalLoanPayments: number;
 }
 
 const CUSTOM_RATE_TERMS = [12, 24, 36, 48, 60, 72, 84];
@@ -758,6 +775,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightAffordableOffersSlug, setLightAffordableOffersSlug] = useState<string | null>(null);
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
   const [showLightMobileTotals, setShowLightMobileTotals] = useState(false);
+  const [lightReviewAdviceId, setLightReviewAdviceId] = useState<LightReviewAdviceId>('extra-down');
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
     [defaultVehicle, selectedSlug, vehicles],
@@ -818,25 +836,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         icon: bodyStyleCatalogIcon(row.iconId),
       })),
     [],
-  );
-
-  const lightBrowseTypicalFromByKey = useMemo(() => {
-    const out: Record<string, number> = {};
-    for (const row of LIGHT_VEHICLE_BROWSE_GRID) {
-      if (row.bodyStyle === 'EV') {
-        const evs = vehicles.filter((v) => v.fuelType === 'Electric');
-        out[row.key] = evs.length > 0 ? Math.min(...evs.map((v) => v.priceMin)) : 0;
-      } else {
-        const ranked = getRankingVehicles(row.bodyStyle, 120);
-        out[row.key] = ranked.length > 0 ? Math.min(...ranked.map((v) => v.priceMin)) : 0;
-      }
-    }
-    return out;
-  }, [vehicles]);
-
-  const lightBrowseSelectionLabel = useMemo(
-    () => LIGHT_VEHICLE_BROWSE_GRID.find((row) => row.bodyStyle === lightBrowseBodyStyle)?.label ?? lightBrowseBodyStyle,
-    [lightBrowseBodyStyle],
   );
 
   const vehicleIncentives = useMemo(
@@ -1023,18 +1022,97 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lowerAprMonthly = monthlyPayment(totalLoanAmount, Math.max(0, activeApr - 1), loanTerm);
   const lowAprVsCash = financeIncentives[0] && cashIncentives[0]
     ? (() => {
-        const financeApr = getFinanceRateForTerm(financeIncentives[0], getFinanceTermOptions(financeIncentives[0])[0]) ?? activeApr;
-        const financeTerm = getFinanceTermOptions(financeIncentives[0])[0] ?? loanTerm;
+        const financeTermOptions = getFinanceTermOptions(financeIncentives[0]);
+        const financeApr = getFinanceRateForTerm(financeIncentives[0], financeTermOptions[0]) ?? activeApr;
+        const financeTerm = financeTermOptions[0] ?? loanTerm;
         const cashBack = parseMoney(cashIncentives[0].value);
-        const lowAprPayment = monthlyPayment(Math.max(0, workingPrice + salesTax + fees - downPayment - tradeEquity), financeApr, financeTerm);
-        const cashPayment = monthlyPayment(Math.max(0, workingPrice + salesTax + fees - downPayment - tradeEquity - cashBack), customApr, loanTerm);
+        const financePrincipal = Math.max(0, workingPrice + salesTax + fees - downPayment - tradeEquity);
+        const cashPrincipal = Math.max(0, financePrincipal - cashBack);
+        const lowAprPayment = monthlyPayment(financePrincipal, financeApr, financeTerm);
+        const cashPayment = monthlyPayment(cashPrincipal, customApr, loanTerm);
+        const lowAprTotalPayments = lowAprPayment * financeTerm;
+        const cashTotalPayments = cashPayment * loanTerm;
         return {
           label: `${financeIncentives[0].title} vs. ${cashIncentives[0].title}`,
           monthlyDelta: cashPayment - lowAprPayment,
-          totalDelta: cashPayment * loanTerm - lowAprPayment * financeTerm,
+          totalDelta: cashTotalPayments - lowAprTotalPayments,
+          finance: {
+            title: financeIncentives[0].title,
+            principal: financePrincipal,
+            apr: financeApr,
+            term: financeTerm,
+            monthlyPayment: lowAprPayment,
+            totalLoanPayments: lowAprTotalPayments,
+            totalInterest: Math.max(0, lowAprTotalPayments - financePrincipal),
+          },
+          cash: {
+            title: cashIncentives[0].title,
+            principal: cashPrincipal,
+            apr: customApr,
+            term: loanTerm,
+            monthlyPayment: cashPayment,
+            totalLoanPayments: cashTotalPayments,
+            totalInterest: Math.max(0, cashTotalPayments - cashPrincipal),
+          },
         };
       })()
     : null;
+  const extraDownPrincipal = Math.max(0, totalLoanAmount - 1000);
+  const extraDownTotalLoanPayments = extraDownPaymentMonthly * loanTerm;
+  const lowerAprRate = Math.max(0, activeApr - 1);
+  const lowerAprTotalLoanPayments = lowerAprMonthly * loanTerm;
+  const lightReviewAdviceOptions: LightReviewAdviceOption[] = totalLoanAmount > 0 && loanTerm > 0
+    ? [
+        {
+          id: 'extra-down',
+          title: 'Add $1,000 down',
+          body: `Lower the monthly estimate by ${currency(estimatedMonthly - extraDownPaymentMonthly)}/mo and finance less from day one.`,
+          savingsLabel: 'Savings vs. current estimate',
+          monthlyDelta: estimatedMonthly - extraDownPaymentMonthly,
+          totalDelta: totalLoanPayments - extraDownTotalLoanPayments,
+          loanPrincipal: extraDownPrincipal,
+          financeApr: activeApr,
+          termMonths: loanTerm,
+          monthlyPayment: extraDownPaymentMonthly,
+          totalInterest: Math.max(0, extraDownTotalLoanPayments - extraDownPrincipal),
+          totalLoanPayments: extraDownTotalLoanPayments,
+        },
+        {
+          id: 'lower-apr',
+          title: 'Lower APR by 1 point',
+          body: `Bring the rate to ${lowerAprRate.toFixed(1)}% APR to reduce finance charges over ${loanTerm} months.`,
+          savingsLabel: 'Savings vs. current estimate',
+          monthlyDelta: estimatedMonthly - lowerAprMonthly,
+          totalDelta: totalLoanPayments - lowerAprTotalLoanPayments,
+          loanPrincipal: totalLoanAmount,
+          financeApr: lowerAprRate,
+          termMonths: loanTerm,
+          monthlyPayment: lowerAprMonthly,
+          totalInterest: Math.max(0, lowerAprTotalLoanPayments - totalLoanAmount),
+          totalLoanPayments: lowerAprTotalLoanPayments,
+        },
+      ]
+    : [];
+  if (lowAprVsCash) {
+    const strongerIncentive = lowAprVsCash.totalDelta >= 0 ? lowAprVsCash.finance : lowAprVsCash.cash;
+    const comparedIncentive = lowAprVsCash.totalDelta >= 0 ? lowAprVsCash.cash : lowAprVsCash.finance;
+    lightReviewAdviceOptions.push({
+      id: 'incentive-compare',
+      title: strongerIncentive.title,
+      body: `${strongerIncentive.title} beats ${comparedIncentive.title} on estimated total loan payments.`,
+      savingsLabel: 'Savings vs. other incentive',
+      monthlyDelta: Math.abs(lowAprVsCash.monthlyDelta),
+      totalDelta: Math.abs(lowAprVsCash.totalDelta),
+      loanPrincipal: strongerIncentive.principal,
+      financeApr: strongerIncentive.apr,
+      termMonths: strongerIncentive.term,
+      monthlyPayment: strongerIncentive.monthlyPayment,
+      totalInterest: strongerIncentive.totalInterest,
+      totalLoanPayments: strongerIncentive.totalLoanPayments,
+    });
+  }
+  const selectedLightReviewAdvice =
+    lightReviewAdviceOptions.find((option) => option.id === lightReviewAdviceId) ?? lightReviewAdviceOptions[0];
   const aiTargetPrice = Math.max(0, workingPrice - Math.max(750, workingPrice * 0.025));
   const negotiatedDiscount = Math.max(0, selectedVehicle.priceMin - workingPrice);
   const aiBestOfferPath = lowAprVsCash
@@ -1436,21 +1514,29 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     type="button"
                     role="tab"
                     aria-selected={startMode === 'monthly'}
-                    className={startMode === 'monthly' ? 'payment-calc__tab payment-calc__tab--on' : 'payment-calc__tab'}
+                    aria-label={`Start with monthly budget, currently ${currency(targetMonthlyPayment)} per month`}
+                    className={startMode === 'monthly' ? 'payment-calc__tab payment-calc__tab--on aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'payment-calc__tab aio-payment__light-toggle-button'}
                     onClick={() => setStartMode('monthly')}
                   >
-                    <span className="payment-calc__tab-name">Monthly budget</span>
-                    <span className="payment-calc__tab-amt">{currency(targetMonthlyPayment)}/mo</span>
+                    <span className="aio-payment__light-toggle-icon" aria-hidden="true">
+                      <CreditCard size={22} strokeWidth={2} />
+                    </span>
+                    <span className="aio-payment__light-toggle-button-title">Start with monthly budget</span>
+                    <span className="aio-payment__light-toggle-button-copy">Tell us what you can pay each month.</span>
                   </button>
                   <button
                     type="button"
                     role="tab"
                     aria-selected={startMode === 'price'}
-                    className={startMode === 'price' ? 'payment-calc__tab payment-calc__tab--on' : 'payment-calc__tab'}
+                    aria-label={`Start with vehicle price, currently ${currency(price)}`}
+                    className={startMode === 'price' ? 'payment-calc__tab payment-calc__tab--on aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'payment-calc__tab aio-payment__light-toggle-button'}
                     onClick={() => setStartMode('price')}
                   >
-                    <span className="payment-calc__tab-name">Vehicle price</span>
-                    <span className="payment-calc__tab-amt">{currency(price)}</span>
+                    <span className="aio-payment__light-toggle-icon" aria-hidden="true">
+                      <Car size={22} strokeWidth={2} />
+                    </span>
+                    <span className="aio-payment__light-toggle-button-title">Start with vehicle price</span>
+                    <span className="aio-payment__light-toggle-button-copy">Know the sticker? Start there.</span>
                   </button>
                 </div>
 
@@ -1532,7 +1618,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           <Car size={22} strokeWidth={2} />
                         </span>
                         <span className="aio-payment__light-vehicle-step__path-title">I know the vehicle</span>
-                        <span className="aio-payment__light-vehicle-step__path-copy">Pick a year, make, and model.</span>
+                        <span className="aio-payment__light-vehicle-step__path-copy">
+                          Pick a year, make, and model to compare against your budget.
+                        </span>
                       </button>
                       <button
                         type="button"
@@ -1550,17 +1638,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-vehicle-step__path-icon aio-payment__light-vehicle-step__path-icon--help" aria-hidden>
                           <CircleHelp size={22} strokeWidth={2} />
                         </span>
-                        <span className="aio-payment__light-vehicle-step__path-title">Still shopping</span>
+                        <span className="aio-payment__light-vehicle-step__path-title">Still shopping?</span>
                         <span className="aio-payment__light-vehicle-step__path-copy">
-                          Browse by body style and we&apos;ll use a typical starting price.
+                          Browse by body style and we&apos;ll compare a typical starting price against your budget.
                         </span>
                       </button>
                     </div>
-                    {startMode === 'monthly' && (
-                      <p className={`aio-payment__light-budget-note aio-payment__light-budget-note--${visibleBudgetFitStatus} aio-payment__light-vehicle-step__budget-note`}>
-                        <strong className="aio-payment__light-budget-status-label">{visibleBudgetFitLabel}:</strong> {visibleBudgetFitCopy}
-                      </p>
-                    )}
                     <div className="aio-payment__light-vehicle-step__nu">
                       <p className="aio-payment__light-vehicle-step__nu-label">New or used</p>
                       <div className="aio-payment__light-vehicle-step__nu-row" role="tablist" aria-label="New or used vehicle">
@@ -1641,7 +1724,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         >
                           {lightVehicleBrowseTiles.map((tile) => {
                             const selected = lightBrowseBodyStyle === tile.bodyStyle;
-                            const fromAmt = lightBrowseTypicalFromByKey[tile.key] ?? 0;
                             return (
                               <button
                                 key={tile.key}
@@ -1667,37 +1749,27 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                   />
                                 </span>
                                 <span className="aio-payment__light-vehicle-step__body-tile-label">{tile.label}</span>
-                                <span className="aio-payment__light-vehicle-step__body-tile-from">
-                                  from {currency(fromAmt)}
-                                </span>
                               </button>
                             );
                           })}
                         </div>
-                        <p className="aio-payment__light-vehicle-step__browse-hint">
-                          We&apos;ll plug in a popular, well-rated pick for that category. You can fine-tune the exact trim later.
+                      </div>
+                    )}
+                    {lightVehicleStepMode === 'known' && (
+                      <div className="aio-payment__light-vehicle-step__price-bar">
+                        <div className="aio-payment__light-vehicle-step__price-meta">
+                          <span className="aio-payment__light-vehicle-step__price-kicker">Starting price</span>
+                          <p className="aio-payment__light-vehicle-step__price-vehicle">
+                            {lightKnownVehicleSelected
+                              ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`
+                              : 'Choose a vehicle'}
+                          </p>
+                        </div>
+                        <p className="aio-payment__light-vehicle-step__price-value">
+                          {lightKnownVehicleSelected ? currency(selectedVehicle.priceMin) : 'Not selected'}
                         </p>
                       </div>
                     )}
-                    <div className="aio-payment__light-vehicle-step__price-bar">
-                      <div className="aio-payment__light-vehicle-step__price-meta">
-                        <span className="aio-payment__light-vehicle-step__price-kicker">
-                          {lightVehicleStepMode === 'browsing' ? 'Typical starting price' : 'Starting price'}
-                        </span>
-                        <p className="aio-payment__light-vehicle-step__price-vehicle">
-                          {lightVehicleStepMode === 'browsing'
-                            ? lightBrowseSelectionLabel
-                            : lightKnownVehicleSelected
-                              ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`
-                              : 'Choose a vehicle'}
-                        </p>
-                      </div>
-                      <p className="aio-payment__light-vehicle-step__price-value">
-                        {lightVehicleStepMode === 'known' && !lightKnownVehicleSelected
-                          ? 'Not selected'
-                          : currency(selectedVehicle.priceMin)}
-                      </p>
-                    </div>
                   </div>
                 )}
 
@@ -2203,6 +2275,82 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             </div>
           </div>
         </section>
+
+        {isLightStepsVariant && lightWizardStep === 5 && selectedLightReviewAdvice && (
+          <section className="aio-payment__light-review-insights-section" aria-label="Review insights">
+            <div className="container">
+              <div className="aio-payment__light-review-insights">
+                <article className="aio-payment__panel aio-payment__panel--wide aio-payment__finance-visualization aio-payment__light-review-panel aio-payment__light-review-panel--interactive">
+                  <div className="aio-payment__light-review-heading">
+                    <div>
+                      <span className="aio-payment__eyebrow">Post-calculation tips</span>
+                      <h2>Ways to optimize this deal</h2>
+                    </div>
+                    <p>
+                      Current estimate: <strong>{currency(estimatedMonthly)}/mo</strong> and <strong>{currency(totalLoanPayments)}</strong> in loan payments.
+                    </p>
+                  </div>
+
+                  <div className="aio-payment__light-review-playground">
+                    <div className="aio-payment__light-advice-list" aria-label="Optimization advice">
+                      {lightReviewAdviceOptions.map((option) => {
+                        const selected = option.id === selectedLightReviewAdvice.id;
+                        return (
+                          <button
+                            key={option.id}
+                            type="button"
+                            className={
+                              selected
+                                ? 'aio-payment__light-advice-button aio-payment__light-advice-button--selected'
+                                : 'aio-payment__light-advice-button'
+                            }
+                            aria-pressed={selected}
+                            onClick={() => setLightReviewAdviceId(option.id)}
+                          >
+                            <span className="aio-payment__light-advice-button-title">{option.title}</span>
+                            <span className="aio-payment__light-advice-button-copy">{option.body}</span>
+                            <span className="aio-payment__light-advice-button-savings">
+                              <strong>{currency(option.totalDelta)}</strong>
+                              <span>{option.savingsLabel}</span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="aio-payment__light-review-preview" aria-live="polite">
+                      <div className="aio-payment__light-review-preview-heading">
+                        <div>
+                          <span className="aio-payment__eyebrow">Selected outlook</span>
+                          <h3>{selectedLightReviewAdvice.title}</h3>
+                        </div>
+                      </div>
+                      <div className="aio-payment__light-review-impact" aria-label="Selected advice impact">
+                        <div>
+                          <span>{selectedLightReviewAdvice.id === 'incentive-compare' ? 'Monthly difference' : 'Monthly improvement'}</span>
+                          <strong>{currency(selectedLightReviewAdvice.monthlyDelta)}/mo</strong>
+                          <small>{selectedLightReviewAdvice.id === 'incentive-compare' ? 'between offers' : 'lower payment'}</small>
+                        </div>
+                        <div>
+                          <span>{selectedLightReviewAdvice.savingsLabel}</span>
+                          <strong>{currency(selectedLightReviewAdvice.totalDelta)}</strong>
+                          <small>Total loan payments</small>
+                        </div>
+                      </div>
+                      <PaymentCalculatorFinanceCharts
+                        loanPrincipal={selectedLightReviewAdvice.loanPrincipal}
+                        financeApr={selectedLightReviewAdvice.financeApr}
+                        termMonths={selectedLightReviewAdvice.termMonths}
+                        monthlyPayment={selectedLightReviewAdvice.monthlyPayment}
+                        totalInterest={selectedLightReviewAdvice.totalInterest}
+                      />
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+        )}
 
         {lightAffordableDealCards.length > 0 && (
             <section ref={lightAffordableSectionRef} className="aio-payment__light-affordable-section">

@@ -1505,10 +1505,6 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-gray-600);
 }
 
-.aio-payment__light-vehicle-step__budget-note {
-  margin: 0;
-}
-
 .aio-payment__light-vehicle-step__nu {
   display: flex;
   flex-direction: column;
@@ -1664,20 +1660,6 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
   color: var(--color-blue-cobalt);
-}
-
-.aio-payment__light-vehicle-step__body-tile-from {
-  font-size: var(--font-size-xs);
-  line-height: 1.35;
-  color: var(--color-gray-600);
-}
-
-.aio-payment__light-vehicle-step__browse-hint {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  line-height: 1.55;
-  color: var(--color-gray-600);
 }
 
 .aio-payment__light-vehicle-step__price-bar {
@@ -2205,6 +2187,7 @@ label.aio-payment__light-loan-step__label {
   gap: var(--spacing-3);
   padding: 0;
   background: transparent;
+  border-bottom: 0;
   border-radius: 0;
 }
 
@@ -2212,27 +2195,42 @@ label.aio-payment__light-loan-step__label {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: flex-start;
   gap: var(--spacing-2);
   width: 100%;
   margin: 0;
-  padding: var(--spacing-6);
+  min-height: 8rem;
+  padding: var(--spacing-5) var(--spacing-6);
   background: var(--color-white);
-  border: 2px solid var(--color-gray-200);
-  border-radius: var(--border-radius-2xl);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--border-radius-xl);
   box-shadow: none;
-  color: inherit;
+  color: var(--color-dark);
   cursor: pointer;
   font: inherit;
   text-align: left;
   text-transform: none;
-  transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.aio-payment__light-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-7);
+  height: var(--spacing-7);
+  color: var(--color-gray-700);
 }
 
 .aio-payment__light-toggle-button-title {
   font-family: var(--font-heading);
-  font-size: var(--aio-light-body);
+  font-size: var(--font-size-lg);
   font-weight: var(--aio-light-heading-weight);
-  line-height: var(--line-height-tight);
+  line-height: 1.2;
   letter-spacing: 0;
   color: var(--color-dark);
 }
@@ -2246,7 +2244,8 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-toggle-button:hover:not(.aio-payment__light-toggle-button--active) {
-  border-color: var(--color-gray-300);
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 38%, var(--color-gray-300) 62%);
+  background: color-mix(in srgb, var(--color-white) 96%, var(--color-blue-cobalt) 4%);
   outline: none;
 }
 
@@ -2260,9 +2259,13 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-toggle-button--active {
-  background: var(--color-neutrals-8);
+  background: color-mix(in srgb, var(--color-white) 88%, var(--color-blue-cobalt) 12%);
   border-color: var(--color-blue-cobalt);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 14%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-cobalt) 14%, transparent);
+}
+
+.aio-payment__light-toggle-button--active .aio-payment__light-toggle-icon {
+  color: var(--color-blue-cobalt);
 }
 
 .aio-payment__light-primary {
@@ -2489,6 +2492,224 @@ label.aio-payment__light-loan-step__label {
   border-color: var(--color-error);
 }
 
+.aio-payment__light-review-insights-section {
+  padding: 0 0 var(--spacing-6);
+  background: var(--color-warm-canvas);
+}
+
+.aio-payment__light-review-insights {
+  display: grid;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+.aio-payment__light-review-panel {
+  box-shadow: 0 1px 8px color-mix(in srgb, var(--color-black) 6%, transparent);
+}
+
+.aio-payment__light-review-panel--interactive {
+  display: grid;
+  gap: var(--spacing-5);
+}
+
+.aio-payment__light-review-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-5);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__light-review-heading h2 {
+  margin-bottom: 0;
+}
+
+.aio-payment__light-review-heading p {
+  max-width: 24rem;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-review-heading strong {
+  color: var(--color-dark);
+}
+
+.aio-payment__light-review-playground {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.8fr) minmax(0, 1.7fr);
+  gap: var(--spacing-5);
+  align-items: start;
+}
+
+.aio-payment__light-advice-list {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.aio-payment__light-advice-button {
+  display: grid;
+  gap: var(--spacing-2);
+  width: 100%;
+  margin: 0;
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
+  color: var(--color-dark);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-advice-button:hover {
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 34%, var(--color-gray-200) 66%);
+  background: color-mix(in srgb, var(--color-white) 94%, var(--color-blue-cobalt) 6%);
+}
+
+.aio-payment__light-advice-button:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-advice-button--selected {
+  border-color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-white) 89%, var(--color-blue-cobalt) 11%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-cobalt) 14%, transparent);
+}
+
+.aio-payment__light-advice-button-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.aio-payment__light-advice-button-copy {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  color: var(--color-gray-700);
+}
+
+.aio-payment__light-advice-button-savings {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid color-mix(in srgb, var(--color-gray-200) 78%, transparent);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.3;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-advice-button-savings strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  line-height: 1;
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-review-preview {
+  min-width: 0;
+}
+
+.aio-payment__light-review-preview-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.aio-payment__light-review-preview-heading h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-dark);
+}
+
+.aio-payment__light-review-impact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: var(--spacing-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
+  overflow: hidden;
+}
+
+.aio-payment__light-review-impact div {
+  display: grid;
+  gap: var(--spacing-1);
+  padding: var(--spacing-4);
+}
+
+.aio-payment__light-review-impact div + div {
+  border-left: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__light-review-impact span,
+.aio-payment__light-review-impact small {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.3;
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-review-impact strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  color: var(--color-dark);
+}
+
+.aio-payment__light-review-panel .payment-calc-viz {
+  margin-top: var(--spacing-5);
+  padding-top: 0;
+  border-top: 0;
+}
+
+@media (max-width: 900px) {
+  .aio-payment__light-review-heading,
+  .aio-payment__light-review-preview-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .aio-payment__light-review-playground {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .aio-payment__light-review-impact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aio-payment__light-review-impact div + div {
+    border-top: 1px solid var(--color-gray-200);
+    border-left: 0;
+  }
+
+  .aio-payment__light-advice-button-savings {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+}
+
 .aio-payment__light-affordable-section {
   padding: var(--spacing-8) 0 var(--spacing-16);
   background: var(--color-warm-canvas);
@@ -2706,8 +2927,8 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-toggle.payment-calc__tabs {
-  gap: 0;
-  border-bottom: 1px solid var(--color-gray-200);
+  gap: var(--spacing-3);
+  border-bottom: 0;
 }
 
 .aio-payment--light-steps .aio-payment__light-estimator-field {
@@ -2998,14 +3219,6 @@ label.aio-payment__light-loan-step__label {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
-}
-
-/* Light vehicle step: undo .aio-payment__light-budget-note horizontal margins so the note aligns with path cards. */
-.aio-payment__light-budget-note.aio-payment__light-vehicle-step__budget-note {
-  box-sizing: border-box;
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
 }
 
 .aio-payment__light-budget-note--over {
@@ -4652,7 +4865,7 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-toggle.payment-calc__tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .aio-payment--light-steps .aio-payment__light-result-metrics {
