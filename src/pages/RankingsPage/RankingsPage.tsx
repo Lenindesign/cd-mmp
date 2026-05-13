@@ -31,11 +31,20 @@ const BODY_STYLE_ICONS: Record<string, string> = {
 const SEDAN_TILE_IMAGE = 'https://tpc.googlesyndication.com/simgad/2269585553418629614?';
 const CROSSOVER_TILE_IMAGE = 'https://tpc.googlesyndication.com/simgad/1343272272197513191?';
 
+type RankingSubcategory = {
+  id: string;
+  name: string;
+  navLabel?: string;
+  filter: (v: Vehicle) => boolean;
+};
+
+const formatSubnavLabel = (sub: RankingSubcategory) => sub.navLabel ?? sub.name.replace('Best ', '');
+
 // Body style configuration with subcategories
 const BODY_STYLE_CONFIG: Record<string, {
   title: string;
   description: string;
-  subcategories: { id: string; name: string; filter: (v: Vehicle) => boolean }[];
+  subcategories: RankingSubcategory[];
 }> = {
   suv: {
     title: 'Best SUVs',
@@ -46,6 +55,7 @@ const BODY_STYLE_CONFIG: Record<string, {
       { id: 'luxury', name: 'Best Luxury SUVs', filter: (v) => v.priceMin >= 50000 },
       { id: 'family', name: 'Best SUVs for Families', filter: () => true }, // All SUVs qualify
       { id: 'offroad', name: 'Best Off-Road SUVs', filter: (v) => ['Jeep', 'Land Rover', 'Toyota', 'Ford'].includes(v.make) },
+      { id: 'safety', name: 'Best SUVs by Safety Rating', navLabel: 'By Safety Rating', filter: () => true },
     ],
   },
   sedan: {
@@ -496,6 +506,7 @@ const RankingsPage = () => {
 
   const subnavPillsRef = useRef<HTMLDivElement>(null);
   const [showSubnavScrollArrow, setShowSubnavScrollArrow] = useState(false);
+  const [activeSubcategoryId, setActiveSubcategoryId] = useState<string | null>(null);
 
   const updateSubnavScrollArrow = useCallback(() => {
     const subnavPills = subnavPillsRef.current;
@@ -536,6 +547,55 @@ const RankingsPage = () => {
       window.cancelAnimationFrame(animationFrameId);
     };
   }, [showIncentiveSubnavVariant, subcategoryVehicles, updateSubnavScrollArrow]);
+
+  useEffect(() => {
+    if (!subcategoryVehicles?.length || subcategory) {
+      return;
+    }
+
+    const sections = subcategoryVehicles
+      .map((sub) => document.getElementById(sub.id))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    if (sections.length === 0) return;
+
+    let animationFrameId = 0;
+    const activationOffset = 160;
+
+    const updateActiveSubcategory = () => {
+      animationFrameId = 0;
+
+      const nextActiveId = sections.reduce((currentId, section) => {
+        return section.getBoundingClientRect().top <= activationOffset ? section.id : currentId;
+      }, sections[0].id);
+
+      setActiveSubcategoryId(nextActiveId);
+    };
+
+    const requestActiveSubcategoryUpdate = () => {
+      if (animationFrameId) return;
+      animationFrameId = window.requestAnimationFrame(updateActiveSubcategory);
+    };
+
+    requestActiveSubcategoryUpdate();
+    window.addEventListener('scroll', requestActiveSubcategoryUpdate, { passive: true });
+    window.addEventListener('resize', requestActiveSubcategoryUpdate);
+
+    return () => {
+      window.removeEventListener('scroll', requestActiveSubcategoryUpdate);
+      window.removeEventListener('resize', requestActiveSubcategoryUpdate);
+      if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [subcategory, subcategoryVehicles]);
+
+  useEffect(() => {
+    if (!activeSubcategoryId || !subnavPillsRef.current) return;
+
+    const activePill = subnavPillsRef.current.querySelector<HTMLAnchorElement>(
+      `.rankings-page__subnav-pill[href="#${activeSubcategoryId}"]`,
+    );
+    activePill?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }, [activeSubcategoryId]);
 
   // If no config found, show landing page with body-style rows
   if (!config) {
@@ -787,16 +847,21 @@ const RankingsPage = () => {
       {!subcategory && config && (
         <div className={`rankings-page__subnav rankings-page__subnav--sticky${showIncentiveSubnavVariant ? ' rankings-page__subnav--has-actions' : ''}${showIncentiveSubnavVariant && showSubnavScrollArrow ? ' rankings-page__subnav--can-scroll' : ''}`}>
           <div className="container">
-            <div className="rankings-page__subnav-pills" ref={showIncentiveSubnavVariant ? subnavPillsRef : undefined}>
-              {subcategoryVehicles && subcategoryVehicles.length > 0 && subcategoryVehicles.map((sub) => (
-                <a
-                  key={sub.id}
-                  href={`#${sub.id}`}
-                  className="rankings-page__subnav-pill"
-                >
-                  {sub.name.replace('Best ', '')}
-                </a>
-              ))}
+            <div className="rankings-page__subnav-pills" ref={subnavPillsRef}>
+              {subcategoryVehicles && subcategoryVehicles.length > 0 && subcategoryVehicles.map((sub, index) => {
+                const isActive = activeSubcategoryId ? activeSubcategoryId === sub.id : index === 0;
+                return (
+                  <a
+                    key={sub.id}
+                    href={`#${sub.id}`}
+                    className={isActive ? 'rankings-page__subnav-pill rankings-page__subnav-pill--active' : 'rankings-page__subnav-pill'}
+                    aria-current={isActive ? 'true' : undefined}
+                    onClick={() => setActiveSubcategoryId(sub.id)}
+                  >
+                    {formatSubnavLabel(sub)}
+                  </a>
+                );
+              })}
             </div>
             {showIncentiveSubnavVariant && showSubnavScrollArrow && (
               <button
