@@ -9,6 +9,7 @@ import { Select, TextField } from '../../components/TextField';
 import DealCard, { type DealCardPayment } from '../../components/DealCard/DealCard';
 import HeroOffersB from '../../components/Hero/HeroOffersB';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import { OptimizedImage } from '../../components/OptimizedImage/OptimizedImage';
 import TradeInEstimateModal from '../../components/TradeInEstimateModal';
 import { estimateTradeInValue } from '../../utils/tradeInEstimate';
 import { getVehicleOffers, type VehicleOfferSummary } from '../../utils/dealCalculations';
@@ -405,6 +406,8 @@ function bodyStyleCatalogIcon(iconId: string): string {
   return DEFAULT_BODY_STYLES.find((b) => b.id === iconId)?.icon ?? '';
 }
 
+const normalizeVehicleMatch = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, '');
+
 /** Light wizard “Still shopping” grid — BodyStyleSelector line art; `EV` maps to electric vehicles in browse apply. */
 const LIGHT_VEHICLE_BROWSE_GRID = [
   { key: 'sedan', label: 'Sedan', bodyStyle: 'Sedan', iconId: 'sedans' },
@@ -780,6 +783,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
     [defaultVehicle, selectedSlug, vehicles],
   );
+  const selectedVehiclePageHref = `/${selectedVehicle.slug}`;
+  const lightTradeVehicleMatch = useMemo(() => {
+    const query = normalizeVehicleMatch(tradeVehicle);
+    if (query.length < 3) return undefined;
+
+    return vehicles.find((vehicle) => {
+      const makeModel = normalizeVehicleMatch(`${vehicle.make} ${vehicle.model}`);
+      const fullVehicleName = normalizeVehicleMatch(`${vehicle.year} ${vehicle.make} ${vehicle.model}`);
+
+      return makeModel === query || query.includes(makeModel) || fullVehicleName === query || fullVehicleName.includes(query);
+    });
+  }, [tradeVehicle, vehicles]);
+  const lightTradeVehicleLabel = tradeVehicle.trim() || 'Trade-in vehicle';
+  const lightTradeVehicleImage = lightTradeVehicleMatch?.image;
   const lightHasVehicleSelection = !isLightStepsVariant || lightVehicleStepMode === 'browsing' || lightKnownVehicleSelected;
   const selectedVehicleStyle = selectedVehicle.trim || selectedVehicle.drivetrain || selectedVehicle.bodyStyle;
 
@@ -1757,13 +1774,30 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     )}
                     {lightVehicleStepMode === 'known' && (
                       <div className="aio-payment__light-vehicle-step__price-bar">
-                        <div className="aio-payment__light-vehicle-step__price-meta">
-                          <span className="aio-payment__light-vehicle-step__price-kicker">Starting price</span>
-                          <p className="aio-payment__light-vehicle-step__price-vehicle">
-                            {lightKnownVehicleSelected
-                              ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`
-                              : 'Choose a vehicle'}
-                          </p>
+                        <div className="aio-payment__light-vehicle-step__price-summary">
+                          {lightKnownVehicleSelected && (
+                            <Link
+                              to={selectedVehiclePageHref}
+                              className="aio-payment__light-vehicle-step__thumbnail-link"
+                              aria-label={`View ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
+                            >
+                              <OptimizedImage
+                                src={selectedVehicle.image}
+                                alt={`${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
+                                aspectRatio="4/3"
+                                objectFit="cover"
+                                wrapperClassName="aio-payment__light-vehicle-step__thumbnail"
+                              />
+                            </Link>
+                          )}
+                          <div className="aio-payment__light-vehicle-step__price-meta">
+                            <span className="aio-payment__light-vehicle-step__price-kicker">Starting price</span>
+                            <p className="aio-payment__light-vehicle-step__price-vehicle">
+                              {lightKnownVehicleSelected
+                                ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`
+                                : 'Choose a vehicle'}
+                            </p>
+                          </div>
                         </div>
                         <p className="aio-payment__light-vehicle-step__price-value">
                           {lightKnownVehicleSelected ? currency(selectedVehicle.priceMin) : 'Not selected'}
@@ -1859,21 +1893,23 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         />
                         {showLightTradeEstimateCard ? (
                           <aside
-                            className={`aio-payment__light-trade-estimate-card aio-payment__light-trade-estimate-card--full-row${selectedVehicle.image ? ' aio-payment__light-trade-estimate-card--split' : ''}`}
-                            aria-label="Estimated trade-in value for your selected vehicle"
+                            className={`aio-payment__light-trade-estimate-card aio-payment__light-trade-estimate-card--full-row${lightTradeVehicleImage ? ' aio-payment__light-trade-estimate-card--split' : ''}`}
+                            aria-label={`Estimated trade-in value for ${lightTradeVehicleLabel}`}
                           >
-                            {selectedVehicle.image ? (
+                            {lightTradeVehicleImage ? (
                               <div className="aio-payment__light-trade-estimate-card__media">
-                                <img
-                                  className="aio-payment__light-trade-estimate-card__image"
-                                  src={selectedVehicle.image}
-                                  alt=""
-                                  loading="lazy"
+                                <OptimizedImage
+                                  src={lightTradeVehicleImage}
+                                  alt={lightTradeVehicleLabel}
+                                  aspectRatio="16/9"
+                                  objectFit="cover"
+                                  wrapperClassName="aio-payment__light-trade-estimate-card__image"
                                 />
                               </div>
                             ) : null}
                             <div className="aio-payment__light-trade-estimate-card__body">
                               <p className="aio-payment__light-trade-estimate-card__eyebrow">Estimated trade-in value</p>
+                              <p className="aio-payment__light-trade-estimate-card__vehicle">{lightTradeVehicleLabel}</p>
                               <p className="aio-payment__light-trade-estimate-card__value">
                                 {currency(lightTradeEstimateDisplayAmount)}
                               </p>

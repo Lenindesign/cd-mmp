@@ -75,7 +75,7 @@ const HeroOffersB = ({
     <div className="hero__offers-b">
       <div className="hero__offers-b-header">
         <h3 className="hero__offers-b-title">{title}</h3>
-        <nav className="hero__offers-b-deal-links" aria-label="Browse deal pages">
+        <nav className="hero__offers-b-deal-links" aria-label={`${vehicleIncentives.make} ${vehicleIncentives.model} deal pages`}>
           {dealCounts.buy > 0 && (
             <Link
               to={dealLinks.buy}

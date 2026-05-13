@@ -1665,13 +1665,52 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-vehicle-step__price-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--spacing-4);
   padding: var(--spacing-5);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
   background: var(--color-white);
+}
+
+.aio-payment__light-vehicle-step__price-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
+}
+
+.aio-payment__light-vehicle-step__thumbnail-link {
+  display: block;
+  flex: 0 0 auto;
+  width: 72px;
+  color: inherit;
+  border-radius: var(--border-radius-md);
+}
+
+.aio-payment__light-vehicle-step__thumbnail-link:hover,
+.aio-payment__light-vehicle-step__thumbnail-link:focus-visible {
+  text-decoration: none;
+}
+
+.aio-payment__light-vehicle-step__thumbnail-link:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 3px;
+}
+
+.aio-payment__light-vehicle-step__thumbnail {
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-100);
+}
+
+.aio-payment__light-vehicle-step__thumbnail .optimized-image__img {
+  transition: opacity var(--transition-normal), transform var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__thumbnail-link:hover .optimized-image__img {
+  transform: scale(1.04);
 }
 
 .aio-payment__light-vehicle-step__price-meta {
@@ -1709,6 +1748,18 @@ label.aio-payment__light-loan-step__label {
 @media (max-width: 639px) {
   .aio-payment__light-vehicle-step__path-cards {
     grid-template-columns: 1fr;
+  }
+
+  .aio-payment__light-vehicle-step__price-bar {
+    align-items: flex-start;
+  }
+
+  .aio-payment__light-vehicle-step__price-summary {
+    width: 100%;
+  }
+
+  .aio-payment__light-vehicle-step__thumbnail-link {
+    width: 64px;
   }
 }
 
@@ -1825,6 +1876,15 @@ label.aio-payment__light-loan-step__label {
   letter-spacing: 0;
   line-height: var(--line-height-tight);
   color: var(--color-dark);
+}
+
+.aio-payment__light-trade-estimate-card__vehicle {
+  margin: calc(var(--spacing-1) * -1) 0 var(--spacing-2);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
 }
 
 .aio-payment__light-trade-estimate-card__note {
