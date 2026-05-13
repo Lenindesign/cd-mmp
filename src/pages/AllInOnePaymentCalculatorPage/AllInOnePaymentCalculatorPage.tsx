@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, Info, Mail, RotateCcw, SkipForward, TrendingUp } from 'lucide-react';
-import { getAllVehicles, getRankingVehicles, getVehiclesInBudget, type Vehicle } from '../../services/vehicleService';
+import { getAllVehicles, getRankingVehicles, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
 import { Button } from '../../components/Button';
 import { Select, TextField } from '../../components/TextField';
-import { VehicleCard } from '../../components/VehicleCard/VehicleCard';
 import DealCard, { type DealCardPayment } from '../../components/DealCard/DealCard';
 import HeroOffersB from '../../components/Hero/HeroOffersB';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -190,16 +189,6 @@ const parseTerm = (value?: string) => {
   const match = value?.match(/(\d+)/);
   return match ? Number(match[1]) : 60;
 };
-
-const getCombinedMpg = (mpg?: string) => {
-  if (!mpg) return undefined;
-  const values = mpg.split('/').map((item) => Number(item));
-  if (values.some((value) => !Number.isFinite(value))) return undefined;
-  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
-};
-
-const getVehicleCardCopy = (vehicle: Vehicle) =>
-  `The ${vehicle.year} ${vehicle.make} ${vehicle.model} keeps this estimate realistic with a starting price under your budget and a ${vehicle.staffRating}/10 C/D rating.`;
 
 const getLightDealTypeTag = (offerType: VehicleOfferSummary['type']) => {
   switch (offerType) {
@@ -716,7 +705,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [condition, setCondition] = useState<VehicleCondition>('new');
   const [selectedSlug, setSelectedSlug] = useState(defaultVehicle.slug);
   const [selectedYear, setSelectedYear] = useState(defaultVehicle.year);
-  const [startMode, setStartMode] = useState<PurchaseStartMode>(isBudgetFirstVariant || isLightVariant ? 'monthly' : 'price');
+  const [startMode, setStartMode] = useState<PurchaseStartMode>('monthly');
   const [price, setPrice] = useState(defaultVehicle.priceMin);
   const [targetMonthlyPayment, setTargetMonthlyPayment] = useState(550);
   const [downPayment, setDownPayment] = useState(4000);
@@ -964,9 +953,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     return monthlyPayment(vehicleLoanAmount, activeApr, loanTerm);
   };
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
-  const affordableVehicleBudget = isBudgetFirstVariant || isLightVariant ? workingPrice : price + downPayment + rebateTotal;
-
-  const affordableVehicles = getVehiclesInBudget(Math.max(0, affordableVehicleBudget), selectedVehicle.bodyStyle).slice(0, 4);
   const lightAffordableBudgetCeiling = startMode === 'monthly' ? affordableMsrp : Math.max(0, price);
   const lightAffordableDealCards = (() => {
     const ceiling = lightAffordableBudgetCeiling;
@@ -1312,7 +1298,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       carousel.removeEventListener('scroll', updateAffordableCarouselState);
       window.removeEventListener('resize', updateAffordableCarouselState);
     };
-  }, [affordableVehicleBudget, lightAffordableBudgetCeiling, lightAffordableDealCards.length, selectedVehicle.bodyStyle, vehicles]);
+  }, [lightAffordableBudgetCeiling, lightAffordableDealCards.length, selectedVehicle.bodyStyle, vehicles]);
 
   useEffect(() => {
     const summary = summaryRef.current;
@@ -2498,22 +2484,22 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <button
                 type="button"
                 role="tab"
-                aria-selected={startMode === 'price'}
-                className={`aio-payment__start-mode-button ${startMode === 'price' ? 'aio-payment__start-mode-button--active' : ''}`}
-                onClick={() => setStartMode('price')}
-              >
-                <span>{isBudgetFirstVariant ? 'I know the MSRP' : 'Monthly payment'}</span>
-                <strong>{isBudgetFirstVariant ? 'Estimate the monthly payment for a specific vehicle price.' : 'Pick a car and calculate the monthly payment.'}</strong>
-              </button>
-              <button
-                type="button"
-                role="tab"
                 aria-selected={startMode === 'monthly'}
                 className={`aio-payment__start-mode-button ${startMode === 'monthly' ? 'aio-payment__start-mode-button--active' : ''}`}
                 onClick={() => setStartMode('monthly')}
               >
-                <span>{isBudgetFirstVariant ? 'I know my budget' : 'Selected car price'}</span>
-                <strong>{isBudgetFirstVariant ? 'Find the MSRP that fits your monthly target.' : 'Enter a budget and see how much vehicle it supports.'}</strong>
+                <span>{isBudgetFirstVariant ? 'I know my budget' : 'Monthly payment'}</span>
+                <strong>{isBudgetFirstVariant ? 'Find the MSRP that fits your monthly target.' : 'Enter a target payment and see how much vehicle it supports.'}</strong>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={startMode === 'price'}
+                className={`aio-payment__start-mode-button ${startMode === 'price' ? 'aio-payment__start-mode-button--active' : ''}`}
+                onClick={() => setStartMode('price')}
+              >
+                <span>{isBudgetFirstVariant ? 'I know the MSRP' : 'Selected car price'}</span>
+                <strong>{isBudgetFirstVariant ? 'Estimate the monthly payment for a specific vehicle price.' : 'Enter a price and calculate the monthly payment.'}</strong>
               </button>
             </div>
 
@@ -2538,26 +2524,30 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               </div>
             )}
 
-            {isBudgetFirstVariant && (
+            {(isBudgetFirstVariant || !isLightVariant) && (
               <div className="aio-payment__primary-input">
                 {startMode === 'price' ? (
                   <TextField
-                    label="Vehicle price or MSRP"
+                    label={isBudgetFirstVariant ? 'Vehicle price or MSRP' : 'Selected car price'}
                     type="number"
                     value={price}
                     min={0}
                     step={500}
-                    helperText="Use the negotiated selling price if you already have one."
+                    helperText={isBudgetFirstVariant
+                      ? 'Use the negotiated selling price if you already have one.'
+                      : `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} estimate: ${currency(estimatedMonthly)}/mo`}
                     onChange={(event) => setPrice(numberInput(event.target.value))}
                   />
                 ) : (
                   <TextField
-                    label="Monthly budget"
+                    label={isBudgetFirstVariant ? 'Monthly budget' : 'Target monthly payment'}
                     type="number"
                     value={targetMonthlyPayment}
                     min={0}
                     step={25}
-                    helperText={`Try 500 for a $500 monthly budget. This supports about ${currency(affordableMsrp)} before tax and fees.`}
+                    helperText={isBudgetFirstVariant
+                      ? `Try 500 for a $500 monthly budget. This supports about ${currency(affordableMsrp)} before tax and fees.`
+                      : `This supports about ${currency(affordableMsrp)} before tax and fees.`}
                     onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
                   />
                 )}
@@ -2602,21 +2592,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   label: `${vehicle.trim || vehicle.drivetrain || vehicle.bodyStyle} · ${vehicle.bodyStyle} · ${currency(vehicle.priceMin)}`,
                 }))}
               />
-              {!isBudgetFirstVariant && (
-                startMode === 'price' ? (
-                  <TextField label="Price (MSRP)" type="number" value={price} min={0} step={500} onChange={(event) => setPrice(numberInput(event.target.value))} />
-                ) : (
-                  <TextField
-                    label="Target monthly payment"
-                    type="number"
-                    value={targetMonthlyPayment}
-                    min={0}
-                    step={25}
-                    helperText={`${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} estimate: ${currency(estimatedMonthly)}/mo`}
-                    onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
-                  />
-                )
-              )}
               <TextField label="Down payment" type="number" value={downPayment} min={0} step={500} onChange={(event) => setDownPayment(numberInput(event.target.value))} />
               <TextField label="Trade-in value" type="number" value={tradeInValue} min={0} step={500} onChange={(event) => setTradeInValue(numberInput(event.target.value))} />
               <TextField label="Amount owed on trade" type="number" value={amountOwed} min={0} step={500} onChange={(event) => setAmountOwed(numberInput(event.target.value))} />
@@ -2736,6 +2711,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
           <section className="aio-payment__section">
             <div className="aio-payment__results">
+              {!isBudgetFirstVariant && totalLoanAmount > 0 && loanTerm > 0 && (
+                <div className="aio-payment__panel aio-payment__panel--wide aio-payment__finance-visualization">
+                  <span className="aio-payment__eyebrow">Loan visualization</span>
+                  <h2>Payment breakdown over time</h2>
+                  <PaymentCalculatorFinanceCharts
+                    loanPrincipal={totalLoanAmount}
+                    financeApr={activeApr}
+                    termMonths={loanTerm}
+                    monthlyPayment={estimatedMonthly}
+                    totalInterest={totalLoanInterest}
+                  />
+                </div>
+              )}
+
           <div className="aio-payment__panel">
             <span className="aio-payment__eyebrow">Loan breakdown</span>
             <h2>Principal and interest</h2>
@@ -3004,7 +2993,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         <div className="container">
           <div className="aio-payment__similar-heading">
             <span className="aio-payment__similar-line" aria-hidden="true" />
-            <h2 id="aio-payment-similar-heading">Similar Vehicles You Can Afford</h2>
+            <h2 id="aio-payment-similar-heading">Deals Your Budget Can Support</h2>
             <span className="aio-payment__similar-line" aria-hidden="true" />
           </div>
           <div className="aio-payment__vehicle-carousel-wrap">
@@ -3017,27 +3006,50 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             >
               <ChevronLeft size={24} aria-hidden="true" />
             </button>
-            <div ref={affordableCarouselRef} className="aio-payment__vehicle-carousel">
-              {affordableVehicles.slice(0, 6).map((vehicle) => (
-                <VehicleCard
+            <div ref={affordableCarouselRef} className="aio-payment__vehicle-carousel aio-payment__vehicle-carousel--deals" role="list">
+              {lightAffordableDealCards.map(({ vehicle, offers, primaryOffer, primaryIncentive }) => (
+                <DealCard
                   key={vehicle.id}
-                  id={vehicle.id}
-                  name={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                   slug={vehicle.slug}
-                  image={vehicle.image}
-                  price={currency(vehicle.priceMin)}
-                  priceLabel="Starting at"
+                  vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                  vehicleImage={vehicle.image}
+                  imageLoading="lazy"
+                  vehicleSlug={vehicle.slug}
+                  vehicleMake={vehicle.make}
+                  vehicleModel={vehicle.model}
                   rating={vehicle.staffRating}
-                  epaMpg={getCombinedMpg(vehicle.mpg)}
-                  cdSays={getVehicleCardCopy(vehicle)}
+                  dealTypeTag={getLightDealTypeTag(primaryOffer.type)}
+                  imageBadge={vehicle.bodyStyle}
                   editorsChoice={vehicle.editorsChoice}
                   tenBest={vehicle.tenBest}
-                  evOfTheYear={vehicle.evOfTheYear}
-                  showShopButton
-                  shopButtonText={`Shop New ${vehicle.model}`}
-                  shopButtonVariant="primary"
-                  availableYears={[Number(vehicle.year)]}
-                  modelName={vehicle.model}
+                  isSaved={false}
+                  onSaveClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }}
+                  offers={offers}
+                  offersPopupOpen={lightAffordableOffersSlug === vehicle.slug}
+                  onToggleOffersPopup={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setLightAffordableOffersSlug((current) => current === vehicle.slug ? null : vehicle.slug);
+                  }}
+                  onCloseOffersPopup={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setLightAffordableOffersSlug(null);
+                  }}
+                  payment={getLightDealPayment(primaryOffer)}
+                  details={[
+                    { label: 'Est. payment', value: `${currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo` },
+                    { label: 'Starts at', value: currency(vehicle.priceMin) },
+                  ]}
+                  onDealClick={(event) => {
+                    event.preventDefault();
+                    setLightDealModalVehicle(vehicle);
+                    setSelectedIncentive(primaryIncentive);
+                    setShowIncentiveModal(true);
+                  }}
                 />
               ))}
             </div>
@@ -3073,7 +3085,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         }}
         variant="conversion-b"
         offer={incentiveOfferDetail}
-        allIncentives={vehicleIncentives.incentives}
+        allIncentives={activeVehicleIncentives.incentives}
         selectedIncentiveId={selectedIncentive?.id}
         appliedIncentiveIds={[
           ...selectedCashIds,

@@ -238,12 +238,12 @@
   min-height: var(--spacing-11);
   padding: 0 var(--spacing-4);
   background: transparent;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--border-radius-md);
   color: var(--color-gray-600);
   cursor: pointer;
   text-align: center;
-  transition: background var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
 }
 
 .aio-payment__start-mode-button:hover,
@@ -253,9 +253,10 @@
 }
 
 .aio-payment__start-mode-button--active {
-  background: var(--color-white);
-  color: var(--color-black);
-  box-shadow: var(--shadow-sm);
+  background: color-mix(in srgb, var(--color-blue-cobalt) 12%, var(--color-white));
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-blue-cobalt-dark);
+  box-shadow: inset 0 0 0 1px var(--color-blue-cobalt), var(--shadow-sm);
 }
 
 .aio-payment__start-mode-button span {
@@ -295,7 +296,7 @@
 }
 
 .aio-payment__start-mode--guided .aio-payment__start-mode-button--active {
-  border-color: var(--color-badge-finance-border);
+  border-color: var(--color-blue-cobalt);
 }
 
 .aio-payment__start-mode--guided .aio-payment__start-mode-button strong {
@@ -373,8 +374,16 @@
 }
 
 .aio-payment__primary-input {
-  max-width: 420px;
+  max-width: none;
   margin: 0 0 var(--spacing-5);
+}
+
+.aio-payment__primary-input .text-field__input {
+  min-height: var(--spacing-14);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
 }
 
 .aio-payment--light {
@@ -3999,6 +4008,12 @@ label.aio-payment__light-loan-step__label {
   grid-column: 1 / -1;
 }
 
+.aio-payment__finance-visualization .payment-calc-viz {
+  margin-top: var(--spacing-5);
+  padding-top: 0;
+  border-top: 0;
+}
+
 .aio-payment__post-grid .aio-payment__panel,
 .aio-payment__results .aio-payment__panel {
   font-family: var(--font-body);
@@ -4086,7 +4101,18 @@ label.aio-payment__light-loan-step__label {
   scroll-snap-align: start;
 }
 
+.aio-payment__vehicle-carousel .deal-card {
+  flex: 0 0 calc((100% - var(--spacing-5)) / 2);
+  min-width: 300px;
+  scroll-snap-align: start;
+}
+
 .aio-payment__vehicle-carousel-section .aio-payment__vehicle-carousel .vehicle-card {
+  flex-basis: calc((100% - 2 * var(--spacing-5)) / 3);
+  min-width: 320px;
+}
+
+.aio-payment__vehicle-carousel-section .aio-payment__vehicle-carousel .deal-card {
   flex-basis: calc((100% - 2 * var(--spacing-5)) / 3);
   min-width: 320px;
 }
