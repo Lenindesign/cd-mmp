@@ -882,7 +882,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--spacing-2);
+  gap: var(--spacing-1-5);
   font-family: var(--font-body);
   line-height: 1;
   white-space: nowrap;
@@ -891,45 +891,49 @@
 .hero__offers-b-deal-link {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-1);
-  min-height: 32px;
-  padding: 0 var(--spacing-3);
-  border: 1px solid color-mix(in srgb, var(--color-success) 34%, transparent);
-  border-radius: var(--border-radius-full);
-  background: color-mix(in srgb, var(--color-white) 84%, var(--color-success) 16%);
-  color: var(--color-dark);
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: var(--font-weight-semibold);
+  min-height: 22px;
+  color: var(--color-badge-special-text);
   letter-spacing: 0;
   line-height: 1;
   text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+
+.hero__offers-b-deal-link-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-badge-special-text);
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--color-badge-special-text);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  white-space: nowrap;
   transition:
-    background var(--transition-fast),
+    background-color var(--transition-fast),
     border-color var(--transition-fast),
     color var(--transition-fast);
 }
 
-.hero__offers-b-deal-link-number {
-  color: var(--color-success);
-  font-family: var(--font-heading);
-  font-size: 15px;
-  font-weight: var(--font-weight-extrabold);
-  line-height: 0.9;
-}
-
-.hero__offers-b-deal-link-label {
-  color: var(--color-dark);
-  font-weight: var(--font-weight-semibold);
-}
-
 .hero__offers-b-deal-link:hover,
 .hero__offers-b-deal-link:focus-visible {
-  border-color: color-mix(in srgb, var(--color-success) 54%, transparent);
-  background: color-mix(in srgb, var(--color-white) 74%, var(--color-success) 26%);
-  color: var(--color-dark);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: var(--color-success-dark);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.hero__offers-b-deal-link:hover .hero__offers-b-deal-link-badge,
+.hero__offers-b-deal-link:focus-visible .hero__offers-b-deal-link-badge {
+  border-color: var(--color-success);
+  background-color: color-mix(in srgb, var(--color-success) 8%, transparent);
+  color: var(--color-success-dark);
 }
 
 .hero__offers-b-deal-link:focus-visible {
@@ -1108,7 +1112,7 @@
   }
 
   .hero__offers-b-deal-link {
-    font-size: 14px;
+    min-height: 24px;
   }
 
   .hero__offers-b-pills {

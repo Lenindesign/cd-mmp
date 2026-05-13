@@ -22,12 +22,9 @@ const formatDealCount = (count: number, label: 'Buy' | 'Lease') =>
   `${count} ${label} ${count === 1 ? 'Deal' : 'Deals'}`;
 
 const renderDealCount = (count: number, label: 'Buy' | 'Lease') => (
-  <>
-    <span className="hero__offers-b-deal-link-number">{count}</span>
-    <span className="hero__offers-b-deal-link-label">
-      {label} {count === 1 ? 'Deal' : 'Deals'}
-    </span>
-  </>
+  <span className="hero__offers-b-deal-link-badge">
+    ALL {label.toUpperCase()} DEALS ({count})
+  </span>
 );
 
 const getChipLabel = (type: Incentive['type']) => {
