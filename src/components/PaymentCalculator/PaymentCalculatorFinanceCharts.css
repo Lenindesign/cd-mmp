@@ -128,7 +128,8 @@
    Raise the chart subtree (Recharts portals tooltip into .recharts-wrapper).
    ResponsiveContainer sometimes omits .recharts-responsive-container when sizes are static. */
 .payment-calc-viz__donut-wrap > .recharts-responsive-container,
-.payment-calc-viz__donut-wrap > .recharts-wrapper {
+.payment-calc-viz__donut-wrap > .recharts-wrapper,
+.payment-calc-viz__donut-wrap > .payment-calc-viz__chart {
   position: relative;
   z-index: 2;
 }

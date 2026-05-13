@@ -1418,7 +1418,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         : 'Fine-tune your car payment estimate.',
     );
     return (
-      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
+      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
         <section className="aio-payment__light-hero">
           <div className="container">
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
@@ -2357,11 +2357,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <div className="container">
                 <section className="aio-payment__light-affordable" aria-labelledby="aio-payment-light-affordable-heading">
                   <div className="aio-payment__light-affordable-head">
-                    <span className="aio-payment__similar-line" aria-hidden="true" />
                     <h2 id="aio-payment-light-affordable-heading">
                       {startMode === 'monthly' ? 'Deals Your Budget Can Support' : 'Deals Near Your Price'}
                     </h2>
-                    <span className="aio-payment__similar-line" aria-hidden="true" />
                   </div>
                   <p className="aio-payment__light-affordable-copy">
                     {startMode === 'monthly'

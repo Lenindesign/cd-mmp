@@ -2738,32 +2738,29 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-affordable-head {
-  display: grid;
-  grid-template-columns: minmax(var(--spacing-12), 1fr) auto minmax(var(--spacing-12), 1fr);
-  align-items: center;
-  gap: var(--spacing-3);
+  display: block;
 }
 
 .aio-payment__light-affordable-head h2 {
   margin: 0;
   color: var(--color-black);
   font-family: var(--font-condensed);
-  font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-36));
+  font-size: 48px;
   font-weight: var(--font-weight-semibold);
   line-height: 1;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .aio-payment__light-affordable-copy {
   max-width: 620px;
-  margin: calc(var(--spacing-3) * -1) auto 0;
+  margin: calc(var(--spacing-3) * -1) 0 0;
   color: var(--color-gray-600);
   font-family: var(--font-body);
-  font-size: var(--font-size-sm);
+  font-size: 14px;
   line-height: var(--line-height-normal);
-  text-align: center;
+  text-align: left;
 }
 
 .aio-payment__vehicle-carousel-wrap--light {
@@ -4646,6 +4643,11 @@ label.aio-payment__light-loan-step__label {
     padding-bottom: calc(20rem + env(safe-area-inset-bottom));
   }
 
+  .aio-payment.aio-payment--light-steps.aio-payment--light-review-step,
+  .aio-payment.aio-payment--light-steps.aio-payment--light-review-step.aio-payment--light-mobile-totals-open {
+    padding-bottom: 0;
+  }
+
   .aio-payment--light-steps .aio-payment__mobile-summary {
     display: none;
   }
@@ -4663,6 +4665,10 @@ label.aio-payment__light-loan-step__label {
     border-radius: var(--spacing-2);
     box-shadow: 0 10px 32px color-mix(in srgb, var(--color-black) 18%, transparent);
     overflow: hidden;
+  }
+
+  .aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-sticky-summary {
+    display: none;
   }
 
   .aio-payment--light-steps .aio-payment__light-result-hero {
