@@ -244,6 +244,81 @@ const YearSelector: React.FC = () => {
   );
 };
 
+type HeroYearSwitcherProps = {
+  years: number[];
+  selectedYear: number;
+  onYearChange: (year: number) => void;
+};
+
+const HeroYearSwitcher: React.FC<HeroYearSwitcherProps> = ({ years, selectedYear, onYearChange }) => {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [open]);
+
+  return (
+    <div className="rankings-page__hero-year-menu" ref={menuRef}>
+      <button
+        type="button"
+        className="rankings-page__hero-year-button"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-label={`Select different ranking year. Current year ${selectedYear}`}
+        onClick={() => setOpen((isOpen) => !isOpen)}
+      >
+        <span>{selectedYear}</span>
+        <ChevronDown
+          size={18}
+          aria-hidden="true"
+          className={`rankings-page__hero-year-chevron${open ? ' rankings-page__hero-year-chevron--open' : ''}`}
+        />
+      </button>
+      {open && (
+        <ul className="rankings-page__hero-year-dropdown" role="menu">
+          {years.map((year) => (
+            <li key={year} role="none">
+              <button
+                type="button"
+                role="menuitemradio"
+                aria-checked={year === selectedYear}
+                className={`rankings-page__hero-year-option${year === selectedYear ? ' rankings-page__hero-year-option--active' : ''}`}
+                onClick={() => {
+                  onYearChange(year);
+                  setOpen(false);
+                }}
+              >
+                {year}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
 const RankingsPage = () => {
   const { bodyStyle, subcategory } = useParams<{ bodyStyle: string; subcategory?: string }>();
   const navigate = useNavigate();
@@ -262,6 +337,7 @@ const RankingsPage = () => {
   // State for sign-in modal
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
+  const [selectedRankingYear, setSelectedRankingYear] = useState(2026);
 
   // Get config for current body style
   const config = bodyStyle ? BODY_STYLE_CONFIG[bodyStyle.toLowerCase()] : null;
@@ -324,6 +400,32 @@ const RankingsPage = () => {
     });
   }, []);
 
+  const availableRankingYears = useMemo(() => {
+    if (!bodyStyle) {
+      return [...YEAR_OPTIONS].sort((a, b) => b - a);
+    }
+
+    const years = new Set<number>();
+
+    getAllVehicles()
+      .filter((vehicle) => vehicle.bodyStyle.toLowerCase() === bodyStyle.toLowerCase())
+      .forEach((vehicle) => {
+        const year = parseInt(vehicle.year, 10);
+        if (!Number.isNaN(year)) {
+          years.add(year);
+        }
+      });
+
+    return [...years].sort((a, b) => b - a);
+  }, [bodyStyle]);
+
+  useEffect(() => {
+    if (availableRankingYears.length === 0) return;
+    if (!availableRankingYears.includes(selectedRankingYear)) {
+      setSelectedRankingYear(availableRankingYears[0]);
+    }
+  }, [availableRankingYears, selectedRankingYear]);
+
   // Check if a vehicle is saved
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some(v => v.name === vehicleName) || false;
@@ -365,11 +467,11 @@ const RankingsPage = () => {
 
     const vehicles = getAllVehicles()
       .filter(v => v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase())
-      .filter(v => parseInt(v.year) >= 2026); // Include 2026+ vehicles
+      .filter(v => parseInt(v.year) === selectedRankingYear);
 
     // Sort by rating
     return vehicles.sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
-  }, [bodyStyle, getVehicleRating]);
+  }, [bodyStyle, getVehicleRating, selectedRankingYear]);
 
   // Get subcategory vehicles if subcategory is specified
   const subcategoryConfig = subcategory && config
@@ -768,7 +870,16 @@ const RankingsPage = () => {
               />
               <span className="hero-pill__label">Expert Rankings</span>
             </div>
-            <h1 className="rankings-page__title">{pageTitle}</h1>
+            <div className="rankings-page__hero-title-row">
+              <h1 className="rankings-page__title">{pageTitle}</h1>
+              {availableRankingYears.length > 1 && (
+                <HeroYearSwitcher
+                  years={availableRankingYears}
+                  selectedYear={selectedRankingYear}
+                  onYearChange={setSelectedRankingYear}
+                />
+              )}
+            </div>
             <p className="rankings-page__description">{config.description}</p>
             {showHeroIncentiveRow && (
               <div className="rankings-page__hero-offers" aria-label={`${offerBodyStyleLabel} deals and incentives`}>

@@ -7,7 +7,7 @@
 
 [class*='__faq-heading'] {
   font-family: var(--font-condensed) !important;
-  font-size: var(--font-size-36) !important;
+  font-size: 48px !important;
   font-weight: 600 !important;
   font-style: normal !important;
   line-height: var(--spacing-16) !important;
@@ -102,7 +102,7 @@ button[class*='__faq-question'] svg {
 
 @media (max-width: 768px) {
   [class*='__faq-heading'] {
-    font-size: var(--font-size-2xl) !important;
+    font-size: 48px !important;
   }
 
   button[class*='__faq-question'] {
