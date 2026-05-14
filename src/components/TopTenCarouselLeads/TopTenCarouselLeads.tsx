@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAllVehicles, getAvailableYears, getYearDetails } from '../../services/vehicleService';
@@ -93,6 +93,7 @@ const TopTenCarouselLeads = ({
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [progressWidth, setProgressWidth] = useState(20);
   const [selectedBodyStyle, setSelectedBodyStyle] = useState('all');
 
   const handleBodyStyleSelect = (bodyStyleId: string) => {
@@ -111,9 +112,9 @@ const TopTenCarouselLeads = ({
   const { getRating: getSupabaseRating } = useSupabaseRatings();
   
   // Helper to get vehicle rating (uses Supabase in production)
-  const getVehicleRating = (vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
+  const getVehicleRating = useCallback((vehicle: { id: string; bodyStyle: string; staffRating: number }): number => {
     return getSupabaseRating(vehicle.id, getCategory(vehicle.bodyStyle), vehicle.staffRating);
-  };
+  }, [getSupabaseRating]);
 
   // Determine the active body style filter (internal state takes precedence over prop)
   // Get the dbValue from the selected option for exact matching
@@ -203,7 +204,7 @@ const TopTenCarouselLeads = ({
         vehicleYear: vehicle.year,
       };
     });
-  }, [activeBodyStyleFilter, make, lifestyle, maxPrice, currentVehicleId, inventoryType, getSupabaseRating]);
+  }, [activeBodyStyleFilter, make, lifestyle, maxPrice, currentVehicleId, inventoryType, getVehicleRating]);
 
   // Generate dynamic category label
   const getCategoryLabelDynamic = (): string => {
@@ -249,13 +250,23 @@ const TopTenCarouselLeads = ({
     return '/rankings';
   };
 
-  const checkScrollPosition = () => {
+  const checkScrollPosition = useCallback(() => {
     if (carouselRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      const maxScroll = Math.max(scrollWidth - clientWidth, 0);
+      const nextProgressWidth = maxScroll > 0
+        ? Math.max(20, Math.min(100, (scrollLeft / maxScroll) * 100))
+        : 100;
+
       setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+      setCanScrollRight(maxScroll > 10 && scrollLeft < maxScroll - 10);
+      setProgressWidth(nextProgressWidth);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkScrollPosition();
+  }, [checkScrollPosition, vehicles.length]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -356,9 +367,6 @@ const TopTenCarouselLeads = ({
                 price={vehicle.price}
                 rating={vehicle.rating}
                 rank={vehicle.rank}
-                badge={vehicle.badge}
-                editorsChoice={vehicle.editorsChoice}
-                tenBest={vehicle.tenBest}
                 isCurrentVehicle={vehicle.isCurrentVehicle}
                 showShopButton={true}
                 showSaveButton={true}
@@ -412,11 +420,7 @@ const TopTenCarouselLeads = ({
           <div className="top-ten__progress-track">
             <div
               className="top-ten__progress-fill"
-              style={{
-                width: carouselRef.current
-                  ? `${Math.max(20, (carouselRef.current.scrollLeft / (carouselRef.current.scrollWidth - carouselRef.current.clientWidth)) * 100)}%`
-                  : '20%'
-              }}
+              style={{ width: `${progressWidth}%` }}
             />
           </div>
           <span className="top-ten__progress-text">
@@ -438,4 +442,3 @@ const TopTenCarouselLeads = ({
 };
 
 export default TopTenCarouselLeads;
-

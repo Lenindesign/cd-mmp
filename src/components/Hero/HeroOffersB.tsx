@@ -23,7 +23,7 @@ const formatDealCount = (count: number, label: 'Buy' | 'Lease') =>
 
 const renderDealCount = (count: number, label: 'Buy' | 'Lease') => (
   <span className="hero__offers-b-deal-link-badge">
-    ALL {label.toUpperCase()} DEALS ({count})
+    {label === 'Buy' ? `ALL BUYING DEAL (${count})` : `ALL ${label.toUpperCase()} DEALS (${count})`}
   </span>
 );
 

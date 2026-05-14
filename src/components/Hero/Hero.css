@@ -1094,22 +1094,45 @@
 }
 
 @media (max-width: 768px) {
+  .hero__offers-b {
+    gap: var(--spacing-3);
+  }
+
   .hero__offers-b-header {
     align-items: flex-start;
+    display: contents;
     flex-direction: column;
     gap: var(--spacing-2);
   }
 
+  .hero__offers-b-title {
+    order: 1;
+  }
+
+  .hero__offers-b-pills {
+    order: 2;
+  }
+
   .hero__offers-b-deal-links {
+    align-self: stretch;
     flex-wrap: wrap;
+    justify-content: flex-start;
+    order: 3;
     white-space: normal;
   }
 
   .hero__offers-b-deal-link {
+    flex: 1 1 0;
     min-height: 24px;
+    min-width: 0;
+  }
+
+  .hero__offers-b-deal-link-badge {
+    width: 100%;
   }
 
   .hero__offers-b-pills {
+    gap: 12px;
     flex-direction: column;
   }
 }

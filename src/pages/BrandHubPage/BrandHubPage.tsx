@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ExternalLink } from 'lucide-react';
+import { ChevronDown, ExternalLink } from 'lucide-react';
 import {
   getAllVehicles,
   getVehiclesByMake,
@@ -189,6 +189,8 @@ const BrandHubPage = ({
 }: BrandHubPageProps) => {
   const navigate = useNavigate();
   const makeSlug = toMakeSlug(make);
+  const [isHeroDescriptionExpanded, setIsHeroDescriptionExpanded] = useState(false);
+  const isHeroDescriptionExpandable = description.length > 180;
 
   const allBrandVehicles = useMemo(() => getVehiclesByMake(make), [make]);
 
@@ -288,7 +290,26 @@ const BrandHubPage = ({
               <span className="brand-page__breadcrumb-current">{make}</span>
             </nav>
             <h1 className="brand-page__title">{make}</h1>
-            <p className="brand-page__description">{description}</p>
+            <div className="brand-page__description-wrap">
+              <p
+                className={`brand-page__description${isHeroDescriptionExpandable && !isHeroDescriptionExpanded ? ' brand-page__description--clamped' : ''}`}
+                id="brand-hero-description"
+              >
+                {description}
+              </p>
+              {isHeroDescriptionExpandable && (
+                <button
+                  type="button"
+                  className="brand-page__description-toggle"
+                  onClick={() => setIsHeroDescriptionExpanded((expanded) => !expanded)}
+                  aria-expanded={isHeroDescriptionExpanded}
+                  aria-controls="brand-hero-description"
+                >
+                  <span>{isHeroDescriptionExpanded ? 'Read less' : 'Read more'}</span>
+                  {!isHeroDescriptionExpanded && <ChevronDown size={14} strokeWidth={2.5} aria-hidden="true" />}
+                </button>
+              )}
+            </div>
             {(offerCounts.buying > 0 || offerCounts.leasing > 0) && (
               <div className="brand-page__hero-offers" aria-label={`${make} deals and incentives`}>
                 {offerCounts.buying > 0 && (

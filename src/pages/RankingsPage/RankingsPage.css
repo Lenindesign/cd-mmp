@@ -13,54 +13,6 @@
   overflow: hidden;
 }
 
-.rankings-page__hero::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(calc(-50% + 410px)) translateY(-50%);
-  width: 450px;
-  height: 500px;
-  background-image: url("https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 1;
-  pointer-events: none;
-  animation: rankingsLogoFloat 3s ease-in-out infinite;
-}
-
-@keyframes rankingsLogoFloat {
-  0%, 100% {
-    transform: translateX(calc(-50% + 410px)) translateY(-50%);
-  }
-  50% {
-    transform: translateX(calc(-50% + 410px)) translateY(calc(-50% - 12px));
-  }
-}
-
-@media (max-width: 1200px) {
-    .rankings-page__hero::before {
-      transform: translateX(calc(-50% + 350px)) translateY(-50%);
-      animation: rankingsLogoFloatMd 3s ease-in-out infinite;
-    }
-  }
-  
-@keyframes rankingsLogoFloatMd {
-  0%, 100% {
-    transform: translateX(calc(-50% + 350px)) translateY(-50%);
-  }
-  50% {
-    transform: translateX(calc(-50% + 350px)) translateY(calc(-50% - 12px));
-  }
-}
-
-@media (max-width: 900px) {
-    .rankings-page__hero::before {
-      display: none;
-  }
-}
-
 .rankings-page__hero::after {
   content: '';
   position: absolute;
