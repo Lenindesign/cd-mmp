@@ -48,7 +48,7 @@ const BODY_STYLE_CONFIG: Record<string, {
 }> = {
   suv: {
     title: 'Best SUVs',
-    description: 'Our experts have tested and ranked every SUV on the market. From compact crossovers to full-size family haulers, find the perfect SUV for your needs.',
+    description: 'If you\'re a new car buyer, chances are an SUV is on your shopping list. And if that\'s the case, you\'re spoiled for choice. Whether you\'re looking for a subcompact or full-size model, or anything in between, SUVs exist at pretty much every price point imaginable and in every shape, size, and powertrain configuration you can think of. Here, we\'ve ranked the best SUVs in every segment based on roughly 200 data points encompassing acceleration, handling, comfort, cargo space, fuel efficiency, value, and how enjoyable they are to drive. Car and Driver\'s rankings are arrived at from the results of our extensive instrumented testing of several hundred vehicles each year and from our expert editors\' subjective impressions gained in real-world driving. We take rankings seriously because we want you to know everything about the vehicles that you\'re interested in.',
     subcategories: [
       { id: 'compact', name: 'Best Compact SUVs', filter: (v) => v.priceMin < 35000 },
       { id: 'midsize', name: 'Best Midsize SUVs', filter: (v) => v.priceMin >= 35000 && v.priceMin < 50000 },
@@ -338,6 +338,7 @@ const RankingsPage = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [selectedRankingYear, setSelectedRankingYear] = useState(2026);
+  const [isHeroDescriptionExpanded, setIsHeroDescriptionExpanded] = useState(false);
 
   // Get config for current body style
   const config = bodyStyle ? BODY_STYLE_CONFIG[bodyStyle.toLowerCase()] : null;
@@ -350,6 +351,7 @@ const RankingsPage = () => {
   }, [location.search]);
   const showIncentiveSubnavVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_INCENTIVE_SUBNAV_VARIANT;
   const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant);
+  const isHeroDescriptionExpandable = bodyStyleKey === 'suv';
   const bodyStyleNavRef = useRef<HTMLDivElement>(null);
   const bodyStyleNavItems = useMemo(() => {
     const rankingItems = Object.entries(BODY_STYLE_CONFIG).map(([key, value]) => ({
@@ -419,12 +421,9 @@ const RankingsPage = () => {
     return [...years].sort((a, b) => b - a);
   }, [bodyStyle]);
 
-  useEffect(() => {
-    if (availableRankingYears.length === 0) return;
-    if (!availableRankingYears.includes(selectedRankingYear)) {
-      setSelectedRankingYear(availableRankingYears[0]);
-    }
-  }, [availableRankingYears, selectedRankingYear]);
+  const effectiveSelectedRankingYear = availableRankingYears.includes(selectedRankingYear)
+    ? selectedRankingYear
+    : availableRankingYears[0] ?? selectedRankingYear;
 
   // Check if a vehicle is saved
   const isVehicleSaved = (vehicleName: string) => {
@@ -467,11 +466,11 @@ const RankingsPage = () => {
 
     const vehicles = getAllVehicles()
       .filter(v => v.bodyStyle.toLowerCase() === bodyStyle.toLowerCase())
-      .filter(v => parseInt(v.year) === selectedRankingYear);
+      .filter(v => parseInt(v.year) === effectiveSelectedRankingYear);
 
     // Sort by rating
     return vehicles.sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
-  }, [bodyStyle, getVehicleRating, selectedRankingYear]);
+  }, [bodyStyle, effectiveSelectedRankingYear, getVehicleRating]);
 
   // Get subcategory vehicles if subcategory is specified
   const subcategoryConfig = subcategory && config
@@ -875,12 +874,31 @@ const RankingsPage = () => {
               {availableRankingYears.length > 1 && (
                 <HeroYearSwitcher
                   years={availableRankingYears}
-                  selectedYear={selectedRankingYear}
+                  selectedYear={effectiveSelectedRankingYear}
                   onYearChange={setSelectedRankingYear}
                 />
               )}
             </div>
-            <p className="rankings-page__description">{config.description}</p>
+            <div className="rankings-page__description-wrap">
+              <p
+                className={`rankings-page__description${isHeroDescriptionExpandable && !isHeroDescriptionExpanded ? ' rankings-page__description--clamped' : ''}`}
+                id="rankings-hero-description"
+              >
+                {config.description}
+              </p>
+              {isHeroDescriptionExpandable && (
+                <button
+                  type="button"
+                  className="rankings-page__description-toggle"
+                  onClick={() => setIsHeroDescriptionExpanded((expanded) => !expanded)}
+                  aria-expanded={isHeroDescriptionExpanded}
+                  aria-controls="rankings-hero-description"
+                >
+                  <span>{isHeroDescriptionExpanded ? 'Read less' : 'Read more'}</span>
+                  {!isHeroDescriptionExpanded && <ChevronDown size={14} strokeWidth={2.5} aria-hidden="true" />}
+                </button>
+              )}
+            </div>
             {showHeroIncentiveRow && (
               <div className="rankings-page__hero-offers" aria-label={`${offerBodyStyleLabel} deals and incentives`}>
                 <Link to={buyingOffersPath} className="rankings-page__hero-offer-link">
