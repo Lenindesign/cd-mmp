@@ -32,6 +32,7 @@ const Header = ({ onAccountPromptOpen }: HeaderProps) => {
   const searchRef = useRef<HTMLFormElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const welcomeTooltipRef = useRef<HTMLDivElement>(null);
+  const isCdRankingsControl = location.pathname === '/rankings/suv' && new URLSearchParams(location.search).get('variant') === 'cd-control';
   
   // Fetch all ratings from Supabase in production
   const { getRating: getSupabaseRating } = useSupabaseRatings();
@@ -124,26 +125,36 @@ const Header = ({ onAccountPromptOpen }: HeaderProps) => {
     href: string;
     isRoute?: boolean;
     children?: { label: string; href: string; isRoute?: boolean }[];
-  }[] = [
-    { label: 'Browse All Vehicles', href: '/vehicles', isRoute: true },
-    { label: 'Shop New Cars', href: '/vehicles?type=new&sort=rating', isRoute: true },
-    { label: 'Shop Used Cars', href: '/vehicles?type=used&sort=price-low', isRoute: true },
-    { label: 'Research Cars', href: '/rankings', isRoute: true },
-    { label: 'Expert Reviews', href: '/expert-reviews', isRoute: true },
-    {
-      label: 'Deals',
-      href: '/deals',
-      isRoute: true,
-      children: [
-        { label: 'Buying Deals', href: BEST_BUYING_DEALS_PATH, isRoute: true },
-        { label: 'Lease Deals', href: '/deals/lease', isRoute: true },
-        { label: '0% APR Deals', href: ZERO_PERCENT_APR_DEALS_PATH, isRoute: true },
-        { label: 'Cash Back Deals', href: CASH_BACK_DEALS_PATH, isRoute: true },
-      ],
-    },
-    { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },
-    { label: 'News + Stories', href: '/news' },
-  ];
+  }[] = isCdRankingsControl
+    ? [
+        { label: 'Shop New Cars', href: '/vehicles?type=new&sort=rating', isRoute: true },
+        { label: 'Shop Used Cars', href: '/vehicles?type=used&sort=price-low', isRoute: true },
+        { label: 'Research Cars', href: '/rankings', isRoute: true },
+        { label: 'Expert Reviews', href: '/expert-reviews', isRoute: true },
+        { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },
+        { label: 'Expert-Tested Gear', href: '/news' },
+        { label: 'News + Stories', href: '/news' },
+      ]
+    : [
+        { label: 'Browse All Vehicles', href: '/vehicles', isRoute: true },
+        { label: 'Shop New Cars', href: '/vehicles?type=new&sort=rating', isRoute: true },
+        { label: 'Shop Used Cars', href: '/vehicles?type=used&sort=price-low', isRoute: true },
+        { label: 'Research Cars', href: '/rankings', isRoute: true },
+        { label: 'Expert Reviews', href: '/expert-reviews', isRoute: true },
+        {
+          label: 'Deals',
+          href: '/deals',
+          isRoute: true,
+          children: [
+            { label: 'Buying Deals', href: BEST_BUYING_DEALS_PATH, isRoute: true },
+            { label: 'Lease Deals', href: '/deals/lease', isRoute: true },
+            { label: '0% APR Deals', href: ZERO_PERCENT_APR_DEALS_PATH, isRoute: true },
+            { label: 'Cash Back Deals', href: CASH_BACK_DEALS_PATH, isRoute: true },
+          ],
+        },
+        { label: "What's My Car Worth?", href: '/whats-my-car-worth', isRoute: true },
+        { label: 'News + Stories', href: '/news' },
+      ];
 
   // Handle search input changes
   useEffect(() => {
@@ -213,7 +224,7 @@ const Header = ({ onAccountPromptOpen }: HeaderProps) => {
   };
 
   return (
-    <header className="header">
+    <header className={`header${isCdRankingsControl ? ' header--cd-control' : ''}`}>
       <div className="header__container">
         {/* Top Row: Logo, Search, Actions */}
         <div className="header__top">
@@ -263,7 +274,7 @@ const Header = ({ onAccountPromptOpen }: HeaderProps) => {
             <input
               type="text"
               className="header__search-input"
-              placeholder="Search vehicles..."
+              placeholder={isCdRankingsControl ? 'e.g. 2026 Toyota RAV4' : 'Search vehicles...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -482,9 +493,13 @@ const Header = ({ onAccountPromptOpen }: HeaderProps) => {
                 </>
               ) : (
                 <Link to="/sign-in" className="header__user-btn" aria-label="Sign in">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path d="M21.649 19.875c-1.428-2.468-3.629-4.239-6.196-5.078a6.75 6.75 0 1 0-6.906 0c-2.568.839-4.768 2.609-6.196 5.078a.75.75 0 1 0 1.299.75C5.416 17.573 8.538 15.75 12 15.75c3.462 0 6.584 1.823 8.35 4.875a.75.75 0 1 0 1.299-.75ZM6.749 9a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" fill="currentColor"/>
-                  </svg>
+                  {isCdRankingsControl ? (
+                    <span className="header__signin-text">Sign In</span>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path d="M21.649 19.875c-1.428-2.468-3.629-4.239-6.196-5.078a6.75 6.75 0 1 0-6.906 0c-2.568.839-4.768 2.609-6.196 5.078a.75.75 0 1 0 1.299.75C5.416 17.573 8.538 15.75 12 15.75c3.462 0 6.584 1.823 8.35 4.875a.75.75 0 1 0 1.299-.75ZM6.749 9a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" fill="currentColor"/>
+                    </svg>
+                  )}
                 </Link>
               )}
             </div>

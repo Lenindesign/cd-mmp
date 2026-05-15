@@ -1790,6 +1790,10 @@ label.aio-payment__light-loan-step__label {
   grid-template-columns: 1fr;
 }
 
+.aio-payment__light-trade-step__row--4 {
+  grid-template-columns: 1fr;
+}
+
 @media (min-width: 640px) {
   .aio-payment__light-trade-step__row--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1798,10 +1802,71 @@ label.aio-payment__light-loan-step__label {
   .aio-payment__light-trade-step__row--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .aio-payment__light-trade-step__row--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .aio-payment__light-trade-step__row--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .aio-payment__light-trade-step__field-with-action {
   min-width: 0;
+}
+
+.aio-payment__light-input-prefix,
+.aio-payment__light-input-suffix,
+.aio-payment__light-money-input-prefix,
+.aio-payment__light-percent-input-suffix {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-money-input,
+.aio-payment__light-percent-input {
+  position: relative;
+}
+
+.aio-payment__light-money-input-prefix {
+  position: absolute;
+  left: var(--spacing-4);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.aio-payment__light-money-input-control.payment-calc__input {
+  padding-left: var(--spacing-8);
+}
+
+.aio-payment .text-field__input-wrapper:has(.aio-payment__light-input-prefix) .text-field__icon--left {
+  left: var(--spacing-4);
+  width: auto;
+  min-width: 0;
+}
+
+.aio-payment .text-field__input-wrapper:has(.aio-payment__light-input-prefix) .text-field__input--has-icon-left {
+  padding-left: var(--spacing-8) !important;
+}
+
+.aio-payment__light-percent-input-suffix {
+  position: absolute;
+  right: var(--spacing-4);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.aio-payment__light-percent-input-control.payment-calc__input {
+  padding-right: var(--spacing-8);
 }
 
 .aio-payment__light-trade-estimate-card {
@@ -1922,6 +1987,24 @@ label.aio-payment__light-loan-step__label {
   border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
   background: var(--color-white);
+}
+
+.aio-payment__light-trade-step__dealer-note,
+.aio-payment__light-dealer-fee-note {
+  margin: 0;
+  padding: var(--spacing-3);
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 18%, var(--color-gray-200));
+  border-radius: var(--border-radius-md);
+  background: color-mix(in srgb, var(--color-blue-cobalt) 7%, var(--color-white));
+  color: var(--color-blue-cobalt-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-dealer-fee-note {
+  margin-top: var(--spacing-3);
+  font-size: var(--font-size-xs);
 }
 
 .aio-payment__light-trade-step__switch {
@@ -3632,8 +3715,16 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-estimate-email {
   margin-top: var(--spacing-5);
-  padding-top: var(--spacing-5);
+  padding: var(--spacing-5);
   border-top: 1px solid var(--color-gray-200);
+  box-sizing: border-box;
+}
+
+.aio-payment--light-steps .aio-payment__light-estimate-email {
+  margin: var(--spacing-5);
+  border: 1px solid color-mix(in srgb, var(--color-gray-200) 86%, var(--color-warm-canvas) 14%);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--color-white) 96%, var(--color-warm-canvas) 4%);
 }
 
 .aio-payment__light-estimate-email__lede {
@@ -3649,6 +3740,10 @@ label.aio-payment__light-loan-step__label {
   flex-wrap: wrap;
   gap: var(--spacing-3);
   align-items: flex-end;
+}
+
+.aio-payment__light-estimate-email__row .button {
+  flex: 0 0 auto;
 }
 
 .aio-payment__light-estimate-email__field {
@@ -3710,8 +3805,8 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__ai-modal-panel {
   position: relative;
   z-index: 1;
-  width: min(920px, 100%);
-  max-height: min(86vh, 860px);
+  width: min(1040px, 100%);
+  max-height: min(88vh, 900px);
   overflow: auto;
   padding: var(--spacing-6);
   background: var(--color-white);
@@ -3737,6 +3832,49 @@ label.aio-payment__light-loan-step__label {
   line-height: 1;
 }
 
+.aio-payment__ai-modal-subtitle {
+  margin: var(--spacing-3) 0 0;
+  max-width: 58rem;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+.aio-payment__ai-modal-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin: var(--spacing-4) 0 0;
+}
+
+.aio-payment__ai-modal-context div {
+  display: inline-flex;
+  gap: var(--spacing-1);
+  align-items: baseline;
+  padding: var(--spacing-1-5) var(--spacing-2-5);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-full);
+  background: var(--color-gray-50);
+}
+
+.aio-payment__ai-modal-context dt,
+.aio-payment__ai-modal-context dd {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.2;
+}
+
+.aio-payment__ai-modal-context dt {
+  color: var(--color-gray-600);
+}
+
+.aio-payment__ai-modal-context dd {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-bold);
+}
+
 .aio-payment__ai-modal-head button {
   display: inline-flex;
   align-items: center;
@@ -3753,14 +3891,7 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--font-weight-bold);
 }
 
-.aio-payment__ai-modal-summary {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--spacing-3);
-  margin-top: var(--spacing-5);
-}
-
-.aio-payment__ai-modal-summary div,
+.aio-payment__ai-modal-plan,
 .aio-payment__ai-modal-grid section {
   padding: var(--spacing-4);
   background: var(--color-gray-50);
@@ -3768,25 +3899,6 @@ label.aio-payment__light-loan-step__label {
   border-radius: var(--border-radius-lg);
 }
 
-.aio-payment__ai-modal-summary span {
-  color: var(--color-gray-500);
-  font-family: var(--font-label);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.aio-payment__ai-modal-summary strong {
-  display: block;
-  margin-top: var(--spacing-1);
-  color: var(--color-blue-cobalt);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-2xl);
-  letter-spacing: 0;
-}
-
-.aio-payment__ai-modal-summary p,
 .aio-payment__ai-modal-grid p,
 .aio-payment__ai-modal-grid li {
   color: var(--color-gray-600);
@@ -3794,8 +3906,94 @@ label.aio-payment__light-loan-step__label {
   line-height: 1.55;
 }
 
-.aio-payment__ai-modal-summary p {
-  margin: var(--spacing-1) 0 0;
+.aio-payment__ai-modal-plan {
+  margin-top: var(--spacing-5);
+  background: var(--color-white);
+}
+
+.aio-payment__ai-modal-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  align-items: baseline;
+  margin-bottom: var(--spacing-4);
+}
+
+.aio-payment__ai-modal-section-head h3 {
+  margin: 0;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+}
+
+.aio-payment__ai-modal-section-head p {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+}
+
+.aio-payment__ai-modal-action-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aio-payment__ai-modal-action-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacing-3);
+  min-width: 0;
+  padding: var(--spacing-3);
+  border: 1px solid color-mix(in srgb, var(--color-gray-200) 86%, var(--color-white) 14%);
+  border-radius: var(--border-radius-md);
+  background: color-mix(in srgb, var(--color-gray-50) 78%, var(--color-white) 22%);
+}
+
+.aio-payment__ai-modal-action-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-7);
+  height: var(--spacing-7);
+  border-radius: var(--border-radius-full);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__ai-modal-action-kicker {
+  display: block;
+  color: var(--color-gray-600);
+  font-family: var(--font-label);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.aio-payment__ai-modal-action-list strong {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.aio-payment__ai-modal-action-list p {
+  margin: var(--spacing-2) 0 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
 }
 
 .aio-payment__ai-modal-grid {
@@ -3803,6 +4001,10 @@ label.aio-payment__light-loan-step__label {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-4);
   margin-top: var(--spacing-4);
+}
+
+.aio-payment__ai-modal-grid section {
+  background: var(--color-white);
 }
 
 .aio-payment__ai-modal-grid h3 {
@@ -3825,6 +4027,107 @@ label.aio-payment__light-loan-step__label {
   gap: var(--spacing-2);
   margin: 0;
   padding-left: 0px;
+  list-style: none;
+}
+
+.aio-payment__ai-modal-checklist li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacing-2);
+  align-items: start;
+}
+
+.aio-payment__ai-modal-checklist svg {
+  margin-top: 0.15rem;
+  color: var(--color-success);
+}
+
+.aio-payment__ai-modal-script {
+  padding: var(--spacing-3);
+  border-left: 3px solid var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-blue-cobalt) 6%, var(--color-white));
+  color: var(--color-dark) !important;
+  font-weight: var(--font-weight-semibold);
+}
+
+.aio-payment__ai-modal-risks li {
+  position: relative;
+  padding-left: var(--spacing-4);
+}
+
+.aio-payment__ai-modal-risks li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: var(--spacing-1-5);
+  height: var(--spacing-1-5);
+  border-radius: var(--border-radius-full);
+  background: var(--color-warning);
+}
+
+.aio-payment__ai-modal-deal-sheet {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: 0 0 var(--spacing-3);
+}
+
+.aio-payment__ai-modal-deal-sheet div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__ai-modal-deal-sheet dt,
+.aio-payment__ai-modal-deal-sheet dd {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+}
+
+.aio-payment__ai-modal-deal-sheet dt {
+  color: var(--color-gray-600);
+}
+
+.aio-payment__ai-modal-deal-sheet dd {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__ai-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  justify-content: flex-end;
+  margin-top: var(--spacing-5);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+@media (max-width: 1024px) {
+  .aio-payment__ai-modal-action-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .aio-payment__ai-modal-action-list {
+    grid-template-columns: 1fr;
+  }
+
+  .aio-payment__ai-modal-section-head {
+    display: grid;
+  }
+
+  .aio-payment__ai-modal-actions {
+    justify-content: stretch;
+  }
+
+  .aio-payment__ai-modal-actions .payment-calc__cta {
+    flex: 1 1 100%;
+  }
 }
 
 .aio-payment__summary .aio-payment__eyebrow {
@@ -4951,7 +5254,6 @@ label.aio-payment__light-loan-step__label {
     padding: var(--spacing-4);
   }
 
-  .aio-payment__ai-modal-summary,
   .aio-payment__ai-modal-grid {
     grid-template-columns: 1fr;
   }

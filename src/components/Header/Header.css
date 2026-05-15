@@ -254,6 +254,66 @@
   color: var(--color-blue-cobalt);
 }
 
+.header__signin-text {
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.header--cd-control .header__container {
+  max-width: 1100px;
+  padding: 0;
+}
+
+.header--cd-control .header__top {
+  gap: 28px;
+  padding: 24px 0 15px;
+}
+
+.header--cd-control .header__logo {
+  margin-right: 100px;
+}
+
+.header--cd-control .header__logo:hover .header__logo-svg {
+  transform: none;
+}
+
+.header--cd-control .header__search-bar {
+  flex: 0 0 624px;
+  max-width: 624px;
+  height: 37px;
+  margin: 0;
+  padding-left: 24px;
+  border-color: #c9c9c9;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.header--cd-control .header__search-input {
+  font-size: 16px;
+}
+
+.header--cd-control .header__actions {
+  gap: 14px;
+}
+
+.header--cd-control .header__subscribe-btn {
+  min-width: 100px;
+  min-height: 37px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.header--cd-control .header__user-btn {
+  min-width: 54px;
+  padding: 0;
+}
+
 /* Navigation */
 .header__nav {
   position: relative;
@@ -282,6 +342,45 @@
   padding: 0;
   flex-wrap: nowrap;
   width: 100%;
+}
+
+.header--cd-control .header__nav-list {
+  gap: 34px;
+}
+
+.header--cd-control .header__nav-item {
+  padding: 14px 0 17px;
+}
+
+.header--cd-control .header__nav-link {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.header--cd-control .header__nav-link--active {
+  font-weight: var(--font-weight-medium);
+}
+
+.header--cd-control .header__nav-item:has(.header__nav-link--active)::after {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .header--cd-control .header__container {
+    padding: 0 var(--spacing-6);
+  }
+
+  .header--cd-control .header__logo {
+    margin-right: 0;
+  }
+
+  .header--cd-control .header__search-bar {
+    flex: 1 1 auto;
+  }
+
+  .header--cd-control .header__nav-list {
+    gap: var(--spacing-4);
+  }
 }
 
 .header__nav-item {

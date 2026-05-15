@@ -965,6 +965,26 @@
   border-bottom: 1px solid var(--color-gray-300);
 }
 
+.rankings-page__subcategory-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.rankings-page__subcategory-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.rankings-page__subcategory-kicker {
+  display: none;
+}
+
+.rankings-page__subcategory-shop {
+  display: none;
+}
+
 .rankings-page__subcategory-title {
   font-family: var(--font-heading);
   font-size: var(--font-size-3xl);
@@ -2276,5 +2296,502 @@
 
   .rankings-page__body-row-cards {
     gap: var(--spacing-2);
+  }
+}
+
+/* Production control for /rankings/suv?variant=cd-control */
+.rankings-page--cd-control {
+  background: var(--color-white);
+}
+
+.rankings-page--cd-control .container {
+  max-width: 1078px;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav {
+  background: var(--color-white);
+  border: 0;
+  box-shadow: none;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-inner {
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  gap: 24px;
+  padding: 31px 0 0;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-track {
+  gap: 8px;
+  padding: 0;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-card {
+  flex: 0 0 108px;
+  grid-template-rows: 42px 16px;
+  row-gap: 8px;
+  width: 108px;
+  height: 90px;
+  min-height: 90px;
+  padding: 13px 10px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  background: var(--color-white);
+  box-shadow: none;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-card:hover,
+.rankings-page--cd-control .rankings-page__body-style-subnav-card:focus-visible {
+  background: #f7fbfc;
+  border-color: #b9c4cb;
+  box-shadow: none;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-card--active {
+  background: #f5fbfd;
+  border-color: #d1d5db;
+  box-shadow: none;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-model {
+  display: none;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-icon {
+  width: 85px;
+  height: 43px;
+  object-fit: contain;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-label {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.rankings-page--cd-control .rankings-page__body-style-subnav-btn {
+  width: 24px;
+  height: 90px;
+  color: var(--color-black);
+}
+
+.rankings-page--cd-control .rankings-page__hero {
+  padding: 22px 0 50px;
+  overflow: visible;
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.rankings-page--cd-control .rankings-page__hero::after {
+  display: none;
+}
+
+.rankings-page--cd-control .rankings-page__hero-content {
+  max-width: 740px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.rankings-page--cd-control .rankings-page__hero-badge {
+  display: none;
+}
+
+.rankings-page--cd-control .rankings-page__hero-title-row {
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 18px;
+}
+
+.rankings-page--cd-control .rankings-page__title {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: clamp(54px, 5.6vw, 66px);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.rankings-page--cd-control .rankings-page__hero-year-button {
+  color: var(--color-blue-cobalt);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.rankings-page--cd-control .rankings-page__hero-year-button:hover,
+.rankings-page--cd-control .rankings-page__hero-year-button:focus-visible {
+  color: var(--color-blue-cobalt-dark);
+}
+
+.rankings-page--cd-control .rankings-page__hero-year-chevron {
+  color: currentColor;
+}
+
+.rankings-page--cd-control .rankings-page__description-wrap {
+  max-width: 740px;
+  margin: 0 auto;
+}
+
+.rankings-page--cd-control .rankings-page__description {
+  max-width: none;
+  margin: 0;
+  color: var(--color-black);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  line-height: 1.28;
+}
+
+.rankings-page--cd-control .rankings-page__subnav--sticky {
+  top: 0;
+  z-index: 95;
+  background: #f4f4f4;
+  border-top: 0;
+  border-bottom: 3px solid #d2d2d2;
+}
+
+.rankings-page--cd-control .rankings-page__subnav-pills {
+  justify-content: flex-start;
+  gap: 48px;
+  height: 48px;
+  padding: 0 34px 0 0;
+}
+
+.rankings-page--cd-control .rankings-page__subnav-pill {
+  color: var(--color-black);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.rankings-page--cd-control .rankings-page__subnav-pill:hover {
+  color: var(--color-black);
+}
+
+.rankings-page--cd-control .rankings-page__subnav-pill--active::after {
+  height: 4px;
+  background: var(--color-blue-cobalt);
+}
+
+.rankings-page--cd-control .rankings-page__subnav-breaker {
+  padding: 24px 0 28px;
+  background: #f4f4f4;
+  border-bottom: 0;
+}
+
+.rankings-page--cd-control .rankings-page__subnav-breaker .ad-banner__image {
+  width: min(100%, 728px);
+  border: 1px solid var(--color-black);
+  border-radius: 0;
+}
+
+@media (min-width: 769px) {
+  .rankings-page--cd-control .rankings-page__subnav-breaker-inner,
+  .rankings-page--cd-control .rankings-page__subnav-breaker + .container,
+  .rankings-page--cd-control .rankings-page__content > .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.rankings-page--cd-control .rankings-page__content {
+  padding: 28px 0 80px;
+  background: #f4f4f4;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta {
+  margin: 0 0 64px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-white));
+  box-shadow: none;
+  gap: 8px;
+}
+
+.rankings-page--cd-control .rankings-page__subnav-breaker + .container .rankings-page__offers-cta {
+  margin: 32px 0;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-header {
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-title {
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-count {
+  display: none;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-links {
+  gap: 10px;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-link {
+  min-height: 0;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-gray-200);
+  border-radius: 8px;
+  background: var(--color-white);
+  box-shadow: none;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-link-main {
+  gap: 10px;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-chip {
+  min-width: 0;
+  min-height: 0;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--color-badge-special-text);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.3px;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-link-main > span:last-child {
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.rankings-page--cd-control .rankings-page__offers-cta-badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--color-gray-50);
+  color: var(--color-gray-600);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.rankings-page--cd-control .rankings-page__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 64px;
+}
+
+.rankings-page--cd-control .rankings-page__sidebar {
+  display: block;
+  flex: 0 0 300px;
+  width: 300px;
+  padding-top: 196px;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-section {
+  margin-bottom: 72px;
+  padding-top: 0;
+  scroll-margin-top: 70px;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-header {
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-heading {
+  flex: 0 0 auto;
+  gap: 32px;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-kicker {
+  display: block;
+  color: var(--color-gray-500);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: var(--color-black);
+  font-family: var(--font-condensed);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 56px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-actions {
+  align-self: flex-end;
+  flex: 0 0 auto;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-shop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 2px solid var(--color-blue-cobalt);
+  border-radius: 4px;
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.44px;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-more {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.44px;
+  white-space: nowrap;
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-content {
+  border: 1px solid #e5e5e5;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-content:hover {
+  border-color: #d1d5db;
+  box-shadow: none;
+  transform: none;
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-content:hover .rankings-page__hero-card-image {
+  transform: none;
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-content:hover .rankings-page__hero-card-title {
+  color: var(--color-black);
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-header {
+  padding: 26px 27px 18px;
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-title {
+  font-size: clamp(35px, 2.9vw, 40px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-rating-value {
+  font-size: 36px;
+}
+
+.rankings-page--cd-control .rankings-page__hero-card-image-container {
+  aspect-ratio: 16 / 9;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-grid {
+  gap: 24px;
+}
+
+.rankings-page--cd-control .vehicle-card {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.rankings-page--cd-control .vehicle-card:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .rankings-page--cd-control .container {
+    max-width: none;
+  }
+
+  .rankings-page--cd-control .rankings-page__body-style-subnav-inner {
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
+    gap: var(--spacing-2);
+    padding-top: var(--spacing-4);
+  }
+
+  .rankings-page--cd-control .rankings-page__hero {
+    padding: var(--spacing-6) 0 var(--spacing-8);
+  }
+
+  .rankings-page--cd-control .rankings-page__title {
+    font-size: clamp(44px, 14vw, 56px);
+  }
+
+  .rankings-page--cd-control .rankings-page__description {
+    font-size: 18px;
+  }
+
+  .rankings-page--cd-control .rankings-page__subnav-pills {
+    gap: 34px;
+  }
+
+  .rankings-page--cd-control .rankings-page__subcategory-header {
+    align-items: stretch;
+  }
+
+  .rankings-page--cd-control .rankings-page__layout {
+    display: block;
+  }
+
+  .rankings-page--cd-control .rankings-page__sidebar {
+    display: none;
+  }
+
+  .rankings-page--cd-control .rankings-page__subnav-breaker {
+    padding: var(--spacing-5) 0;
+  }
+
+  .rankings-page--cd-control .rankings-page__subcategory-heading {
+    gap: var(--spacing-4);
+  }
+
+  .rankings-page--cd-control .rankings-page__subcategory-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-3);
+    margin-bottom: 0;
+  }
+
+  .rankings-page--cd-control .rankings-page__subcategory-shop,
+  .rankings-page--cd-control .rankings-page__subcategory-more {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .rankings-page--cd-control .rankings-page__subcategory-more {
+    justify-content: center;
   }
 }

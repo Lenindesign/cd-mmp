@@ -20,11 +20,17 @@ import './RankingsPage.css';
 // Body style icons
 const BODY_STYLE_ICONS: Record<string, string> = {
   suv: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
+  hybrid: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybridcar-647e4833d60f9.jpg?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*',
   sedan: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
   truck: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*',
+  luxury: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/luxury-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*',
+  ev: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hybrids-1585158794.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*',
+  sports: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sportscar-1585158794.png?crop=1.00xw:0.502xh;0,0.255xh&resize=180:*',
   coupe: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sportscar-1585158794.png?crop=1.00xw:0.502xh;0,0.255xh&resize=180:*',
   convertible: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/convertibles-1585158793.png?crop=1.00xw:0.502xh;0,0.258xh&resize=180:*',
   wagon: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/wagons-1585158795.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*',
+  hatchbackProduction: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/hatch-1585158793.png?crop=1.00xw:0.502xh;0,0.247xh&resize=180:*',
+  van: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/vans-1585158795.png?crop=1.00xw:0.502xh;0,0.252xh&resize=180:*',
   hatchback: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/crossovers-1585158793.png?crop=1.00xw:0.502xh;0,0.244xh&resize=180:*',
 };
 
@@ -145,6 +151,37 @@ const RANKINGS_OFFER_COUNTS = {
 };
 
 const RANKINGS_INCENTIVE_SUBNAV_VARIANT = 'incentive-subnav';
+const RANKINGS_CD_CONTROL_VARIANT = 'cd-control';
+
+const CD_CONTROL_BODY_STYLE_NAV_ITEMS = [
+  { key: 'suv', label: 'SUVs', title: 'SUVs', icon: BODY_STYLE_ICONS.suv, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control' },
+  { key: 'hybrid', label: 'Hybrids', title: 'Hybrids', icon: BODY_STYLE_ICONS.hybrid, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control#hybrid' },
+  { key: 'crossover', label: 'Crossovers', title: 'Crossovers', icon: BODY_STYLE_ICONS.hatchback, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control' },
+  { key: 'truck', label: 'Pickup Trucks', title: 'Pickup Trucks', icon: BODY_STYLE_ICONS.truck, imageClassName: undefined, modelLabel: undefined, path: '/rankings/truck' },
+  { key: 'luxury', label: 'Luxury', title: 'Luxury', icon: BODY_STYLE_ICONS.luxury, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control#luxury' },
+  { key: 'ev', label: 'EVs', title: 'EVs', icon: BODY_STYLE_ICONS.ev, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control#electric' },
+  { key: 'sports', label: 'Sports Cars', title: 'Sports Cars', icon: BODY_STYLE_ICONS.sports, imageClassName: undefined, modelLabel: undefined, path: '/rankings/coupe' },
+  { key: 'sedan', label: 'Sedans', title: 'Sedans', icon: BODY_STYLE_ICONS.sedan, imageClassName: undefined, modelLabel: undefined, path: '/rankings/sedan' },
+  { key: 'coupe', label: 'Coupes', title: 'Coupes', icon: BODY_STYLE_ICONS.coupe, imageClassName: undefined, modelLabel: undefined, path: '/rankings/coupe' },
+  { key: 'wagon', label: 'Wagons', title: 'Wagons', icon: BODY_STYLE_ICONS.wagon, imageClassName: undefined, modelLabel: undefined, path: '/rankings/wagon' },
+  { key: 'hatchback', label: 'Hatchbacks', title: 'Hatchbacks', icon: BODY_STYLE_ICONS.hatchbackProduction, imageClassName: undefined, modelLabel: undefined, path: '/rankings/hatchback' },
+  { key: 'convertible', label: 'Convertibles', title: 'Convertibles', icon: BODY_STYLE_ICONS.convertible, imageClassName: undefined, modelLabel: undefined, path: '/rankings/convertible' },
+  { key: 'small-cars', label: 'Small Cars', title: 'Small Cars', icon: BODY_STYLE_ICONS.sedan, imageClassName: undefined, modelLabel: undefined, path: '/rankings/sedan' },
+  { key: 'vans', label: 'Vans', title: 'Vans', icon: BODY_STYLE_ICONS.van, imageClassName: undefined, modelLabel: undefined, path: '/vehicles?bodyStyle=van' },
+  { key: 'used-cars', label: 'Used Cars', title: 'Used Cars', icon: BODY_STYLE_ICONS.sedan, imageClassName: undefined, modelLabel: undefined, path: '/vehicles?type=used&sort=price-low' },
+];
+
+const CD_CONTROL_SUBNAV_ITEMS = [
+  { id: 'compact', label: 'By Size' },
+  { id: 'price', label: 'By Price' },
+  { id: 'three-row', label: '3-Row' },
+  { id: 'fuel-economy', label: 'Fuel Economy' },
+  { id: 'hybrid', label: 'Hybrid' },
+  { id: 'plug-in-hybrid', label: 'Plug-In Hybrid' },
+  { id: 'electric', label: 'Electric' },
+  { id: 'luxury', label: 'Luxury' },
+  { id: 'safety', label: 'By Safety Rating' },
+];
 
 // Helper to calculate combined MPG
 const getCombinedMpg = (mpg?: string): number | undefined => {
@@ -248,9 +285,10 @@ type HeroYearSwitcherProps = {
   years: number[];
   selectedYear: number;
   onYearChange: (year: number) => void;
+  controlLabel?: string;
 };
 
-const HeroYearSwitcher: React.FC<HeroYearSwitcherProps> = ({ years, selectedYear, onYearChange }) => {
+const HeroYearSwitcher: React.FC<HeroYearSwitcherProps> = ({ years, selectedYear, onYearChange, controlLabel }) => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -288,7 +326,7 @@ const HeroYearSwitcher: React.FC<HeroYearSwitcherProps> = ({ years, selectedYear
         aria-label={`Select different ranking year. Current year ${selectedYear}`}
         onClick={() => setOpen((isOpen) => !isOpen)}
       >
-        <span>{selectedYear}</span>
+        <span>{controlLabel ?? selectedYear}</span>
         <ChevronDown
           size={18}
           aria-hidden="true"
@@ -350,10 +388,15 @@ const RankingsPage = () => {
     return new URLSearchParams(location.search).get('variant');
   }, [location.search]);
   const showIncentiveSubnavVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_INCENTIVE_SUBNAV_VARIANT;
-  const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant);
-  const isHeroDescriptionExpandable = bodyStyleKey === 'suv';
+  const showCdControlVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_CD_CONTROL_VARIANT;
+  const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant && !showCdControlVariant);
+  const isHeroDescriptionExpandable = bodyStyleKey === 'suv' && !showCdControlVariant;
   const bodyStyleNavRef = useRef<HTMLDivElement>(null);
   const bodyStyleNavItems = useMemo(() => {
+    if (showCdControlVariant) {
+      return CD_CONTROL_BODY_STYLE_NAV_ITEMS;
+    }
+
     const rankingItems = Object.entries(BODY_STYLE_CONFIG).map(([key, value]) => ({
       key,
       label: BODY_STYLE_NAV_LABELS[key] ?? value.title.replace(/^Best\s+/, ''),
@@ -393,7 +436,7 @@ const RankingsPage = () => {
         path: '/vehicles?type=used&sort=price-low',
       },
     ];
-  }, []);
+  }, [showCdControlVariant]);
 
   const scrollBodyStyleNav = useCallback((direction: 'left' | 'right') => {
     bodyStyleNavRef.current?.scrollBy({
@@ -541,8 +584,19 @@ const RankingsPage = () => {
     if (!config || subcategory) return null; // Don't compute if no config or on a subcategory page
 
     return config.subcategories.map((sub) => {
-      const filtered = allVehicles
-        .filter(sub.filter)
+      const controlCompactOrder = ['Honda CR-V', 'Mazda CX-5', 'Chevrolet Trax'];
+      const filteredVehicles = allVehicles.filter(sub.filter);
+      const orderedVehicles = showCdControlVariant && sub.id === 'compact'
+        ? [...filteredVehicles].sort((a, b) => {
+            const aIndex = controlCompactOrder.indexOf(`${a.make} ${a.model}`);
+            const bIndex = controlCompactOrder.indexOf(`${b.make} ${b.model}`);
+            if (aIndex !== -1 || bIndex !== -1) {
+              return (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) - (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex);
+            }
+            return getVehicleRating(b) - getVehicleRating(a);
+          })
+        : filteredVehicles;
+      const filtered = orderedVehicles
         .slice(0, 3)
         .map((vehicle, index) => ({
           id: vehicle.id,
@@ -567,7 +621,7 @@ const RankingsPage = () => {
         totalCount: allVehicles.filter(sub.filter).length,
       };
     }).filter(sub => sub.vehicles.length > 0);
-  }, [allVehicles, config, subcategory, getVehicleRating]);
+  }, [allVehicles, config, subcategory, getVehicleRating, showCdControlVariant]);
 
   // Top 3 vehicles per body style for the landing page rows
   const topByBodyStyle = useMemo(() => {
@@ -841,9 +895,56 @@ const RankingsPage = () => {
   }
 
   const pageTitle = subcategoryConfig ? subcategoryConfig.name : config.title;
+  const bodyStyleSubnav = (
+    <nav className="rankings-page__body-style-subnav" aria-label="Body style rankings">
+      <div className="container rankings-page__body-style-subnav-inner">
+        <button
+          type="button"
+          className="rankings-page__body-style-subnav-btn rankings-page__body-style-subnav-btn--prev"
+          onClick={() => scrollBodyStyleNav('left')}
+          aria-label="Scroll body styles left"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <div className="rankings-page__body-style-subnav-track" ref={bodyStyleNavRef}>
+          {bodyStyleNavItems.map((item) => (
+            <Link
+              key={item.key}
+              to={item.path}
+              className={`rankings-page__body-style-subnav-card${item.modelLabel ? ' rankings-page__body-style-subnav-card--has-model' : ''}${item.key === bodyStyleKey ? ' rankings-page__body-style-subnav-card--active' : ''}`}
+              aria-current={item.key === bodyStyleKey ? 'page' : undefined}
+            >
+              <span
+                className={`rankings-page__body-style-subnav-model${item.modelLabel ? '' : ' rankings-page__body-style-subnav-model--empty'}`}
+                aria-hidden={item.modelLabel ? undefined : true}
+              >
+                {item.modelLabel || '\u00A0'}
+              </span>
+              {item.icon && (
+                <img
+                  src={item.icon}
+                  alt=""
+                  className={`rankings-page__body-style-subnav-icon${item.imageClassName ? ` ${item.imageClassName}` : ''}`}
+                />
+              )}
+              <span className="rankings-page__body-style-subnav-label">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="rankings-page__body-style-subnav-btn rankings-page__body-style-subnav-btn--next"
+          onClick={() => scrollBodyStyleNav('right')}
+          aria-label="Scroll body styles right"
+        >
+          <ChevronRight size={24} />
+        </button>
+      </div>
+    </nav>
+  );
 
   return (
-    <div className="rankings-page">
+    <div className={`rankings-page${showCdControlVariant ? ' rankings-page--cd-control' : ''}`}>
       <SEO
         title={`${pageTitle} | Car and Driver Rankings`}
         description={config.description}
@@ -856,6 +957,8 @@ const RankingsPage = () => {
           isAuthenticated={isAuthenticated}
         />
       )}
+
+      {showCdControlVariant && bodyStyleSubnav}
 
       {/* Hero Section */}
       <div className="rankings-page__hero">
@@ -876,6 +979,7 @@ const RankingsPage = () => {
                   years={availableRankingYears}
                   selectedYear={effectiveSelectedRankingYear}
                   onYearChange={setSelectedRankingYear}
+                  controlLabel={showCdControlVariant ? 'Select a different year' : undefined}
                 />
               )}
             </div>
@@ -926,58 +1030,17 @@ const RankingsPage = () => {
         </div>
       </div>
 
-      <nav className="rankings-page__body-style-subnav" aria-label="Body style rankings">
-        <div className="container rankings-page__body-style-subnav-inner">
-          <button
-            type="button"
-            className="rankings-page__body-style-subnav-btn rankings-page__body-style-subnav-btn--prev"
-            onClick={() => scrollBodyStyleNav('left')}
-            aria-label="Scroll body styles left"
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <div className="rankings-page__body-style-subnav-track" ref={bodyStyleNavRef}>
-            {bodyStyleNavItems.map((item) => (
-              <Link
-                key={item.key}
-                to={item.path}
-                className={`rankings-page__body-style-subnav-card${item.modelLabel ? ' rankings-page__body-style-subnav-card--has-model' : ''}${item.key === bodyStyleKey ? ' rankings-page__body-style-subnav-card--active' : ''}`}
-                aria-current={item.key === bodyStyleKey ? 'page' : undefined}
-              >
-                <span
-                  className={`rankings-page__body-style-subnav-model${item.modelLabel ? '' : ' rankings-page__body-style-subnav-model--empty'}`}
-                  aria-hidden={item.modelLabel ? undefined : true}
-                >
-                  {item.modelLabel || '\u00A0'}
-                </span>
-                {item.icon && (
-                  <img
-                    src={item.icon}
-                    alt=""
-                    className={`rankings-page__body-style-subnav-icon${item.imageClassName ? ` ${item.imageClassName}` : ''}`}
-                  />
-                )}
-                <span className="rankings-page__body-style-subnav-label">{item.label}</span>
-              </Link>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="rankings-page__body-style-subnav-btn rankings-page__body-style-subnav-btn--next"
-            onClick={() => scrollBodyStyleNav('right')}
-            aria-label="Scroll body styles right"
-          >
-            <ChevronRight size={24} />
-          </button>
-        </div>
-      </nav>
+      {!showCdControlVariant && bodyStyleSubnav}
 
       {/* Subcategory Anchor Navigation - only show on main body style page */}
       {!subcategory && config && (
         <div className={`rankings-page__subnav rankings-page__subnav--sticky${showIncentiveSubnavVariant ? ' rankings-page__subnav--has-actions' : ''}${showIncentiveSubnavVariant && showSubnavScrollArrow ? ' rankings-page__subnav--can-scroll' : ''}`}>
           <div className="container">
             <div className="rankings-page__subnav-pills" ref={subnavPillsRef}>
-              {subcategoryVehicles && subcategoryVehicles.length > 0 && subcategoryVehicles.map((sub, index) => {
+              {(showCdControlVariant ? CD_CONTROL_SUBNAV_ITEMS : (subcategoryVehicles ?? []).map((sub) => ({
+                id: sub.id,
+                label: formatSubnavLabel(sub),
+              }))).map((sub, index) => {
                 const isActive = activeSubcategoryId ? activeSubcategoryId === sub.id : index === 0;
                 return (
                   <a
@@ -987,7 +1050,7 @@ const RankingsPage = () => {
                     aria-current={isActive ? 'true' : undefined}
                     onClick={() => setActiveSubcategoryId(sub.id)}
                   >
-                    {formatSubnavLabel(sub)}
+                    {sub.label}
                   </a>
                 );
               })}
@@ -1050,14 +1113,18 @@ const RankingsPage = () => {
               <Link to={buyingOffersPath} className="rankings-page__offers-cta-link">
                 <span className="rankings-page__offers-cta-link-main">
                   <span className="rankings-page__offers-cta-chip">BUY</span>
-                  <span>See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Deals</span>
+                  <span>
+                    See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying {showCdControlVariant ? 'Offers' : 'Deals'}
+                  </span>
                 </span>
                 <span className="rankings-page__offers-cta-badge">{RANKINGS_OFFER_COUNTS.buyingExpiringSoon} expiring soon!</span>
               </Link>
               <Link to={leasingOffersPath} className="rankings-page__offers-cta-link">
                 <span className="rankings-page__offers-cta-link-main">
                   <span className="rankings-page__offers-cta-chip">LEASE</span>
-                  <span>See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Deals</span>
+                  <span>
+                    See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing {showCdControlVariant ? 'Offers' : 'Deals'}
+                  </span>
                 </span>
                 <span className="rankings-page__offers-cta-badge">{RANKINGS_OFFER_COUNTS.leasingExpiringSoon} expiring soon!</span>
               </Link>
@@ -1080,14 +1147,27 @@ const RankingsPage = () => {
                   className="rankings-page__subcategory-section"
                 >
                   <div className="rankings-page__subcategory-header">
-                    <h2 className="rankings-page__subcategory-title">{sub.name}</h2>
-                    <Link
-                      to={`/rankings/${bodyStyle}/${sub.id}`}
-                      className="rankings-page__subcategory-more"
-                    >
-                      See all {sub.totalCount} vehicles
-                      <ChevronRight size={18} />
-                    </Link>
+                    <div className="rankings-page__subcategory-heading">
+                      {showCdControlVariant && <span className="rankings-page__subcategory-kicker">By Size</span>}
+                      <h2 className="rankings-page__subcategory-title">
+                        {sub.name}
+                        {showCdControlVariant && <ChevronRight size={20} strokeWidth={3} aria-hidden="true" />}
+                      </h2>
+                    </div>
+                    <div className="rankings-page__subcategory-actions">
+                      {showCdControlVariant && (
+                        <Link to={buyingOffersPath} className="rankings-page__subcategory-shop">
+                          Shop the top 3
+                        </Link>
+                      )}
+                      <Link
+                        to={`/rankings/${bodyStyle}/${sub.id}`}
+                        className="rankings-page__subcategory-more"
+                      >
+                        {showCdControlVariant ? 'See full list' : `See all ${sub.totalCount} vehicles`}
+                        <ChevronRight size={18} />
+                      </Link>
+                    </div>
                   </div>
 
                   {/* #1 Hero Card */}

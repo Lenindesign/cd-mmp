@@ -149,6 +149,9 @@ const formatLightTradeSalesTaxPercent = (percent: number): string => {
   return String(rounded);
 };
 
+const MONEY_INPUT_PREFIX = <span className="aio-payment__light-input-prefix" aria-hidden="true">$</span>;
+const PERCENT_INPUT_SUFFIX = <span className="aio-payment__light-input-suffix" aria-hidden="true">%</span>;
+
 /** Light calculator primary controls — shared slider + field pattern */
 const LIGHT_MONTHLY_BUDGET_MIN = 100;
 const LIGHT_MONTHLY_BUDGET_MAX = 2000;
@@ -206,6 +209,25 @@ const parseApr = (value: string) => {
 const parseTerm = (value?: string) => {
   const match = value?.match(/(\d+)/);
   return match ? Number(match[1]) : 60;
+};
+
+const isBuyingIncentive = (incentive: Incentive) => incentive.type === 'cash' || incentive.type === 'finance';
+
+const formatInlineList = (items: string[]) => {
+  if (items.length <= 1) return items[0] ?? '';
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+};
+
+const formatAiIncentiveList = (items: Incentive[], limit = 3) => {
+  const visibleItems = items.slice(0, limit).map((incentive) => incentive.title);
+  const hiddenCount = Math.max(0, items.length - visibleItems.length);
+
+  if (hiddenCount > 0) {
+    visibleItems.push(`${hiddenCount} more`);
+  }
+
+  return formatInlineList(visibleItems);
 };
 
 const getLightDealTypeTag = (offerType: VehicleOfferSummary['type']) => {
@@ -607,17 +629,20 @@ function LightLoanTermsStepPanel({
             {currency(downClamped)}
           </span>
         </div>
-        <input
-          id={downId}
-          type="number"
-          className="payment-calc__input"
-          min={LIGHT_DOWN_PAYMENT_MIN}
-          max={LIGHT_DOWN_PAYMENT_MAX}
-          step={LIGHT_DOWN_PAYMENT_STEP}
-          value={downPayment}
-          onChange={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.target.value)))}
-          onBlur={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.currentTarget.value)))}
-        />
+        <div className="aio-payment__light-money-input">
+          <span className="aio-payment__light-money-input-prefix" aria-hidden="true">$</span>
+          <input
+            id={downId}
+            type="number"
+            className="payment-calc__input aio-payment__light-money-input-control"
+            min={LIGHT_DOWN_PAYMENT_MIN}
+            max={LIGHT_DOWN_PAYMENT_MAX}
+            step={LIGHT_DOWN_PAYMENT_STEP}
+            value={downPayment}
+            onChange={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.target.value)))}
+            onBlur={(event) => onDownPaymentChange(clampLightDownPayment(numberInput(event.currentTarget.value)))}
+          />
+        </div>
         <input
           type="range"
           className="payment-calc__slider"
@@ -650,17 +675,20 @@ function LightLoanTermsStepPanel({
         </div>
         {!aprLocked ? (
           <>
-            <input
-              id={aprId}
-              type="number"
-              className="payment-calc__input"
-              min={LIGHT_APR_SLIDER_MIN}
-              max={LIGHT_APR_SLIDER_MAX}
-              step={LIGHT_APR_SLIDER_STEP}
-              value={customApr}
-              onChange={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.target.value)))}
-              onBlur={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.currentTarget.value)))}
-            />
+            <div className="aio-payment__light-percent-input">
+              <input
+                id={aprId}
+                type="number"
+                className="payment-calc__input aio-payment__light-percent-input-control"
+                min={LIGHT_APR_SLIDER_MIN}
+                max={LIGHT_APR_SLIDER_MAX}
+                step={LIGHT_APR_SLIDER_STEP}
+                value={customApr}
+                onChange={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.target.value)))}
+                onBlur={(event) => onCustomAprChange(clampLightAprSlider(numberInput(event.currentTarget.value)))}
+              />
+              <span className="aio-payment__light-percent-input-suffix" aria-hidden="true">%</span>
+            </div>
             <input
               type="range"
               className="payment-calc__slider"
@@ -725,7 +753,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [condition, setCondition] = useState<VehicleCondition>('new');
   const [selectedSlug, setSelectedSlug] = useState(defaultVehicle.slug);
   const [selectedYear, setSelectedYear] = useState(defaultVehicle.year);
-  const [startMode, setStartMode] = useState<PurchaseStartMode>('monthly');
+  const [startMode, setStartMode] = useState<PurchaseStartMode>(() => isLightVariant ? 'price' : 'monthly');
   const [price, setPrice] = useState(defaultVehicle.priceMin);
   const [targetMonthlyPayment, setTargetMonthlyPayment] = useState(550);
   const [downPayment, setDownPayment] = useState(4000);
@@ -750,6 +778,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [stateCode, setStateCode] = useState(DEFAULT_STATE_VEHICLE_TAX.code);
   const [salesTaxOverride, setSalesTaxOverride] = useState('');
   const [feesOverride, setFeesOverride] = useState('');
+  const [dealerFeesOverride, setDealerFeesOverride] = useState('');
   const [includeTaxesAndFeesInLoan, setIncludeTaxesAndFeesInLoan] = useState(true);
   const [showTradeTool, setShowTradeTool] = useState(false);
   const [tradeVehicle, setTradeVehicle] = useState('2020 Honda CR-V');
@@ -773,7 +802,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
-  const [lightKnownVehicleSelected, setLightKnownVehicleSelected] = useState(() => !isLightStepsVariant);
+  const [lightKnownVehicleSelected, setLightKnownVehicleSelected] = useState(() => !isLightVariant);
   const [lightBrowseBodyStyle, setLightBrowseBodyStyle] = useState('SUV');
   const [lightAffordableOffersSlug, setLightAffordableOffersSlug] = useState<string | null>(null);
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
@@ -797,8 +826,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, [tradeVehicle, vehicles]);
   const lightTradeVehicleLabel = tradeVehicle.trim() || 'Trade-in vehicle';
   const lightTradeVehicleImage = lightTradeVehicleMatch?.image;
-  const lightHasVehicleSelection = !isLightStepsVariant || lightVehicleStepMode === 'browsing' || lightKnownVehicleSelected;
+  const lightHasVehicleSelection = !isLightVariant || lightVehicleStepMode === 'browsing' || lightKnownVehicleSelected;
   const selectedVehicleStyle = selectedVehicle.trim || selectedVehicle.drivetrain || selectedVehicle.bodyStyle;
+  const selectedVehicleLabel = lightHasVehicleSelection
+    ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`
+    : 'No vehicle selected';
 
   const showLightTradeEstimateCard =
     isLightStepsVariant &&
@@ -856,10 +888,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   );
 
   const vehicleIncentives = useMemo(
-    () => condition === 'new'
+    () => condition === 'new' && lightHasVehicleSelection
       ? getVehicleIncentives(selectedVehicle.make, selectedVehicle.model)
       : { make: selectedVehicle.make, model: selectedVehicle.model, totalSavings: 0, incentives: [] },
-    [condition, selectedVehicle.make, selectedVehicle.model],
+    [condition, lightHasVehicleSelection, selectedVehicle.make, selectedVehicle.model],
   );
   const activeVehicleIncentives = lightDealModalVehicle
     ? getVehicleIncentives(lightDealModalVehicle.make, lightDealModalVehicle.model)
@@ -890,7 +922,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, 0);
   const rebateTotal = selectedCashTotal + tierCashBack;
   const stateRule = stateRules.find((state) => state.code === stateCode) ?? stateRules[0];
-  const fees = feesOverride ? numberInput(feesOverride) : stateRule.titleRegistrationFees;
+  const registrationFees = feesOverride ? numberInput(feesOverride) : stateRule.titleRegistrationFees;
+  const dealerFees = dealerFeesOverride ? numberInput(dealerFeesOverride) : 0;
+  const fees = registrationFees + dealerFees;
   const tradeEquity = tradeInValue - amountOwed;
   const affordableMsrp = getAffordablePriceFromMonthlyBudget({
     targetMonthlyPayment,
@@ -1131,6 +1165,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const selectedLightReviewAdvice =
     lightReviewAdviceOptions.find((option) => option.id === lightReviewAdviceId) ?? lightReviewAdviceOptions[0];
   const aiTargetPrice = Math.max(0, workingPrice - Math.max(750, workingPrice * 0.025));
+  const aiTargetTaxableAmount = getTaxableAmount(aiTargetPrice, tradeInValue, rebateTotal, stateRule.taxRule);
+  const aiTargetSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : aiTargetTaxableAmount * stateRule.rate;
+  const aiTargetOutTheDoor = aiTargetPrice + aiTargetSalesTax + fees;
+  const aiTargetFinancedPrice = includeTaxesAndFeesInLoan ? aiTargetOutTheDoor : aiTargetPrice;
+  const aiTargetNetPrice = Math.max(0, aiTargetFinancedPrice - tradeEquity - rebateTotal);
+  const aiTargetLoanAmount = Math.max(0, aiTargetNetPrice - downPayment);
   const negotiatedDiscount = Math.max(0, selectedVehicle.priceMin - workingPrice);
   const aiBestOfferPath = lowAprVsCash
     ? lowAprVsCash.totalDelta > 0
@@ -1141,12 +1181,101 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : cashIncentives[0]
         ? `${cashIncentives[0].title} is the best visible incentive to pressure-test against your own financing.`
         : 'No active manufacturer deal is selected. Treat dealer discount, APR, and fees as the main negotiation levers.';
+  const aiSelectedIncentiveIds = new Set([
+    ...selectedCashIds,
+    ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
+  ]);
+  const aiAvailableBuyingIncentives = incentives.filter(isBuyingIncentive);
+  const aiAppliedBuyingIncentives = aiAvailableBuyingIncentives.filter((incentive) => aiSelectedIncentiveIds.has(incentive.id));
+  const aiUnappliedBuyingIncentives = aiAvailableBuyingIncentives.filter((incentive) => !aiSelectedIncentiveIds.has(incentive.id));
+  const aiIncentiveChecks = (() => {
+    if (condition !== 'new') return [];
+
+    if (!lightHasVehicleSelection) {
+      const nearbyIncentiveLabels = lightAffordableDealCards
+        .map(({ vehicle, primaryIncentive }) => {
+          const buyingIncentive = isBuyingIncentive(primaryIncentive)
+            ? primaryIncentive
+            : getVehicleIncentives(vehicle.make, vehicle.model).incentives.find(isBuyingIncentive);
+
+          return buyingIncentive
+            ? `${vehicle.year} ${vehicle.make} ${vehicle.model}: ${buyingIncentive.title}`
+            : '';
+        })
+        .filter(Boolean)
+        .slice(0, 3);
+
+      if (nearbyIncentiveLabels.length > 0) {
+        return [
+          `Current price has incentive-backed matches to check: ${formatInlineList(nearbyIncentiveLabels)}. Pick a vehicle to apply the exact program to this estimate.`,
+        ];
+      }
+
+      return ['Choose a vehicle to check model-specific cash and APR incentives against this estimate.'];
+    }
+
+    if (aiAvailableBuyingIncentives.length === 0) {
+      return [
+        `Checked visible programs for ${selectedVehicleLabel}: no cash-back or promotional APR is currently attached. Ask the dealer to confirm regional, loyalty, conquest, or captive-finance offers.`,
+      ];
+    }
+
+    if (aiUnappliedBuyingIncentives.length > 0) {
+      return [
+        `Potential programs for ${selectedVehicleLabel}: ${formatAiIncentiveList(aiUnappliedBuyingIncentives)}. Apply or compare them before judging the payment.`,
+      ];
+    }
+
+    return [
+      `Visible ${aiAppliedBuyingIncentives.length === 1 ? 'program is' : 'programs are'} already applied: ${formatAiIncentiveList(aiAppliedBuyingIncentives)}. Make sure the dealer lists ${aiAppliedBuyingIncentives.length === 1 ? 'it' : 'them'} separately and does not offset savings with fees.`,
+    ];
+  })();
   const aiDealerFlags = [
     activeApr > 8 ? `${activeApr.toFixed(1)}% APR is high enough to shop a bank or credit union quote before the dealer visit.` : '',
-    fees > 900 ? `${currency(fees)} in title, registration, and fees deserves an itemized quote.` : '',
-    negotiatedDiscount < selectedVehicle.priceMin * 0.02 ? 'The current price is close to MSRP. Ask for a real selling-price discount before discussing payment.' : '',
-    rebateTotal === 0 && condition === 'new' ? 'No rebate is applied. Ask whether regional cash, loyalty, conquest, or captive-finance programs are available.' : '',
+    fees > 900 ? `${currency(fees)} in title, registration, dealer, and other fees deserves an itemized quote.` : '',
+    lightHasVehicleSelection && negotiatedDiscount < selectedVehicle.priceMin * 0.02 ? 'The current price is close to MSRP. Ask for a real selling-price discount before discussing payment.' : '',
+    ...aiIncentiveChecks,
   ].filter(Boolean);
+  const aiMonthlyWalkAway = Math.max(0, Math.min(estimatedMonthly, targetMonthlyPayment || estimatedMonthly) - 25);
+  const aiPriceSavingsTarget = Math.max(0, workingPrice - aiTargetPrice);
+  const aiAprTarget = Math.max(0, activeApr - 1);
+  const aiFeeGuardrailLabel = dealerFees > 0 ? currency(dealerFees) : 'No add-ons';
+  const aiFeeGuardrailCopy = dealerFees > 0
+    ? `Dealer fees are currently ${currency(dealerFees)}. Ask what each one covers and reject duplicate add-ons.`
+    : `Keep dealer add-ons at ${currency(0)} and ask for every doc, protection, and market adjustment line in writing.`;
+  const aiDealActions = [
+    {
+      title: 'Counter the selling price',
+      value: currency(aiTargetPrice),
+      body: `${aiPriceSavingsTarget > 0 ? `Aim for about ${currency(aiPriceSavingsTarget)} off the current price. ` : ''}Do this before discussing payment, trade, or financing.`,
+    },
+    {
+      title: 'Protect the payment',
+      value: `${currency(aiMonthlyWalkAway)}/mo`,
+      body: `Treat this as the walk-away zone. If the dealer can only hit it by stretching the term or adding cash down, compare total cost first.`,
+    },
+    {
+      title: 'Shop the APR',
+      value: `${aiAprTarget.toFixed(1)}% target`,
+      body: `Bring a bank or credit-union quote and ask the dealer to beat it without changing the selling price or fees.`,
+    },
+    {
+      title: 'Cap fees and add-ons',
+      value: aiFeeGuardrailLabel,
+      body: aiFeeGuardrailCopy,
+    },
+  ];
+  const aiQuoteChecklist = [
+    'Selling price before rebates, trade, taxes, and fees',
+    'Itemized tax, title, registration, doc fee, and dealer fees',
+    'APR, lender name, loan term, and amount financed',
+    'Rebates, loyalty, conquest, or finance incentives applied',
+    'Every add-on package, protection product, or market adjustment',
+    `Final due at signing near ${currency(cashDueAtSigning)} and target amount financed near ${currency(aiTargetLoanAmount)}`,
+  ];
+  const aiDealRisks = aiDealerFlags.length > 0
+    ? aiDealerFlags
+    : ['No major markup flags from the visible inputs. Still ask for a full worksheet before signing.'];
 
   const handleSendLightEstimateEmail = () => {
     const trimmed = lightEstimateEmail.trim();
@@ -1159,11 +1288,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       return;
     }
     setLightEstimateEmailError(undefined);
-    const subject = `Payment estimate: ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`;
+    const subject = `Payment estimate: ${selectedVehicleLabel}`;
     const lines: string[] = [
       'Payment estimate (Car and Driver Marketplace auto loan calculator)',
       '',
-      `Vehicle: ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`,
+      `Vehicle: ${selectedVehicleLabel}`,
       `Out-the-door estimate: ${currency(outTheDoorPrice)}`,
     ];
     if (tradeEquity !== 0) {
@@ -1530,20 +1659,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <button
                     type="button"
                     role="tab"
-                    aria-selected={startMode === 'monthly'}
-                    aria-label={`Start with monthly budget, currently ${currency(targetMonthlyPayment)} per month`}
-                    className={startMode === 'monthly' ? 'payment-calc__tab payment-calc__tab--on aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'payment-calc__tab aio-payment__light-toggle-button'}
-                    onClick={() => setStartMode('monthly')}
-                  >
-                    <span className="aio-payment__light-toggle-icon" aria-hidden="true">
-                      <CreditCard size={22} strokeWidth={2} />
-                    </span>
-                    <span className="aio-payment__light-toggle-button-title">Start with monthly budget</span>
-                    <span className="aio-payment__light-toggle-button-copy">Tell us what you can pay each month.</span>
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
                     aria-selected={startMode === 'price'}
                     aria-label={`Start with vehicle price, currently ${currency(price)}`}
                     className={startMode === 'price' ? 'payment-calc__tab payment-calc__tab--on aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'payment-calc__tab aio-payment__light-toggle-button'}
@@ -1554,6 +1669,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </span>
                     <span className="aio-payment__light-toggle-button-title">Start with vehicle price</span>
                     <span className="aio-payment__light-toggle-button-copy">Know the sticker? Start there.</span>
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={startMode === 'monthly'}
+                    aria-label={`Start with monthly budget, currently ${currency(targetMonthlyPayment)} per month`}
+                    className={startMode === 'monthly' ? 'payment-calc__tab payment-calc__tab--on aio-payment__light-toggle-button aio-payment__light-toggle-button--active' : 'payment-calc__tab aio-payment__light-toggle-button'}
+                    onClick={() => setStartMode('monthly')}
+                  >
+                    <span className="aio-payment__light-toggle-icon" aria-hidden="true">
+                      <CreditCard size={22} strokeWidth={2} />
+                    </span>
+                    <span className="aio-payment__light-toggle-button-title">Start with monthly budget</span>
+                    <span className="aio-payment__light-toggle-button-copy">Tell us what you can pay each month.</span>
                   </button>
                 </div>
 
@@ -1598,7 +1727,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <strong>{currency(downPayment)} down · {loanTerm} months · {activeApr.toFixed(1)}% APR</strong>
                   </summary>
                   <div className="aio-payment__light-grid">
-                    <TextField label="Down payment" type="number" value={downPayment} min={0} step={500} onChange={(event) => setDownPayment(numberInput(event.target.value))} />
+                    <TextField
+                      label="Down payment"
+                      type="number"
+                      value={downPayment}
+                      min={0}
+                      step={500}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setDownPayment(numberInput(event.target.value))}
+                    />
                     <TextField
                       label="Interest rate"
                       type="number"
@@ -1606,6 +1743,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       min={0}
                       step={0.1}
                       disabled={selectedFinanceId !== 'custom'}
+                      iconRight={PERCENT_INPUT_SUFFIX}
                       onChange={(event) => setCustomApr(numberInput(event.target.value))}
                     />
                     <Select
@@ -1811,16 +1949,18 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 <details className="aio-payment__light-disclosure" open={undefined}>
                   <summary>
                     <span>Vehicle</span>
-                    <strong>{selectedYear} {selectedVehicle.make} {selectedVehicle.model}</strong>
+                    <strong>{lightHasVehicleSelection ? selectedVehicleLabel : 'Not selected'}</strong>
                   </summary>
                   <p className="aio-payment__light-disclosure-copy">
-                    {startMode === 'monthly'
+                    {!lightHasVehicleSelection
+                      ? 'Optional: choose a vehicle to apply realistic trim pricing, incentives, AI analysis, and shopping links. If you already know the selling price, enter it above.'
+                      : startMode === 'monthly'
                       ? 'Choose a year, make, model, and trim so we can compare your budget with a realistic starting price and available incentives.'
                       : 'Optional: choose a vehicle to apply realistic trim pricing, incentives, AI analysis, and shopping links. If you already know the selling price, enter it above.'}
                   </p>
                   {startMode === 'monthly' && (
-                    <p className={`aio-payment__light-budget-note aio-payment__light-budget-note--${budgetFitStatus}`}>
-                      <strong className="aio-payment__light-budget-status-label">{budgetFitLabel}:</strong> {budgetFitCopy}
+                    <p className={`aio-payment__light-budget-note aio-payment__light-budget-note--${visibleBudgetFitStatus}`}>
+                      <strong className="aio-payment__light-budget-status-label">{visibleBudgetFitLabel}:</strong> {visibleBudgetFitCopy}
                     </p>
                   )}
                   <div className="aio-payment__light-grid">
@@ -1835,27 +1975,31 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     />
                     <Select
                       label="Year"
-                      value={selectedYear}
+                      value={lightHasVehicleSelection ? selectedYear : ''}
                       onChange={(event) => updateVehicleByParts({ year: event.target.value })}
+                      placeholder="Select year"
                       options={availableYears.map((year) => ({ value: year, label: year }))}
                     />
                     <Select
                       label="Make"
-                      value={selectedVehicle.make}
+                      value={lightHasVehicleSelection ? selectedVehicle.make : ''}
                       onChange={(event) => updateVehicleByParts({ make: event.target.value })}
+                      placeholder="Select make"
                       options={availableMakes.map((make) => ({ value: make, label: make }))}
                     />
                     <Select
                       label="Model"
-                      value={selectedVehicle.model}
+                      value={lightHasVehicleSelection ? selectedVehicle.model : ''}
                       onChange={(event) => updateVehicleByParts({ model: event.target.value })}
+                      placeholder="Select model"
                       options={availableModels.map((model) => ({ value: model, label: model }))}
                     />
                     <Select
                       label="Trim / style"
-                      value={selectedVehicle.slug}
+                      value={lightHasVehicleSelection ? selectedVehicle.slug : ''}
                       wrapperClassName="aio-payment__light-field--wide"
                       onChange={(event) => updateVehicleByParts({ slug: event.target.value })}
+                      placeholder="Select trim or style"
                       options={availableTrimStyles.map((vehicle) => ({
                         value: vehicle.slug,
                         label: `${vehicle.trim || vehicle.drivetrain || vehicle.bodyStyle} · ${vehicle.bodyStyle} · ${currency(vehicle.priceMin)}`,
@@ -1876,6 +2020,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             value={tradeInValue}
                             min={0}
                             step={500}
+                            iconLeft={MONEY_INPUT_PREFIX}
                             onChange={(event) => setTradeInValue(numberInput(event.target.value))}
                           />
                           <button type="button" className="aio-payment__light-inline-action" onClick={() => setShowTradeTool(true)}>
@@ -1888,6 +2033,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           value={amountOwed}
                           min={0}
                           step={500}
+                          iconLeft={MONEY_INPUT_PREFIX}
                           onChange={(event) => setAmountOwed(numberInput(event.target.value))}
                           wrapperClassName="aio-payment__light-trade-step__field-with-action"
                         />
@@ -1921,7 +2067,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           </aside>
                         ) : null}
                       </div>
-                      <div className="aio-payment__light-trade-step__row aio-payment__light-trade-step__row--3">
+                      <div className="aio-payment__light-trade-step__row aio-payment__light-trade-step__row--4">
                         <Select
                           label="Your state"
                           value={stateCode}
@@ -1934,6 +2080,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           value={formatLightTradeSalesTaxPercent(lightTradeSalesTaxPercent)}
                           min={0}
                           step={0.001}
+                          iconRight={PERCENT_INPUT_SUFFIX}
                           onChange={(event) => handleLightTradeSalesTaxPercentChange(event.target.value)}
                         />
                         <TextField
@@ -1941,10 +2088,26 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           type="number"
                           value={feesOverride || stateRule.titleRegistrationFees}
                           min={0}
+                          iconLeft={MONEY_INPUT_PREFIX}
                           onChange={(event) => setFeesOverride(event.target.value)}
+                        />
+                        <TextField
+                          label="Dealer fees"
+                          type="number"
+                          value={dealerFeesOverride}
+                          min={0}
+                          placeholder="0"
+                          iconLeft={MONEY_INPUT_PREFIX}
+                          onChange={(event) => setDealerFeesOverride(event.target.value)}
                         />
                       </div>
                     </div>
+
+                    <p className="aio-payment__light-trade-step__dealer-note">
+                      Dealer fees are not always known until you get a written quote. Documentation fees, dealer-installed
+                      add-ons, protection packages, market adjustments, and other dealer charges may be extra; add them here
+                      if they appear on the quote.
+                    </p>
 
                     <div className="aio-payment__light-trade-step__finance-box">
                       <button
@@ -1965,8 +2128,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           <span className="aio-payment__light-trade-step__switch-title">Finance taxes and fees</span>
                           <span className="aio-payment__light-trade-step__switch-desc">
                             {includeTaxesAndFeesInLoan
-                              ? 'Roll these into the loan instead of paying upfront.'
-                              : 'Pay tax, title, and registration at signing (not in the loan amount).'}
+                              ? 'Roll tax, title, registration, and dealer fees into the loan instead of paying upfront.'
+                              : 'Pay tax, title, registration, and dealer fees at signing (not in the loan amount).'}
                           </span>
                         </span>
                       </button>
@@ -1986,20 +2149,59 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </summary>
                   <div className="aio-payment__light-grid">
                     <div className="aio-payment__light-field-with-action">
-                      <TextField label="Trade-in value" type="number" value={tradeInValue} min={0} step={500} onChange={(event) => setTradeInValue(numberInput(event.target.value))} />
+                      <TextField
+                        label="Trade-in value"
+                        type="number"
+                        value={tradeInValue}
+                        min={0}
+                        step={500}
+                        iconLeft={MONEY_INPUT_PREFIX}
+                        onChange={(event) => setTradeInValue(numberInput(event.target.value))}
+                      />
                       <button type="button" className="aio-payment__light-inline-action" onClick={() => setShowTradeTool(true)}>
                         Estimate trade-in value
                       </button>
                     </div>
-                    <TextField label="Amount owed on trade" type="number" value={amountOwed} min={0} step={500} onChange={(event) => setAmountOwed(numberInput(event.target.value))} />
+                    <TextField
+                      label="Amount owed on trade"
+                      type="number"
+                      value={amountOwed}
+                      min={0}
+                      step={500}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setAmountOwed(numberInput(event.target.value))}
+                    />
                     <Select
                       label="Your state"
                       value={stateCode}
                       onChange={(event) => setStateCode(event.target.value)}
                       options={stateRules.map((state) => ({ value: state.code, label: state.name }))}
                     />
-                    <TextField label="Sales tax" type="number" value={salesTaxOverride || Math.round(calculatedSalesTax)} min={0} onChange={(event) => setSalesTaxOverride(event.target.value)} />
-                    <TextField label="Title, registration, and other fees" type="number" value={feesOverride || stateRule.titleRegistrationFees} min={0} onChange={(event) => setFeesOverride(event.target.value)} />
+                    <TextField
+                      label="Sales tax"
+                      type="number"
+                      value={salesTaxOverride || Math.round(calculatedSalesTax)}
+                      min={0}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setSalesTaxOverride(event.target.value)}
+                    />
+                    <TextField
+                      label="Title, registration, and other fees"
+                      type="number"
+                      value={feesOverride || stateRule.titleRegistrationFees}
+                      min={0}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setFeesOverride(event.target.value)}
+                    />
+                    <TextField
+                      label="Dealer fees"
+                      type="number"
+                      value={dealerFeesOverride}
+                      min={0}
+                      placeholder="0"
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setDealerFeesOverride(event.target.value)}
+                    />
                     <label className="aio-payment__light-checkbox aio-payment__light-field--wide">
                       <input
                         type="checkbox"
@@ -2262,6 +2464,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           <dd>{currency(totalCost)}</dd>
                         </div>
                       </dl>
+                      <p className="aio-payment__light-dealer-fee-note">
+                        Dealer fees can be extra and are not always known until a written quote. Add documentation fees,
+                        dealer-installed add-ons, protection packages, or market adjustments in the trade and fees step.
+                      </p>
                     </div>
                   </div>
                 {startMode === 'monthly' && (
@@ -2509,74 +2715,105 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 <div>
                   <span className="aio-payment__eyebrow">AI deal analysis</span>
                   <h2 id="aio-payment-ai-modal-title">
-                    Best path for a {selectedYear} {selectedVehicle.make} {selectedVehicle.model} {selectedVehicleStyle}
+                    {lightHasVehicleSelection
+                      ? `Best path for a ${selectedVehicleLabel} ${selectedVehicleStyle}`
+                      : 'Best path for your estimate'}
                   </h2>
+                  <p className="aio-payment__ai-modal-subtitle">
+                    Use this as a dealer worksheet. Lock the selling price first, then compare fees, APR, cash due, and total loan payments.
+                  </p>
+                  <dl className="aio-payment__ai-modal-context" aria-label="Current estimate context">
+                    <div><dt>Current payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
+                    <div><dt>Loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
+                    <div><dt>Rate &amp; term</dt><dd>{activeApr.toFixed(1)}% · {loanTerm} mo</dd></div>
+                    <div><dt>Due at signing</dt><dd>{currency(cashDueAtSigning)}</dd></div>
+                  </dl>
                 </div>
                 <button type="button" onClick={() => setShowAiDealAnalysis(false)} aria-label="Close AI deal analysis">
                   x
                 </button>
               </div>
 
-              <div className="aio-payment__ai-modal-summary">
-                <div>
-                  <span>Target price</span>
-                  <strong>{currency(aiTargetPrice)}</strong>
-                  <p>Start here before taxes, fees, trade equity, and rebates.</p>
+              <section className="aio-payment__ai-modal-plan" aria-labelledby="aio-payment-ai-plan-title">
+                <div className="aio-payment__ai-modal-section-head">
+                  <h3 id="aio-payment-ai-plan-title">Do these in order</h3>
+                  <p>Each move protects a different part of the deal sheet.</p>
                 </div>
-                <div>
-                  <span>Current estimate</span>
-                  <strong>{currency(estimatedMonthly)}/mo</strong>
-                  <p>{loanTerm} months at {activeApr.toFixed(1)}% APR.</p>
-                </div>
-                <div>
-                  <span>Total loan cost</span>
-                  <strong>{currency(totalLoanPayments)}</strong>
-                  <p>{currency(totalLoanInterest)} of estimated interest.</p>
-                </div>
-              </div>
+                <ol className="aio-payment__ai-modal-action-list">
+                  {aiDealActions.map((action, index) => (
+                    <li key={action.title}>
+                      <span className="aio-payment__ai-modal-action-index">{index + 1}</span>
+                      <div>
+                        <span className="aio-payment__ai-modal-action-kicker">{action.title}</span>
+                        <strong>{action.value}</strong>
+                        <p>{action.body}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
 
               <div className="aio-payment__ai-modal-grid">
-                <section>
-                  <h3>Best deal path</h3>
-                  <p>{aiBestOfferPath}</p>
-                  <p>
-                    Current out-the-door estimate is {currency(outTheDoorPrice)}. The financeable amount after trade,
-                    down payment, and incentives is {currency(totalLoanAmount)}.
-                  </p>
-                </section>
-
-                <section>
-                  <h3>Negotiation script</h3>
+                <section className="aio-payment__ai-modal-checklist">
+                  <h3>Dealer quote checklist</h3>
                   <ul>
-                    <li>Ask for the selling price first, before monthly payment.</li>
-                    <li>Counter at {currency(aiTargetPrice)} and ask the dealer to show taxes, registration, doc fee, and add-ons separately.</li>
-                    <li>Keep the selected incentive only if the dealer does not raise the price to offset it.</li>
-                    <li>Use a walk-away payment near {currency(Math.max(0, targetMonthlyPayment - 25))}/mo if your budget target is firm.</li>
+                    {aiQuoteChecklist.map((item) => (
+                      <li key={item}>
+                        <Check size={16} strokeWidth={2.4} aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </section>
 
                 <section>
-                  <h3>Dealer red flags</h3>
-                  {aiDealerFlags.length > 0 ? (
-                    <ul>
-                      {aiDealerFlags.map((flag) => <li key={flag}>{flag}</li>)}
-                    </ul>
-                  ) : (
-                    <p>No major markup flags from the visible inputs. Still ask for a full worksheet before signing.</p>
-                  )}
+                  <h3>Ask exactly this</h3>
+                  <p className="aio-payment__ai-modal-script">
+                    I want the selling price first. Please show a written out-the-door quote at {currency(aiTargetPrice)}
+                    before trade, with taxes, registration, doc fee, dealer fees, add-ons, APR, and amount financed listed separately.
+                  </p>
+                  <p>{aiBestOfferPath}</p>
+                </section>
+
+                <section className="aio-payment__ai-modal-risks">
+                  <h3>Watch-outs</h3>
+                  <ul>
+                    {aiDealRisks.map((flag) => <li key={flag}>{flag}</li>)}
+                  </ul>
                 </section>
 
                 <section>
-                  <h3>Best possible deal</h3>
+                  <h3>What a strong deal looks like</h3>
+                  <dl className="aio-payment__ai-modal-deal-sheet">
+                    <div><dt>Selling price</dt><dd>{currency(aiTargetPrice)}</dd></div>
+                    <div><dt>Out-the-door target</dt><dd>{currency(aiTargetOutTheDoor)}</dd></div>
+                    <div><dt>Target financed</dt><dd>{currency(aiTargetLoanAmount)}</dd></div>
+                    <div><dt>Due at signing</dt><dd>{currency(cashDueAtSigning)}</dd></div>
+                  </dl>
                   <p>
-                    A strong version of this deal combines a selling price near {currency(aiTargetPrice)}, fees under
-                    {currency(Math.min(fees, 800))}, and either the best APR deal or cash rebate without dealer add-ons.
-                  </p>
-                  <p>
-                    If the dealer cannot preserve that structure, compare similar {selectedVehicle.model} listings or use
-                    the full calculator to test a lower APR and larger down payment.
+                    If the dealer cannot preserve these numbers, compare similar listings or test a lower APR and larger down payment.
                   </p>
                 </section>
+              </div>
+
+              <div className="aio-payment__ai-modal-actions">
+                <a
+                  className="payment-calc__cta"
+                  href={lightShopHref}
+                  onClick={(event) => {
+                    if (!shouldScrollToBudgetVehicles) return;
+                    event.preventDefault();
+                    setShowAiDealAnalysis(false);
+                    window.requestAnimationFrame(() => {
+                      lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
+                    });
+                  }}
+                >
+                  {lightShopLabel}
+                </a>
+                <button type="button" className="payment-calc__cta payment-calc__cta--secondary" onClick={() => setShowAiDealAnalysis(false)}>
+                  Back to estimate
+                </button>
               </div>
             </div>
           </div>
@@ -2715,6 +2952,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     value={price}
                     min={0}
                     step={500}
+                    iconLeft={MONEY_INPUT_PREFIX}
                     helperText={isBudgetFirstVariant
                       ? 'Use the negotiated selling price if you already have one.'
                       : `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} estimate: ${currency(estimatedMonthly)}/mo`}
@@ -2727,6 +2965,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     value={targetMonthlyPayment}
                     min={0}
                     step={25}
+                    iconLeft={MONEY_INPUT_PREFIX}
                     helperText={isBudgetFirstVariant
                       ? `Try 500 for a $500 monthly budget. This supports about ${currency(affordableMsrp)} before tax and fees.`
                       : `This supports about ${currency(affordableMsrp)} before tax and fees.`}
@@ -2774,9 +3013,33 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   label: `${vehicle.trim || vehicle.drivetrain || vehicle.bodyStyle} · ${vehicle.bodyStyle} · ${currency(vehicle.priceMin)}`,
                 }))}
               />
-              <TextField label="Down payment" type="number" value={downPayment} min={0} step={500} onChange={(event) => setDownPayment(numberInput(event.target.value))} />
-              <TextField label="Trade-in value" type="number" value={tradeInValue} min={0} step={500} onChange={(event) => setTradeInValue(numberInput(event.target.value))} />
-              <TextField label="Amount owed on trade" type="number" value={amountOwed} min={0} step={500} onChange={(event) => setAmountOwed(numberInput(event.target.value))} />
+              <TextField
+                label="Down payment"
+                type="number"
+                value={downPayment}
+                min={0}
+                step={500}
+                iconLeft={MONEY_INPUT_PREFIX}
+                onChange={(event) => setDownPayment(numberInput(event.target.value))}
+              />
+              <TextField
+                label="Trade-in value"
+                type="number"
+                value={tradeInValue}
+                min={0}
+                step={500}
+                iconLeft={MONEY_INPUT_PREFIX}
+                onChange={(event) => setTradeInValue(numberInput(event.target.value))}
+              />
+              <TextField
+                label="Amount owed on trade"
+                type="number"
+                value={amountOwed}
+                min={0}
+                step={500}
+                iconLeft={MONEY_INPUT_PREFIX}
+                onChange={(event) => setAmountOwed(numberInput(event.target.value))}
+              />
             </div>
 
             <div className="aio-payment__trade-card">
@@ -2817,6 +3080,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 min={0}
                 step={0.1}
                 disabled={selectedFinanceId !== 'custom'}
+                iconRight={PERCENT_INPUT_SUFFIX}
                 onChange={(event) => setCustomApr(numberInput(event.target.value))}
               />
               <Select
@@ -2836,6 +3100,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 type="number"
                 value={salesTaxOverride || Math.round(calculatedSalesTax)}
                 min={0}
+                iconLeft={MONEY_INPUT_PREFIX}
                 onChange={(event) => setSalesTaxOverride(event.target.value)}
               />
               <TextField
@@ -2843,12 +3108,22 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 type="number"
                 value={feesOverride || stateRule.titleRegistrationFees}
                 min={0}
-                wrapperClassName="aio-payment__field--wide"
+                iconLeft={MONEY_INPUT_PREFIX}
                 onChange={(event) => setFeesOverride(event.target.value)}
+              />
+              <TextField
+                label="Dealer fees"
+                type="number"
+                value={dealerFeesOverride}
+                min={0}
+                placeholder="0"
+                iconLeft={MONEY_INPUT_PREFIX}
+                onChange={(event) => setDealerFeesOverride(event.target.value)}
               />
             </div>
             <p className="aio-payment__tax-note">
               {stateRule.name} rule: {TAX_RULE_LABELS[stateRule.taxRule]}. Taxable amount: {currency(taxableAmount)}.
+              Dealer fees are estimates until a dealer provides a written quote.
             </p>
 
             <div className="aio-payment__expert-tip">
@@ -2914,7 +3189,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <div><dt>Total principal</dt><dd>{currency(totalLoanAmount)}</dd></div>
               <div><dt>Total interest</dt><dd>{currency(totalLoanInterest)}</dd></div>
               <div><dt>Sales tax</dt><dd>{currency(salesTax)}</dd></div>
-              <div><dt>Fees</dt><dd>{currency(fees)}</dd></div>
+              <div><dt>Title, registration & fees</dt><dd>{currency(registrationFees)}</dd></div>
+              <div><dt>Dealer fees</dt><dd>{currency(dealerFees)}</dd></div>
               <div><dt>Applied rebates</dt><dd>{currency(rebateTotal)}</dd></div>
             </dl>
           </div>
@@ -2981,7 +3257,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               {leaseEstimatorMode === 'lease' ? (
                 <div className="aio-payment__lease-panel" role="tabpanel">
                   <div className="aio-payment__form-grid">
-                    <TextField label="MSRP" type="number" value={leaseMsrp} min={0} step={500} onChange={(event) => setLeaseMsrp(numberInput(event.target.value))} />
+                    <TextField
+                      label="MSRP"
+                      type="number"
+                      value={leaseMsrp}
+                      min={0}
+                      step={500}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setLeaseMsrp(numberInput(event.target.value))}
+                    />
                     <Select
                       label="Lease term"
                       value={leaseTerm}
@@ -2989,9 +3273,34 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       options={[24, 36, 39, 48].map((term) => ({ value: String(term), label: `${term} months` }))}
                     />
                     <TextField label="Money factor" type="number" value={leaseMoneyFactor} min={0} step={0.0001} onChange={(event) => setLeaseMoneyFactor(numberInput(event.target.value))} />
-                    <TextField label="Residual %" type="number" value={leaseResidualPercent} min={0} max={100} step={1} onChange={(event) => setLeaseResidualPercent(numberInput(event.target.value))} />
-                    <TextField label="Cash due at signing" type="number" value={leaseDueAtSigning} min={0} step={250} onChange={(event) => setLeaseDueAtSigning(numberInput(event.target.value))} />
-                    <TextField label="Lease fees" type="number" value={leaseFees} min={0} step={100} onChange={(event) => setLeaseFees(numberInput(event.target.value))} />
+                    <TextField
+                      label="Residual %"
+                      type="number"
+                      value={leaseResidualPercent}
+                      min={0}
+                      max={100}
+                      step={1}
+                      iconRight={PERCENT_INPUT_SUFFIX}
+                      onChange={(event) => setLeaseResidualPercent(numberInput(event.target.value))}
+                    />
+                    <TextField
+                      label="Cash due at signing"
+                      type="number"
+                      value={leaseDueAtSigning}
+                      min={0}
+                      step={250}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setLeaseDueAtSigning(numberInput(event.target.value))}
+                    />
+                    <TextField
+                      label="Lease fees"
+                      type="number"
+                      value={leaseFees}
+                      min={0}
+                      step={100}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setLeaseFees(numberInput(event.target.value))}
+                    />
                     <Select
                       label="Annual mileage"
                       value={leaseAnnualMileage}
@@ -3016,9 +3325,33 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               ) : (
                 <div className="aio-payment__lease-panel" role="tabpanel">
                   <div className="aio-payment__form-grid">
-                    <TextField label="Lease buyout price" type="number" value={buyoutPrice} min={0} step={500} onChange={(event) => setBuyoutPrice(numberInput(event.target.value))} />
-                    <TextField label="Buyout down payment" type="number" value={buyoutDownPayment} min={0} step={250} onChange={(event) => setBuyoutDownPayment(numberInput(event.target.value))} />
-                    <TextField label="Buyout APR" type="number" value={buyoutApr} min={0} step={0.1} onChange={(event) => setBuyoutApr(numberInput(event.target.value))} />
+                    <TextField
+                      label="Lease buyout price"
+                      type="number"
+                      value={buyoutPrice}
+                      min={0}
+                      step={500}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setBuyoutPrice(numberInput(event.target.value))}
+                    />
+                    <TextField
+                      label="Buyout down payment"
+                      type="number"
+                      value={buyoutDownPayment}
+                      min={0}
+                      step={250}
+                      iconLeft={MONEY_INPUT_PREFIX}
+                      onChange={(event) => setBuyoutDownPayment(numberInput(event.target.value))}
+                    />
+                    <TextField
+                      label="Buyout APR"
+                      type="number"
+                      value={buyoutApr}
+                      min={0}
+                      step={0.1}
+                      iconRight={PERCENT_INPUT_SUFFIX}
+                      onChange={(event) => setBuyoutApr(numberInput(event.target.value))}
+                    />
                     <Select
                       label="Buyout loan term"
                       value={buyoutTerm}
@@ -3115,7 +3448,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <dl className="aio-payment__summary-breakdown">
                 <div><dt>Vehicle price</dt><dd>{currency(workingPrice)}</dd></div>
                 <div><dt>Sales tax</dt><dd>{currency(salesTax)}</dd></div>
-                <div><dt>Title, registration & fees</dt><dd>{currency(fees)}</dd></div>
+                <div><dt>Title, registration & fees</dt><dd>{currency(registrationFees)}</dd></div>
+                <div><dt>Dealer fees</dt><dd>{currency(dealerFees)}</dd></div>
               </dl>
             </details>
 
