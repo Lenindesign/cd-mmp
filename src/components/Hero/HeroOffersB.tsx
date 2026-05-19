@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 import { getAprRangeLabel } from '../IncentivesModal/incentivesModalUtils';
@@ -21,10 +22,13 @@ const slugify = (value: string) =>
 const formatDealCount = (count: number, label: 'Buy' | 'Lease') =>
   `${count} ${label} ${count === 1 ? 'Deal' : 'Deals'}`;
 
-const renderDealCount = (count: number, label: 'Buy' | 'Lease') => (
-  <span className="hero__offers-b-deal-link-badge">
-    {label === 'Buy' ? `ALL BUYING DEAL (${count})` : `ALL ${label.toUpperCase()} DEALS (${count})`}
-  </span>
+const renderDealLink = (label: 'Buy' | 'Lease') => (
+  <>
+    <span className="hero__offers-b-deal-link-label">
+      {label === 'Buy' ? 'Browse all Buying Offers' : 'Browse all Leasing Offers'}
+    </span>
+    <ChevronRight className="hero__offers-b-deal-link-icon" size={14} aria-hidden />
+  </>
 );
 
 const getChipLabel = (type: Incentive['type']) => {
@@ -79,7 +83,7 @@ const HeroOffersB = ({
               className="hero__offers-b-deal-link"
               aria-label={`View ${formatDealCount(dealCounts.buy, 'Buy').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
             >
-              {renderDealCount(dealCounts.buy, 'Buy')}
+              {renderDealLink('Buy')}
             </Link>
           )}
           {dealCounts.lease > 0 && (
@@ -88,7 +92,7 @@ const HeroOffersB = ({
               className="hero__offers-b-deal-link"
               aria-label={`View ${formatDealCount(dealCounts.lease, 'Lease').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
             >
-              {renderDealCount(dealCounts.lease, 'Lease')}
+              {renderDealLink('Lease')}
             </Link>
           )}
         </nav>

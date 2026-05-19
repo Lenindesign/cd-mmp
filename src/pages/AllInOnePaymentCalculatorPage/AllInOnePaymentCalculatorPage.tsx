@@ -565,8 +565,8 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
     label: 'Loan setup',
     short: 'Loan',
     hint: 'Set down payment, APR, and how long you’ll finance.',
-    panelTitle: 'Set your loan terms',
-    panelIntro: 'Down payment, APR, and term length all change the monthly payment.',
+    panelTitle: 'Customize Your Loan',
+    panelIntro: 'Adjust your down payment, APR, and term to refine your estimate.',
   },
   {
     routeSlug: 'vehicle',
@@ -1849,9 +1849,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-vehicle-step__path-icon aio-payment__light-vehicle-step__path-icon--car" aria-hidden>
                           <Car size={22} strokeWidth={2} />
                         </span>
-                        <span className="aio-payment__light-vehicle-step__path-title">I know the vehicle</span>
+                        <span className="aio-payment__light-vehicle-step__path-title">I Have a Vehicle in Mind</span>
                         <span className="aio-payment__light-vehicle-step__path-copy">
-                          Pick a year, make, and model to compare against your budget.
+                          Choose a year, make, and model to compare against your budget.
                         </span>
                       </button>
                       <button
@@ -1870,7 +1870,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-vehicle-step__path-icon aio-payment__light-vehicle-step__path-icon--help" aria-hidden>
                           <CircleHelp size={22} strokeWidth={2} />
                         </span>
-                        <span className="aio-payment__light-vehicle-step__path-title">Still shopping?</span>
+                        <span className="aio-payment__light-vehicle-step__path-title">I Have a Preferred Body Style</span>
                         <span className="aio-payment__light-vehicle-step__path-copy">
                           Browse by body style and we&apos;ll compare a typical starting price against your budget.
                         </span>
