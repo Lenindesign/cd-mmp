@@ -635,7 +635,7 @@
   font-family: var(--font-heading);
   font-size: var(--aio-light-body);
   font-weight: var(--aio-light-heading-weight);
-  line-height: var(--line-height-tight);
+  line-height: 1.2;
   letter-spacing: 0;
   color: var(--color-dark);
 }
