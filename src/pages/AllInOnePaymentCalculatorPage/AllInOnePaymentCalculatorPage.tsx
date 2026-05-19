@@ -1057,26 +1057,46 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const selectedVehicleBudgetDelta = selectedVehicleMonthly - targetMonthlyPayment;
   const budgetFitStatus = selectedVehicleBudgetDelta > 10 ? 'over' : selectedVehicleBudgetDelta < -10 ? 'under' : 'fit';
   const budgetFitLabel = budgetFitStatus === 'over'
-    ? 'Above target'
+    ? 'Above budget'
     : budgetFitStatus === 'under'
-      ? 'Under target'
-      : 'On target';
+      ? 'Below budget'
+      : 'On budget';
   const budgetFitHeadline = budgetFitStatus === 'over'
-    ? `About ${currency(selectedVehicleBudgetDelta)}/mo over your target`
+    ? `About ${currency(selectedVehicleBudgetDelta)}/mo over your budget`
     : budgetFitStatus === 'under'
-      ? `About ${currency(Math.abs(selectedVehicleBudgetDelta))}/mo under your target`
-      : 'Close to your target';
+      ? `About ${currency(Math.abs(selectedVehicleBudgetDelta))}/mo below your budget`
+      : 'Close to your budget';
   const budgetFitCopy = budgetFitStatus === 'over'
     ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)}. Your budget supports about ${currency(affordableMsrp)} before tax and fees. Try a lower trim, more cash down, a longer term, or vehicles below that range.`
     : budgetFitStatus === 'under'
       ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)} and estimates near ${currency(selectedVehicleMonthly)}/mo with these assumptions.`
       : `${selectedVehicle.model} estimates near ${currency(selectedVehicleMonthly)}/mo with your selected down payment, term, taxes, and fees.`;
+  const estimateBudgetFitStatus = paymentDelta > 10 ? 'over' : paymentDelta < -10 ? 'under' : 'fit';
+  const estimateBudgetFitLabel = estimateBudgetFitStatus === 'over'
+    ? 'Above budget'
+    : estimateBudgetFitStatus === 'under'
+      ? 'Below budget'
+      : 'On budget';
+  const estimateBudgetFitHeadline = estimateBudgetFitStatus === 'over'
+    ? `About ${currency(paymentDelta)}/mo over your ${currency(targetMonthlyPayment)}/mo budget`
+    : estimateBudgetFitStatus === 'under'
+      ? `About ${currency(Math.abs(paymentDelta))}/mo below your ${currency(targetMonthlyPayment)}/mo budget`
+      : `Close to your ${currency(targetMonthlyPayment)}/mo budget`;
+  const estimateBudgetFitCopy = estimateBudgetFitStatus === 'over'
+    ? `Try a lower price, more cash down, a longer term, or vehicles under about ${currency(affordableMsrp)} before tax and fees.`
+    : estimateBudgetFitStatus === 'under'
+      ? `This estimate leaves room in your monthly budget with the current price, down payment, APR, and term.`
+      : 'This estimate is within about $10/mo of your target with the current assumptions.';
   const visibleBudgetFitStatus = lightHasVehicleSelection ? budgetFitStatus : 'fit';
   const visibleBudgetFitLabel = lightHasVehicleSelection ? budgetFitLabel : 'Pick a vehicle';
   const visibleBudgetFitHeadline = lightHasVehicleSelection ? budgetFitHeadline : 'Choose a vehicle to compare';
   const visibleBudgetFitCopy = lightHasVehicleSelection
     ? budgetFitCopy
     : `Your budget supports about ${currency(affordableMsrp)} before tax and fees. Choose a vehicle or browse by body style to compare it with your target.`;
+  const summaryBudgetFitStatus = startMode === 'monthly' ? visibleBudgetFitStatus : estimateBudgetFitStatus;
+  const summaryBudgetFitLabel = startMode === 'monthly' ? visibleBudgetFitLabel : estimateBudgetFitLabel;
+  const summaryBudgetFitHeadline = startMode === 'monthly' ? visibleBudgetFitHeadline : estimateBudgetFitHeadline;
+  const summaryBudgetFitCopy = startMode === 'monthly' ? visibleBudgetFitCopy : estimateBudgetFitCopy;
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
     const vehicleTaxableAmount = getTaxableAmount(vehiclePrice, tradeInValue, rebateTotal, stateRule.taxRule);
     const vehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : vehicleTaxableAmount * stateRule.rate;
@@ -2549,25 +2569,23 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       )}
                     </div>
                   </div>
-                {startMode === 'monthly' && (
-                  <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${visibleBudgetFitStatus}`}>
-                    <div
-                      className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${visibleBudgetFitStatus === 'over' ? 'alert' : 'success'}`}
-                      aria-hidden="true"
-                    >
-                      {visibleBudgetFitStatus === 'over' ? (
-                        <AlertTriangle size={16} strokeWidth={2.25} />
-                      ) : (
-                        <Check size={14} strokeWidth={3} />
-                      )}
-                    </div>
-                    <div className="aio-payment__light-budget-fit-text">
-                      <span className="aio-payment__light-budget-fit-label">{visibleBudgetFitLabel}</span>
-                      <strong className="aio-payment__light-budget-fit-headline">{visibleBudgetFitHeadline}</strong>
-                      <p className="aio-payment__light-budget-fit-copy">{visibleBudgetFitCopy}</p>
-                    </div>
+                <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${summaryBudgetFitStatus}`}>
+                  <div
+                    className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${summaryBudgetFitStatus === 'over' ? 'alert' : 'success'}`}
+                    aria-hidden="true"
+                  >
+                    {summaryBudgetFitStatus === 'over' ? (
+                      <AlertTriangle size={16} strokeWidth={2.25} />
+                    ) : (
+                      <Check size={14} strokeWidth={3} />
+                    )}
                   </div>
-                )}
+                  <div className="aio-payment__light-budget-fit-text">
+                    <span className="aio-payment__light-budget-fit-label">{summaryBudgetFitLabel}</span>
+                    <strong className="aio-payment__light-budget-fit-headline">{summaryBudgetFitHeadline}</strong>
+                    <p className="aio-payment__light-budget-fit-copy">{summaryBudgetFitCopy}</p>
+                  </div>
+                </div>
                 <a
                   className="payment-calc__cta aio-payment__light-result-shop"
                   href={lightShopHref}
