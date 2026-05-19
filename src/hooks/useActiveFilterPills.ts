@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import type { DealsFilterState } from '../components/DealsFilterModal';
-import { ELIGIBILITY_FILTER_OPTIONS } from '../utils/dealCalculations';
+import { BUYING_DEAL_TYPE_FILTER_OPTIONS, ELIGIBILITY_FILTER_OPTIONS } from '../utils/dealCalculations';
 
 export interface FilterPill {
   id: string;
@@ -25,6 +25,10 @@ const ELIGIBILITY_LABELS = Object.fromEntries(
   ELIGIBILITY_FILTER_OPTIONS.map(opt => [opt.value, opt.label]),
 ) as Record<string, string>;
 
+const BUYING_DEAL_TYPE_LABELS = Object.fromEntries(
+  BUYING_DEAL_TYPE_FILTER_OPTIONS.map(opt => [opt.value, opt.label]),
+) as Record<string, string>;
+
 const GLOBAL_DEFAULTS: DealsFilterState = {
   tab: 'best-deals',
   dealType: 'all',
@@ -41,6 +45,7 @@ const GLOBAL_DEFAULTS: DealsFilterState = {
   terms: [],
   creditTier: null,
   eligibilityTags: [],
+  buyingDealTypes: [],
   sortBy: 'a-z',
 };
 
@@ -112,6 +117,16 @@ export function useActiveFilterPills(
     for (const tm of filters.terms) {
       if (defaultTerms.has(tm)) continue;
       result.push({ id: `term-${tm}`, label: `${tm} mo`, onRemove: () => setFilters(f => ({ ...f, terms: f.terms.filter(x => x !== tm) })) });
+    }
+
+    const defaultBuyingDealTypes = new Set(defaults.buyingDealTypes ?? []);
+    for (const type of filters.buyingDealTypes ?? []) {
+      if (defaultBuyingDealTypes.has(type)) continue;
+      result.push({
+        id: `buying-deal-type-${type}`,
+        label: BUYING_DEAL_TYPE_LABELS[type] || type,
+        onRemove: () => setFilters(f => ({ ...f, buyingDealTypes: (f.buyingDealTypes ?? []).filter(x => x !== type) })),
+      });
     }
 
     if (filters.creditTier && filters.creditTier !== defaults.creditTier) {

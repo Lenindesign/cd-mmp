@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, inferCreditTier, creditTierQualifies, getVehicleOffers, offersToIncentives, findMatchingIncentiveId, sortDeals, getCashBackLabel, getEligibilityLabels, matchesBuyingDealTypeFilters, matchesEligibilityTags } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { EligibilityTag, VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
@@ -307,6 +307,7 @@ const ZeroAprDealsPage = () => {
         const dealTier = inferCreditTier(d.targetAudience);
         if (!creditTierQualifies(dealTier, f.creditTier)) return false;
       }
+      if (!matchesBuyingDealTypeFilters(f.buyingDealTypes, d.aprType)) return false;
       if (!matchesEligibilityTags(f.eligibilityTags, d.eligibilityTags)) return false;
       if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 1500) {
         if (d.estimatedMonthly < f.monthlyPaymentMin || d.estimatedMonthly > f.monthlyPaymentMax) return false;

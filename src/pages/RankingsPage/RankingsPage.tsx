@@ -152,6 +152,7 @@ const RANKINGS_OFFER_COUNTS = {
 
 const RANKINGS_INCENTIVE_SUBNAV_VARIANT = 'incentive-subnav';
 const RANKINGS_CD_CONTROL_VARIANT = 'cd-control';
+const RANKINGS_CD_CONTROL_B_VARIANT = 'cd-control-b';
 
 const CD_CONTROL_BODY_STYLE_NAV_ITEMS = [
   { key: 'suv', label: 'SUVs', title: 'SUVs', icon: BODY_STYLE_ICONS.suv, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control' },
@@ -182,6 +183,20 @@ const CD_CONTROL_SUBNAV_ITEMS = [
   { id: 'luxury', label: 'Luxury' },
   { id: 'safety', label: 'By Safety Rating' },
 ];
+
+const getCdControlBodyStyleNavItems = (variant: string | null) => {
+  if (variant !== RANKINGS_CD_CONTROL_B_VARIANT) {
+    return CD_CONTROL_BODY_STYLE_NAV_ITEMS;
+  }
+
+  return CD_CONTROL_BODY_STYLE_NAV_ITEMS.map((item) => ({
+    ...item,
+    path: item.path.replace(
+      `variant=${RANKINGS_CD_CONTROL_VARIANT}`,
+      `variant=${RANKINGS_CD_CONTROL_B_VARIANT}`,
+    ),
+  }));
+};
 
 // Helper to calculate combined MPG
 const getCombinedMpg = (mpg?: string): number | undefined => {
@@ -388,13 +403,17 @@ const RankingsPage = () => {
     return new URLSearchParams(location.search).get('variant');
   }, [location.search]);
   const showIncentiveSubnavVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_INCENTIVE_SUBNAV_VARIANT;
-  const showCdControlVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_CD_CONTROL_VARIANT;
-  const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant && !showCdControlVariant);
-  const isHeroDescriptionExpandable = bodyStyleKey === 'suv' && !showCdControlVariant;
+  const showCdControlBVariant = bodyStyleKey === 'suv' && rankingsVariant === RANKINGS_CD_CONTROL_B_VARIANT;
+  const showCdControlVariant = bodyStyleKey === 'suv' && (
+    rankingsVariant === RANKINGS_CD_CONTROL_VARIANT ||
+    rankingsVariant === RANKINGS_CD_CONTROL_B_VARIANT
+  );
+  const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant && (!showCdControlVariant || showCdControlBVariant));
+  const isHeroDescriptionExpandable = bodyStyleKey === 'suv' && (!showCdControlVariant || showCdControlBVariant);
   const bodyStyleNavRef = useRef<HTMLDivElement>(null);
   const bodyStyleNavItems = useMemo(() => {
     if (showCdControlVariant) {
-      return CD_CONTROL_BODY_STYLE_NAV_ITEMS;
+      return getCdControlBodyStyleNavItems(rankingsVariant);
     }
 
     const rankingItems = Object.entries(BODY_STYLE_CONFIG).map(([key, value]) => ({
@@ -436,7 +455,7 @@ const RankingsPage = () => {
         path: '/vehicles?type=used&sort=price-low',
       },
     ];
-  }, [showCdControlVariant]);
+  }, [rankingsVariant, showCdControlVariant]);
 
   const scrollBodyStyleNav = useCallback((direction: 'left' | 'right') => {
     bodyStyleNavRef.current?.scrollBy({
@@ -944,7 +963,7 @@ const RankingsPage = () => {
   );
 
   return (
-    <div className={`rankings-page${showCdControlVariant ? ' rankings-page--cd-control' : ''}`}>
+    <div className={`rankings-page${showCdControlVariant ? ' rankings-page--cd-control' : ''}${showCdControlBVariant ? ' rankings-page--cd-control-b' : ''}`}>
       <SEO
         title={`${pageTitle} | Car and Driver Rankings`}
         description={config.description}

@@ -21,6 +21,22 @@ export const ELIGIBILITY_FILTER_OPTIONS: { value: import('../services/_dealCompo
   { value: 'conquest', label: 'Conquest' },
 ];
 
+export type BuyingDealTypeFilter = 'zero-apr' | 'special-apr' | 'cash';
+
+export const BUYING_DEAL_TYPE_FILTER_OPTIONS: { value: BuyingDealTypeFilter; label: string }[] = [
+  { value: 'zero-apr', label: '0% APR Deals' },
+];
+
+export function matchesBuyingDealTypeFilters(
+  selectedTypes?: BuyingDealTypeFilter[],
+  dealType?: string,
+): boolean {
+  if (!selectedTypes || selectedTypes.length === 0) return true;
+  if (!dealType) return false;
+  const normalizedDealType = dealType === 'finance' ? 'special-apr' : dealType;
+  return selectedTypes.includes(normalizedDealType as BuyingDealTypeFilter);
+}
+
 const ELIGIBILITY_LABELS: Record<import('../services/_dealComposer').EligibilityTag, string> = {
   military: 'Military eligible',
   firstResponder: 'First responder bonus',

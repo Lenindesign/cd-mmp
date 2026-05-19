@@ -2444,6 +2444,67 @@
   line-height: 1.28;
 }
 
+.rankings-page--cd-control .rankings-page__description-wrap .rankings-page__description {
+  margin-bottom: var(--spacing-1);
+}
+
+.rankings-page--cd-control .rankings-page__description-toggle {
+  color: var(--color-black);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+.rankings-page--cd-control .rankings-page__description-toggle:hover,
+.rankings-page--cd-control .rankings-page__description-toggle:focus-visible {
+  color: var(--color-black);
+}
+
+.rankings-page--cd-control .rankings-page__description-toggle:focus-visible {
+  outline-color: var(--color-blue-cobalt);
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offers {
+  justify-content: center;
+  gap: var(--spacing-5);
+  margin: var(--spacing-6) auto 0;
+  color: var(--color-black);
+  text-align: left;
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offers-divider {
+  height: 46px;
+  background: var(--color-gray-300);
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offer-link {
+  min-height: 58px;
+  color: var(--color-black);
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offer-link:hover,
+.rankings-page--cd-control-b .rankings-page__hero-offer-link:focus-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offer-link:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 6px;
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offer-main {
+  color: var(--color-black);
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offer-chip {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.rankings-page--cd-control-b .rankings-page__hero-offer-badge {
+  color: var(--color-gray-600);
+}
+
 .rankings-page--cd-control .rankings-page__subnav--sticky {
   top: 0;
   z-index: 95;
@@ -2752,6 +2813,18 @@
 
   .rankings-page--cd-control .rankings-page__description {
     font-size: 18px;
+  }
+
+  .rankings-page--cd-control-b .rankings-page__hero-offers {
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    width: fit-content;
+    max-width: 100%;
+    margin-top: var(--spacing-5);
+  }
+
+  .rankings-page--cd-control-b .rankings-page__hero-offer-link {
+    min-height: 62px;
   }
 
   .rankings-page--cd-control .rankings-page__subnav-pills {

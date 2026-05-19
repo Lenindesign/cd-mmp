@@ -13,7 +13,7 @@ import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { DealCard } from '../../components/DealCard';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import { useAuth } from '../../contexts/AuthContext';
-import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts, getCashBackLabel, getEligibilityLabels, matchesEligibilityTags } from '../../utils/dealCalculations';
+import { parseMsrpMin, calcMonthly, parseTermMonths, buildSavingsText, getVehicleOffers, getGlobalDealCounts, getCashBackLabel, getEligibilityLabels, matchesBuyingDealTypeFilters, matchesEligibilityTags } from '../../utils/dealCalculations';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import type { EligibilityTag, VehicleOfferSummary, RateTier } from '../../utils/dealCalculations';
 import AdBanner from '../../components/AdBanner';
@@ -271,6 +271,7 @@ const AllDealsPage = () => {
       if (f.monthlyPaymentMin > 0 || f.monthlyPaymentMax < 1500) {
         if (d.monthlyNum < f.monthlyPaymentMin || d.monthlyNum > f.monthlyPaymentMax) return false;
       }
+      if (!matchesBuyingDealTypeFilters(f.buyingDealTypes, d.dealType)) return false;
       if (!matchesEligibilityTags(f.eligibilityTags, d.eligibilityTags)) return false;
       return true;
     });
