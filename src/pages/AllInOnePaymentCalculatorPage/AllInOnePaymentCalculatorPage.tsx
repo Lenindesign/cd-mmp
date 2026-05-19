@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, CreditCard, Info, Mail, RotateCcw, SkipForward, TrendingUp } from 'lucide-react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { AlertTriangle, ArrowLeft, ArrowRight, Car, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleHelp, CreditCard, Info, Mail, RotateCcw, SkipForward } from 'lucide-react';
 import { getAllVehicles, getRankingVehicles, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
@@ -50,6 +50,7 @@ interface LightAffordableDealCard {
 }
 
 type LightReviewAdviceId = 'extra-down' | 'lower-apr' | 'incentive-compare';
+type LightWizardStepSlug = 'goal' | 'loan' | 'vehicle' | 'trade' | 'review';
 
 interface LightReviewAdviceOption {
   id: LightReviewAdviceId;
@@ -541,6 +542,7 @@ function LightMonthlyBudgetField({ affordableMsrp, targetMonthlyPayment, onBudge
 }
 
 type LightWizardStepMeta = {
+  routeSlug: LightWizardStepSlug;
   label: string;
   short: string;
   hint: string;
@@ -551,13 +553,15 @@ type LightWizardStepMeta = {
 
 const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
   {
+    routeSlug: 'goal',
     label: 'Payment goal',
     short: 'Goal',
-    hint: 'Start with a monthly budget or vehicle price, then we’ll build the estimate from there.',
+    hint: 'Start with the vehicle price you have in mind — or work backward from a monthly payment.',
     panelTitle: 'Choose your starting point',
-    panelIntro: 'Start with a monthly budget or vehicle price, then we’ll build the estimate from there.',
+    panelIntro: 'Start with the vehicle price you have in mind — or work backward from a monthly payment.',
   },
   {
+    routeSlug: 'loan',
     label: 'Loan setup',
     short: 'Loan',
     hint: 'Set down payment, APR, and how long you’ll finance.',
@@ -565,6 +569,7 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
     panelIntro: 'Down payment, APR, and term length all change the monthly payment.',
   },
   {
+    routeSlug: 'vehicle',
     label: 'Vehicle',
     short: 'Vehicle',
     hint: 'Pick a year, make, and trim so incentives and pricing feel real, not generic.',
@@ -574,6 +579,7 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
     panelEyebrowSuffix: ' · OPTIONAL',
   },
   {
+    routeSlug: 'trade',
     label: 'Trade, taxes & fees',
     short: 'Trade',
     hint: 'Rough numbers are fine here. You can refine with a dealer later.',
@@ -582,11 +588,45 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
     panelEyebrowSuffix: ' · OPTIONAL',
   },
   {
+    routeSlug: 'review',
     label: 'Review',
     short: 'Review',
     hint: 'Stack on any deals, peek at the breakdown, then jump to cars that fit.',
     panelTitle: 'Review your estimate',
     panelIntro: 'Stack on any deals, peek at the breakdown, then jump to cars that fit.',
+  },
+];
+
+const LIGHT_WIZARD_STEP_ROUTE_BASE = '/auto-loan-calculator/light-steps';
+
+const clampLightWizardStep = (step: number) => Math.min(LIGHT_WIZARD_STEP_META.length, Math.max(1, step));
+
+const getLightWizardStepFromSlug = (stepSlug?: string) => {
+  if (!stepSlug) return 1;
+  const stepIndex = LIGHT_WIZARD_STEP_META.findIndex((stepMeta) => stepMeta.routeSlug === stepSlug);
+  return stepIndex >= 0 ? stepIndex + 1 : 1;
+};
+
+const getLightWizardStepPath = (step: number) => {
+  const stepMeta = LIGHT_WIZARD_STEP_META[clampLightWizardStep(step) - 1];
+  return `${LIGHT_WIZARD_STEP_ROUTE_BASE}/${stepMeta.routeSlug}`;
+};
+
+const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
+  {
+    title: 'Over 70 Years of Automotive Testing',
+    image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/2023-chevrolet-colorado-zr2-1x1-69175873b441b.jpg?format=jpg&resize=360:*',
+    alt: 'Car and Driver vehicle testing from inside a truck',
+  },
+  {
+    title: 'Real World Data and Expert Evaluations',
+    image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sim26521x1-691759e90706b.jpg?format=jpg&resize=360:*',
+    alt: 'Car and Driver evaluation notes on a clipboard',
+  },
+  {
+    title: 'Transparent Pricing and Expert Advice',
+    image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/behind-the-scenes-lightning-lap-2025-1x1-691758dc2f53a.jpg?format=jpg&resize=360:*',
+    alt: 'Car and Driver experts discussing vehicle testing',
   },
 ];
 
@@ -746,6 +786,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const isBudgetFirstVariant = variant === 'budget-first';
   const isLightStepsVariant = variant === 'light-steps';
   const isLightVariant = variant === 'light' || isLightStepsVariant;
+  const { stepSlug } = useParams<{ stepSlug?: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const initialLightWizardStep = isLightStepsVariant ? getLightWizardStepFromSlug(stepSlug) : 1;
   const vehicles = useMemo(() => getAllVehicles(), []);
   const stateRules = useMemo(() => buildStateRules(), []);
   const defaultVehicle = vehicles.find((vehicle) => vehicle.make === 'Honda' && vehicle.model === 'CR-V') ?? vehicles[0];
@@ -794,7 +838,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightWizardPanelRef = useRef<HTMLDivElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
-  const [lightWizardStep, setLightWizardStep] = useState(1);
+  const [lightWizardStep, setLightWizardStepState] = useState(initialLightWizardStep);
   const lightWizardStepPrevRef = useRef(lightWizardStep);
   const lightVehicleBodyStyleHeadingId = useId();
   const lightBreakdownHeadingId = useId();
@@ -808,6 +852,46 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
   const [showLightMobileTotals, setShowLightMobileTotals] = useState(false);
   const [lightReviewAdviceId, setLightReviewAdviceId] = useState<LightReviewAdviceId>('extra-down');
+  const goToLightWizardStep = useCallback((step: number, options?: { replace?: boolean }) => {
+    const nextStep = clampLightWizardStep(step);
+    setLightWizardStepState(nextStep);
+
+    if (!isLightStepsVariant) return;
+
+    const nextPath = getLightWizardStepPath(nextStep);
+    if (location.pathname === nextPath) return;
+
+    navigate(
+      {
+        pathname: nextPath,
+        search: location.search,
+        hash: location.hash,
+      },
+      { replace: options?.replace ?? false },
+    );
+  }, [isLightStepsVariant, location.hash, location.pathname, location.search, navigate]);
+
+  useEffect(() => {
+    if (!isLightStepsVariant) return;
+
+    const routeStep = getLightWizardStepFromSlug(stepSlug);
+    setLightWizardStepState((currentStep) => (currentStep === routeStep ? currentStep : routeStep));
+
+    if (!stepSlug) return;
+
+    const expectedPath = getLightWizardStepPath(routeStep);
+    if (location.pathname === expectedPath) return;
+
+    navigate(
+      {
+        pathname: expectedPath,
+        search: location.search,
+        hash: location.hash,
+      },
+      { replace: true },
+    );
+  }, [isLightStepsVariant, location.hash, location.pathname, location.search, navigate, stepSlug]);
+
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
     [defaultVehicle, selectedSlug, vehicles],
@@ -1047,13 +1131,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightShopLabel = shouldScrollToBudgetVehicles
     ? 'See cars in your budget'
     : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedVehicle.model}`;
-  const lightNextStepCopy = !lightHasVehicleSelection
-    ? `Choose a vehicle or start with cars near ${currency(lightAffordableBudgetCeiling)}.`
-    : shouldScrollToBudgetVehicles
-      ? `Start with cars near ${currency(affordableMsrp)} or choose a vehicle to compare.`
-      : startMode === 'monthly'
-        ? 'This vehicle is close enough to compare deals and inventory.'
-        : 'Review the due-at-signing and total cost before you shop.';
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
   const leaseDepreciationCharge = Math.max(0, leaseAdjustedCapCost - leaseResidualValue) / Math.max(1, leaseTerm);
@@ -1391,7 +1468,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   };
 
   const handleLightStartOver = () => {
-    setLightWizardStep(1);
+    goToLightWizardStep(1);
     setLightVehicleStepMode('known');
     setLightKnownVehicleSelected(false);
     setLightAffordableOffersSlug(null);
@@ -1608,7 +1685,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                 aria-current={isCurrent ? 'step' : undefined}
                                 aria-label={`${stepMeta.label}${isDone ? ', completed' : ''}${isCurrent ? ', current step' : ''}`}
                                 onClick={() => {
-                                  if (stepNumber <= lightWizardStep) setLightWizardStep(stepNumber);
+                                  if (stepNumber <= lightWizardStep) goToLightWizardStep(stepNumber);
                                 }}
                               >
                                 <span className="aio-payment__light-wizard-dot-ring" aria-hidden="true">
@@ -1668,7 +1745,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <Car size={22} strokeWidth={2} />
                     </span>
                     <span className="aio-payment__light-toggle-button-title">Start with vehicle price</span>
-                    <span className="aio-payment__light-toggle-button-copy">Know the sticker? Start there.</span>
+                    <span className="aio-payment__light-toggle-button-copy">Estimate payments, total cost, and payoff schedule.</span>
                   </button>
                   <button
                     type="button"
@@ -1682,7 +1759,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <CreditCard size={22} strokeWidth={2} />
                     </span>
                     <span className="aio-payment__light-toggle-button-title">Start with monthly budget</span>
-                    <span className="aio-payment__light-toggle-button-copy">Tell us what you can pay each month.</span>
+                    <span className="aio-payment__light-toggle-button-copy">Estimate costs and browse matching vehicles</span>
                   </button>
                 </div>
 
@@ -2360,7 +2437,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     type="button"
                     className="aio-payment__light-wizard-back-link"
                     disabled={lightWizardStep <= 1}
-                    onClick={() => setLightWizardStep((s) => Math.max(1, s - 1))}
+                    onClick={() => goToLightWizardStep(lightWizardStep - 1)}
                   >
                     <ArrowLeft size={18} strokeWidth={2} aria-hidden="true" />
                     Back
@@ -2380,7 +2457,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <button
                         type="button"
                         className="aio-payment__light-wizard-skip"
-                        onClick={() => setLightWizardStep(lightWizardStep === 3 ? 4 : 5)}
+                        onClick={() => goToLightWizardStep(lightWizardStep === 3 ? 4 : 5)}
                       >
                         <SkipForward size={18} strokeWidth={2} aria-hidden="true" />
                         Skip this step
@@ -2390,7 +2467,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <button
                         type="button"
                         className="aio-payment__light-wizard-primary aio-payment__light-wizard-primary--with-trailing-icon"
-                        onClick={() => setLightWizardStep((s) => Math.min(5, s + 1))}
+                        onClick={() => goToLightWizardStep(lightWizardStep + 1)}
                       >
                         Continue
                         <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
@@ -2464,10 +2541,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           <dd>{currency(totalCost)}</dd>
                         </div>
                       </dl>
-                      <p className="aio-payment__light-dealer-fee-note">
-                        Dealer fees can be extra and are not always known until a written quote. Add documentation fees,
-                        dealer-installed add-ons, protection packages, or market adjustments in the trade and fees step.
-                      </p>
+                      {(!isLightStepsVariant || lightWizardStep === 5) && (
+                        <p className="aio-payment__light-dealer-fee-note">
+                          Tip: Dealer fees can be extra and are not always known until a written quote. Add documentation fees,
+                          dealer-installed add-ons, protection packages, or market adjustments in the trade and fees step.
+                        </p>
+                      )}
                     </div>
                   </div>
                 {startMode === 'monthly' && (
@@ -2489,10 +2568,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
                   </div>
                 )}
-                <div className="aio-payment__light-result-footer">
-                  <TrendingUp className="aio-payment__light-result-footer-icon" size={18} strokeWidth={2} aria-hidden="true" />
-                  <p className="aio-payment__light-result-footer-copy">{lightNextStepCopy}</p>
-                </div>
                 <a
                   className="payment-calc__cta aio-payment__light-result-shop"
                   href={lightShopHref}
@@ -2594,7 +2669,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           </section>
         )}
 
-        {lightAffordableDealCards.length > 0 && (
+        {(!isLightStepsVariant || lightWizardStep === 5) && lightAffordableDealCards.length > 0 && (
             <section ref={lightAffordableSectionRef} className="aio-payment__light-affordable-section">
               <div className="container">
                 <section className="aio-payment__light-affordable" aria-labelledby="aio-payment-light-affordable-heading">
@@ -2679,6 +2754,39 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </section>
               </div>
             </section>
+        )}
+
+        {isLightStepsVariant && lightWizardStep === 1 && (
+          <section className="aio-payment__advantage-section" aria-labelledby="aio-payment-advantage-heading">
+            <div className="container">
+              <div className="aio-payment__advantage">
+                <h2 id="aio-payment-advantage-heading" className="aio-payment__faq-heading aio-payment__advantage-heading">
+                  THE CAR AND DRIVER ADVANTAGE
+                </h2>
+                <div className="aio-payment__advantage-points" role="list">
+                  {CAR_AND_DRIVER_ADVANTAGE_ITEMS.map((item) => (
+                    <article key={item.title} className="aio-payment__advantage-point" role="listitem">
+                      <img src={item.image} alt={item.alt} className="aio-payment__advantage-image" loading="lazy" />
+                      <h3>{item.title}</h3>
+                    </article>
+                  ))}
+                </div>
+                <p className="aio-payment__advantage-copy">
+                  For 70 years, millions of readers have trusted <em>Car and Driver</em>'s expertise in automotive testing and reviews.
+                  {' '}Now we have expanded our mission to help you shop for a new or used vehicle. The <em>Car and Driver</em> Marketplace will help you research, compare, and make a buying decision.
+                  {' '}What's special about our Marketplace is the wealth of real-world driving and testing data you can use to bolster your purchase decision, and it's all here on <a href="https://www.caranddriver.com/">CarandDriver.com</a>.
+                </p>
+                <div className="aio-payment__advantage-actions" aria-label="Shop Car and Driver Marketplace">
+                  <Link to="/vehicles?type=new&sort=rating" className="aio-payment__advantage-cta">
+                    Shop New Cars
+                  </Link>
+                  <Link to="/vehicles?type=used&sort=price-low" className="aio-payment__advantage-cta">
+                    Shop Used Cars
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
         )}
 
         <section className="aio-payment__light-faq-section" aria-labelledby="aio-payment-light-faq-heading">

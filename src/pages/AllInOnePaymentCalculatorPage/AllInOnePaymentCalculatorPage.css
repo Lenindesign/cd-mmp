@@ -704,29 +704,6 @@
   color: var(--color-gray-600);
 }
 
-.aio-payment__light-result-footer {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-2);
-  margin-top: var(--spacing-4);
-  padding-top: var(--spacing-4);
-  border-top: 1px solid var(--color-gray-200);
-}
-
-.aio-payment__light-result-footer-icon {
-  flex-shrink: 0;
-  margin-top: var(--spacing-0-5);
-  color: var(--color-blue-cobalt);
-}
-
-.aio-payment__light-result-footer-copy {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--aio-light-meta);
-  line-height: 1.45;
-  color: var(--color-gray-600);
-}
-
 .aio-payment__light-budget-status-label::before {
   content: '';
   flex: 0 0 auto;
@@ -2869,6 +2846,109 @@ label.aio-payment__light-loan-step__label {
   background: var(--color-warm-canvas);
 }
 
+.aio-payment__advantage-section {
+  padding: var(--spacing-10) 0 var(--spacing-12);
+  background: var(--color-warm-canvas);
+}
+
+.aio-payment__advantage {
+  display: grid;
+  gap: var(--spacing-7);
+}
+
+.aio-payment__advantage-heading.aio-payment__faq-heading {
+  margin-bottom: 0 !important;
+}
+
+.aio-payment__advantage-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-6);
+  align-items: start;
+}
+
+.aio-payment__advantage-point {
+  display: grid;
+  justify-items: center;
+  gap: var(--spacing-4);
+  text-align: center;
+}
+
+.aio-payment__advantage-image {
+  width: 150px;
+  height: 150px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--color-black) 14%, transparent);
+}
+
+.aio-payment__advantage-point h3 {
+  max-width: 270px;
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.15;
+}
+
+.aio-payment__advantage-copy {
+  max-width: 1180px;
+  margin: 0 auto;
+  color: var(--color-black);
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.aio-payment__advantage-copy a {
+  color: inherit;
+  font-style: italic;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.aio-payment__advantage-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-6);
+  flex-wrap: wrap;
+}
+
+.aio-payment__advantage-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 178px;
+  min-height: var(--spacing-11);
+  padding: 0 var(--spacing-6);
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-heading);
+  font-size: var(--aio-light-body);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.aio-payment__advantage-cta:hover,
+.aio-payment__advantage-cta:focus-visible {
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
+}
+
+.aio-payment__advantage-cta:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-1);
+}
+
 .aio-payment__light-affordable {
   display: grid;
   gap: var(--spacing-6);
@@ -3137,10 +3217,6 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-result-details {
   order: 2;
-}
-
-.aio-payment--light-steps .aio-payment__light-result-footer {
-  order: 3;
 }
 
 .aio-payment--light-steps .aio-payment__light-result-shop {
@@ -5190,6 +5266,43 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment__light-affordable-section {
     padding: var(--spacing-8) 0 var(--spacing-12);
+  }
+
+  .aio-payment__advantage-section {
+    padding: var(--spacing-8) 0 var(--spacing-10);
+  }
+
+  .aio-payment__advantage {
+    gap: var(--spacing-6);
+  }
+
+  .aio-payment__advantage-points {
+    gap: var(--spacing-3);
+  }
+
+  .aio-payment__advantage-image {
+    width: clamp(88px, 27vw, 128px);
+    height: auto;
+  }
+
+  .aio-payment__advantage-point h3 {
+    font-size: 16px;
+  }
+
+  .aio-payment__advantage-copy {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  .aio-payment__advantage-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+
+  .aio-payment__advantage-cta {
+    width: 100%;
+    min-width: 0;
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-actions {

@@ -204,6 +204,7 @@ function App() {
             <Route path="/auto-loan-calculator/all-in-one-budget" element={<AllInOnePaymentCalculatorBudgetPage />} />
             <Route path="/auto-loan-calculator/light" element={<AllInOnePaymentCalculatorLightPage />} />
             <Route path="/auto-loan-calculator/light-steps" element={<AllInOnePaymentCalculatorLightStepsPage />} />
+            <Route path="/auto-loan-calculator/light-steps/:stepSlug" element={<AllInOnePaymentCalculatorLightStepsPage />} />
             <Route path="/auto-loan-calculator/lease-vs-buy-ai" element={<LeaseVsBuyAIPage />} />
 
             {/* Deals Pages */}
