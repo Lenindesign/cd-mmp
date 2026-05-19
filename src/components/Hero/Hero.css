@@ -892,7 +892,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--color-black);
+  color: var(--color-blue-cobalt);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
@@ -912,7 +912,7 @@
 
 .hero__offers-b-deal-link:hover,
 .hero__offers-b-deal-link:focus-visible {
-  color: var(--color-gray-600);
+  color: var(--color-blue-cobalt-dark);
   text-decoration-color: currentColor;
 }
 
