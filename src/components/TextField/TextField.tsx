@@ -3,7 +3,7 @@ import './TextField.css';
 
 export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /** Field label */
-  label?: string;
+  label?: React.ReactNode;
   /** Helper text below the input */
   helperText?: string;
   /** Error message - shows error state when provided */
@@ -94,7 +94,7 @@ TextField.displayName = 'TextField';
  * A standardized textarea following the design system.
  */
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  label?: string;
+  label?: React.ReactNode;
   helperText?: string;
   error?: string;
   fullWidth?: boolean;
@@ -153,7 +153,7 @@ TextArea.displayName = 'TextArea';
  * A standardized select dropdown following the design system.
  */
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label?: string;
+  label?: React.ReactNode;
   helperText?: string;
   error?: string;
   fullWidth?: boolean;
@@ -229,4 +229,3 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(({
 Select.displayName = 'Select';
 
 export default TextField;
-

@@ -6,6 +6,7 @@ import { getVehicleIncentives, type Incentive } from '../../services/incentivesS
 import { DEFAULT_STATE_VEHICLE_TAX, STATE_VEHICLE_TAXES } from '../../data/stateVehicleTaxes';
 import { Button } from '../../components/Button';
 import { Select, TextField } from '../../components/TextField';
+import { useAuth } from '../../contexts/AuthContext';
 import DealCard, { type DealCardPayment } from '../../components/DealCard/DealCard';
 import HeroOffersB from '../../components/Hero/HeroOffersB';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
@@ -32,7 +33,15 @@ interface StateTaxRule {
   name: string;
   rate: number;
   titleRegistrationFees: number;
+  dealerFeesEstimate: number;
   taxRule: TaxableAmountRule;
+}
+
+interface UserAreaStateSource {
+  location?: string;
+  budgetPreferences?: {
+    stateCode?: string;
+  };
 }
 
 interface YearScheduleRow {
@@ -70,6 +79,7 @@ interface LightReviewAdviceOption {
 const CUSTOM_RATE_TERMS = [12, 24, 36, 48, 60, 72, 84];
 const USED_YEAR_OPTIONS = Array.from({ length: 11 }, (_, index) => String(2026 - index));
 const LIGHT_AFFORDABLE_DEAL_CARD_LIMIT = 9;
+const AREA_ESTIMATE_TOOLTIP_COPY = 'This is an estimation based on your area.';
 
 const TAX_RULE_LABELS: Record<TaxableAmountRule, string> = {
   'full-price': 'Tax full price',
@@ -88,6 +98,48 @@ const DEFAULT_TAX_RULE_BY_STATE: Record<string, TaxableAmountRule> = {
   TX: 'after-trade',
   WA: 'full-price',
 };
+
+const STATE_CODE_SET = new Set(STATE_VEHICLE_TAXES.map((state) => state.code));
+
+const getStateCodeFromLocation = (location?: string | null) => {
+  if (!location) return null;
+  const normalizedLocation = location.trim();
+  if (!normalizedLocation) return null;
+
+  const trailingStateCode = normalizedLocation.toUpperCase().match(/(?:^|[\s,])([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?\s*$/);
+  if (trailingStateCode && STATE_CODE_SET.has(trailingStateCode[1])) {
+    return trailingStateCode[1];
+  }
+
+  const stateNameMatch = STATE_VEHICLE_TAXES.find((state) =>
+    normalizedLocation.toLowerCase().includes(state.name.toLowerCase()),
+  );
+  if (stateNameMatch) return stateNameMatch.code;
+
+  return null;
+};
+
+const getUserAreaStateCode = (user?: UserAreaStateSource | null) => {
+  const preferredStateCode = user?.budgetPreferences?.stateCode?.toUpperCase();
+  if (preferredStateCode && STATE_CODE_SET.has(preferredStateCode)) return preferredStateCode;
+  return getStateCodeFromLocation(user?.location);
+};
+
+const renderAreaEstimateLabel = (label: string) => (
+  <span className="aio-payment__field-label-with-tooltip">
+    <span>{label}</span>
+    <span
+      className="aio-payment__info-tooltip aio-payment__info-tooltip--field"
+      tabIndex={0}
+      aria-label={AREA_ESTIMATE_TOOLTIP_COPY}
+    >
+      <Info size={14} aria-hidden="true" />
+      <span className="aio-payment__info-tooltip-text" role="tooltip">
+        {AREA_ESTIMATE_TOOLTIP_COPY}
+      </span>
+    </span>
+  </span>
+);
 
 const FAQS = [
   {
@@ -318,6 +370,7 @@ const buildStateRules = (): StateTaxRule[] =>
   STATE_VEHICLE_TAXES.map((state) => ({
     ...state,
     titleRegistrationFees: state.rate === 0 ? 180 : Math.round(220 + state.rate * 3800),
+    dealerFeesEstimate: state.rate === 0 ? 350 : Math.round((500 + state.rate * 2000) / 25) * 25,
     taxRule: DEFAULT_TAX_RULE_BY_STATE[state.code] ?? 'after-trade',
   }));
 
@@ -789,9 +842,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const { stepSlug } = useParams<{ stepSlug?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const initialLightWizardStep = isLightStepsVariant ? getLightWizardStepFromSlug(stepSlug) : 1;
   const vehicles = useMemo(() => getAllVehicles(), []);
   const stateRules = useMemo(() => buildStateRules(), []);
+  const userAreaStateCode = useMemo(
+    () => getUserAreaStateCode(user),
+    [user?.budgetPreferences?.stateCode, user?.location],
+  );
   const defaultVehicle = vehicles.find((vehicle) => vehicle.make === 'Honda' && vehicle.model === 'CR-V') ?? vehicles[0];
 
   const [condition, setCondition] = useState<VehicleCondition>('new');
@@ -819,7 +877,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [buyoutDownPayment, setBuyoutDownPayment] = useState(1000);
   const [buyoutApr, setBuyoutApr] = useState(7.2);
   const [buyoutTerm, setBuyoutTerm] = useState(60);
-  const [stateCode, setStateCode] = useState(DEFAULT_STATE_VEHICLE_TAX.code);
+  const [stateCode, setStateCode] = useState(userAreaStateCode ?? DEFAULT_STATE_VEHICLE_TAX.code);
   const [salesTaxOverride, setSalesTaxOverride] = useState('');
   const [feesOverride, setFeesOverride] = useState('');
   const [dealerFeesOverride, setDealerFeesOverride] = useState('');
@@ -833,6 +891,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [showAiDealAnalysis, setShowAiDealAnalysis] = useState(false);
   const [selectedIncentive, setSelectedIncentive] = useState<Incentive | null>(null);
   const summaryRef = useRef<HTMLElement>(null);
+  const hasAdjustedStateCodeRef = useRef(false);
   const affordableCarouselRef = useRef<HTMLDivElement>(null);
   const lightAffordableSectionRef = useRef<HTMLElement>(null);
   const lightWizardPanelRef = useRef<HTMLDivElement>(null);
@@ -852,6 +911,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
   const [showLightMobileTotals, setShowLightMobileTotals] = useState(false);
   const [lightReviewAdviceId, setLightReviewAdviceId] = useState<LightReviewAdviceId>('extra-down');
+  const handleStateCodeChange = useCallback((nextStateCode: string) => {
+    hasAdjustedStateCodeRef.current = true;
+    setStateCode(nextStateCode);
+  }, []);
+
+  useEffect(() => {
+    if (!userAreaStateCode || hasAdjustedStateCodeRef.current) return;
+    setStateCode(userAreaStateCode);
+  }, [userAreaStateCode]);
+
   const goToLightWizardStep = useCallback((step: number, options?: { replace?: boolean }) => {
     const nextStep = clampLightWizardStep(step);
     setLightWizardStepState(nextStep);
@@ -1007,7 +1076,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const rebateTotal = selectedCashTotal + tierCashBack;
   const stateRule = stateRules.find((state) => state.code === stateCode) ?? stateRules[0];
   const registrationFees = feesOverride ? numberInput(feesOverride) : stateRule.titleRegistrationFees;
-  const dealerFees = dealerFeesOverride ? numberInput(dealerFeesOverride) : 0;
+  const dealerFees = dealerFeesOverride ? numberInput(dealerFeesOverride) : stateRule.dealerFeesEstimate;
   const fees = registrationFees + dealerFees;
   const tradeEquity = tradeInValue - amountOwed;
   const affordableMsrp = getAffordablePriceFromMonthlyBudget({
@@ -1043,11 +1112,18 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const totalLoanPayments = estimatedMonthly * loanTerm;
   const totalLoanInterest = Math.max(0, totalLoanPayments - totalLoanAmount);
   const totalCost = netVehiclePriceAfterTradeAndOffers + taxesAndFees + totalLoanInterest;
+  const priceDerivedMonthlyBudget = Math.round(estimatedMonthly);
+  const syncedMonthlyBudgetFromPrice = Math.min(
+    LIGHT_MONTHLY_BUDGET_MAX,
+    Math.max(LIGHT_MONTHLY_BUDGET_MIN, priceDerivedMonthlyBudget),
+  );
+  const monthlyDerivedVehiclePrice = clampLightVehiclePrice(affordableMsrp);
   const financedCashDue = Math.min(downPayment, netPriceAfterTradeAndOffers);
   const upfrontCashDue = Math.min(downPayment, netVehiclePriceAfterTradeAndOffers) + taxesAndFees;
   const cashDueAtSigning = includeTaxesAndFeesInLoan ? financedCashDue : upfrontCashDue;
   const totalPaidFromPocket = cashDueAtSigning + totalLoanPayments;
-  const paymentDelta = estimatedMonthly - targetMonthlyPayment;
+  const budgetComparisonMonthlyPayment = startMode === 'price' ? priceDerivedMonthlyBudget : targetMonthlyPayment;
+  const paymentDelta = estimatedMonthly - budgetComparisonMonthlyPayment;
   const selectedVehicleTaxableAmount = getTaxableAmount(selectedVehicle.priceMin, tradeInValue, rebateTotal, stateRule.taxRule);
   const selectedVehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : selectedVehicleTaxableAmount * stateRule.rate;
   const selectedVehicleFinancedPrice = includeTaxesAndFeesInLoan ? selectedVehicle.priceMin + selectedVehicleSalesTax + fees : selectedVehicle.priceMin;
@@ -1071,32 +1147,35 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     : budgetFitStatus === 'under'
       ? `${selectedVehicle.model} starts around ${currency(selectedVehicle.priceMin)} and estimates near ${currency(selectedVehicleMonthly)}/mo with these assumptions.`
       : `${selectedVehicle.model} estimates near ${currency(selectedVehicleMonthly)}/mo with your selected down payment, term, taxes, and fees.`;
-  const estimateBudgetFitStatus = paymentDelta > 10 ? 'over' : paymentDelta < -10 ? 'under' : 'fit';
-  const estimateBudgetFitLabel = estimateBudgetFitStatus === 'over'
-    ? 'Above budget'
-    : estimateBudgetFitStatus === 'under'
-      ? 'Below budget'
-      : 'On budget';
-  const estimateBudgetFitHeadline = estimateBudgetFitStatus === 'over'
-    ? `About ${currency(paymentDelta)}/mo over your ${currency(targetMonthlyPayment)}/mo budget`
-    : estimateBudgetFitStatus === 'under'
-      ? `About ${currency(Math.abs(paymentDelta))}/mo below your ${currency(targetMonthlyPayment)}/mo budget`
-      : `Close to your ${currency(targetMonthlyPayment)}/mo budget`;
-  const estimateBudgetFitCopy = estimateBudgetFitStatus === 'over'
-    ? `Try a lower price, more cash down, a longer term, or vehicles under about ${currency(affordableMsrp)} before tax and fees.`
-    : estimateBudgetFitStatus === 'under'
-      ? `This estimate leaves room in your monthly budget with the current price, down payment, APR, and term.`
-      : 'This estimate is within about $10/mo of your target with the current assumptions.';
   const visibleBudgetFitStatus = lightHasVehicleSelection ? budgetFitStatus : 'fit';
   const visibleBudgetFitLabel = lightHasVehicleSelection ? budgetFitLabel : 'Pick a vehicle';
   const visibleBudgetFitHeadline = lightHasVehicleSelection ? budgetFitHeadline : 'Choose a vehicle to compare';
   const visibleBudgetFitCopy = lightHasVehicleSelection
     ? budgetFitCopy
     : `Your budget supports about ${currency(affordableMsrp)} before tax and fees. Choose a vehicle or browse by body style to compare it with your target.`;
-  const summaryBudgetFitStatus = startMode === 'monthly' ? visibleBudgetFitStatus : estimateBudgetFitStatus;
-  const summaryBudgetFitLabel = startMode === 'monthly' ? visibleBudgetFitLabel : estimateBudgetFitLabel;
-  const summaryBudgetFitHeadline = startMode === 'monthly' ? visibleBudgetFitHeadline : estimateBudgetFitHeadline;
-  const summaryBudgetFitCopy = startMode === 'monthly' ? visibleBudgetFitCopy : estimateBudgetFitCopy;
+  const summaryBudgetFitStatus = startMode === 'monthly' ? visibleBudgetFitStatus : 'fit';
+  const summaryBudgetFitLabel = startMode === 'monthly' ? visibleBudgetFitLabel : 'Budget from price';
+  const summaryBudgetFitHeadline = startMode === 'monthly'
+    ? visibleBudgetFitHeadline
+    : `${currency(priceDerivedMonthlyBudget)}/mo estimate from this vehicle price`;
+  const summaryBudgetFitCopy = startMode === 'monthly'
+    ? visibleBudgetFitCopy
+    : 'Change the vehicle price or loan terms and the monthly budget updates with it.';
+
+  useEffect(() => {
+    if (!isLightVariant || startMode !== 'price') return;
+    setTargetMonthlyPayment((current) => (
+      current === syncedMonthlyBudgetFromPrice ? current : syncedMonthlyBudgetFromPrice
+    ));
+  }, [isLightVariant, startMode, syncedMonthlyBudgetFromPrice]);
+
+  useEffect(() => {
+    if (!isLightVariant || startMode !== 'monthly') return;
+    setPrice((current) => (
+      current === monthlyDerivedVehiclePrice ? current : monthlyDerivedVehiclePrice
+    ));
+  }, [isLightVariant, monthlyDerivedVehiclePrice, startMode]);
+
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
     const vehicleTaxableAmount = getTaxableAmount(vehiclePrice, tradeInValue, rebateTotal, stateRule.taxRule);
     const vehicleSalesTax = salesTaxOverride ? numberInput(salesTaxOverride) : vehicleTaxableAmount * stateRule.rate;
@@ -2168,7 +2247,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <Select
                           label="Your state"
                           value={stateCode}
-                          onChange={(event) => setStateCode(event.target.value)}
+                          onChange={(event) => handleStateCodeChange(event.target.value)}
                           options={stateRules.map((state) => ({ value: state.code, label: state.name }))}
                         />
                         <TextField
@@ -2189,11 +2268,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           onChange={(event) => setFeesOverride(event.target.value)}
                         />
                         <TextField
-                          label="Dealer fees"
+                          label={renderAreaEstimateLabel('Dealer fees')}
                           type="number"
-                          value={dealerFeesOverride}
+                          value={dealerFeesOverride || stateRule.dealerFeesEstimate}
                           min={0}
-                          placeholder="0"
                           iconLeft={MONEY_INPUT_PREFIX}
                           onChange={(event) => setDealerFeesOverride(event.target.value)}
                         />
@@ -2271,7 +2349,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <Select
                       label="Your state"
                       value={stateCode}
-                      onChange={(event) => setStateCode(event.target.value)}
+                      onChange={(event) => handleStateCodeChange(event.target.value)}
                       options={stateRules.map((state) => ({ value: state.code, label: state.name }))}
                     />
                     <TextField
@@ -2291,11 +2369,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       onChange={(event) => setFeesOverride(event.target.value)}
                     />
                     <TextField
-                      label="Dealer fees"
+                      label={renderAreaEstimateLabel('Dealer fees')}
                       type="number"
-                      value={dealerFeesOverride}
+                      value={dealerFeesOverride || stateRule.dealerFeesEstimate}
                       min={0}
-                      placeholder="0"
                       iconLeft={MONEY_INPUT_PREFIX}
                       onChange={(event) => setDealerFeesOverride(event.target.value)}
                     />
@@ -3218,7 +3295,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <Select
                 label="Your state"
                 value={stateCode}
-                onChange={(event) => setStateCode(event.target.value)}
+                onChange={(event) => handleStateCodeChange(event.target.value)}
                 options={stateRules.map((state) => ({ value: state.code, label: state.name }))}
               />
               <TextField
@@ -3238,11 +3315,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 onChange={(event) => setFeesOverride(event.target.value)}
               />
               <TextField
-                label="Dealer fees"
+                label={renderAreaEstimateLabel('Dealer fees')}
                 type="number"
-                value={dealerFeesOverride}
+                value={dealerFeesOverride || stateRule.dealerFeesEstimate}
                 min={0}
-                placeholder="0"
                 iconLeft={MONEY_INPUT_PREFIX}
                 onChange={(event) => setDealerFeesOverride(event.target.value)}
               />
