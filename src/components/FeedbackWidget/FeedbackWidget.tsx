@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import type { SitepingInstance, SitepingStore } from '@siteping/widget';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
 
 /**
@@ -27,7 +28,226 @@ import { isSupabaseConfigured, supabase } from '../../lib/supabase';
  */
 const STORAGE_FLAG_KEY = 'cd-mmp:feedback';
 const STORAGE_DATA_KEY = 'cd-mmp:feedback:data';
+const PENDING_FEEDBACK_KEY = 'cd-mmp:feedback:pending-id';
 const PROJECT_NAME = 'cd-mmp-review';
+
+type FeedbackRecord = Awaited<ReturnType<SitepingStore['createFeedback']>>;
+
+function withOpenSitepingShadow<T>(callback: () => T): T {
+  const originalAttachShadow = Element.prototype.attachShadow;
+
+  Element.prototype.attachShadow = function attachSitepingShadow(this: Element, init: ShadowRootInit) {
+    if (this.localName === 'siteping-widget' && init.mode === 'closed') {
+      return originalAttachShadow.call(this, { ...init, mode: 'open' });
+    }
+
+    return originalAttachShadow.call(this, init);
+  } as typeof Element.prototype.attachShadow;
+
+  try {
+    return callback();
+  } finally {
+    Element.prototype.attachShadow = originalAttachShadow;
+  }
+}
+
+function getSitepingShadowRoot(): ShadowRoot | null {
+  return document.querySelector('siteping-widget')?.shadowRoot ?? null;
+}
+
+function getComparablePageUrl(url: URL): string {
+  const normalized = new URL(url.toString());
+  normalized.hash = '';
+  normalized.searchParams.delete('review');
+  return normalized.toString();
+}
+
+function getFeedbackTargetUrl(feedback: FeedbackRecord): URL | null {
+  try {
+    return new URL(feedback.url, window.location.href);
+  } catch {
+    return null;
+  }
+}
+
+function isCurrentFeedbackPage(feedback: FeedbackRecord): boolean {
+  const targetUrl = getFeedbackTargetUrl(feedback);
+  if (!targetUrl) return true;
+
+  return getComparablePageUrl(targetUrl) === getComparablePageUrl(new URL(window.location.href));
+}
+
+function scrollToFeedbackAnnotation(feedback: FeedbackRecord) {
+  const annotation = feedback.annotations[0];
+  if (!annotation) return;
+
+  window.scrollTo({
+    left: annotation.scrollX,
+    top: annotation.scrollY,
+    behavior: 'smooth',
+  });
+}
+
+function navigateToFeedbackPage(feedback: FeedbackRecord) {
+  const targetUrl = getFeedbackTargetUrl(feedback);
+  if (!targetUrl) return;
+
+  try {
+    window.sessionStorage.setItem(PENDING_FEEDBACK_KEY, feedback.id);
+  } catch {
+    // Ignore storage errors; navigation still works without marker restoration.
+  }
+
+  window.location.assign(targetUrl.toString());
+}
+
+function installFeedbackUrlNavigation(instance: SitepingInstance, store: SitepingStore): () => void {
+  const shadowRoot = getSitepingShadowRoot();
+  if (!shadowRoot) return () => {};
+
+  let feedbacksById = new Map<string, FeedbackRecord>();
+  let refreshPromise: Promise<void> | null = null;
+  const timeouts = new Set<number>();
+
+  const schedule = (callback: () => void, delay: number) => {
+    const timeoutId = window.setTimeout(() => {
+      timeouts.delete(timeoutId);
+      callback();
+    }, delay);
+    timeouts.add(timeoutId);
+  };
+
+  const refreshFeedbackCache = () => {
+    if (!refreshPromise) {
+      refreshPromise = store
+        .getFeedbacks({ projectName: PROJECT_NAME, limit: 100 })
+        .then(({ feedbacks }) => {
+          feedbacksById = new Map(feedbacks.map((feedback) => [feedback.id, feedback]));
+        })
+        .finally(() => {
+          refreshPromise = null;
+        });
+    }
+
+    return refreshPromise;
+  };
+
+  const getFeedback = async (feedbackId: string) => {
+    let feedback = feedbacksById.get(feedbackId);
+    if (feedback) return feedback;
+
+    await refreshFeedbackCache();
+    return feedbacksById.get(feedbackId);
+  };
+
+  const handleFeedbackCard = async (feedbackId: string) => {
+    const feedback = await getFeedback(feedbackId);
+    if (!feedback) return;
+
+    if (isCurrentFeedbackPage(feedback)) {
+      scrollToFeedbackAnnotation(feedback);
+      return;
+    }
+
+    navigateToFeedbackPage(feedback);
+  };
+
+  const onCardClick = (event: Event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest('button, [data-action]')) return;
+
+    const card = target.closest<HTMLElement>('.sp-card');
+    const feedbackId = card?.dataset.feedbackId;
+    if (!feedbackId) return;
+
+    const cachedFeedback = feedbacksById.get(feedbackId);
+    if (cachedFeedback && isCurrentFeedbackPage(cachedFeedback)) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    void handleFeedbackCard(feedbackId);
+  };
+
+  const onCardKeydown = (event: Event) => {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.key !== 'Enter' && keyboardEvent.key !== ' ') return;
+
+    const target = keyboardEvent.target;
+    if (!(target instanceof HTMLElement) || !target.classList.contains('sp-card')) return;
+
+    const feedbackId = target.dataset.feedbackId;
+    if (!feedbackId) return;
+
+    const cachedFeedback = feedbacksById.get(feedbackId);
+    if (cachedFeedback && isCurrentFeedbackPage(cachedFeedback)) return;
+
+    keyboardEvent.preventDefault();
+    keyboardEvent.stopImmediatePropagation();
+    void handleFeedbackCard(feedbackId);
+  };
+
+  const restorePendingFeedback = async () => {
+    let pendingFeedbackId: string | null = null;
+    try {
+      pendingFeedbackId = window.sessionStorage.getItem(PENDING_FEEDBACK_KEY);
+      if (pendingFeedbackId) window.sessionStorage.removeItem(PENDING_FEEDBACK_KEY);
+    } catch {
+      return;
+    }
+
+    if (!pendingFeedbackId) return;
+
+    instance.open();
+    await refreshFeedbackCache();
+
+    const feedback = feedbacksById.get(pendingFeedbackId);
+    if (feedback && isCurrentFeedbackPage(feedback)) {
+      schedule(() => scrollToFeedbackAnnotation(feedback), 350);
+    }
+
+    const scrollCardIntoView = (attempt = 0) => {
+      const activeShadowRoot = getSitepingShadowRoot();
+      const escapedFeedbackId = CSS.escape(pendingFeedbackId);
+      const card = activeShadowRoot?.querySelector<HTMLElement>(`.sp-card[data-feedback-id="${escapedFeedbackId}"]`);
+
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('sp-anim-flash');
+        return;
+      }
+
+      if (attempt < 10) schedule(() => scrollCardIntoView(attempt + 1), 250);
+    };
+
+    scrollCardIntoView();
+  };
+
+  void refreshFeedbackCache();
+  schedule(() => {
+    void restorePendingFeedback();
+  }, 0);
+
+  const unsubscribeOpen = instance.on('panel:open', () => {
+    void refreshFeedbackCache();
+  });
+
+  const unsubscribeFeedbackSent = instance.on('feedback:sent', (feedback) => {
+    feedbacksById.set(feedback.id, feedback as unknown as FeedbackRecord);
+  });
+
+  shadowRoot.addEventListener('click', onCardClick, true);
+  shadowRoot.addEventListener('keydown', onCardKeydown, true);
+
+  return () => {
+    shadowRoot.removeEventListener('click', onCardClick, true);
+    shadowRoot.removeEventListener('keydown', onCardKeydown, true);
+    unsubscribeOpen();
+    unsubscribeFeedbackSent();
+    timeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    timeouts.clear();
+  };
+}
 
 function isFeedbackEnabled(): boolean {
   if (typeof window === 'undefined') return false;
@@ -100,16 +320,20 @@ export default function FeedbackWidget() {
         );
       }
 
-      const instance = initSiteping({
+      const instance = withOpenSitepingShadow(() => initSiteping({
         store,
         projectName: PROJECT_NAME,
         position: 'bottom-right',
         accentColor: '#1B5F8A',
         theme: 'light',
         forceShow: true,
-      });
+      }));
+      const destroyFeedbackUrlNavigation = installFeedbackUrlNavigation(instance, store);
 
-      destroy = () => instance.destroy();
+      destroy = () => {
+        destroyFeedbackUrlNavigation();
+        instance.destroy();
+      };
     });
 
     return () => {
