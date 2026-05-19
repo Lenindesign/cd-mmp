@@ -102,7 +102,7 @@ const DealsFilterModal = ({
     bodyType: false,
     monthlyPayment: false,
     make: false,
-    buyingDealType: true,
+    buyingDealType: false,
     term: false,
     dueAtSigning: false,
     fuelType: false,
