@@ -2073,6 +2073,12 @@ label.aio-payment__light-loan-step__label {
   line-height: var(--line-height-normal);
 }
 
+.aio-payment__light-trade-step__dealer-note strong {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+}
+
 .aio-payment__light-dealer-fee-note {
   margin-top: var(--spacing-3);
   font-size: var(--font-size-xs);
@@ -3139,7 +3145,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-card {
   max-width: none;
   padding: clamp(var(--spacing-7), 3vw, var(--spacing-10));
-  gap: var(--spacing-8);
+  gap: var(--spacing-6);
   border: 0;
   border-radius: 0;
   background: var(--color-white);
@@ -3285,7 +3291,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__section-heading--wizard + .aio-payment__light-start-panel {
-  margin-top: var(--spacing-1);
+  margin-top: 0;
 }
 
 .aio-payment--light-steps .aio-payment__section-heading--wizard .aio-payment__light-wizard-step-eyebrow {

@@ -285,6 +285,30 @@ const getTrimOptionLabel = (vehicle: Vehicle, trim: TrimData, trimPrice: number,
   return canUseCatalogPrice ? `${label} · ${currency(trimPrice)}` : label;
 };
 
+const getRegistrationDealerFeeGuidance = (stateFeeEstimate: number) => {
+  if (stateFeeEstimate <= 500) {
+    return {
+      label: 'Low Fee States',
+      range: '~$300-$500',
+      copy: 'Registration and dealer fees in your state typically range from $300-$500, though final dealer charges and add-ons may vary.',
+    };
+  }
+
+  if (stateFeeEstimate <= 900) {
+    return {
+      label: 'Medium Fee States',
+      range: '~$600-$900',
+      copy: 'Registration and dealer fees in your state typically range from $600-$900, depending on the dealer, vehicle, and local fees.',
+    };
+  }
+
+  return {
+    label: 'High Fee States',
+    range: '~$1,000-$1,500',
+    copy: 'Registration and dealer fees in your state are often higher and may range from $1,000-$1,500 depending on dealer charges and add-ons.',
+  };
+};
+
 const parseApr = (value: string) => {
   const match = value.match(/([\d.]+)%/);
   return match ? Number(match[1]) : 0;
@@ -1164,6 +1188,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const registrationFees = feesOverride ? numberInput(feesOverride) : stateRule.titleRegistrationFees;
   const dealerFees = dealerFeesOverride ? numberInput(dealerFeesOverride) : stateRule.dealerFeesEstimate;
   const defaultEstimatedRegistrationDealerFees = registrationFees + dealerFees;
+  const registrationDealerFeeGuidance = getRegistrationDealerFeeGuidance(defaultEstimatedRegistrationDealerFees);
   const fees = estimatedFeesOverride ? numberInput(estimatedFeesOverride) : defaultEstimatedRegistrationDealerFees;
   const tradeEquity = tradeInValue - amountOwed;
   const affordableMsrp = getAffordablePriceFromMonthlyBudget({
@@ -2409,9 +2434,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
 
                     <p className="aio-payment__light-trade-step__dealer-note">
-                      Registration and dealer fees are not always known until you get a written quote. Documentation fees,
-                      dealer-installed add-ons, protection packages, market adjustments, and other charges may be extra; add them here
-                      if they appear on the quote.
+                      <strong>
+                        {registrationDealerFeeGuidance.label} ({registrationDealerFeeGuidance.range}):
+                      </strong>{' '}
+                      {registrationDealerFeeGuidance.copy}
                     </p>
 
                     <div className="aio-payment__light-trade-step__finance-box">
@@ -2966,14 +2992,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   {' '}Now we have expanded our mission to help you shop for a new or used vehicle. The <em>Car and Driver</em> Marketplace will help you research, compare, and make a buying decision.
                   {' '}What's special about our Marketplace is the wealth of real-world driving and testing data you can use to bolster your purchase decision, and it's all here on <a href="https://www.caranddriver.com/">CarandDriver.com</a>.
                 </p>
-                <div className="aio-payment__advantage-actions" aria-label="Shop Car and Driver Marketplace">
-                  <Link to="/vehicles?type=new&sort=rating" className="aio-payment__advantage-cta">
-                    Shop New Cars
-                  </Link>
-                  <Link to="/vehicles?type=used&sort=price-low" className="aio-payment__advantage-cta">
-                    Shop Used Cars
-                  </Link>
-                </div>
               </div>
             </div>
           </section>
