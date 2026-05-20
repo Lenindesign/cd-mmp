@@ -17,6 +17,8 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
       links: [
         { label: 'Car Rankings', path: '/rankings' },
         { label: 'SUV Rankings', path: '/rankings' },
+        { label: 'SUV Rankings Control', path: '/rankings/suv?variant=cd-control' },
+        { label: 'SUV Rankings Control B', path: '/rankings/suv?variant=cd-control-b' },
         { label: 'SUV Rankings Incentive Nav', path: '/rankings/suv?variant=incentive-subnav' },
         { label: 'Truck Rankings', path: '/rankings' },
         { label: 'Buying Deals', path: BEST_BUYING_DEALS_PATH },
@@ -177,7 +179,6 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <a href="#" className="footer__legal-link">Accessibility</a>
               <Link to="/design-system" className="footer__legal-link">Design System</Link>
               <Link to="/rankings" className="footer__legal-link">Vehicle Ranking</Link>
-              <Link to="/rankings/suv?variant=cd-control" className="footer__legal-link">SUV Rankings Control</Link>
               <Link to="/admin/vehicle-ratings" className="footer__legal-link">Editor Portal</Link>
               <Link to="/2026/Chevrolet/Trax?offersVersion=a" className="footer__legal-link">Incentives Version A</Link>
               <Link to="/2026/Chevrolet/Trax?modalVersion=b" className="footer__legal-link">Modal Version B</Link>
@@ -190,9 +191,6 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
 };
 
 export default Footer;
-
-
-
 
 
 
