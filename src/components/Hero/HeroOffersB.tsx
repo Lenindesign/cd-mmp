@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ChevronDown, ChevronRight, ChevronUp, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 import { getAprRangeLabel } from '../IncentivesModal/incentivesModalUtils';
@@ -13,6 +13,8 @@ interface HeroOffersBProps {
   title?: string | null;
   showBuyDealLink?: boolean;
   showLeaseDealLink?: boolean;
+  showMoreDealsAccordion?: boolean;
+  showToggleIndicator?: boolean;
 }
 
 const stripQualifier = (v: string) =>
@@ -42,6 +44,23 @@ const getChipLabel = (type: Incentive['type']) => {
   }
 };
 
+const getOfferDisplayLabel = (incentive: Incentive) => {
+  const value = stripQualifier(incentive.value);
+
+  if (incentive.type === 'finance') {
+    return getAprRangeLabel(incentive);
+  }
+
+  if (incentive.type === 'cash') {
+    return /\bcash\s*back\b/i.test(value) ? value : `${value} cash back`;
+  }
+
+  const termMatch = (incentive.terms || '').match(/(\d+)[\s-]*month/i)
+    || (incentive.description || '').match(/(\d+)[\s-]*month/i)
+    || (incentive.title || '').match(/(\d+)[\s-]*month/i);
+  return termMatch ? `${value} for ${termMatch[1]} mo.` : value;
+};
+
 const HeroOffersB = ({
   vehicleIncentives,
   onOfferClick,
@@ -50,13 +69,21 @@ const HeroOffersB = ({
   title = 'SPECIAL DEALS AND INCENTIVES',
   showBuyDealLink = true,
   showLeaseDealLink = true,
+  showMoreDealsAccordion = false,
+  showToggleIndicator = false,
 }: HeroOffersBProps) => {
+  const [showMoreDeals, setShowMoreDeals] = useState(false);
   const topOffers = useMemo(() => {
     const finance = vehicleIncentives.incentives.find(i => i.type === 'finance');
     const lease = vehicleIncentives.incentives.find(i => i.type === 'lease');
     const cash = vehicleIncentives.incentives.find(i => i.type === 'cash');
     return [finance, lease, cash].filter(Boolean) as Incentive[];
   }, [vehicleIncentives]);
+
+  const moreOffers = useMemo(() => {
+    const topOfferIds = new Set(topOffers.map((incentive) => incentive.id));
+    return vehicleIncentives.incentives.filter((incentive) => !topOfferIds.has(incentive.id));
+  }, [topOffers, vehicleIncentives.incentives]);
 
   const dealCounts = useMemo(() => {
     return {
@@ -79,6 +106,62 @@ const HeroOffersB = ({
   const showBuyLink = showBuyDealLink && dealCounts.buy > 0;
   const showLeaseLink = showLeaseDealLink && dealCounts.lease > 0;
   const showHeader = Boolean(title) || showBuyLink || showLeaseLink;
+  const showMoreDealsControl = showMoreDealsAccordion && moreOffers.length > 0;
+  const moreDealsId = `hero-offers-b-more-${slugify(vehicleIncentives.make)}-${slugify(vehicleIncentives.model)}`;
+
+  const renderOfferPill = (inc: Incentive) => {
+    const isSelected = selectedOfferIds.includes(inc.id);
+    const label = getOfferDisplayLabel(inc);
+    const showInlineToggleIndicator = showToggleIndicator && !onApplyOffer;
+
+    return (
+      <div
+        key={inc.id}
+        role="button"
+        aria-pressed={isSelected}
+        tabIndex={0}
+        className={`hero__offers-b-pill ${isSelected ? 'hero__offers-b-pill--selected' : ''}`}
+        onClick={() => onOfferClick(inc)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onOfferClick(inc);
+          }
+        }}
+      >
+        <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
+        <span className="hero__offers-b-pill-text">{label}</span>
+        <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
+        {showInlineToggleIndicator && (
+          <span
+            className={`hero__offers-b-pill-toggle ${isSelected ? 'hero__offers-b-pill-toggle--selected' : ''}`}
+            aria-hidden="true"
+          >
+            {isSelected ? <Minus size={14} strokeWidth={3} /> : <Plus size={14} strokeWidth={3} />}
+          </span>
+        )}
+        {isSelected && !onApplyOffer && (
+          <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
+            Applied
+          </span>
+        )}
+        {onApplyOffer && (
+          <span className="hero__offers-b-pill-actions">
+            <button
+              type="button"
+              className="hero__offers-b-pill-apply"
+              onClick={(event) => {
+                event.stopPropagation();
+                onApplyOffer(inc);
+              }}
+            >
+              {isSelected ? 'Applied' : 'Apply'}
+            </button>
+          </span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="hero__offers-b">
@@ -110,60 +193,27 @@ const HeroOffersB = ({
         </div>
       )}
       <div className="hero__offers-b-pills">
-        {topOffers.map(inc => {
-          const isSelected = selectedOfferIds.includes(inc.id);
-          const value = stripQualifier(inc.value);
-          const label = inc.type === 'finance'
-            ? getAprRangeLabel(inc)
-            : inc.type === 'cash'
-              ? (/\bcash\s*back\b/i.test(value) ? value : `${value} cash back`)
-              : (() => {
-                  const termMatch = (inc.terms || '').match(/(\d+)[\s-]*month/i)
-                    || (inc.description || '').match(/(\d+)[\s-]*month/i)
-                    || (inc.title || '').match(/(\d+)[\s-]*month/i);
-                  return termMatch ? `${value} for ${termMatch[1]} mo.` : value;
-                })();
-          return (
-            <div
-              key={inc.id}
-              role="button"
-              aria-pressed={isSelected}
-              tabIndex={0}
-              className={`hero__offers-b-pill ${isSelected ? 'hero__offers-b-pill--selected' : ''}`}
-              onClick={() => onOfferClick(inc)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  onOfferClick(inc);
-                }
-              }}
-            >
-              <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
-              <span className="hero__offers-b-pill-text">{label}</span>
-              <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
-              {isSelected && !onApplyOffer && (
-                <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
-                  Applied
-                </span>
-              )}
-              {onApplyOffer && (
-                <span className="hero__offers-b-pill-actions">
-                  <button
-                    type="button"
-                    className="hero__offers-b-pill-apply"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onApplyOffer(inc);
-                    }}
-                  >
-                    {isSelected ? 'Applied' : 'Apply'}
-                  </button>
-                </span>
-              )}
-            </div>
-          );
-        })}
+        {topOffers.map(renderOfferPill)}
       </div>
+      {showMoreDealsControl && (
+        <div className="hero__offers-b-more-wrap">
+          {showMoreDeals && (
+            <div id={moreDealsId} className="hero__offers-b-more" role="region" aria-label="More available deals">
+              {moreOffers.map(renderOfferPill)}
+            </div>
+          )}
+          <button
+            type="button"
+            className="hero__offers-b-more-toggle"
+            aria-expanded={showMoreDeals}
+            aria-controls={moreDealsId}
+            onClick={() => setShowMoreDeals((current) => !current)}
+          >
+            <span>{showMoreDeals ? 'Show fewer deals' : `Show more deals (${moreOffers.length})`}</span>
+            {showMoreDeals ? <ChevronUp size={16} aria-hidden /> : <ChevronDown size={16} aria-hidden />}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -4,7 +4,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import {
   getAllVehicles,
@@ -74,6 +74,8 @@ const toModelSlug = (model: string): string =>
 
 const toMakeSlug = (make: string): string =>
   make.toLowerCase().replace(/\s+/g, '-');
+
+const BRAND_RESEARCH_SECTION_ID = 'brand-page-research-title';
 
 const formatList = (items: string[]): string => {
   if (items.length <= 2) return items.join(' and ');
@@ -188,6 +190,7 @@ const BrandHubPage = ({
   afterSections,
 }: BrandHubPageProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const makeSlug = toMakeSlug(make);
   const [isHeroDescriptionExpanded, setIsHeroDescriptionExpanded] = useState(false);
   const isHeroDescriptionExpandable = description.length > 180;
@@ -249,6 +252,20 @@ const BrandHubPage = ({
     () => formatList(sections.map(section => section.title)),
     [sections],
   );
+
+  const activeSubnavId = useMemo(() => {
+    if (!location.hash) return BRAND_RESEARCH_SECTION_ID;
+
+    const rawHash = location.hash.slice(1);
+    try {
+      return decodeURIComponent(rawHash);
+    } catch {
+      return rawHash;
+    }
+  }, [location.hash]);
+
+  const getSubnavLinkClass = (id: string) =>
+    `brand-page__subnav-link${activeSubnavId === id ? ' brand-page__subnav-link--active' : ''}`;
 
   const breadcrumbJsonLd = useMemo(
     () =>
@@ -342,6 +359,33 @@ const BrandHubPage = ({
           </div>
         </div>
       </header>
+
+      <nav className="brand-page__subnav" aria-label={`${make} page sections`}>
+        <div className="container brand-page__subnav-inner">
+          <div className="brand-page__subnav-track">
+            <a
+              className={getSubnavLinkClass(BRAND_RESEARCH_SECTION_ID)}
+              href={`#${BRAND_RESEARCH_SECTION_ID}`}
+              aria-current={activeSubnavId === BRAND_RESEARCH_SECTION_ID ? 'location' : undefined}
+            >
+              Research
+            </a>
+            {sections.map(section => {
+              const isActive = activeSubnavId === section.id;
+              return (
+                <a
+                  key={section.id}
+                  className={getSubnavLinkClass(section.id)}
+                  href={`#${section.id}`}
+                  aria-current={isActive ? 'location' : undefined}
+                >
+                  {section.title}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
 
       <div className="container">
         <div className="brand-page__breaker-ad" role="complementary" aria-label="Advertisement">

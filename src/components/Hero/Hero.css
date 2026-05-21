@@ -1004,6 +1004,25 @@
   white-space: nowrap;
 }
 
+.hero__offers-b-pill-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 45%, var(--color-gray-200));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-blue-cobalt) 7%, var(--color-white));
+  color: var(--color-blue-cobalt);
+}
+
+.hero__offers-b-pill-toggle--selected {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
 .hero__offers-b-pill-applied {
   flex-shrink: 0;
   padding: 3px 8px;
@@ -1062,6 +1081,50 @@
 .hero__offers-b-pill-apply:hover,
 .hero__offers-b-pill-apply:focus-visible {
   background: var(--color-dark);
+}
+
+.hero__offers-b-more-wrap {
+  display: grid;
+  gap: var(--spacing-2);
+  width: 100%;
+}
+
+.hero__offers-b-more-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  min-height: var(--spacing-9);
+  padding: 0 var(--spacing-3);
+  border: 1px solid color-mix(in srgb, var(--color-success) 28%, var(--color-gray-200));
+  border-radius: var(--border-radius-sm);
+  background: color-mix(in srgb, var(--color-success) 6%, var(--color-white));
+  color: var(--color-success);
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  text-transform: uppercase;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.hero__offers-b-more-toggle:hover,
+.hero__offers-b-more-toggle:focus-visible {
+  border-color: color-mix(in srgb, var(--color-success) 52%, var(--color-gray-200));
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-white));
+  color: var(--color-green);
+}
+
+.hero__offers-b-more-toggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-success) 35%, transparent);
+  outline-offset: 2px;
+}
+
+.hero__offers-b-more {
+  display: grid;
+  gap: var(--spacing-2);
+  width: 100%;
 }
 
 @container (max-width: 320px) {

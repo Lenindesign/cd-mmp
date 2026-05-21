@@ -281,6 +281,105 @@
   }
 }
 
+/* ============ Brand Subnavigation ============ */
+
+.brand-page__subnav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--color-gray-200, #e5e5e5);
+  background: var(--color-white, #fff);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+.brand-page__subnav-inner {
+  display: flex;
+  align-items: center;
+  min-height: 54px;
+}
+
+.brand-page__subnav-track {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.brand-page__subnav-track::-webkit-scrollbar {
+  display: none;
+}
+
+.brand-page__subnav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 54px;
+  padding: 0 var(--spacing-4);
+  color: var(--color-dark, #111);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.brand-page__subnav-link::after {
+  content: '';
+  position: absolute;
+  right: var(--spacing-4);
+  bottom: 0;
+  left: var(--spacing-4);
+  height: 3px;
+  background: transparent;
+  transition: background var(--transition-fast);
+}
+
+.brand-page__subnav-link:hover,
+.brand-page__subnav-link:focus-visible {
+  background: var(--color-gray-50, #f7f7f7);
+  color: var(--color-brand-blue, #1b5f8a);
+  text-decoration: none;
+}
+
+.brand-page__subnav-link--active {
+  color: var(--color-brand-blue, #1b5f8a);
+}
+
+.brand-page__subnav-link:hover::after,
+.brand-page__subnav-link:focus-visible::after,
+.brand-page__subnav-link--active::after {
+  background: var(--color-brand-blue, #1b5f8a);
+}
+
+.brand-page__subnav-link:focus-visible {
+  outline: 2px solid var(--color-brand-blue, #1b5f8a);
+  outline-offset: -2px;
+}
+
+@media (max-width: 768px) {
+  .brand-page__subnav-inner {
+    min-height: 48px;
+  }
+
+  .brand-page__subnav-link {
+    min-height: 48px;
+    padding: 0 var(--spacing-3);
+    font-size: var(--font-size-xs, 12px);
+  }
+
+  .brand-page__subnav-link::after {
+    right: var(--spacing-3);
+    left: var(--spacing-3);
+  }
+}
+
 /* ============ Breaker Ad ============ */
 
 .brand-page__breaker-ad {
