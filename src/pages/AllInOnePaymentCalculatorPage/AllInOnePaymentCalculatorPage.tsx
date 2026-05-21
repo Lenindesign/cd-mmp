@@ -756,7 +756,7 @@ const getLightWizardStepPath = (step: number) => {
 
 const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
   {
-    title: 'Budget-First Payment Guidance',
+    title: 'Budget-First Guidance',
     image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/2023-chevrolet-colorado-zr2-1x1-69175873b441b.jpg?format=jpg&resize=360:*',
     alt: 'Car and Driver vehicle testing from inside a truck',
   },
@@ -766,7 +766,7 @@ const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
     alt: 'Car and Driver evaluation notes on a clipboard',
   },
   {
-    title: 'Deals Compared in Your Estimate',
+    title: 'Personalized Recommendations for Your Budget',
     image: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/behind-the-scenes-lightning-lap-2025-1x1-691758dc2f53a.jpg?format=jpg&resize=360:*',
     alt: 'Car and Driver experts discussing vehicle testing',
   },
