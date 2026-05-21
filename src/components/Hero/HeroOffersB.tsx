@@ -10,7 +10,9 @@ interface HeroOffersBProps {
   onOfferClick: (inc: Incentive) => void;
   onApplyOffer?: (inc: Incentive) => void;
   selectedOfferIds?: string[];
-  title?: string;
+  title?: string | null;
+  showBuyDealLink?: boolean;
+  showLeaseDealLink?: boolean;
 }
 
 const stripQualifier = (v: string) =>
@@ -46,6 +48,8 @@ const HeroOffersB = ({
   onApplyOffer,
   selectedOfferIds = [],
   title = 'SPECIAL DEALS AND INCENTIVES',
+  showBuyDealLink = true,
+  showLeaseDealLink = true,
 }: HeroOffersBProps) => {
   const topOffers = useMemo(() => {
     const finance = vehicleIncentives.incentives.find(i => i.type === 'finance');
@@ -72,33 +76,42 @@ const HeroOffersB = ({
 
   if (topOffers.length === 0) return null;
 
+  const showBuyLink = showBuyDealLink && dealCounts.buy > 0;
+  const showLeaseLink = showLeaseDealLink && dealCounts.lease > 0;
+  const showHeader = Boolean(title) || showBuyLink || showLeaseLink;
+
   return (
     <div className="hero__offers-b">
-      <div className="hero__offers-b-header">
-        <h3 className="hero__offers-b-title">{title}</h3>
-        <nav className="hero__offers-b-deal-links" aria-label={`${vehicleIncentives.make} ${vehicleIncentives.model} deal pages`}>
-          {dealCounts.buy > 0 && (
-            <Link
-              to={dealLinks.buy}
-              className="hero__offers-b-deal-link"
-              aria-label={`View ${formatDealCount(dealCounts.buy, 'Buy').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
-            >
-              {renderDealLink('Buy')}
-            </Link>
+      {showHeader && (
+        <div className="hero__offers-b-header">
+          {title && <h3 className="hero__offers-b-title">{title}</h3>}
+          {(showBuyLink || showLeaseLink) && (
+            <nav className="hero__offers-b-deal-links" aria-label={`${vehicleIncentives.make} ${vehicleIncentives.model} deal pages`}>
+              {showBuyLink && (
+                <Link
+                  to={dealLinks.buy}
+                  className="hero__offers-b-deal-link"
+                  aria-label={`View ${formatDealCount(dealCounts.buy, 'Buy').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
+                >
+                  {renderDealLink('Buy')}
+                </Link>
+              )}
+              {showLeaseLink && (
+                <Link
+                  to={dealLinks.lease}
+                  className="hero__offers-b-deal-link"
+                  aria-label={`View ${formatDealCount(dealCounts.lease, 'Lease').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
+                >
+                  {renderDealLink('Lease')}
+                </Link>
+              )}
+            </nav>
           )}
-          {dealCounts.lease > 0 && (
-            <Link
-              to={dealLinks.lease}
-              className="hero__offers-b-deal-link"
-              aria-label={`View ${formatDealCount(dealCounts.lease, 'Lease').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
-            >
-              {renderDealLink('Lease')}
-            </Link>
-          )}
-        </nav>
-      </div>
+        </div>
+      )}
       <div className="hero__offers-b-pills">
         {topOffers.map(inc => {
+          const isSelected = selectedOfferIds.includes(inc.id);
           const value = stripQualifier(inc.value);
           const label = inc.type === 'finance'
             ? getAprRangeLabel(inc)
@@ -114,8 +127,9 @@ const HeroOffersB = ({
             <div
               key={inc.id}
               role="button"
+              aria-pressed={isSelected}
               tabIndex={0}
-              className={`hero__offers-b-pill ${selectedOfferIds.includes(inc.id) ? 'hero__offers-b-pill--selected' : ''}`}
+              className={`hero__offers-b-pill ${isSelected ? 'hero__offers-b-pill--selected' : ''}`}
               onClick={() => onOfferClick(inc)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -127,7 +141,7 @@ const HeroOffersB = ({
               <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
               <span className="hero__offers-b-pill-text">{label}</span>
               <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
-              {selectedOfferIds.includes(inc.id) && !onApplyOffer && (
+              {isSelected && !onApplyOffer && (
                 <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
                   Applied
                 </span>
@@ -142,7 +156,7 @@ const HeroOffersB = ({
                       onApplyOffer(inc);
                     }}
                   >
-                    {selectedOfferIds.includes(inc.id) ? 'Applied' : 'Apply'}
+                    {isSelected ? 'Applied' : 'Apply'}
                   </button>
                 </span>
               )}

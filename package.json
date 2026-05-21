@@ -24,6 +24,7 @@
     "chromatic": "npx chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@siteping/adapter-localstorage": "^0.4.3",
     "@siteping/widget": "^0.9.5",
     "@supabase/supabase-js": "^2.87.3",

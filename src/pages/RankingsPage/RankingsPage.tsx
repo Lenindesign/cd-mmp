@@ -391,7 +391,6 @@ const RankingsPage = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [selectedRankingYear, setSelectedRankingYear] = useState(2026);
-  const [isHeroDescriptionExpanded, setIsHeroDescriptionExpanded] = useState(false);
 
   // Get config for current body style
   const config = bodyStyle ? BODY_STYLE_CONFIG[bodyStyle.toLowerCase()] : null;
@@ -409,7 +408,6 @@ const RankingsPage = () => {
     rankingsVariant === RANKINGS_CD_CONTROL_B_VARIANT
   );
   const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant && (!showCdControlVariant || showCdControlBVariant));
-  const isHeroDescriptionExpandable = bodyStyleKey === 'suv' && (!showCdControlVariant || showCdControlBVariant);
   const bodyStyleNavRef = useRef<HTMLDivElement>(null);
   const bodyStyleNavItems = useMemo(() => {
     if (showCdControlVariant) {
@@ -1004,23 +1002,11 @@ const RankingsPage = () => {
             </div>
             <div className="rankings-page__description-wrap">
               <p
-                className={`rankings-page__description${isHeroDescriptionExpandable && !isHeroDescriptionExpanded ? ' rankings-page__description--clamped' : ''}`}
+                className="rankings-page__description"
                 id="rankings-hero-description"
               >
                 {config.description}
               </p>
-              {isHeroDescriptionExpandable && (
-                <button
-                  type="button"
-                  className="rankings-page__description-toggle"
-                  onClick={() => setIsHeroDescriptionExpanded((expanded) => !expanded)}
-                  aria-expanded={isHeroDescriptionExpanded}
-                  aria-controls="rankings-hero-description"
-                >
-                  <span>{isHeroDescriptionExpanded ? 'Read less' : 'Read more'}</span>
-                  {!isHeroDescriptionExpanded && <ChevronDown size={14} strokeWidth={2.5} aria-hidden="true" />}
-                </button>
-              )}
             </div>
             {showHeroIncentiveRow && (
               <div className="rankings-page__hero-offers" aria-label={`${offerBodyStyleLabel} deals and incentives`}>
@@ -1028,7 +1014,7 @@ const RankingsPage = () => {
                   <span className="rankings-page__hero-offer-main">
                     <span className="rankings-page__hero-offer-chip">BUY</span>
                     <span className="rankings-page__hero-offer-copy">
-                      <span>See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Deals</span>
+                      <span className="rankings-page__hero-offer-label">See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Deals</span>
                       <span className="rankings-page__hero-offer-badge">{RANKINGS_OFFER_COUNTS.buyingExpiringSoon} expiring soon</span>
                     </span>
                   </span>
@@ -1038,7 +1024,7 @@ const RankingsPage = () => {
                   <span className="rankings-page__hero-offer-main">
                     <span className="rankings-page__hero-offer-chip">LEASE</span>
                     <span className="rankings-page__hero-offer-copy">
-                      <span>See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Deals</span>
+                      <span className="rankings-page__hero-offer-label">See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Deals</span>
                       <span className="rankings-page__hero-offer-badge">{RANKINGS_OFFER_COUNTS.leasingExpiringSoon} expiring soon</span>
                     </span>
                   </span>
