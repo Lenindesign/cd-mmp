@@ -1011,16 +1011,16 @@
   flex: 0 0 auto;
   width: 26px;
   height: 26px;
-  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 45%, var(--color-gray-200));
+  border: 1px solid color-mix(in srgb, var(--color-success) 60%, var(--color-gray-200));
   border-radius: 50%;
-  background: color-mix(in srgb, var(--color-blue-cobalt) 7%, var(--color-white));
-  color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-white));
+  color: var(--color-success);
 }
 
 .hero__offers-b-pill-toggle--selected {
-  border-color: var(--color-success);
-  background: var(--color-success);
-  color: var(--color-white);
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 60%, var(--color-gray-200));
+  background: color-mix(in srgb, var(--color-blue-cobalt) 8%, var(--color-white));
+  color: var(--color-blue-cobalt);
 }
 
 .hero__offers-b-pill-applied {

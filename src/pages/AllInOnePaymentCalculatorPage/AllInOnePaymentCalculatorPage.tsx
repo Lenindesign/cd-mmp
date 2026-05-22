@@ -793,7 +793,7 @@ const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
   },
   {
     title: 'Personalized Recommendations for Your Budget',
-    image: '/calculator-advantage/personalized-recommendations.jpg',
+    image: '/calculator-advantage/personalized-recommendations.jpg?v=personalized-budget',
     alt: 'Car shoppers comparing personalized vehicle recommendations',
   },
 ];
