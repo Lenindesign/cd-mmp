@@ -123,7 +123,7 @@ const SHOPPING_TOOLS = [
     description: 'Estimate monthly payments, total cost, and budget fit before you shop.',
     cta: 'Calculate',
     href: '/auto-loan-calculator/light-steps',
-    image: '/calculator-advantage/price-calculator.png',
+    image: '/calculator-advantage/price-calculator.png?v=window-sticker',
     primary: false,
   },
 ] as const;
@@ -1252,6 +1252,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     return sum + (incentive ? parseMoney(incentive.value) : 0);
   }, 0);
   const rebateTotal = selectedCashTotal + tierCashBack;
+  const selectedOfferCount = selectedCashIds.length + (selectedFinance ? 1 : 0);
+  const selectedOfferSummary = selectedOfferCount > 0 ? `${selectedOfferCount} applied` : 'None applied';
   const stateRule = stateRules.find((state) => state.code === stateCode) ?? stateRules[0];
   const registrationFees = feesOverride ? numberInput(feesOverride) : stateRule.titleRegistrationFees;
   const dealerFees = dealerFeesOverride ? numberInput(dealerFeesOverride) : stateRule.dealerFeesEstimate;
@@ -1273,7 +1275,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     fees,
     includeTaxesAndFeesInLoan,
   });
-  const workingPrice = (isBudgetFirstVariant || isLightVariant) && startMode === 'monthly' ? affordableMsrp : price;
+  const budgetVehiclePrice = (isBudgetFirstVariant || isLightVariant) && startMode === 'monthly' ? affordableMsrp : price;
+  const usesSelectedCatalogPriceForEstimate = isLightVariant && lightHasSpecificVehicleSelection && canUseCatalogPrice;
+  const workingPrice = usesSelectedCatalogPriceForEstimate ? selectedCatalogPrice : budgetVehiclePrice;
+  const workingPriceDescriptor = usesSelectedCatalogPriceForEstimate ? 'selected vehicle price' : 'target vehicle price';
+  const workingPriceBreakdownLabel = usesSelectedCatalogPriceForEstimate ? 'Selected Vehicle Price' : 'Target Vehicle Price';
+  const workingPriceFormulaLabel = usesSelectedCatalogPriceForEstimate ? 'selected vehicle price' : 'target price';
   const taxableAmount = getTaxableAmount(workingPrice, tradeInValue, rebateTotal, stateRule.taxRule);
   const calculatedSalesTax = taxableAmount * stateRule.rate;
   const salesTax = salesTaxOverride ? numberInput(salesTaxOverride) : calculatedSalesTax;
@@ -1317,7 +1324,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     };
   };
   const amountFinancedFormulaParts = [
-    { label: `${currency(workingPrice)} target price` },
+    { label: `${currency(workingPrice)} ${workingPriceFormulaLabel}` },
     includeTaxesAndFeesInLoan && taxesAndFees > 0 ? { sign: '+', label: `${currency(taxesAndFees)} taxes & fees` } : null,
     tradeEquity > 0 ? { sign: '-', label: `${currency(tradeEquity)} trade equity` } : null,
     tradeEquity < 0 ? { sign: '+', label: `${currency(Math.abs(tradeEquity))} trade payoff` } : null,
@@ -1392,22 +1399,52 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     : estimateBudgetFitStatus === 'over'
       ? `This estimate uses the current listing-price input. Try a lower listing price, more cash down, a longer term, or a written quote under about ${currency(affordableMsrp)} before tax and fees.`
       : estimateBudgetFitStatus === 'under'
-        ? 'This estimate uses the current listing-price input and leaves room in your monthly budget. Replace it with the exact listing price or written quote before shopping.'
-        : 'This estimate uses the current listing-price input and is within about $10/mo of your budget. Confirm it against the exact listing price or written quote.';
+      ? 'This estimate uses the current listing-price input and leaves room in your monthly budget. Replace it with the exact listing price or written quote before shopping.'
+      : 'This estimate uses the current listing-price input and is within about $10/mo of your budget. Confirm it against the exact listing price or written quote.';
+  const priceBudgetDelta = selectedCatalogPrice - price;
+  const priceBudgetFitStatus: BudgetFitStatus = priceBudgetDelta > 10 ? 'over' : priceBudgetDelta < -10 ? 'under' : 'fit';
+  const priceBudgetFitLabel = priceBudgetFitStatus === 'over'
+    ? 'Above budget'
+    : priceBudgetFitStatus === 'under'
+      ? 'Below budget'
+      : 'On budget';
+  const priceBudgetFitHeadline = priceBudgetFitStatus === 'over'
+    ? `About ${currency(priceBudgetDelta)} over your ${currency(price)} budget`
+    : priceBudgetFitStatus === 'under'
+      ? `About ${currency(Math.abs(priceBudgetDelta))} below your ${currency(price)} budget`
+      : `Close to your ${currency(price)} budget`;
+  const priceBudgetFitCopy = priceBudgetFitStatus === 'over'
+    ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. Try a lower trim, more cash down, or vehicles below your target price.`
+    : priceBudgetFitStatus === 'under'
+      ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. Your estimate uses the selected trim price while your target budget stays fixed.`
+      : `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees, which is close to your target price.`;
   const visibleBudgetFitStatus = !canUseCatalogPrice && lightHasVehicleSelection ? usedBudgetFitStatus : lightHasVehicleSelection ? budgetFitStatus : 'fit';
   const visibleBudgetFitLabel = !canUseCatalogPrice && lightHasVehicleSelection ? usedBudgetFitLabel : lightHasVehicleSelection ? budgetFitLabel : 'Pick a vehicle';
   const visibleBudgetFitHeadline = !canUseCatalogPrice && lightHasVehicleSelection ? usedBudgetFitHeadline : lightHasVehicleSelection ? budgetFitHeadline : 'Choose a vehicle to compare';
   const visibleBudgetFitCopy = lightHasVehicleSelection
     ? canUseCatalogPrice ? budgetFitCopy : usedBudgetFitCopy
     : `Your budget supports about ${currency(affordableMsrp)} before tax and fees. Choose a vehicle or browse by body style to compare it with your target.`;
-  const summaryBudgetFitStatus = startMode === 'monthly' ? visibleBudgetFitStatus : estimateBudgetFitStatus;
-  const summaryBudgetFitLabel = startMode === 'monthly' ? visibleBudgetFitLabel : estimateBudgetFitLabel;
+  const showPriceBudgetFit = startMode === 'price' && usesSelectedCatalogPriceForEstimate;
+  const summaryBudgetFitStatus = startMode === 'monthly'
+    ? visibleBudgetFitStatus
+    : showPriceBudgetFit
+      ? priceBudgetFitStatus
+      : estimateBudgetFitStatus;
+  const summaryBudgetFitLabel = startMode === 'monthly'
+    ? visibleBudgetFitLabel
+    : showPriceBudgetFit
+      ? priceBudgetFitLabel
+      : estimateBudgetFitLabel;
   const summaryBudgetFitHeadline = startMode === 'monthly'
     ? visibleBudgetFitHeadline
-    : estimateBudgetFitHeadline;
+    : showPriceBudgetFit
+      ? priceBudgetFitHeadline
+      : estimateBudgetFitHeadline;
   const summaryBudgetFitCopy = startMode === 'monthly'
     ? visibleBudgetFitCopy
-    : estimateBudgetFitCopy;
+    : showPriceBudgetFit
+      ? priceBudgetFitCopy
+      : estimateBudgetFitCopy;
   const showSummaryBudgetFit = !isLightStepsVariant || (lightWizardStep > 1 && lightHasSpecificVehicleSelection);
 
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
@@ -2797,7 +2834,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
                     <p className="aio-payment__light-trade-step__dealer-note">
                       <strong>
-                        {registrationDealerFeeGuidance.label} {registrationDealerFeeGuidance.range}:
+                        {registrationDealerFeeGuidance.label}:
                       </strong>{' '}
                       {registrationDealerFeeGuidance.copy}
                     </p>
@@ -2925,9 +2962,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <details className="aio-payment__light-disclosure" open={isLightStepsVariant ? true : undefined}>
                     <summary>
                       <span>Deals and incentives</span>
-                      <strong>{rebateTotal > 0 ? `${currency(rebateTotal)} applied` : 'None applied'}</strong>
+                      <strong>{selectedOfferSummary}</strong>
                     </summary>
                     <div className="aio-payment__light-offers aio-payment__light-offers--hero">
+                      <p className="aio-payment__light-offer-help">
+                        {isLightStepsVariant
+                          ? 'Select a deal to apply it to this estimate. Select it again to remove it.'
+                          : 'Select a deal to see details, then apply or remove it from this estimate.'}
+                      </p>
                       <HeroOffersB
                         vehicleIncentives={vehicleIncentives}
                         onOfferClick={isLightStepsVariant ? applyOfferToEstimate : handleOfferClick}
@@ -2941,11 +2983,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
                         ]}
                       />
-                      <p className="aio-payment__light-offer-help">
-                        {isLightStepsVariant
-                          ? 'Select a deal to apply it to this estimate. Select it again to remove it.'
-                          : 'Select a deal to see details, then apply or remove it from this estimate.'}
-                      </p>
                     </div>
                   </details>
                 ) : isLightStepsVariant ? (
@@ -2989,7 +3026,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </p>
                       </div>
 	                    <dl className="aio-payment__light-breakdown" aria-labelledby={lightBreakdownLabelId}>
-	                      <div><dt>Target Vehicle Price</dt><dd>{renderLightBreakdownValue(workingPrice)}</dd></div>
+	                      <div><dt>{workingPriceBreakdownLabel}</dt><dd>{renderLightBreakdownValue(workingPrice)}</dd></div>
 	                      <div><dt>Estimated Taxes &amp; Fees</dt><dd>{renderLightBreakdownValue(taxesAndFees, 'add')}</dd></div>
 	                      <div><dt>Down Payment</dt><dd>{renderLightBreakdownValue(downPayment, 'subtract')}</dd></div>
 	                      <div><dt>Trade Value</dt><dd>{renderLightBreakdownValue(tradeInValue, 'subtract')}</dd></div>
@@ -3149,7 +3186,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           ? canUseCatalogPrice
                             ? `Estimated MSRP before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
                             : `Estimated listing-price target before tax and fees for a ${currency(targetMonthlyPayment)}/mo target.`
-                          : `Based on a ${currency(workingPrice)} target vehicle price, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
+                          : `Based on a ${currency(workingPrice)} ${workingPriceDescriptor}, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`}
                       </p>
                     </div>
                     <div className={`aio-payment__light-result-details ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
