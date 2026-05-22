@@ -1012,11 +1012,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const affordableCarouselRef = useRef<HTMLDivElement>(null);
   const shoppingToolsRef = useRef<HTMLDivElement>(null);
   const lightAffordableSectionRef = useRef<HTMLElement>(null);
+  const lightWizardShellRef = useRef<HTMLDivElement>(null);
   const lightWizardPanelRef = useRef<HTMLDivElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
   const [lightWizardStep, setLightWizardStepState] = useState(initialLightWizardStep);
   const lightWizardStepPrevRef = useRef(lightWizardStep);
+  const lightWizardPathPrevRef = useRef(location.pathname);
   const lightVehicleBodyStyleHeadingId = useId();
   const lightBreakdownLabelId = useId();
   const lightEstimateTotalsId = useId();
@@ -2216,18 +2218,23 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   useEffect(() => {
     const previousStep = lightWizardStepPrevRef.current;
+    const previousPath = lightWizardPathPrevRef.current;
     lightWizardStepPrevRef.current = lightWizardStep;
-    if (!isLightStepsVariant || previousStep === lightWizardStep) return;
+    lightWizardPathPrevRef.current = location.pathname;
+    if (!isLightStepsVariant || (previousStep === lightWizardStep && previousPath === location.pathname)) return;
 
+    const shell = lightWizardShellRef.current;
     const panel = lightWizardPanelRef.current;
     const heading = panel?.querySelector<HTMLElement>('#aio-payment-light-heading');
-    if (!panel || !heading) return;
+    if (!shell || !heading) return;
 
-    panel.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
-    window.requestAnimationFrame(() => {
+    const scrollFrame = window.requestAnimationFrame(() => {
+      shell.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
       heading.focus({ preventScroll: true });
     });
-  }, [isLightStepsVariant, lightWizardStep]);
+
+    return () => window.cancelAnimationFrame(scrollFrame);
+  }, [isLightStepsVariant, lightWizardStep, location.pathname]);
 
   if (isLightVariant) {
     const lightWizardStepMeta = LIGHT_WIZARD_STEP_META[lightWizardStep - 1];
@@ -2263,7 +2270,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
         <section className="aio-payment__light-main" aria-labelledby="aio-payment-light-heading">
           <div className="container">
-            <div className="aio-payment__light-shell">
+            <div className="aio-payment__light-shell" ref={isLightStepsVariant ? lightWizardShellRef : undefined}>
               {isLightStepsVariant ? (
                 <div className="aio-payment__light-wizard-strip">
                   <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">

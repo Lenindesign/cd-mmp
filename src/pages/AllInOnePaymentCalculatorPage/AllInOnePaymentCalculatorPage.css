@@ -3844,6 +3844,10 @@ label.aio-payment__light-loan-step__label {
   background: var(--color-white);
 }
 
+.aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row {
+  font-size: var(--font-size-base);
+}
+
 .aio-payment--light-steps .aio-payment__light-result-shop.payment-calc__cta,
 .aio-payment--light-steps .aio-payment__light-ai-button.payment-calc__cta {
   max-width: none;
@@ -5935,7 +5939,7 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row {
     padding: var(--spacing-2) 0;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
   }
 
   .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row dd {
