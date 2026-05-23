@@ -152,7 +152,7 @@ export const NewsPage: React.FC = () => {
                   margin: var(--spacing-2) 0;
                   color: var(--color-dark);
                   font-family: var(--font-heading);
-                  font-size: var(--font-size-3xl);
+                  font-size: var(--font-size-xl);
                   font-weight: var(--font-weight-extrabold);
                   line-height: 0.95;
                 }
@@ -166,17 +166,24 @@ export const NewsPage: React.FC = () => {
                 .live-delight-desk__cta {
                   display: inline-flex;
                   align-items: center;
-                  gap: var(--spacing-1);
+                  gap: 4px;
                   width: fit-content;
-                  padding: var(--spacing-2) var(--spacing-3);
+                  padding: 4px 12px;
                   border: 1px solid var(--color-blue-cobalt);
                   border-radius: var(--border-radius-full);
                   color: var(--color-blue-cobalt);
-                  font-family: var(--font-label);
-                  font-size: var(--font-size-xs);
+                  font-family: var(--font-heading);
+                  font-size: var(--font-size-sm);
                   font-weight: var(--font-weight-bold);
-                  letter-spacing: 0.08em;
+                  text-decoration: none;
                   text-transform: uppercase;
+                  white-space: nowrap;
+                  transition: background var(--transition-fast), color var(--transition-fast);
+                }
+
+                .live-delight-desk__cta:hover {
+                  background: var(--color-blue-cobalt);
+                  color: var(--color-white);
                 }
 
                 .live-delight-desk__cards {

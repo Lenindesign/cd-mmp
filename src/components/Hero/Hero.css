@@ -1175,6 +1175,10 @@
     min-width: 0;
   }
 
+  .hero__offers-b-more-wrap {
+    order: 4;
+  }
+
   .hero__offers-b-pills {
     gap: 12px;
     flex-direction: column;

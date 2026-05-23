@@ -82,7 +82,7 @@
 .aio-payment__hero h1 {
   margin: 0 0 var(--spacing-4);
   font-family: var(--font-heading);
-  font-size: clamp(32px, 5vw, 48px);
+  font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-4xl));
   font-weight: var(--font-weight-extrabold);
   line-height: 1.1;
   letter-spacing: 0;
@@ -483,7 +483,7 @@
 }
 
 .aio-payment--light-steps {
-  --aio-light-steps-bg: #f5f5f5;
+  --aio-light-steps-bg: var(--color-gray-100);
   background: var(--aio-light-steps-bg);
   color: var(--color-dark);
 }
@@ -689,8 +689,8 @@
   margin: var(--spacing-3) 0 0;
   padding: var(--spacing-3);
   color: var(--color-dark);
-  background: color-mix(in srgb, #1D7A19 8%, var(--color-white) 92%);
-  border: 1px solid color-mix(in srgb, #1D7A19 24%, var(--color-gray-200) 76%);
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-white) 92%);
+  border: 1px solid color-mix(in srgb, var(--color-success) 24%, var(--color-gray-200) 76%);
   border-radius: var(--border-radius-md);
   font-family: var(--font-body);
   font-size: var(--aio-light-meta);
@@ -698,14 +698,18 @@
 }
 
 .aio-payment__light-result-expert-link a {
-  color: #1D7A19;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--spacing-11);
+  vertical-align: middle;
+  color: var(--color-success);
   font-weight: var(--font-weight-bold);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .aio-payment__light-result-expert-link a:focus-visible {
-  outline: 2px solid #1D7A19;
+  outline: 2px solid var(--color-success);
   outline-offset: var(--spacing-1);
   border-radius: var(--border-radius-sm);
 }
@@ -1114,8 +1118,10 @@
   align-items: center;
   gap: var(--spacing-2);
   width: 100%;
+  min-width: var(--spacing-11);
+  min-height: var(--spacing-14);
   margin: 0;
-  padding: 0;
+  padding: 0 var(--spacing-1);
   border: none;
   background: transparent;
   cursor: pointer;
@@ -1419,6 +1425,206 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-gray-600);
 }
 
+.aio-payment__light-label-with-help {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1-5);
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: var(--line-height-tight);
+  text-transform: uppercase;
+}
+
+.payment-calc__row-label .aio-payment__light-label-with-help label,
+.payment-calc__row-label .aio-payment__light-label-with-help .aio-payment__light-label-text {
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.aio-payment__light-loan-guidance-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.aio-payment__light-loan-guidance-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-11);
+  height: var(--spacing-11);
+  padding: 0;
+  border: 0;
+  border-radius: var(--border-radius-full);
+  background: transparent;
+  color: var(--color-blue-cobalt);
+  cursor: pointer;
+}
+
+.aio-payment__light-loan-guidance-trigger::before {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 38%, var(--color-gray-200));
+  border-radius: var(--border-radius-full);
+  background: var(--color-white);
+  transform: translate(-50%, -50%);
+}
+
+.aio-payment__light-loan-guidance-trigger svg {
+  position: relative;
+  z-index: 1;
+}
+
+.aio-payment__light-loan-guidance-trigger:hover,
+.aio-payment__light-loan-guidance-trigger:focus-visible {
+  outline: none;
+}
+
+.aio-payment__light-loan-guidance-trigger:hover::before,
+.aio-payment__light-loan-guidance-trigger:focus-visible::before {
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-teal-light);
+}
+
+.aio-payment__light-loan-guidance {
+  position: absolute;
+  top: calc(100% + var(--spacing-2));
+  left: 0;
+  z-index: 30;
+  display: grid;
+  gap: var(--spacing-2);
+  width: min(22rem, calc(100vw - var(--spacing-8)));
+  margin: 0;
+  padding: var(--spacing-3);
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 18%, var(--color-gray-200));
+  border-radius: var(--border-radius-md);
+  background: var(--color-teal-light);
+  box-shadow: var(--shadow-md);
+  color: var(--color-dark);
+  letter-spacing: 0;
+  opacity: 0;
+  pointer-events: none;
+  text-align: left;
+  text-transform: none;
+  transform: translateY(calc(var(--spacing-1) * -1));
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
+  visibility: hidden;
+}
+
+.aio-payment__light-loan-guidance-tooltip:hover .aio-payment__light-loan-guidance,
+.aio-payment__light-loan-guidance-tooltip:focus-within .aio-payment__light-loan-guidance {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.aio-payment__light-loan-guidance-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin: 0;
+  color: var(--color-blue-cobalt-dark);
+  font-family: var(--font-heading);
+  font-size: var(--aio-light-meta);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.payment-calc__row-label .aio-payment__light-loan-guidance-header span {
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.aio-payment__light-loan-guidance-header svg {
+  flex: 0 0 auto;
+}
+
+.aio-payment__light-loan-guidance-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-2) var(--spacing-4);
+  margin: 0;
+  padding: 0;
+}
+
+.aio-payment__light-loan-guidance-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  padding: var(--spacing-1) 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
+}
+
+.aio-payment__light-loan-guidance-list dt,
+.aio-payment__light-loan-guidance-list dd,
+.aio-payment__light-loan-guidance-copy,
+.aio-payment__light-loan-guidance-note {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-loan-guidance-list dt {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+}
+
+.aio-payment__light-loan-guidance-list dd {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-loan-guidance-copy {
+  color: var(--color-gray-700);
+}
+
+.aio-payment__light-loan-guidance-copy strong {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.aio-payment__light-loan-guidance-note {
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-loan-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin: var(--spacing-3) 0 0;
+  padding: var(--spacing-3);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 34%, var(--color-gray-200));
+  border-radius: var(--border-radius-md);
+  background: color-mix(in srgb, var(--color-warning-light) 80%, var(--color-white) 20%);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-loan-warning svg {
+  flex: 0 0 auto;
+  color: var(--color-warning-dark);
+}
+
 .aio-payment__light-loan-step__terms-label {
   margin: 0;
   font-family: var(--font-body);
@@ -1517,7 +1723,7 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-vehicle-step__path--selected {
   border-color: var(--color-blue-cobalt);
-  background: #f1f7f7;
+  background: var(--color-teal-light);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 35%, transparent);
 }
 
@@ -1610,9 +1816,12 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-vehicle-step__nu-btn--active {
-  border-color: var(--color-primary-1);
-  background-color: var(--color-primary-1);
-  color: var(--color-white);
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-teal-light);
+  color: var(--color-dark);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 45%, transparent),
+    0 10px 28px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
 }
 
 .aio-payment__light-vehicle-step__fields {
@@ -1690,7 +1899,7 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-vehicle-step__body-tile--selected {
   border-color: var(--color-blue-cobalt);
-  background: #f1f7f7;
+  background: var(--color-teal-light);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 35%, transparent);
 }
 
@@ -1853,7 +2062,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-vehicle-step__price-bar--guidance .aio-payment__light-vehicle-step__price-guidance {
   max-width: 46ch;
   color: var(--color-black);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-regular);
   text-align: left;
 }
@@ -1861,12 +2070,38 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-vehicle-step__price-guidance-lead {
   display: block;
   color: var(--color-blue-cobalt);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
 }
 
 .aio-payment__light-vehicle-step__price-guidance-copy {
   display: block;
+}
+
+.aio-payment__light-context-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-context-note svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-context-note strong {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-semibold);
 }
 
 @media (max-width: 819px) {
@@ -2162,7 +2397,32 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-trade-step__dealer-note {
-  background: #f1f7f7;
+  background: var(--color-teal-light);
+}
+
+.aio-payment__light-trade-step__negative-equity {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: var(--spacing-3);
+  border: 1px solid color-mix(in srgb, var(--color-error) 30%, var(--color-gray-200));
+  border-radius: var(--border-radius-md);
+  background: var(--color-error-50);
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-trade-step__negative-equity svg {
+  flex: 0 0 auto;
+  color: var(--color-error);
+}
+
+.aio-payment__light-trade-step__negative-equity strong {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
 }
 
 .aio-payment__light-dealer-fee-note {
@@ -2175,6 +2435,7 @@ label.aio-payment__light-loan-step__label {
   align-items: center;
   gap: var(--spacing-4);
   width: 100%;
+  min-height: var(--spacing-11);
   margin: 0;
   padding: 0;
   border: none;
@@ -2251,10 +2512,29 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-trade-step__tax-note {
-  margin: var(--spacing-4) 0 0;
-  font-size: var(--font-size-xs);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
-  color: var(--color-gray-600);
+  color: var(--color-gray-700);
+}
+
+.aio-payment__light-trade-step__tax-note svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-trade-step__tax-note strong {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-semibold);
 }
 
 .aio-payment__section-heading--wizard .aio-payment__light-heading-copy {
@@ -2293,6 +2573,7 @@ label.aio-payment__light-loan-step__label {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
+  min-height: var(--spacing-11);
   margin: 0;
   padding: var(--spacing-2) var(--spacing-1);
   border: none;
@@ -2463,8 +2744,27 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__light-wizard-dot-label {
-    font-size: 0.625rem;
+    font-size: var(--font-size-xs);
     letter-spacing: 0.04em;
+  }
+
+  .aio-payment__light-loan-guidance {
+    position: absolute;
+    top: var(--spacing-11);
+    right: 0;
+    bottom: auto;
+    left: 0;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .aio-payment--light-steps .payment-calc__field:has(.aio-payment__light-loan-guidance-tooltip) {
+    position: relative;
+  }
+
+  .aio-payment__light-loan-guidance-tooltip {
+    position: static;
   }
 }
 
@@ -2574,7 +2874,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-toggle-button--active {
-  background: #f1f7f7;
+  background: var(--color-teal-light);
   border-color: var(--color-blue-cobalt);
   box-shadow: none;
 }
@@ -2851,9 +3151,9 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-expert-tip-header span {
-  color: #1D7A19;
+  color: var(--color-success);
   font-family: var(--font-heading);
-  font-size: 26px;
+  font-size: var(--font-size-28);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
 }
@@ -2863,7 +3163,7 @@ label.aio-payment__light-loan-step__label {
   max-width: 78ch;
   color: var(--color-black);
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   line-height: 1.35;
 }
 
@@ -2930,8 +3230,8 @@ label.aio-payment__light-loan-step__label {
   height: var(--spacing-7);
   margin-top: var(--spacing-0-5);
   border-radius: var(--border-radius-full);
-  background: color-mix(in srgb, #1D7A19 11%, var(--color-white) 89%);
-  color: #1D7A19;
+  background: color-mix(in srgb, var(--color-success) 11%, var(--color-white) 89%);
+  color: var(--color-success);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
@@ -2972,11 +3272,11 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__light-review-expert-tip-header span {
-    font-size: 24px;
+    font-size: var(--font-size-2xl);
   }
 
   .aio-payment__light-review-expert-tip p {
-    font-size: 16px;
+    font-size: var(--font-size-md);
   }
 }
 
@@ -3034,7 +3334,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: var(--color-black);
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-extrabold);
   line-height: 1.15;
 }
@@ -3044,7 +3344,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0 auto;
   color: var(--color-black);
   font-family: var(--font-serif);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   line-height: 1.5;
   text-align: center;
 }
@@ -3127,7 +3427,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: var(--color-black);
   font-family: var(--font-condensed);
-  font-size: clamp(34px, 3vw, 48px);
+  font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0;
   line-height: 1;
@@ -3234,7 +3534,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: inherit;
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0;
   line-height: 1.05;
@@ -3244,7 +3544,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: inherit;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--font-size-15);
   font-weight: var(--font-weight-semibold);
   line-height: 1.18;
 }
@@ -3350,7 +3650,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: var(--color-black);
   font-family: var(--font-condensed);
-  font-size: 48px;
+  font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-semibold);
   line-height: 1;
   text-align: left;
@@ -3367,7 +3667,7 @@ label.aio-payment__light-loan-step__label {
   margin: calc(var(--spacing-3) * -1) 0 0;
   color: var(--color-gray-600);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
   text-align: left;
 }
@@ -3387,7 +3687,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: var(--color-black);
   font-family: var(--font-heading);
-  font-size: clamp(32px, 4vw, 40px);
+  font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-40));
   font-weight: var(--font-weight-extrabold);
   line-height: 1.1;
   letter-spacing: 0;
@@ -3400,7 +3700,7 @@ label.aio-payment__light-loan-step__label {
   gap: var(--spacing-1);
   color: var(--color-black);
   font-family: var(--font-serif);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   line-height: 1.35;
   text-decoration: none;
 }
@@ -3464,12 +3764,12 @@ label.aio-payment__light-loan-step__label {
   position: absolute;
   right: 0;
   bottom: 0;
-  padding: 7px 14px 7px 16px;
-  background: #b7f394;
+  padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-4);
+  background: var(--color-success-border);
   clip-path: polygon(0 0, 100% 0, 100% 78%, 88% 100%, 0 100%);
-  color: #075700;
+  color: var(--color-success-dark);
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
   text-transform: uppercase;
@@ -3477,7 +3777,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-elot-price-badge--good {
-  background: #8ce36b;
+  background: color-mix(in srgb, var(--color-success-border) 78%, var(--color-white) 22%);
 }
 
 .aio-payment__light-elot-card-body {
@@ -3491,7 +3791,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0 0 2px;
   color: var(--color-gray-700);
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   line-height: 1.2;
 }
@@ -3500,7 +3800,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-extrabold);
   line-height: 1.15;
 }
@@ -3519,7 +3819,7 @@ label.aio-payment__light-loan-step__label {
   margin: auto 0 var(--spacing-2);
   color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
   letter-spacing: 0;
@@ -3529,7 +3829,7 @@ label.aio-payment__light-loan-step__label {
   position: relative;
   top: -0.45em;
   margin-right: 2px;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
 }
 
 .aio-payment__light-elot-dealer {
@@ -3539,7 +3839,7 @@ label.aio-payment__light-loan-step__label {
   border-top: 1px solid var(--color-gray-300);
   color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   line-height: 1.25;
 }
@@ -3625,7 +3925,7 @@ label.aio-payment__light-loan-step__label {
   background: var(--color-white);
 }
 
-.aio-payment__light-disclosure summary {
+.aio-payment__light-disclosure > summary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto var(--spacing-3);
   gap: var(--spacing-3);
@@ -3635,11 +3935,11 @@ label.aio-payment__light-loan-step__label {
   list-style: none;
 }
 
-.aio-payment__light-disclosure summary::-webkit-details-marker {
+.aio-payment__light-disclosure > summary::-webkit-details-marker {
   display: none;
 }
 
-.aio-payment__light-disclosure summary::after {
+.aio-payment__light-disclosure > summary::after {
   content: '';
   justify-self: end;
   width: var(--spacing-2);
@@ -3650,18 +3950,18 @@ label.aio-payment__light-loan-step__label {
   transition: transform var(--transition-fast);
 }
 
-.aio-payment__light-disclosure[open] summary::after {
+.aio-payment__light-disclosure[open] > summary::after {
   transform: rotate(225deg);
 }
 
-.aio-payment__light-disclosure summary span {
+.aio-payment__light-disclosure > summary span {
   color: var(--color-dark);
   font-family: var(--font-heading);
   font-size: var(--aio-light-section-label);
   font-weight: var(--aio-light-heading-weight);
 }
 
-.aio-payment__light-disclosure summary strong {
+.aio-payment__light-disclosure > summary strong {
   color: var(--color-gray-600);
   font-family: var(--font-body);
   font-size: var(--aio-light-meta);
@@ -3688,6 +3988,11 @@ label.aio-payment__light-loan-step__label {
   box-shadow:
     0 1px 0 color-mix(in srgb, var(--color-white) 88%, var(--color-gray-100) 12%),
     0 14px 42px color-mix(in srgb, var(--color-dark-bg) 5.5%, transparent);
+}
+
+.aio-payment--light-steps .payment-calc__slider {
+  height: var(--spacing-11);
+  margin: calc(var(--spacing-2) * -1) 0;
 }
 
 .aio-payment--light-steps .aio-payment__light-shell {
@@ -3779,7 +4084,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside {
   gap: 0;
   min-height: 100%;
-  background: #f1f7f7;
+  background: var(--color-teal-light);
   border: 0;
   border-left: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 22%, var(--color-gray-200) 78%);
   border-radius: 0;
@@ -3868,6 +4173,12 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-budget-fit {
   text-align: left;
+}
+
+.aio-payment--light-steps .aio-payment__light-budget-fit a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--spacing-11);
 }
 
 .aio-payment--light-steps .aio-payment__light-wizard-steps-shell::before {
@@ -3961,7 +4272,7 @@ label.aio-payment__light-loan-step__label {
   border-radius: var(--border-radius-xl);
 }
 
-.aio-payment--light-steps .aio-payment__light-disclosure summary {
+.aio-payment--light-steps .aio-payment__light-disclosure > summary {
   padding: var(--spacing-5) var(--spacing-5);
 }
 
@@ -3979,7 +4290,7 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step__path--selected {
   border-width: 2px;
-  background: #f1f7f7;
+  background: var(--color-teal-light);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 45%, transparent),
     0 10px 28px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
@@ -3987,7 +4298,7 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step__body-tile--selected {
   border-width: 2px;
-  background: #f1f7f7;
+  background: var(--color-teal-light);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 45%, transparent),
     0 10px 28px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
@@ -3999,7 +4310,13 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn.aio-payment__light-vehicle-step__nu-btn--active {
-  color: var(--color-white);
+  border-width: 2px;
+  border-color: var(--color-blue-cobalt);
+  background: var(--color-teal-light);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 45%, transparent),
+    0 10px 28px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
+  color: var(--color-dark);
 }
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn:hover:not(.aio-payment__light-vehicle-step__nu-btn--active) {
@@ -4115,7 +4432,10 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-inline-action {
+  display: inline-flex;
+  align-items: center;
   align-self: flex-start;
+  min-height: var(--spacing-11);
   padding: 0;
   background: none;
   border: 0;
@@ -4340,7 +4660,7 @@ label.aio-payment__light-loan-step__label {
   gap: var(--spacing-1);
   margin-bottom: var(--spacing-4);
   padding: var(--spacing-4);
-  background: #f1f7f7;
+  background: var(--color-teal-light);
   border-radius: var(--border-radius-md);
 }
 
@@ -4359,7 +4679,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-size: clamp(var(--font-size-2xl), 2vw, var(--font-size-3xl));
   font-weight: var(--font-weight-extrabold);
   line-height: var(--line-height-tight);
 }
@@ -4392,6 +4712,64 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-breakdown-financed-sign--total {
   color: var(--color-gray-700);
+}
+
+.aio-payment__light-review-drivers {
+  display: grid;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
+}
+
+.aio-payment__light-review-drivers-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1-5);
+  margin: 0;
+  list-style: none;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  cursor: pointer;
+}
+
+.aio-payment__light-review-drivers-title::-webkit-details-marker {
+  display: none;
+}
+
+.aio-payment__light-review-drivers-title svg {
+  flex: 0 0 auto;
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-review-drivers-title svg:last-child {
+  margin-left: auto;
+  transition: transform var(--transition-fast);
+}
+
+.aio-payment__light-review-drivers[open] .aio-payment__light-review-drivers-title svg:last-child {
+  transform: rotate(180deg);
+}
+
+.aio-payment__light-review-drivers-list {
+  display: grid;
+  gap: var(--spacing-1-5);
+  margin: 0;
+  padding-left: var(--spacing-5);
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-review-drivers-list strong {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-semibold);
 }
 
 .aio-payment__light-breakdown {
@@ -4500,6 +4878,12 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) {
     padding: var(--spacing-4) 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .aio-payment__light-loan-guidance-list {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -5910,7 +6294,7 @@ label.aio-payment__light-loan-step__label {
     grid-row: 1;
     justify-self: end;
     margin: 0;
-    font-size: clamp(1.875rem, 6vw, 2.5rem);
+    font-size: clamp(var(--font-size-28), 6vw, var(--font-size-40));
     line-height: 0.95;
     white-space: nowrap;
   }
@@ -6050,16 +6434,21 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__light-elot-head h2 {
-    font-size: 32px;
+    font-size: var(--font-size-3xl);
   }
 
   .aio-payment__light-elot-results-link {
-    font-size: 16px;
+    font-size: var(--font-size-md);
   }
 
   .aio-payment__light-elot-card {
     flex-basis: 178px;
     min-height: 336px;
+  }
+
+  .aio-payment__light-elot-carousel-wrap,
+  .aio-payment__shopping-tools-shell {
+    overflow: hidden;
   }
 
   .aio-payment__light-elot-nav {
@@ -6075,7 +6464,8 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__advantage-points {
-    gap: var(--spacing-3);
+    grid-template-columns: 1fr;
+    gap: var(--spacing-7);
   }
 
   .aio-payment__advantage-image {
@@ -6084,11 +6474,12 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__advantage-point h3 {
-    font-size: 16px;
+    max-width: min(20rem, 100%);
+    font-size: var(--font-size-md);
   }
 
   .aio-payment__advantage-copy {
-    font-size: 18px;
+    font-size: var(--font-size-lg);
     line-height: 1.5;
   }
 
@@ -6112,7 +6503,7 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__shopping-tools-title-row h2 {
-    font-size: 32px;
+    font-size: var(--font-size-3xl);
   }
 
   .aio-payment__shopping-tools-shell {
@@ -6150,11 +6541,11 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__shopping-tool-content h3 {
-    font-size: 24px;
+    font-size: var(--font-size-2xl);
   }
 
   .aio-payment__shopping-tool-content p {
-    font-size: 15px;
+    font-size: var(--font-size-15);
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-actions {
@@ -6231,11 +6622,11 @@ label.aio-payment__light-loan-step__label {
     grid-template-columns: 1fr;
   }
 
-  .aio-payment__light-disclosure summary {
+  .aio-payment__light-disclosure > summary {
     grid-template-columns: minmax(0, 1fr) var(--spacing-3);
   }
 
-  .aio-payment__light-disclosure summary strong {
+  .aio-payment__light-disclosure > summary strong {
     grid-column: 1 / -1;
     grid-row: 2;
   }
@@ -6364,7 +6755,7 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment__similar-heading h2 {
     max-width: 12ch;
-    font-size: clamp(24px, 8vw, var(--font-size-36));
+    font-size: clamp(var(--font-size-2xl), 8vw, var(--font-size-36));
     text-align: center;
   }
 
