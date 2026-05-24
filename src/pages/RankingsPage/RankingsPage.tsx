@@ -13,6 +13,7 @@ import AdBanner from '../../components/AdBanner';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
+import TopRankedGlance from '../../components/TopRankedGlance/TopRankedGlance';
 import { DEALS_GRID_BREAKER_AD_URL } from '../../constants/dealsLayout';
 import type { Vehicle } from '../../types/vehicle';
 import './RankingsPage.css';
@@ -153,6 +154,8 @@ const RANKINGS_OFFER_COUNTS = {
 const RANKINGS_INCENTIVE_SUBNAV_VARIANT = 'incentive-subnav';
 const RANKINGS_CD_CONTROL_VARIANT = 'cd-control';
 const RANKINGS_CD_CONTROL_B_VARIANT = 'cd-control-b';
+const RANKINGS_METHODOLOGY_URL = 'https://www.caranddriver.com/how-we-test-cars/';
+const RANKINGS_METHODOLOGY_ARROW_URL = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/arrow-down.3b05ce3.svg?primary=%25231B5F8A';
 
 const CD_CONTROL_BODY_STYLE_NAV_ITEMS = [
   { key: 'suv', label: 'SUVs', title: 'SUVs', icon: BODY_STYLE_ICONS.suv, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control' },
@@ -212,6 +215,16 @@ const getCombinedMpg = (mpg?: string): number | undefined => {
 // Helper to generate C/D Says description
 const generateCdSays = (year: string, make: string, model: string): string => {
   return `Read our ${year} ${make} ${model} review for information on ratings, pricing, specs, and features.`;
+};
+
+const getRankingSubject = (subcategoryName: string): string => {
+  const subject = subcategoryName.replace(/^Best\s+/, '');
+  return subject.startsWith('SUV') ? subject : `${subject.charAt(0).toLowerCase()}${subject.slice(1)}`;
+};
+
+const getSubcategoryRankingDescription = (subcategoryName: string): string => {
+  const subject = getRankingSubject(subcategoryName);
+  return `Car and Driver's rankings are arrived at from the results of our extensive instrumented testing of several hundred vehicles each year and from our expert editors' subjective impressions gained in real-world driving. We've ranked the best ${subject} based on roughly 200 data points encompassing acceleration, handling, comfort, cargo space, fuel efficiency, value, and how enjoyable they are to drive. We take rankings seriously because we want you to know everything about the vehicles that you're interested in.`;
 };
 
 const YEAR_OPTIONS = [2022, 2023, 2024, 2025, 2026];
@@ -408,8 +421,19 @@ const RankingsPage = () => {
     rankingsVariant === RANKINGS_CD_CONTROL_VARIANT ||
     rankingsVariant === RANKINGS_CD_CONTROL_B_VARIANT
   );
+  const subcategoryConfig = subcategory && config
+    ? config.subcategories.find(s => s.id === subcategory)
+    : null;
+  const heroDescription = subcategoryConfig
+    ? getSubcategoryRankingDescription(subcategoryConfig.name)
+    : config?.description ?? '';
+  const getSubcategoryPath = useCallback((subId: string) => {
+    const basePath = `/rankings/${bodyStyleKey}/${subId}`;
+    return location.search ? `${basePath}${location.search}` : basePath;
+  }, [bodyStyleKey, location.search]);
   const showHeroIncentiveRow = Boolean(config && bodyStyleKey && !showIncentiveSubnavVariant && (!showCdControlVariant || showCdControlBVariant));
-  const isHeroDescriptionExpandable = Boolean(config && !showCdControlVariant && config.description.length > 180);
+  const showRankingMethodologyLink = Boolean(subcategoryConfig && showCdControlBVariant);
+  const isHeroDescriptionExpandable = Boolean(config && !showCdControlVariant && heroDescription.length > 180);
   const bodyStyleNavRef = useRef<HTMLDivElement>(null);
   const bodyStyleNavItems = useMemo(() => {
     if (showCdControlVariant) {
@@ -538,11 +562,6 @@ const RankingsPage = () => {
     return vehicles.sort((a, b) => getVehicleRating(b) - getVehicleRating(a));
   }, [bodyStyle, effectiveSelectedRankingYear, getVehicleRating]);
 
-  // Get subcategory vehicles if subcategory is specified
-  const subcategoryConfig = subcategory && config
-    ? config.subcategories.find(s => s.id === subcategory)
-    : null;
-
   const displayVehicles = useMemo(() => {
     if (subcategoryConfig) {
       return allVehicles.filter(subcategoryConfig.filter);
@@ -567,8 +586,107 @@ const RankingsPage = () => {
       epaMpg: getCombinedMpg(vehicle.mpg),
       cdSays: generateCdSays(vehicle.year, vehicle.make, vehicle.model),
       modelName: vehicle.model,
+      priceRange: vehicle.priceRange,
     }));
   }, [displayVehicles, getVehicleRating]);
+
+  const renderHeroRankingCard = (vehicle: typeof formattedVehicles[number]) => {
+    const vehicleName = `${vehicle.year} ${vehicle.name}`;
+    const isFirstRank = vehicle.rank === 1;
+
+    return (
+      <article key={vehicle.id} className="rankings-page__hero-card rankings-page__hero-card--list-item">
+        <Link to={`/${vehicle.slug}`} className="rankings-page__hero-card-content">
+          <div className="rankings-page__hero-card-header">
+            <h2 className="rankings-page__hero-card-title">
+              {vehicleName}
+            </h2>
+            <div className="rankings-page__hero-card-rating">
+              <div className="rankings-page__hero-card-rating-score">
+                <span className="rankings-page__hero-card-rating-value">{vehicle.rating}</span>
+                <span className="rankings-page__hero-card-rating-max">/10</span>
+              </div>
+              <span className="rankings-page__hero-card-rating-label">C/D RATING</span>
+            </div>
+          </div>
+          <div className="rankings-page__hero-card-image-container">
+            <div className="rankings-page__hero-card-rank-container">
+              <div className={`rankings-page__hero-card-rank ${isFirstRank ? 'rankings-page__hero-card-rank--first' : ''}`}>
+                {vehicle.rank}
+              </div>
+            </div>
+            <button
+              className={`rankings-page__hero-card-save ${isVehicleSaved(vehicleName) ? 'rankings-page__hero-card-save--saved' : ''}`}
+              onClick={(e) => handleSaveClick(e, { name: vehicleName, slug: vehicle.slug, image: vehicle.image })}
+              aria-label={isVehicleSaved(vehicleName) ? 'Remove from saved' : 'Save vehicle'}
+            >
+              <Bookmark size={18} fill={isVehicleSaved(vehicleName) ? 'currentColor' : 'none'} />
+            </button>
+            <img
+              src={vehicle.image}
+              alt={vehicle.name}
+              className="rankings-page__hero-card-image"
+            />
+          </div>
+          <div className="rankings-page__hero-card-details">
+            <div className="rankings-page__hero-card-price-row">
+              <div className="rankings-page__hero-card-price">
+                <span className="rankings-page__hero-card-price-label">Starting at</span>
+                <span className="rankings-page__hero-card-price-value">{vehicle.price}</span>
+              </div>
+              <div className="rankings-page__hero-card-mpg">
+                <span className="rankings-page__hero-card-mpg-label">EPA MPG</span>
+                <span className="rankings-page__hero-card-mpg-value">
+                  {vehicle.epaMpg ? (
+                    <>
+                      <strong>{vehicle.epaMpg}</strong>
+                      <span className="rankings-page__hero-card-mpg-unit">combined</span>
+                    </>
+                  ) : 'N/A'}
+                </span>
+              </div>
+              {(vehicle.tenBest || vehicle.editorsChoice) && (
+                <>
+                  <div className="rankings-page__hero-card-divider"></div>
+                  <div className="rankings-page__hero-card-badges">
+                    {vehicle.tenBest && (
+                      <div className="rankings-page__hero-card-badge-item">
+                        <img
+                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
+                          alt="10Best"
+                          className="rankings-page__hero-card-badge"
+                        />
+                        <span className="rankings-page__hero-card-badge-label">10Best</span>
+                      </div>
+                    )}
+                    {vehicle.editorsChoice && (
+                      <div className="rankings-page__hero-card-badge-item">
+                        <img
+                          src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE"
+                          alt="Editor's Choice"
+                          className="rankings-page__hero-card-badge"
+                        />
+                        <span className="rankings-page__hero-card-badge-label">Editor's Choice</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              <button className="rankings-page__hero-card-cta">
+                {parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} {vehicle.modelName.toUpperCase()}
+              </button>
+            </div>
+            <div className="rankings-page__hero-card-cdsays">
+              <span className="rankings-page__hero-card-cdsays-label">C/D SAYS:</span>
+              <span className="rankings-page__hero-card-cdsays-text">
+                {vehicle.cdSays} <span className="rankings-page__hero-card-cdsays-link">Learn More</span>
+              </span>
+            </div>
+          </div>
+        </Link>
+      </article>
+    );
+  };
 
   // Get top vehicle and count for each body style category (for landing page)
   const categoryData = useMemo(() => {
@@ -918,6 +1036,23 @@ const RankingsPage = () => {
   }
 
   const pageTitle = subcategoryConfig ? subcategoryConfig.name : config.title;
+  const fullListAnchor = `${location.pathname}${location.search}#rankings-full-list`;
+  const subcategoryGlanceTitle = subcategoryConfig
+    ? `Top Ranked ${subcategoryConfig.name.replace(/^Best\s+/, '')} at a Glance`
+    : '';
+  const topRankedGlanceItems = formattedVehicles.slice(0, 3).map((vehicle) => ({
+    id: vehicle.id,
+    rank: vehicle.rank,
+    name: vehicle.name,
+    make: vehicle.make,
+    modelName: vehicle.modelName,
+    year: vehicle.year,
+    image: vehicle.image,
+    rating: vehicle.rating,
+    priceRange: vehicle.priceRange,
+    slug: vehicle.slug,
+    shopLabel: 'Shop Now',
+  }));
   const bodyStyleSubnav = (
     <nav className="rankings-page__body-style-subnav" aria-label="Body style rankings">
       <div className="container rankings-page__body-style-subnav-inner">
@@ -970,7 +1105,7 @@ const RankingsPage = () => {
     <div className={`rankings-page${showCdControlVariant ? ' rankings-page--cd-control' : ''}${showCdControlBVariant ? ' rankings-page--cd-control-b' : ''}`}>
       <SEO
         title={`${pageTitle} | Car and Driver Rankings`}
-        description={config.description}
+        description={heroDescription}
       />
 
       {/* Google One Tap for non-authenticated users */}
@@ -981,7 +1116,7 @@ const RankingsPage = () => {
         />
       )}
 
-      {showCdControlVariant && bodyStyleSubnav}
+      {showCdControlVariant && !subcategory && bodyStyleSubnav}
 
       {/* Hero Section */}
       <div className="rankings-page__hero">
@@ -1011,7 +1146,7 @@ const RankingsPage = () => {
                 className={`rankings-page__description${isHeroDescriptionExpandable && !isHeroDescriptionExpanded ? ' rankings-page__description--clamped' : ''}`}
                 id="rankings-hero-description"
               >
-                {config.description}
+                {heroDescription}
               </p>
               {isHeroDescriptionExpandable && (
                 <button
@@ -1024,6 +1159,22 @@ const RankingsPage = () => {
                   <span>{isHeroDescriptionExpanded ? 'Read less' : 'Read more'}</span>
                   {!isHeroDescriptionExpanded && <ChevronDown size={14} strokeWidth={2.5} aria-hidden="true" />}
                 </button>
+              )}
+              {showRankingMethodologyLink && (
+                <div className="rankings-page__methodology-link-wrap">
+                  <img
+                    src={RANKINGS_METHODOLOGY_ARROW_URL}
+                    alt=""
+                    aria-hidden="true"
+                    className="rankings-page__methodology-arrow"
+                  />
+                  <a
+                    href={RANKINGS_METHODOLOGY_URL}
+                    className="rankings-page__methodology-link"
+                  >
+                    Read about how we test and evaluate vehicles here.
+                  </a>
+                </div>
               )}
             </div>
             {showHeroIncentiveRow && (
@@ -1053,7 +1204,7 @@ const RankingsPage = () => {
         </div>
       </div>
 
-      {!showCdControlVariant && bodyStyleSubnav}
+      {!showCdControlVariant && !subcategory && bodyStyleSubnav}
 
       {/* Subcategory Anchor Navigation - only show on main body style page */}
       {!subcategory && config && (
@@ -1159,7 +1310,32 @@ const RankingsPage = () => {
       {/* Main Content */}
       <div className="rankings-page__content">
         <div className="container">
-          <div className="rankings-page__layout">
+          {subcategory && formattedVehicles.length >= 1 && (
+            <div className="rankings-page__subcategory-breaker" role="complementary" aria-label="Advertisement">
+              <AdBanner
+                imageUrl={DEALS_GRID_BREAKER_AD_URL}
+                altText="Advertisement"
+                hideHeader
+                hideLine
+                mobileCompact
+              />
+            </div>
+          )}
+
+          {subcategory && topRankedGlanceItems.length >= 1 && (
+            <div className="rankings-page__top-ranked-glance-shell">
+              <TopRankedGlance
+                title={subcategoryGlanceTitle}
+                seeAllLabel="See full list"
+                seeAllPath={fullListAnchor}
+                primaryCtaLabel="SHOP THE TOP 3"
+                primaryCtaPath={buyingOffersPath}
+                rankingItems={topRankedGlanceItems}
+              />
+            </div>
+          )}
+
+          <div className={`rankings-page__layout${subcategory ? ' rankings-page__layout--subcategory' : ''}`}>
             <div className="rankings-page__main">
 
               {/* MAIN BODY STYLE PAGE: Show top 3 from each subcategory */}
@@ -1173,8 +1349,14 @@ const RankingsPage = () => {
                     <div className="rankings-page__subcategory-heading">
                       {showCdControlVariant && <span className="rankings-page__subcategory-kicker">By Size</span>}
                       <h2 className="rankings-page__subcategory-title">
-                        {sub.name}
-                        {showCdControlVariant && <ChevronRight size={20} strokeWidth={3} aria-hidden="true" />}
+                        <Link
+                          to={getSubcategoryPath(sub.id)}
+                          className="rankings-page__subcategory-title-link"
+                          aria-label={`See the full ${sub.name} rankings`}
+                        >
+                          {sub.name}
+                          {showCdControlVariant && <ChevronRight size={20} strokeWidth={3} aria-hidden="true" />}
+                        </Link>
                       </h2>
                     </div>
                     <div className="rankings-page__subcategory-actions">
@@ -1184,7 +1366,7 @@ const RankingsPage = () => {
                         </Link>
                       )}
                       <Link
-                        to={`/rankings/${bodyStyle}/${sub.id}`}
+                        to={getSubcategoryPath(sub.id)}
                         className="rankings-page__subcategory-more"
                       >
                         {showCdControlVariant ? 'See full list' : `See all ${sub.totalCount} vehicles`}
@@ -1318,141 +1500,11 @@ const RankingsPage = () => {
                 </section>
               ))}
 
-              {/* SUBCATEGORY PAGE: Show full list */}
-              {subcategory && (
-                <>
-                  {/* #1 Hero Card */}
-                  {formattedVehicles.length >= 1 && (
-                    <section className="rankings-page__hero-card">
-                      <div className="rankings-page__hero-card-label">{subcategoryConfig?.name || 'Top Pick'}</div>
-                      <Link to={`/${formattedVehicles[0].slug}`} className="rankings-page__hero-card-content">
-                        <div className="rankings-page__hero-card-header">
-                          <h2 className="rankings-page__hero-card-title">
-                            {formattedVehicles[0].year} {formattedVehicles[0].name}
-                          </h2>
-                          <div className="rankings-page__hero-card-rating">
-                            <div className="rankings-page__hero-card-rating-score">
-                              <span className="rankings-page__hero-card-rating-value">{formattedVehicles[0].rating}</span>
-                              <span className="rankings-page__hero-card-rating-max">/10</span>
-                            </div>
-                            <span className="rankings-page__hero-card-rating-label">C/D RATING</span>
-                          </div>
-                        </div>
-                        <div className="rankings-page__hero-card-image-container">
-                          <div className="rankings-page__hero-card-rank-container">
-                            <div className="rankings-page__hero-card-rank rankings-page__hero-card-rank--first">1</div>
-                          </div>
-                          <button
-                            className={`rankings-page__hero-card-save ${isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'rankings-page__hero-card-save--saved' : ''}`}
-                            onClick={(e) => handleSaveClick(e, { name: `${formattedVehicles[0].year} ${formattedVehicles[0].name}`, slug: formattedVehicles[0].slug, image: formattedVehicles[0].image })}
-                            aria-label={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'Remove from saved' : 'Save vehicle'}
-                          >
-                            <Bookmark size={18} fill={isVehicleSaved(`${formattedVehicles[0].year} ${formattedVehicles[0].name}`) ? 'currentColor' : 'none'} />
-                          </button>
-                          <img
-                            src={formattedVehicles[0].image}
-                            alt={formattedVehicles[0].name}
-                            className="rankings-page__hero-card-image"
-                          />
-                        </div>
-                        <div className="rankings-page__hero-card-details">
-                          <div className="rankings-page__hero-card-price-row">
-                            <div className="rankings-page__hero-card-price">
-                              <span className="rankings-page__hero-card-price-label">Starting at</span>
-                              <span className="rankings-page__hero-card-price-value">{formattedVehicles[0].price}</span>
-                            </div>
-                            <div className="rankings-page__hero-card-mpg">
-                              <span className="rankings-page__hero-card-mpg-label">EPA MPG</span>
-                              <span className="rankings-page__hero-card-mpg-value">
-                                {formattedVehicles[0].epaMpg ? (
-                                  <>
-                                    <strong>{formattedVehicles[0].epaMpg}</strong>
-                                    <span className="rankings-page__hero-card-mpg-unit">combined</span>
-                                  </>
-                                ) : 'N/A'}
-                              </span>
-                            </div>
-                            {(formattedVehicles[0].tenBest || formattedVehicles[0].editorsChoice) && (
-                              <>
-                                <div className="rankings-page__hero-card-divider"></div>
-                                <div className="rankings-page__hero-card-badges">
-                                  {formattedVehicles[0].tenBest && (
-                                    <div className="rankings-page__hero-card-badge-item">
-                                      <img
-                                        src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
-                                        alt="10Best"
-                                        className="rankings-page__hero-card-badge"
-                                      />
-                                      <span className="rankings-page__hero-card-badge-label">10Best</span>
-                                    </div>
-                                  )}
-                                  {formattedVehicles[0].editorsChoice && (
-                                    <div className="rankings-page__hero-card-badge-item">
-                                      <img
-                                        src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE"
-                                        alt="Editor's Choice"
-                                        className="rankings-page__hero-card-badge"
-                                      />
-                                      <span className="rankings-page__hero-card-badge-label">Editor's Choice</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </>
-                            )}
-                            <button className="rankings-page__hero-card-cta">
-                              {parseInt(formattedVehicles[0].year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} {formattedVehicles[0].modelName.toUpperCase()}
-                            </button>
-                          </div>
-                          <div className="rankings-page__hero-card-cdsays">
-                            <span className="rankings-page__hero-card-cdsays-label">C/D SAYS:</span>
-                            <span className="rankings-page__hero-card-cdsays-text">
-                              {formattedVehicles[0].cdSays} <span className="rankings-page__hero-card-cdsays-link">Learn More</span>
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    </section>
-                  )}
-
-                  {/* Full Rankings List */}
-                  <section className="rankings-page__full-list">
-                    <h2 className="rankings-page__section-title">
-                      <img
-                        src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg"
-                        alt="10Best"
-                        className="rankings-page__section-icon"
-                      />
-                      All {subcategoryConfig?.name || pageTitle}
-                    </h2>
-                    <div className="rankings-page__grid">
-                      {formattedVehicles.slice(1).map((vehicle) => {
-                        const offers = getVehicleOffers(vehicle.make, vehicle.modelName);
-                        return (
-                        <VehicleCard
-                          key={vehicle.id}
-                          id={vehicle.id}
-                          name={vehicle.name}
-                          slug={vehicle.slug}
-                          image={vehicle.image}
-                          price={vehicle.price}
-                          rating={vehicle.rating}
-                          rank={vehicle.rank}
-                          editorsChoice={vehicle.editorsChoice}
-                          tenBest={vehicle.tenBest}
-                          showShopButton={true}
-                          showSaveButton={true}
-                          shopButtonText={`${parseInt(vehicle.year) >= 2026 ? 'SHOP NEW' : 'SHOP USED'} ${vehicle.modelName.toUpperCase()}`}
-                          shopButtonVariant="primary"
-                          epaMpg={vehicle.epaMpg}
-                          cdSays={vehicle.cdSays}
-                          modelName={vehicle.modelName}
-                          incentiveCount={offers.length}
-                          onIncentiveClick={() => navigate(`/${vehicle.make.toLowerCase()}/${vehicle.modelName.toLowerCase().replace(/\s+/g, '-')}/deals-incentives`)}
-                        />);
-                      })}
-                    </div>
-                  </section>
-                </>
+              {/* SUBCATEGORY PAGE: Show the full rankings list with consistent ranked cards */}
+              {subcategory && formattedVehicles.length >= 1 && (
+                <section id="rankings-full-list" className="rankings-page__full-list rankings-page__full-list--hero-cards">
+                  {formattedVehicles.map((vehicle) => renderHeroRankingCard(vehicle))}
+                </section>
               )}
 
               {/* Empty State */}

@@ -133,6 +133,40 @@
   outline-offset: var(--spacing-1);
 }
 
+.rankings-page__methodology-link-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-5);
+  color: var(--color-blue-cobalt);
+}
+
+.rankings-page__methodology-arrow {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.rankings-page__methodology-link {
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xl);
+  line-height: 1.25;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.rankings-page__methodology-link:hover,
+.rankings-page__methodology-link:focus-visible {
+  color: var(--color-blue-cobalt-dark);
+}
+
+.rankings-page__methodology-link:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-1);
+}
+
 /* Hero Stats */
 .rankings-page__hero-stats {
   display: flex;
@@ -948,6 +982,25 @@
   margin-top: var(--spacing-5);
 }
 
+.rankings-page__subcategory-breaker {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 0 var(--spacing-8);
+}
+
+.rankings-page__subcategory-breaker .ad-banner {
+  margin: 0;
+  background: transparent;
+}
+
+.rankings-page__subcategory-breaker .ad-banner__content {
+  padding: 0;
+}
+
+.rankings-page__subcategory-breaker .ad-banner__image {
+  border-color: var(--color-gray-200);
+}
 
 /* Subcategory Sections */
 .rankings-page__subcategory-section {
@@ -993,6 +1046,24 @@
   margin: 0;
   text-transform: capitalize;
   letter-spacing: -0.5px;
+}
+
+.rankings-page__subcategory-title-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: inherit;
+  text-decoration: none;
+}
+
+.rankings-page__subcategory-title-link:hover,
+.rankings-page__subcategory-title-link:focus-visible {
+  color: var(--color-blue-cobalt);
+}
+
+.rankings-page__subcategory-title-link:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 4px;
 }
 
 .rankings-page__subcategory-more {
@@ -1493,21 +1564,21 @@
 
 .rankings-page__hero-card-cta {
   padding: var(--spacing-2) var(--spacing-4);
-  background: transparent;
+  background: var(--color-blue-cobalt);
   border: 1px solid var(--color-blue-cobalt);
   border-radius: var(--border-radius-md);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
-  color: var(--color-blue-cobalt);
+  color: var(--color-white);
   cursor: pointer;
   transition: all var(--transition-fast);
   margin-left: auto;
 }
 
 .rankings-page__hero-card-cta:hover {
-  background: var(--color-blue-cobalt);
-  border-color: var(--color-blue-cobalt);
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
   color: var(--color-white);
 }
 
@@ -1596,6 +1667,7 @@
 
 .rankings-page__hero-card-cdsays-text {
   font-family: var(--font-article);
+  font-size: var(--font-size-lg);
 }
 
 .rankings-page__hero-card-cdsays-link {
@@ -1618,6 +1690,19 @@
 /* Full Rankings Grid */
 .rankings-page__full-list {
   margin-bottom: var(--spacing-10);
+}
+
+.rankings-page__full-list--hero-cards {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.rankings-page__hero-card--list-item {
+  margin-bottom: 0;
+}
+
+.rankings-page__hero-card--list-item .rankings-page__hero-card-content {
+  border-radius: var(--border-radius-lg);
 }
 
 .rankings-page__grid {
@@ -2308,6 +2393,18 @@
   max-width: 1078px;
 }
 
+/* Top ranked glance: 1200px strip while main column stays 1078px */
+@media (min-width: 769px) {
+  .rankings-page--cd-control .rankings-page__top-ranked-glance-shell {
+    position: relative;
+    left: 50%;
+    box-sizing: border-box;
+    width: min(100vw, var(--max-width-rankings-glance));
+    max-width: var(--max-width-rankings-glance);
+    transform: translateX(-50%);
+  }
+}
+
 .rankings-page--cd-control .rankings-page__body-style-subnav {
   background: var(--color-white);
   border: 0;
@@ -2446,6 +2543,14 @@
 
 .rankings-page--cd-control .rankings-page__description-wrap .rankings-page__description {
   margin-bottom: var(--spacing-1);
+}
+
+.rankings-page--cd-control-b .rankings-page__methodology-link-wrap {
+  margin-top: var(--spacing-3);
+}
+
+.rankings-page--cd-control-b .rankings-page__methodology-link {
+  font-size: 16px;
 }
 
 .rankings-page--cd-control .rankings-page__description-toggle {
@@ -2654,6 +2759,10 @@
   padding-top: 196px;
 }
 
+.rankings-page--cd-control .rankings-page__layout--subcategory .rankings-page__sidebar {
+  padding-top: 0;
+}
+
 .rankings-page--cd-control .rankings-page__subcategory-section {
   margin-bottom: 72px;
   padding-top: 0;
@@ -2687,7 +2796,6 @@
 .rankings-page--cd-control .rankings-page__subcategory-title {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   flex-shrink: 0;
   color: var(--color-black);
   font-family: var(--font-condensed);
@@ -2695,6 +2803,11 @@
   font-weight: 500;
   line-height: 56px;
   letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.rankings-page--cd-control .rankings-page__subcategory-title-link {
+  gap: 6px;
   white-space: nowrap;
 }
 

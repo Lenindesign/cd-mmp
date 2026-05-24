@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { type FocusEvent, type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, Mail, RotateCcw, SkipForward } from 'lucide-react';
 import { CarProfile, CreditCard as PhosphorCreditCard } from '@phosphor-icons/react';
@@ -79,6 +79,12 @@ interface LightTrimStyleOption {
   trimId: string;
   trimName: string;
   price: number;
+}
+
+interface LightVehicleDraft {
+  year: string;
+  make: string;
+  model: string;
 }
 
 type LightWizardStepSlug = 'goal' | 'loan' | 'vehicle' | 'trade' | 'review';
@@ -1132,6 +1138,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
   const [lightKnownVehicleSelected, setLightKnownVehicleSelected] = useState(() => !isLightVariant);
+  const [lightVehicleDraft, setLightVehicleDraft] = useState<LightVehicleDraft>(() => ({
+    year: isLightVariant ? '' : defaultVehicle.year,
+    make: isLightVariant ? '' : defaultVehicle.make,
+    model: isLightVariant ? '' : defaultVehicle.model,
+  }));
   const [lightBrowseBodyStyle, setLightBrowseBodyStyle] = useState('SUV');
   const [lightAffordableOffersSlug, setLightAffordableOffersSlug] = useState<string | null>(null);
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
@@ -1146,6 +1157,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, [isLightVariant]);
   const handlePriceChange = useCallback((nextPrice: number) => {
     setPrice(nextPrice);
+  }, []);
+  const selectInputValueOnFocus = useCallback((event: FocusEvent<HTMLInputElement>) => {
+    event.currentTarget.select();
   }, []);
   const handleStateCodeChange = useCallback((nextStateCode: string) => {
     hasAdjustedStateCodeRef.current = true;
@@ -1202,6 +1216,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     [defaultVehicle, selectedSlug, vehicles],
   );
   const selectedVehiclePageHref = `/${selectedVehicle.slug}`;
+  const lightVehicleYearValue = lightKnownVehicleSelected ? selectedYear : lightVehicleDraft.year;
+  const lightVehicleMakeValue = lightKnownVehicleSelected ? selectedVehicle.make : lightVehicleDraft.make;
+  const lightVehicleModelValue = lightKnownVehicleSelected ? selectedVehicle.model : lightVehicleDraft.model;
   const lightTradeVehicleMatch = useMemo(() => {
     const query = normalizeVehicleMatch(tradeVehicle);
     if (query.length < 3) return undefined;
@@ -1218,6 +1235,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightHasVehicleSelection = !isLightVariant || lightVehicleStepMode === 'browsing' || lightKnownVehicleSelected;
   const lightHasSpecificVehicleSelection = !isLightVariant || lightKnownVehicleSelected;
   const availableTrimStyleOptions = useMemo<LightTrimStyleOption[]>(() => {
+    if (isLightVariant && lightVehicleStepMode === 'known' && !lightKnownVehicleSelected) {
+      return [];
+    }
+
     const trims = getVehicleTrims(
       selectedVehicle.make,
       selectedVehicle.model,
@@ -1239,6 +1260,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     });
   }, [
     canUseCatalogPrice,
+    isLightVariant,
+    lightKnownVehicleSelected,
+    lightVehicleStepMode,
     selectedVehicle.make,
     selectedVehicle.model,
     selectedVehicle.priceMax,
@@ -1300,20 +1324,24 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   );
   const availableMakes = useMemo(
     () => [...new Set(vehicles
-      .filter((vehicle) => condition === 'used' || vehicle.year === selectedYear)
+      .filter((vehicle) => condition === 'used' || !lightVehicleYearValue || vehicle.year === lightVehicleYearValue)
       .map((vehicle) => vehicle.make))]
       .sort(),
-    [condition, selectedYear, vehicles],
+    [condition, lightVehicleYearValue, vehicles],
   );
   const availableModels = useMemo(
-    () => [...new Set(vehicles
-      .filter((vehicle) => (
-        (condition === 'used' || vehicle.year === selectedYear) &&
-        vehicle.make === selectedVehicle.make
-      ))
-      .map((vehicle) => vehicle.model))]
-      .sort(),
-    [condition, selectedVehicle.make, selectedYear, vehicles],
+    () => {
+      if (!lightVehicleMakeValue) return [];
+
+      return [...new Set(vehicles
+        .filter((vehicle) => (
+          (condition === 'used' || !lightVehicleYearValue || vehicle.year === lightVehicleYearValue) &&
+          vehicle.make === lightVehicleMakeValue
+        ))
+        .map((vehicle) => vehicle.model))]
+        .sort();
+    },
+    [condition, lightVehicleMakeValue, lightVehicleYearValue, vehicles],
   );
   const lightVehicleBrowseTiles = useMemo(
     () =>
@@ -2173,8 +2201,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, [lightDealModalVehicle, selectedIncentive, selectedVehicle, selectedYear]);
 
   const applySelectedVehicle = useCallback((vehicle: Vehicle, options?: { selectedYear?: string; syncCatalogPrice?: boolean }) => {
+    const nextYear = options?.selectedYear ?? vehicle.year;
     setSelectedSlug(vehicle.slug);
-    setSelectedYear(options?.selectedYear ?? vehicle.year);
+    setSelectedYear(nextYear);
+    setLightVehicleDraft({
+      year: nextYear,
+      make: vehicle.make,
+      model: vehicle.model,
+    });
     setSelectedTrimId(null);
     if (options?.syncCatalogPrice ?? true) {
       syncCatalogPrice(vehicle.priceMin);
@@ -2185,32 +2219,64 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, [syncCatalogPrice]);
 
   const updateVehicleByParts = (partial: Partial<Pick<Vehicle, 'year' | 'make' | 'model' | 'slug'>>) => {
-    setLightKnownVehicleSelected(true);
-    const year = partial.year ?? selectedYear;
-    const make = partial.make ?? selectedVehicle.make;
-    const model = partial.model ?? selectedVehicle.model;
     const exactSlug = partial.slug;
 
-    const next = exactSlug
-      ? vehicles.find((vehicle) => vehicle.slug === exactSlug)
-      : vehicles.find((vehicle) => (
-          (condition === 'used' || vehicle.year === year) &&
-          vehicle.make === make &&
-          vehicle.model === model
-        ))
-        ?? vehicles.find((vehicle) => (
-          (condition === 'used' || vehicle.year === year) &&
-          vehicle.make === make
-        ))
-        ?? vehicles.find((vehicle) => condition === 'used' || vehicle.year === year)
-        ?? selectedVehicle;
+    if (exactSlug) {
+      const next = vehicles.find((vehicle) => vehicle.slug === exactSlug);
+      if (!next) return;
 
-    if (next) {
+      setLightKnownVehicleSelected(true);
       if (condition === 'used') {
-        applySelectedVehicle(next, { selectedYear: year, syncCatalogPrice: false });
+        applySelectedVehicle(next, { selectedYear: lightVehicleYearValue || selectedYear, syncCatalogPrice: false });
       } else {
         applySelectedVehicle(next);
       }
+      return;
+    }
+
+    const yearChanged = partial.year !== undefined;
+    const makeChanged = partial.make !== undefined;
+    const nextYear = partial.year ?? lightVehicleYearValue;
+    const nextMake = partial.make ?? (yearChanged ? '' : lightVehicleMakeValue);
+    const nextModel = partial.model ?? (yearChanged || makeChanged ? '' : lightVehicleModelValue);
+
+    setLightVehicleDraft({
+      year: nextYear,
+      make: nextMake,
+      model: nextModel,
+    });
+
+    if (nextYear) {
+      setSelectedYear(nextYear);
+    }
+
+    if (!nextYear || !nextMake || !nextModel) {
+      setLightKnownVehicleSelected(false);
+      setSelectedTrimId(null);
+      setSelectedCashIds([]);
+      setSelectedFinanceId('custom');
+      return;
+    }
+
+    const next = vehicles.find((vehicle) => (
+      (condition === 'used' || vehicle.year === nextYear) &&
+      vehicle.make === nextMake &&
+      vehicle.model === nextModel
+    ));
+
+    if (!next) {
+      setLightKnownVehicleSelected(false);
+      setSelectedTrimId(null);
+      setSelectedCashIds([]);
+      setSelectedFinanceId('custom');
+      return;
+    }
+
+    setLightKnownVehicleSelected(true);
+    if (condition === 'used') {
+      applySelectedVehicle(next, { selectedYear: nextYear, syncCatalogPrice: false });
+    } else {
+      applySelectedVehicle(next);
     }
   };
 
@@ -2232,6 +2298,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     goToLightWizardStep(1);
     setLightVehicleStepMode('known');
     setLightKnownVehicleSelected(false);
+    setLightVehicleDraft({ year: '', make: '', model: '' });
     setLightAffordableOffersSlug(null);
     setLightDealModalVehicle(null);
     setSelectedCashIds([]);
@@ -2244,11 +2311,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     setSelectedFinanceId('custom');
 
     if (nextCondition === 'used' && !USED_YEAR_OPTIONS.includes(selectedYear)) {
-      setSelectedYear(USED_YEAR_OPTIONS[0]);
+      const nextYear = USED_YEAR_OPTIONS[0];
+      setSelectedYear(nextYear);
+      setLightVehicleDraft((current) => ({
+        ...current,
+        year: nextYear,
+      }));
     }
 
     if (nextCondition === 'new') {
       setSelectedYear(selectedVehicle.year);
+      setLightVehicleDraft((current) => ({
+        year: lightKnownVehicleSelected ? selectedVehicle.year : current.year,
+        make: lightKnownVehicleSelected ? selectedVehicle.make : current.make,
+        model: lightKnownVehicleSelected ? selectedVehicle.model : current.model,
+      }));
     }
   };
 
@@ -2675,21 +2752,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <div className="aio-payment__light-vehicle-step__ymm-row">
                           <Select
                             label="Year"
-                            value={lightKnownVehicleSelected ? selectedYear : ''}
+                            value={lightVehicleYearValue}
                             onChange={(event) => updateVehicleByParts({ year: event.target.value })}
                             placeholder="Select year"
                             options={availableYears.map((year) => ({ value: year, label: year }))}
                           />
                           <Select
                             label="Make"
-                            value={lightKnownVehicleSelected ? selectedVehicle.make : ''}
+                            value={lightVehicleMakeValue}
                             onChange={(event) => updateVehicleByParts({ make: event.target.value })}
                             placeholder="Select make"
                             options={availableMakes.map((make) => ({ value: make, label: make }))}
                           />
                           <Select
                             label="Model"
-                            value={lightKnownVehicleSelected ? selectedVehicle.model : ''}
+                            value={lightVehicleModelValue}
                             onChange={(event) => updateVehicleByParts({ model: event.target.value })}
                             placeholder="Select model"
                             options={availableModels.map((model) => ({ value: model, label: model }))}
@@ -2834,21 +2911,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     />
                     <Select
                       label="Year"
-                      value={lightHasVehicleSelection ? selectedYear : ''}
+                      value={lightVehicleYearValue}
                       onChange={(event) => updateVehicleByParts({ year: event.target.value })}
                       placeholder="Select year"
                       options={availableYears.map((year) => ({ value: year, label: year }))}
                     />
                     <Select
                       label="Make"
-                      value={lightHasVehicleSelection ? selectedVehicle.make : ''}
+                      value={lightVehicleMakeValue}
                       onChange={(event) => updateVehicleByParts({ make: event.target.value })}
                       placeholder="Select make"
                       options={availableMakes.map((make) => ({ value: make, label: make }))}
                     />
                     <Select
                       label="Model"
-                      value={lightHasVehicleSelection ? selectedVehicle.model : ''}
+                      value={lightVehicleModelValue}
                       onChange={(event) => updateVehicleByParts({ model: event.target.value })}
                       placeholder="Select model"
                       options={availableModels.map((model) => ({ value: model, label: model }))}
@@ -2880,6 +2957,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             min={0}
                             step={500}
                             iconLeft={MONEY_INPUT_PREFIX}
+                            onFocus={selectInputValueOnFocus}
                             onChange={(event) => setTradeInValue(numberInput(event.target.value))}
                           />
                           <button type="button" className="aio-payment__light-inline-action" onClick={() => setShowTradeTool(true)}>
@@ -2893,6 +2971,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           min={0}
                           step={500}
                           iconLeft={MONEY_INPUT_PREFIX}
+                          onFocus={selectInputValueOnFocus}
                           onChange={(event) => setAmountOwed(numberInput(event.target.value))}
                           wrapperClassName="aio-payment__light-trade-step__field-with-action"
                         />
@@ -3026,6 +3105,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         min={0}
                         step={500}
                         iconLeft={MONEY_INPUT_PREFIX}
+                        onFocus={selectInputValueOnFocus}
                         onChange={(event) => setTradeInValue(numberInput(event.target.value))}
                       />
                       <button type="button" className="aio-payment__light-inline-action" onClick={() => setShowTradeTool(true)}>
@@ -3039,6 +3119,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       min={0}
                       step={500}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectInputValueOnFocus}
                       onChange={(event) => setAmountOwed(numberInput(event.target.value))}
                     />
                     <Select
@@ -4101,6 +4182,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 min={0}
                 step={500}
                 iconLeft={MONEY_INPUT_PREFIX}
+                onFocus={selectInputValueOnFocus}
                 onChange={(event) => setTradeInValue(numberInput(event.target.value))}
               />
               <TextField
@@ -4110,6 +4192,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 min={0}
                 step={500}
                 iconLeft={MONEY_INPUT_PREFIX}
+                onFocus={selectInputValueOnFocus}
                 onChange={(event) => setAmountOwed(numberInput(event.target.value))}
               />
             </div>

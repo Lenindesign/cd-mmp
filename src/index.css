@@ -248,6 +248,7 @@
   --max-width-container: 1280px;
   --max-width-content: 1280px;
   --max-width-narrow: 960px;
+  --max-width-rankings-glance: 1200px;
   --content-padding: var(--spacing-8);
   --header-height: 46px;
   --subnav-height: 50px;

@@ -120,7 +120,8 @@
     "maxWidth": {
       "container": { "value": "1280px" },
       "content": { "value": "1280px" },
-      "narrow": { "value": "960px" }
+      "narrow": { "value": "960px" },
+      "rankingsGlance": { "value": "1200px", "description": "Top Ranked at a Glance strip on rankings cd-control" }
     },
     "contentPadding": { "value": "{spacing.8}" },
     "headerHeight": { "value": "46px" },
