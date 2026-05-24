@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './ArticleCard.css';
 
 export interface ArticleCardProps {
@@ -30,6 +30,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   aspectRatio = 'portrait',
   onClick,
 }) => {
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+  const hasImage = Boolean(imageUrl) && failedImageUrl !== imageUrl;
+
   const handleClick = (e: React.MouseEvent) => {
     if (onClick) {
       e.preventDefault();
@@ -45,12 +48,17 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         onClick={handleClick}
       >
         <div className={`article-card__image-container article-card__image-container--${aspectRatio}`}>
-          <img 
-            src={imageUrl} 
-            alt={imageAlt} 
-            className="article-card__image"
-            loading="lazy"
-          />
+          {hasImage ? (
+            <img
+              src={imageUrl}
+              alt={imageAlt}
+              className="article-card__image"
+              loading="lazy"
+              onError={() => setFailedImageUrl(imageUrl)}
+            />
+          ) : (
+            <span className="article-card__image-missing">Image unavailable</span>
+          )}
         </div>
         
         <div className="article-card__content">
@@ -66,4 +74,3 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 };
 
 export default ArticleCard;
-

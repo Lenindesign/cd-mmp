@@ -1032,6 +1032,50 @@
   box-shadow: var(--shadow-sm);
 }
 
+.aio-payment--light-steps .aio-payment__light-card--step-panel {
+  --aio-light-step-slide-distance: clamp(var(--spacing-10), 8vw, var(--spacing-16));
+  transform-origin: center top;
+  backface-visibility: hidden;
+}
+
+.aio-payment--light-steps .aio-payment__light-card--step-panel[data-step-motion='forward'] {
+  animation: aio-light-step-slide-in-forward 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.aio-payment--light-steps .aio-payment__light-card--step-panel[data-step-motion='backward'] {
+  animation: aio-light-step-slide-in-backward 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aio-light-step-slide-in-forward {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--aio-light-step-slide-distance), 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes aio-light-step-slide-in-backward {
+  from {
+    opacity: 0;
+    transform: translate3d(calc(var(--aio-light-step-slide-distance) * -1), 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aio-payment--light-steps .aio-payment__light-card--step-panel[data-step-motion] {
+    animation: none;
+  }
+}
+
 .aio-payment--light:not(.aio-payment--light-steps) .aio-payment__light-card {
   max-width: none;
   padding: clamp(var(--spacing-7), 3vw, var(--spacing-10));
@@ -1164,31 +1208,73 @@
   font-size: var(--aio-light-meta);
   font-weight: var(--aio-light-heading-weight);
   color: var(--color-gray-600);
+  transform: scale(1);
   transition:
     border-color var(--transition-fast),
-    background var(--transition-fast),
+    background-color var(--transition-fast),
     color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    box-shadow var(--transition-fast),
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
   border-color: var(--color-blue-cobalt);
-  /* Opaque fill so the connector line does not show through (--color-badge-finance-bg is translucent) */
-  background: color-mix(in srgb, var(--color-blue-cobalt) 14%, var(--color-white));
-  color: var(--color-blue-cobalt);
+  background-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+  transform: scale(1.16);
   box-shadow:
     0 0 0 2px var(--color-white),
-    0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 14%, var(--color-white));
+    0 0 0 5px color-mix(in srgb, var(--color-blue-cobalt) 18%, var(--color-white));
   transition:
     border-color var(--transition-fast),
-    background var(--transition-fast),
-    color var(--transition-fast);
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aio-payment__light-wizard-strip[data-step-motion] .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
+  animation: aio-light-step-dot-activate 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aio-light-step-dot-activate {
+  0% {
+    opacity: 0.72;
+    border-color: var(--color-blue-cobalt);
+    background-color: color-mix(in srgb, var(--color-blue-cobalt) 14%, var(--color-white));
+    color: var(--color-blue-cobalt);
+    transform: scale(0.82);
+  }
+
+  58% {
+    opacity: 1;
+    border-color: var(--color-blue-cobalt);
+    background-color: var(--color-blue-cobalt);
+    color: var(--color-white);
+    box-shadow:
+      0 0 0 2px var(--color-white),
+      0 0 0 7px color-mix(in srgb, var(--color-blue-cobalt) 16%, var(--color-white));
+    transform: scale(1.22);
+  }
+
+  100% {
+    opacity: 1;
+    border-color: var(--color-blue-cobalt);
+    background-color: var(--color-blue-cobalt);
+    color: var(--color-white);
+    transform: scale(1.16);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .aio-payment__light-wizard-strip[data-step-motion] .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring,
   .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
     animation: none;
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 12%, var(--color-white));
+  }
+
+  .aio-payment__light-wizard-dot-ring,
+  .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-ring {
+    transition: none;
   }
 }
 
@@ -4134,6 +4220,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-result-amount.payment-calc__result-big {
   display: block;
   width: auto;
+  font-size: clamp(var(--font-size-40), 22cqi, var(--font-size-5xl));
   color: var(--color-blue-cobalt);
 }
 
@@ -4182,6 +4269,8 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-wizard-steps-shell::before {
+  left: calc(var(--spacing-8) + var(--spacing-5));
+  right: calc(var(--spacing-8) + var(--spacing-5));
   top: calc(var(--spacing-7) + var(--spacing-5));
   height: 2px;
   background: color-mix(in srgb, var(--color-gray-300) 50%, var(--color-gray-200) 50%);
@@ -6396,6 +6485,8 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-steps-shell::before {
+    left: calc(var(--spacing-8) / 2 + var(--spacing-3));
+    right: var(--spacing-4);
     top: calc(var(--spacing-5) + var(--spacing-4));
   }
 

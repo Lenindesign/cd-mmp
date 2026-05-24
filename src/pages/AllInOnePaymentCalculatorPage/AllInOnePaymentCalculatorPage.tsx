@@ -31,6 +31,7 @@ type TradeCondition = 'rough' | 'average' | 'clean';
 type LeaseEstimatorMode = 'lease' | 'buyout';
 type PurchaseStartMode = 'price' | 'monthly';
 type BudgetFitStatus = 'over' | 'under' | 'fit' | 'neutral';
+type LightWizardStepMotion = 'none' | 'forward' | 'backward';
 
 interface StateTaxRule {
   code: string;
@@ -778,23 +779,23 @@ type LightWizardStepMeta = {
 const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
   {
     routeSlug: 'goal',
-    label: 'Payment goal',
-    short: 'Goal',
+    label: 'Set budget',
+    short: 'Budget',
     hint: 'Start with the vehicle price you have in mind — or work backward from a monthly payment.',
     panelTitle: 'Choose your starting point',
     panelIntro: 'Start by choosing the vehicle price or monthly payment that feels comfortable. You can refine assumptions as you go.',
   },
   {
     routeSlug: 'loan',
-    label: 'Loan setup',
-    short: 'Loan',
+    label: 'Set loan terms',
+    short: 'Loan Terms',
     hint: 'Set down payment, APR, and how long you’ll finance.',
     panelTitle: 'Customize Your Loan',
     panelIntro: 'Adjust your down payment, APR, and term to refine your estimate.',
   },
   {
     routeSlug: 'vehicle',
-    label: 'Vehicle',
+    label: 'Choose vehicle',
     short: 'Vehicle',
     hint: 'Pick a year, make, and trim so the estimate has the right shopping context.',
     panelTitle: 'Pick a vehicle',
@@ -804,8 +805,8 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
   },
   {
     routeSlug: 'trade',
-    label: 'Trade, taxes & fees',
-    short: 'Trade',
+    label: 'Add trade and fees',
+    short: 'Trade & Fees',
     hint: 'Rough numbers are fine here. You can refine with a dealer later.',
     panelTitle: 'Trade-in, taxes & fees',
     panelIntro: 'Add your trade-in details and state for a more accurate estimate.',
@@ -813,8 +814,8 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
   },
   {
     routeSlug: 'review',
-    label: 'Review',
-    short: 'Review',
+    label: 'Review estimate',
+    short: 'Estimate',
     hint: 'See estimated payments, total costs, and vehicles that fit your budget.',
     panelTitle: 'Your Personalized Estimate',
     panelIntro: 'See estimated payments, total costs, and vehicles that fit your budget.',
@@ -1070,13 +1071,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const initialLightWizardStep = isLightStepsVariant ? getLightWizardStepFromSlug(stepSlug) : 1;
   const vehicles = useMemo(() => getAllVehicles(), []);
   const stateRules = useMemo(() => buildStateRules(), []);
   const userAreaStateCode = useMemo(
     () => getUserAreaStateCode(user),
     [user?.budgetPreferences?.stateCode, user?.location],
   );
+  const routeLightWizardStep = isLightStepsVariant ? getLightWizardStepFromSlug(stepSlug) : 1;
   const defaultVehicle = vehicles.find((vehicle) => vehicle.make === 'Honda' && vehicle.model === 'CR-V') ?? vehicles[0];
 
   const [condition, setCondition] = useState<VehicleCondition>('new');
@@ -1128,7 +1129,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightWizardPanelRef = useRef<HTMLDivElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
-  const [lightWizardStep, setLightWizardStepState] = useState(initialLightWizardStep);
+  const [lightWizardStepMotion, setLightWizardStepMotion] = useState<LightWizardStepMotion>('none');
+  const lightWizardStep = routeLightWizardStep;
   const lightWizardStepPrevRef = useRef(lightWizardStep);
   const lightWizardPathPrevRef = useRef(location.pathname);
   const lightVehicleBodyStyleHeadingId = useId();
@@ -1173,7 +1175,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const goToLightWizardStep = useCallback((step: number, options?: { replace?: boolean }) => {
     const nextStep = clampLightWizardStep(step);
-    setLightWizardStepState(nextStep);
+    if (nextStep !== lightWizardStep) {
+      setLightWizardStepMotion(nextStep > lightWizardStep ? 'forward' : 'backward');
+    }
 
     if (!isLightStepsVariant) return;
 
@@ -1188,14 +1192,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       },
       { replace: options?.replace ?? false },
     );
-  }, [isLightStepsVariant, location.hash, location.pathname, location.search, navigate]);
+  }, [isLightStepsVariant, lightWizardStep, location.hash, location.pathname, location.search, navigate]);
 
   useEffect(() => {
     if (!isLightStepsVariant) return;
 
     const routeStep = getLightWizardStepFromSlug(stepSlug);
-    setLightWizardStepState((currentStep) => (currentStep === routeStep ? currentStep : routeStep));
-
     if (!stepSlug) return;
 
     const expectedPath = getLightWizardStepPath(routeStep);
@@ -2467,6 +2469,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   if (isLightVariant) {
     const lightWizardStepMeta = LIGHT_WIZARD_STEP_META[lightWizardStep - 1];
+    const lightWizardStepMotionAttribute = isLightStepsVariant && lightWizardStepMotion !== 'none'
+      ? lightWizardStepMotion
+      : undefined;
     const lightLoanTermChips = [...new Set(termOptions)].sort((a, b) => a - b);
     const lightHeroHeadline = toTitleCase(
       isLightStepsVariant
@@ -2501,7 +2506,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           <div className="container">
             <div className="aio-payment__light-shell" ref={isLightStepsVariant ? lightWizardShellRef : undefined}>
               {isLightStepsVariant ? (
-                <div className="aio-payment__light-wizard-strip">
+                <div className="aio-payment__light-wizard-strip" data-step-motion={lightWizardStepMotionAttribute}>
                   <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
                     <div className="aio-payment__light-wizard-steps-shell">
                       <ol className="aio-payment__light-wizard-steps">
@@ -2534,7 +2539,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </nav>
                 </div>
               ) : null}
-              <div className="aio-payment__light-card" ref={isLightStepsVariant ? lightWizardPanelRef : undefined}>
+              <div
+                key={isLightStepsVariant ? `light-wizard-step-${lightWizardStep}` : 'light-calculator-card'}
+                className={`aio-payment__light-card${isLightStepsVariant ? ' aio-payment__light-card--step-panel' : ''}`}
+                data-step-motion={lightWizardStepMotionAttribute}
+                ref={isLightStepsVariant ? lightWizardPanelRef : undefined}
+              >
               {isLightStepsVariant ? (
                 <div className="aio-payment__section-heading aio-payment__section-heading--wizard">
                   <p className="aio-payment__light-wizard-step-eyebrow">
