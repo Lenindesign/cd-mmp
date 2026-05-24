@@ -4220,7 +4220,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-result-amount.payment-calc__result-big {
   display: block;
   width: auto;
-  font-size: clamp(var(--font-size-40), 22cqi, var(--font-size-5xl));
+  font-size: var(--font-size-4xl);
   color: var(--color-blue-cobalt);
 }
 
