@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { getVehicleBySlug } from '../../services/vehicleService';
+import { getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
 import { addRecentlyViewed } from '../../services/recentlyViewedService';
 import { useSupabaseRating, getCategory } from '../../hooks/useSupabaseRating';
 import { getVehicleTrims, getRecommendedTrimName } from '../../services/trimService';
@@ -17,7 +17,7 @@ import Comparison from '../../components/Comparison';
 import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
-import ForSaleNearYou from '../../components/ForSaleNearYou';
+import OfficialELotCarousel from '../../components/OfficialELotCarousel';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
@@ -43,6 +43,52 @@ interface CalculatorTradeInEstimate {
   value: number;
   appliedAt: number;
 }
+
+const joinEditorialList = (items: string[]) => {
+  const filteredItems = items.filter(Boolean);
+
+  if (filteredItems.length <= 1) {
+    return filteredItems[0] || '';
+  }
+
+  if (filteredItems.length === 2) {
+    return `${filteredItems[0]} and ${filteredItems[1]}`;
+  }
+
+  return `${filteredItems.slice(0, -1).join(', ')}, and ${filteredItems[filteredItems.length - 1]}`;
+};
+
+const buildHeroReviewSummary = (vehicle: Vehicle, rating: number) => {
+  if (vehicle.make === 'Chevrolet' && vehicle.model === 'Trax') {
+    return {
+      highs: 'Attractively low starting price, spacious interior for its class, user-friendly infotainment, and composed ride quality.',
+      lows: 'Modest engine power, no all-wheel-drive option, basic interior materials, and limited towing capacity.',
+      verdict: 'As a smartly priced and space-efficient subcompact SUV, the Chevrolet Trax is one of the clearest value plays in its class.',
+    };
+  }
+
+  const features = vehicle.features?.slice(0, 3) || [];
+  const highs = features.length > 0
+    ? joinEditorialList(features)
+    : `Competitive value, useful ${vehicle.bodyStyle.toLowerCase()} packaging, and approachable day-to-day manners`;
+
+  const lows: string[] = [];
+  if (vehicle.horsepower && vehicle.horsepower < 170) {
+    lows.push('modest engine output');
+  }
+  if (vehicle.drivetrain === 'FWD') {
+    lows.push('front-wheel-drive focus');
+  }
+  if (vehicle.transmission === 'CVT') {
+    lows.push('CVT tuning may not satisfy every driver');
+  }
+
+  return {
+    highs: `${highs}.`,
+    lows: `${joinEditorialList(lows.length > 0 ? lows : ['some rivals offer more excitement'])}.`,
+    verdict: `With a ${rating}/10 C/D rating, the ${vehicle.make} ${vehicle.model} is a compelling ${vehicle.bodyStyle.toLowerCase()} choice for shoppers who want a clear balance of value, features, and everyday usability.`,
+  };
+};
 
 const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProps) => {
   const params = useParams<{ year: string; make: string; model: string }>();
@@ -143,6 +189,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     cargoSpace: vehicle.cargoSpace,
     fuelType: vehicle.fuelType,
     drivetrain: vehicle.drivetrain,
+    reviewSummary: buildHeroReviewSummary(vehicle, supabaseRating),
   };
 
   // SEO structured data
@@ -185,6 +232,14 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
       
       <main className="main">
         <Hero vehicle={vehicleData} animateButtons />
+        <OfficialELotCarousel
+          year={vehicle.year}
+          make={vehicle.make}
+          model={vehicle.model}
+          bodyStyle={vehicle.bodyStyle}
+          location="Miami, FL"
+          priceThreshold={vehicle.priceMax}
+        />
         
         {/* Content with Sidebar - Part 1 */}
         <div className="content-with-sidebar content-with-sidebar--no-bottom-padding">
@@ -335,15 +390,6 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         
         <Comparison 
           currentVehicle={{ make: vehicle.make, model: vehicle.model }}
-        />
-        
-        <ForSaleNearYou 
-          vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-          make={vehicle.make}
-          model={vehicle.model}
-          bodyStyle={vehicle.bodyStyle}
-          maxPrice={vehicle.priceMax + 10000}
-          location="Miami, FL"
         />
         
         {/* Dealer Locator Map */}

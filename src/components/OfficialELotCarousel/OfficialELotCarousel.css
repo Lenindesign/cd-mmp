@@ -1,0 +1,246 @@
+.aio-payment__light-affordable-section {
+  padding: var(--spacing-8) 0 var(--spacing-16);
+  background: var(--color-warm-canvas);
+  overflow: hidden;
+}
+
+.main > section.official-elot-section:not(.comparison):not(.for-sale) {
+  display: block;
+}
+
+.aio-payment__light-elot {
+  display: grid;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+.aio-payment__light-elot-head {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.aio-payment__light-elot-head h2 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-40));
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.aio-payment__light-elot-results-link {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--spacing-1);
+  color: var(--color-black);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.aio-payment__light-elot-results-link u {
+  color: var(--color-blue-cobalt);
+  text-underline-offset: 2px;
+}
+
+.aio-payment__light-elot-results-link:hover u,
+.aio-payment__light-elot-results-link:focus-visible u {
+  color: var(--color-blue-dark);
+}
+
+.aio-payment__light-elot-carousel-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.aio-payment__light-elot-carousel {
+  display: flex;
+  gap: var(--spacing-2);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.aio-payment__light-elot-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.aio-payment__light-elot-card {
+  display: flex;
+  flex: 0 0 190px;
+  flex-direction: column;
+  min-height: 355px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  scroll-snap-align: start;
+}
+
+.aio-payment__light-elot-image-link {
+  position: relative;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.aio-payment__light-elot-image {
+  height: auto;
+  background: var(--color-gray-100);
+}
+
+.aio-payment__light-elot-image .optimized-image__img {
+  object-fit: cover;
+}
+
+.aio-payment__light-elot-price-badge {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-4);
+  background: var(--color-success-border);
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 88% 100%, 0 100%);
+  color: var(--color-success-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.aio-payment__light-elot-price-badge--good {
+  background: color-mix(in srgb, var(--color-success-border) 78%, var(--color-white) 22%);
+}
+
+.aio-payment__light-elot-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--spacing-2);
+}
+
+.aio-payment__light-elot-kicker {
+  margin: 0 0 2px;
+  color: var(--color-gray-700);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+}
+
+.aio-payment__light-elot-card-title {
+  margin: 0;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.15;
+}
+
+.aio-payment__light-elot-card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.aio-payment__light-elot-card-title a:hover,
+.aio-payment__light-elot-card-title a:focus-visible {
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-elot-card-price {
+  margin: auto 0 var(--spacing-2);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.aio-payment__light-elot-card-price span {
+  position: relative;
+  top: -0.45em;
+  margin-right: 2px;
+  font-size: var(--font-size-sm);
+}
+
+.aio-payment__light-elot-dealer {
+  min-height: 44px;
+  margin: 0;
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-gray-300);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+}
+
+.aio-payment__light-elot-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background var(--transition-fast), color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.aio-payment__light-elot-nav:hover:not(:disabled),
+.aio-payment__light-elot-nav:focus-visible:not(:disabled) {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.aio-payment__light-elot-nav:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aio-payment__light-elot-nav--left {
+  left: calc(var(--spacing-5) * -1);
+}
+
+.aio-payment__light-elot-nav--right {
+  right: calc(var(--spacing-5) * -1);
+}
+
+@media (max-width: 768px) {
+  .aio-payment__light-affordable-section {
+    padding: var(--spacing-8) 0 var(--spacing-12);
+  }
+
+  .aio-payment__light-elot-head h2 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .aio-payment__light-elot-results-link {
+    font-size: var(--font-size-md);
+  }
+
+  .aio-payment__light-elot-card {
+    flex-basis: 178px;
+    min-height: 336px;
+  }
+
+  .aio-payment__light-elot-carousel-wrap {
+    overflow: hidden;
+  }
+
+  .aio-payment__light-elot-nav {
+    display: none;
+  }
+}

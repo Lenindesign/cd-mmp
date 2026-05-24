@@ -1185,6 +1185,106 @@
   }
 }
 
+/* Production-style review summary */
+.hero__review-summary {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 24px auto 16px;
+  padding: 4px 0 0;
+}
+
+.hero__review-summary-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.hero__review-summary-list {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.hero__review-summary-item {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.hero__review-summary-item + .hero__review-summary-item {
+  padding-left: 32px;
+  border-left: 1px solid var(--color-gray-300);
+}
+
+.hero__review-summary-label {
+  display: block;
+  margin: 16px 0 10px;
+  padding: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 14.4px;
+}
+
+.hero__review-summary-copy-list {
+  margin: 0;
+  padding: 0;
+}
+
+.hero__review-summary-copy {
+  margin: 0 0 15px;
+  padding: 0 32px 0 0;
+  color: var(--color-black);
+  font-family: var(--font-article);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 24px;
+}
+
+@media (max-width: 768px) {
+  .hero__review-summary {
+    margin-bottom: 16px;
+    padding: 4px 0 0;
+  }
+
+  .hero__review-summary-section {
+    margin-bottom: 12px;
+  }
+
+  .hero__review-summary-list {
+    flex-direction: column;
+  }
+
+  .hero__review-summary-item + .hero__review-summary-item {
+    margin-top: 2px;
+    padding-top: 2px;
+    padding-left: 0;
+    border-top: 1px solid var(--color-gray-300);
+    border-left: 0;
+  }
+
+  .hero__review-summary-item {
+    flex-basis: auto;
+    max-width: none;
+  }
+
+  .hero__review-summary-label {
+    margin: 14px 0 8px;
+  }
+
+  .hero__review-summary-copy {
+    padding-right: 0;
+  }
+}
+
 /* =============================================
    MOBILE CAROUSEL
    ============================================= */

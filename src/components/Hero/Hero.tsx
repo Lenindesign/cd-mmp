@@ -33,6 +33,11 @@ interface HeroProps {
     cargoSpace?: string | number;
     fuelType?: string;
     drivetrain?: string;
+    reviewSummary?: {
+      highs: string;
+      lows: string;
+      verdict: string;
+    };
   };
   animateButtons?: boolean;
   showModelInButtons?: boolean;
@@ -140,6 +145,11 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   }, []);
 
   const hasAccolades = vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear;
+  const reviewSummaryItems = vehicle.reviewSummary ? [
+    { label: 'HIGHS', copy: vehicle.reviewSummary.highs },
+    { label: 'LOWS', copy: vehicle.reviewSummary.lows },
+    { label: 'VERDICT', copy: vehicle.reviewSummary.verdict },
+  ] : [];
 
   const renderAccolades = (className?: string) => hasAccolades ? (
     <div className={`hero__accolades${className ? ` ${className}` : ''}`}>
@@ -498,6 +508,26 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
               vehicleIncentives={vehicleIncentives}
               onOfferClick={handleOfferClick}
             />
+          )}
+
+          {reviewSummaryItems.length > 0 && (
+            <div className="hero__review-summary">
+              <section
+                className="hero__review-summary-section"
+                aria-label={`${vehicle.year} ${vehicle.make} ${vehicle.model} review highlights`}
+              >
+                <ul className="hero__review-summary-list">
+                  {reviewSummaryItems.map((item) => (
+                    <li key={item.label} className="hero__review-summary-item">
+                      <span className="hero__review-summary-label">{item.label}</span>
+                      <ul className="hero__review-summary-copy-list">
+                        <li className="hero__review-summary-copy">{item.copy}</li>
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
           )}
 
           {/* Mobile accolades — below offers */}
