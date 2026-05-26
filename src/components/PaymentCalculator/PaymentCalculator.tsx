@@ -21,11 +21,11 @@ interface PaymentCalculatorProps {
 }
 
 const CREDIT_TIERS = [
-  { label: 'Excellent (740+)', value: 'excellent', apr: 4.5 },
-  { label: 'Very Good (700–739)', value: 'very-good', apr: 5.9 },
-  { label: 'Good (670–699)', value: 'good', apr: 7.5 },
-  { label: 'Fair (630–669)', value: 'fair', apr: 10.5 },
-  { label: 'Building credit (below 630)', value: 'rebuilding', apr: 14.0 },
+  { label: 'Excellent (720-850)', value: 'excellent', apr: 4.5 },
+  { label: 'Very Good (700-719)', value: 'very-good', apr: 5.9 },
+  { label: 'Good (670-699)', value: 'good', apr: 7.5 },
+  { label: 'Fair (630-669)', value: 'fair', apr: 10.5 },
+  { label: 'Building Credit (300-629)', value: 'rebuilding', apr: 14.0 },
 ];
 
 const FINANCE_TERM_OPTIONS = [36, 48, 60, 72, 84];
@@ -38,8 +38,15 @@ const fmt = (n: number) =>
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 const roundUpToHundred = (n: number) => Math.ceil(n / 100) * 100;
+const parseMoneyInput = (value: string) => {
+  const digits = value.replace(/[^\d]/g, '');
+  return digits ? Number(digits) : 0;
+};
+const formatMoneyInput = (value: number) => Math.round(value).toLocaleString('en-US');
 const formatCondition = (value?: string) =>
   value ? value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, ' ') : '';
+const fmtDeduction = (value: number) => (value > 0 ? `- ${fmt(value)}` : fmt(0));
+const fmtApr = (apr: number) => `${Number.isInteger(apr) ? apr.toFixed(0) : apr.toFixed(1)}% APR`;
 
 type CalcTab = 'finance' | 'lease' | 'cash';
 
@@ -78,9 +85,10 @@ const PaymentCalculator = ({
   }, [msrp, priceFloor, priceCeiling]);
 
   const [downPayment, setDownPayment] = useState(() => Math.round(msrp * 0.1));
+  const downPaymentMax = Math.round(vehiclePrice * 0.5);
   useEffect(() => {
-    setDownPayment(p => clamp(p, 0, Math.round(vehiclePrice * 0.5)));
-  }, [vehiclePrice]);
+    setDownPayment(p => clamp(p, 0, downPaymentMax));
+  }, [downPaymentMax]);
 
   const [tradeIn, setTradeIn] = useState(0);
   const [termMonths, setTermMonths] = useState(60);
@@ -152,6 +160,7 @@ const PaymentCalculator = ({
 
   const leaseTotalPayments = leaseMonthly * leaseTermMonths;
   const cashOutOfPocket = Math.max(0, vehiclePrice - tradeIn);
+  const amountFinanced = Math.max(0, vehiclePrice - downPayment - tradeIn);
 
   const tabValues: Record<CalcTab, string> = {
     finance: `${fmt(monthly)}/mo`,
@@ -159,12 +168,15 @@ const PaymentCalculator = ({
     cash: fmt(cashOutOfPocket),
   };
 
-  const handleSlider =
-    (setter: (v: number) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setter(Math.round(Number(e.target.value) / 100) * 100);
-    };
-
   const leaseAprFromMf = moneyFactor * 2400;
+
+  const handleDownPaymentInput = (raw: string) => {
+    setDownPayment(clamp(parseMoneyInput(raw), 0, downPaymentMax));
+  };
+
+  const handleTradeInInput = (raw: string) => {
+    setTradeIn(clamp(parseMoneyInput(raw), 0, tradeInMax));
+  };
 
   const handleLeaseAprSlider = (apr: number) => {
     setMoneyFactor(clamp(aprPercentToMoneyFactor(apr), 0.0001, 0.01));
@@ -193,6 +205,13 @@ const PaymentCalculator = ({
   const hero =
     tab === 'finance' ? monthly : tab === 'lease' ? leaseMonthly : cashOutOfPocket;
   const heroMonthly = tab !== 'cash';
+  const resultHeading = heroMonthly ? 'Estimated monthly payment' : 'Estimated total to pay';
+  const resultLede =
+    tab === 'finance'
+      ? `Based on a ${fmt(vehiclePrice)} expected purchase price, ${termMonths} months, and ${financeApr.toFixed(2)}% APR.`
+      : tab === 'lease'
+        ? `Based on a ${fmt(vehiclePrice)} expected purchase price, ${leaseTermMonths} months, and a ${leaseAprFromMf.toFixed(2)}% lease-rate equivalent.`
+        : `Estimated before tax, title, registration, dealer fees, and available incentives.`;
   const shopText = ctaLabel(make, model, vehicleName);
   const tradeVehicleName = tradeInEstimate?.vehicle?.trim();
   const tradeMeta = [
@@ -203,7 +222,7 @@ const PaymentCalculator = ({
   ].filter(Boolean).join(' · ');
 
   return (
-    <section id="payment-calculator" className="payment-calc">
+    <section id="payment-calculator" className="payment-calc payment-calc--vehicle">
       <div className="container">
         <div className="payment-calc__wrap">
           <header className="payment-calc__head">
@@ -262,25 +281,43 @@ const PaymentCalculator = ({
                     </div>
                   </div>
 
+                  {tab !== 'cash' && (
+                    <label className="payment-calc__field payment-calc__field--full">
+                      <span className="payment-calc__lab">
+                        {tab === 'lease' ? 'Up-front payment' : 'Down payment'}
+                      </span>
+                      <div className="payment-calc__money-input">
+                        <span className="payment-calc__money-prefix" aria-hidden="true">$</span>
+                        <input
+                          id={tab === 'lease' ? 'pc-cap' : 'pc-down'}
+                          type="text"
+                          inputMode="numeric"
+                          value={formatMoneyInput(downPayment)}
+                          onChange={e => handleDownPaymentInput(e.target.value)}
+                          className="payment-calc__money-input-control"
+                          aria-label={`${tab === 'lease' ? 'Up-front payment' : 'Down payment'}, maximum ${fmt(downPaymentMax)}`}
+                          autoComplete="off"
+                        />
+                      </div>
+                    </label>
+                  )}
+
                   <div className="payment-calc__field payment-calc__field--full">
                     <div className="payment-calc__row-label">
                       <label htmlFor="pc-trade">Trade-in value</label>
-                      <span>{fmt(tradeIn)}</span>
                     </div>
-                    <input
-                      id="pc-trade"
-                      type="range"
-                      min={0}
-                      max={tradeInMax}
-                      step={100}
-                      value={tradeIn}
-                      onChange={handleSlider(setTradeIn)}
-                      className="payment-calc__slider"
-                      style={getRangeInputStyle(tradeIn, 0, tradeInMax)}
-                    />
-                    <div className="payment-calc__ticks">
-                      <span>$0</span>
-                      <span>{fmt(tradeInMax)}</span>
+                    <div className="payment-calc__money-input">
+                      <span className="payment-calc__money-prefix" aria-hidden="true">$</span>
+                      <input
+                        id="pc-trade"
+                        type="text"
+                        inputMode="numeric"
+                        value={formatMoneyInput(tradeIn)}
+                        onChange={e => handleTradeInInput(e.target.value)}
+                        className="payment-calc__money-input-control"
+                        aria-label={`Trade-in value, maximum ${fmt(tradeInMax)}`}
+                        autoComplete="off"
+                      />
                     </div>
                     {onEstimateTradeIn && (
                       <button type="button" className="payment-calc__inline-action" onClick={onEstimateTradeIn}>
@@ -303,65 +340,36 @@ const PaymentCalculator = ({
 
             {tab === 'finance' && (
               <div className="payment-calc__section payment-calc__section--pad">
-                <div className="payment-calc__grid2">
-                  <label className="payment-calc__field">
-                    <span className="payment-calc__lab">Estimated credit range</span>
-                    <select
-                      className="payment-calc__select"
-                      value={creditTier}
-                      onChange={e => setCreditTier(e.target.value)}
-                      aria-describedby="pc-credit-hint"
-                    >
-                      {CREDIT_TIERS.map(t => (
-                        <option key={t.value} value={t.value}>
-                          {t.label} (~{t.apr}% APR)
-                        </option>
-                      ))}
-                    </select>
-                    <span id="pc-credit-hint" className="payment-calc__note payment-calc__note--inline">
-                      Pick the range closest to your score. Your lender decides the final rate.
-                    </span>
-                  </label>
-                  <div className="payment-calc__field">
-                    <div className="payment-calc__row-label">
-                      <label htmlFor="pc-down">Down payment</label>
-                      <span>{fmt(downPayment)}</span>
-                    </div>
-                    <input
-                      id="pc-down"
-                      type="range"
-                      min={0}
-                      max={Math.round(vehiclePrice * 0.5)}
-                      step={100}
-                      value={downPayment}
-                      onChange={handleSlider(setDownPayment)}
-                      className="payment-calc__slider"
-                      style={getRangeInputStyle(downPayment, 0, Math.round(vehiclePrice * 0.5))}
-                    />
-                    <div className="payment-calc__ticks">
-                      <span>$0</span>
-                      <span>{fmt(vehiclePrice * 0.5)}</span>
-                    </div>
-                    <p className="payment-calc__sync-note">
-                      Same amount as <strong>Up-front payment</strong> on Lease; we keep them in sync.
-                    </p>
-                  </div>
-                </div>
-                <div className="payment-calc__field payment-calc__field--full">
-                  <span className="payment-calc__lab">Loan term</span>
-                  <div className="payment-calc__terms" role="group" aria-label="Loan length in months">
-                    {FINANCE_TERM_OPTIONS.map(t => (
-                      <button
-                        key={t}
-                        type="button"
-                        className={`payment-calc__pill ${termMonths === t ? 'payment-calc__pill--on' : ''}`}
-                        onClick={() => setTermMonths(t)}
-                      >
-                        {t} mo
-                      </button>
+                <label className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab">Credit score</span>
+                  <select
+                    id="pc-credit"
+                    className="payment-calc__select"
+                    value={creditTier}
+                    onChange={e => setCreditTier(e.target.value)}
+                  >
+                    {CREDIT_TIERS.map(t => (
+                      <option key={t.value} value={t.value}>
+                        {t.label} · {fmtApr(t.apr)}
+                      </option>
                     ))}
-                  </div>
-                </div>
+                  </select>
+                </label>
+                <label className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab">Loan term</span>
+                  <select
+                    id="pc-term"
+                    className="payment-calc__select"
+                    value={termMonths}
+                    onChange={e => setTermMonths(Number(e.target.value))}
+                  >
+                    {FINANCE_TERM_OPTIONS.map(t => (
+                      <option key={t} value={t}>
+                        {t} months
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 {bestApr !== undefined && (
                   <p className="payment-calc__note">
                     The special rate in the banner replaces your range’s rate when it’s lower.
@@ -372,32 +380,7 @@ const PaymentCalculator = ({
 
             {tab === 'lease' && (
               <div className="payment-calc__section payment-calc__section--pad">
-              <div className="payment-calc__grid2">
-                <div className="payment-calc__field">
-                  <div className="payment-calc__row-label">
-                    <label htmlFor="pc-cap">Up-front payment</label>
-                    <span>{fmt(downPayment)}</span>
-                  </div>
-                  <input
-                    id="pc-cap"
-                    type="range"
-                    min={0}
-                    max={Math.round(vehiclePrice * 0.5)}
-                    step={100}
-                    value={downPayment}
-                    onChange={handleSlider(setDownPayment)}
-                    className="payment-calc__slider"
-                    style={getRangeInputStyle(downPayment, 0, Math.round(vehiclePrice * 0.5))}
-                  />
-                  <div className="payment-calc__ticks">
-                    <span>$0</span>
-                    <span>{fmt(vehiclePrice * 0.5)}</span>
-                  </div>
-                  <p className="payment-calc__sync-note">
-                    Same amount as <strong>Down payment</strong> on Finance; we keep them in sync.
-                  </p>
-                </div>
-                <div className="payment-calc__field">
+                <div className="payment-calc__field payment-calc__field--full">
                   <div className="payment-calc__row-label">
                     <label htmlFor="pc-res">Value at lease end</label>
                     <span>
@@ -420,81 +403,80 @@ const PaymentCalculator = ({
                     <span>72%</span>
                   </div>
                 </div>
-              </div>
-              <div className="payment-calc__field payment-calc__field--full">
-                <div className="payment-calc__row-label">
-                  <label htmlFor="pc-lease-apr">Lease rate (like loan APR)</label>
-                  <span>{leaseAprFromMf.toFixed(2)}%</span>
-                </div>
-                <input
-                  id="pc-lease-apr"
-                  type="range"
-                  min={0}
-                  max={15}
-                  step={0.05}
-                  value={clamp(leaseAprFromMf, 0, 15)}
-                  onChange={e => handleLeaseAprSlider(Number(e.target.value))}
-                  className="payment-calc__slider"
-                  style={getRangeInputStyle(clamp(leaseAprFromMf, 0, 15), 0, 15)}
-                  aria-describedby="pc-lease-apr-hint"
-                />
-                <div className="payment-calc__ticks">
-                  <span>0%</span>
-                  <span>15%</span>
-                </div>
-                <p id="pc-lease-apr-hint" className="payment-calc__muted">
-                  Dealer leases use a “money factor”; this sets the same idea in APR form (factor × 2400).
-                </p>
-              </div>
-              <details className="payment-calc__details">
-                <summary className="payment-calc__details-sum">Money factor (dealer quote)</summary>
-                <label className="payment-calc__field payment-calc__field--full">
-                  <span className="payment-calc__lab">Money factor</span>
+                <div className="payment-calc__field payment-calc__field--full">
+                  <div className="payment-calc__row-label">
+                    <label htmlFor="pc-lease-apr">Lease rate (like loan APR)</label>
+                    <span>{leaseAprFromMf.toFixed(2)}%</span>
+                  </div>
                   <input
-                    type="text"
-                    inputMode="decimal"
-                    className={`payment-calc__input ${mfError ? 'payment-calc__input--invalid' : ''}`}
-                    value={mfDraft}
-                    onChange={e => handleMfDraftChange(e.target.value)}
-                    onBlur={() => {
-                      if (!mfDraft.trim()) {
-                        setMfDraft(moneyFactor.toFixed(5));
-                        setMfError(null);
-                      }
-                    }}
-                    aria-invalid={mfError ? true : undefined}
-                    aria-describedby={mfError ? 'pc-mf-err' : 'pc-mf-tip'}
-                    autoComplete="off"
+                    id="pc-lease-apr"
+                    type="range"
+                    min={0}
+                    max={15}
+                    step={0.05}
+                    value={clamp(leaseAprFromMf, 0, 15)}
+                    onChange={e => handleLeaseAprSlider(Number(e.target.value))}
+                    className="payment-calc__slider"
+                    style={getRangeInputStyle(clamp(leaseAprFromMf, 0, 15), 0, 15)}
+                    aria-describedby="pc-lease-apr-hint"
                   />
-                  {mfError ? (
-                    <span id="pc-mf-err" className="payment-calc__err" role="alert">
-                      {mfError}
-                    </span>
-                  ) : (
-                    <span id="pc-mf-tip" className="payment-calc__muted">
-                      Typical ~0.0005–0.005. About {moneyFactorToAprDisplay(moneyFactor)}% APR equivalent.
-                    </span>
-                  )}
-                </label>
-              </details>
-              <div className="payment-calc__field payment-calc__field--full">
-                <span className="payment-calc__lab">Lease length</span>
-                <div className="payment-calc__terms" role="group" aria-label="Lease length in months">
-                  {LEASE_TERM_OPTIONS.map(t => (
-                    <button
-                      key={t}
-                      type="button"
-                      className={`payment-calc__pill ${leaseTermMonths === t ? 'payment-calc__pill--on' : ''}`}
-                      onClick={() => setLeaseTermMonths(t)}
-                    >
-                      {t} mo
-                    </button>
-                  ))}
+                  <div className="payment-calc__ticks">
+                    <span>0%</span>
+                    <span>15%</span>
+                  </div>
+                  <p id="pc-lease-apr-hint" className="payment-calc__muted">
+                    Dealer leases use a “money factor”; this sets the same idea in APR form (factor × 2400).
+                  </p>
                 </div>
-              </div>
-              <p className="payment-calc__muted">
-                Sticker (MSRP) {fmt(msrp)} · Amount leased after trade and up-front payment: {fmt(adjustedCap)}
-              </p>
+                <details className="payment-calc__details">
+                  <summary className="payment-calc__details-sum">Money factor (dealer quote)</summary>
+                  <label className="payment-calc__field payment-calc__field--full">
+                    <span className="payment-calc__lab">Money factor</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      className={`payment-calc__input ${mfError ? 'payment-calc__input--invalid' : ''}`}
+                      value={mfDraft}
+                      onChange={e => handleMfDraftChange(e.target.value)}
+                      onBlur={() => {
+                        if (!mfDraft.trim()) {
+                          setMfDraft(moneyFactor.toFixed(5));
+                          setMfError(null);
+                        }
+                      }}
+                      aria-invalid={mfError ? true : undefined}
+                      aria-describedby={mfError ? 'pc-mf-err' : 'pc-mf-tip'}
+                      autoComplete="off"
+                    />
+                    {mfError ? (
+                      <span id="pc-mf-err" className="payment-calc__err" role="alert">
+                        {mfError}
+                      </span>
+                    ) : (
+                      <span id="pc-mf-tip" className="payment-calc__muted">
+                        Typical ~0.0005–0.005. About {moneyFactorToAprDisplay(moneyFactor)}% APR equivalent.
+                      </span>
+                    )}
+                  </label>
+                </details>
+                <div className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab">Lease length</span>
+                  <div className="payment-calc__terms" role="group" aria-label="Lease length in months">
+                    {LEASE_TERM_OPTIONS.map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        className={`payment-calc__pill ${leaseTermMonths === t ? 'payment-calc__pill--on' : ''}`}
+                        onClick={() => setLeaseTermMonths(t)}
+                      >
+                        {t} mo
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <p className="payment-calc__muted">
+                  Sticker (MSRP) {fmt(msrp)} · Amount leased after trade and up-front payment: {fmt(adjustedCap)}
+                </p>
               </div>
             )}
 
@@ -510,59 +492,107 @@ const PaymentCalculator = ({
               <div className="payment-calc__aside-inner">
                 <div className="payment-calc__result">
                   <div className="payment-calc__result-hero">
-                    <p className="payment-calc__result-kicker">
-                      {heroMonthly ? 'Estimated monthly payment' : 'Estimated total to pay'}
-                    </p>
+                    <p className="payment-calc__result-kicker">{resultHeading}</p>
                     <p className="payment-calc__result-big" aria-live="polite">
                       <span className="payment-calc__sym">$</span>
                       {Math.round(hero).toLocaleString()}
                       {heroMonthly && <span className="payment-calc__mo">/mo</span>}
                     </p>
+                    <p className="payment-calc__result-lede">{resultLede}</p>
                   </div>
 
                   {tab === 'finance' && (
                     <dl className="payment-calc__sum">
-                      <div className="payment-calc__sum-row">
-                        <dt>Rate &amp; term</dt>
-                        <dd>
-                          {financeApr.toFixed(2)}% APR · {termMonths} months
-                        </dd>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Vehicle Budget</dt>
+                        <dd>{fmt(vehiclePrice)}</dd>
                       </div>
-                      <div className="payment-calc__sum-row">
-                        <dt>Interest (est.)</dt>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Down Payment</dt>
+                        <dd>{fmtDeduction(downPayment)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Trade-In Value</dt>
+                        <dd>{fmtDeduction(tradeIn)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--calculated">
+                        <dt>Amount Financed</dt>
+                        <dd>{fmt(amountFinanced)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--calculated">
+                        <dt>Finance Charge</dt>
                         <dd>{fmt(totalInterest)}</dd>
                       </div>
-                      <div className="payment-calc__sum-row">
-                        <dt>Total paid (est.)</dt>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--divider payment-calc__sum-row--total">
+                        <dt>Est. Total Paid</dt>
                         <dd>{fmt(financeTotalOutOfPocket)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--emphasis">
+                        <dt>Monthly Payment</dt>
+                        <dd>{fmt(monthly)}/mo</dd>
                       </div>
                     </dl>
                   )}
                   {tab === 'lease' && (
                     <dl className="payment-calc__sum">
-                      <div className="payment-calc__sum-row">
-                        <dt>Lease length</dt>
-                        <dd>{leaseTermMonths} months</dd>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Vehicle Budget</dt>
+                        <dd>{fmt(vehiclePrice)}</dd>
                       </div>
-                      <div className="payment-calc__sum-row">
-                        <dt>Payments over term (est.)</dt>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Up-front Payment</dt>
+                        <dd>{fmtDeduction(downPayment)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Trade-In Value</dt>
+                        <dd>{fmtDeduction(tradeIn)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--calculated">
+                        <dt>Value at Lease End</dt>
+                        <dd>{fmt(residualValue)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--divider payment-calc__sum-row--total">
+                        <dt>Payments Over Term</dt>
                         <dd>{fmt(leaseTotalPayments)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--emphasis">
+                        <dt>Monthly Payment</dt>
+                        <dd>{fmt(leaseMonthly)}/mo</dd>
+                      </div>
+                    </dl>
+                  )}
+                  {tab === 'cash' && (
+                    <dl className="payment-calc__sum">
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Purchase Price</dt>
+                        <dd>{fmt(vehiclePrice)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--supporting">
+                        <dt>Trade-In Value</dt>
+                        <dd>{fmtDeduction(tradeIn)}</dd>
+                      </div>
+                      <div className="payment-calc__sum-row payment-calc__sum-row--divider payment-calc__sum-row--emphasis payment-calc__sum-row--total">
+                        <dt>Est. Total to Pay</dt>
+                        <dd>{fmt(cashOutOfPocket)}</dd>
                       </div>
                     </dl>
                   )}
 
-                  <button
-                    type="button"
-                    className="payment-calc__cta"
-                    onClick={onGetDeal}
-                    aria-label={
-                      make?.trim() && model?.trim()
-                        ? `Browse new and used ${make} ${model} listings`
-                        : `Browse listings for ${vehicleName}`
-                    }
-                  >
-                    {shopText}
-                  </button>
+                  <div className="payment-calc__cta-wrap">
+                    <p className="payment-calc__cta-message">Find real listings that fit this estimate.</p>
+                    <button
+                      type="button"
+                      className="payment-calc__cta"
+                      onClick={onGetDeal}
+                      aria-label={
+                        make?.trim() && model?.trim()
+                          ? `Browse new and used ${make} ${model} listings`
+                          : `Browse listings for ${vehicleName}`
+                      }
+                    >
+                      {shopText}
+                    </button>
+                  </div>
                 </div>
               </div>
             </aside>

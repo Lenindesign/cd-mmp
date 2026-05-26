@@ -177,6 +177,7 @@
 .save-modal__social {
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-2);
 }
 
 /* Google One Tap Button Container */

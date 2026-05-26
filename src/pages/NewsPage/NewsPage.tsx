@@ -25,7 +25,7 @@ const heroStory = {
   headline: "The Refreshed Solterra EV SUV Is the Quickest Subaru We've Ever Tested",
   subheadline: "Everyone knows EVs are quick, but we're still shocked to see the Solterra's acceleration times compared with sportier Subies.",
   author: 'Jack Fitzgerald',
-  image: 'https://hips.hearstapps.com/mtg-prod/68acee0b9a8a250002dfbc03/2-2026-subaru-solterra-first-drive.jpg',
+  image: 'https://di-uploads-pod46.dealerinspire.com/santacruzsubaru/uploads/2026/02/Red-2026-Subaru-Solterra-on-road.jpg',
   href: '/news/solterra-quickest-subaru',
 };
 

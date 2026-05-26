@@ -4,6 +4,10 @@
   overflow: hidden;
 }
 
+.aio-payment__light-affordable-section.official-elot-section {
+  background: var(--color-white);
+}
+
 .main > section.official-elot-section:not(.comparison):not(.for-sale) {
   display: block;
 }
@@ -27,6 +31,10 @@
   font-weight: var(--font-weight-extrabold);
   line-height: 1.1;
   letter-spacing: 0;
+}
+
+.official-elot-section .aio-payment__light-elot-head h2 {
+  font-size: 2.25rem;
 }
 
 .aio-payment__light-elot-results-link {

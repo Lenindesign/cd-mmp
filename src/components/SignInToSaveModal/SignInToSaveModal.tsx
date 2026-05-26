@@ -299,6 +299,12 @@ const SignInToSaveModal = ({
         <div className="save-modal__actions">
           {/* Social Sign In */}
           <div className="save-modal__social">
+            {/* Google One Tap Button Container */}
+            <div
+              ref={googleButtonRef}
+              className="save-modal__google-btn-container"
+              style={{ minHeight: '44px' }}
+            />
             <button 
               className="save-modal__social-btn save-modal__social-btn--apple" 
               onClick={handleAppleLogin}
@@ -309,12 +315,6 @@ const SignInToSaveModal = ({
               </svg>
               {isSigningIn ? 'Signing in...' : 'Continue with Apple'}
             </button>
-            {/* Google One Tap Button Container */}
-            <div 
-              ref={googleButtonRef} 
-              className="save-modal__google-btn-container"
-              style={{ minHeight: '44px' }}
-            />
           </div>
 
           <div className="save-modal__divider">

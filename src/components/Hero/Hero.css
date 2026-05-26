@@ -572,7 +572,7 @@
 .hero__accolades--mobile {
   align-items: flex-start;
   text-align: left;
-  margin-top: var(--spacing-6);
+  margin-top: var(--spacing-8);
 }
 
 @media (min-width: 939px) {
@@ -1190,14 +1190,14 @@
   display: flex;
   width: 100%;
   max-width: 1200px;
-  margin: 24px auto 16px;
-  padding: 4px 0 0;
+  margin: var(--spacing-12) auto var(--spacing-4);
+  padding: 0;
 }
 
 .hero__review-summary-section {
   width: 100%;
   max-width: 1200px;
-  margin: 0 0 20px;
+  margin: 0;
   padding: 0;
 }
 
@@ -1223,7 +1223,7 @@
 
 .hero__review-summary-label {
   display: block;
-  margin: 16px 0 10px;
+  margin: 0 0 10px;
   padding: 0;
   color: var(--color-black);
   font-family: var(--font-heading);
@@ -1239,7 +1239,7 @@
 }
 
 .hero__review-summary-copy {
-  margin: 0 0 15px;
+  margin: 0;
   padding: 0 32px 0 0;
   color: var(--color-black);
   font-family: var(--font-article);
@@ -1251,12 +1251,12 @@
 
 @media (max-width: 768px) {
   .hero__review-summary {
-    margin-bottom: 16px;
-    padding: 4px 0 0;
+    margin-top: var(--spacing-8);
+    margin-bottom: 0;
   }
 
   .hero__review-summary-section {
-    margin-bottom: 12px;
+    margin-bottom: 0;
   }
 
   .hero__review-summary-list {
@@ -1277,7 +1277,7 @@
   }
 
   .hero__review-summary-label {
-    margin: 14px 0 8px;
+    margin: 0 0 8px;
   }
 
   .hero__review-summary-copy {

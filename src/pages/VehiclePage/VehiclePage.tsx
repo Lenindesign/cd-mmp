@@ -23,7 +23,6 @@ import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import PaymentCalculator from '../../components/PaymentCalculator';
-import TradeInPrompt from '../../components/TradeInPrompt';
 import TradeInEstimateModal, { type TradeInEstimateCondition } from '../../components/TradeInEstimateModal';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
@@ -266,11 +265,6 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               model={vehicle.model}
               onEstimateTradeIn={() => setIsTradeInModalOpen(true)}
               tradeInEstimate={calculatorTradeInEstimate}
-            />
-            <TradeInPrompt
-              vehicleName={`${vehicle.make} ${vehicle.model}`}
-              msrp={vehicle.priceMin}
-              onEstimateTradeIn={() => setIsTradeInModalOpen(true)}
             />
             <FuelEconomy
               year={parseInt(vehicle.year)}
