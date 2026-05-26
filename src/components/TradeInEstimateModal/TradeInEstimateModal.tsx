@@ -1,11 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Gauge, MapPin, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, X, Zap } from 'lucide-react';
-import { getAllVehicles } from '../../services/vehicleService';
+import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import { estimateTradeInValue, type TradeInEstimateCondition } from '../../utils/tradeInEstimate';
 import './TradeInEstimateModal.css';
 
 export type { TradeInEstimateCondition };
+
+export interface TradeInSelectedOption {
+  id: string;
+  label: string;
+  value: number;
+}
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
@@ -18,11 +24,31 @@ interface TradeInEstimateModalProps {
   onClose: () => void;
   onApply: (estimate: {
     vehicle: string;
+    image?: string;
     mileage: number;
     zipCode: string;
     condition: TradeInEstimateCondition;
+    options: TradeInSelectedOption[];
     value: number;
   }) => void;
+}
+
+interface TradeInVehicleSuggestion {
+  year: string;
+  make: string;
+  model: string;
+  label: string;
+  searchText: string;
+  image: string;
+  trim?: string;
+  bodyStyle: string;
+  drivetrain?: string;
+  fuelType?: string;
+  features: string[];
+}
+
+interface TradeInOption extends TradeInSelectedOption {
+  description: string;
 }
 
 const TRADE_IN_CONDITIONS: Array<{ value: TradeInEstimateCondition; label: string; description: string }> = [
@@ -32,12 +58,125 @@ const TRADE_IN_CONDITIONS: Array<{ value: TradeInEstimateCondition; label: strin
 ];
 
 const normalizeVehicleSearch = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, '');
+const normalizeOptionId = (value: string) => normalizeVehicleSearch(value) || 'option';
 
 const formatTradeInVehicle = (vehicle: { year: string; make: string; model: string }) =>
   `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
 
 const currency = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Math.round(value));
+
+const formatFeatureLabel = (feature: string) =>
+  feature
+    .replace(/\s+/g, ' ')
+    .replace(/\bawd\b/gi, 'AWD')
+    .replace(/\bfwd\b/gi, 'FWD')
+    .replace(/\b4wd\b/gi, '4WD')
+    .trim();
+
+const optionDetailsForFeature = (feature: string): { value: number; description: string } => {
+  const normalized = feature.toLowerCase();
+
+  if (/all[- ]wheel|awd|4wd|four[- ]wheel/.test(normalized)) {
+    return { value: 1200, description: 'Drivetrain equipment that can lift resale demand.' };
+  }
+
+  if (/hybrid|electric|plug[- ]in|battery|ev\b/.test(normalized)) {
+    return { value: 950, description: 'Electrified equipment and charging features can affect value.' };
+  }
+
+  if (/safety|assist|adaptive|cruise|blind|collision|lane|parking|camera/.test(normalized)) {
+    return { value: 650, description: 'Driver-assist equipment buyers often compare.' };
+  }
+
+  if (/leather|heated|ventilated|seat|premium|comfort/.test(normalized)) {
+    return { value: 800, description: 'Comfort equipment that can help the appraisal.' };
+  }
+
+  if (/sunroof|moonroof|panoramic|roof/.test(normalized)) {
+    return { value: 750, description: 'Roof and appearance equipment often priced separately.' };
+  }
+
+  if (/audio|sound|navigation|infotainment|carplay|android|wireless|touchscreen|display/.test(normalized)) {
+    return { value: 450, description: 'Technology features that can support a stronger estimate.' };
+  }
+
+  if (/tow|towing|trail|off[- ]road|suspension/.test(normalized)) {
+    return { value: 900, description: 'Utility equipment shoppers tend to value.' };
+  }
+
+  if (/sport|performance|turbo|wheel|appearance/.test(normalized)) {
+    return { value: 700, description: 'Appearance or performance content can improve desirability.' };
+  }
+
+  return { value: 500, description: 'Factory equipment selected from this vehicle record.' };
+};
+
+const createVehicleSuggestion = (item: Vehicle): TradeInVehicleSuggestion => ({
+  year: item.year,
+  make: item.make,
+  model: item.model,
+  label: formatTradeInVehicle(item),
+  searchText: normalizeVehicleSearch(`${item.year} ${item.make} ${item.model}`),
+  image: item.image,
+  trim: item.trim,
+  bodyStyle: item.bodyStyle,
+  drivetrain: item.drivetrain,
+  fuelType: item.fuelType,
+  features: item.features || [],
+});
+
+const buildTradeInOptions = (vehicle: TradeInVehicleSuggestion | null): TradeInOption[] => {
+  if (!vehicle) return [];
+
+  const options: TradeInOption[] = [];
+  const addOption = (option: TradeInOption) => {
+    if (!options.some((item) => item.id === option.id)) {
+      options.push(option);
+    }
+  };
+
+  vehicle.features.slice(0, 6).forEach((feature) => {
+    const label = formatFeatureLabel(feature);
+    const details = optionDetailsForFeature(label);
+
+    addOption({
+      id: `feature-${normalizeOptionId(label)}`,
+      label,
+      description: details.description,
+      value: details.value,
+    });
+  });
+
+  if (vehicle.drivetrain && /awd|4wd/i.test(vehicle.drivetrain)) {
+    addOption({
+      id: `drivetrain-${normalizeOptionId(vehicle.drivetrain)}`,
+      label: `${vehicle.drivetrain} drivetrain`,
+      description: 'All-weather traction can improve resale demand.',
+      value: 1200,
+    });
+  }
+
+  if (vehicle.trim && !/base|standard/i.test(vehicle.trim)) {
+    addOption({
+      id: `trim-${normalizeOptionId(vehicle.trim)}`,
+      label: `${vehicle.trim} package`,
+      description: 'Trim content can affect dealer appraisal.',
+      value: 1000,
+    });
+  }
+
+  if (!options.length && /suv|truck/i.test(vehicle.bodyStyle)) {
+    addOption({
+      id: 'utility-package',
+      label: 'Utility package',
+      description: 'Cargo, roof, or utility equipment can affect value.',
+      value: 650,
+    });
+  }
+
+  return options.slice(0, 4);
+};
 
 const loadGoogleMapsGeocoder = async () => {
   if (window.google?.maps?.Geocoder) return;
@@ -114,23 +253,17 @@ export const TradeInEstimateModal = ({
   const [isDetectingZip, setIsDetectingZip] = useState(false);
   const [zipDetectionError, setZipDetectionError] = useState('');
   const [condition, setCondition] = useState<TradeInEstimateCondition>(initialCondition);
+  const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
 
   const vehicleSuggestions = useMemo(() => {
-    const latestByModel = new Map<string, { year: string; make: string; model: string; label: string; searchText: string; image: string }>();
+    const latestByModel = new Map<string, TradeInVehicleSuggestion>();
 
     getAllVehicles().forEach((item) => {
       const modelKey = normalizeVehicleSearch(`${item.make} ${item.model}`);
       const current = latestByModel.get(modelKey);
 
       if (!current || Number(item.year) > Number(current.year)) {
-        latestByModel.set(modelKey, {
-          year: item.year,
-          make: item.make,
-          model: item.model,
-          label: formatTradeInVehicle(item),
-          searchText: normalizeVehicleSearch(`${item.year} ${item.make} ${item.model}`),
-          image: item.image,
-        });
+        latestByModel.set(modelKey, createVehicleSuggestion(item));
       }
     });
 
@@ -148,11 +281,29 @@ export const TradeInEstimateModal = ({
   }, [vehicle, vehicleSuggestions]);
 
   const parsedMileage = Number(mileage);
-  const estimatedValue = useMemo(
+  const tradeInOptions = useMemo(() => buildTradeInOptions(matchedVehicle), [matchedVehicle]);
+  const selectedOptions = useMemo(
+    () => tradeInOptions.filter((option) => selectedOptionIds.includes(option.id)),
+    [selectedOptionIds, tradeInOptions],
+  );
+  const optionsAdjustment = useMemo(
+    () => selectedOptions.reduce((total, option) => total + option.value, 0),
+    [selectedOptions],
+  );
+  const baseEstimatedValue = useMemo(
     () => estimateTradeInValue(vehicle, parsedMileage, condition),
     [condition, parsedMileage, vehicle],
   );
+  const estimatedValue = baseEstimatedValue > 0
+    ? Math.round((baseEstimatedValue + optionsAdjustment) / 100) * 100
+    : 0;
   const canUseEstimate = estimatedValue > 0;
+
+  useEffect(() => {
+    setSelectedOptionIds((currentIds) =>
+      currentIds.filter((id) => tradeInOptions.some((option) => option.id === id)),
+    );
+  }, [tradeInOptions]);
 
   const detectZipCode = () => {
     if (!navigator.geolocation) {
@@ -354,6 +505,46 @@ export const TradeInEstimateModal = ({
               </div>
             </div>
 
+            {tradeInOptions.length > 0 && (
+              <fieldset className="trade-in-modal__options">
+                <legend>Options on this vehicle</legend>
+                <p className="trade-in-modal__options-tip">
+                  Select the equipment on your current vehicle so the estimate reflects more than the base model.
+                </p>
+                <div className="trade-in-modal__options-list">
+                  {tradeInOptions.map((option) => {
+                    const isSelected = selectedOptionIds.includes(option.id);
+
+                    return (
+                      <label
+                        key={option.id}
+                        className={`trade-in-modal__option ${isSelected ? 'trade-in-modal__option--selected' : ''}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(event) => {
+                            setSelectedOptionIds((currentIds) => {
+                              if (event.target.checked) {
+                                return [...currentIds, option.id];
+                              }
+
+                              return currentIds.filter((id) => id !== option.id);
+                            });
+                          }}
+                        />
+                        <span className="trade-in-modal__option-copy">
+                          <strong>{option.label}</strong>
+                          <small>{option.description}</small>
+                        </span>
+                        <span className="trade-in-modal__option-value">+{currency(option.value)}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )}
+
             <fieldset className="trade-in-modal__condition">
               <legend>Your vehicle's condition</legend>
               <div className="trade-in-modal__condition-options">
@@ -391,7 +582,12 @@ export const TradeInEstimateModal = ({
             )}
             <span className="trade-in-modal__estimate-label">Estimated trade-in value</span>
             <strong>{estimatedValue ? currency(estimatedValue) : 'Add vehicle details'}</strong>
-            <p>This is a quick planning estimate. A dealer appraisal can adjust for trim, options, history, and local demand.</p>
+            {selectedOptions.length > 0 && (
+              <span className="trade-in-modal__estimate-options">
+                Includes {currency(optionsAdjustment)} from selected options
+              </span>
+            )}
+            <p>This is a quick planning estimate. A dealer appraisal can adjust for history and local demand.</p>
           </aside>
         </div>
 
@@ -404,7 +600,15 @@ export const TradeInEstimateModal = ({
             className="trade-in-modal__primary"
             onClick={() => {
               if (!canUseEstimate) return;
-              onApply({ vehicle, mileage: parsedMileage, zipCode, condition, value: estimatedValue });
+              onApply({
+                vehicle,
+                image: matchedVehicle?.image,
+                mileage: parsedMileage,
+                zipCode,
+                condition,
+                options: selectedOptions,
+                value: estimatedValue,
+              });
               onClose();
             }}
             disabled={!canUseEstimate}

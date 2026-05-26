@@ -23,7 +23,10 @@ import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import PaymentCalculator from '../../components/PaymentCalculator';
-import TradeInEstimateModal, { type TradeInEstimateCondition } from '../../components/TradeInEstimateModal';
+import TradeInEstimateModal, {
+  type TradeInEstimateCondition,
+  type TradeInSelectedOption,
+} from '../../components/TradeInEstimateModal';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
 import './VehiclePage.css';
@@ -36,9 +39,11 @@ interface VehiclePageProps {
 
 interface CalculatorTradeInEstimate {
   vehicle: string;
+  image?: string;
   mileage: number;
   zipCode: string;
   condition: TradeInEstimateCondition;
+  options: TradeInSelectedOption[];
   value: number;
   appliedAt: number;
 }

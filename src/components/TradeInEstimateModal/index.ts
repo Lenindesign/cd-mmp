@@ -1,1 +1,6 @@
-export { default, TradeInEstimateModal, type TradeInEstimateCondition } from './TradeInEstimateModal';
+export {
+  default,
+  TradeInEstimateModal,
+  type TradeInEstimateCondition,
+  type TradeInSelectedOption,
+} from './TradeInEstimateModal';

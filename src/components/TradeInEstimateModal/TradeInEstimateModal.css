@@ -83,7 +83,8 @@
 .trade-in-modal__close:focus-visible,
 .trade-in-modal__primary:focus-visible,
 .trade-in-modal__secondary:focus-visible,
-.trade-in-modal__condition-option:focus-visible {
+.trade-in-modal__condition-option:focus-visible,
+.trade-in-modal__option:focus-within {
   outline: 2px solid var(--color-blue-cobalt-light);
   outline-offset: var(--spacing-1);
 }
@@ -160,6 +161,7 @@
 .trade-in-modal__body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 220px;
+  align-items: start;
   gap: var(--spacing-5);
   padding: 0 var(--spacing-6) var(--spacing-6);
 }
@@ -274,6 +276,100 @@
   border-radius: var(--border-radius-sm);
 }
 
+.trade-in-modal__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  margin: 0;
+  background: rgba(27, 95, 138, 0.04);
+  border: 1px solid rgba(27, 95, 138, 0.18);
+  border-radius: var(--border-radius-lg);
+}
+
+.trade-in-modal__options legend {
+  padding: 0;
+  margin-bottom: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.trade-in-modal__options-tip {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-gray-600);
+}
+
+.trade-in-modal__options-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.trade-in-modal__option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.trade-in-modal__option:hover,
+.trade-in-modal__option--selected {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 1px rgba(27, 95, 138, 0.16);
+}
+
+.trade-in-modal__option--selected {
+  background: rgba(27, 95, 138, 0.06);
+}
+
+.trade-in-modal__option input {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  margin: 2px 0 0;
+  accent-color: var(--color-blue-cobalt);
+}
+
+.trade-in-modal__option-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.trade-in-modal__option-copy strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
+  color: var(--color-dark);
+}
+
+.trade-in-modal__option-copy small {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: var(--color-gray-600);
+}
+
+.trade-in-modal__option-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue-cobalt);
+  white-space: nowrap;
+}
+
 .trade-in-modal__condition {
   display: flex;
   flex-direction: column;
@@ -378,10 +474,12 @@
 }
 
 .trade-in-modal__estimate {
-  align-self: stretch;
+  position: sticky;
+  top: var(--spacing-4);
+  align-self: start;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--spacing-2);
   padding: var(--spacing-5);
   background: var(--color-gray-50);
@@ -419,6 +517,14 @@
   font-size: var(--font-size-3xl);
   line-height: var(--line-height-snug);
   color: var(--color-dark);
+}
+
+.trade-in-modal__estimate-options {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--color-blue-cobalt);
 }
 
 .trade-in-modal__estimate p {
@@ -499,6 +605,10 @@
     gap: var(--spacing-4);
   }
 
+  .trade-in-modal__estimate {
+    position: static;
+  }
+
   .trade-in-modal__intro h2 {
     font-size: var(--font-size-2xl);
   }
@@ -510,6 +620,14 @@
   .trade-in-modal__primary,
   .trade-in-modal__secondary {
     width: 100%;
+  }
+
+  .trade-in-modal__option {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .trade-in-modal__option-value {
+    grid-column: 2;
   }
 }
 
