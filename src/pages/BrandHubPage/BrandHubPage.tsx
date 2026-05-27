@@ -276,11 +276,6 @@ const BrandHubPage = ({
     [brandPath, make],
   );
 
-  const buyingBadge = offerCounts.buyingBadge ?? 'Available now';
-  const leasingBadge = offerCounts.leasingBadge ?? 'Available now';
-  const heroBuyingBadge = buyingBadge.replace(/!+$/, '');
-  const heroLeasingBadge = leasingBadge.replace(/!+$/, '');
-
   return (
     <div className="brand-page">
       <SEO
@@ -334,8 +329,7 @@ const BrandHubPage = ({
                     <span className="brand-page__hero-offer-main">
                       <span className="brand-page__hero-offer-chip">BUY</span>
                       <span className="brand-page__hero-offer-copy">
-                        <span>See {offerCounts.buying} {make} Buying Deals</span>
-                        <span className="brand-page__hero-offer-badge">{heroBuyingBadge}</span>
+                        <span>See All {make} Buying Deals</span>
                       </span>
                     </span>
                   </Link>
@@ -348,8 +342,7 @@ const BrandHubPage = ({
                     <span className="brand-page__hero-offer-main">
                       <span className="brand-page__hero-offer-chip">LEASE</span>
                       <span className="brand-page__hero-offer-copy">
-                        <span>See {offerCounts.leasing} {make} Leasing Deals</span>
-                        <span className="brand-page__hero-offer-badge">{heroLeasingBadge}</span>
+                        <span>See All {make} Leasing Deals</span>
                       </span>
                     </span>
                   </Link>

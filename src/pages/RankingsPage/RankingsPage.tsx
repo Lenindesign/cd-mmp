@@ -1183,8 +1183,7 @@ const RankingsPage = () => {
                   <span className="rankings-page__hero-offer-main">
                     <span className="rankings-page__hero-offer-chip">BUY</span>
                     <span className="rankings-page__hero-offer-copy">
-                      <span className="rankings-page__hero-offer-label">See {RANKINGS_OFFER_COUNTS.buying} {offerBodyStyleLabel} Buying Deals</span>
-                      <span className="rankings-page__hero-offer-badge">{RANKINGS_OFFER_COUNTS.buyingExpiringSoon} expiring soon</span>
+                      <span className="rankings-page__hero-offer-label">See All {offerBodyStyleLabel} Buying Deals</span>
                     </span>
                   </span>
                 </Link>
@@ -1193,8 +1192,7 @@ const RankingsPage = () => {
                   <span className="rankings-page__hero-offer-main">
                     <span className="rankings-page__hero-offer-chip">LEASE</span>
                     <span className="rankings-page__hero-offer-copy">
-                      <span className="rankings-page__hero-offer-label">See {RANKINGS_OFFER_COUNTS.leasing} {offerBodyStyleLabel} Leasing Deals</span>
-                      <span className="rankings-page__hero-offer-badge">{RANKINGS_OFFER_COUNTS.leasingExpiringSoon} expiring soon</span>
+                      <span className="rankings-page__hero-offer-label">See All {offerBodyStyleLabel} Leasing Deals</span>
                     </span>
                   </span>
                 </Link>
