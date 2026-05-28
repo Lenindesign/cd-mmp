@@ -57,6 +57,9 @@ const BADGE_URLS = {
     'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE',
 };
 
+const BRAND_HERO_OFFER_ARROW_SRC =
+  'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/arrow-right-regular.e879c19.svg';
+
 const generateCdSays = (year: string, make: string, model: string): string =>
   `Read our ${year} ${make} ${model} review for information on ratings, pricing, specs, and features.`;
 
@@ -331,6 +334,14 @@ const BrandHubPage = ({
                       <span className="brand-page__hero-offer-copy">
                         <span>See All {make} Buying Deals</span>
                       </span>
+                      <img
+                        className="brand-page__hero-offer-arrow"
+                        src={BRAND_HERO_OFFER_ARROW_SRC}
+                        width="14"
+                        height="14"
+                        alt=""
+                        aria-hidden="true"
+                      />
                     </span>
                   </Link>
                 )}
@@ -344,6 +355,14 @@ const BrandHubPage = ({
                       <span className="brand-page__hero-offer-copy">
                         <span>See All {make} Leasing Deals</span>
                       </span>
+                      <img
+                        className="brand-page__hero-offer-arrow"
+                        src={BRAND_HERO_OFFER_ARROW_SRC}
+                        width="14"
+                        height="14"
+                        alt=""
+                        aria-hidden="true"
+                      />
                     </span>
                   </Link>
                 )}

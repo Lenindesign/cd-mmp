@@ -4294,6 +4294,11 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-blue-cobalt);
 }
 
+.aio-payment--light-steps .aio-payment__light-result-hero .payment-calc__result-kicker {
+  font-size: var(--font-size-sm);
+  text-transform: none;
+}
+
 .aio-payment--light-steps .aio-payment__light-result-lede.payment-calc__muted {
   margin: 0;
 }
@@ -4307,7 +4312,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
 }
 
 .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row--calculated dt,
@@ -4862,6 +4867,12 @@ label.aio-payment__light-loan-step__label {
   line-height: var(--line-height-normal);
 }
 
+.aio-payment__light-breakdown-financed-formula {
+  margin-top: var(--spacing-2);
+  color: #222222;
+  font-size: var(--font-size-sm);
+}
+
 .aio-payment__light-breakdown-financed-formula-part {
   display: inline;
 }
@@ -4994,6 +5005,17 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--font-weight-semibold);
 }
 
+.aio-payment__light-review-drivers-copy {
+  display: block;
+  margin: 0;
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  text-transform: none;
+}
+
 .aio-payment__light-breakdown {
   display: grid;
   gap: 0;
@@ -5066,6 +5088,11 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-success-dark);
 }
 
+.aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) dd,
+.aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) .aio-payment__light-breakdown-sign {
+  color: #222222;
+}
+
 .aio-payment__light-breakdown .aio-payment__light-breakdown__total {
   display: flex;
   justify-content: space-between;
@@ -5084,6 +5111,17 @@ label.aio-payment__light-loan-step__label {
   font-family: var(--font-heading);
   font-size: var(--aio-light-section-label);
   font-weight: var(--aio-light-heading-weight);
+}
+
+.aio-payment__light-breakdown-total-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1-5);
+  min-width: 0;
+}
+
+.aio-payment__light-review-drivers-popover--total {
+  width: min(19rem, calc(100vw - var(--spacing-8)));
 }
 
 .aio-payment__light-breakdown .aio-payment__light-breakdown__total dd {
@@ -6528,8 +6566,9 @@ label.aio-payment__light-loan-step__label {
   .aio-payment--light-steps .aio-payment__light-result-hero .payment-calc__result-kicker {
     grid-column: 1;
     margin: 0;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     line-height: 1;
+    text-transform: none;
   }
 
   .aio-payment--light-steps .aio-payment__light-result-amount.payment-calc__result-big {
@@ -6599,7 +6638,7 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row {
     padding: var(--spacing-2) 0;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
   }
 
   .aio-payment--light-steps .aio-payment__light-result-details .payment-calc__sum-row dd {

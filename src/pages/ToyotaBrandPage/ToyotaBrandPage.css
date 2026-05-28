@@ -203,6 +203,13 @@
   min-width: 0;
 }
 
+.brand-page__hero-offer-arrow {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  filter: brightness(0) invert(1);
+}
+
 .brand-page__hero-offer-chip {
   display: inline-flex;
   align-items: center;

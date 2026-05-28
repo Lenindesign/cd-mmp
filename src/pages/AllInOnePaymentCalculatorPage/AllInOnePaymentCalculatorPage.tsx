@@ -1178,6 +1178,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightVehicleBodyStyleHeadingId = useId();
   const lightBreakdownLabelId = useId();
   const lightBreakdownGuidanceId = useId();
+  const lightTotalPaidGuidanceId = useId();
   const lightEstimateTotalsId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
@@ -3378,7 +3379,38 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <div><dt>Finance Charge</dt><dd>{renderLightBreakdownValue(totalLoanInterest, 'add')}</dd></div>
                       <div><dt>Loan Payments Over {loanTerm} Months</dt><dd>{renderLightBreakdownValue(totalLoanPayments)}</dd></div>
                       <div className="aio-payment__light-breakdown__total">
-                        <dt>Estimated Total Paid</dt>
+                        <dt>
+                          <span className="aio-payment__light-breakdown-total-label">
+                            <span>Estimated Total Paid</span>
+                            <span className="aio-payment__light-review-drivers-tooltip aio-payment__light-review-drivers-tooltip--total">
+                              <button
+                                type="button"
+                                className="aio-payment__light-review-drivers-trigger"
+                                aria-label="Difference between amount financed and estimated total paid"
+                                aria-describedby={lightTotalPaidGuidanceId}
+                              >
+                                <img
+                                  className="aio-payment__light-loan-guidance-trigger-icon"
+                                  src={CAD_INFO_ICON_SRC}
+                                  width="24"
+                                  height="24"
+                                  alt=""
+                                  aria-hidden="true"
+                                />
+                              </button>
+                              <span
+                                id={lightTotalPaidGuidanceId}
+                                className="aio-payment__light-review-drivers-popover aio-payment__light-review-drivers-popover--total"
+                                role="tooltip"
+                              >
+                                <span className="aio-payment__light-review-drivers-popover-title">Estimated total paid</span>
+                                <span className="aio-payment__light-review-drivers-copy">
+                                  Amount financed is what you borrow before interest. Estimated total paid includes your down payment plus loan payments and finance charges over the term.
+                                </span>
+                              </span>
+                            </span>
+                          </span>
+                        </dt>
                         <dd>{renderLightBreakdownValue(totalCost)}</dd>
                       </div>
                     </dl>
@@ -3530,7 +3562,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <div className="aio-payment__light-sticky-summary">
                     <div className="payment-calc__result-hero aio-payment__light-result-hero">
                       <p className="payment-calc__result-kicker">
-                        {startMode === 'monthly' ? 'Budget supports about' : 'Estimated monthly payment'}
+                        {startMode === 'monthly' ? 'Budget Supports About' : 'Estimated Monthly Payment'}
                       </p>
                       <p className="payment-calc__result-big aio-payment__light-result-amount" aria-live="polite">
                         {startMode === 'monthly' ? currency(affordableMsrp) : currency(estimatedMonthly)}

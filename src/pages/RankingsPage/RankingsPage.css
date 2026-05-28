@@ -142,12 +142,6 @@
   color: var(--color-blue-cobalt);
 }
 
-.rankings-page__methodology-arrow {
-  display: block;
-  width: 16px;
-  height: 16px;
-}
-
 .rankings-page__methodology-link {
   color: var(--color-blue-cobalt);
   font-family: var(--font-body);
@@ -602,9 +596,16 @@
 
 .rankings-page__hero-offer-copy {
   display: inline-flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 4px;
   min-width: 0;
+}
+
+.rankings-page__hero-offer-caret {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  color: currentColor;
 }
 
 .rankings-page__hero-offer-chip {
@@ -2569,6 +2570,7 @@
 }
 
 .rankings-page--cd-control-b .rankings-page__hero-offers {
+  align-items: center;
   justify-content: center;
   gap: var(--spacing-5);
   margin: var(--spacing-6) auto 0;
@@ -2577,12 +2579,15 @@
 }
 
 .rankings-page--cd-control-b .rankings-page__hero-offers-divider {
-  height: 46px;
+  align-self: stretch;
+  height: auto;
+  min-height: 34px;
   background: var(--color-gray-300);
 }
 
 .rankings-page--cd-control-b .rankings-page__hero-offer-link {
-  min-height: 58px;
+  min-height: auto;
+  padding: var(--spacing-2) 0;
   color: var(--color-black);
 }
 
@@ -2937,7 +2942,8 @@
   }
 
   .rankings-page--cd-control-b .rankings-page__hero-offer-link {
-    min-height: 62px;
+    min-height: auto;
+    padding: var(--spacing-2) 0;
   }
 
   .rankings-page--cd-control .rankings-page__subnav-pills {

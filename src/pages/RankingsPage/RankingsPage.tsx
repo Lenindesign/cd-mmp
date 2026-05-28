@@ -155,7 +155,6 @@ const RANKINGS_INCENTIVE_SUBNAV_VARIANT = 'incentive-subnav';
 const RANKINGS_CD_CONTROL_VARIANT = 'cd-control';
 const RANKINGS_CD_CONTROL_B_VARIANT = 'cd-control-b';
 const RANKINGS_METHODOLOGY_URL = 'https://www.caranddriver.com/how-we-test-cars/';
-const RANKINGS_METHODOLOGY_ARROW_URL = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/arrow-down.3b05ce3.svg?primary=%25231B5F8A';
 
 const CD_CONTROL_BODY_STYLE_NAV_ITEMS = [
   { key: 'suv', label: 'SUVs', title: 'SUVs', icon: BODY_STYLE_ICONS.suv, imageClassName: undefined, modelLabel: undefined, path: '/rankings/suv?variant=cd-control' },
@@ -1162,12 +1161,6 @@ const RankingsPage = () => {
               )}
               {showRankingMethodologyLink && (
                 <div className="rankings-page__methodology-link-wrap">
-                  <img
-                    src={RANKINGS_METHODOLOGY_ARROW_URL}
-                    alt=""
-                    aria-hidden="true"
-                    className="rankings-page__methodology-arrow"
-                  />
                   <a
                     href={RANKINGS_METHODOLOGY_URL}
                     className="rankings-page__methodology-link"
@@ -1184,6 +1177,7 @@ const RankingsPage = () => {
                     <span className="rankings-page__hero-offer-chip">BUY</span>
                     <span className="rankings-page__hero-offer-copy">
                       <span className="rankings-page__hero-offer-label">See All {offerBodyStyleLabel} Buying Deals</span>
+                      <ChevronRight className="rankings-page__hero-offer-caret" size={14} strokeWidth={3} aria-hidden="true" />
                     </span>
                   </span>
                 </Link>
@@ -1193,6 +1187,7 @@ const RankingsPage = () => {
                     <span className="rankings-page__hero-offer-chip">LEASE</span>
                     <span className="rankings-page__hero-offer-copy">
                       <span className="rankings-page__hero-offer-label">See All {offerBodyStyleLabel} Leasing Deals</span>
+                      <ChevronRight className="rankings-page__hero-offer-caret" size={14} strokeWidth={3} aria-hidden="true" />
                     </span>
                   </span>
                 </Link>
