@@ -180,6 +180,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <Link to="/design-system" className="footer__legal-link">Design System</Link>
               <Link to="/rankings" className="footer__legal-link">Vehicle Ranking</Link>
               <Link to="/admin/vehicle-ratings" className="footer__legal-link">Editor Portal</Link>
+              <Link to="/admin/feedback" className="footer__legal-link">Comments Dashboard</Link>
               <Link to="/2026/Chevrolet/Trax?offersVersion=a" className="footer__legal-link">Incentives Version A</Link>
               <Link to="/2026/Chevrolet/Trax?modalVersion=b" className="footer__legal-link">Modal Version B</Link>
             </div>
@@ -191,7 +192,6 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
 };
 
 export default Footer;
-
 
 
 

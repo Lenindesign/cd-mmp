@@ -4097,6 +4097,28 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--aio-light-label-weight);
 }
 
+.aio-payment__light-disclosure-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-3);
+  align-items: center;
+  padding: var(--spacing-4);
+}
+
+.aio-payment__light-disclosure-heading span {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--aio-light-section-label);
+  font-weight: var(--aio-light-heading-weight);
+}
+
+.aio-payment__light-disclosure-heading strong {
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--aio-light-meta);
+  font-weight: var(--aio-light-label-weight);
+}
+
 .aio-payment__light-disclosure-copy {
   margin: 0;
   padding: 0 var(--spacing-4) var(--spacing-3);
@@ -4411,6 +4433,10 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-disclosure > summary {
+  padding: var(--spacing-5) var(--spacing-5);
+}
+
+.aio-payment--light-steps .aio-payment__light-disclosure-heading {
   padding: var(--spacing-5) var(--spacing-5);
 }
 
@@ -4852,46 +4878,99 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-gray-700);
 }
 
-.aio-payment__light-review-drivers {
-  display: grid;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-4);
-  padding: var(--spacing-3);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-  background: var(--color-gray-50);
-}
-
-.aio-payment__light-review-drivers-title {
-  display: flex;
+.aio-payment__light-breakdown-financed-heading {
+  display: inline-flex;
   align-items: center;
   gap: var(--spacing-1-5);
+  min-width: 0;
+}
+
+.aio-payment__light-review-drivers-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.aio-payment__light-review-drivers-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  padding: 0;
+  border: 0;
+  border-radius: var(--border-radius-full);
+  background: transparent;
+  color: var(--color-black);
+  cursor: pointer;
+}
+
+.aio-payment__light-review-drivers-trigger:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-review-drivers-popover {
+  position: absolute;
+  top: calc(100% + var(--spacing-3));
+  left: 50%;
+  z-index: 25;
+  display: grid;
+  gap: var(--spacing-3);
+  width: min(22rem, calc(100vw - var(--spacing-8)));
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  color: var(--color-black);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transform: translate(-50%, var(--spacing-1));
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    visibility var(--transition-fast);
+}
+
+.aio-payment__light-review-drivers-popover::before,
+.aio-payment__light-review-drivers-popover::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--spacing-2) * -1);
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-right: var(--spacing-2) solid transparent;
+  border-left: var(--spacing-2) solid transparent;
+  transform: translateX(-50%);
+}
+
+.aio-payment__light-review-drivers-popover::before {
+  border-bottom: var(--spacing-2) solid var(--color-gray-300);
+}
+
+.aio-payment__light-review-drivers-popover::after {
+  top: -7px;
+  border-bottom: var(--spacing-2) solid var(--color-white);
+}
+
+.aio-payment__light-review-drivers-tooltip:hover .aio-payment__light-review-drivers-popover,
+.aio-payment__light-review-drivers-tooltip:focus-within .aio-payment__light-review-drivers-popover {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.aio-payment__light-review-drivers-popover-title {
   margin: 0;
-  list-style: none;
-  color: var(--color-dark);
+  color: var(--color-black);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
-  cursor: pointer;
-}
-
-.aio-payment__light-review-drivers-title::-webkit-details-marker {
-  display: none;
-}
-
-.aio-payment__light-review-drivers-title svg {
-  flex: 0 0 auto;
-  color: var(--color-blue-cobalt);
-}
-
-.aio-payment__light-review-drivers-title svg:last-child {
-  margin-left: auto;
-  transition: transform var(--transition-fast);
-}
-
-.aio-payment__light-review-drivers[open] .aio-payment__light-review-drivers-title svg:last-child {
-  transform: rotate(180deg);
 }
 
 .aio-payment__light-review-drivers-list {
