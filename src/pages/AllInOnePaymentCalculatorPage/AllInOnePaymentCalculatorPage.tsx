@@ -101,6 +101,8 @@ const USED_PRICING_GUIDANCE_COPY = 'Your selected vehicle will help personalize 
 const SHOW_LIGHT_ESTIMATE_EMAIL = true;
 const SHOW_LIGHT_TRADE_ESTIMATE_CARD = false;
 const SHOW_LIGHT_DEALER_FEE_NOTE = false;
+const PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH = '/.netlify/functions/send-payment-estimate-email';
+const PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN = 'https://cd-mmp-2025.netlify.app';
 const CD_SEAL_CHECK_ICON_URL = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/seal-check-regular.4dd562d.svg?primary=%25231D7A19';
 const SHOPPING_TOOLS = [
   {
@@ -215,6 +217,23 @@ const FAQS = [
     answer: 'Yes. Select custom rate to compare lender, credit union, or dealer-provided financing against manufacturer incentives.',
   },
 ];
+
+const isLocalHost = () => {
+  if (typeof window === 'undefined') return false;
+  return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+};
+
+const getPaymentEstimateEmailEndpoint = () => {
+  const origin = isLocalHost() ? PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN : '';
+  return `${origin}${PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH}`;
+};
+
+const getPaymentEstimateEmailMockUrl = () => {
+  const origin = isLocalHost() || typeof window === 'undefined'
+    ? PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN
+    : window.location.origin;
+  return `${origin}/payment-estimate-email-mock.html`;
+};
 
 const LIGHT_FINANCING_FAQS = [
   {
@@ -2197,7 +2216,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     ];
 
     try {
-      const response = await fetch('/.netlify/functions/send-payment-estimate-email', {
+      const response = await fetch(getPaymentEstimateEmailEndpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2218,7 +2237,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             summary: `Based on a ${currency(workingPrice)} ${workingPriceDescriptor}, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`,
             rows: estimateRows,
           },
-          mockUrl: `${window.location.origin}/payment-estimate-email-mock.html`,
+          mockUrl: getPaymentEstimateEmailMockUrl(),
         }),
       });
       const result = await response.json().catch(() => ({}));
