@@ -484,6 +484,7 @@
 
 .aio-payment--light-steps {
   --aio-light-steps-bg: var(--color-gray-100);
+  --aio-light-steps-shell-max-width: 1120px;
   background: var(--aio-light-steps-bg);
   color: var(--color-dark);
 }
@@ -4152,6 +4153,10 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-main {
   padding: clamp(var(--spacing-6), 2vw, var(--spacing-8)) 0 clamp(var(--spacing-6), 3vw, var(--spacing-10));
+}
+
+.aio-payment--light-steps .aio-payment__light-main > .container {
+  max-width: var(--aio-light-steps-shell-max-width);
 }
 
 .aio-payment--light-steps .aio-payment__light-main,
