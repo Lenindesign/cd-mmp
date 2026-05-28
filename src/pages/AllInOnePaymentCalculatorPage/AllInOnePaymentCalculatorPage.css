@@ -5168,6 +5168,21 @@ label.aio-payment__light-loan-step__label {
   line-height: 1.45;
 }
 
+.aio-payment__light-estimate-email__status {
+  margin: var(--spacing-3) 0 0;
+  color: var(--color-green-dark);
+  font-family: var(--font-body);
+  font-size: var(--aio-light-caption);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.45;
+}
+
+.aio-payment__light-estimate-email__status a {
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .aio-payment__light-charts {
   width: 100%;
   min-width: 0;

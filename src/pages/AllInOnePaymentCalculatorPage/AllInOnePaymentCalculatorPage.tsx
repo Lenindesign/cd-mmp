@@ -98,7 +98,7 @@ const LIGHT_AFFORDABLE_DEAL_CARD_LIMIT = 9;
 const AREA_ESTIMATE_TOOLTIP_COPY = 'This is an estimation based on your area.';
 const USED_PRICING_GUIDANCE_LEAD = 'Used car prices can vary widely due to factors like mileage, condition, and features.';
 const USED_PRICING_GUIDANCE_COPY = 'Your selected vehicle will help personalize recommendations for your budget.';
-const SHOW_LIGHT_ESTIMATE_EMAIL = false;
+const SHOW_LIGHT_ESTIMATE_EMAIL = true;
 const SHOW_LIGHT_TRADE_ESTIMATE_CARD = false;
 const SHOW_LIGHT_DEALER_FEE_NOTE = false;
 const CD_SEAL_CHECK_ICON_URL = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/seal-check-regular.4dd562d.svg?primary=%25231D7A19';
@@ -1162,6 +1162,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightEstimateTotalsId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
+  const [lightEstimateEmailStatus, setLightEstimateEmailStatus] = useState<string | undefined>();
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
   const [lightKnownVehicleSelected, setLightKnownVehicleSelected] = useState(() => !isLightVariant);
   const [lightVehicleDraft, setLightVehicleDraft] = useState<LightVehicleDraft>(() => ({
@@ -1515,7 +1516,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       </span>
     );
   };
-  const hasTradeInputs = tradeInValue > 0 || amountOwed > 0;
   const showTradePayoffBreakdown = amountOwed > 0;
   const tradeEquityBreakdownLabel = tradeEquity < 0 ? 'Trade Balance' : 'Net Trade Equity';
   const renderTradeEquityBreakdownValue = () => {
@@ -2170,54 +2170,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const trimmed = lightEstimateEmail.trim();
     if (!trimmed) {
       setLightEstimateEmailError('Enter an email address.');
+      setLightEstimateEmailStatus(undefined);
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setLightEstimateEmailError('Enter a valid email address.');
+      setLightEstimateEmailStatus(undefined);
       return;
     }
     setLightEstimateEmailError(undefined);
-    const subject = `Payment estimate: ${selectedVehicleLabel}`;
-    const lines: string[] = [
-      'Payment estimate (Car and Driver Marketplace auto loan calculator)',
-      '',
-      `Vehicle: ${selectedVehicleLabel}`,
-      `Out-the-door estimate: ${currency(outTheDoorPrice)}`,
-    ];
-    if (hasTradeInputs) {
-      lines.push(`Trade-in value: ${tradeInValue > 0 ? `-${currency(tradeInValue)}` : currency(0)}`);
-      if (showTradePayoffBreakdown) {
-        lines.push(
-          `Amount owed on trade: +${currency(amountOwed)}`,
-          `${tradeEquityBreakdownLabel}: ${formatTradeEquitySummaryValue()}`,
-        );
-      }
-    }
-    if (rebateTotal > 0) {
-      lines.push(`Rebates and incentives: -${currency(rebateTotal)}`);
-    }
-    lines.push(
-      `Amount financed: ${currency(totalLoanAmount)}`,
-      `Due at signing: ${currency(cashDueAtSigning)}`,
-      `Estimated monthly payment: ${currency(estimatedMonthly)}/mo`,
-      `Total interest: ${currency(totalLoanInterest)}`,
-      `Total loan payments: ${currency(totalLoanPayments)}`,
-      `Total cost: ${currency(totalCost)}`,
-      '',
-      `Loan: ${loanTerm} months · APR ${activeApr.toFixed(1)}%`,
-      `State: ${stateRule.name} (${stateCode})`,
-      `Generated: ${new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}`,
-    );
-    let body = lines.join('\n');
-    const maxLen = 1800;
-    if (body.length > maxLen) {
-      body = `${body.slice(0, maxLen)}\n...`;
-    }
-    const mailtoHref = `mailto:${encodeURIComponent(trimmed)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    const mailLink = document.createElement('a');
-    mailLink.href = mailtoHref;
-    mailLink.rel = 'noopener noreferrer';
-    mailLink.click();
+    setLightEstimateEmailStatus(`Estimate email signed up for ${trimmed}.`);
   };
   const incentiveOfferDetail = useMemo(() => {
     if (!selectedIncentive) return undefined;
@@ -3352,7 +3314,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   {SHOW_LIGHT_ESTIMATE_EMAIL && (
                     <div className="aio-payment__light-estimate-email">
                       <p className="aio-payment__light-estimate-email__lede">
-                        Send this estimate to your inbox. Your email app opens with the numbers filled in.
+                        Email this estimate so you can keep the numbers handy when you talk with local dealers.
                       </p>
                       <form
                         className="aio-payment__light-estimate-email__row"
@@ -3372,6 +3334,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           onChange={(event) => {
                             setLightEstimateEmail(event.target.value);
                             setLightEstimateEmailError(undefined);
+                            setLightEstimateEmailStatus(undefined);
                           }}
                           error={lightEstimateEmailError}
                           wrapperClassName="aio-payment__light-estimate-email__field"
@@ -3382,12 +3345,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           size="medium"
                           iconLeft={<Mail size={18} strokeWidth={2} aria-hidden="true" />}
                         >
-                          Send estimate
+                          Email estimate
                         </Button>
                       </form>
-                      <p className="aio-payment__light-estimate-email__note">
-                        Nothing is transmitted from this site; your device opens mail with a draft you can send or save.
-                      </p>
+                      {lightEstimateEmailStatus ? (
+                        <p className="aio-payment__light-estimate-email__status" role="status">
+                          {lightEstimateEmailStatus}{' '}
+                          <a href="/payment-estimate-email-mock.html" target="_blank" rel="noopener noreferrer">
+                            View email mock
+                          </a>
+                        </p>
+                      ) : (
+                        <p className="aio-payment__light-estimate-email__note">
+                          We will send the monthly payment, cost breakdown, vehicle details, and shopping links.
+                        </p>
+                      )}
                     </div>
                   )}
                 </section>

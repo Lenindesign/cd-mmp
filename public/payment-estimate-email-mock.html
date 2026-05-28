@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Car and Driver Payment Estimate Email Mock</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f2f4f7;
+        color: #111827;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      a {
+        color: #0b5f92;
+        text-decoration: underline;
+      }
+
+      .email-preview-shell {
+        padding: 32px 12px;
+      }
+
+      .email-preview-note {
+        max-width: 680px;
+        margin: 0 auto 16px;
+        color: #4b5563;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .email {
+        width: 100%;
+        max-width: 680px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-collapse: collapse;
+        border: 1px solid #d8dee6;
+      }
+
+      .section {
+        padding: 28px 32px;
+      }
+
+      .header {
+        padding: 26px 32px;
+        background: #ffffff;
+        border-bottom: 1px solid #d8dee6;
+        text-align: center;
+      }
+
+      .logo {
+        width: 240px;
+        height: auto;
+        display: inline-block;
+        color: #000000;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: #0b5f92;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.6px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 12px;
+        color: #111827;
+        font-size: 32px;
+        line-height: 1.08;
+      }
+
+      h2 {
+        margin-bottom: 16px;
+        color: #111827;
+        font-size: 24px;
+        line-height: 1.15;
+      }
+
+      h3 {
+        margin-bottom: 8px;
+        color: #111827;
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .copy {
+        margin-bottom: 0;
+        color: #4b5563;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .muted {
+        color: #6b7280;
+      }
+
+      .payment-hero {
+        background: #eef5f7;
+        border-top: 1px solid #d8dee6;
+        border-bottom: 1px solid #d8dee6;
+      }
+
+      .payment-amount {
+        margin: 0;
+        color: #1f6c99;
+        font-size: 56px;
+        font-weight: 800;
+        line-height: 0.95;
+      }
+
+      .payment-amount span {
+        color: #555555;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .payment-subcopy {
+        margin: 12px 0 20px;
+        color: #555555;
+        font-size: 16px;
+        line-height: 1.45;
+      }
+
+      .breakdown {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+        border: 1px solid #d8dee6;
+      }
+
+      .breakdown td {
+        padding: 13px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #4b5563;
+        font-size: 15px;
+        line-height: 1.3;
+      }
+
+      .breakdown tr:last-child td {
+        border-bottom: none;
+      }
+
+      .breakdown td:last-child {
+        color: #333333;
+        font-weight: 700;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .breakdown .total td {
+        border-top: 2px solid #b9cbd5;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 800;
+      }
+
+      .vehicle-card {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #d8dee6;
+      }
+
+      .vehicle-image {
+        display: block;
+        width: 100%;
+        height: 345px;
+        object-fit: cover;
+      }
+
+      .vehicle-content {
+        padding: 22px;
+      }
+
+      .rating-row {
+        margin: 0 0 12px;
+      }
+
+      .rating-pill {
+        display: inline-block;
+        margin-right: 8px;
+        padding: 6px 9px;
+        border-radius: 3px;
+        background: #eef5f7;
+        color: #111827;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .vehicle-facts {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+      }
+
+      .vehicle-facts td {
+        width: 50%;
+        padding: 10px 0;
+        border-top: 1px solid #e5e7eb;
+        color: #4b5563;
+        font-size: 14px;
+        vertical-align: top;
+      }
+
+      .vehicle-facts strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #111827;
+        font-size: 13px;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+      }
+
+      .link-grid {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+      }
+
+      .link-grid td {
+        width: 50%;
+        padding: 6px 8px 6px 0;
+        font-size: 14px;
+        line-height: 1.4;
+        vertical-align: top;
+      }
+
+      .link-grid .button {
+        padding: 12px 14px;
+        font-size: 12px;
+      }
+
+      .advice-mosaic {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+      }
+
+      .advice-mosaic td {
+        width: 50%;
+        padding: 0 6px 18px 0;
+        vertical-align: top;
+      }
+
+      .advice-mosaic__cell--end {
+        padding-right: 0 !important;
+        padding-left: 6px !important;
+      }
+
+      .advice-mosaic__cell--bottom {
+        padding-bottom: 0 !important;
+      }
+
+      .advice-card {
+        display: block;
+        color: #111827 !important;
+        text-decoration: none;
+      }
+
+      .advice-card__image {
+        display: block;
+        width: 100%;
+        border: 0;
+        background: #eef5f7;
+        object-fit: cover;
+      }
+
+      .advice-card__image--tile {
+        height: 150px;
+      }
+
+      .advice-card__content {
+        display: block;
+        padding-top: 12px;
+      }
+
+      .advice-card__kicker {
+        display: block;
+        margin: 0 0 4px;
+        color: #0b5f92;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .advice-card__title {
+        display: block;
+        margin: 0;
+        color: #111827;
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .advice-card__summary {
+        display: block;
+        margin: 8px 0 0;
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .cta-row {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .cta-cell {
+        padding: 6px 6px 6px 0;
+        vertical-align: top;
+      }
+
+      .button {
+        display: block;
+        padding: 14px 16px;
+        border-radius: 4px;
+        background: #1f6c99;
+        color: #ffffff !important;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        line-height: 1.2;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .button--secondary {
+        background: #111827;
+      }
+
+      .footer {
+        padding: 24px 32px;
+        background: #111827;
+        color: #d1d5db;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .footer a {
+        color: #ffffff;
+      }
+
+      @media (max-width: 560px) {
+        .section,
+        .header,
+        .footer {
+          padding: 22px 18px;
+        }
+
+        h1 {
+          font-size: 28px;
+        }
+
+        .payment-amount {
+          font-size: 48px;
+        }
+
+        .vehicle-image {
+          height: auto;
+          aspect-ratio: 16 / 9;
+        }
+
+        .cta-cell,
+        .link-grid td,
+        .vehicle-facts td {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .advice-mosaic td {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0 0 18px !important;
+        }
+
+        .advice-card__image--tile {
+          height: auto;
+          aspect-ratio: 16 / 9;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-preview-shell">
+      <p class="email-preview-note">
+        HTML email mock for the payment estimate signup on the calculator results page.
+      </p>
+
+      <table class="email" role="presentation" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="header">
+            <svg class="logo" viewBox="0 0 1364 262" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logo-title">
+              <title id="logo-title">Car and Driver</title>
+              <path fill="currentColor" d="M68.022 210.901C74.858 210.901 76.91 205.432 76.91 197.571V146.641H132.626V199.276C132.626 231.41 116.903 261.83 72.468 261.83H62.554C15.04 261.83 0 233.462 0 194.496V65.289C0 28.712 16.408 0 62.213 0H72.468C117.588 0 132.626 25.978 132.626 59.473V101.177H76.91V61.869C76.91 53.667 74.858 49.222 67.682 49.222C60.502 49.222 58.452 52.982 58.452 61.869V197.571C58.452 206.114 60.846 210.901 68.022 210.901Z"/>
+              <path fill="currentColor" d="M272.324 257.729H217.63L213.53 220.47H187.551L183.791 257.729H134.911L167.384 3.41907H236.774L272.324 257.729ZM192.681 170.223H208.402L200.54 92.9747L192.681 170.223Z"/>
+              <path fill="currentColor" d="M366.797 3.41907C391.752 3.41907 408.842 18.1158 408.842 48.1925V81.6935C408.842 105.278 396.534 115.873 386.624 120.318C396.194 124.079 408.842 134.331 408.842 153.477V237.561C408.842 247.13 410.55 252.601 412.258 256.021V257.729H356.542C354.149 254.654 352.101 248.844 352.101 239.616V165.781C352.101 157.237 350.047 153.477 342.527 153.477H334.666V257.729H278.268V3.41907H366.797ZM334.665 105.623H341.845C349.021 105.623 352.1 102.203 352.1 93.3126V59.1349C352.1 50.245 350.391 47.1691 342.871 47.1691H334.666L334.665 105.623Z"/>
+              <path d="M428.499 63.023H594.769V3.61597H428.5L428.499 63.023Z" fill="#D2232A"/>
+              <path d="M428.499 257.046H594.769V197.644H428.5L428.499 257.046Z" fill="#0061AF"/>
+              <path fill="currentColor" d="M481.039 182.672H461.599L460.098 167.332H449.987L448.607 182.672H430.7L442.597 77.9894H468.019L481.039 182.672ZM451.864 147.839H458.219L454.742 111.882L451.864 147.839Z"/>
+              <path fill="currentColor" d="M486.974 182.672V77.9889H507.008L517.652 128.64V77.9889H535.31V182.671H517.152L504.881 128.077V182.672H486.974Z"/>
+              <path fill="currentColor" d="M573.909 77.9874C585.429 77.9875 592.567 84.3239 592.567 101.067V158.609C592.567 174.929 586.18 182.672 574.035 182.672H544.356V77.9874H573.909ZM564.175 162.549H567.647C570.653 162.549 571.531 160.579 571.531 156.219V103.459C571.531 99.2341 570.653 97.4093 567.898 97.4093H564.175V162.549Z"/>
+              <path fill="currentColor" d="M696.341 3.41907C727.79 3.41907 747.273 18.8019 747.273 59.4728V199.276C747.273 238.928 729.839 257.729 696.682 257.729H615.674V3.41907H696.341ZM671.389 208.852H679.251C687.454 208.852 689.847 204.065 689.847 193.469V65.2892C689.847 55.0342 687.453 50.589 679.933 50.589H671.389V208.852Z"/>
+              <path fill="currentColor" d="M845.438 3.41907C870.393 3.41907 887.48 18.1158 887.48 48.1925V81.6935C887.48 105.278 875.177 115.873 865.264 120.318C874.833 124.079 887.48 134.331 887.48 153.477V237.561C887.48 247.13 889.191 252.601 890.899 256.021V257.729H835.183C832.79 254.654 830.738 248.844 830.738 239.616V165.781C830.738 157.237 828.689 153.477 821.169 153.477H813.307L813.308 257.729H756.907V3.41907H845.438ZM813.307 105.623H820.482C827.662 105.623 830.737 102.203 830.737 93.3126V59.1349C830.737 50.245 829.03 47.1691 821.51 47.1691H813.307V105.623Z"/>
+              <path fill="currentColor" d="M956.492 257.732H900.092V3.41895H956.492V257.732Z"/>
+              <path fill="currentColor" d="M1073.15 257.729H999.319L962.748 3.41895H1022.22L1037.6 162.705L1052.99 3.41895H1107.34L1073.15 257.729Z"/>
+              <path fill="currentColor" d="M1113.59 257.729V3.41895H1219.21V56.0569H1169.3V99.4689H1209.3V153.477H1169.3V204.065H1221.26V257.729H1113.59Z"/>
+              <path fill="currentColor" d="M1285.45 47.1689H1293.65C1301.17 47.1689 1302.88 50.2449 1302.88 59.1349V93.313C1302.88 102.203 1299.81 105.623 1292.63 105.623H1285.45V47.1689ZM1285.45 153.477H1293.31C1300.83 153.477 1302.88 157.237 1302.88 165.781V239.616C1302.88 248.844 1304.93 254.654 1307.33 257.729H1363.04V256.021C1361.33 252.601 1359.62 247.131 1359.62 237.561V153.477C1359.62 134.331 1346.98 124.08 1337.41 120.319C1347.32 115.874 1359.62 105.279 1359.62 81.6939V48.1929C1359.62 18.1159 1342.54 3.41895 1317.58 3.41895H1229.05V257.729H1285.45V153.477Z"/>
+            </svg>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">Your payment estimate</p>
+            <h1>Alex, your 2026 Honda CR-V Hybrid estimate</h1>
+            <p class="copy">
+              Hi Alex, thank you for using Car and Driver to calculate an estimated monthly payment for a
+              2026 Honda CR-V Hybrid Sport Touring. Use this estimate as a planning guide while
+              shopping, and keep in mind that final pricing, taxes, fees, trade-in value, and
+              financing terms may vary by vehicle and retailer.
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section payment-hero">
+            <p class="eyebrow">Estimated monthly payment</p>
+            <p class="payment-amount">$688<span>/mo</span></p>
+            <p class="payment-subcopy">
+              Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.
+            </p>
+            <table class="breakdown" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>Rate &amp; Term</td>
+                <td>6.9% APR - 60 mo</td>
+              </tr>
+              <tr>
+                <td>Selected Vehicle Price</td>
+                <td>$42,150</td>
+              </tr>
+              <tr>
+                <td>Estimated Taxes &amp; Fees</td>
+                <td>+$3,420</td>
+              </tr>
+              <tr>
+                <td>Down Payment</td>
+                <td>-$4,000</td>
+              </tr>
+              <tr>
+                <td>Trade-In Value</td>
+                <td>$0</td>
+              </tr>
+              <tr>
+                <td>Amount Financed</td>
+                <td>$41,570</td>
+              </tr>
+              <tr>
+                <td>Finance Charge</td>
+                <td>+$7,701</td>
+              </tr>
+              <tr>
+                <td>Loan Payments Over 60 Months</td>
+                <td>$49,271</td>
+              </tr>
+              <tr class="total">
+                <td>Estimated Total Paid</td>
+                <td>$53,271</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">Your next vehicle</p>
+            <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>
+                  <img
+                    class="vehicle-image"
+                    src="https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg"
+                    alt="2026 Honda CR-V Hybrid on road"
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td class="vehicle-content">
+                  <div class="rating-row">
+                    <span class="rating-pill">9.5/10 C/D Rating</span>
+                    <span class="rating-pill">Editors' Choice</span>
+                    <span class="rating-pill">#2 Compact SUVs</span>
+                  </div>
+                  <h2>2026 Honda CR-V Hybrid Sport Touring</h2>
+                  <p class="copy">
+                    <strong>C/D Says:</strong> The CR-V Hybrid blends strong fuel economy, smart cargo packaging,
+                    and easy everyday drivability into a compact SUV that feels ready for family duty.
+                  </p>
+
+                  <table class="vehicle-facts" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><strong>YMMT</strong>2026 Honda CR-V Hybrid Sport Touring</td>
+                      <td><strong>MSRP Range</strong>$35,700 - $42,150</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Fuel Economy</strong>40 city / 34 highway mpg</td>
+                      <td><strong>Rank in Category</strong>#2 in Compact SUVs</td>
+                    </tr>
+                  </table>
+
+                  <table class="link-grid" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Shop New CR-V Hybrid</a></td>
+                      <td><a class="button" href="/vehicles?condition=used&amp;make=Honda&amp;model=CR-V">Shop Used CR-V Hybrid</a></td>
+                    </tr>
+                    <tr>
+                      <td><a class="button" href="/vehicles?condition=new&amp;bodyStyle=SUV">Shop New SUVs</a></td>
+                      <td><a class="button" href="/vehicles?condition=used&amp;bodyStyle=SUV">Shop Used SUVs</a></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">More from Car and Driver</p>
+            <h2>Shopping advice for your next step</h2>
+            <table class="advice-mosaic" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="advice-mosaic__cell">
+                  <a class="advice-card" href="https://www.caranddriver.com/shopping-advice/a35768730/how-to-lease-buy-new-car/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/loving-car-driver-what-to-expect-6761cbdd81ec3.jpg?crop=1.00xw:0.766xh;0,0.177xh&amp;resize=2048:*" alt="Car shopper signing vehicle purchase paperwork">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Buying and leasing</span>
+                      <span class="advice-card__title">How to Lease or Buy a New Car</span>
+                    </span>
+                  </a>
+                </td>
+                <td class="advice-mosaic__cell advice-mosaic__cell--end">
+                  <a class="advice-card" href="https://www.caranddriver.com/shopping-advice/a35772417/how-to-buy-used-car/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/pre-owned-vehicles-are-seen-at-the-roger-beasley-south-news-photo-1715021136.jpg?crop=1.00xw:0.845xh;0,0.121xh&amp;resize=1800:*" alt="Used vehicles lined up at a dealership">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Used cars</span>
+                      <span class="advice-card__title">How to Buy a Used Car</span>
+                    </span>
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td class="advice-mosaic__cell advice-mosaic__cell--bottom">
+                  <a class="advice-card" href="https://www.caranddriver.com/features/a22652499/car-dealerships-donts/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/dealership-dos-and-donts-1628009822.jpg?crop=1.00xw:1.00xh;0,0&amp;resize=1800:*" alt="Car dealership do's and don'ts illustration">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Dealer prep</span>
+                      <span class="advice-card__title">Car Dealership Do's and Don'ts</span>
+                    </span>
+                  </a>
+                </td>
+                <td class="advice-mosaic__cell advice-mosaic__cell--end advice-mosaic__cell--bottom">
+                  <a class="advice-card" href="https://www.caranddriver.com/auto-loans/a42414553/how-to-trade-in-car/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/loving-car-driver-under-pressure-6761cc7dc7272.jpg?crop=1.00xw:0.766xh;0,0.130xh&amp;resize=2048:*" alt="Car shopper under pressure during vehicle purchase">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Trade-in</span>
+                      <span class="advice-card__title">How to Trade In a Car</span>
+                    </span>
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">Shopping tools</p>
+            <table class="cta-row" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="cta-cell"><a class="button button--secondary" href="/vehicles">Shop For Cars</a></td>
+                <td class="cta-cell"><a class="button button--secondary" href="/whats-my-car-worth">What's My Car Worth?</a></td>
+                <td class="cta-cell"><a class="button button--secondary" href="/compare">Compare Cars</a></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="footer">
+            <p style="margin:0 0 8px;">
+              Estimates are for planning only and are not loan approvals or offers. Dealer pricing,
+              lender terms, taxes, fees, and incentives may change.
+            </p>
+            <p style="margin:0;">
+              Car and Driver Marketplace - <a href="/auto-loan-calculator/light-steps/review">Calculator Results Page</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
