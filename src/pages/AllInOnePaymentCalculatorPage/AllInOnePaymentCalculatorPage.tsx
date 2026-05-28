@@ -1163,6 +1163,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightEstimateEmailStatus, setLightEstimateEmailStatus] = useState<string | undefined>();
+  const [isLightEstimateEmailSending, setIsLightEstimateEmailSending] = useState(false);
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
   const [lightKnownVehicleSelected, setLightKnownVehicleSelected] = useState(() => !isLightVariant);
   const [lightVehicleDraft, setLightVehicleDraft] = useState<LightVehicleDraft>(() => ({
@@ -2166,7 +2167,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     ? aiDealerFlags
     : ['No major markup flags from the visible inputs. Still ask for a full worksheet before signing.'];
 
-  const handleSendLightEstimateEmail = () => {
+  const handleSendLightEstimateEmail = async () => {
     const trimmed = lightEstimateEmail.trim();
     if (!trimmed) {
       setLightEstimateEmailError('Enter an email address.');
@@ -2179,7 +2180,59 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       return;
     }
     setLightEstimateEmailError(undefined);
-    setLightEstimateEmailStatus(`Estimate email signed up for ${trimmed}.`);
+    setLightEstimateEmailStatus(undefined);
+    setIsLightEstimateEmailSending(true);
+
+    const estimateRows = [
+      { label: 'Rate & Term', value: `${activeApr.toFixed(1)}% APR - ${loanTerm} mo` },
+      { label: workingPriceBreakdownLabel, value: currency(workingPrice) },
+      { label: 'Estimated Taxes & Fees', value: `+${currency(taxesAndFees)}` },
+      { label: 'Down Payment', value: `-${currency(downPayment)}` },
+      { label: 'Trade-In Value', value: tradeInValue > 0 ? `-${currency(tradeInValue)}` : currency(0) },
+      ...(showTradePayoffBreakdown ? [{ label: 'Amount Owed on Trade', value: `+${currency(amountOwed)}` }] : []),
+      { label: 'Amount Financed', value: currency(totalLoanAmount) },
+      { label: 'Finance Charge', value: `+${currency(totalLoanInterest)}` },
+      { label: `Loan Payments Over ${loanTerm} Months`, value: currency(totalLoanPayments) },
+      { label: 'Estimated Total Paid', value: currency(totalCost), emphasis: true },
+    ];
+
+    try {
+      const response = await fetch('/.netlify/functions/send-payment-estimate-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: trimmed,
+          userName: user?.name,
+          vehicle: {
+            condition,
+            year: selectedYear,
+            make: selectedVehicle.make,
+            model: selectedVehicle.model,
+            trim: selectedTrimStyleOption?.trimName,
+            bodyStyle: selectedVehicle.bodyStyle,
+            image: selectedVehicle.image,
+            shopUrl: lightReviewVehicleShopHref,
+          },
+          estimate: {
+            monthlyPayment: `${currency(estimatedMonthly)}/mo`,
+            summary: `Based on a ${currency(workingPrice)} ${workingPriceDescriptor}, ${loanTerm} months, and ${activeApr.toFixed(1)}% APR.`,
+            rows: estimateRows,
+          },
+          mockUrl: `${window.location.origin}/payment-estimate-email-mock.html`,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(typeof result.error === 'string' ? result.error : 'We could not send this estimate. Please try again.');
+      }
+
+      setLightEstimateEmailStatus(`Estimate sent to ${trimmed}.`);
+    } catch (error) {
+      setLightEstimateEmailError(error instanceof Error ? error.message : 'We could not send this estimate. Please try again.');
+    } finally {
+      setIsLightEstimateEmailSending(false);
+    }
   };
   const incentiveOfferDetail = useMemo(() => {
     if (!selectedIncentive) return undefined;
@@ -3343,9 +3396,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           type="submit"
                           variant="outline"
                           size="medium"
+                          loading={isLightEstimateEmailSending}
+                          disabled={isLightEstimateEmailSending}
                           iconLeft={<Mail size={18} strokeWidth={2} aria-hidden="true" />}
                         >
-                          Email estimate
+                          {isLightEstimateEmailSending ? 'Sending' : 'Email estimate'}
                         </Button>
                       </form>
                       {lightEstimateEmailStatus ? (
