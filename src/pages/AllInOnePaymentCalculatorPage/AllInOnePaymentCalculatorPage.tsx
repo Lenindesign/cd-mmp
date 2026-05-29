@@ -1,4 +1,4 @@
-import { type FocusEvent, type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, type FocusEvent, type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, Mail, RotateCcw, SkipForward } from 'lucide-react';
 import { CarProfile, CreditCard as PhosphorCreditCard } from '@phosphor-icons/react';
@@ -2547,6 +2547,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const lightWizardStepMotionAttribute = isLightStepsVariant && lightWizardStepMotion !== 'none'
       ? lightWizardStepMotion
       : undefined;
+    const lightWizardProgressScale = Math.max(
+      0,
+      Math.min(1, (lightWizardStep - 1) / Math.max(1, LIGHT_WIZARD_STEP_META.length - 1)),
+    );
     const lightLoanTermChips = [...new Set(termOptions)].sort((a, b) => a - b);
     const lightHeroHeadline = toTitleCase(
       isLightStepsVariant
@@ -2583,17 +2587,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               {isLightStepsVariant ? (
                 <div className="aio-payment__light-wizard-strip" data-step-motion={lightWizardStepMotionAttribute}>
                   <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
-                    <div className="aio-payment__light-wizard-steps-shell">
+                    <div
+                      className="aio-payment__light-wizard-steps-shell"
+                      style={{ '--aio-light-wizard-progress-scale': lightWizardProgressScale } as CSSProperties}
+                    >
                       <ol className="aio-payment__light-wizard-steps">
                         {LIGHT_WIZARD_STEP_META.map((stepMeta, index) => {
                           const stepNumber = index + 1;
                           const isDone = lightWizardStep > stepNumber;
                           const isCurrent = lightWizardStep === stepNumber;
+                          const isFinalCurrent = isCurrent && stepNumber === LIGHT_WIZARD_STEP_META.length;
                           return (
                             <li key={stepMeta.label} className="aio-payment__light-wizard-step">
                               <button
                                 type="button"
-                                className={`aio-payment__light-wizard-dot${isCurrent ? ' aio-payment__light-wizard-dot--current' : ''}${isDone ? ' aio-payment__light-wizard-dot--done' : ''}`}
+                                className={`aio-payment__light-wizard-dot${isCurrent ? ' aio-payment__light-wizard-dot--current' : ''}${isDone ? ' aio-payment__light-wizard-dot--done' : ''}${isFinalCurrent ? ' aio-payment__light-wizard-dot--final-current' : ''}`}
                                 disabled={stepNumber > lightWizardStep}
                                 aria-current={isCurrent ? 'step' : undefined}
                                 aria-label={`${stepMeta.label}${isDone ? ', completed' : ''}${isCurrent ? ', current step' : ''}`}
