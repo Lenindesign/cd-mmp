@@ -17,6 +17,7 @@ import TradeInEstimateModal from '../../components/TradeInEstimateModal';
 import { estimateTradeInValue } from '../../utils/tradeInEstimate';
 import { getVehicleOffers, type VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getListingsNearYou, type Listing } from '../../services/listingsService';
+import { getVehiclePriceAfterTradeAndIncentives } from '../../utils/financeBudgetFit';
 import { getRangeInputStyle } from '../../utils/rangeInputStyle';
 import { toTitleCase } from '../../utils/textCase';
 import { PaymentCalculatorFinanceCharts } from '../../components/PaymentCalculator/PaymentCalculatorFinanceCharts';
@@ -627,14 +628,14 @@ function bodyStyleCatalogIcon(iconId: string): string {
 
 const normalizeVehicleMatch = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-/** Light wizard “Still shopping” grid — BodyStyleSelector line art; `EV` maps to electric vehicles in browse apply. */
+/** Light wizard “Still shopping” grid — BodyStyleSelector line art; EV/Hybrid are shopping intents. */
 const LIGHT_VEHICLE_BROWSE_GRID = [
   { key: 'sedan', label: 'Sedan', bodyStyle: 'Sedan', iconId: 'sedans' },
   { key: 'suv', label: 'SUV', bodyStyle: 'SUV', iconId: 'suvs' },
   { key: 'truck', label: 'Truck', bodyStyle: 'Truck', iconId: 'trucks' },
   { key: 'ev', label: 'EV', bodyStyle: 'EV', iconId: 'evs' },
-  { key: 'wagon', label: 'Wagon', bodyStyle: 'Wagon', iconId: 'wagons' },
-  { key: 'hatchback', label: 'Hatchback', bodyStyle: 'Hatchback', iconId: 'crossovers' },
+  { key: 'hybrid', label: 'Hybrid', bodyStyle: 'Hybrid', iconId: 'hybrids' },
+  { key: 'crossover', label: 'Crossovers', bodyStyle: 'Crossover', iconId: 'crossovers' },
 ] as const;
 
 interface LightMonthlyBudgetFieldProps {
@@ -835,7 +836,7 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
     hint: 'Pick a year, make, and trim so the estimate has the right shopping context.',
     panelTitle: 'Pick a vehicle',
     panelIntro:
-      'Know exactly what you want, or just have a body style in mind? Either works. You can also skip this and refine it later.',
+      'Know exactly what you want, or just have a vehicle type in mind? Either works. You can also skip this and refine it later.',
     panelEyebrowSuffix: ' · OPTIONAL',
   },
   {
@@ -1603,7 +1604,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : estimateBudgetFitStatus === 'under'
       ? 'This estimate uses the current listing-price input and leaves room in your monthly budget. Replace it with the exact listing price or written quote before shopping.'
       : 'This estimate uses the current listing-price input and is within about $10/mo of your budget. Confirm it against the exact listing price or written quote.';
-  const priceBudgetDelta = selectedCatalogPrice - price;
+  const selectedVehiclePriceAfterTradeAndIncentives = getVehiclePriceAfterTradeAndIncentives({
+    vehiclePrice: selectedCatalogPrice,
+    tradeInValue,
+    amountOwed,
+    rebate: rebateTotal,
+  });
+  const priceBudgetAdjustmentSources = [
+    tradeEquity > 0 ? `${currency(tradeEquity)} trade equity` : '',
+    tradeEquity < 0 ? `${currency(Math.abs(tradeEquity))} trade payoff` : '',
+    rebateTotal > 0 ? `${currency(rebateTotal)} incentives` : '',
+  ].filter(Boolean);
+  const priceBudgetComparisonCopy = priceBudgetAdjustmentSources.length > 0
+    ? `With ${formatInlineList(priceBudgetAdjustmentSources)}, the comparable price is about ${currency(selectedVehiclePriceAfterTradeAndIncentives)} before tax and fees.`
+    : 'This comparison is before tax and fees.';
+  const priceBudgetDelta = selectedVehiclePriceAfterTradeAndIncentives - price;
   const priceBudgetFitStatus: BudgetFitStatus = priceBudgetDelta > 10 ? 'over' : priceBudgetDelta < -10 ? 'under' : 'fit';
   const priceBudgetFitLabel = priceBudgetFitStatus === 'over'
     ? 'Above budget'
@@ -1611,21 +1626,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ? 'Below budget'
       : 'On budget';
   const priceBudgetFitHeadline = priceBudgetFitStatus === 'over'
-    ? `About ${currency(priceBudgetDelta)} over your ${currency(price)} budget`
+    ? `About ${currency(priceBudgetDelta)} over your ${currency(price)} target`
     : priceBudgetFitStatus === 'under'
-      ? `About ${currency(Math.abs(priceBudgetDelta))} below your ${currency(price)} budget`
-      : `Close to your ${currency(price)} budget`;
+      ? `About ${currency(Math.abs(priceBudgetDelta))} below your ${currency(price)} target`
+      : `Close to your ${currency(price)} target`;
   const priceBudgetFitCopy = priceBudgetFitStatus === 'over'
-    ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. Try a lower trim, more cash down, or vehicles below your target price.`
+    ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. ${priceBudgetComparisonCopy} Try a lower trim, a lower selling price, eligible incentives, or vehicles closer to your target.`
     : priceBudgetFitStatus === 'under'
-      ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. Your estimate uses the selected trim price while your target budget stays fixed.`
-      : `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees, which is close to your target price.`;
+      ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. ${priceBudgetComparisonCopy} Taxes and fees are estimated separately in the totals.`
+      : `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. ${priceBudgetComparisonCopy}`;
   const visibleBudgetFitStatus = !canUseCatalogPrice && lightHasVehicleSelection ? usedBudgetFitStatus : lightHasVehicleSelection ? budgetFitStatus : 'fit';
   const visibleBudgetFitLabel = !canUseCatalogPrice && lightHasVehicleSelection ? usedBudgetFitLabel : lightHasVehicleSelection ? budgetFitLabel : 'Pick a vehicle';
   const visibleBudgetFitHeadline = !canUseCatalogPrice && lightHasVehicleSelection ? usedBudgetFitHeadline : lightHasVehicleSelection ? budgetFitHeadline : 'Choose a vehicle to compare';
   const visibleBudgetFitCopy = lightHasVehicleSelection
     ? canUseCatalogPrice ? budgetFitCopy : usedBudgetFitCopy
-    : `Your budget supports about ${currency(affordableMsrp)} before tax and fees. Choose a vehicle or browse by body style to compare it with your target.`;
+    : `Your budget supports about ${currency(affordableMsrp)} before tax and fees. Choose a vehicle or browse by vehicle type to compare it with your target.`;
   const showPriceBudgetFit = startMode === 'price' && usesSelectedCatalogPriceForEstimate;
   const summaryBudgetFitStatus = startMode === 'monthly'
     ? visibleBudgetFitStatus
@@ -2797,7 +2812,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-vehicle-step__path-icon aio-payment__light-vehicle-step__path-icon--profile" aria-hidden>
                           <CarProfile size={22} weight="regular" />
                         </span>
-                        <span className="aio-payment__light-vehicle-step__path-title">I Have a Preferred Body Style</span>
+                        <span className="aio-payment__light-vehicle-step__path-title">I Have a Preferred Vehicle Type</span>
                         <span className="aio-payment__light-vehicle-step__path-copy">
                           Discover vehicles that match your shopping intent.
                         </span>
@@ -2874,7 +2889,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     ) : (
                       <div className="aio-payment__light-vehicle-step__browse">
                         <p className="aio-payment__light-vehicle-step__body-style-label" id={lightVehicleBodyStyleHeadingId}>
-                          Body style
+                          Vehicle type
                         </p>
                         <div
                           className="aio-payment__light-vehicle-step__body-grid"
