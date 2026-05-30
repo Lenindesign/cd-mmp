@@ -4581,14 +4581,28 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-main {
+  position: relative;
+  overflow: hidden;
   padding: clamp(var(--spacing-6), 2vw, var(--spacing-8)) 0 clamp(var(--spacing-6), 3vw, var(--spacing-10));
+  background: var(--gradient-dark);
+  color: var(--color-dark);
+}
+
+.aio-payment--light-steps .aio-payment__light-main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .aio-payment--light-steps .aio-payment__light-main > .container {
+  position: relative;
+  z-index: 1;
   max-width: var(--aio-light-steps-shell-max-width);
 }
 
-.aio-payment--light-steps .aio-payment__light-main,
 .aio-payment--light-steps .aio-payment__light-affordable-section,
 .aio-payment--light-steps .aio-payment__light-faq-section,
 .aio-payment--light-steps .aio-payment__advantage-section {
@@ -5569,11 +5583,66 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--aio-light-heading-weight);
 }
 
+.aio-payment__light-breakdown-label-with-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
 .aio-payment__light-breakdown-total-label {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-1-5);
   min-width: 0;
+}
+
+.aio-payment__light-review-drivers-popover--finance-charge {
+  width: min(18rem, calc(100vw - var(--spacing-12)));
+}
+
+.aio-payment__light-finance-charge-table {
+  display: grid;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-1);
+  overflow: hidden;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-tight);
+}
+
+.aio-payment__light-finance-charge-table__head,
+.aio-payment__light-finance-charge-table__body {
+  display: grid;
+}
+
+.aio-payment__light-finance-charge-table__row {
+  display: grid;
+  grid-template-columns: 2rem repeat(3, minmax(0, 1fr));
+  align-items: center;
+}
+
+.aio-payment__light-finance-charge-table__row > span {
+  padding: var(--spacing-1-5) var(--spacing-1);
+  border-bottom: 1px solid var(--color-gray-200);
+  color: var(--color-gray-700);
+  text-align: right;
+}
+
+.aio-payment__light-finance-charge-table__row > span:first-child {
+  text-align: left;
+}
+
+.aio-payment__light-finance-charge-table__head .aio-payment__light-finance-charge-table__row > span {
+  background: color-mix(in srgb, var(--color-blue-cobalt) 8%, var(--color-white));
+  color: var(--color-dark);
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-finance-charge-table__body .aio-payment__light-finance-charge-table__row:last-child > span {
+  border-bottom: 0;
 }
 
 .aio-payment__light-review-drivers-popover--total {
@@ -7186,8 +7255,8 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment--light-steps .aio-payment__light-wizard-steps-shell::before,
   .aio-payment--light-steps .aio-payment__light-wizard-steps-shell::after {
-    left: calc(var(--spacing-8) / 2 + var(--spacing-3));
-    right: var(--spacing-4);
+    left: calc(var(--spacing-8) + var(--spacing-3));
+    right: calc(var(--spacing-8) + var(--spacing-4));
     top: calc(var(--spacing-5) + var(--spacing-4));
   }
 
@@ -7600,5 +7669,33 @@ label.aio-payment__light-loan-step__label {
   .aio-payment__trade-estimate {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .aio-payment--light-steps .aio-payment__light-wizard-steps-shell {
+    padding-inline: var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-strip .aio-payment__light-wizard-steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-strip .aio-payment__light-wizard-step {
+    min-width: 0;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-strip .aio-payment__light-wizard-dot {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 0;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-dot-label {
+    font-size: 10px;
+    letter-spacing: 0;
+    line-height: 1.15;
   }
 }

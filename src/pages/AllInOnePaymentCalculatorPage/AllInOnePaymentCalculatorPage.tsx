@@ -1274,6 +1274,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightVehicleSearchListId = useId();
   const lightBreakdownLabelId = useId();
   const lightBreakdownGuidanceId = useId();
+  const lightFinanceChargeGuidanceId = useId();
   const lightTotalPaidGuidanceId = useId();
   const lightEstimateTotalsId = useId();
   const lightSidebarTipBodyId = useId();
@@ -3970,7 +3971,71 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       )}
                       <div><dt>{downPaymentBreakdownLabel}</dt><dd>{renderLightBreakdownValue(downPaymentApplied, 'subtract')}</dd></div>
                       <div><dt>Amount Financed</dt><dd>{renderLightBreakdownValue(totalLoanAmount)}</dd></div>
-                      <div><dt>Finance Charge</dt><dd>{renderLightBreakdownValue(totalLoanInterest, 'add')}</dd></div>
+                      <div>
+                        <dt>
+                          <span className="aio-payment__light-breakdown-label-with-tooltip">
+                            <span>Finance Charge</span>
+                            <span className="aio-payment__light-review-drivers-tooltip aio-payment__light-review-drivers-tooltip--row">
+                              <button
+                                type="button"
+                                className="aio-payment__light-review-drivers-trigger"
+                                aria-label="How finance charge is calculated"
+                                aria-describedby={lightFinanceChargeGuidanceId}
+                              >
+                                <img
+                                  className="aio-payment__light-loan-guidance-trigger-icon"
+                                  src={CAD_INFO_ICON_SRC}
+                                  width="24"
+                                  height="24"
+                                  alt=""
+                                  aria-hidden="true"
+                                />
+                              </button>
+                              <span
+                                id={lightFinanceChargeGuidanceId}
+                                className="aio-payment__light-review-drivers-popover aio-payment__light-review-drivers-popover--finance-charge"
+                                role="tooltip"
+                              >
+                                <span className="aio-payment__light-review-drivers-popover-title">How finance charge works</span>
+                                <span className="aio-payment__light-review-drivers-copy">
+                                  {activeApr > 0 ? (
+                                    <>
+                                      Finance charge is the estimated interest paid over {loanTerm} months. This estimate uses {formatAprPercent(activeApr)} APR on {currency(totalLoanAmount)} financed. Auto loans are amortized, so earlier payments include more interest and later payments pay down more principal.
+                                    </>
+                                  ) : (
+                                    <>
+                                      At {formatAprPercent(activeApr)} APR, this estimate does not add interest over {loanTerm} months, so the finance charge is {currency(0)}. Each payment still reduces the amount financed over the loan term.
+                                    </>
+                                  )}
+                                </span>
+                                {schedule.length > 0 && (
+                                  <span className="aio-payment__light-finance-charge-table" role="table" aria-label="Estimated amount paid by year">
+                                    <span className="aio-payment__light-finance-charge-table__head" role="rowgroup">
+                                      <span className="aio-payment__light-finance-charge-table__row" role="row">
+                                        <span role="columnheader">Year</span>
+                                        <span role="columnheader">Paid</span>
+                                        <span role="columnheader">Interest</span>
+                                        <span role="columnheader">Balance</span>
+                                      </span>
+                                    </span>
+                                    <span className="aio-payment__light-finance-charge-table__body" role="rowgroup">
+                                      {schedule.map((row) => (
+                                        <span className="aio-payment__light-finance-charge-table__row" role="row" key={row.year}>
+                                          <span role="cell">{row.year}</span>
+                                          <span role="cell">{currency(row.principal + row.interest)}</span>
+                                          <span role="cell">{currency(row.interest)}</span>
+                                          <span role="cell">{currency(row.endBalance)}</span>
+                                        </span>
+                                      ))}
+                                    </span>
+                                  </span>
+                                )}
+                              </span>
+                            </span>
+                          </span>
+                        </dt>
+                        <dd>{renderLightBreakdownValue(totalLoanInterest, 'add')}</dd>
+                      </div>
                       <div><dt>Loan Payments Over {loanTerm} Months</dt><dd>{renderLightBreakdownValue(totalLoanPayments)}</dd></div>
                       <div className="aio-payment__light-breakdown__total">
                         <dt>
