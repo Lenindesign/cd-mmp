@@ -1942,6 +1942,27 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-warning-dark);
 }
 
+.aio-payment__light-loan-mode-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin: var(--spacing-3) 0 0;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-loan-mode-note svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+  color: var(--color-blue-cobalt);
+}
+
 .aio-payment__light-loan-step__terms-label {
   margin: 0;
   font-family: var(--font-body);
@@ -2635,10 +2656,19 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment__light-trade-step__row--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
   }
 
   .aio-payment__light-trade-step__row--4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 640px) {
+  .aio-payment__light-trade-step__row--3 .text-field__label {
+    display: flex;
+    align-items: flex-end;
+    min-height: calc(var(--font-size-sm) * 3);
   }
 }
 
@@ -2849,6 +2879,83 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-trade-step__dealer-note {
   background: var(--color-teal-light);
+}
+
+.aio-payment__light-trade-step__fees-breakdown {
+  display: grid;
+  gap: 0;
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+}
+
+.aio-payment__light-trade-step__fees-breakdown div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-4);
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__light-trade-step__fees-breakdown span,
+.aio-payment__light-trade-step__fees-breakdown p {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-trade-step__fees-breakdown strong {
+  flex-shrink: 0;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  text-align: right;
+}
+
+.aio-payment__light-trade-step__fees-breakdown-total span,
+.aio-payment__light-trade-step__fees-breakdown-total strong {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-trade-step__fees-breakdown-total strong {
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-trade-step__fees-breakdown p {
+  padding-top: var(--spacing-3);
+}
+
+.aio-payment__light-trade-step__equity-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: var(--spacing-3);
+  border: 1px solid color-mix(in srgb, var(--color-success) 34%, var(--color-gray-200));
+  border-radius: var(--border-radius-md);
+  background: color-mix(in srgb, var(--color-success) 9%, var(--color-white));
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-trade-step__equity-note svg {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+  color: var(--color-success);
+}
+
+.aio-payment__light-trade-step__equity-note strong {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
 }
 
 .aio-payment__light-trade-step__negative-equity {
@@ -5235,6 +5342,14 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--font-weight-bold);
 }
 
+.aio-payment__light-breakdown-financed-sign--add {
+  color: var(--color-red);
+}
+
+.aio-payment__light-breakdown-financed-sign--subtract {
+  color: var(--color-success);
+}
+
 .aio-payment__light-breakdown-financed-heading {
   display: inline-flex;
   align-items: center;
@@ -5462,6 +5577,30 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--aio-light-total-value);
   font-weight: var(--font-weight-extrabold);
   line-height: var(--line-height-tight);
+}
+
+.aio-payment__light-breakdown-total-formula {
+  margin: var(--spacing-3) 0 0;
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-breakdown-total-formula-part {
+  display: inline;
+}
+
+.aio-payment__light-breakdown-total-formula-amount,
+.aio-payment__light-breakdown-total-formula-sign {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-breakdown-total-formula-part--total .aio-payment__light-breakdown-total-formula-amount {
+  color: var(--color-blue-cobalt);
 }
 
 .aio-payment__light-breakdown-note {

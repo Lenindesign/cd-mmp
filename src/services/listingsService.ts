@@ -254,12 +254,7 @@ export const getListingsNearYou = (params: ListingsParams): Listing[] => {
     const otherMakes = filteredListings.filter(l => l.make !== params.make);
     filteredListings = [...sameMake, ...otherMakes];
   } else if (params.bodyStyle) {
-    // Filter by body style only
-    const vehiclesByBodyStyle = vehicleDatabase.filter(v => v.bodyStyle === params.bodyStyle);
-    const validSlugs = new Set(vehiclesByBodyStyle.map(v => v.slug));
-    const sameBodyStyle = filteredListings.filter(l => validSlugs.has(l.slug));
-    const otherBodyStyles = filteredListings.filter(l => !validSlugs.has(l.slug));
-    filteredListings = [...sameBodyStyle, ...otherBodyStyles];
+    filteredListings = filteredListings.filter(l => l.bodyStyle === params.bodyStyle);
   }
 
   // Sort each priority group by distance while maintaining priority order
