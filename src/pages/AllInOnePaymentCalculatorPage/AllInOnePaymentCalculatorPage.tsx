@@ -3868,11 +3868,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </details>
                 ) : null}
                 <section className="aio-payment__light-disclosure aio-payment__light-disclosure--static" aria-labelledby={lightBreakdownLabelId}>
-                  <div className="aio-payment__light-disclosure-heading">
-                    <span id={lightBreakdownLabelId}>Your Personalized Cost Breakdown</span>
-                    <strong>{currency(totalLoanAmount)} financed</strong>
-                  </div>
                   <div className="aio-payment__light-breakdown-card">
+                    <div className="aio-payment__light-disclosure-heading aio-payment__light-breakdown-card-heading">
+                      <span id={lightBreakdownLabelId}>Your Personalized Cost Breakdown</span>
+                      <strong>{currency(totalLoanAmount)} financed</strong>
+                    </div>
                     <div className="aio-payment__light-breakdown-financed">
                       <div className="aio-payment__light-breakdown-financed-heading">
                         <p className="aio-payment__light-breakdown-financed-label">Amount financed</p>

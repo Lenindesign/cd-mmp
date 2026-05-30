@@ -4888,6 +4888,14 @@ label.aio-payment__light-loan-step__label {
   border-radius: var(--border-radius-xl);
 }
 
+.aio-payment--light-steps .aio-payment__light-disclosure--static {
+  display: grid;
+  gap: var(--spacing-5);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
 .aio-payment--light-steps .aio-payment__light-disclosure > summary {
   padding: var(--spacing-5) var(--spacing-5);
 }
@@ -5623,13 +5631,42 @@ label.aio-payment__light-loan-step__label {
   .aio-payment__light-loan-guidance-list {
     grid-template-columns: 1fr;
   }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-card {
+    padding: var(--spacing-4);
+    border-radius: var(--border-radius-lg);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-card .aio-payment__light-breakdown-card-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-1);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-financed {
+    padding: var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) {
+    gap: var(--spacing-2);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown dt {
+    padding-right: var(--spacing-2);
+  }
 }
 
 .aio-payment--light-steps .aio-payment__light-breakdown-card {
+  margin: 0;
   border-color: color-mix(in srgb, var(--color-gray-200) 88%, var(--color-warm-canvas) 12%);
   box-shadow:
     0 1px 2px color-mix(in srgb, var(--color-dark-bg) 6%, transparent),
     0 8px 24px color-mix(in srgb, var(--color-dark-bg) 5%, transparent);
+}
+
+.aio-payment--light-steps .aio-payment__light-breakdown-card-heading {
+  margin-bottom: var(--spacing-5);
+  padding: 0;
 }
 
 .aio-payment__light-estimate-email {
@@ -5640,7 +5677,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-estimate-email {
-  margin: var(--spacing-5);
+  margin: 0;
   border: 1px solid color-mix(in srgb, var(--color-gray-200) 86%, var(--color-warm-canvas) 14%);
   border-radius: var(--border-radius-lg);
   background: color-mix(in srgb, var(--color-white) 96%, var(--color-warm-canvas) 4%);
