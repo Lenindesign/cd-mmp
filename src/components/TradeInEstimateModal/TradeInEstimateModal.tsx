@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Gauge, MapPin, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, X, Zap } from 'lucide-react';
+import { MapPin, Sparkles, ThumbsDown, ThumbsUp, X } from 'lucide-react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import { estimateTradeInValue, type TradeInEstimateCondition } from '../../utils/tradeInEstimate';
 import './TradeInEstimateModal.css';
@@ -407,24 +407,6 @@ export const TradeInEstimateModal = ({
           <button type="button" className="trade-in-modal__close" onClick={onClose} aria-label="Close trade-in estimator">
             <X size={18} />
           </button>
-        </div>
-
-        <div className="trade-in-modal__steps" aria-label="Estimate benefits">
-          <span>
-            <Zap size={17} />
-            <strong>Fast</strong>
-            <small>About 30 seconds</small>
-          </span>
-          <span>
-            <Gauge size={17} />
-            <strong>Easy</strong>
-            <small>Only the basics</small>
-          </span>
-          <span>
-            <ShieldCheck size={17} />
-            <strong>Dealer-ready</strong>
-            <small>Built for planning</small>
-          </span>
         </div>
 
         <div className="trade-in-modal__intro">

@@ -89,53 +89,6 @@
   outline-offset: var(--spacing-1);
 }
 
-.trade-in-modal__steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-4);
-  padding: var(--spacing-5) var(--spacing-6) 0;
-}
-
-.trade-in-modal__steps span {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  justify-content: start;
-  gap: var(--spacing-2);
-  min-height: auto;
-  padding: 0;
-  color: var(--color-dark);
-  background: transparent;
-  border: none;
-  border-radius: 0;
-}
-
-.trade-in-modal__steps svg {
-  grid-row: span 2;
-  width: var(--spacing-8);
-  height: var(--spacing-8);
-  padding: var(--spacing-2);
-  color: var(--color-blue-cobalt);
-  background: rgba(27, 95, 138, 0.08);
-  border-radius: 50%;
-}
-
-.trade-in-modal__steps strong {
-  font-family: var(--font-label);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  line-height: var(--line-height-none);
-}
-
-.trade-in-modal__steps small {
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
-  line-height: var(--line-height-snug);
-}
-
 .trade-in-modal__intro {
   padding: var(--spacing-6) var(--spacing-6) var(--spacing-5);
   text-align: center;
@@ -590,15 +543,10 @@
     max-height: 94vh;
   }
 
-  .trade-in-modal__steps,
   .trade-in-modal__body,
   .trade-in-modal__field-grid,
   .trade-in-modal__condition-options {
     grid-template-columns: 1fr;
-  }
-
-  .trade-in-modal__steps {
-    gap: var(--spacing-2);
   }
 
   .trade-in-modal__body {
