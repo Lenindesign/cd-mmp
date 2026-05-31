@@ -14,6 +14,7 @@ type EstimateRow = {
 
 type EstimateEmailPayload = {
   email?: string;
+  testMode?: boolean;
   userName?: string;
   vehicle?: {
     condition?: string;
@@ -51,6 +52,16 @@ const escapeHtml = (value: unknown) =>
     .replace(/'/g, '&#39;');
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+const isLocalOrigin = (origin: string | undefined) => {
+  if (!origin) return false;
+  try {
+    const url = new URL(origin);
+    return ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
+  } catch {
+    return false;
+  }
+};
 
 const buildVehicleName = (payload: EstimateEmailPayload) => {
   const vehicle = payload.vehicle ?? {};
@@ -147,9 +158,26 @@ export const handler: Handler = async (event) => {
     return json(400, { error: 'Invalid JSON body' });
   }
 
-  const email = payload.email?.trim().toLowerCase() || '';
-  if (!isEmail(email)) {
+  const rawEmail = payload.email?.trim() || '';
+  const email = rawEmail.toLowerCase();
+  const requestOrigin = event.headers.origin ?? event.headers.Origin;
+  const testMode = payload.testMode === true && isLocalOrigin(requestOrigin);
+
+  if (!rawEmail) {
+    return json(400, { error: 'Enter an email address.' });
+  }
+
+  if (!testMode && !isEmail(email)) {
     return json(400, { error: 'Enter a valid email address.' });
+  }
+
+  if (testMode) {
+    return json(200, {
+      ok: true,
+      testMode: true,
+      id: `test-${Date.now()}`,
+      message: `Test estimate accepted for ${rawEmail}.`,
+    });
   }
 
   const apiKey = process.env.RESEND_API_KEY;

@@ -296,6 +296,17 @@ const formatLightTradeSalesTaxPercent = (percent: number): string => {
   return String(rounded);
 };
 
+const selectCalculatorInputValueOnFocus = (event: FocusEvent<HTMLInputElement>) => {
+  const input = event.currentTarget;
+  input.select();
+  if (typeof window === 'undefined') return;
+  window.requestAnimationFrame(() => {
+    if (typeof document !== 'undefined' && document.activeElement === input) {
+      input.select();
+    }
+  });
+};
+
 const MONEY_INPUT_PREFIX = <span className="aio-payment__light-input-prefix" aria-hidden="true">$</span>;
 const PERCENT_INPUT_SUFFIX = <span className="aio-payment__light-input-suffix" aria-hidden="true">%</span>;
 
@@ -759,6 +770,7 @@ function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: Ligh
         className="payment-calc__input aio-payment__light-estimator-input"
         value={currency(price)}
         aria-describedby={helperId}
+        onFocus={selectCalculatorInputValueOnFocus}
         onChange={(event) => onPriceChange(currencyInput(event.target.value))}
         onBlur={(event) => onPriceChange(boundLightVehiclePrice(currencyInput(event.currentTarget.value)))}
       />
@@ -835,6 +847,7 @@ function LightMonthlyBudgetField({ affordableMsrp, targetMonthlyPayment, onBudge
         className="payment-calc__input aio-payment__light-estimator-input"
         value={currency(targetMonthlyPayment)}
         aria-describedby={helperId}
+        onFocus={selectCalculatorInputValueOnFocus}
         onChange={(event) => onBudgetChange(currencyInput(event.target.value))}
         onBlur={(event) => onBudgetChange(boundLightMonthlyBudget(currencyInput(event.currentTarget.value)))}
       />
@@ -1039,6 +1052,7 @@ function LightLoanTermsStepPanel({
             pattern="[0-9,]*"
             className="payment-calc__input aio-payment__light-money-input-control"
             value={numberWithCommas(downClamped)}
+            onFocus={selectCalculatorInputValueOnFocus}
             onChange={(event) => onDownPaymentChange(clampLightDownPayment(currencyInput(event.target.value)))}
             onBlur={(event) => onDownPaymentChange(clampLightDownPayment(currencyInput(event.currentTarget.value)))}
           />
@@ -1118,11 +1132,13 @@ function LightLoanTermsStepPanel({
               <input
                 id={aprId}
                 type="number"
+                inputMode="decimal"
                 className="payment-calc__input aio-payment__light-percent-input-control"
                 min={LIGHT_APR_SLIDER_MIN}
                 max={LIGHT_APR_SLIDER_MAX}
                 step={LIGHT_APR_INPUT_STEP}
                 value={customAprDisplayValue}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => onCustomAprChange(clampLightApr(numberInput(event.target.value)))}
                 onBlur={(event) => onCustomAprChange(clampLightApr(numberInput(event.currentTarget.value)))}
               />
@@ -1276,6 +1292,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightBreakdownGuidanceId = useId();
   const lightFinanceChargeGuidanceId = useId();
   const lightTotalPaidGuidanceId = useId();
+  const lightTradeSalesTaxPercentFieldId = useId();
   const lightEstimateTotalsId = useId();
   const lightSidebarTipBodyId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
@@ -1321,9 +1338,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       setDownPayment(getDefaultLightDownPayment(boundLightVehiclePrice(nextPrice)));
     }
   }, [isLightVariant]);
-  const selectInputValueOnFocus = useCallback((event: FocusEvent<HTMLInputElement>) => {
-    event.currentTarget.select();
-  }, []);
   const handleStateCodeChange = useCallback((nextStateCode: string) => {
     hasAdjustedStateCodeRef.current = true;
     setStateCode(nextStateCode);
@@ -1720,6 +1734,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     if (taxableAmount <= 0) return effectiveSalesTaxRate * 100;
     return (taxDollars / taxableAmount) * 100;
   })();
+  const lightTradeSalesTaxPercentDisplayValue = formatLightTradeSalesTaxPercent(lightTradeSalesTaxPercent);
   const taxesAndFees = salesTax + fees;
   const tradeCanReduceTaxableAmount = stateRule.taxRule === 'after-trade' || stateRule.taxRule === 'after-trade-and-rebate';
   const estimatedTradeTaxSavings = tradeCanReduceTaxableAmount ? tradeInValue * effectiveSalesTaxRate : 0;
@@ -2544,12 +2559,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const handleSendLightEstimateEmail = async () => {
     const trimmed = lightEstimateEmail.trim();
+    const useEmailTestMode = isLocalHost();
     if (!trimmed) {
       setLightEstimateEmailError('Enter an email address.');
       setLightEstimateEmailStatus(undefined);
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    if (!useEmailTestMode && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setLightEstimateEmailError('Enter a valid email address.');
       setLightEstimateEmailStatus(undefined);
       return;
@@ -2579,6 +2595,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: trimmed,
+          testMode: useEmailTestMode,
           userName: user?.name,
           vehicle: {
             condition,
@@ -2601,11 +2618,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
+        if (useEmailTestMode) {
+          setLightEstimateEmailStatus(`Test estimate accepted for ${trimmed}.`);
+          return;
+        }
         throw new Error(typeof result.error === 'string' ? result.error : 'We could not send this estimate. Please try again.');
       }
 
-      setLightEstimateEmailStatus(`Estimate sent to ${trimmed}.`);
+      setLightEstimateEmailStatus(typeof result.message === 'string' ? result.message : `Estimate sent to ${trimmed}.`);
     } catch (error) {
+      if (useEmailTestMode) {
+        setLightEstimateEmailStatus(`Test estimate accepted for ${trimmed}.`);
+        return;
+      }
       setLightEstimateEmailError(error instanceof Error ? error.message : 'We could not send this estimate. Please try again.');
     } finally {
       setIsLightEstimateEmailSending(false);
@@ -3202,10 +3227,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <TextField
                       label="Down payment"
                       type="number"
+                      inputMode="numeric"
                       value={downPayment}
                       min={0}
                       step={500}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => {
                         const nextDownPayment = numberInput(event.target.value);
                         if (isLightVariant) {
@@ -3218,11 +3245,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <TextField
                       label="Interest rate"
                       type="number"
+                      inputMode="decimal"
                       value={activeApr}
                       min={0}
                       step={0.1}
                       disabled={selectedFinanceId !== 'custom'}
                       iconRight={PERCENT_INPUT_SUFFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => {
                         const nextApr = numberInput(event.target.value);
                         if (isLightVariant) {
@@ -3582,7 +3611,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             pattern="[0-9,]*"
                             value={numberWithCommas(tradeInValue)}
                             iconLeft={MONEY_INPUT_PREFIX}
-                            onFocus={selectInputValueOnFocus}
+                            onFocus={selectCalculatorInputValueOnFocus}
                             onChange={(event) => setTradeInValue(currencyInput(event.target.value))}
                           />
                           <button type="button" className="aio-payment__light-inline-action" onClick={() => setShowTradeTool(true)}>
@@ -3596,7 +3625,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           pattern="[0-9,]*"
                           value={numberWithCommas(amountOwed)}
                           iconLeft={MONEY_INPUT_PREFIX}
-                          onFocus={selectInputValueOnFocus}
+                          onFocus={selectCalculatorInputValueOnFocus}
                           onChange={(event) => setAmountOwed(currencyInput(event.target.value))}
                           wrapperClassName="aio-payment__light-trade-step__field-with-action"
                         />
@@ -3637,15 +3666,35 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           onChange={(event) => handleStateCodeChange(event.target.value)}
                           options={stateRules.map((state) => ({ value: state.code, label: state.name }))}
                         />
-                        <TextField
-                          label="Sales tax (%)"
-                          type="number"
-                          value={formatLightTradeSalesTaxPercent(lightTradeSalesTaxPercent)}
-                          min={0}
-                          step={0.001}
-                          iconRight={PERCENT_INPUT_SUFFIX}
-                          onChange={(event) => handleLightTradeSalesTaxPercentChange(event.target.value)}
-                        />
+                        <div
+                          className="text-field text-field--default aio-payment__light-trade-tax-field"
+                          style={{ '--aio-light-trade-tax-value-width': `${lightTradeSalesTaxPercentDisplayValue.length}ch` } as CSSProperties}
+                        >
+                          <label htmlFor={lightTradeSalesTaxPercentFieldId} className="text-field__label">
+                            Sales tax (%)
+                          </label>
+                          <div className="text-field__input-wrapper">
+                            <input
+                              id={lightTradeSalesTaxPercentFieldId}
+                              className="text-field__input aio-payment__light-trade-tax-input"
+                              type="number"
+                              inputMode="decimal"
+                              value={lightTradeSalesTaxPercentDisplayValue}
+                              min={0}
+                              step={0.001}
+                              aria-describedby={`${lightTradeSalesTaxPercentFieldId}-estimate`}
+                              onFocus={selectCalculatorInputValueOnFocus}
+                              onChange={(event) => handleLightTradeSalesTaxPercentChange(event.target.value)}
+                            />
+                            <span className="aio-payment__light-trade-tax-inline" aria-hidden="true">
+                              <span>%</span>
+                              <span className="aio-payment__light-trade-tax-inline-estimate">({currency(salesTax)})</span>
+                            </span>
+                            <span id={`${lightTradeSalesTaxPercentFieldId}-estimate`} className="sr-only">
+                              Estimated sales tax {currency(salesTax)}
+                            </span>
+                          </div>
+                        </div>
                         <TextField
                           label="Estimated Registration & Dealer Fees"
                           type="text"
@@ -3654,6 +3703,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           value={formatMoneyInputValue(estimatedFeesOverride, defaultEstimatedRegistrationDealerFees)}
                           iconLeft={MONEY_INPUT_PREFIX}
                           helperText="Registration and dealer fees only. Sales tax is estimated below."
+                          onFocus={selectCalculatorInputValueOnFocus}
                           onChange={(event) => setEstimatedFeesOverride(normalizeMoneyInputValue(event.target.value))}
                         />
                       </div>
@@ -3762,7 +3812,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         pattern="[0-9,]*"
                         value={numberWithCommas(tradeInValue)}
                         iconLeft={MONEY_INPUT_PREFIX}
-                        onFocus={selectInputValueOnFocus}
+                        onFocus={selectCalculatorInputValueOnFocus}
                         onChange={(event) => setTradeInValue(currencyInput(event.target.value))}
                       />
                       <button type="button" className="aio-payment__light-inline-action" onClick={() => setShowTradeTool(true)}>
@@ -3776,7 +3826,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       pattern="[0-9,]*"
                       value={numberWithCommas(amountOwed)}
                       iconLeft={MONEY_INPUT_PREFIX}
-                      onFocus={selectInputValueOnFocus}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setAmountOwed(currencyInput(event.target.value))}
                     />
                     <Select
@@ -3788,9 +3838,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <TextField
                       label="Sales tax"
                       type="number"
+                      inputMode="numeric"
                       value={salesTaxOverride || Math.round(calculatedSalesTax)}
                       min={0}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setSalesTaxOverride(event.target.value)}
                     />
                     <TextField
@@ -3800,6 +3852,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       pattern="[0-9,]*"
                       value={formatMoneyInputValue(feesOverride, stateRule.titleRegistrationFees)}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => {
                         setEstimatedFeesOverride('');
                         setFeesOverride(normalizeMoneyInputValue(event.target.value));
@@ -3808,9 +3861,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <TextField
                       label={renderAreaEstimateLabel('Dealer fees')}
                       type="number"
+                      inputMode="numeric"
                       value={dealerFeesOverride || stateRule.dealerFeesEstimate}
                       min={0}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => {
                         setEstimatedFeesOverride('');
                         setDealerFeesOverride(event.target.value);
@@ -4115,6 +4170,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </p>
                       <form
                         className="aio-payment__light-estimate-email__row"
+                        noValidate={isLocalHost()}
                         onSubmit={(event) => {
                           event.preventDefault();
                           handleSendLightEstimateEmail();
@@ -4964,6 +5020,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <TextField
                     label={isBudgetFirstVariant ? canUseCatalogPrice ? 'Vehicle price or MSRP' : 'Vehicle listing price' : 'Selected car price'}
                     type="number"
+                    inputMode="numeric"
                     value={price}
                     min={0}
                     step={500}
@@ -4971,12 +5028,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     helperText={isBudgetFirstVariant
                       ? 'Use the negotiated selling price if you already have one.'
                       : `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model} estimate: ${currency(estimatedMonthly)}/mo`}
+                    onFocus={selectCalculatorInputValueOnFocus}
                     onChange={(event) => handlePriceChange(numberInput(event.target.value))}
                   />
                 ) : (
                   <TextField
                     label={isBudgetFirstVariant ? 'Monthly budget' : 'Target monthly payment'}
                     type="number"
+                    inputMode="numeric"
                     value={targetMonthlyPayment}
                     min={0}
                     step={25}
@@ -4984,6 +5043,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     helperText={isBudgetFirstVariant
                       ? `Try 500 for a $500 monthly budget. This supports about ${currency(affordableMsrp)} before tax and fees.`
                       : `This supports about ${currency(affordableMsrp)} before tax and fees.`}
+                    onFocus={selectCalculatorInputValueOnFocus}
                     onChange={(event) => setTargetMonthlyPayment(numberInput(event.target.value))}
                   />
                 )}
@@ -5031,10 +5091,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <TextField
                 label="Down payment"
                 type="number"
+                inputMode="numeric"
                 value={downPayment}
                 min={0}
                 step={500}
                 iconLeft={MONEY_INPUT_PREFIX}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => {
                   const nextDownPayment = numberInput(event.target.value);
                   if (isLightVariant) {
@@ -5051,7 +5113,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 pattern="[0-9,]*"
                 value={numberWithCommas(tradeInValue)}
                 iconLeft={MONEY_INPUT_PREFIX}
-                onFocus={selectInputValueOnFocus}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => setTradeInValue(currencyInput(event.target.value))}
               />
               <TextField
@@ -5061,7 +5123,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 pattern="[0-9,]*"
                 value={numberWithCommas(amountOwed)}
                 iconLeft={MONEY_INPUT_PREFIX}
-                onFocus={selectInputValueOnFocus}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => setAmountOwed(currencyInput(event.target.value))}
               />
             </div>
@@ -5100,11 +5162,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <TextField
                 label="Interest rate"
                 type="number"
+                inputMode="decimal"
                 value={activeApr}
                 min={0}
                 step={0.1}
                 disabled={selectedFinanceId !== 'custom'}
                 iconRight={PERCENT_INPUT_SUFFIX}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => {
                   const nextApr = numberInput(event.target.value);
                   if (isLightVariant) {
@@ -5129,9 +5193,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <TextField
                 label="Sales tax"
                 type="number"
+                inputMode="numeric"
                 value={salesTaxOverride || Math.round(calculatedSalesTax)}
                 min={0}
                 iconLeft={MONEY_INPUT_PREFIX}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => setSalesTaxOverride(event.target.value)}
               />
               <TextField
@@ -5141,6 +5207,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 pattern="[0-9,]*"
                 value={formatMoneyInputValue(feesOverride, stateRule.titleRegistrationFees)}
                 iconLeft={MONEY_INPUT_PREFIX}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => {
                   setEstimatedFeesOverride('');
                   setFeesOverride(normalizeMoneyInputValue(event.target.value));
@@ -5149,9 +5216,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <TextField
                 label={renderAreaEstimateLabel('Dealer fees')}
                 type="number"
+                inputMode="numeric"
                 value={dealerFeesOverride || stateRule.dealerFeesEstimate}
                 min={0}
                 iconLeft={MONEY_INPUT_PREFIX}
+                onFocus={selectCalculatorInputValueOnFocus}
                 onChange={(event) => {
                   setEstimatedFeesOverride('');
                   setDealerFeesOverride(event.target.value);
@@ -5296,10 +5365,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <TextField
                       label="MSRP"
                       type="number"
+                      inputMode="numeric"
                       value={leaseMsrp}
                       min={0}
                       step={500}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setLeaseMsrp(numberInput(event.target.value))}
                     />
                     <Select
@@ -5308,33 +5379,48 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       onChange={(event) => setLeaseTerm(numberInput(event.target.value))}
                       options={[24, 36, 39, 48].map((term) => ({ value: String(term), label: `${term} months` }))}
                     />
-                    <TextField label="Money factor" type="number" value={leaseMoneyFactor} min={0} step={0.0001} onChange={(event) => setLeaseMoneyFactor(numberInput(event.target.value))} />
+                    <TextField
+                      label="Money factor"
+                      type="number"
+                      inputMode="decimal"
+                      value={leaseMoneyFactor}
+                      min={0}
+                      step={0.0001}
+                      onFocus={selectCalculatorInputValueOnFocus}
+                      onChange={(event) => setLeaseMoneyFactor(numberInput(event.target.value))}
+                    />
                     <TextField
                       label="Residual %"
                       type="number"
+                      inputMode="numeric"
                       value={leaseResidualPercent}
                       min={0}
                       max={100}
                       step={1}
                       iconRight={PERCENT_INPUT_SUFFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setLeaseResidualPercent(numberInput(event.target.value))}
                     />
                     <TextField
                       label="Cash due at signing"
                       type="number"
+                      inputMode="numeric"
                       value={leaseDueAtSigning}
                       min={0}
                       step={250}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setLeaseDueAtSigning(numberInput(event.target.value))}
                     />
                     <TextField
                       label="Lease fees"
                       type="number"
+                      inputMode="numeric"
                       value={leaseFees}
                       min={0}
                       step={100}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setLeaseFees(numberInput(event.target.value))}
                     />
                     <Select
@@ -5364,28 +5450,34 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <TextField
                       label="Lease buyout price"
                       type="number"
+                      inputMode="numeric"
                       value={buyoutPrice}
                       min={0}
                       step={500}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setBuyoutPrice(numberInput(event.target.value))}
                     />
                     <TextField
                       label="Buyout down payment"
                       type="number"
+                      inputMode="numeric"
                       value={buyoutDownPayment}
                       min={0}
                       step={250}
                       iconLeft={MONEY_INPUT_PREFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setBuyoutDownPayment(numberInput(event.target.value))}
                     />
                     <TextField
                       label="Buyout APR"
                       type="number"
+                      inputMode="decimal"
                       value={buyoutApr}
                       min={0}
                       step={0.1}
                       iconRight={PERCENT_INPUT_SUFFIX}
+                      onFocus={selectCalculatorInputValueOnFocus}
                       onChange={(event) => setBuyoutApr(numberInput(event.target.value))}
                     />
                     <Select

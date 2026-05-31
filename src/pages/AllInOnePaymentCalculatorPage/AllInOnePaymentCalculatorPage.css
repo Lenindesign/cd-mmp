@@ -386,6 +386,17 @@
   color: var(--color-dark);
 }
 
+.aio-payment input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.aio-payment input[type='number']::-webkit-inner-spin-button,
+.aio-payment input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
 .aio-payment--light {
   min-height: 100vh;
   background: var(--color-warm-canvas);
@@ -2738,6 +2749,44 @@ label.aio-payment__light-loan-step__label {
   padding-right: var(--spacing-8);
 }
 
+.aio-payment__light-trade-tax-field {
+  min-width: 0;
+}
+
+.aio-payment__light-trade-tax-input.text-field__input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  padding-right: min(9rem, 50%) !important;
+}
+
+.aio-payment__light-trade-tax-input.text-field__input::-webkit-inner-spin-button,
+.aio-payment__light-trade-tax-input.text-field__input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.aio-payment__light-trade-tax-inline {
+  position: absolute;
+  left: calc(var(--spacing-4) + var(--aio-light-trade-tax-value-width, 2ch) + 0.05ch);
+  top: 50%;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--spacing-1);
+  max-width: calc(100% - var(--spacing-8));
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  pointer-events: none;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.aio-payment__light-trade-tax-inline-estimate {
+  color: var(--color-gray-600);
+}
+
 .aio-payment__light-trade-estimate-card {
   margin-top: var(--spacing-3);
   padding: var(--spacing-6);
@@ -3186,6 +3235,7 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--aio-light-body);
   font-weight: var(--aio-light-label-weight);
   cursor: pointer;
+  text-transform: uppercase;
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
@@ -3219,6 +3269,7 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--aio-light-label-weight);
   cursor: pointer;
   text-decoration: none;
+  text-transform: uppercase;
   transition: color var(--transition-fast), background var(--transition-fast);
 }
 
@@ -3247,6 +3298,7 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--aio-light-body);
   font-weight: var(--aio-light-label-weight);
   cursor: pointer;
+  text-transform: uppercase;
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
@@ -3322,8 +3374,17 @@ label.aio-payment__light-loan-step__label {
     position: relative;
   }
 
+  .aio-payment--light-steps .payment-calc__field:has(.aio-payment__light-loan-guidance-tooltip) .aio-payment__light-label-with-help {
+    position: static;
+  }
+
   .aio-payment__light-loan-guidance-tooltip {
     position: static;
+  }
+
+  .aio-payment__light-loan-guidance::before,
+  .aio-payment__light-loan-guidance::after {
+    left: min(calc(100% - var(--spacing-6)), calc(var(--spacing-32) + var(--spacing-5)));
   }
 }
 
@@ -4583,7 +4644,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-main {
   position: relative;
   overflow: hidden;
-  padding: clamp(var(--spacing-6), 2vw, var(--spacing-8)) 0 clamp(var(--spacing-6), 3vw, var(--spacing-10));
+  padding: clamp(var(--spacing-6), 2vw, var(--spacing-8)) 0 clamp(var(--spacing-6), 3vw, var(--spacing-8));
   background: var(--gradient-dark);
   color: var(--color-dark);
 }
@@ -7410,18 +7471,27 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-actions {
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: stretch;
     gap: var(--spacing-3);
     padding-inline: 0;
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-back-link {
+    order: 2;
     justify-content: center;
-    min-height: var(--spacing-11);
+    width: 100%;
+    min-height: var(--spacing-12);
     padding: 0 var(--spacing-3);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--border-radius-md);
+    background: var(--color-gray-50);
+    text-decoration: none;
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-actions-right {
+    order: 1;
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
@@ -7433,6 +7503,43 @@ label.aio-payment__light-loan-step__label {
   .aio-payment--light-steps .aio-payment__light-wizard-skip,
   .aio-payment--light-steps .aio-payment__light-wizard-primary {
     width: 100%;
+    min-height: var(--spacing-14);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-actions:has(.aio-payment__light-wizard-skip) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-actions:has(.aio-payment__light-wizard-skip) .aio-payment__light-wizard-actions-right {
+    display: contents;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-actions:has(.aio-payment__light-wizard-skip) .aio-payment__light-wizard-back-link,
+  .aio-payment--light-steps .aio-payment__light-wizard-actions:has(.aio-payment__light-wizard-skip) .aio-payment__light-wizard-skip {
+    gap: var(--spacing-1);
+    min-height: var(--spacing-12);
+    padding: 0 var(--spacing-2);
+    border: 1px solid var(--color-gray-200);
+    background: var(--color-gray-50);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-actions:has(.aio-payment__light-wizard-skip) .aio-payment__light-wizard-back-link {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-actions:has(.aio-payment__light-wizard-skip) .aio-payment__light-wizard-skip {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-actions:has(.aio-payment__light-wizard-skip) .aio-payment__light-wizard-primary {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-primary--review {
