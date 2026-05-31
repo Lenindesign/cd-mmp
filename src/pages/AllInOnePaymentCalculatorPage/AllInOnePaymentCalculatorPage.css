@@ -2556,6 +2556,155 @@ label.aio-payment__light-loan-step__label {
   border: 0;
 }
 
+.aio-payment__light-vehicle-step__coverage {
+  display: grid;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--color-white) 78%, var(--color-teal-light) 22%);
+}
+
+.aio-payment__light-vehicle-step__coverage-head {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.aio-payment__light-vehicle-step__coverage-head span {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.aio-payment__light-vehicle-step__coverage-head p {
+  max-width: 64ch;
+  margin: 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.aio-payment__light-vehicle-step__coverage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.aio-payment__light-vehicle-step__coverage-option {
+  display: grid;
+  align-content: start;
+  gap: var(--spacing-3);
+  min-width: 0;
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__coverage-option--active {
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 70%, var(--color-gray-200) 30%);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
+}
+
+.aio-payment__light-vehicle-step__coverage-switch {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  min-height: var(--spacing-12);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.aio-payment__light-vehicle-step__coverage-switch:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+}
+
+.aio-payment__light-vehicle-step__coverage-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
+  border-radius: var(--border-radius-full);
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-vehicle-step__coverage-switch--on .aio-payment__light-vehicle-step__coverage-icon {
+  background: color-mix(in srgb, var(--color-blue-cobalt) 16%, var(--color-white) 84%);
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-vehicle-step__coverage-copy {
+  display: grid;
+  gap: var(--spacing-0-5);
+  min-width: 0;
+}
+
+.aio-payment__light-vehicle-step__coverage-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.aio-payment__light-vehicle-step__coverage-desc {
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+}
+
+.aio-payment__light-vehicle-step__coverage-track {
+  position: relative;
+  width: 3rem;
+  height: 1.625rem;
+  border-radius: var(--border-radius-full);
+  background: var(--color-gray-300);
+  transition: background var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__coverage-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.625rem - 4px);
+  height: calc(1.625rem - 4px);
+  border-radius: var(--border-radius-full);
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__coverage-switch--on .aio-payment__light-vehicle-step__coverage-track {
+  background: var(--color-primary-1);
+}
+
+.aio-payment__light-vehicle-step__coverage-switch--on .aio-payment__light-vehicle-step__coverage-thumb {
+  transform: translateX(calc(3rem - 1.625rem));
+}
+
+.aio-payment__light-vehicle-step__coverage-option .text-field {
+  margin: 0;
+}
+
 .aio-payment__light-context-note {
   display: flex;
   align-items: flex-start;
@@ -2605,6 +2754,14 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment__light-vehicle-step__price-bar {
     align-items: flex-start;
+  }
+
+  .aio-payment__light-vehicle-step__coverage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aio-payment__light-vehicle-step__coverage-switch {
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 
   .aio-payment__light-vehicle-step__price-detail {

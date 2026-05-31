@@ -8,6 +8,7 @@ export interface VehiclePriceAfterCreditsInput {
 export interface PurchasePaymentSummaryInput {
   vehiclePrice: number;
   taxesAndFees: number;
+  financedAddOns?: number;
   tradeEquity: number;
   rebate: number;
   downPayment: number;
@@ -38,26 +39,28 @@ export const getVehiclePriceAfterTradeAndIncentives = ({
 export const getPurchasePaymentSummary = ({
   vehiclePrice,
   taxesAndFees,
+  financedAddOns = 0,
   tradeEquity,
   rebate,
   downPayment,
   includeTaxesAndFeesInLoan,
 }: PurchasePaymentSummaryInput): PurchasePaymentSummary => {
+  const addOns = Math.max(0, financedAddOns);
   const nonCashCredits = tradeEquity + rebate;
-  const financedBase = vehiclePrice + (includeTaxesAndFeesInLoan ? taxesAndFees : 0);
+  const financedBase = vehiclePrice + addOns + (includeTaxesAndFeesInLoan ? taxesAndFees : 0);
   const amountBeforeDownPayment = Math.max(0, financedBase - nonCashCredits);
   const downPaymentApplied = Math.min(Math.max(0, downPayment), amountBeforeDownPayment);
   const amountFinanced = Math.max(0, amountBeforeDownPayment - downPaymentApplied);
   const positiveTradeEquity = Math.max(0, tradeEquity);
-  const transactionAmountBeforeTrade = Math.max(0, vehiclePrice + taxesAndFees - rebate);
+  const transactionAmountBeforeTrade = Math.max(0, vehiclePrice + addOns + taxesAndFees - rebate);
   const tradeEquityApplied = Math.min(positiveTradeEquity, transactionAmountBeforeTrade);
-  const vehicleAmountBeforeTrade = Math.max(0, vehiclePrice - rebate);
+  const vehicleAmountBeforeTrade = Math.max(0, vehiclePrice + addOns - rebate);
   const tradeEquityAppliedToVehicle = Math.min(positiveTradeEquity, vehicleAmountBeforeTrade);
   const tradeEquityAppliedToTaxesAndFees = Math.min(
     Math.max(0, taxesAndFees),
     Math.max(0, tradeEquityApplied - tradeEquityAppliedToVehicle),
   );
-  const nonCashCreditsAfterVehicle = Math.max(0, nonCashCredits - vehiclePrice);
+  const nonCashCreditsAfterVehicle = Math.max(0, nonCashCredits - vehiclePrice - addOns);
   const taxesAndFeesCoveredByCredits = Math.min(Math.max(0, taxesAndFees), nonCashCreditsAfterVehicle);
   const upfrontTaxesAndFeesDue = includeTaxesAndFeesInLoan
     ? 0

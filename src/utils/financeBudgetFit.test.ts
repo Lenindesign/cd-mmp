@@ -104,4 +104,42 @@ describe('getPurchasePaymentSummary', () => {
       remainingTradeEquity: 0,
     });
   });
+
+  it('adds optional financed products without treating them as taxes and fees', () => {
+    expect(getPurchasePaymentSummary({
+      vehiclePrice: 30000,
+      taxesAndFees: 2873,
+      financedAddOns: 2500,
+      tradeEquity: 0,
+      rebate: 0,
+      downPayment: 3000,
+      includeTaxesAndFeesInLoan: true,
+    })).toMatchObject({
+      amountFinanced: 32373,
+      downPaymentApplied: 3000,
+      cashDueAtSigning: 3000,
+      upfrontTaxesAndFeesDue: 0,
+      taxesAndFeesCoveredByCredits: 0,
+      tradeEquityApplied: 0,
+      tradeEquityAppliedToTaxesAndFees: 0,
+      remainingTradeEquity: 0,
+    });
+  });
+
+  it('keeps non-financed taxes due upfront while financing optional products', () => {
+    expect(getPurchasePaymentSummary({
+      vehiclePrice: 30000,
+      taxesAndFees: 2873,
+      financedAddOns: 2500,
+      tradeEquity: 0,
+      rebate: 0,
+      downPayment: 3000,
+      includeTaxesAndFeesInLoan: false,
+    })).toMatchObject({
+      amountFinanced: 29500,
+      downPaymentApplied: 3000,
+      cashDueAtSigning: 5873,
+      upfrontTaxesAndFeesDue: 2873,
+    });
+  });
 });
