@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getPurchasePaymentSummary, getVehiclePriceAfterTradeAndIncentives } from './financeBudgetFit';
+import { getPurchasePaymentSummary, getVehicleCoverageEstimates, getVehiclePriceAfterTradeAndIncentives } from './financeBudgetFit';
 
 describe('getVehiclePriceAfterTradeAndIncentives', () => {
   it('applies positive trade equity before comparing against a price budget', () => {
@@ -140,6 +140,45 @@ describe('getPurchasePaymentSummary', () => {
       downPaymentApplied: 3000,
       cashDueAtSigning: 5873,
       upfrontTaxesAndFeesDue: 2873,
+    });
+  });
+});
+
+describe('getVehicleCoverageEstimates', () => {
+  it('scales coverage estimates with vehicle price and complexity', () => {
+    expect(getVehicleCoverageEstimates({
+      vehiclePrice: 30000,
+      condition: 'new',
+      bodyStyle: 'SUV',
+      fuelType: 'Gas',
+      horsepower: 190,
+    })).toEqual({
+      extendedWarranty: 1800,
+      monthlyInsurance: 165,
+    });
+
+    expect(getVehicleCoverageEstimates({
+      vehiclePrice: 104900,
+      condition: 'new',
+      bodyStyle: 'Sedan',
+      fuelType: 'Electric',
+      horsepower: 522,
+    })).toEqual({
+      extendedWarranty: 7500,
+      monthlyInsurance: 445,
+    });
+  });
+
+  it('uses higher warranty risk but lower insurance depreciation pressure for used vehicles', () => {
+    expect(getVehicleCoverageEstimates({
+      vehiclePrice: 45000,
+      condition: 'used',
+      bodyStyle: 'SUV',
+      fuelType: 'Gas',
+      horsepower: 250,
+    })).toEqual({
+      extendedWarranty: 4000,
+      monthlyInsurance: 180,
     });
   });
 });

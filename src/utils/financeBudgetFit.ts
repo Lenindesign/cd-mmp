@@ -26,6 +26,77 @@ export interface PurchasePaymentSummary {
   remainingTradeEquity: number;
 }
 
+export interface VehicleCoverageEstimateInput {
+  vehiclePrice: number;
+  condition: 'new' | 'used';
+  bodyStyle?: string;
+  fuelType?: string;
+  horsepower?: number;
+}
+
+export interface VehicleCoverageEstimates {
+  extendedWarranty: number;
+  monthlyInsurance: number;
+}
+
+const roundToIncrement = (value: number, increment: number) => Math.round(value / increment) * increment;
+
+const clampNumber = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+export const getVehicleCoverageEstimates = ({
+  vehiclePrice,
+  condition,
+  bodyStyle,
+  fuelType,
+  horsepower,
+}: VehicleCoverageEstimateInput): VehicleCoverageEstimates => {
+  const price = Math.max(15000, vehiclePrice);
+  const normalizedBodyStyle = bodyStyle?.toLowerCase() ?? '';
+  const normalizedFuelType = fuelType?.toLowerCase() ?? '';
+  const isUsed = condition === 'used';
+  const isHeavyVehicle = ['suv', 'truck', 'van', 'minivan'].some((type) => normalizedBodyStyle.includes(type));
+  const isPerformanceVehicle = (
+    (horsepower ?? 0) >= 350 ||
+    normalizedBodyStyle.includes('coupe') ||
+    normalizedBodyStyle.includes('convertible')
+  );
+  const isElectric = normalizedFuelType.includes('electric') || normalizedFuelType.includes('plug-in');
+  const highValueMultiplier = price >= 75000 ? 1.18 : price >= 55000 ? 1.1 : price >= 40000 ? 1.04 : 1;
+
+  const warrantyRate = isUsed ? 0.075 : 0.055;
+  const warrantyMultiplier = [
+    highValueMultiplier,
+    isElectric ? 1.08 : 1,
+    isPerformanceVehicle ? 1.06 : 1,
+    isHeavyVehicle ? 1.04 : 1,
+    isUsed ? 1.1 : 1,
+  ].reduce((current, multiplier) => current * multiplier, 1);
+  const extendedWarranty = clampNumber(
+    roundToIncrement(price * warrantyRate * warrantyMultiplier, 100),
+    isUsed ? 2200 : 1800,
+    isUsed ? 9000 : 7500,
+  );
+
+  const annualInsuranceBase = 1200 + price * (isUsed ? 0.021 : 0.022);
+  const insuranceMultiplier = [
+    highValueMultiplier,
+    isElectric ? 1.15 : 1,
+    isPerformanceVehicle ? 1.12 : 1,
+    isHeavyVehicle ? 1.06 : 1,
+    isUsed ? 0.92 : 1,
+  ].reduce((current, multiplier) => current * multiplier, 1);
+  const monthlyInsurance = clampNumber(
+    roundToIncrement((annualInsuranceBase * insuranceMultiplier) / 12, 5),
+    isUsed ? 95 : 110,
+    650,
+  );
+
+  return {
+    extendedWarranty,
+    monthlyInsurance,
+  };
+};
+
 export const getVehiclePriceAfterTradeAndIncentives = ({
   vehiclePrice,
   tradeInValue,

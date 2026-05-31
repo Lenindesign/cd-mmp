@@ -18,7 +18,7 @@ import { estimateTradeInValue } from '../../utils/tradeInEstimate';
 import { getVehicleOffers, type VehicleOfferSummary } from '../../utils/dealCalculations';
 import { getListingsNearYou, type Listing } from '../../services/listingsService';
 import { getRangeInputStyle } from '../../utils/rangeInputStyle';
-import { getPurchasePaymentSummary, getVehiclePriceAfterTradeAndIncentives } from '../../utils/financeBudgetFit';
+import { getPurchasePaymentSummary, getVehicleCoverageEstimates, getVehiclePriceAfterTradeAndIncentives } from '../../utils/financeBudgetFit';
 import { toTitleCase } from '../../utils/textCase';
 import { PaymentCalculatorFinanceCharts } from '../../components/PaymentCalculator/PaymentCalculatorFinanceCharts';
 import { DEFAULT_BODY_STYLES } from '../../components/BodyStyleSelector';
@@ -235,6 +235,11 @@ const isLocalHost = () => {
   return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
 };
 
+const isPaymentEstimateEmailTestMode = () => {
+  if (typeof window === 'undefined') return false;
+  return isLocalHost() || window.location.hostname.endsWith('.netlify.app');
+};
+
 const getPaymentEstimateEmailEndpoint = () => {
   const origin = isLocalHost() ? PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN : '';
   return `${origin}${PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH}`;
@@ -279,6 +284,14 @@ const numberWithCommas = (value: number) =>
 const numberInput = (value: string) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const normalizeAprInputValue = (value: string) => {
+  const cleaned = value.replace(/[^\d.]/g, '');
+  const [whole = '', ...decimalParts] = cleaned.split('.');
+  if (!cleaned.includes('.')) return whole;
+
+  return `${whole || '0'}.${decimalParts.join('').slice(0, 2)}`;
 };
 
 const currencyInput = (value: string) => {
@@ -1036,9 +1049,51 @@ function LightLoanTermsStepPanel({
   const aprId = useId();
   const aprGuidanceId = useId();
   const downClamped = clampLightDownPayment(downPayment);
+  const downPaymentDisplayValue = numberWithCommas(downClamped);
+  const [downPaymentInputDraft, setDownPaymentInputDraft] = useState<string | null>(null);
+  const downPaymentInputValue = downPaymentInputDraft ?? downPaymentDisplayValue;
   const aprSliderValue = aprLocked ? activeApr : clampLightAprSlider(customApr);
   const customAprDisplayValue = clampLightApr(customApr).toFixed(2);
+  const [aprInputDraft, setAprInputDraft] = useState<string | null>(null);
+  const aprInputValue = aprInputDraft ?? customAprDisplayValue;
   const loanTermWarning = getLightLoanTermWarning(loanTerm);
+
+  const handleDownPaymentInputChange = (value: string) => {
+    const nextValue = normalizeMoneyInputValue(value);
+    setDownPaymentInputDraft(nextValue);
+
+    if (nextValue.trim() === '') return;
+
+    onDownPaymentChange(clampLightDownPayment(currencyInput(nextValue)));
+  };
+
+  const handleDownPaymentInputBlur = () => {
+    const nextDownPayment = downPaymentInputValue.trim() === ''
+      ? LIGHT_DOWN_PAYMENT_MIN
+      : clampLightDownPayment(currencyInput(downPaymentInputValue));
+    onDownPaymentChange(nextDownPayment);
+    setDownPaymentInputDraft(null);
+  };
+
+  const handleAprInputChange = (value: string) => {
+    const nextValue = normalizeAprInputValue(value);
+    setAprInputDraft(nextValue);
+
+    if (nextValue.trim() === '') return;
+
+    const nextApr = Number(nextValue);
+    if (Number.isFinite(nextApr)) {
+      onCustomAprChange(clampLightApr(nextApr));
+    }
+  };
+
+  const handleAprInputBlur = () => {
+    const nextApr = aprInputValue.trim() === ''
+      ? clampLightApr(customApr)
+      : clampLightApr(numberInput(aprInputValue));
+    onCustomAprChange(nextApr);
+    setAprInputDraft(null);
+  };
 
   return (
     <div className="payment-calc__section payment-calc__section--pad aio-payment__light-loan-step">
@@ -1059,10 +1114,13 @@ function LightLoanTermsStepPanel({
             inputMode="numeric"
             pattern="[0-9,]*"
             className="payment-calc__input aio-payment__light-money-input-control"
-            value={numberWithCommas(downClamped)}
-            onFocus={selectCalculatorInputValueOnFocus}
-            onChange={(event) => onDownPaymentChange(clampLightDownPayment(currencyInput(event.target.value)))}
-            onBlur={(event) => onDownPaymentChange(clampLightDownPayment(currencyInput(event.currentTarget.value)))}
+            value={downPaymentInputValue}
+            onFocus={(event) => {
+              setDownPaymentInputDraft(String(downClamped));
+              selectCalculatorInputValueOnFocus(event);
+            }}
+            onChange={(event) => handleDownPaymentInputChange(event.target.value)}
+            onBlur={handleDownPaymentInputBlur}
           />
         </div>
         <input
@@ -1135,20 +1193,24 @@ function LightLoanTermsStepPanel({
           <>
             <div
               className="aio-payment__light-percent-input"
-              style={{ '--aio-light-percent-value-width': `${customAprDisplayValue.length}ch` } as CSSProperties}
+              style={{ '--aio-light-percent-value-width': `${Math.max(aprInputValue.length, customAprDisplayValue.length)}ch` } as CSSProperties}
             >
               <input
                 id={aprId}
-                type="number"
+                type="text"
                 inputMode="decimal"
+                pattern="[0-9.]*"
                 className="payment-calc__input aio-payment__light-percent-input-control"
                 min={LIGHT_APR_SLIDER_MIN}
                 max={LIGHT_APR_SLIDER_MAX}
                 step={LIGHT_APR_INPUT_STEP}
-                value={customAprDisplayValue}
-                onFocus={selectCalculatorInputValueOnFocus}
-                onChange={(event) => onCustomAprChange(clampLightApr(numberInput(event.target.value)))}
-                onBlur={(event) => onCustomAprChange(clampLightApr(numberInput(event.currentTarget.value)))}
+                value={aprInputValue}
+                onFocus={(event) => {
+                  setAprInputDraft(customAprDisplayValue);
+                  selectCalculatorInputValueOnFocus(event);
+                }}
+                onChange={(event) => handleAprInputChange(event.target.value)}
+                onBlur={handleAprInputBlur}
               />
               <span className="aio-payment__light-percent-input-suffix" aria-hidden="true">%</span>
             </div>
@@ -1272,8 +1334,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [includeTaxesAndFeesInLoan, setIncludeTaxesAndFeesInLoan] = useState(true);
   const [includeExtendedWarranty, setIncludeExtendedWarranty] = useState(false);
   const [extendedWarrantyCost, setExtendedWarrantyCost] = useState(DEFAULT_EXTENDED_WARRANTY_COST);
+  const [hasEditedExtendedWarrantyCost, setHasEditedExtendedWarrantyCost] = useState(false);
   const [includeInsuranceEstimate, setIncludeInsuranceEstimate] = useState(false);
   const [monthlyInsuranceEstimate, setMonthlyInsuranceEstimate] = useState(DEFAULT_MONTHLY_INSURANCE_ESTIMATE);
+  const [hasEditedMonthlyInsuranceEstimate, setHasEditedMonthlyInsuranceEstimate] = useState(false);
   const [showTradeTool, setShowTradeTool] = useState(false);
   const [tradeVehicle, setTradeVehicle] = useState('2020 Honda CR-V');
   const [tradeMileage, setTradeMileage] = useState(52000);
@@ -1571,12 +1635,45 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     [availableTrimStyleOptions, selectedTrimId],
   );
   const selectedCatalogPrice = canUseCatalogPrice && selectedTrimStyleOption ? selectedTrimStyleOption.price : selectedVehicle.priceMin;
+  const coverageEstimateVehiclePrice = Math.max(0, lightHasSpecificVehicleSelection && canUseCatalogPrice ? selectedCatalogPrice : price);
+  const coverageEstimateSourceLabel = lightHasSpecificVehicleSelection && canUseCatalogPrice
+    ? 'selected vehicle price'
+    : 'current vehicle price';
+  const suggestedCoverageEstimates = useMemo(() => getVehicleCoverageEstimates({
+    vehiclePrice: coverageEstimateVehiclePrice,
+    condition,
+    bodyStyle: selectedVehicle.bodyStyle,
+    fuelType: selectedVehicle.fuelType,
+    horsepower: selectedVehicle.horsepower,
+  }), [
+    condition,
+    coverageEstimateVehiclePrice,
+    selectedVehicle.bodyStyle,
+    selectedVehicle.fuelType,
+    selectedVehicle.horsepower,
+  ]);
+  const suggestedExtendedWarrantyCost = suggestedCoverageEstimates.extendedWarranty;
+  const suggestedMonthlyInsuranceEstimate = suggestedCoverageEstimates.monthlyInsurance;
   const selectedVehicleStyle = selectedTrimStyleOption?.trimName || selectedVehicle.trim || selectedVehicle.drivetrain || selectedVehicle.bodyStyle;
   const selectedVehicleLabel = lightHasSpecificVehicleSelection
     ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}${selectedTrimStyleOption ? ` ${selectedTrimStyleOption.trimName}` : ''}`
     : lightVehicleStepMode === 'browsing'
       ? getBodyStyleListingsLabel(lightBrowseBodyStyle)
       : 'No vehicle selected';
+
+  useEffect(() => {
+    if (hasEditedExtendedWarrantyCost) return;
+    setExtendedWarrantyCost((current) => (
+      current === suggestedExtendedWarrantyCost ? current : suggestedExtendedWarrantyCost
+    ));
+  }, [hasEditedExtendedWarrantyCost, suggestedExtendedWarrantyCost]);
+
+  useEffect(() => {
+    if (hasEditedMonthlyInsuranceEstimate) return;
+    setMonthlyInsuranceEstimate((current) => (
+      current === suggestedMonthlyInsuranceEstimate ? current : suggestedMonthlyInsuranceEstimate
+    ));
+  }, [hasEditedMonthlyInsuranceEstimate, suggestedMonthlyInsuranceEstimate]);
 
   useEffect(() => {
     const defaultTrimOption = availableTrimStyleOptions[0];
@@ -1776,6 +1873,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const totalLoanPayments = estimatedMonthly * loanTerm;
   const totalLoanInterest = Math.max(0, totalLoanPayments - totalLoanAmount);
   const totalInsuranceCost = monthlyInsuranceAmount * loanTerm;
+  const warrantyMonthlyImpact = Math.max(
+    0,
+    estimatedMonthly - monthlyPayment(Math.max(0, totalLoanAmount - extendedWarrantyAmount), activeApr, loanTerm),
+  );
+  const coverageEstimateSourceText = `${currency(coverageEstimateVehiclePrice)} ${coverageEstimateSourceLabel}`;
+  const extendedWarrantyHelperText = hasEditedExtendedWarrantyCost
+    ? `Manual value. Suggested estimate for ${coverageEstimateSourceText}: ${currency(suggestedExtendedWarrantyCost)}. Adds about ${currency(warrantyMonthlyImpact)}/mo to the loan payment.`
+    : `Suggested from ${coverageEstimateSourceText}. Adds about ${currency(warrantyMonthlyImpact)}/mo to the loan payment.`;
+  const insuranceEstimateHelperText = hasEditedMonthlyInsuranceEstimate
+    ? `Manual value. Suggested estimate for ${coverageEstimateSourceText}: ${currency(suggestedMonthlyInsuranceEstimate)}/mo.`
+    : `Suggested from ${coverageEstimateSourceText}. Monthly cost shown separately from the loan payment.`;
   const getEstimateMetricsFor = ({
     apr,
     term,
@@ -1813,6 +1921,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const remainingTradeEquity = purchasePaymentSummary.remainingTradeEquity;
   const hasRemainingTradeEquity = remainingTradeEquity > 0;
   const showTradeCreditAppliedBreakdown = tradeEquityApplied > 0 && hasRemainingTradeEquity;
+  const isLoanCoveredByTradeEquity = totalLoanAmount <= 0 && tradeEquityApplied > 0;
+  const showNoLoanPaymentState = isLoanCoveredByTradeEquity && monthlyInsuranceAmount <= 0;
   const estimatedTotalLabel = monthlyInsuranceAmount > 0
     ? 'Estimated Total Cost'
     : hasRemainingTradeEquity
@@ -1861,6 +1971,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     rebateTotal > 0 ? 'incentives' : '',
   ].filter(Boolean);
   const paymentCreditTotal = downPaymentApplied + tradeEquityApplied + rebateTotal;
+  const monthlyLoanPaymentDisplay = isLoanCoveredByTradeEquity ? 'No loan payment' : `${currency(estimatedMonthly)}/mo`;
+  const currentMonthlyCostDisplay = showNoLoanPaymentState ? 'No loan' : `${currency(estimatedMonthlyWithInsurance)}/mo`;
+  const lightEstimateSummaryCopy = isLoanCoveredByTradeEquity
+    ? `${currency(tradeEquityApplied)} in trade credit covers the financed amount${hasRemainingTradeEquity ? `, with ${currency(remainingTradeEquity)} remaining outside this loan estimate` : ''}.`
+    : `Based on a ${currency(workingPrice)} ${workingPriceDescriptor}, ${loanTerm} months, and ${formatAprPercent(activeApr)} APR.`;
   const renderLightBreakdownValue = (value: number, operation?: 'add' | 'subtract') => {
     if (!operation) return currency(value);
 
@@ -2600,7 +2715,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const handleSendLightEstimateEmail = async () => {
     const trimmed = lightEstimateEmail.trim();
-    const useEmailTestMode = isLocalHost();
+    const useEmailTestMode = isPaymentEstimateEmailTestMode();
     if (!trimmed) {
       setLightEstimateEmailError('Enter an email address.');
       setLightEstimateEmailStatus(undefined);
@@ -2615,6 +2730,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     setLightEstimateEmailStatus(undefined);
     setIsLightEstimateEmailSending(true);
 
+    if (useEmailTestMode) {
+      setLightEstimateEmailStatus(`Test estimate accepted for ${trimmed}.`);
+      setIsLightEstimateEmailSending(false);
+      return;
+    }
+
     const estimateRows = [
       { label: 'Rate & Term', value: `${formatAprPercent(activeApr)} APR - ${loanTerm} mo` },
       { label: workingPriceBreakdownLabel, value: currency(workingPrice) },
@@ -2626,6 +2747,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ...(hasRemainingTradeEquity ? [{ label: 'Remaining Trade Equity', value: currency(remainingTradeEquity) }] : []),
       { label: downPaymentBreakdownLabel, value: currency(downPaymentApplied) },
       { label: 'Amount Financed', value: currency(totalLoanAmount) },
+      { label: isLoanCoveredByTradeEquity ? 'Loan Payment' : 'Monthly Payment', value: monthlyLoanPaymentDisplay },
       ...(monthlyInsuranceAmount > 0 ? [{ label: 'Insurance Estimate', value: `${currency(monthlyInsuranceAmount)}/mo` }] : []),
       { label: 'Finance Charge', value: currency(totalLoanInterest) },
       { label: `Loan Payments Over ${loanTerm} Months`, value: currency(totalLoanPayments) },
@@ -2652,8 +2774,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             shopUrl: lightReviewVehicleShopHref,
           },
           estimate: {
-            monthlyPayment: `${currency(estimatedMonthlyWithInsurance)}/mo`,
-            summary: `Based on a ${currency(workingPrice)} ${workingPriceDescriptor}, ${loanTerm} months, and ${formatAprPercent(activeApr)} APR.`,
+            monthlyPayment: currentMonthlyCostDisplay,
+            summary: lightEstimateSummaryCopy,
             rows: estimateRows,
           },
           mockUrl: getPaymentEstimateEmailMockUrl(),
@@ -2905,6 +3027,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     setLightDealModalVehicle(null);
     setSelectedCashIds([]);
     setSelectedFinanceId('custom');
+    setIncludeExtendedWarranty(false);
+    setHasEditedExtendedWarrantyCost(false);
+    setExtendedWarrantyCost(suggestedExtendedWarrantyCost);
+    setIncludeInsuranceEstimate(false);
+    setHasEditedMonthlyInsuranceEstimate(false);
+    setMonthlyInsuranceEstimate(suggestedMonthlyInsuranceEstimate);
     setDownPayment(getDefaultLightDownPayment(boundLightVehiclePrice(price)));
     setCustomApr(condition === 'used' ? LIGHT_DEFAULT_USED_APR : LIGHT_DEFAULT_NEW_APR);
     setLoanTerm(60);
@@ -3575,7 +3703,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <section className="aio-payment__light-vehicle-step__coverage" aria-labelledby="aio-payment-light-coverage-heading">
                       <div className="aio-payment__light-vehicle-step__coverage-head">
                         <span id="aio-payment-light-coverage-heading">Warranty &amp; insurance</span>
-                        <p>Optional planning estimates. Warranty is financed; insurance stays separate from the loan.</p>
+                        <p>Planning estimates based on vehicle price, type, and market trends, not final quotes. Warranty is financed; insurance stays separate from the loan.</p>
                       </div>
                       <div className="aio-payment__light-vehicle-step__coverage-grid">
                         <div className={`aio-payment__light-vehicle-step__coverage-option ${includeExtendedWarranty ? 'aio-payment__light-vehicle-step__coverage-option--active' : ''}`}>
@@ -3592,7 +3720,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <span className="aio-payment__light-vehicle-step__coverage-copy">
                               <span className="aio-payment__light-vehicle-step__coverage-title">Extended warranty</span>
                               <span className="aio-payment__light-vehicle-step__coverage-desc">
-                                Adds a financed protection estimate to the amount borrowed.
+                                Estimates a financed protection plan from price and vehicle type.
                               </span>
                             </span>
                             <span className="aio-payment__light-vehicle-step__coverage-track" aria-hidden="true">
@@ -3608,8 +3736,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               value={numberWithCommas(extendedWarrantyCost)}
                               iconLeft={MONEY_INPUT_PREFIX}
                               onFocus={selectCalculatorInputValueOnFocus}
-                              onChange={(event) => setExtendedWarrantyCost(currencyInput(event.target.value))}
-                              helperText={`Adds about ${currency(Math.max(0, estimatedMonthly - monthlyPayment(Math.max(0, totalLoanAmount - extendedWarrantyAmount), activeApr, loanTerm)))}/mo to the loan payment.`}
+                              onChange={(event) => {
+                                setHasEditedExtendedWarrantyCost(true);
+                                setExtendedWarrantyCost(currencyInput(event.target.value));
+                              }}
+                              helperText={extendedWarrantyHelperText}
                             />
                           )}
                         </div>
@@ -3627,7 +3758,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <span className="aio-payment__light-vehicle-step__coverage-copy">
                               <span className="aio-payment__light-vehicle-step__coverage-title">Insurance estimate</span>
                               <span className="aio-payment__light-vehicle-step__coverage-desc">
-                                Adds a monthly insurance estimate to your budget view.
+                                Estimates monthly insurance from price and vehicle type.
                               </span>
                             </span>
                             <span className="aio-payment__light-vehicle-step__coverage-track" aria-hidden="true">
@@ -3643,8 +3774,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               value={numberWithCommas(monthlyInsuranceEstimate)}
                               iconLeft={MONEY_INPUT_PREFIX}
                               onFocus={selectCalculatorInputValueOnFocus}
-                              onChange={(event) => setMonthlyInsuranceEstimate(currencyInput(event.target.value))}
-                              helperText={`Monthly cost shown separately from the loan payment.`}
+                              onChange={(event) => {
+                                setHasEditedMonthlyInsuranceEstimate(true);
+                                setMonthlyInsuranceEstimate(currencyInput(event.target.value));
+                              }}
+                              helperText={insuranceEstimateHelperText}
                             />
                           )}
                         </div>
@@ -4120,6 +4254,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           </span>
                         ))}
                       </p>
+                      {isLoanCoveredByTradeEquity ? (
+                        <p className="aio-payment__light-breakdown-note">
+                          Trade equity covers the full financed amount. There is no estimated loan payment unless you change the trade, fees, add-ons, or down payment.
+                        </p>
+                      ) : null}
                     </div>
                     <dl className="aio-payment__light-breakdown" aria-labelledby={lightBreakdownLabelId}>
                       <div><dt>{workingPriceBreakdownLabel}</dt><dd>{renderLightBreakdownValue(workingPrice)}</dd></div>
@@ -4305,7 +4444,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </p>
                       <form
                         className="aio-payment__light-estimate-email__row"
-                        noValidate={isLocalHost()}
+                        noValidate={isPaymentEstimateEmailTestMode()}
                         onSubmit={(event) => {
                           event.preventDefault();
                           handleSendLightEstimateEmail();
@@ -4448,20 +4587,24 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <p className="payment-calc__result-kicker">
                         {startMode === 'monthly'
                           ? 'Budget Supports About'
-                          : monthlyInsuranceAmount > 0 ? 'Estimated Monthly Cost' : 'Estimated Monthly Payment'}
+                          : showNoLoanPaymentState ? 'Trade Equity Covers Loan' : monthlyInsuranceAmount > 0 ? 'Estimated Monthly Cost' : 'Estimated Monthly Payment'}
                       </p>
                       <p className="payment-calc__result-big aio-payment__light-result-amount" aria-live="polite">
-                        {startMode === 'monthly' ? currency(affordableMsrp) : currency(estimatedMonthlyWithInsurance)}
-                        {startMode !== 'monthly' && <span className="payment-calc__mo">/mo</span>}
+                        {startMode === 'monthly' ? currency(affordableMsrp) : showNoLoanPaymentState ? 'No loan' : currency(estimatedMonthlyWithInsurance)}
+                        {startMode !== 'monthly' && !showNoLoanPaymentState && <span className="payment-calc__mo">/mo</span>}
                       </p>
                       <p className="payment-calc__muted aio-payment__light-result-lede">
                         {startMode === 'monthly'
                           ? canUseCatalogPrice
                             ? `Estimated MSRP ${lightBudgetSupportBasis} for a ${currency(targetMonthlyPayment)}/mo target.`
                             : `Estimated listing-price target ${lightBudgetSupportBasis} for a ${currency(targetMonthlyPayment)}/mo target.`
-                          : monthlyInsuranceAmount > 0
-                            ? `Includes ${currency(estimatedMonthly)}/mo loan payment plus ${currency(monthlyInsuranceAmount)}/mo insurance.`
-                            : `Based on a ${currency(workingPrice)} ${workingPriceDescriptor}, ${loanTerm} months, and ${formatAprPercent(activeApr)} APR.`}
+                          : isLoanCoveredByTradeEquity
+                            ? monthlyInsuranceAmount > 0
+                              ? `No loan payment. Includes ${currency(monthlyInsuranceAmount)}/mo insurance estimate shown separately.`
+                              : lightEstimateSummaryCopy
+                            : monthlyInsuranceAmount > 0
+                              ? `Includes ${currency(estimatedMonthly)}/mo loan payment plus ${currency(monthlyInsuranceAmount)}/mo insurance.`
+                              : lightEstimateSummaryCopy}
                       </p>
                     </div>
                     <div className={`aio-payment__light-result-details ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
@@ -4470,9 +4613,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         className="aio-payment__light-result-details-toggle"
                         aria-expanded={showLightMobileTotals}
                         aria-controls={lightEstimateTotalsId}
+                        aria-label={showLightMobileTotals ? 'Close estimate totals' : 'Open estimate totals'}
                         onClick={() => setShowLightMobileTotals((isOpen) => !isOpen)}
                       >
-                        Estimate totals
+                        <span className="aio-payment__light-result-details-toggle-text">Estimate totals</span>
                         {showLightMobileTotals ? (
                           <ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" />
                         ) : (
@@ -4523,8 +4667,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           </div>
                         )}
                         <div className="payment-calc__sum-row">
-                          <dt>Monthly Payment</dt>
-                          <dd>{currency(estimatedMonthly)}/mo</dd>
+                          <dt>{isLoanCoveredByTradeEquity ? 'Loan Payment' : 'Monthly Payment'}</dt>
+                          <dd>{monthlyLoanPaymentDisplay}</dd>
                         </div>
                         {monthlyInsuranceAmount > 0 && (
                           <div className="payment-calc__sum-row">
@@ -4590,11 +4734,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-sidebar-tip-prompt">Want a better price?</span>
                         <ChevronDown className="aio-payment__light-sidebar-tip-chevron" size={18} strokeWidth={2.25} aria-hidden="true" />
                       </button>
-                      <div id={lightSidebarTipBodyId} className="aio-payment__light-sidebar-tip-body" hidden={!showLightSidebarTips}>
-                        <p className="aio-payment__light-sidebar-tip-intro">
-                          <strong>Your estimate is {currency(estimatedMonthlyWithInsurance)}/mo with {currency(totalLoanPayments)} in loan payments.</strong>
-                          {' '}{lightExpertTipContextCopy}
-                        </p>
+	                      <div id={lightSidebarTipBodyId} className="aio-payment__light-sidebar-tip-body" hidden={!showLightSidebarTips}>
+	                        <p className="aio-payment__light-sidebar-tip-intro">
+	                          <strong>
+	                            {isLoanCoveredByTradeEquity
+	                              ? 'Your trade equity covers the financed amount, so there is no estimated loan payment.'
+	                              : `Your estimate is ${currency(estimatedMonthlyWithInsurance)}/mo with ${currency(totalLoanPayments)} in loan payments.`}
+	                          </strong>
+	                          {' '}{lightExpertTipContextCopy}
+	                        </p>
                         <ol className="aio-payment__light-sidebar-tip-list">
                           {lightOptimizationTips.map((tip, index) => (
                             <li key={tip.id} className="aio-payment__light-sidebar-tip-item">
@@ -4945,7 +5093,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     Use this as a dealer worksheet. Lock the selling price first, then compare fees, APR, cash due, and total loan payments.
                   </p>
                   <dl className="aio-payment__ai-modal-context" aria-label="Current estimate context">
-                    <div><dt>{monthlyInsuranceAmount > 0 ? 'Current monthly cost' : 'Current payment'}</dt><dd>{currency(estimatedMonthlyWithInsurance)}/mo</dd></div>
+	                    <div><dt>{monthlyInsuranceAmount > 0 ? 'Current monthly cost' : 'Current payment'}</dt><dd>{currentMonthlyCostDisplay}</dd></div>
                     <div><dt>Loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
                     <div><dt>Rate &amp; term</dt><dd>{formatAprPercent(activeApr)} · {loanTerm} mo</dd></div>
                     <div><dt>Due at signing</dt><dd>{currency(cashDueAtSigning)}</dd></div>
@@ -5765,7 +5913,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 <strong>{currency(totalLoanAmount)}</strong>
               </summary>
               <dl className="aio-payment__summary-breakdown">
-                <div><dt>Estimated payment</dt><dd>{currency(estimatedMonthly)}/mo</dd></div>
+	                <div><dt>{isLoanCoveredByTradeEquity ? 'Loan payment' : 'Estimated payment'}</dt><dd>{monthlyLoanPaymentDisplay}</dd></div>
                 {monthlyInsuranceAmount > 0 && (
                   <div><dt>Monthly insurance</dt><dd>{currency(monthlyInsuranceAmount)}/mo</dd></div>
                 )}
@@ -5795,8 +5943,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
       <aside className={`aio-payment__mobile-summary ${showMobileSummary ? 'aio-payment__mobile-summary--visible' : ''}`} aria-label="Compact payment estimate">
         <div>
-          <span>{startMode === 'price' ? monthlyInsuranceAmount > 0 ? 'Estimated monthly cost' : 'Estimated monthly payment' : isBudgetFirstVariant ? `Budget-supported ${canUseCatalogPrice ? 'MSRP' : 'price'}` : 'Selected car price'}</span>
-          <strong>{startMode === 'price' ? `${currency(estimatedMonthlyWithInsurance)}/mo` : currency(isBudgetFirstVariant ? workingPrice : price)}</strong>
+	          <span>{startMode === 'price' ? showNoLoanPaymentState ? 'Trade equity covers loan' : monthlyInsuranceAmount > 0 ? 'Estimated monthly cost' : 'Estimated monthly payment' : isBudgetFirstVariant ? `Budget-supported ${canUseCatalogPrice ? 'MSRP' : 'price'}` : 'Selected car price'}</span>
+	          <strong>{startMode === 'price' ? currentMonthlyCostDisplay : currency(isBudgetFirstVariant ? workingPrice : price)}</strong>
           <small>{currency(totalCost)} total after credits</small>
         </div>
         <Button as="a" href={getMarketplaceUrl(condition, selectedVehicle, selectedYear)} variant="primary" size="large" className="aio-payment__mobile-summary-cta">
