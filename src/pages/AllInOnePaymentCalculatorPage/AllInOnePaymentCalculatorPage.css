@@ -869,6 +869,45 @@
   font-weight: var(--font-weight-bold);
 }
 
+.aio-payment__light-marketplace-handoff {
+  display: grid;
+  gap: var(--spacing-2);
+  width: 100%;
+  margin-top: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: color-mix(in srgb, var(--color-blue-cobalt) 5%, var(--color-white) 95%);
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 20%, var(--color-gray-200) 80%);
+  border-radius: var(--border-radius-md);
+}
+
+.aio-payment__light-marketplace-handoff-kicker {
+  margin: 0;
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.aio-payment__light-marketplace-handoff h3 {
+  margin: 0;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.18;
+}
+
+.aio-payment__light-marketplace-handoff p:not(.aio-payment__light-marketplace-handoff-kicker) {
+  margin: 0;
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
 .aio-payment__light-result-vehicle-shop {
   display: inline-flex;
   align-items: center;
@@ -890,6 +929,10 @@
   text-decoration: none;
   text-transform: uppercase;
   transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.aio-payment__light-marketplace-handoff .aio-payment__light-result-vehicle-shop {
+  margin-top: var(--spacing-2);
 }
 
 .aio-payment__light-result-vehicle-shop:hover {
@@ -1888,6 +1931,7 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-loan-guidance-list div {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--spacing-2);
   padding: var(--spacing-1) 0;
@@ -1905,11 +1949,22 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-loan-guidance-list dt {
+  display: grid;
+  gap: var(--spacing-0-5);
   color: var(--color-black);
   font-weight: var(--font-weight-medium);
 }
 
+.aio-payment__light-loan-guidance-list dt small {
+  color: var(--color-gray-700);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.25;
+}
+
 .aio-payment__light-loan-guidance-list dd {
+  flex: 0 0 auto;
   color: var(--color-black);
   font-weight: var(--font-weight-bold);
 }
@@ -2259,6 +2314,128 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-gray-600);
   font-size: var(--font-size-sm);
   line-height: 1.3;
+}
+
+.aio-payment__light-listbox-select {
+  min-width: 0;
+}
+
+.aio-payment__light-listbox-select__control {
+  position: relative;
+  min-width: 0;
+}
+
+.aio-payment__light-listbox-select__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 0 var(--spacing-3) 0 var(--spacing-4);
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-tight);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.aio-payment__light-listbox-select__trigger span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aio-payment__light-listbox-select__trigger svg {
+  flex: 0 0 auto;
+  color: var(--color-gray-500);
+}
+
+.aio-payment__light-listbox-select__trigger:focus-visible,
+.aio-payment__light-listbox-select__trigger[aria-expanded='true'] {
+  outline: none;
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
+}
+
+.aio-payment__light-listbox-select__trigger--placeholder {
+  color: var(--color-gray-500);
+}
+
+.aio-payment__light-listbox-select__trigger:disabled {
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+  cursor: not-allowed;
+}
+
+.aio-payment__light-listbox-select__menu {
+  position: absolute;
+  z-index: 25;
+  top: calc(100% + var(--spacing-1));
+  right: 0;
+  left: 0;
+  display: grid;
+  max-height: 18rem;
+  overflow-y: auto;
+  padding: var(--spacing-1);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-black) 16%, transparent);
+}
+
+.aio-payment__light-listbox-select__option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  min-height: var(--spacing-11);
+  margin: 0;
+  padding: var(--spacing-3);
+  color: var(--color-dark);
+  background: transparent;
+  border: 0;
+  border-radius: var(--border-radius-sm);
+  font: inherit;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+
+.aio-payment__light-listbox-select__option span {
+  min-width: 0;
+}
+
+.aio-payment__light-listbox-select__option svg {
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment__light-listbox-select__option:hover,
+.aio-payment__light-listbox-select__option--active {
+  background: color-mix(in srgb, var(--color-blue-cobalt) 10%, var(--color-white) 90%);
+}
+
+.aio-payment__light-listbox-select__option--selected {
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-listbox-select__option:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 1px;
+}
+
+.aio-payment__light-listbox-select__empty {
+  padding: var(--spacing-3);
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
 }
 
 .aio-payment__light-vehicle-step__ymm-row {
@@ -2910,8 +3087,26 @@ label.aio-payment__light-loan-step__label {
   pointer-events: none;
 }
 
+.aio-payment__light-percent-input-quality {
+  position: absolute;
+  left: calc(var(--spacing-3) + var(--aio-light-percent-value-width, 3ch) + 3.1ch);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  max-width: calc(100% - var(--spacing-4) - var(--aio-light-percent-value-width, 3ch) - 3ch);
+  overflow: hidden;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  pointer-events: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .aio-payment__light-percent-input-control.payment-calc__input {
-  padding-right: var(--spacing-8);
+  padding-right: min(13rem, 48%);
 }
 
 .aio-payment__light-trade-tax-field {
@@ -5925,6 +6120,26 @@ label.aio-payment__light-loan-step__label {
 }
 
 @media (max-width: 640px) {
+  .aio-payment__light-loan-guidance {
+    top: auto;
+    bottom: calc(100% + var(--spacing-2));
+    max-height: min(21rem, calc(100dvh - var(--spacing-20)));
+    overflow-y: auto;
+  }
+
+  .aio-payment__light-loan-guidance::before,
+  .aio-payment__light-loan-guidance::after {
+    top: auto;
+    bottom: -8px;
+    border-top: var(--spacing-2) solid var(--color-gray-300);
+    border-bottom: 0;
+  }
+
+  .aio-payment__light-loan-guidance::after {
+    bottom: -7px;
+    border-top-color: var(--color-white);
+  }
+
   .aio-payment__light-loan-guidance-list {
     grid-template-columns: 1fr;
   }
@@ -7352,14 +7567,35 @@ label.aio-payment__light-loan-step__label {
     overflow: visible;
   }
 
-  .aio-payment.aio-payment--light-steps:has(input:focus, select:focus, textarea:focus) {
+  .aio-payment.aio-payment--light-steps:has(input:focus, select:focus, textarea:focus, .aio-payment__light-listbox-select__trigger[aria-expanded='true'], .aio-payment__light-loan-guidance-tooltip:focus-within) {
     padding-bottom: calc(var(--spacing-6) + env(safe-area-inset-bottom));
   }
 
-  .aio-payment--light-steps:has(input:focus, select:focus, textarea:focus) .aio-payment__light-sticky-summary {
+  .aio-payment--light-steps:has(input:focus, select:focus, textarea:focus, .aio-payment__light-listbox-select__trigger[aria-expanded='true'], .aio-payment__light-loan-guidance-tooltip:focus-within) .aio-payment__light-sticky-summary {
     opacity: 0;
     pointer-events: none;
     transform: translateY(calc(100% + var(--spacing-4)));
+  }
+
+  .aio-payment--light-steps .aio-payment__light-listbox-select__trigger {
+    min-height: var(--spacing-12);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-listbox-select__menu {
+    position: static;
+    z-index: 1;
+    box-sizing: border-box;
+    width: 100%;
+    max-height: min(12rem, 24dvh);
+    margin-top: var(--spacing-1);
+    padding: var(--spacing-1);
+    overscroll-behavior: contain;
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--color-black) 16%, transparent);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-listbox-select__option {
+    padding: var(--spacing-3) var(--spacing-4);
   }
 
   .aio-payment--light-steps .aio-payment__light-vehicle-search__menu {
@@ -7472,7 +7708,7 @@ label.aio-payment__light-loan-step__label {
     display: none;
   }
 
-  .aio-payment--light-steps .aio-payment__light-result-details:not(.aio-payment__light-result-details--open) .aio-payment__light-result-vehicle-shop {
+  .aio-payment--light-steps .aio-payment__light-result-details:not(.aio-payment__light-result-details--open) .aio-payment__light-marketplace-handoff {
     display: none;
   }
 
@@ -7539,6 +7775,16 @@ label.aio-payment__light-loan-step__label {
   .aio-payment--light-steps .aio-payment__light-result-vehicle-shop {
     width: calc(100% - var(--spacing-8));
     margin: 0 var(--spacing-4) var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details--open .aio-payment__light-marketplace-handoff {
+    width: auto;
+    margin: var(--spacing-2) var(--spacing-4) var(--spacing-4);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-marketplace-handoff .aio-payment__light-result-vehicle-shop {
+    width: 100%;
+    margin: var(--spacing-2) 0 0;
   }
 }
 

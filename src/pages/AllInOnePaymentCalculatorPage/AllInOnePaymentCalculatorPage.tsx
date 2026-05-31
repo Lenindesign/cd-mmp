@@ -1,7 +1,7 @@
 import { type CSSProperties, type FocusEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, Mail, RotateCcw, ShieldCheck, SkipForward, Umbrella } from 'lucide-react';
-import { CarProfile, CreditCard as PhosphorCreditCard } from '@phosphor-icons/react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, Mail, RotateCcw, SkipForward } from 'lucide-react';
+import { CarProfile, CreditCard as PhosphorCreditCard, ShieldCheck as PhosphorShieldCheck, Umbrella as PhosphorUmbrella } from '@phosphor-icons/react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { getVehicleTrims, type TrimData } from '../../services/trimService';
@@ -98,6 +98,12 @@ interface LightVehicleDraft {
   year: string;
   make: string;
   model: string;
+}
+
+interface LightListboxSelectOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
 }
 
 type LightWizardStepSlug = 'goal' | 'loan' | 'vehicle' | 'trade' | 'review';
@@ -286,12 +292,14 @@ const numberInput = (value: string) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const APR_INPUT_DECIMAL_PLACES = 1;
+
 const normalizeAprInputValue = (value: string) => {
   const cleaned = value.replace(/[^\d.]/g, '');
   const [whole = '', ...decimalParts] = cleaned.split('.');
   if (!cleaned.includes('.')) return whole;
 
-  return `${whole || '0'}.${decimalParts.join('').slice(0, 2)}`;
+  return `${whole || '0'}.${decimalParts.join('').slice(0, APR_INPUT_DECIMAL_PLACES)}`;
 };
 
 const currencyInput = (value: string) => {
@@ -362,15 +370,15 @@ const getDefaultLightDownPayment = (vehiclePrice: number) => clampLightDownPayme
 
 const LIGHT_APR_SLIDER_MIN = 0;
 const LIGHT_APR_SLIDER_MAX = 20;
-const LIGHT_APR_SLIDER_STEP = 0.01;
-const LIGHT_APR_INPUT_STEP = 0.01;
+const LIGHT_APR_SLIDER_STEP = 0.1;
+const LIGHT_APR_INPUT_STEP = 0.1;
 const LIGHT_DEFAULT_NEW_APR = 7;
 const LIGHT_DEFAULT_USED_APR = 11;
 
 const clampLightApr = (value: number) => {
   const rounded = Math.round(value / LIGHT_APR_INPUT_STEP) * LIGHT_APR_INPUT_STEP;
   const clamped = Math.min(LIGHT_APR_SLIDER_MAX, Math.max(LIGHT_APR_SLIDER_MIN, rounded));
-  return Number(clamped.toFixed(2));
+  return Number(clamped.toFixed(APR_INPUT_DECIMAL_PLACES));
 };
 
 const clampLightAprSlider = (value: number) => {
@@ -378,7 +386,7 @@ const clampLightAprSlider = (value: number) => {
   return clampLightApr(rounded);
 };
 
-const formatAprPercent = (value: number) => `${clampLightApr(value).toFixed(2)}%`;
+const formatAprPercent = (value: number) => `${clampLightApr(value).toFixed(APR_INPUT_DECIMAL_PLACES)}%`;
 
 const monthlyPayment = (principal: number, apr: number, termMonths: number) => {
   if (principal <= 0 || termMonths <= 0) return 0;
@@ -1002,11 +1010,17 @@ const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
 ];
 
 const LIGHT_APR_GUIDANCE_TIERS = [
-  { label: 'Excellent credit', range: '4-6%' },
-  { label: 'Good credit', range: '6-9%' },
-  { label: 'Fair credit', range: '10-15%' },
-  { label: 'Rebuilding credit', range: '15%+' },
+  { label: 'Excellent credit', score: '(740+)', range: '~4–7%', maxApr: 7 },
+  { label: 'Good credit', score: '(670–739)', range: '~6–10%', maxApr: 10 },
+  { label: 'Fair credit', score: '(580–669)', range: '~9–15%', maxApr: 15 },
+  { label: 'Poor credit', score: '(<580)', range: '~15%+', maxApr: Number.POSITIVE_INFINITY },
 ];
+
+const getLightAprGuidanceTier = (value: number) => {
+  if (!Number.isFinite(value)) return null;
+  const apr = clampLightApr(value);
+  return LIGHT_APR_GUIDANCE_TIERS.find((tier) => apr <= tier.maxApr) ?? LIGHT_APR_GUIDANCE_TIERS[LIGHT_APR_GUIDANCE_TIERS.length - 1] ?? null;
+};
 
 const getLightLoanTermWarning = (loanTerm: number) => {
   if (loanTerm >= 84) {
@@ -1048,14 +1062,16 @@ function LightLoanTermsStepPanel({
   const downId = useId();
   const aprId = useId();
   const aprGuidanceId = useId();
+  const aprQualityId = useId();
   const downClamped = clampLightDownPayment(downPayment);
   const downPaymentDisplayValue = numberWithCommas(downClamped);
   const [downPaymentInputDraft, setDownPaymentInputDraft] = useState<string | null>(null);
   const downPaymentInputValue = downPaymentInputDraft ?? downPaymentDisplayValue;
   const aprSliderValue = aprLocked ? activeApr : clampLightAprSlider(customApr);
-  const customAprDisplayValue = clampLightApr(customApr).toFixed(2);
+  const customAprDisplayValue = clampLightApr(customApr).toFixed(APR_INPUT_DECIMAL_PLACES);
   const [aprInputDraft, setAprInputDraft] = useState<string | null>(null);
   const aprInputValue = aprInputDraft ?? customAprDisplayValue;
+  const aprQualityTier = aprInputValue.trim() === '' ? null : getLightAprGuidanceTier(numberInput(aprInputValue));
   const loanTermWarning = getLightLoanTermWarning(loanTerm);
 
   const handleDownPaymentInputChange = (value: string) => {
@@ -1174,13 +1190,16 @@ function LightLoanTermsStepPanel({
                 <dl className="aio-payment__light-loan-guidance-list">
                   {LIGHT_APR_GUIDANCE_TIERS.map((tier) => (
                     <div key={tier.label}>
-                      <dt>{tier.label}</dt>
+                      <dt>
+                        <span>{tier.label}</span>
+                        <small>{tier.score}</small>
+                      </dt>
                       <dd>{tier.range}</dd>
                     </div>
                   ))}
                 </dl>
                 <p className="aio-payment__light-loan-guidance-note">
-                  Planning ranges only. Use a lender quote or pre-qualification when you have one.
+                  Planning ranges only. Actual APR depends on lender, vehicle type, loan term, down payment, market conditions, and credit profile.
                 </p>
               </div>
             </div>
@@ -1204,6 +1223,7 @@ function LightLoanTermsStepPanel({
                 min={LIGHT_APR_SLIDER_MIN}
                 max={LIGHT_APR_SLIDER_MAX}
                 step={LIGHT_APR_INPUT_STEP}
+                aria-describedby={aprQualityTier ? aprQualityId : undefined}
                 value={aprInputValue}
                 onFocus={(event) => {
                   setAprInputDraft(customAprDisplayValue);
@@ -1213,6 +1233,11 @@ function LightLoanTermsStepPanel({
                 onBlur={handleAprInputBlur}
               />
               <span className="aio-payment__light-percent-input-suffix" aria-hidden="true">%</span>
+              {aprQualityTier ? (
+                <span id={aprQualityId} className="aio-payment__light-percent-input-quality" aria-live="polite">
+                  ({aprQualityTier.label})
+                </span>
+              ) : null}
             </div>
             <input
               type="range"
@@ -1280,6 +1305,169 @@ function LightLoanTermsStepPanel({
 
 interface AllInOnePaymentCalculatorPageProps {
   variant?: 'classic' | 'budget-first' | 'light' | 'light-steps';
+}
+
+function LightListboxSelect({
+  label,
+  value,
+  options,
+  onChange,
+  placeholder,
+  wrapperClassName = '',
+  disabled = false,
+}: {
+  label: ReactNode;
+  value: string;
+  options: LightListboxSelectOption[];
+  onChange: (value: string) => void;
+  placeholder?: string;
+  wrapperClassName?: string;
+  disabled?: boolean;
+}) {
+  const generatedId = useId();
+  const triggerId = `${generatedId}-trigger`;
+  const listboxId = `${generatedId}-listbox`;
+  const selectedIndex = options.findIndex((option) => option.value === value);
+  const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : undefined;
+  const firstEnabledIndex = Math.max(0, options.findIndex((option) => !option.disabled));
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(selectedIndex >= 0 ? selectedIndex : firstEnabledIndex);
+  const activeOptionRef = useRef<HTMLButtonElement | null>(null);
+  const selectedOrFirstEnabledIndex = selectedIndex >= 0 ? selectedIndex : firstEnabledIndex;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    activeOptionRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [activeIndex, isOpen]);
+
+  const getNextEnabledIndex = (startIndex: number, direction: 1 | -1) => {
+    if (!options.length) return 0;
+
+    for (let offset = 1; offset <= options.length; offset += 1) {
+      const nextIndex = (startIndex + direction * offset + options.length) % options.length;
+      if (!options[nextIndex]?.disabled) return nextIndex;
+    }
+
+    return startIndex;
+  };
+
+  const selectOption = (index: number) => {
+    const option = options[index];
+    if (!option || option.disabled) return;
+
+    onChange(option.value);
+    setIsOpen(false);
+  };
+
+  const handleTriggerKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (!isOpen) {
+        setActiveIndex(selectedOrFirstEnabledIndex);
+        setIsOpen(true);
+        return;
+      }
+      setActiveIndex((current) => getNextEnabledIndex(current, event.key === 'ArrowDown' ? 1 : -1));
+      return;
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault();
+      setIsOpen(true);
+      setActiveIndex(firstEnabledIndex);
+      return;
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault();
+      setIsOpen(true);
+      setActiveIndex(Math.max(0, options.map((option, index) => (option.disabled ? -1 : index)).filter((index) => index >= 0).pop() ?? firstEnabledIndex));
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (isOpen) {
+        selectOption(activeIndex);
+        return;
+      }
+      setActiveIndex(selectedOrFirstEnabledIndex);
+      setIsOpen(true);
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      setIsOpen(false);
+    }
+  };
+
+  return (
+    <div
+      className={`text-field text-field--select aio-payment__light-listbox-select ${wrapperClassName}`}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setIsOpen(false);
+        }
+      }}
+    >
+      <label id={`${generatedId}-label`} className="text-field__label" htmlFor={triggerId}>
+        {label}
+      </label>
+      <div className="aio-payment__light-listbox-select__control">
+        <button
+          id={triggerId}
+          type="button"
+          className={`aio-payment__light-listbox-select__trigger ${selectedOption ? '' : 'aio-payment__light-listbox-select__trigger--placeholder'}`}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          aria-controls={listboxId}
+          aria-labelledby={`${generatedId}-label ${triggerId}`}
+          aria-activedescendant={isOpen ? `${listboxId}-option-${activeIndex}` : undefined}
+          disabled={disabled}
+          onClick={() => {
+            if (!isOpen) setActiveIndex(selectedOrFirstEnabledIndex);
+            setIsOpen((current) => !current);
+          }}
+          onKeyDown={handleTriggerKeyDown}
+        >
+          <span>{selectedOption?.label ?? placeholder ?? 'Select an option'}</span>
+          <ChevronDown size={20} strokeWidth={2.25} aria-hidden="true" />
+        </button>
+        {isOpen && (
+          <div id={listboxId} className="aio-payment__light-listbox-select__menu" role="listbox" aria-labelledby={`${generatedId}-label`}>
+            {options.length > 0 ? options.map((option, index) => {
+              const isSelected = option.value === value;
+              const isActive = index === activeIndex;
+              return (
+                <button
+                  key={option.value}
+                  id={`${listboxId}-option-${index}`}
+                  ref={isActive ? activeOptionRef : undefined}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  className={`aio-payment__light-listbox-select__option${isActive ? ' aio-payment__light-listbox-select__option--active' : ''}${isSelected ? ' aio-payment__light-listbox-select__option--selected' : ''}`}
+                  disabled={option.disabled}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={() => selectOption(index)}
+                >
+                  <span>{option.label}</span>
+                  {isSelected ? <Check size={16} strokeWidth={2.5} aria-hidden="true" /> : null}
+                </button>
+              );
+            }) : (
+              <span className="aio-payment__light-listbox-select__empty" role="option" aria-selected="false">
+                No options available
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentCalculatorPageProps) => {
@@ -2252,6 +2440,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightSidebarVehicleCtaLabel = useLightSidebarBudgetCta
     ? 'See cars in your budget'
     : lightReviewVehicleShopLabel;
+  const lightSidebarVehicleCtaTitle = useLightSidebarBudgetCta
+    ? 'Shop from your budget'
+    : 'Find this car faster';
+  const lightSidebarVehicleCtaCopy = useLightSidebarBudgetCta
+    ? 'Jump into C/D Marketplace to compare real listings that fit the estimate you just built.'
+    : `Use C/D Marketplace to compare matching ${selectedVehicle.make} ${selectedVehicle.model} listings, trims, and price context without starting over.`;
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
   const leaseDepreciationCharge = Math.max(0, leaseAdjustedCapCost - leaseResidualValue) / Math.max(1, leaseTerm);
@@ -3569,11 +3763,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             </div>
                           )}
                         </div>
-                        <Select
+                        <LightListboxSelect
                           label="Trim / style"
                           value={lightKnownVehicleSelected ? selectedTrimStyleOption?.value ?? '' : ''}
                           wrapperClassName="aio-payment__light-field--wide"
-                          onChange={(event) => handleTrimStyleChange(event.target.value)}
+                          onChange={handleTrimStyleChange}
                           placeholder="Select trim or style"
                           options={availableTrimStyleOptions.map((option) => ({
                             value: option.value,
@@ -3715,7 +3909,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             onClick={() => setIncludeExtendedWarranty((isIncluded) => !isIncluded)}
                           >
                             <span className="aio-payment__light-vehicle-step__coverage-icon" aria-hidden="true">
-                              <ShieldCheck size={20} strokeWidth={2.25} />
+                              <PhosphorShieldCheck size={22} weight="regular" />
                             </span>
                             <span className="aio-payment__light-vehicle-step__coverage-copy">
                               <span className="aio-payment__light-vehicle-step__coverage-title">Extended warranty</span>
@@ -3753,7 +3947,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             onClick={() => setIncludeInsuranceEstimate((isIncluded) => !isIncluded)}
                           >
                             <span className="aio-payment__light-vehicle-step__coverage-icon" aria-hidden="true">
-                              <Umbrella size={20} strokeWidth={2.25} />
+                              <PhosphorUmbrella size={22} weight="regular" />
                             </span>
                             <span className="aio-payment__light-vehicle-step__coverage-copy">
                               <span className="aio-payment__light-vehicle-step__coverage-title">Insurance estimate</span>
@@ -3916,10 +4110,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         ) : null}
                       </div>
                       <div className="aio-payment__light-trade-step__row aio-payment__light-trade-step__row--3">
-                        <Select
+                        <LightListboxSelect
                           label="Your state"
                           value={stateCode}
-                          onChange={(event) => handleStateCodeChange(event.target.value)}
+                          onChange={handleStateCodeChange}
                           options={stateRules.map((state) => ({ value: state.code, label: state.name }))}
                         />
                         <div
@@ -4692,20 +4886,25 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </div>
                       </dl>
                       {showLightSidebarVehicleCta && (
-                        <a
-                          className="aio-payment__light-result-vehicle-shop"
-                          href={lightSidebarVehicleCtaHref}
-                          aria-label={useLightSidebarBudgetCta
-                            ? 'See cars in your budget'
-                            : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                          onClick={(event) => {
-                            if (!useLightSidebarBudgetCta) return;
-                            event.preventDefault();
-                            lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
-                          }}
-                        >
-                          {lightSidebarVehicleCtaLabel}
-                        </a>
+                        <section className="aio-payment__light-marketplace-handoff" aria-labelledby="aio-payment-light-marketplace-handoff-title">
+                          <p className="aio-payment__light-marketplace-handoff-kicker">C/D Marketplace</p>
+                          <h3 id="aio-payment-light-marketplace-handoff-title">{lightSidebarVehicleCtaTitle}</h3>
+                          <p>{lightSidebarVehicleCtaCopy}</p>
+                          <a
+                            className="aio-payment__light-result-vehicle-shop"
+                            href={lightSidebarVehicleCtaHref}
+                            aria-label={useLightSidebarBudgetCta
+                              ? 'See cars in your budget'
+                              : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
+                            onClick={(event) => {
+                              if (!useLightSidebarBudgetCta) return;
+                              event.preventDefault();
+                              lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
+                            }}
+                          >
+                            {lightSidebarVehicleCtaLabel}
+                          </a>
+                        </section>
                       )}
                       {SHOW_LIGHT_DEALER_FEE_NOTE && (!isLightStepsVariant || lightWizardStep === 5) && (
                         <p className="aio-payment__light-dealer-fee-note">
