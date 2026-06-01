@@ -34,7 +34,7 @@ type PurchaseStartMode = 'price' | 'monthly';
 type BudgetFitStatus = 'over' | 'under' | 'fit' | 'neutral';
 type LightWizardStepMotion = 'none' | 'forward' | 'backward';
 
-const CAD_INFO_ICON_SRC = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/info-regular.348beca.svg?primary=%2523000';
+const CAD_INFO_ICON_SRC = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/info-regular.348beca.svg?primary=%2523222222';
 
 interface StateTaxRule {
   code: string;
@@ -260,24 +260,102 @@ const getPaymentEstimateEmailMockUrl = () => {
 
 const LIGHT_FINANCING_FAQS = [
   {
-    question: 'How does interest rate impact your monthly payment?',
-    answer: 'The interest rate directly affects how much you pay over the life of the loan. A lower rate means a lower monthly payment and less total interest paid. For example, on a $30,000 loan over 60 months, the difference between a 4% and 7% rate is roughly $45/month, or over $2,700 total.',
+    question: 'How does the Car and Driver Auto Loan Calculator work?',
+    answer: [
+      'The Car and Driver Auto Loan Calculator estimates how much car may fit your budget based on your monthly payment, credit range, loan term, down payment, state sales tax, and trade-in details. The result is an estimate of your buying power, not a loan approval or a final dealer quote.',
+      'After the calculator estimates your budget, it can show vehicles that may fit that range, along with C/D ratings, starting prices, and available deal signals such as promotional APR or lease offers. Use those matches to build a smarter shortlist before comparing lender offers or contacting a dealer.',
+    ],
   },
   {
-    question: 'How does your credit score impact your monthly payment?',
-    answer: 'Your credit score is one of the biggest factors lenders use to determine your interest rate. Borrowers with excellent credit typically qualify for lower rates, while fair credit may see much higher rates. Improving your score before applying can save thousands over the loan term.',
+    question: 'What does estimated buying power mean?',
+    answer: [
+      'Estimated buying power is the approximate vehicle price range your selected monthly payment may support under the calculator\'s assumptions. It gives you a practical shopping ceiling, so you can focus on cars that are more likely to fit your budget.',
+      'Your actual buying power may change once a lender reviews your application, a dealer confirms the final price, or taxes, fees, incentives, trade-in value, and add-ons are included. Treat the estimate as a starting point for shopping, not the final number you will sign for.',
+    ],
   },
   {
-    question: 'What is the usual loan term for an auto loan?',
-    answer: 'The most common auto loan terms are 60 months and 72 months. Shorter terms usually mean higher monthly payments but less total interest. Longer terms lower the payment but increase total cost and the risk of owing more than the vehicle is worth.',
+    question: 'How much car can I afford based on a monthly payment?',
+    answer: [
+      'A monthly payment target helps narrow your search, but it should not be the only number you use. A lower payment can still cost more overall if it comes from a longer loan term, a higher APR, or a larger amount financed.',
+      'A practical budget also includes insurance, fuel or charging, maintenance, repairs, registration, parking, and your other monthly expenses. A car that fits the calculator may still be too expensive if the total ownership cost strains the rest of your budget.',
+    ],
   },
   {
-    question: 'How does a trade-in potentially impact your monthly payment?',
-    answer: 'A trade-in reduces the amount you need to finance. If your trade-in is worth $5,000 on a $30,000 vehicle, you would only finance about $25,000 before taxes and fees, which can lower the monthly payment and may reduce taxable value in some states.',
+    question: 'What is included in a monthly car payment?',
+    answer: [
+      'A monthly auto-loan payment usually includes repayment of the amount borrowed plus interest. If you finance taxes, title, registration, dealer fees, destination charges, or add-ons, those costs can also become part of the monthly payment.',
+      'Insurance, fuel or charging, maintenance, repairs, parking, and future registration renewals are usually separate costs. Budget for those before deciding that a monthly payment is comfortable.',
+    ],
   },
   {
-    question: 'How do you calculate monthly car payments?',
-    answer: 'Monthly payments are based on the loan amount, annual interest rate, and loan term. The calculator estimates the amount financed after down payment, trade equity, taxes, fees, and incentives, then applies the selected APR and term.',
+    question: 'How does APR affect my car payment?',
+    answer: [
+      'APR affects both your monthly payment and the total amount you pay to borrow money. A higher APR raises the cost of the loan, while a lower APR can help the same monthly payment support a higher vehicle price or a shorter repayment term.',
+      'When comparing cars or loan offers, look beyond the monthly payment. Compare APR, loan term, total interest, amount financed, and total amount paid over the life of the loan.',
+    ],
+  },
+  {
+    question: 'How does my credit score affect an auto loan estimate?',
+    answer: [
+      'Your credit score can influence the APR you qualify for, which can change your estimated monthly payment and buying power. A stronger credit profile generally helps you qualify for more competitive financing, while a weaker credit profile can raise borrowing costs.',
+      'Credit score is only one part of a lender\'s decision. Lenders may also review income, debt, loan term, down payment, vehicle age, and the full credit application. The calculator\'s credit range is useful for planning, but the actual rate comes from lender approval.',
+    ],
+  },
+  {
+    question: 'Is a longer car loan term better?',
+    answer: [
+      'A longer loan term can lower the monthly payment, but it usually increases the total interest paid. It can also raise the chance of owing more than the car is worth, especially early in the loan.',
+      'A shorter term often costs more per month but can reduce interest and help you build equity faster. When two vehicles fit the same payment, compare the term length and total cost before choosing the one that looks cheaper month to month.',
+    ],
+  },
+  {
+    question: 'How much should I put down on a car?',
+    answer: [
+      'A larger down payment reduces the amount you finance, which can lower your monthly payment and total interest cost. It can also give you more equity from the start, which helps protect you if the car depreciates quickly.',
+      'A common target is 15% to 20% down when your budget allows, but the right amount depends on your savings, trade-in value, loan rate, and other costs due at purchase. Keep enough cash available for insurance, registration, maintenance, and emergencies.',
+    ],
+  },
+  {
+    question: 'How does a trade-in affect my car loan?',
+    answer: [
+      'A trade-in can lower the amount you need to finance. If your trade-in is worth more than your current loan payoff, the difference can work like extra money down.',
+      'If you owe more than the trade-in is worth, the difference is negative equity. Rolling negative equity into the next loan increases the amount financed and can make the new car more expensive than the monthly payment suggests.',
+    ],
+  },
+  {
+    question: 'Should I include taxes and fees in my auto loan estimate?',
+    answer: [
+      'Include taxes and fees when you want a more realistic estimate. Sales tax, title, registration, dealer documentation fees, destination charges, and other required costs can add meaningful money to the amount due at purchase.',
+      'Paying those costs upfront keeps them out of the loan. Financing those costs may reduce what you owe at signing, but it increases the amount borrowed and can increase total interest.',
+    ],
+  },
+  {
+    question: 'What is an out-the-door price, and why does it matter?',
+    answer: [
+      'The out-the-door price is the full price to buy the car, including the vehicle price, taxes, title, registration, dealer fees, destination charges, and any add-ons, minus discounts, rebates, and trade-in credit. It is the number that matters most when comparing offers.',
+      'A loan calculator estimates payment, but it does not guarantee the dealer\'s final price. Before visiting a dealer, ask for the out-the-door price in writing and confirm the vehicle, trim, incentives, fees, and add-ons included in that number.',
+    ],
+  },
+  {
+    question: 'Should I get preapproved before visiting a dealer?',
+    answer: [
+      'Getting preapproved before visiting a dealer can help you understand your real rate range and monthly payment before negotiations begin. It also gives you a financing offer to compare against dealer or automaker financing.',
+      'Dealer financing can still be worth considering, especially when an automaker offers a promotional APR or rebate. Compare the full offer, including APR, term, fees, incentives, amount financed, and total cost - not just the monthly payment.',
+    ],
+  },
+  {
+    question: 'Why do some vehicles show APR, rebate, or lease deals?',
+    answer: [
+      'APR, rebate, and lease deal signals can help you spot vehicles with potentially stronger financing or payment offers. A promotional APR can reduce borrowing cost, and a rebate can lower the price or amount financed.',
+      'Read the deal details carefully. Offers may depend on credit approval, location, trim, term length, down payment, due-at-signing amount, and vehicle availability. Lease payments are not the same as loan payments, so compare mileage limits, upfront costs, and total lease cost before treating a lease as a direct substitute for financing.',
+    ],
+  },
+  {
+    question: 'What should I do after the calculator finds cars in my budget?',
+    answer: [
+      'Use the calculator results to narrow your search to vehicles that fit your payment target, then compare C/D ratings, reviews, trims, features, incentives, and real-world ownership costs. A car that fits your payment should still fit your needs, driving habits, insurance budget, and long-term cost expectations.',
+      'Before contacting a dealer, compare financing options, estimate your trade-in, ask for the out-the-door price in writing, and confirm the vehicle is available. Before signing, make sure the final contract matches the price, APR, term, trade-in value, fees, and add-ons you agreed to.',
+    ],
   },
 ];
 
@@ -440,7 +518,7 @@ const getRegistrationDealerFeeGuidance = (stateFeeEstimate: number) => {
     return {
       label: 'Low Fee States',
       range: '~$300-$500',
-      copy: 'Registration and dealer fees in your state typically range from $300-$500, though final dealer charges and add-ons may vary.',
+      copy: 'These are separate from sales tax and may include title, registration, documentation, plate, and dealer processing charges. In your state, they often range from $300-$500, but the final itemized dealer quote can change.',
     };
   }
 
@@ -448,14 +526,14 @@ const getRegistrationDealerFeeGuidance = (stateFeeEstimate: number) => {
     return {
       label: 'Medium Fee States',
       range: '~$600-$900',
-      copy: 'Registration and dealer fees in your state typically range from $600-$900, depending on the dealer, vehicle, and local fees.',
+      copy: 'These are separate from sales tax and may include title, registration, documentation, plate, and dealer processing charges. In your state, they often range from $600-$900, but the final itemized dealer quote can change.',
     };
   }
 
   return {
     label: 'High Fee States',
     range: '~$1,000-$1,500',
-    copy: 'Registration and dealer fees in your state are often higher and may range from $1,000-$1,500 depending on dealer charges and add-ons.',
+    copy: 'These are separate from sales tax and may include title, registration, documentation, plate, and dealer processing charges. In your state, they are often higher and may range from $1,000-$1,500, but the final itemized dealer quote can change.',
   };
 };
 
@@ -726,6 +804,9 @@ const getBodyStyleListingsLabel = (bodyStyle: string) => (
   bodyStyle === 'SUV' ? 'SUVs' : `${bodyStyle}s`
 );
 
+const getBodyStyleShoppingCtaLabel = (condition: VehicleCondition, bodyStyle: string) =>
+  `Shop ${condition === 'new' ? 'new' : 'used'} ${getBodyStyleListingsLabel(bodyStyle)}`.toUpperCase();
+
 const getLightListingConditionLabel = (listing: Listing) => {
   if (listing.isCertified) return `Certified ${listing.year}`;
   return `${listing.isNew ? 'New' : 'Used'} ${listing.year}`;
@@ -762,42 +843,67 @@ interface LightVehiclePriceFieldProps {
   onPriceChange: (value: number) => void;
 }
 
-interface LightGuidanceTooltipConfig {
+interface LightGuidanceTooltipProps {
   id: string;
   title: string;
-  copy: ReactNode;
+  copy?: ReactNode;
   note?: ReactNode;
   ariaLabel?: string;
+  compact?: boolean;
+  children?: ReactNode;
 }
 
-const renderLightGuidanceTooltip = ({ id, title, copy, note, ariaLabel }: LightGuidanceTooltipConfig) => (
-  <span className="aio-payment__light-loan-guidance-tooltip">
-    <button
-      type="button"
-      className="aio-payment__light-loan-guidance-trigger"
-      aria-label={ariaLabel ?? `${title} help`}
-      aria-describedby={id}
-    >
-      <img
-        className="aio-payment__light-loan-guidance-trigger-icon"
-        src={CAD_INFO_ICON_SRC}
-        width="24"
-        height="24"
-        alt=""
-        aria-hidden="true"
-      />
-    </button>
-    <span id={id} className="aio-payment__light-loan-guidance aio-payment__light-loan-guidance--compact" role="tooltip">
-      <span className="aio-payment__light-loan-guidance-header">
-        <Info size={16} strokeWidth={2.25} aria-hidden="true" />
-        <span>{title}</span>
+function LightGuidanceTooltip({
+  id,
+  title,
+  copy,
+  note,
+  ariaLabel,
+  compact = true,
+  children,
+}: LightGuidanceTooltipProps) {
+  const popoverClassName = [
+    'aio-payment__light-loan-guidance',
+    compact ? 'aio-payment__light-loan-guidance--compact' : '',
+  ].filter(Boolean).join(' ');
+
+  return (
+    <span className="aio-payment__light-loan-guidance-tooltip">
+      <button
+        type="button"
+        className="aio-payment__light-loan-guidance-trigger"
+        aria-label={ariaLabel ?? `${title} help`}
+        aria-describedby={id}
+      >
+        <img
+          className="aio-payment__light-loan-guidance-trigger-icon"
+          src={CAD_INFO_ICON_SRC}
+          width="24"
+          height="24"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+      <span id={id} className={popoverClassName} role="tooltip">
+        <span className="aio-payment__light-loan-guidance-header">
+          <Info size={16} strokeWidth={2.25} aria-hidden="true" />
+          <span>{title}</span>
+        </span>
+        {children ?? (
+          <>
+            <span className="aio-payment__light-loan-guidance-copy">{copy}</span>
+            {note ? (
+              <span className="aio-payment__light-loan-guidance-note">{note}</span>
+            ) : null}
+          </>
+        )}
       </span>
-      <span className="aio-payment__light-loan-guidance-copy">{copy}</span>
-      {note ? (
-        <span className="aio-payment__light-loan-guidance-note">{note}</span>
-      ) : null}
     </span>
-  </span>
+  );
+}
+
+const renderLightGuidanceTooltip = (config: LightGuidanceTooltipProps) => (
+  <LightGuidanceTooltip {...config} />
 );
 
 function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: LightVehiclePriceFieldProps) {
@@ -1184,43 +1290,27 @@ function LightLoanTermsStepPanel({
                 Interest rate (APR)
               </label>
             )}
-            <div className="aio-payment__light-loan-guidance-tooltip">
-              <button
-                type="button"
-                className="aio-payment__light-loan-guidance-trigger"
-                aria-label="APR planning ranges"
-                aria-describedby={aprGuidanceId}
-              >
-                <img
-                  className="aio-payment__light-loan-guidance-trigger-icon"
-                  src={CAD_INFO_ICON_SRC}
-                  width="24"
-                  height="24"
-                  alt=""
-                  aria-hidden="true"
-                />
-              </button>
-              <div id={aprGuidanceId} className="aio-payment__light-loan-guidance" role="tooltip">
-                <p className="aio-payment__light-loan-guidance-header">
-                  <Info size={16} strokeWidth={2.25} aria-hidden="true" />
-                  <span>APR planning ranges</span>
-                </p>
-                <dl className="aio-payment__light-loan-guidance-list">
-                  {LIGHT_APR_GUIDANCE_TIERS.map((tier) => (
-                    <div key={tier.label}>
-                      <dt>
-                        <span>{tier.label}</span>
-                        <small>{tier.score}</small>
-                      </dt>
-                      <dd>{tier.range}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="aio-payment__light-loan-guidance-note">
-                  Planning ranges only. Actual APR depends on lender, vehicle type, loan term, down payment, market conditions, and credit profile.
-                </p>
-              </div>
-            </div>
+            <LightGuidanceTooltip
+              id={aprGuidanceId}
+              title="APR planning ranges"
+              ariaLabel="APR planning ranges"
+              compact={false}
+            >
+              <span className="aio-payment__light-loan-guidance-list" role="list">
+                {LIGHT_APR_GUIDANCE_TIERS.map((tier) => (
+                  <span className="aio-payment__light-loan-guidance-list-row" role="listitem" key={tier.label}>
+                    <span className="aio-payment__light-loan-guidance-list-term">
+                      <span>{tier.label}</span>
+                      <small>{tier.score}</small>
+                    </span>
+                    <span className="aio-payment__light-loan-guidance-list-value">{tier.range}</span>
+                  </span>
+                ))}
+              </span>
+              <span className="aio-payment__light-loan-guidance-note">
+                Planning ranges only. Actual APR depends on lender, vehicle type, loan term, down payment, market conditions, and credit profile.
+              </span>
+            </LightGuidanceTooltip>
           </div>
           <span aria-live="polite">
             {formatAprPercent(activeApr)}
@@ -2150,10 +2240,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ? 'Estimated cash due'
       : 'Estimated total paid';
   const estimatedTotalTooltipCopy = monthlyInsuranceAmount > 0
-    ? 'Estimated total cost includes cash due at signing, loan payments, finance charges, and the selected monthly insurance estimate over the term. Amount financed is still what you borrow before interest.'
+    ? 'Estimated total cost includes cash due at signing, loan payments, finance charges, and the selected monthly insurance estimate over the term. It is different from out-the-door price, which is the estimated purchase price before financing.'
     : hasRemainingTradeEquity
-      ? 'Estimated cash due is what you pay after trade equity is applied. Remaining trade equity is shown separately and depends on final appraisal, payoff, and dealer paperwork.'
-      : 'Amount financed is what you borrow before interest. Estimated total paid includes cash due at signing plus loan payments and finance charges over the term.';
+      ? 'Estimated cash due is what you pay after trade equity is applied. It is different from out-the-door price, which is the estimated purchase price before financing. Remaining trade equity depends on final appraisal, payoff, and dealer paperwork.'
+      : 'Estimated total paid includes cash due at signing plus loan payments and finance charges over the term. It is different from out-the-door price, which is the estimated purchase price before financing.';
+  const estimatedOutTheDoorPrice = workingPrice + taxesAndFees + optionalFinancedAddOns;
+  const estimatedOutTheDoorTooltipCopy = optionalFinancedAddOns > 0
+    ? `${currency(estimatedOutTheDoorPrice)} estimated out-the-door price is ${currency(workingPrice)} vehicle price plus ${currency(taxesAndFees)} estimated taxes and fees plus ${currency(optionalFinancedAddOns)} selected warranty. Down payment, trade, incentives, and interest change what you borrow or pay over time.`
+    : `${currency(estimatedOutTheDoorPrice)} estimated out-the-door price is ${currency(workingPrice)} vehicle price plus ${currency(taxesAndFees)} estimated taxes and fees. Down payment, trade, incentives, and interest change what you borrow or pay over time.`;
   const amountFinancedFormulaParts = [
     { value: workingPrice, label: workingPriceFormulaLabel },
     includeTaxesAndFeesInLoan && taxesAndFees > 0 ? { operation: 'add', value: taxesAndFees, label: 'taxes & fees' } : null,
@@ -2437,7 +2531,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     lightELotListings.length > 0;
   const lightELotAllResultsHref = lightHasSpecificVehicleSelection
     ? getMarketplaceUrl('used', selectedVehicle, selectedYear)
-    : getMarketplacePriceRangeUrl('used', lightVehiclePriceRangeMax, lightVehicleResultBodyStyle);
+    : getMarketplacePriceRangeUrl(condition, lightVehiclePriceRangeMax, lightVehicleResultBodyStyle);
   const lightELotSearchLabel = lightHasSpecificVehicleSelection
     ? `used ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`
     : lightVehicleResultBodyStyle
@@ -2446,34 +2540,55 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const shouldScrollToBudgetVehicles =
     showLightAffordableDealCards &&
     (!lightHasSpecificVehicleSelection || (startMode === 'monthly' && budgetFitStatus === 'over'));
+  const lightGenericBudgetCtaLabel = 'SEE CARS IN YOUR BUDGET';
   const lightShopHref = shouldScrollToBudgetVehicles
     ? '#aio-payment-light-affordable-heading'
     : getMarketplaceUrl(condition, selectedVehicle, selectedYear);
   const lightShopLabel = shouldScrollToBudgetVehicles
-    ? 'See cars in your budget'
-    : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedVehicle.model}`;
+    ? lightGenericBudgetCtaLabel
+    : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedVehicle.model}`.toUpperCase();
   const showLightReviewVehicleShopCta =
     isLightStepsVariant &&
     lightWizardStep === 5 &&
     lightHasSpecificVehicleSelection &&
     Boolean(selectedVehicle.make?.trim() && selectedVehicle.model?.trim());
   const lightReviewVehicleShopHref = getMarketplaceUrl(condition, selectedVehicle, selectedYear);
-  const lightReviewVehicleShopLabel = `Shop ${selectedVehicle.make} ${selectedVehicle.model}`;
+  const lightReviewVehicleShopLabel = `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedVehicle.model}`.toUpperCase();
   const canScrollToLightVehicleResults = isLightStepsVariant && lightWizardStep === 5 && showLightELotSection;
+  const hasLightBodyStyleBrowseSelection = Boolean(
+    isLightStepsVariant &&
+    !lightHasSpecificVehicleSelection &&
+    lightVehicleStepMode === 'browsing' &&
+    lightVehicleResultBodyStyle,
+  );
+  const lightBodyStyleShopLabel = hasLightBodyStyleBrowseSelection && lightVehicleResultBodyStyle
+    ? getBodyStyleShoppingCtaLabel(condition, lightVehicleResultBodyStyle)
+    : undefined;
+  const lightBodyStyleShopHref = hasLightBodyStyleBrowseSelection && lightVehicleResultBodyStyle
+    ? canScrollToLightVehicleResults
+      ? '#aio-payment-light-affordable-heading'
+      : getMarketplacePriceRangeUrl(condition, lightVehiclePriceRangeMax, lightVehicleResultBodyStyle)
+    : undefined;
   const useLightSidebarBudgetCta = canScrollToLightVehicleResults && !lightHasSpecificVehicleSelection;
   const showLightSidebarVehicleCta = useLightSidebarBudgetCta || showLightReviewVehicleShopCta;
   const lightSidebarVehicleCtaHref = useLightSidebarBudgetCta
-    ? '#aio-payment-light-affordable-heading'
+    ? lightBodyStyleShopHref ?? '#aio-payment-light-affordable-heading'
     : lightReviewVehicleShopHref;
   const lightSidebarVehicleCtaLabel = useLightSidebarBudgetCta
-    ? 'See cars in your budget'
+    ? lightBodyStyleShopLabel ?? lightGenericBudgetCtaLabel
     : lightReviewVehicleShopLabel;
   const lightSidebarVehicleCtaTitle = useLightSidebarBudgetCta
-    ? 'Shop from your budget'
+    ? lightBodyStyleShopLabel
+      ? `Shop ${getBodyStyleListingsLabel(lightVehicleResultBodyStyle ?? 'vehicles')} in your budget`
+      : 'Shop from your budget'
     : 'Find this car faster';
   const lightSidebarVehicleCtaCopy = useLightSidebarBudgetCta
-    ? 'Jump into C/D Marketplace to compare real listings that fit the estimate you just built.'
+    ? lightBodyStyleShopLabel && lightVehicleResultBodyStyle
+      ? `Jump into C/D Marketplace to compare ${condition} ${getBodyStyleListingsLabel(lightVehicleResultBodyStyle).toLowerCase()} that fit the estimate you just built.`
+      : 'Jump into C/D Marketplace to compare real listings that fit the estimate you just built.'
     : `Use C/D Marketplace to compare matching ${selectedVehicle.make} ${selectedVehicle.model} listings, trims, and price context without starting over.`;
+  const lightReviewPrimaryCtaLabel = lightBodyStyleShopLabel
+    ?? (showLightReviewVehicleShopCta ? lightReviewVehicleShopLabel : showLightAffordableDealCards ? lightGenericBudgetCtaLabel : lightShopLabel);
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
   const leaseAdjustedCapCost = Math.max(0, leaseMsrp + leaseFees - leaseDueAtSigning);
   const leaseDepreciationCharge = Math.max(0, leaseAdjustedCapCost - leaseResidualValue) / Math.max(1, leaseTerm);
@@ -4221,7 +4336,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           pattern="[0-9,]*"
                           value={formatMoneyInputValue(estimatedFeesOverride, defaultEstimatedRegistrationDealerFees)}
                           iconLeft={MONEY_INPUT_PREFIX}
-                          helperText="Registration and dealer fees only. Sales tax is estimated below."
+                          helperText="Separate from sales tax. Covers title, registration, documentation, plate, and dealer processing estimates."
                           onFocus={selectCalculatorInputValueOnFocus}
                           onChange={(event) => setEstimatedFeesOverride(normalizeMoneyInputValue(event.target.value))}
                         />
@@ -4247,7 +4362,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           {renderLightGuidanceTooltip({
                             id: lightRegistrationFeesGuidanceId,
                             title: 'Registration & dealer fees',
-                            copy: 'Planning estimate for title, registration, doc, and dealer fees. Final fees vary by dealer and location.',
+                            copy: 'Planning estimate for title, registration, documentation, plate, and dealer processing charges. These are separate from sales tax. Ask the dealer for an itemized out-the-door quote because final fees vary by dealer and location.',
                             ariaLabel: 'Registration and dealer fees guidance',
                           })}
                         </span>
@@ -4487,6 +4602,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <p className="aio-payment__light-review-drivers-popover-title">What affects this estimate</p>
                             <ul className="aio-payment__light-review-drivers-list">
                               <li>
+                                {estimatedOutTheDoorTooltipCopy}
+                              </li>
+                              <li>
                                 <strong>{currency(totalLoanAmount)}</strong> is the amount financed after vehicle price, taxes and fees, optional warranty, trade, incentives, and down payment.
                               </li>
                               <li>
@@ -4674,6 +4792,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                 <span className="aio-payment__light-review-drivers-copy">
                                   {estimatedTotalTooltipCopy}
                                 </span>
+                                <span className="aio-payment__light-review-drivers-copy">
+                                  {estimatedOutTheDoorTooltipCopy}
+                                </span>
                               </span>
                             </span>
                           </span>
@@ -4835,7 +4956,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         className="aio-payment__light-wizard-primary aio-payment__light-wizard-primary--with-trailing-icon"
                         onClick={() => goToLightWizardStep(lightWizardStep + 1)}
                       >
-                        Continue
+                        {lightWizardStep === 4 ? 'See final estimate' : 'Continue'}
                         <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
                       </button>
                     ) : (
@@ -4843,15 +4964,32 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         type="button"
                         className="aio-payment__light-wizard-primary aio-payment__light-wizard-primary--review"
                         onClick={() => {
+                          if (lightBodyStyleShopLabel) {
+                            if (lightBodyStyleShopHref?.startsWith('#')) {
+                              lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
+                              return;
+                            }
+
+                            if (lightBodyStyleShopHref) {
+                              window.location.assign(lightBodyStyleShopHref);
+                              return;
+                            }
+                          }
+
+                          if (showLightReviewVehicleShopCta) {
+                            window.location.assign(lightReviewVehicleShopHref);
+                            return;
+                          }
+
                           if (showLightAffordableDealCards) {
                             lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
                           } else {
                             window.location.assign(lightShopHref);
                           }
                         }}
-                        disabled={canUseCatalogPrice && lightAffordableDealCards.length === 0}
+                        disabled={!lightBodyStyleShopLabel && canUseCatalogPrice && lightAffordableDealCards.length === 0}
                       >
-                        {showLightAffordableDealCards ? 'See cars in your budget' : lightShopLabel}
+                        {lightReviewPrimaryCtaLabel}
                       </button>
                     )}
                   </div>
@@ -4979,7 +5117,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             className="aio-payment__light-result-vehicle-shop"
                             href={lightSidebarVehicleCtaHref}
                             aria-label={useLightSidebarBudgetCta
-                              ? 'See cars in your budget'
+                              ? lightSidebarVehicleCtaLabel
                               : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
                             onClick={(event) => {
                               if (!useLightSidebarBudgetCta) return;
@@ -5093,7 +5231,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   className="aio-payment__light-review-sticky-cta-button"
                   href={lightSidebarVehicleCtaHref}
                   aria-label={useLightSidebarBudgetCta
-                    ? 'See cars in your budget'
+                    ? lightSidebarVehicleCtaLabel
                     : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
                   onClick={(event) => {
                     if (!useLightSidebarBudgetCta) return;
@@ -5312,7 +5450,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </button>
                   {expandedFaq === index && (
                     <div className="aio-payment__faq-answer">
-                      <p>{item.answer}</p>
+                      {item.answer.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
                     </div>
                   )}
                 </div>
