@@ -3402,6 +3402,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     lightWizardPathPrevRef.current = location.pathname;
     if (!isLightStepsVariant || (previousStep === lightWizardStep && previousPath === location.pathname)) return;
 
+    if (previousStep !== lightWizardStep) {
+      const nextMotion = lightWizardStep > previousStep ? 'forward' : 'backward';
+      setLightWizardStepMotion((currentMotion) => currentMotion === nextMotion ? currentMotion : nextMotion);
+    }
+
     const shell = lightWizardShellRef.current;
     const panel = lightWizardPanelRef.current;
     const heading = panel?.querySelector<HTMLElement>('#aio-payment-light-heading');
@@ -3414,6 +3419,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
     return () => window.cancelAnimationFrame(scrollFrame);
   }, [isLightStepsVariant, lightWizardStep, location.pathname]);
+
+  useEffect(() => {
+    if (!isLightStepsVariant || lightWizardStepMotion === 'none') return undefined;
+
+    const motionResetTimeout = window.setTimeout(() => {
+      setLightWizardStepMotion('none');
+    }, 520);
+
+    return () => window.clearTimeout(motionResetTimeout);
+  }, [isLightStepsVariant, lightWizardStep, lightWizardStepMotion]);
 
   if (isLightVariant) {
     const lightWizardStepMeta = LIGHT_WIZARD_STEP_META[lightWizardStep - 1];
@@ -3463,7 +3478,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           <div className="container">
             <div className="aio-payment__light-shell" ref={isLightStepsVariant ? lightWizardShellRef : undefined}>
               {isLightStepsVariant ? (
-                <div className="aio-payment__light-wizard-strip" data-step-motion={lightWizardStepMotionAttribute}>
+                <div
+                  key={`light-wizard-strip-${lightWizardStep}`}
+                  className="aio-payment__light-wizard-strip"
+                  data-step-motion={lightWizardStepMotionAttribute}
+                >
                   <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
                     <div
                       className="aio-payment__light-wizard-steps-shell"
