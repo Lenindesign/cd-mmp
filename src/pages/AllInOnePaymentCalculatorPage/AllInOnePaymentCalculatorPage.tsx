@@ -571,6 +571,20 @@ const getPreferredScrollBehavior = (): ScrollBehavior => {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 };
 
+const scrollLightVehicleSearchIntoMobileView = (input: HTMLInputElement) => {
+  if (typeof window === 'undefined' || !window.matchMedia('(max-width: 768px)').matches) return;
+
+  const searchField = input.closest('.aio-payment__light-vehicle-search') as HTMLElement | null;
+  const scrollTarget = searchField ?? input;
+  const alignSearchField = () => {
+    if (document.activeElement !== input) return;
+    scrollTarget.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
+  };
+
+  window.requestAnimationFrame(alignSearchField);
+  window.setTimeout(alignSearchField, 280);
+};
+
 const buildStateRules = (): StateTaxRule[] =>
   STATE_VEHICLE_TAXES.map((state) => ({
     ...state,
@@ -3417,7 +3431,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         : 'Fine-tune your car payment estimate.',
     );
     return (
-      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
+      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && lightWizardStep === 5 && showLightSidebarVehicleCta ? ' aio-payment--light-review-cta' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
         <section className="aio-payment__light-hero">
           <div className="container">
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
@@ -3435,6 +3449,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     ? 'The budget-first car payment calculator. Answer one question at a time and watch your numbers update live.'
                     : 'Adjust budget, loan terms, vehicle price, trade-in, deals, and payment details together on one page.'}
                 </p>
+                {isLightStepsVariant && (
+                  <p className="aio-payment__light-privacy-note">
+                    No phone number required. Emailing your estimate is optional.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -3726,7 +3745,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             aria-expanded={isLightVehicleSearchMenuOpen}
                             aria-controls={lightVehicleSearchListId}
                             aria-activedescendant={lightVehicleActiveSuggestionId}
-                            onFocus={() => setShowLightVehicleSearchSuggestions(true)}
+                            onFocus={(event) => {
+                              scrollLightVehicleSearchIntoMobileView(event.currentTarget);
+                              setShowLightVehicleSearchSuggestions(true);
+                            }}
                             onChange={(event) => handleLightVehicleSearchChange(event.target.value)}
                             onKeyDown={handleLightVehicleSearchKeyDown}
                             onBlur={(event) => {
@@ -4634,7 +4656,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   {SHOW_LIGHT_ESTIMATE_EMAIL && (
                     <div className="aio-payment__light-estimate-email">
                       <p className="aio-payment__light-estimate-email__lede">
-                        Email this estimate so you can keep the numbers handy when you talk with local dealers.
+                        Optional: email this estimate so you can keep the numbers handy when you talk with local dealers.
                       </p>
                       <form
                         className="aio-payment__light-estimate-email__row"
@@ -4680,7 +4702,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </p>
                       ) : (
                         <p className="aio-payment__light-estimate-email__note">
-                          We will send the monthly payment, cost breakdown, vehicle details, and shopping links.
+                          No phone number required. Email is optional and is used for the estimate you request.
                         </p>
                       )}
                     </div>
@@ -4998,10 +5020,28 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 	                      Generate AI deal analysis
 	                    </button>
 	                  </>
-	                )}
-	                </div>
+                  )}
+                </div>
               </aside>
             </div>
+            {isLightStepsVariant && lightWizardStep === 5 && showLightSidebarVehicleCta && (
+              <div className="aio-payment__light-review-sticky-cta" aria-label="Marketplace action">
+                <a
+                  className="aio-payment__light-review-sticky-cta-button"
+                  href={lightSidebarVehicleCtaHref}
+                  aria-label={useLightSidebarBudgetCta
+                    ? 'See cars in your budget'
+                    : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
+                  onClick={(event) => {
+                    if (!useLightSidebarBudgetCta) return;
+                    event.preventDefault();
+                    lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
+                  }}
+                >
+                  {lightSidebarVehicleCtaLabel}
+                </a>
+              </div>
+            )}
             </div>
           </div>
         </section>

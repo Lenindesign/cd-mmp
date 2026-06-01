@@ -428,6 +428,10 @@
   color: var(--color-white);
 }
 
+.aio-payment--light-steps .aio-payment__light-hero {
+  padding: var(--spacing-7) 0;
+}
+
 .aio-payment__light-hero::after {
   content: '';
   position: absolute;
@@ -491,6 +495,21 @@
 
 .aio-payment--light-steps .aio-payment__light-hero p {
   max-width: min(100%, 74rem);
+}
+
+.aio-payment__light-hero .aio-payment__light-privacy-note {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-2) var(--spacing-3);
+  color: color-mix(in srgb, var(--color-white) 90%, transparent);
+  background: color-mix(in srgb, var(--color-white) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-white) 18%, transparent);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.35;
 }
 
 .aio-payment--light-steps {
@@ -944,6 +963,43 @@
 }
 
 .aio-payment__light-result-vehicle-shop:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.aio-payment__light-review-sticky-cta {
+  display: none;
+}
+
+.aio-payment__light-review-sticky-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--spacing-12);
+  width: 100%;
+  padding: 0 var(--spacing-4);
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: var(--line-height-snug);
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.aio-payment__light-review-sticky-cta-button:hover {
+  color: var(--color-white);
+  background: var(--color-blue-cobalt-dark);
+  border-color: var(--color-blue-cobalt-dark);
+  text-decoration: none;
+}
+
+.aio-payment__light-review-sticky-cta-button:focus-visible {
   outline: 2px solid var(--color-blue-cobalt);
   outline-offset: 2px;
 }
@@ -7546,6 +7602,11 @@ label.aio-payment__light-loan-step__label {
     padding-bottom: 0;
   }
 
+  .aio-payment.aio-payment--light-steps.aio-payment--light-review-step.aio-payment--light-review-cta,
+  .aio-payment.aio-payment--light-steps.aio-payment--light-review-step.aio-payment--light-review-cta.aio-payment--light-mobile-totals-open {
+    padding-bottom: calc(var(--spacing-20) + env(safe-area-inset-bottom));
+  }
+
   .aio-payment--light-steps .aio-payment__mobile-summary {
     display: none;
   }
@@ -7621,6 +7682,27 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-sticky-summary {
     display: none;
+  }
+
+  .aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-review-sticky-cta {
+    position: fixed;
+    right: var(--spacing-4);
+    bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom));
+    left: var(--spacing-4);
+    z-index: 44;
+    display: grid;
+    padding: var(--spacing-2);
+    background: color-mix(in srgb, var(--color-white) 96%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 22%, var(--color-gray-200) 78%);
+    border-radius: var(--spacing-2);
+    box-shadow: 0 10px 32px color-mix(in srgb, var(--color-black) 18%, transparent);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .aio-payment--light-steps.aio-payment--light-review-step:has(input:focus, select:focus, textarea:focus) .aio-payment__light-review-sticky-cta {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(calc(100% + var(--spacing-4)));
   }
 
   .aio-payment--light-steps .aio-payment__light-result-hero {
