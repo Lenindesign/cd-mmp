@@ -13,6 +13,13 @@
 }
 
 /* Label */
+.text-field__label-row {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
 .text-field__label {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
@@ -192,4 +199,3 @@
     height: var(--spacing-12);
   }
 }
-

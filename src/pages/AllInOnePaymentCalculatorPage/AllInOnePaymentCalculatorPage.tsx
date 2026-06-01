@@ -762,6 +762,44 @@ interface LightVehiclePriceFieldProps {
   onPriceChange: (value: number) => void;
 }
 
+interface LightGuidanceTooltipConfig {
+  id: string;
+  title: string;
+  copy: ReactNode;
+  note?: ReactNode;
+  ariaLabel?: string;
+}
+
+const renderLightGuidanceTooltip = ({ id, title, copy, note, ariaLabel }: LightGuidanceTooltipConfig) => (
+  <span className="aio-payment__light-loan-guidance-tooltip">
+    <button
+      type="button"
+      className="aio-payment__light-loan-guidance-trigger"
+      aria-label={ariaLabel ?? `${title} help`}
+      aria-describedby={id}
+    >
+      <img
+        className="aio-payment__light-loan-guidance-trigger-icon"
+        src={CAD_INFO_ICON_SRC}
+        width="24"
+        height="24"
+        alt=""
+        aria-hidden="true"
+      />
+    </button>
+    <span id={id} className="aio-payment__light-loan-guidance aio-payment__light-loan-guidance--compact" role="tooltip">
+      <span className="aio-payment__light-loan-guidance-header">
+        <Info size={16} strokeWidth={2.25} aria-hidden="true" />
+        <span>{title}</span>
+      </span>
+      <span className="aio-payment__light-loan-guidance-copy">{copy}</span>
+      {note ? (
+        <span className="aio-payment__light-loan-guidance-note">{note}</span>
+      ) : null}
+    </span>
+  </span>
+);
+
 function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: LightVehiclePriceFieldProps) {
   const inputId = useId();
   const helperId = `${inputId}-helper`;
@@ -775,35 +813,13 @@ function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: Ligh
           <label htmlFor={inputId}>
             Vehicle price target
           </label>
-          <div className="aio-payment__light-loan-guidance-tooltip">
-            <button
-              type="button"
-              className="aio-payment__light-loan-guidance-trigger"
-              aria-label="Vehicle price estimate guidance"
-              aria-describedby={priceGuidanceId}
-            >
-              <img
-                className="aio-payment__light-loan-guidance-trigger-icon"
-                src={CAD_INFO_ICON_SRC}
-                width="24"
-                height="24"
-                alt=""
-                aria-hidden="true"
-              />
-            </button>
-            <div id={priceGuidanceId} className="aio-payment__light-loan-guidance" role="tooltip">
-              <p className="aio-payment__light-loan-guidance-header">
-                <Info size={16} strokeWidth={2.25} aria-hidden="true" />
-                <span>Vehicle price guidance</span>
-              </p>
-              <p className="aio-payment__light-loan-guidance-copy">
-                <strong>No credit check required.</strong> Use the estimated purchase price before taxes and fees. The estimate updates as you adjust APR, term, trade, taxes, and fees.
-              </p>
-              <p className="aio-payment__light-loan-guidance-note">
-                Estimated payment: {currency(estimatedMonthly)}/mo before dealer-specific changes.
-              </p>
-            </div>
-          </div>
+          {renderLightGuidanceTooltip({
+            id: priceGuidanceId,
+            title: 'Vehicle price target',
+            copy: 'Estimated purchase price before taxes and fees. It helps calculate payment, taxes, fees, amount financed, and total cost.',
+            note: `Estimated payment: ${currency(estimatedMonthly)}/mo before dealer-specific changes.`,
+            ariaLabel: 'Vehicle price target guidance',
+          })}
         </div>
       </div>
       <input
@@ -852,35 +868,13 @@ function LightMonthlyBudgetField({ affordableMsrp, targetMonthlyPayment, onBudge
           <label htmlFor={inputId}>
             Monthly budget
           </label>
-          <div className="aio-payment__light-loan-guidance-tooltip">
-            <button
-              type="button"
-              className="aio-payment__light-loan-guidance-trigger"
-              aria-label="Monthly budget estimate guidance"
-              aria-describedby={budgetGuidanceId}
-            >
-              <img
-                className="aio-payment__light-loan-guidance-trigger-icon"
-                src={CAD_INFO_ICON_SRC}
-                width="24"
-                height="24"
-                alt=""
-                aria-hidden="true"
-              />
-            </button>
-            <div id={budgetGuidanceId} className="aio-payment__light-loan-guidance" role="tooltip">
-              <p className="aio-payment__light-loan-guidance-header">
-                <Info size={16} strokeWidth={2.25} aria-hidden="true" />
-                <span>Monthly budget guidance</span>
-              </p>
-              <p className="aio-payment__light-loan-guidance-copy">
-                <strong>No credit check required.</strong> Estimates include financing assumptions and update as you adjust price, APR, term, trade, taxes, and fees.
-              </p>
-              <p className="aio-payment__light-loan-guidance-note">
-                Your {currency(targetMonthlyPayment)}/mo target currently supports about {currency(affordableMsrp)} before tax and fees.
-              </p>
-            </div>
-          </div>
+          {renderLightGuidanceTooltip({
+            id: budgetGuidanceId,
+            title: 'Monthly budget',
+            copy: 'Target monthly payment you want to stay near. It estimates the vehicle price your budget may support before taxes and fees.',
+            note: `Your ${currency(targetMonthlyPayment)}/mo target currently supports about ${currency(affordableMsrp)} before tax and fees.`,
+            ariaLabel: 'Monthly budget guidance',
+          })}
         </div>
       </div>
       <input
@@ -1075,8 +1069,10 @@ function LightLoanTermsStepPanel({
 }: LightLoanTermsStepPanelProps) {
   const downId = useId();
   const aprId = useId();
+  const downPaymentGuidanceId = useId();
   const aprGuidanceId = useId();
   const aprQualityId = useId();
+  const loanTermGuidanceId = useId();
   const downClamped = clampLightDownPayment(downPayment);
   const downPaymentDisplayValue = numberWithCommas(downClamped);
   const [downPaymentInputDraft, setDownPaymentInputDraft] = useState<string | null>(null);
@@ -1129,9 +1125,17 @@ function LightLoanTermsStepPanel({
     <div className="payment-calc__section payment-calc__section--pad aio-payment__light-loan-step">
       <div className="payment-calc__field payment-calc__field--full">
         <div className="payment-calc__row-label">
-          <label htmlFor={downId}>
-            Down payment
-          </label>
+          <div className="aio-payment__light-label-with-help">
+            <label htmlFor={downId}>
+              Down payment
+            </label>
+            {renderLightGuidanceTooltip({
+              id: downPaymentGuidanceId,
+              title: 'Down payment',
+              copy: 'Cash paid up front. It lowers the amount financed before interest.',
+              ariaLabel: 'Down payment guidance',
+            })}
+          </div>
           <span aria-live="polite">
             {currency(downClamped)}
           </span>
@@ -1286,9 +1290,15 @@ function LightLoanTermsStepPanel({
       </div>
 
       <div className="payment-calc__field payment-calc__field--full">
-        <p className="payment-calc__lab" id={`${downId}-terms`}>
-          Loan term
-        </p>
+        <div className="payment-calc__lab aio-payment__light-label-with-help" id={`${downId}-terms`}>
+          <span>Loan term</span>
+          {renderLightGuidanceTooltip({
+            id: loanTermGuidanceId,
+            title: 'Loan term',
+            copy: 'Number of months used to repay the loan. Longer terms can lower monthly payments but may increase total interest.',
+            ariaLabel: 'Loan term guidance',
+          })}
+        </div>
         <div
           className="payment-calc__terms"
           role="group"
@@ -1571,6 +1581,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightFinanceChargeGuidanceId = useId();
   const lightTotalPaidGuidanceId = useId();
   const lightTradeSalesTaxPercentFieldId = useId();
+  const lightTradeValueGuidanceId = useId();
+  const lightAmountOwedGuidanceId = useId();
+  const lightSalesTaxGuidanceId = useId();
+  const lightRegistrationFeesGuidanceId = useId();
   const lightEstimateTotalsId = useId();
   const lightSidebarTipBodyId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
@@ -4097,6 +4111,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <div className="aio-payment__light-field-with-action aio-payment__light-trade-step__field-with-action">
                           <TextField
                             label="Trade-in value"
+                            labelHelp={renderLightGuidanceTooltip({
+                              id: lightTradeValueGuidanceId,
+                              title: 'Trade-in value',
+                              copy: 'Estimated value of the vehicle you trade in. It may lower the amount financed and, in some states, the taxable amount.',
+                              ariaLabel: 'Trade-in value guidance',
+                            })}
                             type="text"
                             inputMode="numeric"
                             pattern="[0-9,]*"
@@ -4111,6 +4131,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </div>
                         <TextField
                           label="Amount owed on trade"
+                          labelHelp={renderLightGuidanceTooltip({
+                            id: lightAmountOwedGuidanceId,
+                            title: 'Amount owed on trade',
+                            copy: 'Payoff still due on your trade-in. It reduces trade equity and may add to the loan if you owe more than the trade is worth.',
+                            ariaLabel: 'Amount owed on trade guidance',
+                          })}
                           type="text"
                           inputMode="numeric"
                           pattern="[0-9,]*"
@@ -4161,9 +4187,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           className="text-field text-field--default aio-payment__light-trade-tax-field"
                           style={{ '--aio-light-trade-tax-value-width': `${lightTradeSalesTaxPercentDisplayValue.length}ch` } as CSSProperties}
                         >
-                          <label htmlFor={lightTradeSalesTaxPercentFieldId} className="text-field__label">
-                            Sales tax (%)
-                          </label>
+                          <div className="text-field__label-row">
+                            <label htmlFor={lightTradeSalesTaxPercentFieldId} className="text-field__label">
+                              Sales tax (%)
+                            </label>
+                          </div>
                           <div className="text-field__input-wrapper">
                             <input
                               id={lightTradeSalesTaxPercentFieldId}
@@ -4202,11 +4230,27 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
                     <div className="aio-payment__light-trade-step__fees-breakdown" aria-label="Estimated taxes and fees">
                       <div>
-                        <span>Estimated sales tax</span>
+                        <span className="aio-payment__light-fees-breakdown-label">
+                          <span>Estimated sales tax</span>
+                          {renderLightGuidanceTooltip({
+                            id: lightSalesTaxGuidanceId,
+                            title: 'Estimated sales tax',
+                            copy: 'Estimated from taxable amount and state rules. Final tax can change by dealer, county, or state details.',
+                            ariaLabel: 'Estimated sales tax guidance',
+                          })}
+                        </span>
                         <strong>{currency(salesTax)}</strong>
                       </div>
                       <div>
-                        <span>Registration &amp; dealer fees</span>
+                        <span className="aio-payment__light-fees-breakdown-label">
+                          <span>Registration &amp; dealer fees</span>
+                          {renderLightGuidanceTooltip({
+                            id: lightRegistrationFeesGuidanceId,
+                            title: 'Registration & dealer fees',
+                            copy: 'Planning estimate for title, registration, doc, and dealer fees. Final fees vary by dealer and location.',
+                            ariaLabel: 'Registration and dealer fees guidance',
+                          })}
+                        </span>
                         <strong>{currency(fees)}</strong>
                       </div>
                       <div className="aio-payment__light-trade-step__fees-breakdown-total">

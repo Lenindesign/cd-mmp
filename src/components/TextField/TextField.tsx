@@ -4,6 +4,8 @@ import './TextField.css';
 export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /** Field label */
   label?: React.ReactNode;
+  /** Supplemental control rendered beside the label */
+  labelHelp?: React.ReactNode;
   /** Helper text below the input */
   helperText?: string;
   /** Error message - shows error state when provided */
@@ -37,6 +39,7 @@ export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInput
  */
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({
   label,
+  labelHelp,
   helperText,
   error,
   size = 'default',
@@ -54,11 +57,16 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({
 
   return (
     <div className={`text-field text-field--${size} ${fullWidth ? 'text-field--full-width' : ''} ${hasError ? 'text-field--error' : ''} ${wrapperClassName}`}>
-      {label && (
-        <label htmlFor={inputId} className="text-field__label">
-          {label}
-          {props.required && <span className="text-field__required">*</span>}
-        </label>
+      {(label || labelHelp) && (
+        <div className="text-field__label-row">
+          {label && (
+            <label htmlFor={inputId} className="text-field__label">
+              {label}
+              {props.required && <span className="text-field__required">*</span>}
+            </label>
+          )}
+          {labelHelp}
+        </div>
       )}
       <div className="text-field__input-wrapper">
         {iconLeft && <span className="text-field__icon text-field__icon--left">{iconLeft}</span>}
