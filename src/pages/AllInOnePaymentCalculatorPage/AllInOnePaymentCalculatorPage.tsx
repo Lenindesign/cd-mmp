@@ -2232,21 +2232,29 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const showTradeCreditAppliedBreakdown = tradeEquityApplied > 0 && hasRemainingTradeEquity;
   const isLoanCoveredByTradeEquity = totalLoanAmount <= 0 && tradeEquityApplied > 0;
   const showNoLoanPaymentState = isLoanCoveredByTradeEquity && monthlyInsuranceAmount <= 0;
-  const estimatedTotalLabel = monthlyInsuranceAmount > 0
-    ? 'Estimated Total Cost'
-    : hasRemainingTradeEquity
-      ? 'Estimated Cash Due'
-      : 'Estimated Total Paid';
-  const estimatedTotalTooltipTitle = monthlyInsuranceAmount > 0
-    ? 'Estimated total cost'
-    : hasRemainingTradeEquity
-      ? 'Estimated cash due'
-      : 'Estimated total paid';
-  const estimatedTotalTooltipCopy = monthlyInsuranceAmount > 0
-    ? 'Estimated total cost includes cash due at signing, loan payments, finance charges, and the selected monthly insurance estimate over the term. It is different from out-the-door price, which is the estimated purchase price before financing.'
-    : hasRemainingTradeEquity
-      ? 'Estimated cash due is what you pay after trade equity is applied. It is different from out-the-door price, which is the estimated purchase price before financing. Remaining trade equity depends on final appraisal, payoff, and dealer paperwork.'
-      : 'Estimated total paid includes cash due at signing plus loan payments and finance charges over the term. It is different from out-the-door price, which is the estimated purchase price before financing.';
+  const showTotalIncludingTradeCredit = tradeEquityApplied > 0;
+  const cashLoanPaymentsLabel = monthlyInsuranceAmount > 0 ? 'Cash + Loan + Insurance' : 'Cash + Loan Payments';
+  const estimatedTotalLabel = showTotalIncludingTradeCredit
+    ? 'Total Including Trade Credit'
+    : monthlyInsuranceAmount > 0
+      ? 'Estimated Total Cost'
+      : hasRemainingTradeEquity
+        ? 'Estimated Cash Due'
+        : 'Estimated Total Paid';
+  const estimatedTotalTooltipTitle = showTotalIncludingTradeCredit
+    ? 'Total including trade credit'
+    : monthlyInsuranceAmount > 0
+      ? 'Estimated total cost'
+      : hasRemainingTradeEquity
+        ? 'Estimated cash due'
+        : 'Estimated total paid';
+  const estimatedTotalTooltipCopy = showTotalIncludingTradeCredit
+    ? `Total including trade credit adds ${currency(tradeEquityApplied)} in applied trade credit to ${cashLoanPaymentsLabel.toLowerCase()}. Use it to compare the full transaction value. Cash + loan payments alone can be lower than the vehicle price because trade equity is applied as credit.`
+    : monthlyInsuranceAmount > 0
+      ? 'Estimated total cost includes cash due at signing, loan payments, finance charges, and the selected monthly insurance estimate over the term. It is different from out-the-door price, which is the estimated purchase price before financing.'
+      : hasRemainingTradeEquity
+        ? 'Estimated cash due is what you pay after trade equity is applied. It is different from out-the-door price, which is the estimated purchase price before financing. Remaining trade equity depends on final appraisal, payoff, and dealer paperwork.'
+        : 'Estimated total paid includes cash due at signing plus loan payments and finance charges over the term. It is different from out-the-door price, which is the estimated purchase price before financing.';
   const estimatedOutTheDoorPrice = workingPrice + taxesAndFees + optionalFinancedAddOns;
   const estimatedOutTheDoorTooltipCopy = optionalFinancedAddOns > 0
     ? `${currency(estimatedOutTheDoorPrice)} estimated out-the-door price is ${currency(workingPrice)} vehicle price plus ${currency(taxesAndFees)} estimated taxes and fees plus ${currency(optionalFinancedAddOns)} selected warranty. Down payment, trade, incentives, and interest change what you borrow or pay over time.`
@@ -2265,18 +2273,23 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const cashDueAtSigning = purchasePaymentSummary.cashDueAtSigning;
   const totalPaidFromPocket = cashDueAtSigning + totalLoanPayments;
   const totalCost = totalPaidFromPocket + totalInsuranceCost;
+  const totalIncludingTradeCredit = totalCost + tradeEquityApplied;
+  const estimatedTotalValue = showTotalIncludingTradeCredit ? totalIncludingTradeCredit : totalCost;
   const downPaymentBreakdownLabel = downPaymentApplied < downPayment ? 'Down Payment Applied' : 'Down Payment';
   const totalCostCashLabel = purchasePaymentSummary.upfrontTaxesAndFeesDue > 0
     ? 'cash due at signing'
     : downPaymentApplied > 0
       ? 'cash paid upfront'
       : 'cash due at signing';
-  const showTotalCostFormula = totalLoanPayments > 0 || cashDueAtSigning > 0 || totalInsuranceCost > 0;
+  const showTotalCostFormula = totalLoanPayments > 0 || cashDueAtSigning > 0 || totalInsuranceCost > 0 || showTotalIncludingTradeCredit;
+  const hasCashLoanFormulaBase = totalLoanPayments > 0 || cashDueAtSigning > 0 || totalInsuranceCost > 0;
   const totalCostFormulaParts = [
     totalLoanPayments > 0 ? { value: totalLoanPayments, label: `loan payments over ${loanTerm} months` } : null,
     cashDueAtSigning > 0 ? { operation: totalLoanPayments > 0 ? 'add' : undefined, value: cashDueAtSigning, label: totalCostCashLabel } : null,
     totalInsuranceCost > 0 ? { operation: totalLoanPayments > 0 || cashDueAtSigning > 0 ? 'add' : undefined, value: totalInsuranceCost, label: `insurance over ${loanTerm} months` } : null,
-    { operation: 'total', value: totalCost, label: estimatedTotalLabel.toLowerCase() },
+    showTotalIncludingTradeCredit ? { operation: hasCashLoanFormulaBase ? ('total' as const) : undefined, value: totalCost, label: cashLoanPaymentsLabel.toLowerCase() } : null,
+    showTotalIncludingTradeCredit ? { operation: 'add' as const, value: tradeEquityApplied, label: 'trade credit applied' } : null,
+    { operation: 'total' as const, value: estimatedTotalValue, label: estimatedTotalLabel.toLowerCase() },
   ].filter((part): part is { operation?: 'add' | 'total'; value: number; label: string } => Boolean(part));
   const paymentCreditSources = [
     downPaymentApplied > 0 ? 'down payment' : '',
@@ -3115,7 +3128,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       { label: 'Finance Charge', value: currency(totalLoanInterest) },
       { label: `Loan Payments Over ${loanTerm} Months`, value: currency(totalLoanPayments) },
       ...(totalInsuranceCost > 0 ? [{ label: `Insurance Over ${loanTerm} Months`, value: currency(totalInsuranceCost) }] : []),
-      { label: estimatedTotalLabel, value: currency(totalCost), emphasis: true },
+      ...(showTotalIncludingTradeCredit ? [{ label: cashLoanPaymentsLabel, value: currency(totalCost) }] : []),
+      { label: estimatedTotalLabel, value: currency(estimatedTotalValue), emphasis: true },
     ];
 
     try {
@@ -3621,7 +3635,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </p>
                 {isLightStepsVariant && (
                   <p className="aio-payment__light-privacy-note">
-                    No phone number required. Emailing your estimate is optional.
+                    Realistic math, no credit check, no commitment.
                   </p>
                 )}
               </div>
@@ -4786,6 +4800,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       {totalInsuranceCost > 0 && (
                         <div><dt>Insurance Over {loanTerm} Months</dt><dd>{renderLightBreakdownValue(totalInsuranceCost, 'add')}</dd></div>
                       )}
+                      {showTotalIncludingTradeCredit && (
+                        <div className="aio-payment__light-breakdown-row--calculated">
+                          <dt>{cashLoanPaymentsLabel}</dt>
+                          <dd>{renderLightBreakdownValue(totalCost)}</dd>
+                        </div>
+                      )}
                       <div className="aio-payment__light-breakdown__total">
                         <dt>
                           <span className="aio-payment__light-breakdown-total-label">
@@ -4794,11 +4814,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               <button
                                 type="button"
                                 className="aio-payment__light-review-drivers-trigger"
-                                aria-label={monthlyInsuranceAmount > 0
-                                  ? 'How estimated total cost is calculated'
-                                  : hasRemainingTradeEquity
-                                    ? 'How remaining trade equity affects cash due'
-                                    : 'Difference between amount financed and estimated total paid'}
+                                aria-label={showTotalIncludingTradeCredit
+                                  ? 'How total including trade credit is calculated'
+                                  : monthlyInsuranceAmount > 0
+                                    ? 'How estimated total cost is calculated'
+                                    : hasRemainingTradeEquity
+                                      ? 'How remaining trade equity affects cash due'
+                                      : 'Difference between amount financed and estimated total paid'}
                                 aria-describedby={lightTotalPaidGuidanceId}
                               >
                                 <img
@@ -4826,7 +4848,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             </span>
                           </span>
                         </dt>
-                        <dd>{renderLightBreakdownValue(totalCost)}</dd>
+                        <dd>{renderLightBreakdownValue(estimatedTotalValue)}</dd>
                       </div>
                     </dl>
                     {showTotalCostFormula ? (
@@ -4860,7 +4882,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <p className="aio-payment__light-breakdown-total-formula">
                         <span className="aio-payment__light-breakdown-total-formula-amount">{currency(remainingTradeEquity)}</span>{' '}
                         remaining trade equity is separate from cash due, so {estimatedTotalLabel.toLowerCase()} is{' '}
-                        <span className="aio-payment__light-breakdown-total-formula-amount">{currency(totalCost)}</span>.
+                        <span className="aio-payment__light-breakdown-total-formula-amount">{currency(estimatedTotalValue)}</span>.
                       </p>
                     ) : null}
                   </div>
@@ -5158,9 +5180,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <dt>Finance Charge</dt>
                             <dd>{currency(totalLoanInterest)}</dd>
                           </div>
+                          {showTotalIncludingTradeCredit && (
+                            <div className="payment-calc__sum-row payment-calc__sum-row--calculated">
+                              <dt>{cashLoanPaymentsLabel}</dt>
+                              <dd>{currency(totalCost)}</dd>
+                            </div>
+                          )}
                           <div className="payment-calc__sum-row">
                             <dt>{estimatedTotalLabel}</dt>
-                            <dd>{currency(totalCost)}</dd>
+                            <dd>{currency(estimatedTotalValue)}</dd>
                           </div>
                         </dl>
                       )}

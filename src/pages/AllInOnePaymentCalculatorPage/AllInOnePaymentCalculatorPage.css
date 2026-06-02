@@ -4291,7 +4291,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   color: var(--color-success);
   font-family: var(--font-heading);
-  font-size: var(--font-size-28);
+  font-size: var(--font-size-22);
   font-weight: var(--font-weight-extrabold);
   line-height: 1;
 }
@@ -4301,7 +4301,7 @@ label.aio-payment__light-loan-step__label {
   max-width: 78ch;
   color: var(--color-black);
   font-family: var(--font-body);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   line-height: 1.35;
 }
 
@@ -4379,7 +4379,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-optimization-item h3 {
   margin: 0 0 var(--spacing-1);
   font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
   color: var(--color-dark);
@@ -4416,7 +4416,7 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment__light-review-expert-tip-header span,
   .aio-payment__light-review-expert-tip-header h2 {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-22);
   }
 
   .aio-payment__light-review-expert-tip p {
@@ -5272,6 +5272,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-shell {
+  --aio-light-sidebar-sticky-top: var(--spacing-3);
   gap: 0;
   grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
   background: var(--color-white);
@@ -5349,6 +5350,12 @@ label.aio-payment__light-loan-step__label {
   border-left: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 22%, var(--color-gray-200) 78%);
   border-radius: 0;
   box-shadow: none;
+}
+
+.aio-payment--light-steps .aio-payment__light-result--sticky {
+  position: static;
+  top: auto;
+  align-self: stretch;
 }
 
 .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside .payment-calc__aside-inner {
@@ -5455,6 +5462,18 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-budget-fit {
   text-align: left;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside .aio-payment__light-budget-fit {
+  margin-top: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-details--review .aio-payment__light-review-next-steps {
+  margin-top: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-details--review .aio-payment__light-marketplace-handoff {
+  margin-top: var(--spacing-4);
 }
 
 .aio-payment--light-steps .aio-payment__light-budget-fit a {
@@ -7747,6 +7766,34 @@ label.aio-payment__light-loan-step__label {
   }
 }
 
+@media (min-width: 880px) {
+  .aio-payment--light-steps .aio-payment__light-main {
+    overflow: visible;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-shell {
+    overflow: visible;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-card--step-panel {
+    border-radius: 0 0 0 var(--border-radius-lg);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside {
+    border-radius: 0 0 var(--border-radius-lg) 0;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside .payment-calc__aside-inner {
+    position: sticky;
+    top: calc(var(--aio-light-sidebar-sticky-top) + env(safe-area-inset-top));
+    padding-top: var(--spacing-5);
+    max-height: calc(100vh - var(--aio-light-sidebar-sticky-top) - var(--aio-light-sidebar-sticky-top) - env(safe-area-inset-top));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+}
+
 @media (min-width: 880px) and (max-width: 1024px) {
   .aio-payment--light-steps .aio-payment__light-shell {
     grid-template-columns: minmax(0, 2fr) minmax(280px, 0.95fr);
@@ -7763,10 +7810,6 @@ label.aio-payment__light-loan-step__label {
 
   .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside .payment-calc__aside-inner {
     padding: var(--spacing-6);
-  }
-
-  .aio-payment--light-steps .aio-payment__light-result--sticky {
-    position: sticky;
   }
 }
 
