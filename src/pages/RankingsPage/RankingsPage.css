@@ -2554,6 +2554,12 @@
   font-size: 16px;
 }
 
+.rankings-page--cd-control-b .rankings-page__methodology-link:hover,
+.rankings-page--cd-control-b .rankings-page__methodology-link:focus-visible {
+  color: #222222;
+  text-decoration-color: #222222;
+}
+
 .rankings-page--cd-control .rankings-page__description-toggle {
   color: var(--color-black);
   font-family: Arial, Helvetica, sans-serif;
