@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This project has two separate deployable targets: the **main application** (Netlify) and **Storybook** (GitHub Pages).
+This project has two separate deployable targets: the **main application** (Netlify) and **Storybook** (GitHub Pages). By default, "deploy" means the main production application only. Deploy Storybook only when explicitly requested.
 
 ---
 
@@ -55,11 +55,11 @@ Use the Netlify dashboard to roll back to a previous deploy if needed. Every suc
 
 **Production URL:** `https://lenindesign.github.io/cd-mmp/`
 
-### Automatic (CI)
+### Manual only
 
-The GitHub Action at `.github/workflows/deploy-storybook.yml` deploys Storybook on every push to `main`, so it stays in sync with the app automatically.
+The GitHub Action at `.github/workflows/deploy-storybook.yml` is manual-only. It should not run on every production deploy.
 
-### Manual
+Use the GitHub Actions `workflow_dispatch` trigger or run:
 
 ```bash
 npm run deploy-storybook
@@ -88,5 +88,5 @@ Requires `CHROMATIC_PROJECT_TOKEN` to be set.
 | Target       | Trigger              | Command                        | URL                                          |
 |--------------|----------------------|--------------------------------|----------------------------------------------|
 | App          | Push to `main`       | `git push origin main`         | `https://cd-mmp-2025.netlify.app`            |
-| Storybook    | Push to `main` (CI)  | `npm run deploy-storybook`     | `https://lenindesign.github.io/cd-mmp/`      |
+| Storybook    | Manual only          | `npm run deploy-storybook`     | `https://lenindesign.github.io/cd-mmp/`      |
 | Chromatic    | Push/PR to `main`    | `npm run chromatic`            | Chromatic dashboard                          |

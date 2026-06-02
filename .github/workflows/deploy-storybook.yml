@@ -1,10 +1,6 @@
 name: Deploy Storybook to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
-  # Allow manual trigger from GitHub Actions tab
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages

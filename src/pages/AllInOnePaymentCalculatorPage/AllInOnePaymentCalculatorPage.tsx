@@ -110,7 +110,18 @@ interface LightVehicleDraft {
 interface LightListboxSelectOption {
   value: string;
   label: string;
+  helper?: string;
+  statusLabel?: string;
+  statusValue?: string;
+  statusQualifier?: string;
+  triggerStatusLabel?: string;
+  statusTone?: BudgetFitStatus;
   disabled?: boolean;
+}
+
+interface LightBrowseVehicleMatch {
+  vehicle: Vehicle;
+  isNearRange: boolean;
 }
 
 type LightWizardStepSlug = 'goal' | 'loan' | 'vehicle' | 'trade' | 'review';
@@ -118,6 +129,10 @@ type LightWizardStepSlug = 'goal' | 'loan' | 'vehicle' | 'trade' | 'review';
 const CUSTOM_RATE_TERMS = [12, 24, 36, 48, 60, 72, 84];
 const USED_YEAR_OPTIONS = Array.from({ length: 10 }, (_, index) => String(2025 - index));
 const LIGHT_AFFORDABLE_DEAL_CARD_LIMIT = 9;
+const LIGHT_BODY_STYLE_MATCH_LIMIT = 5;
+const LIGHT_BODY_STYLE_NEAR_RANGE_BUFFER = 3500;
+const LIGHT_BODY_STYLE_NEAR_RANGE_MULTIPLIER = 1.12;
+const LIGHT_CURRENT_MODEL_YEAR = 2026;
 const AREA_ESTIMATE_TOOLTIP_COPY = 'This is an estimation based on your area.';
 const USED_PRICING_GUIDANCE_LEAD = 'Used car prices can vary widely due to factors like mileage, condition, and features.';
 const USED_PRICING_GUIDANCE_COPY = 'The selected vehicle adds shopping context. The payment updates from the listing price you enter.';
@@ -522,6 +537,12 @@ const getTrimOptionLabel = (vehicle: Vehicle, trim: TrimData, trimPrice: number,
   return canUseCatalogPrice ? `${label} · ${currency(trimPrice)}` : label;
 };
 
+const getBudgetFitStatusFromDelta = (delta: number): BudgetFitStatus => {
+  if (delta > 10) return 'over';
+  if (delta < -10) return 'under';
+  return 'fit';
+};
+
 const getRegistrationDealerFeeGuidance = (stateFeeEstimate: number) => {
   if (stateFeeEstimate <= 500) {
     return {
@@ -848,7 +869,33 @@ const LIGHT_VEHICLE_BROWSE_GRID = [
   { key: 'ev', label: 'EV', bodyStyle: 'EV', iconId: 'evs' },
   { key: 'hybrid', label: 'Hybrid', bodyStyle: 'Hybrid', iconId: 'hybrids' },
   { key: 'crossover', label: 'Crossovers', bodyStyle: 'Crossover', iconId: 'crossovers' },
+  { key: 'coupe', label: 'Coupe', bodyStyle: 'Coupe', iconId: 'coupes' },
+  { key: 'hatchback', label: 'Hatchback', bodyStyle: 'Hatchback', iconId: 'wagons' },
+  { key: 'wagon', label: 'Wagon', bodyStyle: 'Wagon', iconId: 'wagons' },
+  { key: 'convertible', label: 'Convertible', bodyStyle: 'Convertible', iconId: 'convertibles' },
 ] as const;
+
+const matchesLightBrowseCategory = (vehicle: Vehicle, bodyStyle: string) => {
+  if (bodyStyle === 'EV') return vehicle.fuelType === 'Electric';
+  if (bodyStyle === 'Hybrid') return vehicle.fuelType === 'Hybrid' || vehicle.fuelType === 'Plug-in Hybrid';
+  if (bodyStyle === 'Crossover') return vehicle.bodyStyle === 'SUV';
+
+  return vehicle.bodyStyle.toLowerCase() === bodyStyle.toLowerCase();
+};
+
+const isLightBrowseVehicleInCondition = (vehicle: Vehicle, condition: VehicleCondition) => {
+  const vehicleYear = Number.parseInt(vehicle.year, 10);
+
+  return condition === 'used'
+    ? vehicle.condition === 'used' || vehicleYear < LIGHT_CURRENT_MODEL_YEAR
+    : vehicle.condition !== 'used' && vehicleYear >= LIGHT_CURRENT_MODEL_YEAR;
+};
+
+const sortLightBrowseVehicleMatch = (a: Vehicle, b: Vehicle) =>
+  b.staffRating - a.staffRating || a.priceMin - b.priceMin || `${a.make} ${a.model}`.localeCompare(`${b.make} ${b.model}`);
+
+const formatLightStaffRating = (rating: number) =>
+  Number.isInteger(rating) ? String(rating) : rating.toFixed(1);
 
 interface LightMonthlyBudgetFieldProps {
   affordableMsrp: number;
@@ -1583,7 +1630,16 @@ function LightListboxSelect({
           }}
           onKeyDown={handleTriggerKeyDown}
         >
-          <span>{selectedOption?.label ?? placeholder ?? 'Select an option'}</span>
+          <span className="aio-payment__light-listbox-select__trigger-copy">
+            <span className="aio-payment__light-listbox-select__trigger-label">
+              {selectedOption?.label ?? placeholder ?? 'Select an option'}
+            </span>
+            {selectedOption?.statusLabel ? (
+              <span className={`aio-payment__light-listbox-select__status aio-payment__light-listbox-select__status--${selectedOption.statusTone ?? 'neutral'}`}>
+                {selectedOption.triggerStatusLabel ?? selectedOption.statusLabel}
+              </span>
+            ) : null}
+          </span>
           <ChevronDown size={20} strokeWidth={2.25} aria-hidden="true" />
         </button>
         {isOpen && (
@@ -1605,8 +1661,25 @@ function LightListboxSelect({
                   onMouseEnter={() => setActiveIndex(index)}
                   onClick={() => selectOption(index)}
                 >
-                  <span>{option.label}</span>
-                  {isSelected ? <Check size={16} strokeWidth={2.5} aria-hidden="true" /> : null}
+                  <span className="aio-payment__light-listbox-select__option-copy">
+                    <span className="aio-payment__light-listbox-select__option-label">{option.label}</span>
+                    {option.helper ? (
+                      <span className="aio-payment__light-listbox-select__option-helper">{option.helper}</span>
+                    ) : null}
+                  </span>
+                  <span className="aio-payment__light-listbox-select__option-actions">
+                    {option.statusLabel ? (
+                      <span className={`aio-payment__light-listbox-select__status aio-payment__light-listbox-select__status--${option.statusTone ?? 'neutral'}`}>
+                        {option.statusValue && option.statusQualifier ? (
+                          <>
+                            <span className="aio-payment__light-listbox-select__status-value">{option.statusValue}</span>
+                            <span className="aio-payment__light-listbox-select__status-qualifier">{option.statusQualifier}</span>
+                          </>
+                        ) : option.statusLabel}
+                      </span>
+                    ) : null}
+                    {isSelected ? <Check className="aio-payment__light-listbox-select__option-check" size={16} strokeWidth={2.5} aria-hidden="true" /> : null}
+                  </span>
                 </button>
               );
             }) : (
@@ -1692,11 +1765,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const hasAdjustedLightDownPaymentRef = useRef(false);
   const hasAdjustedLightAprRef = useRef(false);
   const affordableCarouselRef = useRef<HTMLDivElement>(null);
+  const lightBodyStyleCarouselRef = useRef<HTMLDivElement>(null);
   const shoppingToolsRef = useRef<HTMLDivElement>(null);
   const lightAffordableSectionRef = useRef<HTMLElement>(null);
   const lightWizardShellRef = useRef<HTMLDivElement>(null);
   const lightWizardPanelRef = useRef<HTMLDivElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
+  const [lightBodyStyleCarouselState, setLightBodyStyleCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
   const [lightWizardStepMotion, setLightWizardStepMotion] = useState<LightWizardStepMotion>('none');
   const lightWizardStep = routeLightWizardStep;
@@ -1714,6 +1789,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightAmountOwedGuidanceId = useId();
   const lightSalesTaxGuidanceId = useId();
   const lightRegistrationFeesGuidanceId = useId();
+  const lightCategoryBudgetInputId = useId();
   const lightEstimateTotalsId = useId();
   const lightMarketplaceHandoffId = useId();
   const lightMarketplaceHandoffTitleId = useId();
@@ -1734,6 +1810,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [showLightVehicleSearchSuggestions, setShowLightVehicleSearchSuggestions] = useState(false);
   const [lightVehicleSearchActiveIndex, setLightVehicleSearchActiveIndex] = useState(0);
   const [lightBrowseBodyStyle, setLightBrowseBodyStyle] = useState('SUV');
+  const [lightCategoryBudgetInputDraft, setLightCategoryBudgetInputDraft] = useState<string | null>(null);
   const [lightAffordableOffersSlug, setLightAffordableOffersSlug] = useState<string | null>(null);
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
   const [showLightMobileTotals, setShowLightMobileTotals] = useState(false);
@@ -2438,18 +2515,40 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     return currency(0);
   };
   const paymentDelta = estimatedMonthlyWithInsurance - targetMonthlyPayment;
-  const selectedVehicleTaxableAmount = getTaxableAmount(selectedCatalogPrice, tradeInValue, rebateTotal, stateRule.taxRule);
-  const selectedVehicleSalesTax = salesTaxDollarOverride ?? selectedVehicleTaxableAmount * effectiveSalesTaxRate;
-  const selectedVehicleLoanAmount = getPurchasePaymentSummary({
-    vehiclePrice: selectedCatalogPrice,
-    taxesAndFees: selectedVehicleSalesTax + fees,
-    financedAddOns: optionalFinancedAddOns,
-    tradeEquity,
-    rebate: rebateTotal,
+  const getLightVehicleFinancePreview = useCallback((vehiclePrice: number) => {
+    const previewTaxableAmount = getTaxableAmount(vehiclePrice, tradeInValue, rebateTotal, stateRule.taxRule);
+    const previewSalesTax = salesTaxDollarOverride ?? previewTaxableAmount * effectiveSalesTaxRate;
+    const previewLoanAmount = getPurchasePaymentSummary({
+      vehiclePrice,
+      taxesAndFees: previewSalesTax + fees,
+      financedAddOns: optionalFinancedAddOns,
+      tradeEquity,
+      rebate: rebateTotal,
+      downPayment,
+      includeTaxesAndFeesInLoan,
+    }).amountFinanced;
+
+    return {
+      amountFinanced: previewLoanAmount,
+      monthly: monthlyPayment(previewLoanAmount, activeApr, loanTerm) + monthlyInsuranceAmount,
+    };
+  }, [
+    activeApr,
     downPayment,
+    effectiveSalesTaxRate,
+    fees,
     includeTaxesAndFeesInLoan,
-  }).amountFinanced;
-  const selectedVehicleMonthly = monthlyPayment(selectedVehicleLoanAmount, activeApr, loanTerm) + monthlyInsuranceAmount;
+    loanTerm,
+    monthlyInsuranceAmount,
+    optionalFinancedAddOns,
+    rebateTotal,
+    salesTaxDollarOverride,
+    stateRule.taxRule,
+    tradeEquity,
+    tradeInValue,
+  ]);
+  const selectedVehicleFinancePreview = getLightVehicleFinancePreview(selectedCatalogPrice);
+  const selectedVehicleMonthly = selectedVehicleFinancePreview.monthly;
   const selectedVehicleBudgetDelta = selectedVehicleMonthly - targetMonthlyPayment;
   const budgetFitStatus: BudgetFitStatus = selectedVehicleBudgetDelta > 10 ? 'over' : selectedVehicleBudgetDelta < -10 ? 'under' : 'fit';
   const budgetFitLabel = budgetFitStatus === 'over'
@@ -2528,6 +2627,80 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     : priceBudgetFitStatus === 'under'
       ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. ${priceBudgetComparisonCopy} Taxes and fees are estimated separately in the totals.`
       : `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. ${priceBudgetComparisonCopy}`;
+  const lightTrimStyleSelectOptions = useMemo<LightListboxSelectOption[]>(() => {
+    if (!canUseCatalogPrice) {
+      return availableTrimStyleOptions.map((option) => ({
+        value: option.value,
+        label: option.label,
+      }));
+    }
+
+    return availableTrimStyleOptions.map((option) => {
+      const trimFinancePreview = getLightVehicleFinancePreview(option.price);
+
+      if (startMode === 'price') {
+        const comparableTrimPrice = getVehiclePriceAfterTradeAndIncentives({
+          vehiclePrice: option.price,
+          tradeInValue,
+          amountOwed,
+          rebate: rebateTotal,
+        });
+        const targetDelta = comparableTrimPrice - price;
+        const statusTone = getBudgetFitStatusFromDelta(targetDelta);
+        const deltaHelper = statusTone === 'over'
+          ? ` · ${currency(targetDelta)} over target`
+          : statusTone === 'under'
+            ? ` · ${currency(Math.abs(targetDelta))} under target`
+            : '';
+        const targetStatusLabel = statusTone === 'over'
+          ? 'Over target'
+          : statusTone === 'under'
+            ? 'Below target'
+            : 'On target';
+
+        return {
+          value: option.value,
+          label: option.label,
+          helper: `${currency(trimFinancePreview.monthly)}/mo with current terms${deltaHelper}`,
+          statusTone,
+          statusLabel: targetStatusLabel,
+          triggerStatusLabel: targetStatusLabel,
+        };
+      }
+
+      const monthlyDelta = trimFinancePreview.monthly - targetMonthlyPayment;
+      const statusTone = getBudgetFitStatusFromDelta(monthlyDelta);
+      const monthlyDeltaHelper = statusTone === 'over'
+        ? ` · ${currency(monthlyDelta)}/mo over budget`
+        : statusTone === 'under'
+          ? ` · ${currency(Math.abs(monthlyDelta))}/mo under budget`
+          : '';
+      const monthlyStatusLabel = statusTone === 'over'
+        ? 'Over budget'
+        : statusTone === 'under'
+          ? 'Below budget'
+          : 'Fits budget';
+
+      return {
+        value: option.value,
+        label: option.label,
+        helper: `${currency(trimFinancePreview.monthly)}/mo with current terms${monthlyDeltaHelper}`,
+        statusTone,
+        statusLabel: monthlyStatusLabel,
+        triggerStatusLabel: monthlyStatusLabel,
+      };
+    });
+  }, [
+    amountOwed,
+    availableTrimStyleOptions,
+    canUseCatalogPrice,
+    getLightVehicleFinancePreview,
+    price,
+    rebateTotal,
+    startMode,
+    targetMonthlyPayment,
+    tradeInValue,
+  ]);
   const visibleBudgetFitStatus = !canUseCatalogPrice && lightHasSpecificVehicleSelection ? usedBudgetFitStatus : lightHasSpecificVehicleSelection ? budgetFitStatus : 'fit';
   const visibleBudgetFitLabel = !canUseCatalogPrice && lightHasSpecificVehicleSelection ? usedBudgetFitLabel : lightHasSpecificVehicleSelection ? budgetFitLabel : 'Pick a vehicle';
   const visibleBudgetFitHeadline = !canUseCatalogPrice && lightHasSpecificVehicleSelection ? usedBudgetFitHeadline : lightHasSpecificVehicleSelection ? budgetFitHeadline : 'Choose a vehicle to compare';
@@ -2610,6 +2783,78 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   };
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
   const lightAffordableBudgetCeiling = startMode === 'monthly' ? affordableMsrp : Math.max(0, price);
+  const lightCategoryBudgetIsMonthly = startMode === 'monthly';
+  const lightCategoryBudgetValue = lightCategoryBudgetIsMonthly ? targetMonthlyPayment : lightAffordableBudgetCeiling;
+  const lightCategoryBudgetInputValue = lightCategoryBudgetInputDraft ?? numberWithCommas(lightCategoryBudgetValue);
+  const lightCategoryBudgetPreposition = lightCategoryBudgetIsMonthly ? 'for' : 'around';
+  const lightCategoryBudgetAriaLabel = lightCategoryBudgetIsMonthly
+    ? 'Update monthly budget for vehicle recommendations'
+    : 'Update vehicle price budget for vehicle recommendations';
+  const handleLightCategoryBudgetInputChange = useCallback((value: string) => {
+    const nextValue = normalizeMoneyInputValue(value);
+    setLightCategoryBudgetInputDraft(nextValue);
+
+    if (nextValue.trim() === '') return;
+
+    const nextAmount = currencyInput(nextValue);
+    if (lightCategoryBudgetIsMonthly) {
+      setTargetMonthlyPayment(nextAmount);
+      return;
+    }
+
+    handlePriceChange(nextAmount);
+  }, [handlePriceChange, lightCategoryBudgetIsMonthly]);
+  const handleLightCategoryBudgetInputBlur = useCallback(() => {
+    const nextAmount = lightCategoryBudgetInputValue.trim() === ''
+      ? lightCategoryBudgetIsMonthly ? LIGHT_MONTHLY_BUDGET_MIN : LIGHT_VEHICLE_PRICE_MIN
+      : currencyInput(lightCategoryBudgetInputValue);
+
+    if (lightCategoryBudgetIsMonthly) {
+      setTargetMonthlyPayment(boundLightMonthlyBudget(nextAmount));
+    } else {
+      handlePriceChange(boundLightVehiclePrice(nextAmount));
+    }
+
+    setLightCategoryBudgetInputDraft(null);
+  }, [
+    handlePriceChange,
+    lightCategoryBudgetInputValue,
+    lightCategoryBudgetIsMonthly,
+  ]);
+  const lightBrowseVehicleMatches = useMemo<LightBrowseVehicleMatch[]>(() => {
+    const ceiling = Math.max(0, lightAffordableBudgetCeiling);
+    const categoryVehicles = vehicles.filter((vehicle) => (
+      isLightBrowseVehicleInCondition(vehicle, condition) &&
+      matchesLightBrowseCategory(vehicle, lightBrowseBodyStyle)
+    ));
+    const inRangeVehicles = categoryVehicles
+      .filter((vehicle) => vehicle.priceMin <= ceiling)
+      .sort(sortLightBrowseVehicleMatch);
+    const nearRangeCeiling = Math.max(
+      ceiling * LIGHT_BODY_STYLE_NEAR_RANGE_MULTIPLIER,
+      ceiling + LIGHT_BODY_STYLE_NEAR_RANGE_BUFFER,
+    );
+    const nearRangeVehicles = categoryVehicles
+      .filter((vehicle) => vehicle.priceMin > ceiling && vehicle.priceMin <= nearRangeCeiling)
+      .sort(sortLightBrowseVehicleMatch);
+    const seenSlugs = new Set<string>();
+
+    return [
+      ...inRangeVehicles.map((vehicle) => ({ vehicle, isNearRange: false })),
+      ...nearRangeVehicles.map((vehicle) => ({ vehicle, isNearRange: true })),
+    ].filter((match) => {
+      if (seenSlugs.has(match.vehicle.slug)) return false;
+      seenSlugs.add(match.vehicle.slug);
+      return true;
+    }).slice(0, LIGHT_BODY_STYLE_MATCH_LIMIT);
+  }, [
+    condition,
+    lightAffordableBudgetCeiling,
+    lightBrowseBodyStyle,
+    vehicles,
+  ]);
+  const canShowLightBrowseVehicleMatches = condition !== 'used';
+  const lightBrowseVehicleMatchesLabel = getBodyStyleListingsLabel(lightBrowseBodyStyle);
   const lightAffordableDealCards = (() => {
     const ceiling = lightAffordableBudgetCeiling;
     const strict = vehicles
@@ -3417,6 +3662,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     clearLightSpecificVehicleSelection();
   }, [clearLightSpecificVehicleSelection]);
 
+  const handleLightBrowseVehicleMatchSelect = useCallback((vehicle: Vehicle) => {
+    setLightVehicleStepMode('known');
+    applySelectedVehicle(vehicle, {
+      selectedYear: vehicle.year,
+      syncCatalogPrice: condition !== 'used',
+    });
+    setShowLightVehicleSearchSuggestions(false);
+    setLightVehicleSearchActiveIndex(0);
+  }, [applySelectedVehicle, condition]);
+
   const handleLightVehicleSearchChange = useCallback((value: string) => {
     setLightVehicleSearchQuery(value);
     setShowLightVehicleSearchSuggestions(true);
@@ -3671,6 +3926,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     });
   };
 
+  const scrollLightBodyStyles = (direction: 'previous' | 'next') => {
+    const carousel = lightBodyStyleCarouselRef.current;
+    if (!carousel) return;
+
+    carousel.scrollBy({
+      left: direction === 'next' ? carousel.clientWidth * 0.82 : -carousel.clientWidth * 0.82,
+      behavior: getPreferredScrollBehavior(),
+    });
+  };
+
   const scrollShoppingTools = (direction: 'previous' | 'next') => {
     const carousel = shoppingToolsRef.current;
     if (!carousel) return;
@@ -3678,6 +3943,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     carousel.scrollBy({
       left: direction === 'next' ? carousel.clientWidth * 0.9 : -carousel.clientWidth * 0.9,
       behavior: getPreferredScrollBehavior(),
+    });
+  };
+
+  const updateLightBodyStyleCarouselState = () => {
+    const carousel = lightBodyStyleCarouselRef.current;
+    if (!carousel) return;
+    const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+
+    setLightBodyStyleCarouselState({
+      canScrollPrevious: carousel.scrollLeft > 1,
+      canScrollNext: carousel.scrollLeft < maxScrollLeft - 1,
     });
   };
 
@@ -3691,6 +3967,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       canScrollNext: carousel.scrollLeft < maxScrollLeft - 1,
     });
   };
+
+  useEffect(() => {
+    const carousel = lightBodyStyleCarouselRef.current;
+    if (!carousel) return;
+
+    updateLightBodyStyleCarouselState();
+    carousel.addEventListener('scroll', updateLightBodyStyleCarouselState, { passive: true });
+    window.addEventListener('resize', updateLightBodyStyleCarouselState);
+
+    return () => {
+      carousel.removeEventListener('scroll', updateLightBodyStyleCarouselState);
+      window.removeEventListener('resize', updateLightBodyStyleCarouselState);
+    };
+  }, [lightVehicleBrowseTiles.length, lightVehicleStepMode]);
 
   useEffect(() => {
     const carousel = affordableCarouselRef.current;
@@ -4143,10 +4433,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           wrapperClassName="aio-payment__light-field--wide"
                           onChange={handleTrimStyleChange}
                           placeholder="Select trim or style"
-                          options={availableTrimStyleOptions.map((option) => ({
-                            value: option.value,
-                            label: option.label,
-                          }))}
+                          options={lightTrimStyleSelectOptions}
                         />
                       </div>
                     ) : (
@@ -4154,39 +4441,140 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <p className="aio-payment__light-vehicle-step__body-style-label" id={lightVehicleBodyStyleHeadingId}>
                           Vehicle type
                         </p>
-                        <div
-                          className="aio-payment__light-vehicle-step__body-grid"
-                          role="radiogroup"
-                          aria-labelledby={lightVehicleBodyStyleHeadingId}
-                        >
-                          {lightVehicleBrowseTiles.map((tile) => {
-                            const selected = lightBrowseBodyStyle === tile.bodyStyle;
-                            return (
-                              <button
-                                key={tile.key}
-                                type="button"
-                                role="radio"
-                                aria-checked={selected}
-                                className={
-                                  selected
-                                    ? 'aio-payment__light-vehicle-step__body-tile aio-payment__light-vehicle-step__body-tile--selected'
-                                    : 'aio-payment__light-vehicle-step__body-tile'
-                                }
-                                onClick={() => handleLightBrowseBodyStyleChange(tile.bodyStyle)}
-                              >
-                                <span className="aio-payment__light-vehicle-step__body-tile-icon-wrap">
-                                  <img
-                                    src={tile.icon}
-                                    alt=""
-                                    className="aio-payment__light-vehicle-step__body-tile-icon"
-                                    loading="lazy"
-                                  />
-                                </span>
-                                <span className="aio-payment__light-vehicle-step__body-tile-label">{tile.label}</span>
-                              </button>
-                            );
-                          })}
+                        <div className="aio-payment__light-vehicle-step__body-carousel">
+                          <button
+                            type="button"
+                            className="aio-payment__light-vehicle-step__body-carousel-nav aio-payment__light-vehicle-step__body-carousel-nav--previous"
+                            aria-label="Previous vehicle categories"
+                            onClick={() => scrollLightBodyStyles('previous')}
+                            disabled={!lightBodyStyleCarouselState.canScrollPrevious}
+                          >
+                            <ChevronLeft size={18} strokeWidth={2.5} aria-hidden="true" />
+                          </button>
+                          <div
+                            ref={lightBodyStyleCarouselRef}
+                            className="aio-payment__light-vehicle-step__body-grid"
+                            role="radiogroup"
+                            aria-labelledby={lightVehicleBodyStyleHeadingId}
+                          >
+                            {lightVehicleBrowseTiles.map((tile) => {
+                              const selected = lightBrowseBodyStyle === tile.bodyStyle;
+                              return (
+                                <button
+                                  key={tile.key}
+                                  type="button"
+                                  role="radio"
+                                  aria-checked={selected}
+                                  className={
+                                    selected
+                                      ? 'aio-payment__light-vehicle-step__body-tile aio-payment__light-vehicle-step__body-tile--selected'
+                                      : 'aio-payment__light-vehicle-step__body-tile'
+                                  }
+                                  onClick={() => handleLightBrowseBodyStyleChange(tile.bodyStyle)}
+                                >
+                                  <span className="aio-payment__light-vehicle-step__body-tile-icon-wrap">
+                                    <img
+                                      src={tile.icon}
+                                      alt=""
+                                      className="aio-payment__light-vehicle-step__body-tile-icon"
+                                      loading="lazy"
+                                    />
+                                  </span>
+                                  <span className="aio-payment__light-vehicle-step__body-tile-label">{tile.label}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                          <button
+                            type="button"
+                            className="aio-payment__light-vehicle-step__body-carousel-nav aio-payment__light-vehicle-step__body-carousel-nav--next"
+                            aria-label="Next vehicle categories"
+                            onClick={() => scrollLightBodyStyles('next')}
+                            disabled={!lightBodyStyleCarouselState.canScrollNext}
+                          >
+                            <ChevronRight size={18} strokeWidth={2.5} aria-hidden="true" />
+                          </button>
                         </div>
+                        {canShowLightBrowseVehicleMatches ? (
+                          <details className="aio-payment__light-vehicle-step__category-matches" open>
+                            <summary className="aio-payment__light-vehicle-step__category-matches-summary">
+                              <span className="aio-payment__light-vehicle-step__category-matches-summary-title">
+                                <span>Best {lightBrowseVehicleMatchesLabel} {lightCategoryBudgetPreposition}</span>
+                                <span
+                                  className="aio-payment__light-vehicle-step__category-budget"
+                                  onClick={(event) => event.stopPropagation()}
+                                  onKeyDown={(event) => event.stopPropagation()}
+                                >
+                                  <span className="aio-payment__light-vehicle-step__category-budget-prefix" aria-hidden="true">$</span>
+                                  <input
+                                    id={lightCategoryBudgetInputId}
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9,]*"
+                                    className="aio-payment__light-vehicle-step__category-budget-input"
+                                    aria-label={lightCategoryBudgetAriaLabel}
+                                    value={lightCategoryBudgetInputValue}
+                                    onFocus={(event) => {
+                                      setLightCategoryBudgetInputDraft(String(Math.round(lightCategoryBudgetValue)));
+                                      selectCalculatorInputValueOnFocus(event);
+                                    }}
+                                    onChange={(event) => handleLightCategoryBudgetInputChange(event.target.value)}
+                                    onBlur={handleLightCategoryBudgetInputBlur}
+                                  />
+                                  {lightCategoryBudgetIsMonthly ? (
+                                    <span className="aio-payment__light-vehicle-step__category-budget-suffix">/mo</span>
+                                  ) : null}
+                                </span>
+                              </span>
+                              <span className="aio-payment__light-vehicle-step__category-matches-count">
+                                {lightBrowseVehicleMatches.length} shown
+                              </span>
+                            </summary>
+                            {lightBrowseVehicleMatches.length ? (
+                              <div className="aio-payment__light-vehicle-step__category-matches-list" role="list">
+                                {lightBrowseVehicleMatches.map(({ vehicle, isNearRange }, index) => (
+                                  <div key={vehicle.slug} className="aio-payment__light-vehicle-step__category-match" role="listitem">
+                                    <button
+                                      type="button"
+                                      className="aio-payment__light-vehicle-step__category-match-button"
+                                      onClick={() => handleLightBrowseVehicleMatchSelect(vehicle)}
+                                      aria-label={`Select ${vehicle.year} ${vehicle.make} ${vehicle.model} for this estimate`}
+                                    >
+                                      <span className="aio-payment__light-vehicle-step__category-match-main">
+                                        <span className="aio-payment__light-vehicle-step__category-match-rank">
+                                          #{index + 1}
+                                        </span>
+                                        <span className="aio-payment__light-vehicle-step__category-match-copy">
+                                          <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong>
+                                          <span>
+                                            Starts at {currency(vehicle.priceMin)} · {currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo est.
+                                          </span>
+                                        </span>
+                                      </span>
+                                      <span className="aio-payment__light-vehicle-step__category-match-meta">
+                                        <span className="aio-payment__light-vehicle-step__category-match-rating">
+                                          C/D {formatLightStaffRating(vehicle.staffRating)}
+                                        </span>
+                                        <span className={
+                                          isNearRange
+                                            ? 'aio-payment__light-vehicle-step__category-match-range aio-payment__light-vehicle-step__category-match-range--near'
+                                            : 'aio-payment__light-vehicle-step__category-match-range'
+                                        }
+                                        >
+                                          {isNearRange ? 'Near range' : 'In range'}
+                                        </span>
+                                      </span>
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="aio-payment__light-vehicle-step__category-matches-empty">
+                                No {lightBrowseVehicleMatchesLabel.toLowerCase()} found around {currency(lightAffordableBudgetCeiling)} with the current filters.
+                              </p>
+                            )}
+                          </details>
+                        ) : null}
                       </div>
                     )}
                     {lightVehicleStepMode === 'known' && (
