@@ -138,6 +138,7 @@ const USED_PRICING_GUIDANCE_LEAD = 'Used car prices can vary widely due to facto
 const USED_PRICING_GUIDANCE_COPY = 'The selected vehicle adds shopping context. The payment updates from the listing price you enter.';
 const SHOW_LIGHT_ESTIMATE_EMAIL = true;
 const SHOW_LIGHT_TRADE_ESTIMATE_CARD = false;
+const SHOW_LIGHT_COVERAGE_MODULE = false;
 const SHOW_LIGHT_DEALER_FEE_NOTE = false;
 const SHOW_LIGHT_REVIEW_NEXT_STEPS_CARD = false;
 const DEFAULT_EXTENDED_WARRANTY_COST = 2500;
@@ -4555,11 +4556,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                         <span className="aio-payment__light-vehicle-step__category-match-rating">
                                           C/D {formatLightStaffRating(vehicle.staffRating)}
                                         </span>
-                                        <span className={
-                                          isNearRange
-                                            ? 'aio-payment__light-vehicle-step__category-match-range aio-payment__light-vehicle-step__category-match-range--near'
-                                            : 'aio-payment__light-vehicle-step__category-match-range'
-                                        }
+                                        <span
+                                          className={`aio-payment__light-vehicle-step__category-match-range aio-payment__light-listbox-select__status aio-payment__light-listbox-select__status--${isNearRange ? 'neutral' : 'fit'}`}
                                         >
                                           {isNearRange ? 'Near range' : 'In range'}
                                         </span>
@@ -4671,90 +4669,92 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         )}
                       </div>
                     )}
-                    <section className="aio-payment__light-vehicle-step__coverage" aria-labelledby="aio-payment-light-coverage-heading">
-                      <div className="aio-payment__light-vehicle-step__coverage-head">
-                        <span id="aio-payment-light-coverage-heading">Warranty &amp; insurance</span>
-                        <p>Planning estimates based on vehicle price, type, and market trends, not final quotes. Warranty is financed; insurance stays separate from the loan.</p>
-                      </div>
-                      <div className="aio-payment__light-vehicle-step__coverage-grid">
-                        <div className={`aio-payment__light-vehicle-step__coverage-option ${includeExtendedWarranty ? 'aio-payment__light-vehicle-step__coverage-option--active' : ''}`}>
-                          <button
-                            type="button"
-                            className={`aio-payment__light-vehicle-step__coverage-switch ${includeExtendedWarranty ? 'aio-payment__light-vehicle-step__coverage-switch--on' : ''}`}
-                            role="switch"
-                            aria-checked={includeExtendedWarranty}
-                            onClick={() => setIncludeExtendedWarranty((isIncluded) => !isIncluded)}
-                          >
-                            <span className="aio-payment__light-vehicle-step__coverage-icon" aria-hidden="true">
-                              <PhosphorShieldCheck size={22} weight="regular" />
-                            </span>
-                            <span className="aio-payment__light-vehicle-step__coverage-copy">
-                              <span className="aio-payment__light-vehicle-step__coverage-title">Extended warranty</span>
-                              <span className="aio-payment__light-vehicle-step__coverage-desc">
-                                Estimates a financed protection plan from price and vehicle type.
-                              </span>
-                            </span>
-                            <span className="aio-payment__light-vehicle-step__coverage-track" aria-hidden="true">
-                              <span className="aio-payment__light-vehicle-step__coverage-thumb" />
-                            </span>
-                          </button>
-                          {includeExtendedWarranty && (
-                            <TextField
-                              label="Warranty estimate"
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9,]*"
-                              value={numberWithCommas(extendedWarrantyCost)}
-                              iconLeft={MONEY_INPUT_PREFIX}
-                              onFocus={selectCalculatorInputValueOnFocus}
-                              onChange={(event) => {
-                                setHasEditedExtendedWarrantyCost(true);
-                                setExtendedWarrantyCost(currencyInput(event.target.value));
-                              }}
-                              helperText={extendedWarrantyHelperText}
-                            />
-                          )}
+                    {SHOW_LIGHT_COVERAGE_MODULE && (
+                      <section className="aio-payment__light-vehicle-step__coverage" aria-labelledby="aio-payment-light-coverage-heading">
+                        <div className="aio-payment__light-vehicle-step__coverage-head">
+                          <span id="aio-payment-light-coverage-heading">Warranty &amp; insurance</span>
+                          <p>Planning estimates based on vehicle price, type, and market trends, not final quotes. Warranty is financed; insurance stays separate from the loan.</p>
                         </div>
-                        <div className={`aio-payment__light-vehicle-step__coverage-option ${includeInsuranceEstimate ? 'aio-payment__light-vehicle-step__coverage-option--active' : ''}`}>
-                          <button
-                            type="button"
-                            className={`aio-payment__light-vehicle-step__coverage-switch ${includeInsuranceEstimate ? 'aio-payment__light-vehicle-step__coverage-switch--on' : ''}`}
-                            role="switch"
-                            aria-checked={includeInsuranceEstimate}
-                            onClick={() => setIncludeInsuranceEstimate((isIncluded) => !isIncluded)}
-                          >
-                            <span className="aio-payment__light-vehicle-step__coverage-icon" aria-hidden="true">
-                              <PhosphorUmbrella size={22} weight="regular" />
-                            </span>
-                            <span className="aio-payment__light-vehicle-step__coverage-copy">
-                              <span className="aio-payment__light-vehicle-step__coverage-title">Insurance estimate</span>
-                              <span className="aio-payment__light-vehicle-step__coverage-desc">
-                                Estimates monthly insurance from price and vehicle type.
+                        <div className="aio-payment__light-vehicle-step__coverage-grid">
+                          <div className={`aio-payment__light-vehicle-step__coverage-option ${includeExtendedWarranty ? 'aio-payment__light-vehicle-step__coverage-option--active' : ''}`}>
+                            <button
+                              type="button"
+                              className={`aio-payment__light-vehicle-step__coverage-switch ${includeExtendedWarranty ? 'aio-payment__light-vehicle-step__coverage-switch--on' : ''}`}
+                              role="switch"
+                              aria-checked={includeExtendedWarranty}
+                              onClick={() => setIncludeExtendedWarranty((isIncluded) => !isIncluded)}
+                            >
+                              <span className="aio-payment__light-vehicle-step__coverage-icon" aria-hidden="true">
+                                <PhosphorShieldCheck size={22} weight="regular" />
                               </span>
-                            </span>
-                            <span className="aio-payment__light-vehicle-step__coverage-track" aria-hidden="true">
-                              <span className="aio-payment__light-vehicle-step__coverage-thumb" />
-                            </span>
-                          </button>
-                          {includeInsuranceEstimate && (
-                            <TextField
-                              label="Monthly insurance"
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9,]*"
-                              value={numberWithCommas(monthlyInsuranceEstimate)}
-                              iconLeft={MONEY_INPUT_PREFIX}
-                              onFocus={selectCalculatorInputValueOnFocus}
-                              onChange={(event) => {
-                                setHasEditedMonthlyInsuranceEstimate(true);
-                                setMonthlyInsuranceEstimate(currencyInput(event.target.value));
-                              }}
-                              helperText={insuranceEstimateHelperText}
-                            />
-                          )}
+                              <span className="aio-payment__light-vehicle-step__coverage-copy">
+                                <span className="aio-payment__light-vehicle-step__coverage-title">Extended warranty</span>
+                                <span className="aio-payment__light-vehicle-step__coverage-desc">
+                                  Estimates a financed protection plan from price and vehicle type.
+                                </span>
+                              </span>
+                              <span className="aio-payment__light-vehicle-step__coverage-track" aria-hidden="true">
+                                <span className="aio-payment__light-vehicle-step__coverage-thumb" />
+                              </span>
+                            </button>
+                            {includeExtendedWarranty && (
+                              <TextField
+                                label="Warranty estimate"
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9,]*"
+                                value={numberWithCommas(extendedWarrantyCost)}
+                                iconLeft={MONEY_INPUT_PREFIX}
+                                onFocus={selectCalculatorInputValueOnFocus}
+                                onChange={(event) => {
+                                  setHasEditedExtendedWarrantyCost(true);
+                                  setExtendedWarrantyCost(currencyInput(event.target.value));
+                                }}
+                                helperText={extendedWarrantyHelperText}
+                              />
+                            )}
+                          </div>
+                          <div className={`aio-payment__light-vehicle-step__coverage-option ${includeInsuranceEstimate ? 'aio-payment__light-vehicle-step__coverage-option--active' : ''}`}>
+                            <button
+                              type="button"
+                              className={`aio-payment__light-vehicle-step__coverage-switch ${includeInsuranceEstimate ? 'aio-payment__light-vehicle-step__coverage-switch--on' : ''}`}
+                              role="switch"
+                              aria-checked={includeInsuranceEstimate}
+                              onClick={() => setIncludeInsuranceEstimate((isIncluded) => !isIncluded)}
+                            >
+                              <span className="aio-payment__light-vehicle-step__coverage-icon" aria-hidden="true">
+                                <PhosphorUmbrella size={22} weight="regular" />
+                              </span>
+                              <span className="aio-payment__light-vehicle-step__coverage-copy">
+                                <span className="aio-payment__light-vehicle-step__coverage-title">Insurance estimate</span>
+                                <span className="aio-payment__light-vehicle-step__coverage-desc">
+                                  Estimates monthly insurance from price and vehicle type.
+                                </span>
+                              </span>
+                              <span className="aio-payment__light-vehicle-step__coverage-track" aria-hidden="true">
+                                <span className="aio-payment__light-vehicle-step__coverage-thumb" />
+                              </span>
+                            </button>
+                            {includeInsuranceEstimate && (
+                              <TextField
+                                label="Monthly insurance"
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9,]*"
+                                value={numberWithCommas(monthlyInsuranceEstimate)}
+                                iconLeft={MONEY_INPUT_PREFIX}
+                                onFocus={selectCalculatorInputValueOnFocus}
+                                onChange={(event) => {
+                                  setHasEditedMonthlyInsuranceEstimate(true);
+                                  setMonthlyInsuranceEstimate(currencyInput(event.target.value));
+                                }}
+                                helperText={insuranceEstimateHelperText}
+                              />
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </section>
+                      </section>
+                    )}
                   </div>
                 )}
 
