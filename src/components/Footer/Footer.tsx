@@ -54,6 +54,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Budget Payment Calculator', path: '/auto-loan-calculator/all-in-one-budget' },
         { label: 'Advanced payment calculator', path: '/auto-loan-calculator/light' },
         { label: 'Step-by-step payment estimate', path: '/auto-loan-calculator/light-steps' },
+        { label: 'Step-by-step estimate v2', path: '/auto-loan-calculator/light-steps2' },
         { label: 'AI Lease vs Buy Analyzer', path: '/auto-loan-calculator/lease-vs-buy-ai' },
         { label: 'Car Finder', path: '/vehicles' },
       ],
@@ -193,7 +194,6 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
 };
 
 export default Footer;
-
 
 
 

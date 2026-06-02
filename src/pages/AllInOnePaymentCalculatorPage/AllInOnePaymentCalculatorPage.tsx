@@ -33,6 +33,7 @@ type LeaseEstimatorMode = 'lease' | 'buyout';
 type PurchaseStartMode = 'price' | 'monthly';
 type BudgetFitStatus = 'over' | 'under' | 'fit' | 'neutral';
 type LightWizardStepMotion = 'none' | 'forward' | 'backward';
+type LightReviewFormulaOperation = 'add' | 'subtract' | 'total';
 
 const CAD_INFO_ICON_SRC = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/info-regular.348beca.svg?primary=%2523222222';
 
@@ -77,6 +78,12 @@ interface LightOptimizationTip {
   copy: ReactNode;
 }
 
+interface LightReviewFormulaPart {
+  operation?: LightReviewFormulaOperation;
+  value: number;
+  label: string;
+}
+
 interface LightTrimStyleOption {
   value: string;
   label: string;
@@ -113,10 +120,11 @@ const USED_YEAR_OPTIONS = Array.from({ length: 10 }, (_, index) => String(2025 -
 const LIGHT_AFFORDABLE_DEAL_CARD_LIMIT = 9;
 const AREA_ESTIMATE_TOOLTIP_COPY = 'This is an estimation based on your area.';
 const USED_PRICING_GUIDANCE_LEAD = 'Used car prices can vary widely due to factors like mileage, condition, and features.';
-const USED_PRICING_GUIDANCE_COPY = 'Your selected vehicle will help personalize recommendations for your budget.';
+const USED_PRICING_GUIDANCE_COPY = 'The selected vehicle adds shopping context. The payment updates from the listing price you enter.';
 const SHOW_LIGHT_ESTIMATE_EMAIL = true;
 const SHOW_LIGHT_TRADE_ESTIMATE_CARD = false;
 const SHOW_LIGHT_DEALER_FEE_NOTE = false;
+const SHOW_LIGHT_REVIEW_NEXT_STEPS_CARD = false;
 const DEFAULT_EXTENDED_WARRANTY_COST = 2500;
 const DEFAULT_MONTHLY_INSURANCE_ESTIMATE = 180;
 const PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH = '/.netlify/functions/send-payment-estimate-email';
@@ -933,9 +941,25 @@ function LightVehiclePriceField({ price, estimatedMonthly, onPriceChange }: Ligh
           {renderLightGuidanceTooltip({
             id: priceGuidanceId,
             title: 'Vehicle price target',
-            copy: 'Estimated purchase price before taxes and fees. It helps calculate payment, taxes, fees, amount financed, and total cost.',
-            note: `Estimated payment: ${currency(estimatedMonthly)}/mo before dealer-specific changes.`,
             ariaLabel: 'Vehicle price target guidance',
+            children: (
+              <>
+                <span className="aio-payment__light-loan-guidance-copy">
+                  Estimated vehicle purchase price before taxes and fees.
+                </span>
+                <span className="aio-payment__light-loan-guidance-copy">
+                  Not sure where to start?
+                </span>
+                <span className="aio-payment__light-loan-guidance-copy">
+                  • Budget-friendly vehicles: $35,000–$40,000
+                  <br />
+                  • Typical new vehicle: ~$50,000
+                </span>
+                <span className="aio-payment__light-loan-guidance-note">
+                  Enter the price of the vehicle you're considering.
+                </span>
+              </>
+            ),
           })}
         </div>
       </div>
@@ -1084,6 +1108,7 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
 ];
 
 const LIGHT_WIZARD_STEP_ROUTE_BASE = '/auto-loan-calculator/light-steps';
+const LIGHT_WIZARD_STEP_ROUTE_BASE_V2 = '/auto-loan-calculator/light-steps2';
 
 const clampLightWizardStep = (step: number) => Math.min(LIGHT_WIZARD_STEP_META.length, Math.max(1, step));
 
@@ -1093,9 +1118,9 @@ const getLightWizardStepFromSlug = (stepSlug?: string) => {
   return stepIndex >= 0 ? stepIndex + 1 : 1;
 };
 
-const getLightWizardStepPath = (step: number) => {
+const getLightWizardStepPath = (step: number, routeBase = LIGHT_WIZARD_STEP_ROUTE_BASE) => {
   const stepMeta = LIGHT_WIZARD_STEP_META[clampLightWizardStep(step) - 1];
-  return `${LIGHT_WIZARD_STEP_ROUTE_BASE}/${stepMeta.routeSlug}`;
+  return `${routeBase}/${stepMeta.routeSlug}`;
 };
 
 const LIGHT_WIZARD_ARROW_KEY_SKIP_SELECTOR = [
@@ -1135,10 +1160,11 @@ const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
 ];
 
 const LIGHT_APR_GUIDANCE_TIERS = [
-  { label: 'Excellent credit', score: '(740+)', range: '~4–7%', maxApr: 7 },
-  { label: 'Good credit', score: '(670–739)', range: '~6–10%', maxApr: 10 },
-  { label: 'Fair credit', score: '(580–669)', range: '~9–15%', maxApr: 15 },
-  { label: 'Poor credit', score: '(<580)', range: '~15%+', maxApr: Number.POSITIVE_INFINITY },
+  { label: 'Excellent credit', score: '(740–900)', range: '~4–7%', maxApr: 7 },
+  { label: 'Very Good credit', score: '(700–739)', range: '~6–8%', maxApr: 8 },
+  { label: 'Good credit', score: '(670–699)', range: '~8–10%', maxApr: 10 },
+  { label: 'Fair credit', score: '(630–669)', range: '~10–15%', maxApr: 15 },
+  { label: 'Rebuilding credit', score: '(580–629)', range: '~15%+', maxApr: Number.POSITIVE_INFINITY },
 ];
 
 const getLightAprGuidanceTier = (value: number) => {
@@ -1303,8 +1329,8 @@ function LightLoanTermsStepPanel({
             )}
             <LightGuidanceTooltip
               id={aprGuidanceId}
-              title="APR planning ranges"
-              ariaLabel="APR planning ranges"
+              title="Typical APR planning ranges"
+              ariaLabel="Typical APR planning ranges"
               compact={false}
             >
               <span className="aio-payment__light-loan-guidance-list" role="list">
@@ -1319,7 +1345,7 @@ function LightLoanTermsStepPanel({
                 ))}
               </span>
               <span className="aio-payment__light-loan-guidance-note">
-                Planning ranges only. Actual APR depends on lender, vehicle type, loan term, down payment, market conditions, and credit profile.
+                Estimates only. Actual APR varies based on credit profile, lender, vehicle type, loan term, and market conditions.
               </span>
             </LightGuidanceTooltip>
           </div>
@@ -1429,7 +1455,7 @@ function LightLoanTermsStepPanel({
 }
 
 interface AllInOnePaymentCalculatorPageProps {
-  variant?: 'classic' | 'budget-first' | 'light' | 'light-steps';
+  variant?: 'classic' | 'budget-first' | 'light' | 'light-steps' | 'light-steps2';
 }
 
 function LightListboxSelect({
@@ -1597,8 +1623,10 @@ function LightListboxSelect({
 
 const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentCalculatorPageProps) => {
   const isBudgetFirstVariant = variant === 'budget-first';
-  const isLightStepsVariant = variant === 'light-steps';
+  const isLightSteps2Variant = variant === 'light-steps2';
+  const isLightStepsVariant = variant === 'light-steps' || isLightSteps2Variant;
   const isLightVariant = variant === 'light' || isLightStepsVariant;
+  const lightWizardStepRouteBase = isLightSteps2Variant ? LIGHT_WIZARD_STEP_ROUTE_BASE_V2 : LIGHT_WIZARD_STEP_ROUTE_BASE;
   const { stepSlug } = useParams<{ stepSlug?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -1687,6 +1715,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightSalesTaxGuidanceId = useId();
   const lightRegistrationFeesGuidanceId = useId();
   const lightEstimateTotalsId = useId();
+  const lightMarketplaceHandoffId = useId();
+  const lightMarketplaceHandoffTitleId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightEstimateEmailStatus, setLightEstimateEmailStatus] = useState<string | undefined>();
@@ -1749,7 +1779,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
     if (!isLightStepsVariant) return;
 
-    const nextPath = getLightWizardStepPath(nextStep);
+    const nextPath = getLightWizardStepPath(nextStep, lightWizardStepRouteBase);
     if (location.pathname === nextPath) return;
 
     navigate(
@@ -1760,7 +1790,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       },
       { replace: options?.replace ?? false },
     );
-  }, [isLightStepsVariant, lightWizardStep, location.hash, location.pathname, location.search, navigate]);
+  }, [isLightStepsVariant, lightWizardStep, lightWizardStepRouteBase, location.hash, location.pathname, location.search, navigate]);
 
   useEffect(() => {
     if (!isLightStepsVariant) return undefined;
@@ -1799,7 +1829,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const routeStep = getLightWizardStepFromSlug(stepSlug);
     if (!stepSlug) return;
 
-    const expectedPath = getLightWizardStepPath(routeStep);
+    const expectedPath = getLightWizardStepPath(routeStep, lightWizardStepRouteBase);
     if (location.pathname === expectedPath) return;
 
     navigate(
@@ -1810,7 +1840,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       },
       { replace: true },
     );
-  }, [isLightStepsVariant, location.hash, location.pathname, location.search, navigate, stepSlug]);
+  }, [isLightStepsVariant, lightWizardStepRouteBase, location.hash, location.pathname, location.search, navigate, stepSlug]);
 
   const selectedVehicle = useMemo(
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
@@ -2140,14 +2170,28 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   });
   const budgetVehiclePrice = (isBudgetFirstVariant || isLightVariant) && startMode === 'monthly' ? affordableMsrp : price;
   const usesSelectedCatalogPriceForEstimate = isLightVariant && lightHasSpecificVehicleSelection && canUseCatalogPrice;
+  const usesUsedListingPriceInput = !canUseCatalogPrice;
   const workingPrice = usesSelectedCatalogPriceForEstimate ? selectedCatalogPrice : budgetVehiclePrice;
   const lightVehiclePriceRangeTarget = Math.max(0, startMode === 'monthly' ? affordableMsrp : workingPrice);
   const lightVehiclePriceRangeMax = lightVehiclePriceRangeTarget > 0
     ? Math.round(Math.max(lightVehiclePriceRangeTarget * 1.12, lightVehiclePriceRangeTarget + 2500))
     : undefined;
-  const workingPriceDescriptor = usesSelectedCatalogPriceForEstimate ? 'selected vehicle price' : 'target vehicle price';
-  const workingPriceBreakdownLabel = usesSelectedCatalogPriceForEstimate ? 'Selected Vehicle Price' : 'Target Vehicle Price';
-  const workingPriceFormulaLabel = usesSelectedCatalogPriceForEstimate ? 'selected vehicle price' : 'target price';
+  const usedWorkingPriceDescriptor = startMode === 'monthly' ? 'listing-price target' : 'listing-price input';
+  const workingPriceDescriptor = usesSelectedCatalogPriceForEstimate
+    ? 'selected vehicle price'
+    : usesUsedListingPriceInput
+      ? usedWorkingPriceDescriptor
+      : 'target vehicle price';
+  const workingPriceBreakdownLabel = usesSelectedCatalogPriceForEstimate
+    ? 'Selected Vehicle Price'
+    : usesUsedListingPriceInput
+      ? startMode === 'monthly' ? 'Listing Price Target' : 'Vehicle Listing Price'
+      : 'Target Vehicle Price';
+  const workingPriceFormulaLabel = usesSelectedCatalogPriceForEstimate
+    ? 'selected vehicle price'
+    : usesUsedListingPriceInput
+      ? startMode === 'monthly' ? 'listing-price target' : 'listing price'
+      : 'target price';
   const lightBudgetSupportBasis = optionalFinancedAddOns > 0 || monthlyInsuranceAmount > 0
     ? 'before tax and fees, after selected coverage assumptions'
     : 'before tax and fees';
@@ -2241,24 +2285,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : hasRemainingTradeEquity
         ? 'Estimated Cash Due'
         : 'Estimated Total Paid';
-  const estimatedTotalTooltipTitle = showTotalIncludingTradeCredit
-    ? 'Total including trade credit'
-    : monthlyInsuranceAmount > 0
-      ? 'Estimated total cost'
-      : hasRemainingTradeEquity
-        ? 'Estimated cash due'
-        : 'Estimated total paid';
-  const estimatedTotalTooltipCopy = showTotalIncludingTradeCredit
-    ? `Total including trade credit adds ${currency(tradeEquityApplied)} in applied trade credit to ${cashLoanPaymentsLabel.toLowerCase()}. Use it to compare the full transaction value. Cash + loan payments alone can be lower than the vehicle price because trade equity is applied as credit.`
-    : monthlyInsuranceAmount > 0
-      ? 'Estimated total cost includes cash due at signing, loan payments, finance charges, and the selected monthly insurance estimate over the term. It is different from out-the-door price, which is the estimated purchase price before financing.'
-      : hasRemainingTradeEquity
-        ? 'Estimated cash due is what you pay after trade equity is applied. It is different from out-the-door price, which is the estimated purchase price before financing. Remaining trade equity depends on final appraisal, payoff, and dealer paperwork.'
-        : 'Estimated total paid includes cash due at signing plus loan payments and finance charges over the term. It is different from out-the-door price, which is the estimated purchase price before financing.';
   const estimatedOutTheDoorPrice = workingPrice + taxesAndFees + optionalFinancedAddOns;
-  const estimatedOutTheDoorTooltipCopy = optionalFinancedAddOns > 0
-    ? `${currency(estimatedOutTheDoorPrice)} estimated out-the-door price is ${currency(workingPrice)} vehicle price plus ${currency(taxesAndFees)} estimated taxes and fees plus ${currency(optionalFinancedAddOns)} selected warranty. Down payment, trade, incentives, and interest change what you borrow or pay over time.`
-    : `${currency(estimatedOutTheDoorPrice)} estimated out-the-door price is ${currency(workingPrice)} vehicle price plus ${currency(taxesAndFees)} estimated taxes and fees. Down payment, trade, incentives, and interest change what you borrow or pay over time.`;
   const amountFinancedFormulaParts = [
     { value: workingPrice, label: workingPriceFormulaLabel },
     includeTaxesAndFeesInLoan && taxesAndFees > 0 ? { operation: 'add', value: taxesAndFees, label: 'taxes & fees' } : null,
@@ -2275,6 +2302,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const totalCost = totalPaidFromPocket + totalInsuranceCost;
   const totalIncludingTradeCredit = totalCost + tradeEquityApplied;
   const estimatedTotalValue = showTotalIncludingTradeCredit ? totalIncludingTradeCredit : totalCost;
+  const estimatedTotalTooltipTitle = `${estimatedTotalLabel}: ${currency(estimatedTotalValue)}`;
   const downPaymentBreakdownLabel = downPaymentApplied < downPayment ? 'Down Payment Applied' : 'Down Payment';
   const totalCostCashLabel = purchasePaymentSummary.upfrontTaxesAndFeesDue > 0
     ? 'cash due at signing'
@@ -2291,12 +2319,52 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     showTotalIncludingTradeCredit ? { operation: 'add' as const, value: tradeEquityApplied, label: 'trade credit applied' } : null,
     { operation: 'total' as const, value: estimatedTotalValue, label: estimatedTotalLabel.toLowerCase() },
   ].filter((part): part is { operation?: 'add' | 'total'; value: number; label: string } => Boolean(part));
-  const paymentCreditSources = [
-    downPaymentApplied > 0 ? 'down payment' : '',
-    tradeEquityApplied > 0 ? 'trade credit' : '',
-    rebateTotal > 0 ? 'incentives' : '',
-  ].filter(Boolean);
-  const paymentCreditTotal = downPaymentApplied + tradeEquityApplied + rebateTotal;
+  const lightReview2WhatYouPayHelper = purchasePaymentSummary.upfrontTaxesAndFeesDue > 0
+    ? 'Your cash paid up front plus all loan payments over the life of the loan.'
+    : 'Your cash down payment plus all loan payments over the life of the loan.';
+  const lightReview2VehicleCostCovered = totalPaidFromPocket + tradeEquityApplied;
+  const lightReview2AmountFinancedTooltipCopy = 'Amount financed is the estimated amount you borrow after the vehicle price, financed taxes and fees, optional add-ons, trade-in credit, incentives, and down payment are applied.';
+  const lightReview2TradeTooltipCopy = 'Trade-in contribution is the value from your trade-in, after any payoff, that reduces the amount you need to finance. Final trade value depends on appraisal and payoff.';
+  const lightReview2FinanceChargeTooltipCopy = activeApr > 0
+    ? `Finance charge is the estimated interest paid over ${loanTerm} months. This estimate uses ${formatAprPercent(activeApr)} APR on ${currency(totalLoanAmount)} financed.`
+    : `At ${formatAprPercent(activeApr)} APR, this estimate does not add interest over ${loanTerm} months.`;
+  const lightReview2VehicleCostCoveredTooltipCopy = 'This represents the total vehicle cost covered through your loan payments, cash down payment, and trade-in value. It is not the same as the amount you borrow.';
+  const lightReview2AmountFinancedFormulaParts = [
+    { value: workingPrice, label: 'Vehicle Price' },
+    includeTaxesAndFeesInLoan && taxesAndFees > 0 ? { operation: 'add' as const, value: taxesAndFees, label: 'Taxes & Fees' } : null,
+    optionalFinancedAddOns > 0 ? { operation: 'add' as const, value: optionalFinancedAddOns, label: 'Extended Warranty' } : null,
+    tradeEquityAppliedToAmountFinanced > 0 ? { operation: 'subtract' as const, value: tradeEquityAppliedToAmountFinanced, label: 'Trade-In Equity' } : null,
+    tradeEquity < 0 ? { operation: 'add' as const, value: Math.abs(tradeEquity), label: 'Trade Payoff' } : null,
+    rebateTotal > 0 ? { operation: 'subtract' as const, value: rebateTotal, label: 'Incentives' } : null,
+    downPaymentApplied > 0 ? { operation: 'subtract' as const, value: downPaymentApplied, label: 'Down Payment' } : null,
+    { operation: 'total' as const, value: totalLoanAmount, label: 'Amount Financed' },
+  ].filter((part): part is LightReviewFormulaPart => Boolean(part));
+  const lightReview2WhatYouPayFormulaParts = ([
+    { value: downPaymentApplied, label: downPaymentBreakdownLabel },
+    purchasePaymentSummary.upfrontTaxesAndFeesDue > 0
+      ? { operation: 'add' as const, value: purchasePaymentSummary.upfrontTaxesAndFeesDue, label: 'Taxes & Fees Paid Up Front' }
+      : null,
+    { operation: 'add' as const, value: totalLoanPayments, label: `Total Loan Payments Over ${loanTerm} Months` },
+    { operation: 'total' as const, value: totalPaidFromPocket, label: 'Total Out-of-Pocket Cost' },
+  ] as Array<LightReviewFormulaPart | null>).filter((part): part is LightReviewFormulaPart => Boolean(part));
+  const lightReview2VehicleCostFormulaParts = ([
+    { value: totalLoanPayments, label: `Total Loan Payments Over ${loanTerm} Months` },
+    cashDueAtSigning > 0 ? { operation: 'add' as const, value: cashDueAtSigning, label: 'Cash Paid Up Front' } : null,
+    tradeEquityApplied > 0 ? { operation: 'add' as const, value: tradeEquityApplied, label: 'Trade Equity Applied' } : null,
+    { operation: 'total' as const, value: lightReview2VehicleCostCovered, label: 'Total Vehicle Cost Covered' },
+  ] as Array<LightReviewFormulaPart | null>).filter((part): part is LightReviewFormulaPart => Boolean(part));
+  const amountFinancedBaseTooltipValue = workingPrice
+    + (includeTaxesAndFeesInLoan ? taxesAndFees : 0)
+    + optionalFinancedAddOns
+    + (tradeEquity < 0 ? Math.abs(tradeEquity) : 0);
+  const amountFinancedBaseTooltipLabel = includeTaxesAndFeesInLoan
+    ? optionalFinancedAddOns > 0
+      ? 'Vehicle + taxes, fees & optional products'
+      : 'Vehicle + taxes & fees'
+    : optionalFinancedAddOns > 0
+      ? 'Vehicle + financed optional products'
+      : 'Vehicle price';
+  const amountFinancedCreditsTooltipValue = tradeEquityAppliedToAmountFinanced + rebateTotal;
   const monthlyLoanPaymentDisplay = isLoanCoveredByTradeEquity ? 'No loan payment' : `${currency(estimatedMonthly)}/mo`;
   const currentMonthlyCostDisplay = showNoLoanPaymentState ? 'No loan' : `${currency(estimatedMonthlyWithInsurance)}/mo`;
   const lightEstimateSummaryCopy = isLoanCoveredByTradeEquity
@@ -2311,6 +2379,52 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       </span>
     );
   };
+  const renderLightReview2Tooltip = (id: string, ariaLabel: string, title: string, copy: ReactNode) => (
+    <span className="aio-payment__light-review-drivers-tooltip aio-payment__light-review-drivers-tooltip--row">
+      <button
+        type="button"
+        className="aio-payment__light-review-drivers-trigger"
+        aria-label={ariaLabel}
+        aria-describedby={id}
+      >
+        <img
+          className="aio-payment__light-loan-guidance-trigger-icon"
+          src={CAD_INFO_ICON_SRC}
+          width="24"
+          height="24"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+      <span
+        id={id}
+        className="aio-payment__light-review-drivers-popover aio-payment__light-review-drivers-popover--review2"
+        role="tooltip"
+      >
+        <span className="aio-payment__light-review-drivers-popover-title">{title}</span>
+        <span className="aio-payment__light-review-drivers-copy">{copy}</span>
+      </span>
+    </span>
+  );
+  const renderLightReview2Formula = (parts: LightReviewFormulaPart[], ariaLabel: string) => (
+    <div className="aio-payment__light-review2-formula" aria-label={ariaLabel}>
+      {parts.map((part, index) => (
+        <div
+          key={`${part.operation ?? 'base'}-${part.label}-${index}`}
+          className={`aio-payment__light-review2-formula-row aio-payment__light-review2-formula-row--${part.operation ?? 'base'}`}
+        >
+          <span
+            className={`aio-payment__light-review2-formula-sign aio-payment__light-review2-formula-sign--${part.operation ?? 'base'}`}
+            aria-hidden="true"
+          >
+            {part.operation === 'add' ? '+' : part.operation === 'subtract' ? '-' : part.operation === 'total' ? '=' : ''}
+          </span>
+          <span className="aio-payment__light-review2-formula-label">{part.label}</span>
+          <strong className="aio-payment__light-review2-formula-value">{currency(part.value)}</strong>
+        </div>
+      ))}
+    </div>
+  );
   const showTradePayoffBreakdown = amountOwed > 0;
   const tradeEquityBreakdownLabel = tradeEquity < 0 ? 'Trade Balance' : 'Net Trade Equity';
   const renderTradeEquityBreakdownValue = () => {
@@ -2441,6 +2555,42 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     : showPriceBudgetFit
       ? priceBudgetFitCopy
       : estimateBudgetFitCopy;
+  const lightReview2BudgetSources = [
+    tradeEquity > 0 ? `${currency(tradeEquity)} trade-in` : '',
+    tradeEquity < 0 ? `${currency(Math.abs(tradeEquity))} trade payoff` : '',
+    rebateTotal > 0 ? `${currency(rebateTotal)} incentives` : '',
+  ].filter(Boolean);
+  const lightReview2BudgetDelta = selectedVehiclePriceAfterTradeAndIncentives - price;
+  const lightReview2BudgetFitStatus: BudgetFitStatus = lightReview2BudgetDelta > 10 ? 'over' : lightReview2BudgetDelta < -10 ? 'under' : 'fit';
+  const lightReview2BudgetFitLabel = lightReview2BudgetFitStatus === 'over'
+    ? 'Above target'
+    : lightReview2BudgetFitStatus === 'under'
+      ? 'Below target'
+      : 'On target';
+  const lightReview2BudgetFitHeadline = lightReview2BudgetFitStatus === 'over'
+    ? `Comparable cost is about ${currency(lightReview2BudgetDelta)} over your ${currency(price)} target`
+    : lightReview2BudgetFitStatus === 'under'
+      ? `Comparable cost is about ${currency(Math.abs(lightReview2BudgetDelta))} below your ${currency(price)} target`
+      : `Comparable cost is close to your ${currency(price)} target`;
+  const lightReview2BudgetSourceSentence = lightReview2BudgetSources.length > 0
+    ? `After applying your ${formatInlineList(lightReview2BudgetSources)}, the comparable vehicle cost is approximately ${currency(selectedVehiclePriceAfterTradeAndIncentives)} before taxes and fees.`
+    : `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before taxes and fees.`;
+  const lightReview2BudgetDownPaymentSentence = downPaymentApplied > 0
+    ? `Your ${currency(downPaymentApplied)} down payment is applied after that to reduce the amount financed.`
+    : '';
+  const lightReview2BudgetDeltaSentence = lightReview2BudgetFitStatus === 'over'
+    ? `That's about ${currency(lightReview2BudgetDelta)} over your ${currency(price)} target.`
+    : lightReview2BudgetFitStatus === 'under'
+      ? `That's about ${currency(Math.abs(lightReview2BudgetDelta))} below your ${currency(price)} target.`
+      : `That's close to your ${currency(price)} target.`;
+  const lightReview2BudgetFitCopy = [lightReview2BudgetSourceSentence, lightReview2BudgetDownPaymentSentence, lightReview2BudgetDeltaSentence]
+    .filter(Boolean)
+    .join(' ');
+  const useLightReview2BudgetMessaging = isLightSteps2Variant && lightWizardStep === 5 && showPriceBudgetFit;
+  const displayedSummaryBudgetFitStatus = useLightReview2BudgetMessaging ? lightReview2BudgetFitStatus : summaryBudgetFitStatus;
+  const displayedSummaryBudgetFitLabel = useLightReview2BudgetMessaging ? lightReview2BudgetFitLabel : summaryBudgetFitLabel;
+  const displayedSummaryBudgetFitHeadline = useLightReview2BudgetMessaging ? lightReview2BudgetFitHeadline : summaryBudgetFitHeadline;
+  const displayedSummaryBudgetFitCopy = useLightReview2BudgetMessaging ? lightReview2BudgetFitCopy : summaryBudgetFitCopy;
   const showSummaryBudgetFit = !isLightStepsVariant || (lightWizardStep > 1 && lightHasSpecificVehicleSelection);
 
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
@@ -2594,6 +2744,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightReviewVehicleShopLabel = `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedVehicle.model}`.toUpperCase();
   const canScrollToLightVehicleResults = isLightStepsVariant && lightWizardStep === 5 && showLightELotSection;
   const showLightReviewSidebarNextSteps = isLightStepsVariant && lightWizardStep === 5;
+  const showLightReviewNextStepsCard = showLightReviewSidebarNextSteps && SHOW_LIGHT_REVIEW_NEXT_STEPS_CARD;
   const hasLightBodyStyleBrowseSelection = Boolean(
     isLightStepsVariant &&
     !lightHasSpecificVehicleSelection &&
@@ -2611,7 +2762,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const useLightSidebarBudgetCta = canScrollToLightVehicleResults && !lightHasSpecificVehicleSelection;
   const showLightSidebarVehicleCta = useLightSidebarBudgetCta || showLightReviewVehicleShopCta;
   const lightSidebarVehicleCtaHref = useLightSidebarBudgetCta
-    ? lightBodyStyleShopHref ?? '#aio-payment-light-affordable-heading'
+    ? lightELotAllResultsHref
     : lightReviewVehicleShopHref;
   const lightSidebarVehicleCtaLabel = useLightSidebarBudgetCta
     ? lightBodyStyleShopLabel ?? lightGenericBudgetCtaLabel
@@ -2626,6 +2777,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ? `Jump into C/D Marketplace to compare ${condition} ${getBodyStyleListingsLabel(lightVehicleResultBodyStyle).toLowerCase()} that fit the estimate you just built.`
       : 'Jump into C/D Marketplace to compare real listings that fit the estimate you just built.'
     : `Use C/D Marketplace to compare matching ${selectedVehicle.make} ${selectedVehicle.model} listings, trims, and price context without starting over.`;
+  const lightResultDetailsControlsId = showLightReviewSidebarNextSteps && !showLightReviewNextStepsCard && showLightSidebarVehicleCta
+    ? lightMarketplaceHandoffId
+    : lightEstimateTotalsId;
+  const lightResultDetailsToggleText = showLightReviewSidebarNextSteps
+    ? showLightReviewNextStepsCard
+      ? 'Use this estimate'
+      : 'Marketplace'
+    : 'Estimate totals';
+  const lightResultDetailsToggleActionLabel = showLightReviewSidebarNextSteps
+    ? showLightReviewNextStepsCard
+      ? 'estimate next steps'
+      : 'marketplace action'
+    : 'estimate totals';
   const lightReviewPrimaryCtaLabel = lightBodyStyleShopLabel
     ?? (showLightReviewVehicleShopCta ? lightReviewVehicleShopLabel : showLightAffordableDealCards ? lightGenericBudgetCtaLabel : lightShopLabel);
   const leaseResidualValue = leaseMsrp * (leaseResidualPercent / 100);
@@ -3126,7 +3290,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       { label: isLoanCoveredByTradeEquity ? 'Loan Payment' : 'Monthly Payment', value: monthlyLoanPaymentDisplay },
       ...(monthlyInsuranceAmount > 0 ? [{ label: 'Insurance Estimate', value: `${currency(monthlyInsuranceAmount)}/mo` }] : []),
       { label: 'Finance Charge', value: currency(totalLoanInterest) },
-      { label: `Loan Payments Over ${loanTerm} Months`, value: currency(totalLoanPayments) },
+      { label: `Total Loan Payments Over ${loanTerm} Months`, value: currency(totalLoanPayments) },
       ...(totalInsuranceCost > 0 ? [{ label: `Insurance Over ${loanTerm} Months`, value: currency(totalInsuranceCost) }] : []),
       ...(showTotalIncludingTradeCredit ? [{ label: cashLoanPaymentsLabel, value: currency(totalCost) }] : []),
       { label: estimatedTotalLabel, value: currency(estimatedTotalValue), emphasis: true },
@@ -3615,7 +3779,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         : 'Fine-tune your car payment estimate.',
     );
     return (
-      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && lightWizardStep === 5 && showLightSidebarVehicleCta ? ' aio-payment--light-review-cta' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
+      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightSteps2Variant ? ' aio-payment--light-steps2' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && lightWizardStep === 5 && showLightSidebarVehicleCta ? ' aio-payment--light-review-cta' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
         <section className="aio-payment__light-hero">
           <div className="container">
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
@@ -3882,7 +4046,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </span>
                         <span className="aio-payment__light-vehicle-step__path-title">I Have a Preferred Vehicle Type</span>
                         <span className="aio-payment__light-vehicle-step__path-copy">
-                          Discover vehicles that match your shopping intent.
+                          Pick a type now; we&apos;ll show affordable options on the final estimate.
                         </span>
                       </button>
                     </div>
@@ -4064,6 +4228,21 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <p className="aio-payment__light-vehicle-step__price-value">
                               {lightKnownVehicleSelected ? currency(selectedCatalogPrice) : 'Not selected'}
                             </p>
+                          )}
+                          {lightKnownVehicleSelected && !canUseCatalogPrice && startMode === 'price' && (
+                            <TextField
+                              label="Listing price used for estimate"
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9,]*"
+                              value={numberWithCommas(price)}
+                              iconLeft={MONEY_INPUT_PREFIX}
+                              wrapperClassName="aio-payment__light-vehicle-step__listing-price-field"
+                              helperText={`${currency(estimatedMonthly)}/mo with this listing price. Change it to match the vehicle you found.`}
+                              onFocus={selectCalculatorInputValueOnFocus}
+                              onChange={(event) => handlePriceChange(currencyInput(event.target.value))}
+                              onBlur={(event) => handlePriceChange(boundLightVehiclePrice(currencyInput(event.currentTarget.value)))}
+                            />
                           )}
                           {lightKnownVehicleSelected && !canUseCatalogPrice && (
                             <p className="aio-payment__light-vehicle-step__price-guidance">
@@ -4614,6 +4793,145 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </details>
                 ) : null}
                 <section className="aio-payment__light-disclosure aio-payment__light-disclosure--static" aria-labelledby={lightBreakdownLabelId}>
+                  {isLightSteps2Variant ? (
+                    <div className="aio-payment__light-review2-card">
+                      <div className="aio-payment__light-disclosure-heading aio-payment__light-review2-card-heading">
+                        <span id={lightBreakdownLabelId}>Your Personalized Cost Breakdown</span>
+                        <strong>{currency(totalLoanAmount)} financed</strong>
+                      </div>
+
+                      <div className="aio-payment__light-review2-summary-card">
+                        <div className="aio-payment__light-review2-panel-header">
+                          <div>
+                            <p className="aio-payment__light-review2-kicker">What You'll Pay</p>
+                            <h3 className="aio-payment__light-review2-title">Total Out-of-Pocket Cost</h3>
+                            <p className="aio-payment__light-review2-helper">{lightReview2WhatYouPayHelper}</p>
+                          </div>
+                          <strong className="aio-payment__light-review2-total-value">{currency(totalPaidFromPocket)}</strong>
+                        </div>
+                        {renderLightReview2Formula(lightReview2WhatYouPayFormulaParts, 'What you will pay calculation')}
+                      </div>
+
+                      <div className="aio-payment__light-review2-grid">
+                        <section className="aio-payment__light-review2-panel aio-payment__light-review2-panel--wide" aria-labelledby="aio-payment-light-review2-amount-financed">
+                          <div className="aio-payment__light-review2-panel-header">
+                            <div>
+                              <h3 id="aio-payment-light-review2-amount-financed" className="aio-payment__light-review2-title">Amount Financed</h3>
+                              <p className="aio-payment__light-review2-helper">
+                                The estimated amount borrowed after credits and cash down are applied.
+                              </p>
+                            </div>
+                            <div className="aio-payment__light-review2-header-value">
+                              {renderLightReview2Tooltip(
+                                lightBreakdownGuidanceId,
+                                'How amount financed is calculated',
+                                'Amount Financed',
+                                lightReview2AmountFinancedTooltipCopy,
+                              )}
+                              <strong>{currency(totalLoanAmount)}</strong>
+                            </div>
+                          </div>
+                          {renderLightReview2Formula(lightReview2AmountFinancedFormulaParts, 'Amount financed calculation')}
+                          {isLoanCoveredByTradeEquity ? (
+                            <p className="aio-payment__light-review2-note">
+                              Trade equity covers the full financed amount. There is no estimated loan payment unless you change the trade, fees, add-ons, or down payment.
+                            </p>
+                          ) : null}
+                        </section>
+
+                        <section className="aio-payment__light-review2-panel" aria-labelledby="aio-payment-light-review2-trade">
+                          <div className="aio-payment__light-review2-panel-header">
+                            <div>
+                              <h3 id="aio-payment-light-review2-trade" className="aio-payment__light-review2-title">Trade-In Contribution</h3>
+                              <p className="aio-payment__light-review2-helper">
+                                Value from your trade-in that reduces the amount you need to finance.
+                              </p>
+                            </div>
+                            {renderLightReview2Tooltip(
+                              lightTradeValueGuidanceId,
+                              'How trade-in contribution is applied',
+                              'Trade-In Contribution',
+                              lightReview2TradeTooltipCopy,
+                            )}
+                          </div>
+                          <dl className="aio-payment__light-review2-rows">
+                            <div className="aio-payment__light-review2-row">
+                              <dt>Trade-In Value</dt>
+                              <dd>{currency(tradeInValue)}</dd>
+                            </div>
+                            {showTradePayoffBreakdown && (
+                              <div className="aio-payment__light-review2-row">
+                                <dt>Amount Owed on Trade</dt>
+                                <dd>{currency(amountOwed)}</dd>
+                              </div>
+                            )}
+                            <div className="aio-payment__light-review2-row aio-payment__light-review2-row--total">
+                              <dt>Trade Equity Applied</dt>
+                              <dd className="aio-payment__light-review2-value--credit">{currency(tradeEquityApplied)}</dd>
+                            </div>
+                            {hasRemainingTradeEquity && (
+                              <div className="aio-payment__light-review2-row">
+                                <dt>Remaining Trade Equity</dt>
+                                <dd className="aio-payment__light-review2-value--credit">{currency(remainingTradeEquity)}</dd>
+                              </div>
+                            )}
+                          </dl>
+                        </section>
+
+                        <section className="aio-payment__light-review2-panel" aria-labelledby="aio-payment-light-review2-finance-charge">
+                          <div className="aio-payment__light-review2-panel-header">
+                            <div>
+                              <h3 id="aio-payment-light-review2-finance-charge" className="aio-payment__light-review2-title">Finance Charge</h3>
+                              <p className="aio-payment__light-review2-helper">
+                                Estimated interest paid over the life of the loan.
+                              </p>
+                            </div>
+                            {renderLightReview2Tooltip(
+                              lightFinanceChargeGuidanceId,
+                              'How finance charge is calculated',
+                              'Finance Charge',
+                              lightReview2FinanceChargeTooltipCopy,
+                            )}
+                          </div>
+                          <dl className="aio-payment__light-review2-rows">
+                            <div className="aio-payment__light-review2-row">
+                              <dt>Rate &amp; Term</dt>
+                              <dd>{formatAprPercent(activeApr)} APR · {loanTerm} mo</dd>
+                            </div>
+                            <div className="aio-payment__light-review2-row">
+                              <dt>Amount Financed</dt>
+                              <dd>{currency(totalLoanAmount)}</dd>
+                            </div>
+                            <div className="aio-payment__light-review2-row aio-payment__light-review2-row--total">
+                              <dt>Finance Charge</dt>
+                              <dd className="aio-payment__light-review2-value--charge">{currency(totalLoanInterest)}</dd>
+                            </div>
+                          </dl>
+                        </section>
+
+                        <section className="aio-payment__light-review2-panel aio-payment__light-review2-panel--wide" aria-labelledby="aio-payment-light-review2-covered">
+                          <div className="aio-payment__light-review2-panel-header">
+                            <div>
+                              <h3 id="aio-payment-light-review2-covered" className="aio-payment__light-review2-title">Total Vehicle Cost Covered</h3>
+                              <p className="aio-payment__light-review2-helper">
+                                This represents the total vehicle cost covered through your loan, cash down payment, and trade-in value.
+                              </p>
+                            </div>
+                            <div className="aio-payment__light-review2-header-value">
+                              {renderLightReview2Tooltip(
+                                lightTotalPaidGuidanceId,
+                                'How total vehicle cost covered is calculated',
+                                'Total Vehicle Cost Covered',
+                                lightReview2VehicleCostCoveredTooltipCopy,
+                              )}
+                              <strong>{currency(lightReview2VehicleCostCovered)}</strong>
+                            </div>
+                          </div>
+                          {renderLightReview2Formula(lightReview2VehicleCostFormulaParts, 'Total vehicle cost covered calculation')}
+                        </section>
+                      </div>
+                    </div>
+                  ) : (
                   <div className="aio-payment__light-breakdown-card">
                     <div className="aio-payment__light-disclosure-heading aio-payment__light-breakdown-card-heading">
                       <span id={lightBreakdownLabelId}>Your Personalized Cost Breakdown</span>
@@ -4626,7 +4944,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           <button
                             type="button"
                             className="aio-payment__light-review-drivers-trigger"
-                            aria-label="What affects this estimate"
+                            aria-label="How amount financed is calculated"
                             aria-describedby={lightBreakdownGuidanceId}
                           >
                             <img
@@ -4639,27 +4957,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             />
                           </button>
                           <div id={lightBreakdownGuidanceId} className="aio-payment__light-review-drivers-popover" role="tooltip">
-                            <p className="aio-payment__light-review-drivers-popover-title">What affects this estimate</p>
+                            <p className="aio-payment__light-review-drivers-popover-title">Amount financed: {currency(totalLoanAmount)}</p>
+                            <p className="aio-payment__light-review-drivers-copy">
+                              Amount financed is the amount you borrow after applying your down payment, trade-in value, incentives, and any financed taxes, fees, or optional products.
+                            </p>
+                            <p className="aio-payment__light-review-drivers-popover-title">Based on:</p>
                             <ul className="aio-payment__light-review-drivers-list">
-                              <li>
-                                {estimatedOutTheDoorTooltipCopy}
-                              </li>
-                              <li>
-                                <strong>{currency(totalLoanAmount)}</strong> is the amount financed after vehicle price, taxes and fees, optional warranty, trade, incentives, and down payment.
-                              </li>
-                              <li>
-                                <strong>{currency(totalLoanInterest)}</strong> in finance charge is based on {formatAprPercent(activeApr)} APR over {loanTerm} months.
-                              </li>
-                              <li>
-                                {paymentCreditTotal > 0 ? (
-                                  <>
-                                    <strong>{currency(paymentCreditTotal)}</strong> from {formatInlineList(paymentCreditSources)} lowers the amount financed and cash due before interest is calculated.
-                                  </>
-                                ) : (
-                                  'A higher down payment, trade equity, or eligible incentive can lower the amount financed and cash due before interest is calculated.'
-                                )}
-                              </li>
+                              <li>{amountFinancedBaseTooltipLabel}: <strong>{currency(amountFinancedBaseTooltipValue)}</strong></li>
+                              <li>Down payment: <strong>-{currency(downPaymentApplied)}</strong></li>
+                              <li>Trade-in / incentives: <strong>-{currency(amountFinancedCreditsTooltipValue)}</strong></li>
                             </ul>
+                            <p className="aio-payment__light-review-drivers-copy">
+                              Finance charges are calculated on the amount financed.
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -4703,7 +5013,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       {optionalFinancedAddOns > 0 && (
                         <div><dt>Extended Warranty</dt><dd>{renderLightBreakdownValue(optionalFinancedAddOns, 'add')}</dd></div>
                       )}
-                      <div><dt>Trade-In Value</dt><dd>{tradeInValue > 0 ? renderLightBreakdownValue(tradeInValue, 'subtract') : currency(0)}</dd></div>
+                      {tradeInValue > 0 && (
+                        <div><dt>Trade-In Value</dt><dd>{renderLightBreakdownValue(tradeInValue, 'subtract')}</dd></div>
+                      )}
                       {showTradePayoffBreakdown && (
                         <div><dt>Amount Owed on Trade</dt><dd>{renderLightBreakdownValue(amountOwed, 'add')}</dd></div>
                       )}
@@ -4726,8 +5038,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </div>
                       )}
                       <div><dt>{downPaymentBreakdownLabel}</dt><dd>{renderLightBreakdownValue(downPaymentApplied, 'subtract')}</dd></div>
-                      <div><dt>Amount Financed</dt><dd>{renderLightBreakdownValue(totalLoanAmount)}</dd></div>
-                      <div><dt>{isLoanCoveredByTradeEquity ? 'Loan Payment' : 'Monthly Payment'}</dt><dd>{monthlyLoanPaymentDisplay}</dd></div>
+                      <div className="aio-payment__light-breakdown-row--loan-cost-start">
+                        <dt>{isLoanCoveredByTradeEquity ? 'Loan Payment' : 'Monthly Payment'}</dt>
+                        <dd>{monthlyLoanPaymentDisplay}</dd>
+                      </div>
                       {monthlyInsuranceAmount > 0 && (
                         <div><dt>Insurance Estimate</dt><dd>{currency(monthlyInsuranceAmount)}/mo</dd></div>
                       )}
@@ -4756,17 +5070,18 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                 className="aio-payment__light-review-drivers-popover aio-payment__light-review-drivers-popover--finance-charge"
                                 role="tooltip"
                               >
-                                <span className="aio-payment__light-review-drivers-popover-title">How finance charge works</span>
+                                <span className="aio-payment__light-review-drivers-popover-title">Finance charge: {currency(totalLoanInterest)}</span>
                                 <span className="aio-payment__light-review-drivers-copy">
-                                  {activeApr > 0 ? (
-                                    <>
-                                      Finance charge is the estimated interest paid over {loanTerm} months. This estimate uses {formatAprPercent(activeApr)} APR on {currency(totalLoanAmount)} financed. Auto loans are amortized, so earlier payments include more interest and later payments pay down more principal.
-                                    </>
-                                  ) : (
-                                    <>
-                                      At {formatAprPercent(activeApr)} APR, this estimate does not add interest over {loanTerm} months, so the finance charge is {currency(0)}. Each payment still reduces the amount financed over the loan term.
-                                    </>
-                                  )}
+                                  Finance charge is the estimated interest paid over the life of the loan.
+                                </span>
+                                <span className="aio-payment__light-review-drivers-popover-title">This estimate assumes:</span>
+                                <span className="aio-payment__light-review-drivers-bullets" role="list">
+                                  <span role="listitem">Amount financed: <strong>{currency(totalLoanAmount)}</strong></span>
+                                  <span role="listitem">APR: <strong>{formatAprPercent(activeApr)}</strong></span>
+                                  <span role="listitem">Term: <strong>{loanTerm} months</strong></span>
+                                </span>
+                                <span className="aio-payment__light-review-drivers-copy">
+                                  Earlier payments include more interest. Later payments pay down more principal.
                                 </span>
                                 {schedule.length > 0 && (
                                   <span className="aio-payment__light-finance-charge-table" role="table" aria-label="Estimated amount paid by year">
@@ -4796,7 +5111,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </dt>
                         <dd>{renderLightBreakdownValue(totalLoanInterest, 'add')}</dd>
                       </div>
-                      <div><dt>Loan Payments Over {loanTerm} Months</dt><dd>{renderLightBreakdownValue(totalLoanPayments)}</dd></div>
+                      <div><dt>Total Loan Payments Over {loanTerm} Months</dt><dd>{renderLightBreakdownValue(totalLoanPayments)}</dd></div>
                       {totalInsuranceCost > 0 && (
                         <div><dt>Insurance Over {loanTerm} Months</dt><dd>{renderLightBreakdownValue(totalInsuranceCost, 'add')}</dd></div>
                       )}
@@ -4839,10 +5154,25 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               >
                                 <span className="aio-payment__light-review-drivers-popover-title">{estimatedTotalTooltipTitle}</span>
                                 <span className="aio-payment__light-review-drivers-copy">
-                                  {estimatedTotalTooltipCopy}
+                                  Estimated total paid is your cash due at signing plus all monthly loan payments.
+                                </span>
+                                <span className="aio-payment__light-review-drivers-popover-title">Includes:</span>
+                                <span className="aio-payment__light-review-drivers-bullets" role="list">
+                                  <span role="listitem">Cash due at signing: <strong>{currency(cashDueAtSigning)}</strong></span>
+                                  <span role="listitem">Loan payments over {loanTerm} months: <strong>{currency(totalLoanPayments)}</strong></span>
                                 </span>
                                 <span className="aio-payment__light-review-drivers-copy">
-                                  {estimatedOutTheDoorTooltipCopy}
+                                  Those loan payments include <strong>{currency(totalLoanInterest)}</strong> in finance charge. This does not represent the
+                                  vehicle purchase price alone.
+                                </span>
+                                <span className="aio-payment__light-review-drivers-popover-title">Breakdown:</span>
+                                <span className="aio-payment__light-review-drivers-bullets" role="list">
+                                  <span role="listitem">Vehicle price: <strong>{currency(workingPrice)}</strong></span>
+                                  <span role="listitem">Taxes &amp; fees: <strong>{currency(taxesAndFees)}</strong></span>
+                                  {optionalFinancedAddOns > 0 && (
+                                    <span role="listitem">Optional products: <strong>{currency(optionalFinancedAddOns)}</strong></span>
+                                  )}
+                                  <span role="listitem">Out-the-door price: <strong>{currency(estimatedOutTheDoorPrice)}</strong></span>
                                 </span>
                               </span>
                             </span>
@@ -4886,6 +5216,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </p>
                     ) : null}
                   </div>
+                  )}
                   {SHOW_LIGHT_ESTIMATE_EMAIL && (
                     <div className="aio-payment__light-estimate-email">
                       <p className="aio-payment__light-estimate-email__lede">
@@ -5073,19 +5404,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               : lightEstimateSummaryCopy}
                       </p>
                     </div>
-                    <div className={`aio-payment__light-result-details ${showLightReviewSidebarNextSteps ? 'aio-payment__light-result-details--review' : ''} ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
+                    <div className={`aio-payment__light-result-details ${showLightReviewSidebarNextSteps ? 'aio-payment__light-result-details--review' : ''} ${showLightReviewSidebarNextSteps && !showLightReviewNextStepsCard ? 'aio-payment__light-result-details--marketplace' : ''} ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
                       <button
                         type="button"
                         className="aio-payment__light-result-details-toggle"
                         aria-expanded={showLightMobileTotals}
-                        aria-controls={lightEstimateTotalsId}
+                        aria-controls={lightResultDetailsControlsId}
                         aria-label={showLightMobileTotals
-                          ? showLightReviewSidebarNextSteps ? 'Close estimate next steps' : 'Close estimate totals'
-                          : showLightReviewSidebarNextSteps ? 'Open estimate next steps' : 'Open estimate totals'}
+                          ? `Close ${lightResultDetailsToggleActionLabel}`
+                          : `Open ${lightResultDetailsToggleActionLabel}`}
                         onClick={() => setShowLightMobileTotals((isOpen) => !isOpen)}
                       >
                         <span className="aio-payment__light-result-details-toggle-text">
-                          {showLightReviewSidebarNextSteps ? 'Use this estimate' : 'Estimate totals'}
+                          {lightResultDetailsToggleText}
                         </span>
                         {showLightMobileTotals ? (
                           <ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" />
@@ -5093,7 +5424,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           <ChevronUp size={18} strokeWidth={2.25} aria-hidden="true" />
                         )}
                       </button>
-                      {showLightReviewSidebarNextSteps ? (
+                      {showLightReviewNextStepsCard ? (
                         <section id={lightEstimateTotalsId} className="aio-payment__light-review-next-steps" aria-label="Use this estimate">
                           <p className="aio-payment__light-review-next-steps-kicker">Before you shop</p>
                           <ul>
@@ -5116,7 +5447,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             </li>
                           </ul>
                         </section>
-                      ) : (
+                      ) : !showLightReviewSidebarNextSteps ? (
                         <dl id={lightEstimateTotalsId} className="payment-calc__sum aio-payment__light-result-metrics" aria-label="Estimate totals">
                           <div className="payment-calc__sum-row">
                             <dt>Rate &amp; Term</dt>
@@ -5191,11 +5522,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <dd>{currency(estimatedTotalValue)}</dd>
                           </div>
                         </dl>
-                      )}
+                      ) : null}
                       {showLightSidebarVehicleCta && (
-                        <section className="aio-payment__light-marketplace-handoff" aria-labelledby="aio-payment-light-marketplace-handoff-title">
+                        <section
+                          id={lightMarketplaceHandoffId}
+                          className="aio-payment__light-marketplace-handoff"
+                          aria-labelledby={lightMarketplaceHandoffTitleId}
+                        >
                           <p className="aio-payment__light-marketplace-handoff-kicker">C/D Marketplace</p>
-                          <h3 id="aio-payment-light-marketplace-handoff-title">{lightSidebarVehicleCtaTitle}</h3>
+                          <h3 id={lightMarketplaceHandoffTitleId}>{lightSidebarVehicleCtaTitle}</h3>
                           <p>{lightSidebarVehicleCtaCopy}</p>
                           <a
                             className="aio-payment__light-result-vehicle-shop"
@@ -5203,11 +5538,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             aria-label={useLightSidebarBudgetCta
                               ? lightSidebarVehicleCtaLabel
                               : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                            onClick={(event) => {
-                              if (!useLightSidebarBudgetCta) return;
-                              event.preventDefault();
-                              lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
-                            }}
                           >
                             {lightSidebarVehicleCtaLabel}
                           </a>
@@ -5222,23 +5552,23 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
                   </div>
                   {showSummaryBudgetFit && (
-                    <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${summaryBudgetFitStatus}`}>
+                    <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${displayedSummaryBudgetFitStatus}`}>
                       <div
-                        className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${summaryBudgetFitStatus === 'over' ? 'alert' : summaryBudgetFitStatus === 'neutral' ? 'info' : 'success'}`}
+                        className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${displayedSummaryBudgetFitStatus === 'over' ? 'alert' : displayedSummaryBudgetFitStatus === 'neutral' ? 'info' : 'success'}`}
                         aria-hidden="true"
                       >
-                        {summaryBudgetFitStatus === 'over' ? (
+                        {displayedSummaryBudgetFitStatus === 'over' ? (
                           <AlertTriangle size={16} strokeWidth={2.25} />
-                        ) : summaryBudgetFitStatus === 'neutral' ? (
+                        ) : displayedSummaryBudgetFitStatus === 'neutral' ? (
                           <Info size={15} strokeWidth={2.5} />
                         ) : (
                           <Check size={14} strokeWidth={3} />
                         )}
                       </div>
                       <div className="aio-payment__light-budget-fit-text">
-                        <span className="aio-payment__light-budget-fit-label">{summaryBudgetFitLabel}</span>
-                        <strong className="aio-payment__light-budget-fit-headline">{summaryBudgetFitHeadline}</strong>
-                        <p className="aio-payment__light-budget-fit-copy">{summaryBudgetFitCopy}</p>
+                        <span className="aio-payment__light-budget-fit-label">{displayedSummaryBudgetFitLabel}</span>
+                        <strong className="aio-payment__light-budget-fit-headline">{displayedSummaryBudgetFitHeadline}</strong>
+                        <p className="aio-payment__light-budget-fit-copy">{displayedSummaryBudgetFitCopy}</p>
                       </div>
                     </div>
                   )}
@@ -5275,11 +5605,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   aria-label={useLightSidebarBudgetCta
                     ? lightSidebarVehicleCtaLabel
                     : `Shop ${condition === 'new' ? 'new' : 'used'} ${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                  onClick={(event) => {
-                    if (!useLightSidebarBudgetCta) return;
-                    event.preventDefault();
-                    lightAffordableSectionRef.current?.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
-                  }}
                 >
                   {lightSidebarVehicleCtaLabel}
                 </a>
