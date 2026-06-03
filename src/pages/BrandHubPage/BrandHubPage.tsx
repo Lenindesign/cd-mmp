@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, ExternalLink } from 'lucide-react';
+import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import {
   getAllVehicles,
   getVehiclesByMake,
@@ -56,9 +56,6 @@ const BADGE_URLS = {
   editorsChoice:
     'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE',
 };
-
-const BRAND_HERO_OFFER_ARROW_SRC =
-  'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/arrow-right-regular.e879c19.svg';
 
 const generateCdSays = (year: string, make: string, model: string): string =>
   `Read our ${year} ${make} ${model} review for information on ratings, pricing, specs, and features.`;
@@ -330,18 +327,13 @@ const BrandHubPage = ({
                 {offerCounts.buying > 0 && (
                   <Link to={`/${makeSlug}/deals-incentives`} className="brand-page__hero-offer-link">
                     <span className="brand-page__hero-offer-main">
-                      <span className="brand-page__hero-offer-chip">BUY</span>
-                      <span className="brand-page__hero-offer-copy">
-                        <span>See All {make} Buying Deals</span>
+                      <span className="brand-page__hero-offer-text">
+                        <span className="brand-page__hero-offer-chip">BUY</span>
+                        <span className="brand-page__hero-offer-copy">
+                          <span>See All {make} Buying Deals</span>
+                        </span>
                       </span>
-                      <img
-                        className="brand-page__hero-offer-arrow"
-                        src={BRAND_HERO_OFFER_ARROW_SRC}
-                        width="14"
-                        height="14"
-                        alt=""
-                        aria-hidden="true"
-                      />
+                      <ChevronRight className="brand-page__hero-offer-caret" size={14} aria-hidden="true" />
                     </span>
                   </Link>
                 )}
@@ -351,18 +343,13 @@ const BrandHubPage = ({
                 {offerCounts.leasing > 0 && (
                   <Link to={`/${makeSlug}/lease-deals`} className="brand-page__hero-offer-link">
                     <span className="brand-page__hero-offer-main">
-                      <span className="brand-page__hero-offer-chip">LEASE</span>
-                      <span className="brand-page__hero-offer-copy">
-                        <span>See All {make} Leasing Deals</span>
+                      <span className="brand-page__hero-offer-text">
+                        <span className="brand-page__hero-offer-chip">LEASE</span>
+                        <span className="brand-page__hero-offer-copy">
+                          <span>See All {make} Leasing Deals</span>
+                        </span>
                       </span>
-                      <img
-                        className="brand-page__hero-offer-arrow"
-                        src={BRAND_HERO_OFFER_ARROW_SRC}
-                        width="14"
-                        height="14"
-                        alt=""
-                        aria-hidden="true"
-                      />
+                      <ChevronRight className="brand-page__hero-offer-caret" size={14} aria-hidden="true" />
                     </span>
                   </Link>
                 )}

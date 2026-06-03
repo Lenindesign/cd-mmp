@@ -187,13 +187,20 @@
 .brand-page__hero-offer-main {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
   min-width: 0;
   color: var(--color-white);
   font-family: var(--font-heading);
   font-size: 12px;
   font-weight: 800;
   line-height: 1.2;
+}
+
+.brand-page__hero-offer-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 .brand-page__hero-offer-copy {
@@ -203,11 +210,11 @@
   min-width: 0;
 }
 
-.brand-page__hero-offer-arrow {
+.brand-page__hero-offer-caret {
   flex: 0 0 auto;
   width: 14px;
   height: 14px;
-  filter: brightness(0) invert(1);
+  stroke-width: 3;
 }
 
 .brand-page__hero-offer-chip {
