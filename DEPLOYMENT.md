@@ -18,7 +18,10 @@ Configuration lives in `netlify.toml`:
 - **Publish directory:** `dist`
 - **Node version:** 20
 - **Serverless functions:** `netlify/functions/` (bundled with esbuild)
+- **Build guard:** `scripts/netlify-ignore-build.mjs` skips the legacy `cd-design-system` Netlify site
 - **SPA fallback:** All routes redirect to `/index.html` (200)
+
+The legacy Netlify site named `cd-design-system` is intentionally ignored by `netlify.toml` so pushes to `main` do not publish the app there. The production app site is `cd-mmp-2025`.
 
 ### Deploy steps
 
@@ -71,7 +74,7 @@ This runs `storybook build` then publishes `storybook-static/` to the `gh-pages`
 
 ## Chromatic (Visual Regression)
 
-Chromatic runs automatically on pushes and PRs to `main` via `.github/workflows/chromatic.yml`. It is not a user-facing deploy — it captures visual snapshots for review.
+Chromatic is manual-only via `.github/workflows/chromatic.yml`. It is not a user-facing deploy; it captures visual snapshots for review when explicitly triggered.
 
 Manual trigger:
 
@@ -89,4 +92,4 @@ Requires `CHROMATIC_PROJECT_TOKEN` to be set.
 |--------------|----------------------|--------------------------------|----------------------------------------------|
 | App          | Push to `main`       | `git push origin main`         | `https://cd-mmp-2025.netlify.app`            |
 | Storybook    | Manual only          | `npm run deploy-storybook`     | `https://lenindesign.github.io/cd-mmp/`      |
-| Chromatic    | Push/PR to `main`    | `npm run chromatic`            | Chromatic dashboard                          |
+| Chromatic    | Manual only          | `npm run chromatic`            | Chromatic dashboard                          |

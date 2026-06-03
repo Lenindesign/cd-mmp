@@ -2,6 +2,7 @@
   command = "npm run build"
   publish = "dist"
   functions = "netlify/functions"
+  ignore = "node scripts/netlify-ignore-build.mjs"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -18,7 +19,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
 
 
 
