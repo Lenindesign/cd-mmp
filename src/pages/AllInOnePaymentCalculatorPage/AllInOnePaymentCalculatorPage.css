@@ -6043,6 +6043,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-hero .aio-payment__light-budget-fit {
+  order: 1;
   width: min(100%, 26rem);
   margin-top: 0;
   padding: var(--spacing-4);
@@ -6050,6 +6051,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-hero-cta {
+  order: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
