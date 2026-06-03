@@ -18,7 +18,7 @@ Configuration lives in `netlify.toml`:
 - **Publish directory:** `dist`
 - **Node version:** 20
 - **Serverless functions:** `netlify/functions/` (bundled with esbuild)
-- **Build guard:** `scripts/netlify-ignore-build.mjs` skips the legacy `cd-design-system` Netlify site
+- **Build guard:** `netlify.toml` skips the legacy `cd-design-system` Netlify site by name
 - **SPA fallback:** All routes redirect to `/index.html` (200)
 
 The legacy Netlify site named `cd-design-system` is intentionally ignored by `netlify.toml` so pushes to `main` do not publish the app there. The production app site is `cd-mmp-2025`.
