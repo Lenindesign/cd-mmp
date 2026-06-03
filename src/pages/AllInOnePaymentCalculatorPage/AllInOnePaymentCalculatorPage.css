@@ -6043,7 +6043,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-hero .aio-payment__light-budget-fit {
-  width: min(100%, 46rem);
+  width: min(100%, 26rem);
   margin-top: 0;
   padding: var(--spacing-4);
   text-align: left;
