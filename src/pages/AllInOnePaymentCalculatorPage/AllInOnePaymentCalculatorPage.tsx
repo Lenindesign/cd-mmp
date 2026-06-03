@@ -4118,6 +4118,116 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         ? 'See what your monthly budget can really buy.'
         : 'Fine-tune your car payment estimate.',
     );
+    const lightELotReviewModule = showLightELotSection ? (
+      <section
+        ref={lightAffordableSectionRef}
+        className="aio-payment__light-affordable-section aio-payment__light-elot-section aio-payment__light-elot-section--embedded"
+      >
+        <section className="aio-payment__light-elot" aria-labelledby="aio-payment-light-affordable-heading">
+          <div className="aio-payment__light-elot-head">
+            <h2 id="aio-payment-light-affordable-heading">For Sale Near You</h2>
+            <a className="aio-payment__light-elot-results-link" href={lightELotAllResultsHref}>
+              <span>See all results for <u>{lightELotSearchLabel} for sale</u> near {lightELotLocation}</span>
+              <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </div>
+
+          <div className="aio-payment__light-elot-carousel-wrap">
+            <button
+              type="button"
+              className="aio-payment__light-elot-nav aio-payment__light-elot-nav--left"
+              aria-label="Previous listings"
+              onClick={() => scrollAffordableVehicles('previous')}
+              disabled={!affordableCarouselState.canScrollPrevious}
+            >
+              <ChevronLeft size={24} aria-hidden="true" />
+            </button>
+            <div ref={affordableCarouselRef} className="aio-payment__light-elot-carousel" role="list">
+              {lightELotListings.map((listing) => (
+                <article key={listing.id} className="aio-payment__light-elot-card" role="listitem">
+                  <Link to={`/${listing.slug}`} className="aio-payment__light-elot-image-link" aria-label={`View ${listing.year} ${listing.make} ${listing.model}`}>
+                    <OptimizedImage
+                      src={listing.image}
+                      alt={`${listing.year} ${listing.make} ${listing.model}`}
+                      aspectRatio="4/3"
+                      wrapperClassName="aio-payment__light-elot-image"
+                    />
+                    <span className={`aio-payment__light-elot-price-badge aio-payment__light-elot-price-badge--${listing.priceBadge === 'Great Price' ? 'great' : 'good'}`}>
+                      {listing.priceBadge}
+                    </span>
+                  </Link>
+                  <div className="aio-payment__light-elot-card-body">
+                    <p className="aio-payment__light-elot-kicker">{getLightListingConditionLabel(listing)}</p>
+                    <h3 className="aio-payment__light-elot-card-title">
+                      <Link to={`/${listing.slug}`}>
+                        {listing.make} {listing.model}
+                      </Link>
+                    </h3>
+                    <p className="aio-payment__light-elot-card-price">
+                      <span aria-hidden="true">$</span>{currency(listing.price).replace('$', '')}
+                    </p>
+                    <p className="aio-payment__light-elot-dealer">{listing.dealerName}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="aio-payment__light-elot-nav aio-payment__light-elot-nav--right"
+              aria-label="Next listings"
+              onClick={() => scrollAffordableVehicles('next')}
+              disabled={!affordableCarouselState.canScrollNext}
+            >
+              <ChevronRight size={24} aria-hidden="true" />
+            </button>
+          </div>
+          <div className="aio-payment__light-elot-actions" aria-label="More vehicle search options">
+            {lightELotActionLinks.map((link) => (
+              <a key={link.label} className="aio-payment__light-elot-action" href={link.href}>
+                <span>{link.label}</span>
+                <img src={CD_ARROW_RIGHT_ICON_URL} alt="" aria-hidden="true" decoding="async" />
+              </a>
+            ))}
+          </div>
+        </section>
+      </section>
+    ) : null;
+    const lightExpertTipsReviewModule = isLightStepsVariant && lightWizardStep === 5 && showLightELotSection && lightOptimizationTips.length > 0 ? (
+      <section
+        id="aio-payment-light-expert-tip-module"
+        className="aio-payment__light-expert-tip-section aio-payment__light-expert-tip-section--embedded"
+        aria-labelledby="aio-payment-light-expert-tip-heading"
+      >
+        <article className="aio-payment__light-review-expert-tip">
+          <div className="aio-payment__light-review-expert-tip-intro">
+            <div className="aio-payment__light-review-expert-tip-header">
+              <img src={CD_SEAL_CHECK_ICON_URL} alt="" aria-hidden="true" decoding="async" />
+              <h2 id="aio-payment-light-expert-tip-heading">C/D Expert Tips</h2>
+            </div>
+            <p>
+              <strong>
+                {isLoanCoveredByTradeEquity
+                  ? 'Your trade equity covers the financed amount, so there is no estimated loan payment.'
+                  : `Your estimate is ${currency(estimatedMonthlyWithInsurance)}/mo with ${currency(totalLoanPayments)} in loan payments.`}
+              </strong>
+              {' '}{lightExpertTipContextCopy}
+            </p>
+          </div>
+          <ol className="aio-payment__light-optimization-list">
+            {lightOptimizationTips.map((tip, index) => (
+              <li key={tip.id} className="aio-payment__light-optimization-item">
+                <span className="aio-payment__light-optimization-index" aria-hidden="true">{index + 1}</span>
+                <div>
+                  <h3>{tip.title}</h3>
+                  <p>{tip.copy}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </article>
+      </section>
+    ) : null;
+
     return (
       <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightSteps2Variant ? ' aio-payment--light-steps2' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && lightWizardStep === 5 && showLightSidebarVehicleCta ? ' aio-payment--light-review-cta' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
         <section className="aio-payment__light-hero">
@@ -5424,7 +5534,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <div className="aio-payment__light-breakdown-card">
                     <div className="aio-payment__light-disclosure-heading aio-payment__light-breakdown-card-heading">
                       <span id={lightBreakdownLabelId}>Your Personalized Cost Breakdown</span>
-                      <strong>{currency(totalLoanAmount)} financed</strong>
+                      {lightExpertTipsReviewModule ? (
+                        <a className="aio-payment__light-breakdown-expert-link" href="#aio-payment-light-expert-tip-module">
+                          <img src={CD_SEAL_CHECK_ICON_URL} alt="" aria-hidden="true" decoding="async" />
+                          C/D Expert Tips
+                        </a>
+                      ) : (
+                        <strong>{currency(totalLoanAmount)} financed</strong>
+                      )}
                     </div>
                     <div className="aio-payment__light-breakdown-financed">
                       <div className="aio-payment__light-breakdown-financed-heading">
@@ -5631,62 +5748,64 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-breakdown-total-formula-amount">{currency(estimatedTotalValue)}</span>.
                       </p>
                     ) : null}
+                    {SHOW_LIGHT_ESTIMATE_EMAIL && (
+                      <div className="aio-payment__light-estimate-email">
+                        <p className="aio-payment__light-estimate-email__lede">
+                          Optional: email this cost breakdown so you can keep these numbers handy when you talk with local dealers.
+                        </p>
+                        <form
+                          className="aio-payment__light-estimate-email__row"
+                          noValidate={isPaymentEstimateEmailTestMode()}
+                          onSubmit={(event) => {
+                            event.preventDefault();
+                            handleSendLightEstimateEmail();
+                          }}
+                        >
+                          <TextField
+                            label="Email address"
+                            type="email"
+                            name="light-estimate-email"
+                            autoComplete="email"
+                            inputMode="email"
+                            placeholder="you@example.com"
+                            value={lightEstimateEmail}
+                            onChange={(event) => {
+                              setLightEstimateEmail(event.target.value);
+                              setLightEstimateEmailError(undefined);
+                              setLightEstimateEmailStatus(undefined);
+                            }}
+                            error={lightEstimateEmailError}
+                            wrapperClassName="aio-payment__light-estimate-email__field"
+                          />
+                          <Button
+                            type="submit"
+                            variant="outline"
+                            size="medium"
+                            loading={isLightEstimateEmailSending}
+                            disabled={isLightEstimateEmailSending}
+                            iconLeft={<Mail size={18} strokeWidth={2} aria-hidden="true" />}
+                          >
+                            {isLightEstimateEmailSending ? 'Sending' : 'Email estimate'}
+                          </Button>
+                        </form>
+                        {lightEstimateEmailStatus ? (
+                          <p className="aio-payment__light-estimate-email__status" role="status">
+                            {lightEstimateEmailStatus}{' '}
+                            <a href="/payment-estimate-email-mock.html" target="_blank" rel="noopener noreferrer">
+                              View email mock
+                            </a>
+                          </p>
+                        ) : (
+                          <p className="aio-payment__light-estimate-email__note">
+                            No phone number required. Email is optional and is used for the estimate you request.
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                   )}
-                  {SHOW_LIGHT_ESTIMATE_EMAIL && (
-                    <div className="aio-payment__light-estimate-email">
-                      <p className="aio-payment__light-estimate-email__lede">
-                        Optional: email this estimate so you can keep the numbers handy when you talk with local dealers.
-                      </p>
-                      <form
-                        className="aio-payment__light-estimate-email__row"
-                        noValidate={isPaymentEstimateEmailTestMode()}
-                        onSubmit={(event) => {
-                          event.preventDefault();
-                          handleSendLightEstimateEmail();
-                        }}
-                      >
-                        <TextField
-                          label="Email address"
-                          type="email"
-                          name="light-estimate-email"
-                          autoComplete="email"
-                          inputMode="email"
-                          placeholder="you@example.com"
-                          value={lightEstimateEmail}
-                          onChange={(event) => {
-                            setLightEstimateEmail(event.target.value);
-                            setLightEstimateEmailError(undefined);
-                            setLightEstimateEmailStatus(undefined);
-                          }}
-                          error={lightEstimateEmailError}
-                          wrapperClassName="aio-payment__light-estimate-email__field"
-                        />
-                        <Button
-                          type="submit"
-                          variant="outline"
-                          size="medium"
-                          loading={isLightEstimateEmailSending}
-                          disabled={isLightEstimateEmailSending}
-                          iconLeft={<Mail size={18} strokeWidth={2} aria-hidden="true" />}
-                        >
-                          {isLightEstimateEmailSending ? 'Sending' : 'Email estimate'}
-                        </Button>
-                      </form>
-                      {lightEstimateEmailStatus ? (
-                        <p className="aio-payment__light-estimate-email__status" role="status">
-                          {lightEstimateEmailStatus}{' '}
-                          <a href="/payment-estimate-email-mock.html" target="_blank" rel="noopener noreferrer">
-                            View email mock
-                          </a>
-                        </p>
-                      ) : (
-                        <p className="aio-payment__light-estimate-email__note">
-                          No phone number required. Email is optional and is used for the estimate you request.
-                        </p>
-                      )}
-                    </div>
-                  )}
+                  {lightELotReviewModule}
+                  {lightExpertTipsReviewModule}
                 </section>
                 </>
                 )}
@@ -5994,114 +6113,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             </div>
           </div>
         </section>
-
-        {showLightELotSection && (
-          <section ref={lightAffordableSectionRef} className="aio-payment__light-affordable-section aio-payment__light-elot-section">
-            <div className="container">
-              <section className="aio-payment__light-elot" aria-labelledby="aio-payment-light-affordable-heading">
-                <div className="aio-payment__light-elot-head">
-                  <h2 id="aio-payment-light-affordable-heading">For Sale Near You</h2>
-                  <a className="aio-payment__light-elot-results-link" href={lightELotAllResultsHref}>
-                    <span>See all results for <u>{lightELotSearchLabel} for sale</u> near {lightELotLocation}</span>
-                    <ArrowRight size={18} aria-hidden="true" />
-                  </a>
-                </div>
-
-                <div className="aio-payment__light-elot-carousel-wrap">
-                  <button
-                    type="button"
-                    className="aio-payment__light-elot-nav aio-payment__light-elot-nav--left"
-                    aria-label="Previous listings"
-                    onClick={() => scrollAffordableVehicles('previous')}
-                    disabled={!affordableCarouselState.canScrollPrevious}
-                  >
-                    <ChevronLeft size={24} aria-hidden="true" />
-                  </button>
-                  <div ref={affordableCarouselRef} className="aio-payment__light-elot-carousel" role="list">
-                    {lightELotListings.map((listing) => (
-                      <article key={listing.id} className="aio-payment__light-elot-card" role="listitem">
-                        <Link to={`/${listing.slug}`} className="aio-payment__light-elot-image-link" aria-label={`View ${listing.year} ${listing.make} ${listing.model}`}>
-                          <OptimizedImage
-                            src={listing.image}
-                            alt={`${listing.year} ${listing.make} ${listing.model}`}
-                            aspectRatio="4/3"
-                            wrapperClassName="aio-payment__light-elot-image"
-                          />
-                          <span className={`aio-payment__light-elot-price-badge aio-payment__light-elot-price-badge--${listing.priceBadge === 'Great Price' ? 'great' : 'good'}`}>
-                            {listing.priceBadge}
-                          </span>
-                        </Link>
-                        <div className="aio-payment__light-elot-card-body">
-                          <p className="aio-payment__light-elot-kicker">{getLightListingConditionLabel(listing)}</p>
-                          <h3 className="aio-payment__light-elot-card-title">
-                            <Link to={`/${listing.slug}`}>
-                              {listing.make} {listing.model}
-                            </Link>
-                          </h3>
-                          <p className="aio-payment__light-elot-card-price">
-                            <span aria-hidden="true">$</span>{currency(listing.price).replace('$', '')}
-                          </p>
-                          <p className="aio-payment__light-elot-dealer">{listing.dealerName}</p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    className="aio-payment__light-elot-nav aio-payment__light-elot-nav--right"
-                    aria-label="Next listings"
-                    onClick={() => scrollAffordableVehicles('next')}
-                    disabled={!affordableCarouselState.canScrollNext}
-                  >
-                    <ChevronRight size={24} aria-hidden="true" />
-                  </button>
-                </div>
-                <div className="aio-payment__light-elot-actions" aria-label="More vehicle search options">
-                  {lightELotActionLinks.map((link) => (
-                    <a key={link.label} className="aio-payment__light-elot-action" href={link.href}>
-                      <span>{link.label}</span>
-                      <img src={CD_ARROW_RIGHT_ICON_URL} alt="" aria-hidden="true" decoding="async" />
-                    </a>
-                  ))}
-                </div>
-              </section>
-            </div>
-          </section>
-        )}
-
-        {isLightStepsVariant && lightWizardStep === 5 && showLightELotSection && lightOptimizationTips.length > 0 && (
-          <section className="aio-payment__light-expert-tip-section" aria-labelledby="aio-payment-light-expert-tip-heading">
-            <div className="container">
-              <article className="aio-payment__light-review-expert-tip">
-                <div className="aio-payment__light-review-expert-tip-intro">
-                  <div className="aio-payment__light-review-expert-tip-header">
-                    <img src={CD_SEAL_CHECK_ICON_URL} alt="" aria-hidden="true" decoding="async" />
-                    <h2 id="aio-payment-light-expert-tip-heading">C/D Expert Tips</h2>
-                  </div>
-                  <p>
-                    <strong>
-                      {isLoanCoveredByTradeEquity
-                        ? 'Your trade equity covers the financed amount, so there is no estimated loan payment.'
-                        : `Your estimate is ${currency(estimatedMonthlyWithInsurance)}/mo with ${currency(totalLoanPayments)} in loan payments.`}
-                    </strong>
-                    {' '}{lightExpertTipContextCopy}
-                  </p>
-                </div>
-                <ol className="aio-payment__light-optimization-list">
-                  {lightOptimizationTips.map((tip, index) => (
-                    <li key={tip.id} className="aio-payment__light-optimization-item">
-                      <span className="aio-payment__light-optimization-index" aria-hidden="true">{index + 1}</span>
-                      <div>
-                        <h3>{tip.title}</h3>
-                        <p>{tip.copy}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </article>
-            </div>
-          </section>
-        )}
 
         {!isLightStepsVariant && showLightAffordableDealCards && (
             <section ref={lightAffordableSectionRef} className="aio-payment__light-affordable-section">

@@ -446,6 +446,12 @@
   z-index: 1;
 }
 
+.aio-payment--light-steps .aio-payment__light-hero .container {
+  width: calc(100% - (var(--spacing-6) * 2));
+  max-width: var(--aio-light-steps-content-max-width);
+  padding-inline: 0;
+}
+
 .aio-payment__light-breadcrumb {
   display: flex;
   flex-wrap: wrap;
@@ -514,6 +520,9 @@
 .aio-payment--light-steps {
   --aio-light-steps-bg: var(--color-gray-100);
   --aio-light-steps-shell-max-width: 1120px;
+  --aio-light-steps-content-max-width: calc(var(--aio-light-steps-shell-max-width) - (var(--spacing-6) * 2));
+  --aio-light-steps-review-shell-max-width: 800px;
+  --aio-light-steps-review-support-max-width: 1080px;
   max-width: 100%;
   overflow-x: clip;
   background: var(--aio-light-steps-bg);
@@ -5721,6 +5730,10 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-dark);
 }
 
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-main {
+  padding-top: 0;
+}
+
 .aio-payment--light-steps .aio-payment__light-main::after {
   content: '';
   position: absolute;
@@ -5739,9 +5752,87 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-affordable-section,
 .aio-payment--light-steps .aio-payment__light-expert-tip-section,
 .aio-payment--light-steps .aio-payment__light-faq-section,
+.aio-payment--light-steps .aio-payment__shopping-tools-section,
+.aio-payment--light-steps .aio-payment__advantage-section {
+  width: calc(100% - (var(--spacing-6) * 2));
+  max-width: var(--aio-light-steps-content-max-width);
+  margin-inline: auto;
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-affordable-section,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-expert-tip-section,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-faq-section,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__shopping-tools-section {
+  max-width: var(--aio-light-steps-review-shell-max-width);
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-faq-section,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__shopping-tools-section {
+  max-width: var(--aio-light-steps-review-support-max-width);
+}
+
+.aio-payment--light-steps .aio-payment__light-affordable-section > .container,
+.aio-payment--light-steps .aio-payment__light-expert-tip-section > .container,
+.aio-payment--light-steps .aio-payment__light-faq-section > .container,
+.aio-payment--light-steps .aio-payment__shopping-tools-section > .container,
+.aio-payment--light-steps .aio-payment__advantage-section > .container,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-affordable-section > .container,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-expert-tip-section > .container,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-faq-section > .container,
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__shopping-tools-section > .container {
+  max-width: 100%;
+  padding-inline: 0;
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-faq-section > .container {
+  margin-top: var(--spacing-12);
+}
+
+.aio-payment--light-steps .aio-payment__light-affordable-section,
+.aio-payment--light-steps .aio-payment__light-expert-tip-section,
+.aio-payment--light-steps .aio-payment__light-faq-section,
 .aio-payment--light-steps .aio-payment__advantage-section {
   background: var(--aio-light-steps-bg);
   color: var(--color-dark);
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-elot-section--embedded {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 var(--spacing-4);
+  padding: var(--spacing-5);
+  background: color-mix(in srgb, var(--color-teal-light) 88%, var(--color-white) 12%);
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 18%, var(--color-gray-200) 82%);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  scroll-margin-top: var(--spacing-4);
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-elot-section--embedded .aio-payment__light-elot-head h2 {
+  font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-3xl));
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-elot-section--embedded .aio-payment__light-elot-results-link {
+  font-size: var(--font-size-md);
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-elot-section--embedded .aio-payment__light-elot-card {
+  flex-basis: 170px;
+  min-height: 328px;
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-elot-section--embedded .aio-payment__light-elot-actions {
+  margin-top: var(--spacing-2);
+}
+
+.aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-expert-tip-section--embedded {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+  scroll-margin-top: var(--spacing-6);
 }
 
 .aio-payment--light-steps .aio-payment__light-shell {
@@ -5967,11 +6058,14 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-shell--review {
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  max-width: 800px;
+  max-width: var(--aio-light-steps-content-max-width);
   margin-inline: auto;
 }
 
 .aio-payment--light-steps .aio-payment__light-shell--review .aio-payment__light-card--step-panel {
+  justify-self: center;
+  width: 100%;
+  max-width: var(--aio-light-steps-review-shell-max-width);
   gap: var(--spacing-7);
 }
 
@@ -7097,6 +7191,34 @@ label.aio-payment__light-loan-step__label {
   padding: 0;
 }
 
+.aio-payment__light-breakdown-expert-link {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  gap: var(--spacing-1);
+  color: var(--color-success);
+  font-family: var(--font-heading);
+  font-size: var(--aio-light-meta);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.aio-payment__light-breakdown-expert-link img {
+  display: block;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  flex: 0 0 auto;
+}
+
+.aio-payment__light-breakdown-expert-link:hover,
+.aio-payment__light-breakdown-expert-link:focus-visible {
+  color: var(--color-success);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .aio-payment--light-steps2 .aio-payment__light-review2-card {
   display: grid;
   gap: var(--spacing-4);
@@ -7373,6 +7495,15 @@ label.aio-payment__light-loan-step__label {
   border: 1px solid color-mix(in srgb, var(--color-gray-200) 86%, var(--color-warm-canvas) 14%);
   border-radius: var(--border-radius-lg);
   background: color-mix(in srgb, var(--color-white) 96%, var(--color-warm-canvas) 4%);
+}
+
+.aio-payment--light-steps .aio-payment__light-breakdown-card .aio-payment__light-estimate-email {
+  margin-top: var(--spacing-6);
+  padding: var(--spacing-5) 0 0;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-gray-200) 88%, var(--color-warm-canvas) 12%);
+  border-radius: 0;
+  background: transparent;
 }
 
 .aio-payment__light-estimate-email__lede {
@@ -9572,6 +9703,15 @@ label.aio-payment__light-loan-step__label {
 }
 
 @media (max-width: 480px) {
+  .aio-payment--light-steps .aio-payment__light-hero .container,
+  .aio-payment--light-steps .aio-payment__light-affordable-section,
+  .aio-payment--light-steps .aio-payment__light-expert-tip-section,
+  .aio-payment--light-steps .aio-payment__light-faq-section,
+  .aio-payment--light-steps .aio-payment__shopping-tools-section,
+  .aio-payment--light-steps .aio-payment__advantage-section {
+    width: calc(100% - (var(--spacing-3) * 2));
+  }
+
   .aio-payment--light-steps .aio-payment__light-main > .container {
     padding-inline: var(--spacing-3);
   }
