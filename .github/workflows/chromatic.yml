@@ -1,12 +1,7 @@
 name: Chromatic Visual Tests
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   chromatic:
@@ -33,4 +28,3 @@ jobs:
           buildScriptName: 'build-storybook'
           autoAcceptChanges: 'main'  # Auto-approve changes on main branch
           exitZeroOnChanges: true     # Don't fail CI on visual changes
-
