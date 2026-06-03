@@ -1992,9 +1992,9 @@ label.aio-payment__light-loan-step__label {
   z-index: 30;
   display: grid;
   gap: var(--spacing-3);
-  width: min(28rem, calc(100vw - var(--spacing-8)));
+  width: min(22rem, calc(100vw - var(--spacing-8)));
   margin: 0;
-  padding: var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-3);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-md);
   background: var(--color-white);
@@ -2015,7 +2015,8 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-loan-guidance--compact {
   gap: var(--spacing-2);
-  width: min(30rem, calc(100vw - var(--spacing-8)));
+  width: min(18rem, calc(100vw - var(--spacing-8)));
+  padding: var(--spacing-3) var(--spacing-2) var(--spacing-3) var(--spacing-3);
 }
 
 .aio-payment__light-loan-guidance::before,
@@ -4335,9 +4336,13 @@ label.aio-payment__light-loan-step__label {
     right: auto;
     bottom: auto;
     left: 0;
-    width: min(30rem, calc(100vw - var(--spacing-8)));
+    width: min(22rem, calc(100vw - var(--spacing-8)));
     max-height: none;
     overflow: visible;
+  }
+
+  .aio-payment__light-loan-guidance--compact {
+    width: min(18rem, calc(100vw - var(--spacing-8)));
   }
 
   .aio-payment--light-steps .payment-calc__field:has(.aio-payment__light-loan-guidance-tooltip),
@@ -6048,9 +6053,9 @@ label.aio-payment__light-loan-step__label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: min(100%, 46rem);
-  min-height: var(--spacing-14);
-  padding: 0 var(--spacing-6);
+  width: min(100%, 26rem);
+  min-height: var(--spacing-12);
+  padding: 0 var(--spacing-5);
   color: var(--color-white);
   background: var(--color-blue-cobalt);
   border: 1px solid var(--color-blue-cobalt);
@@ -6070,8 +6075,8 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-hero-cta:hover:not(:disabled) {
-  background: var(--color-blue-cobalt-dark);
-  border-color: var(--color-blue-cobalt-dark);
+  background: var(--color-black);
+  border-color: var(--color-black);
   transform: translateY(-1px);
 }
 
@@ -6707,8 +6712,8 @@ label.aio-payment__light-loan-step__label {
   z-index: 25;
   display: grid;
   gap: var(--spacing-3);
-  width: min(22rem, calc(100vw - var(--spacing-8)));
-  padding: var(--spacing-4);
+  width: min(20rem, calc(100vw - var(--spacing-8)));
+  padding: var(--spacing-3) var(--spacing-2) var(--spacing-3) var(--spacing-3);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-md);
   background: var(--color-white);
@@ -6930,7 +6935,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-drivers-popover--finance-charge {
-  width: min(18rem, calc(100vw - var(--spacing-12)));
+  width: min(17rem, calc(100vw - var(--spacing-12)));
 }
 
 .aio-payment__light-finance-charge-table {
@@ -6978,7 +6983,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-drivers-popover--total {
-  width: min(19rem, calc(100vw - var(--spacing-8)));
+  width: min(18rem, calc(100vw - var(--spacing-8)));
 }
 
 .aio-payment__light-breakdown .aio-payment__light-breakdown__total dd {
@@ -7962,8 +7967,8 @@ label.aio-payment__light-loan-step__label {
   left: 50%;
   bottom: calc(100% + var(--spacing-2));
   z-index: 5;
-  width: min(260px, 70vw);
-  padding: var(--spacing-3);
+  width: min(232px, 70vw);
+  padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-3);
   background: var(--color-dark);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-lg);

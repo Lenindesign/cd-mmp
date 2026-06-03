@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { type KeyboardEvent as ReactKeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MapPin, Sparkles, ThumbsDown, ThumbsUp, X } from 'lucide-react';
+import { ChevronDown, MapPin, Sparkles, ThumbsDown, ThumbsUp, X } from 'lucide-react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import { estimateTradeInValue, type TradeInEstimateCondition } from '../../utils/tradeInEstimate';
 import './TradeInEstimateModal.css';
@@ -247,6 +247,10 @@ export const TradeInEstimateModal = ({
   onClose,
   onApply,
 }: TradeInEstimateModalProps) => {
+  const vehicleInputId = useId();
+  const vehicleSuggestionsId = `${vehicleInputId}-suggestions`;
+  const vehicleInputRef = useRef<HTMLInputElement | null>(null);
+  const activeVehicleSuggestionRef = useRef<HTMLButtonElement | null>(null);
   const [vehicle, setVehicle] = useState(initialVehicle);
   const [mileage, setMileage] = useState(String(initialMileage || ''));
   const [zipCode, setZipCode] = useState('');
@@ -254,6 +258,8 @@ export const TradeInEstimateModal = ({
   const [zipDetectionError, setZipDetectionError] = useState('');
   const [condition, setCondition] = useState<TradeInEstimateCondition>(initialCondition);
   const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
+  const [isVehicleSuggestionsOpen, setIsVehicleSuggestionsOpen] = useState(false);
+  const [activeVehicleSuggestionIndex, setActiveVehicleSuggestionIndex] = useState(0);
 
   const vehicleSuggestions = useMemo(() => {
     const latestByModel = new Map<string, TradeInVehicleSuggestion>();
@@ -269,6 +275,38 @@ export const TradeInEstimateModal = ({
 
     return Array.from(latestByModel.values()).sort((a, b) => a.label.localeCompare(b.label));
   }, []);
+
+  const vehicleSuggestionMatches = useMemo(() => {
+    const query = normalizeVehicleSearch(vehicle);
+
+    if (query.length < 2) {
+      return vehicleSuggestions.slice(0, 8);
+    }
+
+    return vehicleSuggestions
+      .map((item) => {
+        const makeModel = normalizeVehicleSearch(`${item.make} ${item.model}`);
+        let score = Number.POSITIVE_INFINITY;
+
+        if (item.searchText === query || item.label.toLowerCase() === vehicle.toLowerCase()) {
+          score = 0;
+        } else if (item.searchText.startsWith(query)) {
+          score = 1;
+        } else if (makeModel.startsWith(query)) {
+          score = 2;
+        } else if (item.searchText.includes(query) || makeModel.includes(query)) {
+          score = 3;
+        } else if (query.includes(makeModel)) {
+          score = 4;
+        }
+
+        return { item, score };
+      })
+      .filter(({ score }) => Number.isFinite(score))
+      .sort((a, b) => a.score - b.score || a.item.label.localeCompare(b.item.label))
+      .slice(0, 8)
+      .map(({ item }) => item);
+  }, [vehicle, vehicleSuggestions]);
 
   const matchedVehicle = useMemo(() => {
     const query = normalizeVehicleSearch(vehicle);
@@ -304,6 +342,71 @@ export const TradeInEstimateModal = ({
       currentIds.filter((id) => tradeInOptions.some((option) => option.id === id)),
     );
   }, [tradeInOptions]);
+
+  useEffect(() => {
+    setActiveVehicleSuggestionIndex((currentIndex) => {
+      if (vehicleSuggestionMatches.length === 0) return 0;
+      return Math.min(currentIndex, vehicleSuggestionMatches.length - 1);
+    });
+  }, [vehicleSuggestionMatches.length]);
+
+  useEffect(() => {
+    if (!isVehicleSuggestionsOpen) return;
+    activeVehicleSuggestionRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [activeVehicleSuggestionIndex, isVehicleSuggestionsOpen]);
+
+  const selectVehicleSuggestion = (suggestion: TradeInVehicleSuggestion) => {
+    setVehicle(suggestion.label);
+    setActiveVehicleSuggestionIndex(0);
+    setIsVehicleSuggestionsOpen(false);
+    window.setTimeout(() => vehicleInputRef.current?.focus(), 0);
+  };
+
+  const handleVehicleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setIsVehicleSuggestionsOpen(true);
+      setActiveVehicleSuggestionIndex((currentIndex) => (
+        vehicleSuggestionMatches.length > 0
+          ? Math.min(currentIndex + 1, vehicleSuggestionMatches.length - 1)
+          : 0
+      ));
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setIsVehicleSuggestionsOpen(true);
+      setActiveVehicleSuggestionIndex((currentIndex) => Math.max(currentIndex - 1, 0));
+      return;
+    }
+
+    if (event.key === 'Home' && isVehicleSuggestionsOpen) {
+      event.preventDefault();
+      setActiveVehicleSuggestionIndex(0);
+      return;
+    }
+
+    if (event.key === 'End' && isVehicleSuggestionsOpen) {
+      event.preventDefault();
+      setActiveVehicleSuggestionIndex(Math.max(vehicleSuggestionMatches.length - 1, 0));
+      return;
+    }
+
+    if (event.key === 'Enter' && isVehicleSuggestionsOpen) {
+      const activeSuggestion = vehicleSuggestionMatches[activeVehicleSuggestionIndex];
+
+      if (activeSuggestion) {
+        event.preventDefault();
+        selectVehicleSuggestion(activeSuggestion);
+      }
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      setIsVehicleSuggestionsOpen(false);
+    }
+  };
 
   const detectZipCode = () => {
     if (!navigator.geolocation) {
@@ -416,24 +519,92 @@ export const TradeInEstimateModal = ({
 
         <div className="trade-in-modal__body">
           <div className="trade-in-modal__form">
-            <label className="trade-in-modal__field">
-              <span>Current vehicle</span>
-              <input
-                type="text"
-                value={vehicle}
-                onChange={(event) => setVehicle(event.target.value)}
-                onBlur={() => {
-                  if (matchedVehicle) setVehicle(matchedVehicle.label);
+            <div className="trade-in-modal__field trade-in-modal__vehicle-field">
+              <label htmlFor={vehicleInputId}>Current vehicle</label>
+              <div
+                className={`trade-in-modal__vehicle-combobox${isVehicleSuggestionsOpen ? ' trade-in-modal__vehicle-combobox--open' : ''}`}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                    if (matchedVehicle) setVehicle(matchedVehicle.label);
+                    setIsVehicleSuggestionsOpen(false);
+                  }
                 }}
-                placeholder="Year, make, and model"
-                list="trade-in-vehicle-options"
-                aria-describedby={matchedVehicle ? 'trade-in-vehicle-match' : undefined}
-              />
-              <datalist id="trade-in-vehicle-options">
-                {vehicleSuggestions.slice(0, 80).map((item) => (
-                  <option key={item.label} value={item.label} />
-                ))}
-              </datalist>
+              >
+                <div className="trade-in-modal__vehicle-input-wrap">
+                  <input
+                    ref={vehicleInputRef}
+                    id={vehicleInputId}
+                    type="text"
+                    value={vehicle}
+                    onChange={(event) => {
+                      setVehicle(event.target.value);
+                      setActiveVehicleSuggestionIndex(0);
+                      setIsVehicleSuggestionsOpen(true);
+                    }}
+                    onFocus={() => setIsVehicleSuggestionsOpen(true)}
+                    onKeyDown={handleVehicleKeyDown}
+                    placeholder="Year, make, and model"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={isVehicleSuggestionsOpen}
+                    aria-controls={vehicleSuggestionsId}
+                    aria-activedescendant={isVehicleSuggestionsOpen && vehicleSuggestionMatches[activeVehicleSuggestionIndex]
+                      ? `${vehicleSuggestionsId}-option-${activeVehicleSuggestionIndex}`
+                      : undefined}
+                    aria-describedby={matchedVehicle && vehicle !== matchedVehicle.label ? 'trade-in-vehicle-match' : undefined}
+                  />
+                  <button
+                    type="button"
+                    className="trade-in-modal__vehicle-toggle"
+                    aria-label={isVehicleSuggestionsOpen ? 'Hide vehicle suggestions' : 'Show vehicle suggestions'}
+                    aria-expanded={isVehicleSuggestionsOpen}
+                    aria-controls={vehicleSuggestionsId}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => {
+                      setIsVehicleSuggestionsOpen((current) => !current);
+                      vehicleInputRef.current?.focus();
+                    }}
+                  >
+                    <ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" />
+                  </button>
+                </div>
+                {isVehicleSuggestionsOpen && (
+                  <div
+                    id={vehicleSuggestionsId}
+                    className="trade-in-modal__vehicle-suggestions"
+                    role="listbox"
+                    aria-label="Vehicle suggestions"
+                  >
+                    {vehicleSuggestionMatches.length > 0 ? vehicleSuggestionMatches.map((item, index) => {
+                      const isActive = index === activeVehicleSuggestionIndex;
+                      const isSelected = item.label === vehicle;
+                      const meta = [item.trim, item.bodyStyle, item.drivetrain].filter(Boolean).join(' | ');
+
+                      return (
+                        <button
+                          key={item.label}
+                          id={`${vehicleSuggestionsId}-option-${index}`}
+                          ref={isActive ? activeVehicleSuggestionRef : undefined}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          className={`trade-in-modal__vehicle-suggestion${isActive ? ' trade-in-modal__vehicle-suggestion--active' : ''}${isSelected ? ' trade-in-modal__vehicle-suggestion--selected' : ''}`}
+                          onMouseDown={(event) => event.preventDefault()}
+                          onMouseEnter={() => setActiveVehicleSuggestionIndex(index)}
+                          onClick={() => selectVehicleSuggestion(item)}
+                        >
+                          <span className="trade-in-modal__vehicle-suggestion-label">{item.label}</span>
+                          {meta ? <span className="trade-in-modal__vehicle-suggestion-meta">{meta}</span> : null}
+                        </button>
+                      );
+                    }) : (
+                      <span className="trade-in-modal__vehicle-suggestion-empty" role="option" aria-selected="false">
+                        No matching vehicles
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
               {matchedVehicle && vehicle !== matchedVehicle.label && (
                 <button
                   id="trade-in-vehicle-match"
@@ -445,7 +616,7 @@ export const TradeInEstimateModal = ({
                   Use {matchedVehicle.label}
                 </button>
               )}
-            </label>
+            </div>
 
             <div className="trade-in-modal__field-grid">
               <label className="trade-in-modal__field">

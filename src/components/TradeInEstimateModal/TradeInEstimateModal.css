@@ -173,6 +173,122 @@
   box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.14);
 }
 
+.trade-in-modal__vehicle-combobox {
+  position: relative;
+}
+
+.trade-in-modal__vehicle-input-wrap {
+  position: relative;
+}
+
+.trade-in-modal__vehicle-input-wrap input {
+  padding-right: var(--spacing-11);
+}
+
+.trade-in-modal__vehicle-toggle {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  padding: 0;
+  color: var(--color-gray-600);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+}
+
+.trade-in-modal__vehicle-toggle:hover,
+.trade-in-modal__vehicle-toggle:focus-visible {
+  color: var(--color-blue-cobalt);
+  background: rgba(27, 95, 138, 0.08);
+  outline: none;
+}
+
+.trade-in-modal__vehicle-combobox--open .trade-in-modal__vehicle-toggle {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.trade-in-modal__vehicle-suggestions {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + var(--spacing-1));
+  right: 0;
+  left: 0;
+  display: grid;
+  max-height: 16rem;
+  overflow-y: auto;
+  padding: var(--spacing-1);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+}
+
+.trade-in-modal__vehicle-suggestion {
+  display: grid;
+  gap: var(--spacing-0-5);
+  width: 100%;
+  min-height: var(--spacing-11);
+  padding: var(--spacing-3);
+  color: var(--color-dark);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.trade-in-modal__vehicle-suggestion:hover,
+.trade-in-modal__vehicle-suggestion--active {
+  background: rgba(27, 95, 138, 0.1);
+}
+
+.trade-in-modal__vehicle-suggestion--selected {
+  font-weight: var(--font-weight-bold);
+}
+
+.trade-in-modal__vehicle-suggestion:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 1px;
+}
+
+.trade-in-modal__vehicle-suggestion-label {
+  overflow: hidden;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trade-in-modal__vehicle-suggestion-meta {
+  overflow: hidden;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-snug);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trade-in-modal__vehicle-suggestion-empty {
+  padding: var(--spacing-3);
+  color: var(--color-gray-500);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+}
+
 .trade-in-modal__detect-zip {
   align-self: flex-start;
   display: inline-flex;
