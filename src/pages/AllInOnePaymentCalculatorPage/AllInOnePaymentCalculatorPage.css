@@ -500,21 +500,7 @@
 }
 
 .aio-payment--light-steps .aio-payment__light-hero p {
-  max-width: min(100%, 74rem);
-}
-
-.aio-payment__light-hero .aio-payment__light-privacy-note {
-  display: inline-block;
-  max-width: 620px;
-  margin-top: var(--spacing-3);
-  padding: 0;
-  color: color-mix(in srgb, var(--color-white) 72%, transparent);
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
+  max-width: min(100%, 48.375rem);
 }
 
 .aio-payment--light-steps {
@@ -1620,6 +1606,13 @@
   border-color: var(--color-success);
   background-color: var(--color-success);
   color: var(--color-white);
+}
+
+.aio-payment__light-wizard-dot--next .aio-payment__light-wizard-dot-ring {
+  border-color: var(--color-blue-cobalt);
+  background-color: color-mix(in srgb, var(--color-blue-cobalt) 8%, var(--color-white));
+  color: var(--color-blue-cobalt-dark);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-blue-cobalt) 10%, var(--color-white));
 }
 
 .aio-payment__light-wizard-strip[data-step-motion] .aio-payment__light-wizard-dot--final-current .aio-payment__light-wizard-dot-ring {
@@ -4075,32 +4068,6 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-gray-600);
 }
 
-.aio-payment__light-trade-step__tax-note {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-2);
-  margin: 0;
-  padding: var(--spacing-3);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-  background: var(--color-gray-50);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-  color: var(--color-gray-700);
-}
-
-.aio-payment__light-trade-step__tax-note svg {
-  flex: 0 0 auto;
-  margin-top: 0.125rem;
-  color: var(--color-blue-cobalt);
-}
-
-.aio-payment__light-trade-step__tax-note strong {
-  color: var(--color-dark);
-  font-weight: var(--font-weight-semibold);
-}
-
 .aio-payment__section-heading--wizard .aio-payment__light-heading-copy {
   margin-top: var(--spacing-3);
 }
@@ -4175,6 +4142,26 @@ label.aio-payment__light-loan-step__label {
   justify-content: flex-end;
   gap: var(--spacing-3);
   margin-left: auto;
+}
+
+.aio-payment__light-wizard-actions-right--next-cue {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-2);
+}
+
+.aio-payment__light-wizard-next-cue {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-gray-600);
+  text-align: right;
+}
+
+.aio-payment__light-wizard-next-cue strong {
+  color: var(--color-blue-cobalt-dark);
+  font-weight: var(--font-weight-bold);
 }
 
 .aio-payment__light-wizard-start-over {
@@ -5732,6 +5719,7 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-main {
   padding-top: 0;
+  padding-bottom: var(--spacing-16);
 }
 
 .aio-payment--light-steps .aio-payment__light-main::after {
@@ -6260,6 +6248,11 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--font-weight-normal);
   line-height: 1.55;
   color: var(--color-gray-600);
+}
+
+.aio-payment--light-steps .aio-payment__section-heading--wizard .aio-payment__light-heading-copy strong {
+  color: var(--color-dark);
+  font-weight: var(--font-weight-bold);
 }
 
 .aio-payment--light-steps .aio-payment__light-result-eyebrow {
@@ -6928,7 +6921,8 @@ label.aio-payment__light-loan-step__label {
   padding: 0;
 }
 
-.aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) {
+.aio-payment__light-breakdown-row,
+.aio-payment__light-breakdown-expander > summary {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -6937,11 +6931,16 @@ label.aio-payment__light-loan-step__label {
   border-bottom: 1px solid var(--color-gray-200);
 }
 
-.aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total):has(+ .aio-payment__light-breakdown__total) {
-  border-bottom: none;
+.aio-payment__light-breakdown-expander > summary {
+  list-style: none;
+  cursor: pointer;
 }
 
-.aio-payment__light-breakdown dt {
+.aio-payment__light-breakdown-expander > summary::-webkit-details-marker {
+  display: none;
+}
+
+.aio-payment__light-breakdown-row-label {
   flex: 1;
   margin: 0;
   padding-right: var(--spacing-3);
@@ -6952,7 +6951,7 @@ label.aio-payment__light-loan-step__label {
   line-height: var(--line-height-normal);
 }
 
-.aio-payment__light-breakdown dd {
+.aio-payment__light-breakdown-row-value {
   flex-shrink: 0;
   margin: 0;
   text-align: right;
@@ -6963,18 +6962,69 @@ label.aio-payment__light-loan-step__label {
   line-height: var(--line-height-tight);
 }
 
+.aio-payment__light-breakdown-row-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+}
+
+.aio-payment__light-breakdown-row-chevron {
+  color: var(--color-gray-600);
+  transition: transform var(--transition-fast);
+}
+
+.aio-payment__light-breakdown-expander[open] .aio-payment__light-breakdown-row-chevron {
+  transform: rotate(180deg);
+}
+
+.aio-payment__light-breakdown-details {
+  display: grid;
+  gap: 0;
+  padding: 0 0 var(--spacing-3);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__light-breakdown-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-4);
+  padding: var(--spacing-2) 0 var(--spacing-2) var(--spacing-4);
+}
+
+.aio-payment__light-breakdown-detail-label,
+.aio-payment__light-breakdown-detail-value {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-breakdown-detail-label {
+  color: var(--color-gray-600);
+}
+
+.aio-payment__light-breakdown-detail-value {
+  flex-shrink: 0;
+  color: var(--color-dark);
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+}
+
 .aio-payment__light-breakdown-signed-value {
   white-space: nowrap;
   font-weight: var(--aio-light-heading-weight);
 }
 
-.aio-payment__light-breakdown-row--calculated dt,
-.aio-payment__light-breakdown-row--calculated dd {
+.aio-payment__light-breakdown-row--calculated .aio-payment__light-breakdown-row-label,
+.aio-payment__light-breakdown-row--calculated .aio-payment__light-breakdown-row-value {
   color: var(--color-dark);
   font-weight: var(--aio-light-heading-weight);
 }
 
-.aio-payment__light-breakdown .aio-payment__light-breakdown-row--loan-cost-start {
+.aio-payment__light-breakdown-row--loan-cost-start,
+.aio-payment__light-breakdown-expander.aio-payment__light-breakdown-row--loan-cost-start > summary {
   margin-top: var(--spacing-2);
   padding-top: var(--spacing-4);
   border-top: 2px solid color-mix(in srgb, var(--color-blue-cobalt) 12%, var(--color-gray-200));
@@ -6992,7 +7042,8 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-success);
 }
 
-.aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) dd {
+.aio-payment__light-breakdown-row:not(.aio-payment__light-breakdown__total) .aio-payment__light-breakdown-row-value,
+.aio-payment__light-breakdown-expander:not(.aio-payment__light-breakdown__total) .aio-payment__light-breakdown-row-value {
   color: #222222;
 }
 
@@ -7009,7 +7060,7 @@ label.aio-payment__light-loan-step__label {
   border-bottom: none;
 }
 
-.aio-payment__light-breakdown .aio-payment__light-breakdown__total dt {
+.aio-payment__light-breakdown .aio-payment__light-breakdown__total .aio-payment__light-breakdown-row-label {
   color: var(--color-dark);
   font-family: var(--font-heading);
   font-size: var(--aio-light-section-label);
@@ -7082,7 +7133,7 @@ label.aio-payment__light-loan-step__label {
   width: min(18rem, calc(100vw - var(--spacing-8)));
 }
 
-.aio-payment__light-breakdown .aio-payment__light-breakdown__total dd {
+.aio-payment__light-breakdown .aio-payment__light-breakdown__total .aio-payment__light-breakdown-row-value {
   color: var(--color-blue-cobalt);
   font-size: var(--aio-light-total-value);
   font-weight: var(--font-weight-extrabold);
@@ -7124,7 +7175,8 @@ label.aio-payment__light-loan-step__label {
     padding: var(--spacing-7) var(--spacing-8);
   }
 
-  .aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) {
+  .aio-payment__light-breakdown-row,
+  .aio-payment__light-breakdown-expander > summary {
     padding: var(--spacing-4) 0;
   }
 }
@@ -7160,8 +7212,9 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-breakdown-card .aio-payment__light-breakdown-card-heading {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--spacing-1);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--spacing-2);
     margin-bottom: var(--spacing-4);
   }
 
@@ -7169,12 +7222,30 @@ label.aio-payment__light-loan-step__label {
     padding: var(--spacing-3);
   }
 
-  .aio-payment--light-steps .aio-payment__light-breakdown div:not(.aio-payment__light-breakdown__total) {
+  .aio-payment--light-steps .aio-payment__light-breakdown-row,
+  .aio-payment--light-steps .aio-payment__light-breakdown-expander > summary {
     gap: var(--spacing-2);
   }
 
-  .aio-payment--light-steps .aio-payment__light-breakdown dt {
+  .aio-payment--light-steps .aio-payment__light-breakdown-row:not(.aio-payment__light-breakdown__total) .aio-payment__light-breakdown-row-label,
+  .aio-payment--light-steps .aio-payment__light-breakdown-expander .aio-payment__light-breakdown-row-label {
+    font-size: 14px;
     padding-right: var(--spacing-2);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-row:not(.aio-payment__light-breakdown__total) .aio-payment__light-breakdown-row-value,
+  .aio-payment--light-steps .aio-payment__light-breakdown-expander .aio-payment__light-breakdown-row-value {
+    font-size: 18px;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-detail-row {
+    gap: var(--spacing-2);
+    padding-left: var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-detail-label,
+  .aio-payment--light-steps .aio-payment__light-breakdown-detail-value {
+    font-size: var(--font-size-xs);
   }
 }
 
@@ -7504,6 +7575,14 @@ label.aio-payment__light-loan-step__label {
   border-top: 1px solid color-mix(in srgb, var(--color-gray-200) 88%, var(--color-warm-canvas) 12%);
   border-radius: 0;
   background: transparent;
+}
+
+.aio-payment__light-estimate-email__panel {
+  padding: var(--spacing-5);
+  border: 1px solid color-mix(in srgb, var(--color-gray-200) 86%, var(--color-warm-canvas) 14%);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--color-white) 96%, var(--color-warm-canvas) 4%);
+  box-sizing: border-box;
 }
 
 .aio-payment__light-estimate-email__lede {
@@ -9198,6 +9277,11 @@ label.aio-payment__light-loan-step__label {
     padding: var(--spacing-3) 0 var(--spacing-6);
   }
 
+  .aio-payment--light-steps.aio-payment--light-review-step .aio-payment__light-main {
+    padding-top: 0;
+    padding-bottom: var(--spacing-16);
+  }
+
   .aio-payment--light-steps .aio-payment__light-wizard-steps-shell {
     padding: var(--spacing-5) var(--spacing-4) var(--spacing-5);
   }
@@ -9385,6 +9469,10 @@ label.aio-payment__light-loan-step__label {
     width: 100%;
     margin-left: 0;
     gap: var(--spacing-2);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-next-cue {
+    text-align: center;
   }
 
   .aio-payment--light-steps .aio-payment__light-wizard-start-over,
@@ -9736,6 +9824,15 @@ label.aio-payment__light-loan-step__label {
     min-height: var(--spacing-12);
     padding-inline: var(--spacing-6);
     font-size: var(--font-size-sm);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-card .aio-payment__light-breakdown-card-heading {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-expert-link {
+    justify-self: start;
   }
 
   .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside .payment-calc__aside-inner {
