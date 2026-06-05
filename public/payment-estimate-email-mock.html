@@ -107,42 +107,136 @@
       }
 
       .payment-hero {
-        background: #eef5f7;
+        background: #ffffff;
         border-top: 1px solid #d8dee6;
         border-bottom: 1px solid #d8dee6;
       }
 
+      .payment-panel {
+        padding: 28px 28px 26px;
+        background: #f6fbfe;
+        border: 1px solid #c8d9e7;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .payment-panel .eyebrow {
+        margin-bottom: 10px;
+      }
+
       .payment-amount {
         margin: 0;
-        color: #1f6c99;
-        font-size: 56px;
+        color: #1d6797;
+        font-size: 74px;
         font-weight: 800;
-        line-height: 0.95;
+        line-height: 0.88;
+        letter-spacing: -1.5px;
       }
 
       .payment-amount span {
-        color: #555555;
-        font-size: 24px;
+        color: #444444;
+        font-size: 22px;
         font-weight: 700;
+        letter-spacing: 0;
       }
 
       .payment-subcopy {
-        margin: 12px 0 20px;
+        margin: 12px 0 0;
         color: #555555;
         font-size: 16px;
         line-height: 1.45;
+        text-align: center;
+      }
+
+      .payment-cta {
+        display: inline-block;
+        min-width: 320px;
+        margin-top: 20px;
+        padding: 14px 22px;
+        border-radius: 3px;
+        background: #2a6f9e;
+        color: #ffffff !important;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .breakdown-card {
+        padding: 24px 24px 18px;
+        border: 1px solid #d8dee6;
+        border-radius: 10px;
+        background: #ffffff;
+      }
+
+      .breakdown-card-head {
+        margin-bottom: 18px;
+      }
+
+      .breakdown-card-head__title {
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .breakdown-highlight {
+        margin-bottom: 18px;
+        padding: 18px 14px 14px;
+        background: #f4fbfd;
+        border-radius: 6px;
+      }
+
+      .breakdown-highlight__eyebrow {
+        margin: 0 0 8px;
+        color: #5d6670;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+      }
+
+      .breakdown-highlight__value {
+        margin: 0 0 8px;
+        color: #222222;
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .breakdown-highlight__meta {
+        margin: 0;
+        color: #444444;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .accent-red {
+        color: #e23d3d;
+        font-weight: 700;
+      }
+
+      .accent-green {
+        color: #289323;
+        font-weight: 700;
+      }
+
+      .accent-blue {
+        color: #1d6797;
+        font-weight: 800;
       }
 
       .breakdown {
         width: 100%;
         border-collapse: collapse;
         background: #ffffff;
-        border: 1px solid #d8dee6;
       }
 
       .breakdown td {
-        padding: 13px 16px;
-        border-bottom: 1px solid #e5e7eb;
+        padding: 16px 0;
+        border-bottom: 1px solid #d8dee6;
         color: #4b5563;
         font-size: 15px;
         line-height: 1.3;
@@ -159,11 +253,23 @@
         white-space: nowrap;
       }
 
+      .breakdown .summary td {
+        border-top: 2px solid #d8dee6;
+        color: #333333;
+      }
+
       .breakdown .total td {
-        border-top: 2px solid #b9cbd5;
+        border-top: 2px solid #d8dee6;
         color: #111827;
         font-size: 17px;
         font-weight: 800;
+      }
+
+      .breakdown-footnote {
+        margin: 12px 0 0;
+        color: #555555;
+        font-size: 13px;
+        line-height: 1.45;
       }
 
       .vehicle-card {
@@ -172,11 +278,161 @@
         border: 1px solid #d8dee6;
       }
 
+      .vehicle-heading {
+        margin: 0 0 10px;
+        color: #111111;
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1.02;
+      }
+
+      .vehicle-hero-layout {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 14px;
+      }
+
+      .vehicle-hero-layout td {
+        vertical-align: top;
+      }
+
+      .vehicle-hero-layout__media {
+        width: 100%;
+      }
+
+      .vehicle-hero-layout__stats {
+        width: 100%;
+      }
+
+      .vehicle-hero-panel {
+        padding: 18px 20px;
+        background: #f8f8f8;
+        border-radius: 10px;
+      }
+
+      .vehicle-rank {
+        margin: 0 0 18px;
+        color: #1d6797;
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.25;
+        text-align: left;
+      }
+
+      .vehicle-score-row {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 18px;
+      }
+
+      .vehicle-score-row td {
+        vertical-align: top;
+      }
+
+      .vehicle-score {
+        color: #111111;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 0.95;
+      }
+
+      .vehicle-score span {
+        font-size: 22px;
+      }
+
+      .vehicle-score-label {
+        display: block;
+        margin-top: 8px;
+        color: #222222;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .vehicle-badges {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .vehicle-badge-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        border: 1px solid #d7dde5;
+        border-radius: 999px;
+        background: #ffffff;
+        vertical-align: middle;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      .vehicle-badge-mark img {
+        display: block;
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+      }
+
+      .vehicle-stat-rule {
+        margin: 0 0 18px;
+        border-top: 3px dotted #444444;
+      }
+
+      .vehicle-stat-block {
+        margin: 0 0 20px;
+      }
+
+      .vehicle-stat-block:last-of-type {
+        margin-bottom: 18px;
+      }
+
+      .vehicle-stat-grid {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 18px;
+      }
+
+      .vehicle-stat-grid td {
+        width: 50%;
+        vertical-align: top;
+      }
+
+      .vehicle-stat-grid td:first-child {
+        padding-right: 12px;
+      }
+
+      .vehicle-stat-grid td:last-child {
+        padding-left: 12px;
+      }
+
+      .vehicle-stat-label {
+        margin: 0 0 8px;
+        color: #6b7280;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .vehicle-stat-value {
+        margin: 0;
+        color: #111111;
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1.05;
+      }
+
       .vehicle-image {
         display: block;
         width: 100%;
-        height: 345px;
+        height: 320px;
         object-fit: cover;
+        border-radius: 10px;
       }
 
       .vehicle-content {
@@ -203,7 +459,7 @@
       .vehicle-facts {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 18px;
+        margin-top: 16px;
       }
 
       .vehicle-facts td {
@@ -227,7 +483,7 @@
       .link-grid {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 18px;
+        margin-top: 14px;
       }
 
       .link-grid td {
@@ -349,6 +605,80 @@
         background: #111827;
       }
 
+      .shopping-tools-panel {
+        padding: 18px 0 0;
+        background: transparent;
+        border: 0;
+      }
+
+      .shopping-tools-panel .eyebrow {
+        margin-bottom: 14px;
+      }
+
+      .shopping-tools-grid {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 12px 0;
+      }
+
+      .shopping-tools-grid td {
+        width: 33.333%;
+        vertical-align: top;
+      }
+
+      .shopping-tool-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 176px;
+        padding: 20px;
+        background: #050505;
+        border-radius: 6px;
+        color: #ffffff !important;
+        text-decoration: none;
+        box-sizing: border-box;
+      }
+
+      .shopping-tool-card--primary {
+        background: #1f6c99;
+        height: 260px;
+        min-height: 260px;
+      }
+
+      .shopping-tool-card__title {
+        display: block;
+        margin: 0 0 10px;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.05;
+      }
+
+      .shopping-tool-card__copy {
+        display: block;
+        margin: 0 0 18px;
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 14px;
+        line-height: 1.3;
+      }
+
+      .shopping-tool-card__cta {
+        display: block;
+        width: fit-content;
+        margin-top: auto;
+        padding: 12px 18px;
+        border-radius: 3px;
+        border: 1px solid rgba(255, 255, 255, 0.88);
+        background: transparent;
+        color: #ffffff !important;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.7px;
+        line-height: 1.2;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
       .footer {
         padding: 24px 32px;
         background: #111827;
@@ -372,13 +702,59 @@
           font-size: 28px;
         }
 
+        .vehicle-heading {
+          font-size: 28px;
+        }
+
         .payment-amount {
-          font-size: 48px;
+          font-size: 56px;
+        }
+
+        .payment-cta {
+          min-width: 0;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .vehicle-image {
           height: auto;
           aspect-ratio: 16 / 9;
+        }
+
+        .vehicle-score-row,
+        .vehicle-score-row tbody,
+        .vehicle-score-row tr,
+        .vehicle-score-row td {
+          display: block;
+          width: 100% !important;
+          box-sizing: border-box;
+        }
+
+        .vehicle-rank,
+        .vehicle-badges {
+          text-align: left;
+        }
+
+        .vehicle-badge-mark {
+          margin: 8px 8px 0 0;
+        }
+
+        .vehicle-stat-value {
+          font-size: 28px;
+        }
+
+        .vehicle-stat-grid,
+        .vehicle-stat-grid tbody,
+        .vehicle-stat-grid tr,
+        .vehicle-stat-grid td {
+          display: block;
+          width: 100% !important;
+          box-sizing: border-box;
+        }
+
+        .vehicle-stat-grid td:first-child,
+        .vehicle-stat-grid td:last-child {
+          padding: 0;
         }
 
         .cta-cell,
@@ -387,6 +763,27 @@
           display: block;
           width: 100%;
           box-sizing: border-box;
+        }
+
+        .shopping-tools-grid,
+        .shopping-tools-grid tbody,
+        .shopping-tools-grid tr,
+        .shopping-tools-grid td {
+          display: block;
+          width: 100% !important;
+          box-sizing: border-box;
+        }
+
+        .shopping-tools-grid {
+          border-spacing: 0;
+        }
+
+        .shopping-tools-grid td {
+          padding: 0 0 10px;
+        }
+
+        .shopping-tool-card {
+          min-height: 0;
         }
 
         .advice-mosaic td {
@@ -447,49 +844,73 @@
 
         <tr>
           <td class="section payment-hero">
-            <p class="eyebrow">Estimated monthly payment</p>
-            <p class="payment-amount">$688<span>/mo</span></p>
-            <p class="payment-subcopy">
-              Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.
-            </p>
-            <table class="breakdown" role="presentation" cellspacing="0" cellpadding="0">
-              <tr>
-                <td>Rate &amp; Term</td>
-                <td>6.9% APR - 60 mo</td>
-              </tr>
-              <tr>
-                <td>Selected Vehicle Price</td>
-                <td>$42,150</td>
-              </tr>
-              <tr>
-                <td>Estimated Taxes &amp; Fees</td>
-                <td>+$3,420</td>
-              </tr>
-              <tr>
-                <td>Down Payment</td>
-                <td>-$4,000</td>
-              </tr>
-              <tr>
-                <td>Trade-In Value</td>
-                <td>$0</td>
-              </tr>
-              <tr>
-                <td>Amount Financed</td>
-                <td>$41,570</td>
-              </tr>
-              <tr>
-                <td>Finance Charge</td>
-                <td>+$7,701</td>
-              </tr>
-              <tr>
-                <td>Loan Payments Over 60 Months</td>
-                <td>$49,271</td>
-              </tr>
-              <tr class="total">
-                <td>Estimated Total Paid</td>
-                <td>$53,271</td>
-              </tr>
-            </table>
+            <div class="payment-panel">
+              <p class="eyebrow">Estimated monthly payment</p>
+              <p class="payment-amount">$688<span>/mo</span></p>
+              <p class="payment-subcopy">
+                Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.
+              </p>
+              <a class="payment-cta" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">
+                See cars in your budget
+              </a>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <div class="breakdown-card">
+              <div class="breakdown-card-head">
+                <div class="breakdown-card-head__title">Your Personalized Cost Breakdown</div>
+              </div>
+
+              <div class="breakdown-highlight">
+                <p class="breakdown-highlight__eyebrow">Amount Financed</p>
+                <p class="breakdown-highlight__value">$41,570</p>
+                <p class="breakdown-highlight__meta">
+                  $42,150 selected vehicle price + <span class="accent-red">$3,420</span> taxes &amp; fees
+                  - <span class="accent-green">$4,000</span> down = $41,570 financed
+                </p>
+              </div>
+
+              <table class="breakdown" role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>Selected Vehicle Price</td>
+                  <td>$42,150</td>
+                </tr>
+                <tr>
+                  <td>Down Payment</td>
+                  <td><span class="accent-green">$4,000</span></td>
+                </tr>
+                <tr>
+                  <td>Total Interest Paid</td>
+                  <td><span class="accent-red">$7,701</span></td>
+                </tr>
+                <tr>
+                  <td>Net Trade Value</td>
+                  <td>$0</td>
+                </tr>
+                <tr>
+                  <td>Taxes &amp; Fees Total</td>
+                  <td><span class="accent-red">$3,420</span></td>
+                </tr>
+                <tr class="summary">
+                  <td>Total Loan Payments Over 60 Months</td>
+                  <td>$49,271</td>
+                </tr>
+                <tr>
+                  <td>Monthly Payment</td>
+                  <td>$688/mo</td>
+                </tr>
+                <tr class="total">
+                  <td>Estimated Total Paid</td>
+                  <td><span class="accent-blue">$53,271</span></td>
+                </tr>
+              </table>
+              <p class="breakdown-footnote">
+                $49,271 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$53,271</span> estimated total paid
+              </p>
+            </div>
           </td>
         </tr>
 
@@ -498,46 +919,106 @@
             <p class="eyebrow">Your next vehicle</p>
             <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
               <tr>
-                <td>
-                  <img
-                    class="vehicle-image"
-                    src="https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg"
-                    alt="2026 Honda CR-V Hybrid on road"
-                  >
-                </td>
-              </tr>
-              <tr>
                 <td class="vehicle-content">
-                  <div class="rating-row">
-                    <span class="rating-pill">9.5/10 C/D Rating</span>
-                    <span class="rating-pill">Editors' Choice</span>
-                    <span class="rating-pill">#2 Compact SUVs</span>
-                  </div>
-                  <h2>2026 Honda CR-V Hybrid Sport Touring</h2>
-                  <p class="copy">
+                  <h2 class="vehicle-heading">2026 Honda CR-V Hybrid Sport Touring</h2>
+                  <p class="vehicle-rank">#2 in Compact SUVs</p>
+                  <table class="vehicle-hero-layout" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td class="vehicle-hero-layout__media">
+                        <img
+                          class="vehicle-image"
+                          src="https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg"
+                          alt="2026 Honda CR-V Hybrid on road"
+                        >
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p class="copy" style="margin-top: 18px;">
                     <strong>C/D Says:</strong> The CR-V Hybrid blends strong fuel economy, smart cargo packaging,
                     and easy everyday drivability into a compact SUV that feels ready for family duty.
+                    <a href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Learn more</a>
                   </p>
 
-                  <table class="vehicle-facts" role="presentation" cellspacing="0" cellpadding="0">
-                    <tr>
-                      <td><strong>YMMT</strong>2026 Honda CR-V Hybrid Sport Touring</td>
-                      <td><strong>MSRP Range</strong>$35,700 - $42,150</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Fuel Economy</strong>40 city / 34 highway mpg</td>
-                      <td><strong>Rank in Category</strong>#2 in Compact SUVs</td>
-                    </tr>
-                  </table>
-
-                  <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
-                    <tr>
-                      <td><a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Shop New CR-V Hybrid</a></td>
-                    </tr>
-                  </table>
+                  <div class="vehicle-hero-panel" style="margin-top: 18px;">
+                    <table class="vehicle-score-row" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>
+                          <div class="vehicle-score">9.5<span>/10</span></div>
+                          <span class="vehicle-score-label">C/D Rating</span>
+                        </td>
+                        <td class="vehicle-badges">
+                          <span class="vehicle-badge-mark">
+                            <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" alt="Editor's Choice">
+                          </span>
+                          <span class="vehicle-badge-mark">
+                            <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" alt="10Best">
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                    <div class="vehicle-stat-rule"></div>
+                    <table class="vehicle-stat-grid" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>
+                          <div class="vehicle-stat-block">
+                            <p class="vehicle-stat-label">MSRP Range</p>
+                            <p class="vehicle-stat-value">$35,700</p>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="vehicle-stat-block">
+                            <p class="vehicle-stat-label">EPA MPG</p>
+                            <p class="vehicle-stat-value">40/34</p>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                    <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td><a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Shop New CR-V Hybrid</a></td>
+                      </tr>
+                      <tr>
+                        <td><a class="button button--secondary" href="/vehicles?condition=used&amp;make=Honda&amp;model=CR-V">Shop Used CR-V Hybrid</a></td>
+                      </tr>
+                    </table>
+                  </div>
                 </td>
               </tr>
             </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <div class="shopping-tools-panel">
+              <p class="eyebrow">Shopping tools</p>
+              <table class="shopping-tools-grid" role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                    <a class="shopping-tool-card shopping-tool-card--primary" href="/vehicles">
+                      <span class="shopping-tool-card__title">Shop For Cars</span>
+                      <span class="shopping-tool-card__copy">Research, compare, and find the exact car you're looking for at a dealer near you.</span>
+                      <span class="shopping-tool-card__cta">Shop Now</span>
+                    </a>
+                  </td>
+                  <td>
+                    <a class="shopping-tool-card shopping-tool-card--primary" href="/whats-my-car-worth">
+                      <span class="shopping-tool-card__title">What's My Car Worth?</span>
+                      <span class="shopping-tool-card__copy">Get your car's value using the same Black Book data dealers use to appraise vehicles.</span>
+                      <span class="shopping-tool-card__cta">Get Estimate</span>
+                    </a>
+                  </td>
+                  <td>
+                    <a class="shopping-tool-card shopping-tool-card--primary" href="/compare">
+                      <span class="shopping-tool-card__title">Compare Cars</span>
+                      <span class="shopping-tool-card__copy">Compare features, specs, prices, and performance between different trim levels on any vehicle.</span>
+                      <span class="shopping-tool-card__cta">Compare</span>
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
         </tr>
 
@@ -585,19 +1066,6 @@
                     </span>
                   </a>
                 </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
-        <tr>
-          <td class="section">
-            <p class="eyebrow">Shopping tools</p>
-            <table class="cta-row" role="presentation" cellspacing="0" cellpadding="0">
-              <tr>
-                <td class="cta-cell"><a class="button button--secondary" href="/vehicles">Shop For Cars</a></td>
-                <td class="cta-cell"><a class="button button--secondary" href="/whats-my-car-worth">What's My Car Worth?</a></td>
-                <td class="cta-cell"><a class="button button--secondary" href="/compare">Compare Cars</a></td>
               </tr>
             </table>
           </td>

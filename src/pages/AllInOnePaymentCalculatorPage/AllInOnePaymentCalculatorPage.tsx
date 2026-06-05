@@ -2453,7 +2453,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightReview2AmountFinancedTooltipCopy = 'Amount financed is the estimated amount you borrow after the vehicle price, financed taxes and fees, optional add-ons, trade-in credit, incentives, and down payment are applied.';
   const lightReview2TradeTooltipCopy = 'Trade-in contribution is the value from your trade-in, after any payoff, that reduces the amount you need to finance. Final trade value depends on appraisal and payoff.';
   const lightReview2FinanceChargeTooltipCopy = activeApr > 0
-    ? `Finance charge is the estimated interest paid over ${loanTerm} months. This estimate uses ${formatAprPercent(activeApr)} APR on ${currency(totalLoanAmount)} financed.`
+    ? `Total interest paid is the estimated interest paid over ${loanTerm} months. This estimate uses ${formatAprPercent(activeApr)} APR on ${currency(totalLoanAmount)} financed.`
     : `At ${formatAprPercent(activeApr)} APR, this estimate does not add interest over ${loanTerm} months.`;
   const lightReview2VehicleCostCoveredTooltipCopy = 'This represents the total vehicle cost covered through your loan payments, cash down payment, and trade-in value. It is not the same as the amount you borrow.';
   const lightReview2AmountFinancedFormulaParts = [
@@ -2651,7 +2651,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     },
     {
       key: 'finance-cost',
-      label: 'Finance Cost',
+      label: 'Total Interest Paid',
       value: renderLightBreakdownValue(totalLoanInterest, 'add'),
       details: [
         {
@@ -3777,7 +3777,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 	    const estimateRows = [
 	      { label: workingPriceBreakdownLabel, value: currency(workingPrice) },
 	      { label: downPaymentBreakdownLabel, value: currency(downPaymentApplied) },
-	      { label: 'Finance Cost', value: currency(totalLoanInterest) },
+	      { label: 'Total Interest Paid', value: currency(totalLoanInterest) },
 	      { label: 'Rate & Term', value: `${formatAprPercent(activeApr)} APR - ${loanTerm} mo` },
 	      { label: 'Net Trade Value', value: currency(tradeEquity) },
 	      { label: 'Trade-In Value', value: tradeInValue > 0 ? currency(tradeInValue) : currency(0) },
@@ -5680,15 +5680,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <section className="aio-payment__light-review2-panel" aria-labelledby="aio-payment-light-review2-finance-charge">
                           <div className="aio-payment__light-review2-panel-header">
                             <div>
-                              <h3 id="aio-payment-light-review2-finance-charge" className="aio-payment__light-review2-title">Finance Charge</h3>
+                              <h3 id="aio-payment-light-review2-finance-charge" className="aio-payment__light-review2-title">Total Interest Paid</h3>
                               <p className="aio-payment__light-review2-helper">
                                 Estimated interest paid over the life of the loan.
                               </p>
                             </div>
                             {renderLightReview2Tooltip(
                               lightFinanceChargeGuidanceId,
-                              'How finance charge is calculated',
-                              'Finance Charge',
+                              'How total interest paid is calculated',
+                              'Total Interest Paid',
                               lightReview2FinanceChargeTooltipCopy,
                             )}
                           </div>
@@ -5702,7 +5702,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               <dd>{currency(totalLoanAmount)}</dd>
                             </div>
                             <div className="aio-payment__light-review2-row aio-payment__light-review2-row--total">
-                              <dt>Finance Charge</dt>
+                              <dt>Total Interest Paid</dt>
                               <dd className="aio-payment__light-review2-value--charge">{currency(totalLoanInterest)}</dd>
                             </div>
                           </dl>
@@ -6095,7 +6095,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             </div>
                           )}
                           <div className="payment-calc__sum-row">
-                            <dt>Finance Charge</dt>
+                            <dt>Total Interest Paid</dt>
                             <dd>{currency(totalLoanInterest)}</dd>
                           </div>
                           {showTotalIncludingTradeCredit && (
@@ -7125,7 +7125,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <div><dt>Estimated buyout payment</dt><dd>{currency(buyoutMonthlyPayment)}/mo</dd></div>
                     <div><dt>Amount financed</dt><dd>{currency(buyoutAmountFinanced)}</dd></div>
                     <div><dt>Total loan payments</dt><dd>{currency(buyoutTotalPayments)}</dd></div>
-                    <div><dt>Finance charge</dt><dd>{currency(buyoutFinanceCharge)}</dd></div>
+                    <div><dt>Total interest paid</dt><dd>{currency(buyoutFinanceCharge)}</dd></div>
                   </dl>
                   <p className="aio-payment__summary-note">
                     Buyout estimate is for purchasing your leased vehicle. It includes state tax plus title and registration assumptions, and stays separate from the new-car finance estimate above.
@@ -7191,7 +7191,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             </div>
           </div>
           <p className="aio-payment__summary-subtitle">
-            Includes price, tax, fees, trade equity, incentives, down payment, and finance charge.
+            Includes price, tax, fees, trade equity, incentives, down payment, and total interest paid.
           </p>
           <div className="aio-payment__summary-groups">
             <details className="aio-payment__summary-group">
@@ -7255,14 +7255,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <dd>{currency(Math.abs(paymentDelta))}/mo</dd>
                   </div>
                 )}
-                <div><dt>Finance charge</dt><dd>{currency(totalLoanInterest)}</dd></div>
+                <div><dt>Total interest paid</dt><dd>{currency(totalLoanInterest)}</dd></div>
                 <div><dt>Total loan payments</dt><dd>{currency(totalLoanPayments)}</dd></div>
                 <div><dt>Cash + loan payments</dt><dd>{currency(totalPaidFromPocket)}</dd></div>
               </dl>
             </details>
           </div>
           <p className="aio-payment__summary-note">
-            Details are estimates. Expand each group to see how taxes, fees, trade, incentives, and finance charges affect the total.
+            Details are estimates. Expand each group to see how taxes, fees, trade, incentives, and interest paid affect the total.
           </p>
           <Button as="a" href={getMarketplaceUrl(condition, selectedVehicle, selectedYear)} variant="primary" size="large" fullWidth className="aio-payment__marketplace">
             Shop {condition === 'new' ? 'New' : 'Used'} {selectedVehicle.model}

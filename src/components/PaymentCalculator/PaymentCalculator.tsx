@@ -542,7 +542,7 @@ const PaymentCalculator = ({
                         <dd>{fmt(amountFinanced)}</dd>
                       </div>
                       <div className="payment-calc__sum-row payment-calc__sum-row--calculated">
-                        <dt>Finance Charge</dt>
+                        <dt>Total Interest Paid</dt>
                         <dd>{fmt(totalInterest)}</dd>
                       </div>
                       <div className="payment-calc__sum-row payment-calc__sum-row--divider payment-calc__sum-row--total">
