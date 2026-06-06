@@ -680,22 +680,100 @@
       }
 
       .footer {
-        padding: 24px 32px;
-        background: #111827;
-        color: #d1d5db;
+        padding: 54px 32px 50px;
+        background: #000000;
+        color: #b7b7b7;
+        font-size: 20px;
+        line-height: 1.4;
+        text-align: center;
+      }
+
+      .footer-powered {
+        margin: 0 0 30px;
+        color: #b7b7b7;
         font-size: 12px;
-        line-height: 1.5;
+        font-weight: 400;
+        letter-spacing: 8px;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .footer-logo {
+        display: inline-block;
+        width: auto;
+        max-width: 82%;
+        height: 45.67px;
+        filter: brightness(0) invert(1);
+      }
+
+      .footer-links {
+        margin: 34px 0 32px;
+        color: #ffffff;
+        font-size: 24px;
+        line-height: 1.3;
       }
 
       .footer a {
         color: #ffffff;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      .footer-divider {
+        display: inline-block;
+        padding: 0 18px;
+        color: #b7b7b7;
+      }
+
+      .footer-publication {
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 17px;
+        line-height: 1.35;
+      }
+
+      .footer-rights {
+        margin: 0;
+        color: #b7b7b7;
+        font-size: 14px;
+        line-height: 1.35;
       }
 
       @media (max-width: 560px) {
         .section,
-        .header,
-        .footer {
+        .header {
           padding: 22px 18px;
+        }
+
+        .footer {
+          padding: 38px 18px 36px;
+        }
+
+        .footer-powered {
+          margin-bottom: 22px;
+          font-size: 12px;
+          letter-spacing: 5px;
+        }
+
+        .footer-logo {
+          max-width: 88%;
+        }
+
+        .footer-links {
+          margin: 26px 0 24px;
+        }
+
+        .footer-links,
+        .footer-publication {
+          font-size: 17px;
+        }
+
+        .footer-rights {
+          font-size: 14px;
+        }
+
+        .footer-divider {
+          padding: 0 10px;
         }
 
         h1 {
@@ -831,8 +909,7 @@
 
         <tr>
           <td class="section">
-            <p class="eyebrow">Your payment estimate</p>
-            <h1>Alex, your 2026 Honda CR-V Hybrid estimate</h1>
+              <h1>Your 2026 Honda CR-V Hybrid estimate</h1>
             <p class="copy">
               Hi Alex, thank you for using Car and Driver to calculate an estimated monthly payment for a
               2026 Honda CR-V Hybrid Sport Touring. Use this estimate as a planning guide while
@@ -875,7 +952,7 @@
 
               <table class="breakdown" role="presentation" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td>Selected Vehicle Price</td>
+                  <td>Vehicle Target Price</td>
                   <td>$42,150</td>
                 </tr>
                 <tr>
@@ -1073,13 +1150,15 @@
 
         <tr>
           <td class="footer">
-            <p style="margin:0 0 8px;">
-              Estimates are for planning only and are not loan approvals or offers. Dealer pricing,
-              lender terms, taxes, fees, and incentives may change.
+            <p class="footer-powered">Powered by</p>
+            <img class="footer-logo" src="/car-and-driver-logo.svg" alt="Car and Driver">
+            <p class="footer-links">
+              <a href="/privacy">Privacy Notice</a>
+              <span class="footer-divider" aria-hidden="true">|</span>
+              <a href="/california-privacy">CA Notice at Collection</a>
             </p>
-            <p style="margin:0;">
-              Car and Driver Marketplace - <a href="/auto-loan-calculator/light-steps/review">Calculator Results Page</a>
-            </p>
+            <p class="footer-publication">Car and Driver is a publication of Hearst Autos, Inc.</p>
+            <p class="footer-rights">All Rights Reserved</p>
           </td>
         </tr>
       </table>

@@ -114,8 +114,10 @@ interface LightVehicleDraft {
 
 interface LightBreakdownDetailRow {
   key: string;
-  label: ReactNode;
-  value: ReactNode;
+  label?: ReactNode;
+  value?: ReactNode;
+  content?: ReactNode;
+  className?: string;
 }
 
 interface LightBreakdownRow {
@@ -163,6 +165,7 @@ const SHOW_LIGHT_REVIEW_NEXT_STEPS_CARD = false;
 const DEFAULT_EXTENDED_WARRANTY_COST = 2500;
 const DEFAULT_MONTHLY_INSURANCE_ESTIMATE = 180;
 const PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH = '/.netlify/functions/send-payment-estimate-email';
+const PAYMENT_ESTIMATE_EMAIL_MOCK_PATH = '/payment-estimate-email-mock.html';
 const PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN = 'https://cd-mmp-2025.netlify.app';
 const CD_SEAL_CHECK_ICON_URL = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/seal-check-regular.4dd562d.svg?primary=%25231D7A19';
 const CD_ARROW_RIGHT_ICON_URL = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/arrow-right.7440adc.svg?primary=%25231f1f1f';
@@ -299,7 +302,12 @@ const getPaymentEstimateEmailMockUrl = () => {
   const origin = isLocalHost() || typeof window === 'undefined'
     ? PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN
     : window.location.origin;
-  return `${origin}/payment-estimate-email-mock.html`;
+  return `${origin}${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}`;
+};
+
+const displayPaymentEstimateEmailMock = () => {
+  if (typeof window === 'undefined') return;
+  window.location.assign(PAYMENT_ESTIMATE_EMAIL_MOCK_PATH);
 };
 
 const LIGHT_FINANCING_FAQS = [
@@ -562,12 +570,6 @@ const getTrimOptionPrice = (vehicle: Vehicle, trim: TrimData, index: number) => 
   return index === 0 ? vehicle.priceMin : parsedTrimPrice || vehicle.priceMin;
 };
 
-const getBudgetFitStatusFromDelta = (delta: number): BudgetFitStatus => {
-  if (delta > 10) return 'over';
-  if (delta < -10) return 'under';
-  return 'fit';
-};
-
 const getRegistrationDealerFeeGuidance = (stateFeeEstimate: number) => {
   if (stateFeeEstimate <= 500) {
     return {
@@ -812,6 +814,8 @@ const getAffordablePriceFromMonthlyBudget = ({
 };
 
 const buildAnnualSchedule = (principal: number, apr: number, termMonths: number, payment: number): YearScheduleRow[] => {
+  if (principal <= 0 || termMonths <= 0 || payment <= 0) return [];
+
   const monthlyRate = apr / 100 / 12;
   let balance = principal;
   const rows: YearScheduleRow[] = [];
@@ -819,6 +823,8 @@ const buildAnnualSchedule = (principal: number, apr: number, termMonths: number,
   for (let month = 1; month <= termMonths && balance > 0.5; month += 1) {
     const interest = balance * monthlyRate;
     const principalPaid = Math.min(balance, Math.max(0, payment - interest));
+    if (principalPaid <= 0) break;
+
     balance = Math.max(0, balance - principalPaid);
     const yearIndex = Math.ceil(month / 12);
     const current = rows[yearIndex - 1] ?? { year: yearIndex, principal: 0, interest: 0, endBalance: balance };
@@ -1781,10 +1787,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const shoppingToolsRef = useRef<HTMLDivElement>(null);
   const lightAffordableSectionRef = useRef<HTMLElement>(null);
   const lightWizardShellRef = useRef<HTMLDivElement>(null);
+  const lightWizardStripRef = useRef<HTMLDivElement>(null);
   const lightWizardPanelRef = useRef<HTMLDivElement>(null);
   const [affordableCarouselState, setAffordableCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [lightBodyStyleCarouselState, setLightBodyStyleCarouselState] = useState({ canScrollPrevious: false, canScrollNext: false });
   const [showMobileSummary, setShowMobileSummary] = useState(false);
+  const [isLightWizardStuck, setIsLightWizardStuck] = useState(false);
   const [lightWizardStepMotion, setLightWizardStepMotion] = useState<LightWizardStepMotion>('none');
   const lightWizardStep = routeLightWizardStep;
   const lightWizardStepPrevRef = useRef(lightWizardStep);
@@ -2018,7 +2026,26 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, [condition, vehicles]);
   const lightVehicleSearchSuggestions = useMemo(() => {
     const query = normalizeVehicleMatch(lightVehicleSearchQuery);
-    const suggestions = query
+    const selectedVehicleBaseSearchText = normalizeVehicleMatch(formatLightVehicleSearchLabel({
+      year: selectedYear,
+      make: selectedVehicle.make,
+      model: selectedVehicle.model,
+    }));
+    const selectedVehicleTrimOptions = lightVehicleSearchOptions.filter((option) => (
+      option.type === 'trim' &&
+      option.year === selectedYear &&
+      option.vehicle.slug === selectedVehicle.slug
+    ));
+    const shouldShowSelectedVehicleTrims = (
+      lightVehicleStepMode === 'known' &&
+      lightKnownVehicleSelected &&
+      selectedVehicleTrimOptions.length > 0 &&
+      (!query || query === selectedVehicleBaseSearchText || query.includes(selectedVehicleBaseSearchText))
+    );
+
+    const suggestions = shouldShowSelectedVehicleTrims
+      ? selectedVehicleTrimOptions
+      : query
       ? lightVehicleSearchOptions.filter((option) => (
         option.searchText.includes(query) ||
         option.makeModelSearchText.includes(query)
@@ -2026,7 +2053,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : lightVehicleSearchOptions.filter((option) => option.type === 'vehicle');
 
     return suggestions.slice(0, 80);
-  }, [lightVehicleSearchOptions, lightVehicleSearchQuery]);
+  }, [
+    lightKnownVehicleSelected,
+    lightVehicleSearchOptions,
+    lightVehicleSearchQuery,
+    lightVehicleStepMode,
+    selectedVehicle.make,
+    selectedVehicle.model,
+    selectedVehicle.slug,
+    selectedYear,
+  ]);
   const isLightVehicleSearchMenuOpen = (
     showLightVehicleSearchSuggestions &&
     lightVehicleStepMode === 'known' &&
@@ -2353,6 +2389,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const estimatedMonthlyWithInsurance = estimatedMonthly + monthlyInsuranceAmount;
   const totalLoanPayments = estimatedMonthly * loanTerm;
   const totalLoanInterest = Math.max(0, totalLoanPayments - totalLoanAmount);
+  const loanAmortizationSchedule = useMemo(
+    () => buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly),
+    [activeApr, estimatedMonthly, loanTerm, totalLoanAmount],
+  );
   const totalInsuranceCost = monthlyInsuranceAmount * loanTerm;
   const warrantyMonthlyImpact = Math.max(
     0,
@@ -2535,12 +2575,60 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       })}
     </span>
   );
+  const renderLightAmortizationTable = () => (
+    <div className="aio-payment__light-amortization" aria-label="Year-by-year loan amortization">
+      <div className="aio-payment__light-amortization__heading">
+        <span>Year-by-year amortization</span>
+        <small>{currency(totalLoanAmount)} financed · {formatAprPercent(activeApr)} APR · {loanTerm} months</small>
+      </div>
+      {loanAmortizationSchedule.length ? (
+        <div className="aio-payment__light-amortization__table-wrap" role="region" aria-label="Year-by-year amortization schedule" tabIndex={0}>
+          <table className="aio-payment__light-amortization__table">
+            <thead>
+              <tr>
+                <th scope="col">Year</th>
+                <th scope="col">Payments</th>
+                <th scope="col">Principal</th>
+                <th scope="col">Interest</th>
+                <th scope="col">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loanAmortizationSchedule.map((row) => (
+                <tr key={row.year}>
+                  <th scope="row">Year {row.year}</th>
+                  <td>{currency(row.principal + row.interest)}</td>
+                  <td>{currency(row.principal)}</td>
+                  <td>{currency(row.interest)}</td>
+                  <td>{currency(row.endBalance)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="aio-payment__light-amortization__empty">
+          No loan balance to amortize with the current trade-in, down payment, and incentive assumptions.
+        </p>
+      )}
+    </div>
+  );
   const renderLightBreakdownDetailRows = (details: LightBreakdownDetailRow[]) => (
     <div className="aio-payment__light-breakdown-details">
       {details.map((detail) => (
-        <div key={detail.key} className="aio-payment__light-breakdown-detail-row">
-          <span className="aio-payment__light-breakdown-detail-label">{detail.label}</span>
-          <span className="aio-payment__light-breakdown-detail-value">{detail.value}</span>
+        <div
+          key={detail.key}
+          className={[
+            detail.content ? 'aio-payment__light-breakdown-detail-row aio-payment__light-breakdown-detail-row--content' : 'aio-payment__light-breakdown-detail-row',
+            detail.className,
+          ].filter(Boolean).join(' ')}
+        >
+          {detail.content ?? (
+            <>
+              <span className="aio-payment__light-breakdown-detail-label">{detail.label}</span>
+              <span className="aio-payment__light-breakdown-detail-value">{detail.value}</span>
+            </>
+          )}
         </div>
       ))}
     </div>
@@ -2658,6 +2746,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           key: 'rate-term',
           label: 'Rate & Term',
           value: `${formatAprPercent(activeApr)} APR · ${loanTerm} mo`,
+        },
+        {
+          key: 'loan-amortization',
+          content: renderLightAmortizationTable(),
         },
       ],
     },
@@ -2869,80 +2961,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     : priceBudgetFitStatus === 'under'
       ? `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. ${priceBudgetComparisonCopy} Taxes and fees are estimated separately in the totals.`
       : `${selectedVehicle.model} starts around ${currency(selectedCatalogPrice)} before tax and fees. ${priceBudgetComparisonCopy}`;
-  const lightTrimStyleSelectOptions = useMemo<LightListboxSelectOption[]>(() => {
-    if (!canUseCatalogPrice) {
-      return availableTrimStyleOptions.map((option) => ({
-        value: option.value,
-        label: option.label,
-      }));
-    }
-
-    return availableTrimStyleOptions.map((option) => {
-      const trimFinancePreview = getLightVehicleFinancePreview(option.price);
-
-      if (startMode === 'price') {
-        const comparableTrimPrice = getVehiclePriceAfterTradeAndIncentives({
-          vehiclePrice: option.price,
-          tradeInValue,
-          amountOwed,
-          rebate: rebateTotal,
-        });
-        const targetDelta = comparableTrimPrice - price;
-        const statusTone = getBudgetFitStatusFromDelta(targetDelta);
-        const deltaHelper = statusTone === 'over'
-          ? ` · ${currency(targetDelta)} over target`
-          : statusTone === 'under'
-            ? ` · ${currency(Math.abs(targetDelta))} under target`
-            : '';
-        const targetStatusLabel = statusTone === 'over'
-          ? 'Over target'
-          : statusTone === 'under'
-            ? 'Below target'
-            : 'On target';
-
-        return {
-          value: option.value,
-          label: option.label,
-          helper: `${currency(trimFinancePreview.monthly)}/mo with current terms${deltaHelper}`,
-          statusTone,
-          statusLabel: targetStatusLabel,
-          triggerStatusLabel: targetStatusLabel,
-        };
-      }
-
-      const monthlyDelta = trimFinancePreview.monthly - targetMonthlyPayment;
-      const statusTone = getBudgetFitStatusFromDelta(monthlyDelta);
-      const monthlyDeltaHelper = statusTone === 'over'
-        ? ` · ${currency(monthlyDelta)}/mo over budget`
-        : statusTone === 'under'
-          ? ` · ${currency(Math.abs(monthlyDelta))}/mo under budget`
-          : '';
-      const monthlyStatusLabel = statusTone === 'over'
-        ? 'Over budget'
-        : statusTone === 'under'
-          ? 'Below budget'
-          : 'Fits budget';
-
-      return {
-        value: option.value,
-        label: option.label,
-        helper: `${currency(trimFinancePreview.monthly)}/mo with current terms${monthlyDeltaHelper}`,
-        statusTone,
-        statusLabel: monthlyStatusLabel,
-        triggerStatusLabel: monthlyStatusLabel,
-      };
-    });
-  }, [
-    amountOwed,
-    availableTrimStyleOptions,
-    canUseCatalogPrice,
-    getLightVehicleFinancePreview,
-    price,
-    rebateTotal,
-    startMode,
-    targetMonthlyPayment,
-    tradeInValue,
-  ]);
   const visibleBudgetFitStatus = !canUseCatalogPrice && lightHasSpecificVehicleSelection ? usedBudgetFitStatus : lightHasSpecificVehicleSelection ? budgetFitStatus : 'fit';
   const visibleBudgetFitLabel = !canUseCatalogPrice && lightHasSpecificVehicleSelection ? usedBudgetFitLabel : lightHasSpecificVehicleSelection ? budgetFitLabel : 'Pick a vehicle';
   const visibleBudgetFitHeadline = !canUseCatalogPrice && lightHasSpecificVehicleSelection ? usedBudgetFitHeadline : lightHasSpecificVehicleSelection ? budgetFitHeadline : 'Choose a vehicle to compare';
@@ -3754,7 +3772,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const handleSendLightEstimateEmail = async () => {
     const trimmed = lightEstimateEmail.trim();
     const useEmailTestMode = isPaymentEstimateEmailTestMode();
-    if (!trimmed) {
+    if (!trimmed && !useEmailTestMode) {
       setLightEstimateEmailError('Enter an email address.');
       setLightEstimateEmailStatus(undefined);
       return;
@@ -3769,8 +3787,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     setIsLightEstimateEmailSending(true);
 
     if (useEmailTestMode) {
-      setLightEstimateEmailStatus(`Test estimate accepted for ${trimmed}.`);
+      setLightEstimateEmailStatus(trimmed ? `Test estimate accepted for ${trimmed}.` : 'Showing email estimate preview.');
       setIsLightEstimateEmailSending(false);
+      displayPaymentEstimateEmailMock();
       return;
     }
 
@@ -3832,9 +3851,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       }
 
       setLightEstimateEmailStatus(typeof result.message === 'string' ? result.message : `Estimate sent to ${trimmed}.`);
+      displayPaymentEstimateEmailMock();
     } catch (error) {
       if (useEmailTestMode) {
         setLightEstimateEmailStatus(`Test estimate accepted for ${trimmed}.`);
+        displayPaymentEstimateEmailMock();
         return;
       }
       setLightEstimateEmailError(error instanceof Error ? error.message : 'We could not send this estimate. Please try again.');
@@ -3897,7 +3918,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         syncCatalogPrice(option.trimPrice);
       }
     }
-    setShowLightVehicleSearchSuggestions(false);
+    setShowLightVehicleSearchSuggestions(option.type === 'vehicle');
     setLightVehicleSearchActiveIndex(0);
   }, [applySelectedVehicle, condition, syncCatalogPrice]);
 
@@ -4299,6 +4320,36 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, [isLightStepsVariant, lightWizardStep, location.pathname]);
 
   useEffect(() => {
+    if (!isLightStepsVariant) {
+      setIsLightWizardStuck(false);
+      return undefined;
+    }
+
+    const updateLightWizardStuckState = () => {
+      const shell = lightWizardShellRef.current;
+      if (!shell) return;
+
+      const shellTop = shell.getBoundingClientRect().top + window.scrollY;
+      const stickyOffset = window.scrollY - shellTop;
+
+      setIsLightWizardStuck((currentIsStuck) => (
+        currentIsStuck
+          ? stickyOffset > -6
+          : stickyOffset > 2
+      ));
+    };
+
+    updateLightWizardStuckState();
+    window.addEventListener('scroll', updateLightWizardStuckState, { passive: true });
+    window.addEventListener('resize', updateLightWizardStuckState);
+
+    return () => {
+      window.removeEventListener('scroll', updateLightWizardStuckState);
+      window.removeEventListener('resize', updateLightWizardStuckState);
+    };
+  }, [isLightStepsVariant, lightWizardStep]);
+
+  useEffect(() => {
     if (!isLightStepsVariant || lightWizardStepMotion === 'none') return undefined;
 
     const motionResetTimeout = window.setTimeout(() => {
@@ -4317,6 +4368,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       0,
       Math.min(1, (lightWizardStep - 1) / Math.max(1, LIGHT_WIZARD_STEP_META.length - 1)),
     );
+    const isLightWizardComplete = lightWizardStep === LIGHT_WIZARD_STEP_META.length;
     const lightReviewBudgetLabel = startMode === 'monthly'
       ? `${currency(targetMonthlyPayment)}/mo`
       : currency(price);
@@ -4478,9 +4530,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             >
               {isLightStepsVariant ? (
                 <div
-                  key={`light-wizard-strip-${lightWizardStep}`}
-                  className="aio-payment__light-wizard-strip"
+                  ref={lightWizardStripRef}
+                  className={`aio-payment__light-wizard-strip${isLightWizardStuck ? ' aio-payment__light-wizard-strip--stuck' : ''}${isLightWizardComplete ? ' aio-payment__light-wizard-strip--complete' : ''}`}
                   data-step-motion={lightWizardStepMotionAttribute}
+                  data-sticky-state={isLightWizardStuck ? 'stuck' : undefined}
                 >
                   <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
                     <div
@@ -4490,7 +4543,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       <ol className="aio-payment__light-wizard-steps">
                         {LIGHT_WIZARD_STEP_META.map((stepMeta, index) => {
                           const stepNumber = index + 1;
-                          const isDone = lightWizardStep > stepNumber;
+                          const isDone = lightWizardStep > stepNumber || isLightWizardComplete;
                           const isCurrent = lightWizardStep === stepNumber;
                           const isFinalCurrent = isCurrent && stepNumber === LIGHT_WIZARD_STEP_META.length;
                           const isFinalNext = lightWizardStep === 4 && stepNumber === LIGHT_WIZARD_STEP_META.length;
@@ -4857,14 +4910,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             </div>
                           )}
                         </div>
-                        <LightListboxSelect
-                          label="Trim / style"
-                          value={lightKnownVehicleSelected ? selectedTrimStyleOption?.value ?? '' : ''}
-                          wrapperClassName="aio-payment__light-field--wide"
-                          onChange={handleTrimStyleChange}
-                          placeholder="Select trim or style"
-                          options={lightTrimStyleSelectOptions}
-                        />
                       </div>
                     ) : (
                       <div className="aio-payment__light-vehicle-step__browse">
@@ -5869,7 +5914,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           {lightEstimateEmailStatus ? (
                             <p className="aio-payment__light-estimate-email__status" role="status">
                               {lightEstimateEmailStatus}{' '}
-                              <a href="/payment-estimate-email-mock.html" target="_blank" rel="noopener noreferrer">
+                              <a href={PAYMENT_ESTIMATE_EMAIL_MOCK_PATH} target="_blank" rel="noopener noreferrer">
                                 View email mock
                               </a>
                             </p>
