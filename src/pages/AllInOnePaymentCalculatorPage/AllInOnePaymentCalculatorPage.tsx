@@ -871,6 +871,21 @@ const addMarketplaceParams = (href: string, params: Record<string, string>) => {
   return url.toString();
 };
 
+const getMarketplaceListingUrl = (listing: Listing) => {
+  const condition: VehicleCondition = listing.isNew ? 'new' : 'used';
+  const params = new URLSearchParams({
+    year: String(listing.year),
+    make: listing.make,
+    model: listing.model,
+  });
+
+  if (listing.isCertified) {
+    params.set('certified', 'true');
+  }
+
+  return `https://www.caranddriver.com/cars-for-sale/${condition}?${params.toString()}`;
+};
+
 const getBodyStyleListingsLabel = (bodyStyle: string) => (
   bodyStyle === 'SUV' ? 'SUVs' : `${bodyStyle}s`
 );
@@ -1169,6 +1184,7 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
 
 const LIGHT_WIZARD_STEP_ROUTE_BASE = '/auto-loan-calculator/light-steps';
 const LIGHT_WIZARD_STEP_ROUTE_BASE_V2 = '/auto-loan-calculator/light-steps2';
+const LIGHT_WIZARD_STEP_REVEAL_OFFSET = 24;
 
 const clampLightWizardStep = (step: number) => Math.min(LIGHT_WIZARD_STEP_META.length, Math.max(1, step));
 
@@ -1891,11 +1907,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       {
         pathname: nextPath,
         search: location.search,
-        hash: location.hash,
+        hash: '',
       },
       { replace: options?.replace ?? false },
     );
-  }, [isLightStepsVariant, lightWizardStep, lightWizardStepRouteBase, location.hash, location.pathname, location.search, navigate]);
+  }, [isLightStepsVariant, lightWizardStep, lightWizardStepRouteBase, location.pathname, location.search, navigate]);
 
   useEffect(() => {
     if (!isLightStepsVariant) return undefined;
@@ -2587,7 +2603,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             <thead>
               <tr>
                 <th scope="col">Year</th>
-                <th scope="col">Payments</th>
                 <th scope="col">Principal</th>
                 <th scope="col">Interest</th>
                 <th scope="col">Balance</th>
@@ -2597,7 +2612,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               {loanAmortizationSchedule.map((row) => (
                 <tr key={row.year}>
                   <th scope="row">Year {row.year}</th>
-                  <td>{currency(row.principal + row.interest)}</td>
                   <td>{currency(row.principal)}</td>
                   <td>{currency(row.interest)}</td>
                   <td>{currency(row.endBalance)}</td>
@@ -2781,9 +2795,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           value: renderLightBreakdownValue(salesTax, 'add'),
         },
         {
-          key: 'registration-dealer-fees',
-          label: 'Registration & Dealer Fees',
-          value: fees > 0 ? renderLightBreakdownValue(fees, 'add') : currency(0),
+          key: 'registration-fees',
+          label: 'Registration Fees',
+          value: registrationFees > 0 ? renderLightBreakdownValue(registrationFees, 'add') : currency(0),
+        },
+        {
+          key: 'dealer-fees',
+          label: 'Dealer Fees',
+          value: dealerFees > 0 ? renderLightBreakdownValue(dealerFees, 'add') : currency(0),
         },
       ],
     },
@@ -4312,7 +4331,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     if (!shell || !heading) return;
 
     const scrollFrame = window.requestAnimationFrame(() => {
-      shell.scrollIntoView({ behavior: getPreferredScrollBehavior(), block: 'start' });
+      const shellTop = shell.getBoundingClientRect().top + window.scrollY;
+      const revealOffset = lightWizardStep === LIGHT_WIZARD_STEP_META.length
+        ? 0
+        : LIGHT_WIZARD_STEP_REVEAL_OFFSET;
+      window.scrollTo({
+        top: Math.max(0, shellTop - revealOffset),
+        behavior: getPreferredScrollBehavior(),
+      });
       heading.focus({ preventScroll: true });
     });
 
@@ -4320,7 +4346,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   }, [isLightStepsVariant, lightWizardStep, location.pathname]);
 
   useEffect(() => {
-    if (!isLightStepsVariant) {
+    if (!isLightStepsVariant || lightWizardStep === LIGHT_WIZARD_STEP_META.length) {
       setIsLightWizardStuck(false);
       return undefined;
     }
@@ -4415,33 +4441,41 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
               <ChevronLeft size={24} aria-hidden="true" />
             </button>
             <div ref={affordableCarouselRef} className="aio-payment__light-elot-carousel" role="list">
-              {lightELotListings.map((listing) => (
-                <article key={listing.id} className="aio-payment__light-elot-card" role="listitem">
-                  <Link to={`/${listing.slug}`} className="aio-payment__light-elot-image-link" aria-label={`View ${listing.year} ${listing.make} ${listing.model}`}>
-                    <OptimizedImage
-                      src={listing.image}
-                      alt={`${listing.year} ${listing.make} ${listing.model}`}
-                      aspectRatio="4/3"
-                      wrapperClassName="aio-payment__light-elot-image"
-                    />
-                    <span className={`aio-payment__light-elot-price-badge aio-payment__light-elot-price-badge--${listing.priceBadge === 'Great Price' ? 'great' : 'good'}`}>
-                      {listing.priceBadge}
-                    </span>
-                  </Link>
-                  <div className="aio-payment__light-elot-card-body">
-                    <p className="aio-payment__light-elot-kicker">{getLightListingConditionLabel(listing)}</p>
-                    <h3 className="aio-payment__light-elot-card-title">
-                      <Link to={`/${listing.slug}`}>
-                        {listing.make} {listing.model}
-                      </Link>
-                    </h3>
-                    <p className="aio-payment__light-elot-card-price">
-                      <span aria-hidden="true">$</span>{currency(listing.price).replace('$', '')}
-                    </p>
-                    <p className="aio-payment__light-elot-dealer">{listing.dealerName}</p>
-                  </div>
-                </article>
-              ))}
+              {lightELotListings.map((listing) => {
+                const listingMarketplaceHref = getMarketplaceListingUrl(listing);
+
+                return (
+                  <article key={listing.id} className="aio-payment__light-elot-card" role="listitem">
+                    <a
+                      href={listingMarketplaceHref}
+                      className="aio-payment__light-elot-image-link"
+                      aria-label={`Shop ${listing.year} ${listing.make} ${listing.model} in C/D Marketplace`}
+                    >
+                      <OptimizedImage
+                        src={listing.image}
+                        alt={`${listing.year} ${listing.make} ${listing.model}`}
+                        aspectRatio="4/3"
+                        wrapperClassName="aio-payment__light-elot-image"
+                      />
+                      <span className={`aio-payment__light-elot-price-badge aio-payment__light-elot-price-badge--${listing.priceBadge === 'Great Price' ? 'great' : 'good'}`}>
+                        {listing.priceBadge}
+                      </span>
+                    </a>
+                    <div className="aio-payment__light-elot-card-body">
+                      <p className="aio-payment__light-elot-kicker">{getLightListingConditionLabel(listing)}</p>
+                      <h3 className="aio-payment__light-elot-card-title">
+                        <a href={listingMarketplaceHref}>
+                          {listing.make} {listing.model}
+                        </a>
+                      </h3>
+                      <p className="aio-payment__light-elot-card-price">
+                        <span aria-hidden="true">$</span>{currency(listing.price).replace('$', '')}
+                      </p>
+                      <p className="aio-payment__light-elot-dealer">{listing.dealerName}</p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
             <button
               type="button"
@@ -4580,6 +4614,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <p className="aio-payment__light-wizard-step-eyebrow">
                     <span className="aio-payment__light-wizard-step-eyebrow-progress">
                       Step {lightWizardStep} of 5
+                    </span>
+                    <span className="aio-payment__light-wizard-step-eyebrow-muted">
+                      {' · '}{lightWizardStepMeta.short}
                     </span>
                     {lightWizardStepMeta.panelEyebrowSuffix ? (
                       <span className="aio-payment__light-wizard-step-eyebrow-muted">

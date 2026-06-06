@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getListingsNearYou, type Listing } from '../../services/listingsService';
 import { OptimizedImage } from '../OptimizedImage';
@@ -35,6 +34,21 @@ const getMarketplaceUrl = (year: string | number, make: string, model: string) =
   });
 
   return `https://www.caranddriver.com/cars-for-sale/used?${params.toString()}`;
+};
+
+const getListingMarketplaceUrl = (listing: Listing) => {
+  const condition = listing.isNew ? 'new' : 'used';
+  const params = new URLSearchParams({
+    year: String(listing.year),
+    make: listing.make,
+    model: listing.model,
+  });
+
+  if (listing.isCertified) {
+    params.set('certified', 'true');
+  }
+
+  return `https://www.caranddriver.com/cars-for-sale/${condition}?${params.toString()}`;
 };
 
 const getListingConditionLabel = (listing: Listing) => {
@@ -156,32 +170,40 @@ const OfficialELotCarousel = ({
             </button>
 
             <div ref={carouselRef} className="aio-payment__light-elot-carousel" role="list">
-              {listings.map((listing) => (
-                <article key={listing.id} className="aio-payment__light-elot-card" role="listitem">
-                  <Link to={`/${listing.slug}`} className="aio-payment__light-elot-image-link" aria-label={`View ${listing.year} ${listing.make} ${listing.model}`}>
-                    <OptimizedImage
-                      src={listing.image}
-                      alt={`${listing.year} ${listing.make} ${listing.model}`}
-                      aspectRatio="4/3"
-                      wrapperClassName="aio-payment__light-elot-image"
-                    />
-                    <span className={`aio-payment__light-elot-price-badge aio-payment__light-elot-price-badge--${listing.priceBadge === 'Great Price' ? 'great' : 'good'}`}>
-                      {listing.priceBadge}
-                    </span>
-                  </Link>
-                  <div className="aio-payment__light-elot-card-body">
-                    <p className="aio-payment__light-elot-kicker">{getListingConditionLabel(listing)}</p>
-                    <h3 className="aio-payment__light-elot-card-title">
-                      <Link to={`/${listing.slug}`}>{listing.make} {listing.model}</Link>
-                    </h3>
-                    <p className="aio-payment__light-elot-card-price">
-                      <span aria-hidden="true">$</span>
-                      {formatCurrency(listing.price).replace('$', '')}
-                    </p>
-                    <p className="aio-payment__light-elot-dealer">{listing.dealerName}</p>
-                  </div>
-                </article>
-              ))}
+              {listings.map((listing) => {
+                const listingMarketplaceHref = getListingMarketplaceUrl(listing);
+
+                return (
+                  <article key={listing.id} className="aio-payment__light-elot-card" role="listitem">
+                    <a
+                      href={listingMarketplaceHref}
+                      className="aio-payment__light-elot-image-link"
+                      aria-label={`Shop ${listing.year} ${listing.make} ${listing.model} in C/D Marketplace`}
+                    >
+                      <OptimizedImage
+                        src={listing.image}
+                        alt={`${listing.year} ${listing.make} ${listing.model}`}
+                        aspectRatio="4/3"
+                        wrapperClassName="aio-payment__light-elot-image"
+                      />
+                      <span className={`aio-payment__light-elot-price-badge aio-payment__light-elot-price-badge--${listing.priceBadge === 'Great Price' ? 'great' : 'good'}`}>
+                        {listing.priceBadge}
+                      </span>
+                    </a>
+                    <div className="aio-payment__light-elot-card-body">
+                      <p className="aio-payment__light-elot-kicker">{getListingConditionLabel(listing)}</p>
+                      <h3 className="aio-payment__light-elot-card-title">
+                        <a href={listingMarketplaceHref}>{listing.make} {listing.model}</a>
+                      </h3>
+                      <p className="aio-payment__light-elot-card-price">
+                        <span aria-hidden="true">$</span>
+                        {formatCurrency(listing.price).replace('$', '')}
+                      </p>
+                      <p className="aio-payment__light-elot-dealer">{listing.dealerName}</p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
 
             <button
