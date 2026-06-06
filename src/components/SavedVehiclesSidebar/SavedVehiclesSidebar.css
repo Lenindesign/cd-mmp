@@ -278,9 +278,168 @@
   letter-spacing: 0.4px;
 }
 
+.saved-sidebar__estimate-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.saved-sidebar__estimate-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+}
+
+.saved-sidebar__estimate-header span {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.saved-sidebar__estimate-header small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--spacing-6);
+  height: var(--spacing-6);
+  padding: 0 var(--spacing-2);
+  border-radius: var(--border-radius-full);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.saved-sidebar__estimate-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.saved-sidebar__estimate-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-2);
+  align-items: start;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+}
+
+.saved-sidebar__estimate-card-main {
+  display: block;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.saved-sidebar__estimate-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.saved-sidebar__estimate-card-header strong {
+  overflow: hidden;
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-sidebar__estimate-card-header span {
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+
+.saved-sidebar__estimate-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-7);
+  height: var(--spacing-7);
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.saved-sidebar__estimate-delete:hover {
+  border-color: var(--color-gray-200);
+  background: var(--color-gray-50);
+  color: var(--color-red);
+}
+
+.saved-sidebar__estimate-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-2);
+  margin: var(--spacing-3) 0 0;
+}
+
+.saved-sidebar__estimate-metrics div {
+  min-width: 0;
+}
+
+.saved-sidebar__estimate-metrics dt,
+.saved-sidebar__estimate-empty p {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+
+.saved-sidebar__estimate-metrics dd {
+  margin: var(--spacing-1) 0 0;
+  color: var(--color-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.35;
+}
+
+.saved-sidebar__estimate-empty {
+  padding: var(--spacing-3);
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
+}
+
+.saved-sidebar__estimate-empty a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-2);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
 .saved-sidebar__budget-edit:hover,
 .saved-sidebar__budget-link:hover,
-.saved-sidebar__budget-preview-main:hover span {
+.saved-sidebar__budget-preview-main:hover span,
+.saved-sidebar__estimate-empty a:hover {
   color: var(--color-dark);
 }
 

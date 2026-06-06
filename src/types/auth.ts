@@ -11,6 +11,7 @@ export interface User {
   userType?: 'buyer' | 'enthusiast' | 'both';
   budgetPreferences?: BudgetPreferences;
   savedVehicles?: SavedVehicle[];
+  savedEstimates?: PaymentEstimate[];
   newsletterSubscriptions?: string[];
   avatar?: string;
   banner?: string;
@@ -43,6 +44,43 @@ export interface SavedVehicle {
   savedAt?: string;
 }
 
+export interface PaymentEstimate {
+  id: string;
+  title: string;
+  source: 'auto-loan-calculator';
+  createdAt: string;
+  vehicle?: {
+    slug?: string;
+    year?: string;
+    make?: string;
+    model?: string;
+    trim?: string;
+    label?: string;
+    condition?: 'new' | 'used';
+  };
+  inputs: {
+    vehiclePrice: number;
+    downPayment: number;
+    tradeInValue: number;
+    amountOwedOnTrade: number;
+    salesTax: number;
+    registrationFees: number;
+    dealerFees: number;
+    apr: number;
+    loanTermMonths: number;
+    includeTaxesAndFeesInLoan: boolean;
+    stateCode?: string;
+  };
+  results: {
+    monthlyPayment: number;
+    amountFinanced: number;
+    totalInterestPaid: number;
+    totalLoanPayments: number;
+    estimatedTotalPaid: number;
+    netTradeValue: number;
+  };
+}
+
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -67,4 +105,3 @@ export interface OnboardingData {
   vehicles?: SavedVehicle[];
   newsletters?: string[];
 }
-

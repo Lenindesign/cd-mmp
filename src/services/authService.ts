@@ -4,7 +4,7 @@
  * In production, this would connect to a real backend API
  */
 
-import type { User, SignInCredentials, SignUpCredentials, OnboardingData, SavedVehicle } from '../types/auth';
+import type { User, SignInCredentials, SignUpCredentials, OnboardingData, PaymentEstimate, SavedVehicle } from '../types/auth';
 
 const STORAGE_KEYS = {
   USER: 'mmp_user',
@@ -84,6 +84,7 @@ export const setUserFromGoogle = (googleUser: { id: string; email: string; name?
       createdAt: existingUser.createdAt,
       onboardingCompleted: existingUser.onboardingCompleted,
       savedVehicles: existingUser.savedVehicles,
+      savedEstimates: existingUser.savedEstimates,
       newsletterSubscriptions: existingUser.newsletterSubscriptions,
     };
     
@@ -105,6 +106,7 @@ export const setUserFromGoogle = (googleUser: { id: string; email: string; name?
       createdAt: new Date().toISOString(),
       onboardingCompleted: false,
       savedVehicles: [],
+      savedEstimates: [],
       newsletterSubscriptions: [],
     };
     
@@ -120,6 +122,7 @@ export const setUserFromGoogle = (googleUser: { id: string; email: string; name?
       createdAt: newUser.createdAt,
       onboardingCompleted: false,
       savedVehicles: [],
+      savedEstimates: [],
       newsletterSubscriptions: [],
     };
   }
@@ -152,6 +155,7 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
     createdAt: new Date().toISOString(),
     onboardingCompleted: false,
     savedVehicles: [],
+    savedEstimates: [],
     newsletterSubscriptions: [],
   };
 
@@ -167,6 +171,7 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
     createdAt: newUser.createdAt,
     onboardingCompleted: newUser.onboardingCompleted,
     savedVehicles: newUser.savedVehicles,
+    savedEstimates: newUser.savedEstimates,
     newsletterSubscriptions: newUser.newsletterSubscriptions,
   };
 
@@ -205,6 +210,7 @@ export const signIn = async (credentials: SignInCredentials): Promise<User> => {
     createdAt: user.createdAt,
     onboardingCompleted: user.onboardingCompleted,
     savedVehicles: user.savedVehicles,
+    savedEstimates: user.savedEstimates,
     newsletterSubscriptions: user.newsletterSubscriptions,
   };
 
@@ -252,6 +258,7 @@ export const updateUser = async (updates: Partial<User>): Promise<User> => {
     createdAt: updatedDbUser.createdAt,
     onboardingCompleted: updatedDbUser.onboardingCompleted,
     savedVehicles: updatedDbUser.savedVehicles,
+    savedEstimates: updatedDbUser.savedEstimates,
     newsletterSubscriptions: updatedDbUser.newsletterSubscriptions,
   };
 
@@ -309,6 +316,37 @@ export const removeSavedVehicle = async (vehicleId: string): Promise<User> => {
 
   const savedVehicles = (currentUser.savedVehicles || []).filter(v => v.id !== vehicleId);
   return updateUser({ savedVehicles });
+};
+
+// Add or replace a saved calculator estimate
+export const savePaymentEstimate = async (estimate: PaymentEstimate): Promise<User> => {
+  const currentUser = getCurrentUser();
+  if (!currentUser) {
+    throw new Error('No user logged in');
+  }
+
+  const existingEstimates = currentUser.savedEstimates || [];
+  const nextEstimate = {
+    ...estimate,
+    createdAt: estimate.createdAt || new Date().toISOString(),
+  };
+  const savedEstimates = [
+    nextEstimate,
+    ...existingEstimates.filter(savedEstimate => savedEstimate.id !== nextEstimate.id),
+  ].slice(0, 8);
+
+  return updateUser({ savedEstimates });
+};
+
+// Remove a saved calculator estimate
+export const removePaymentEstimate = async (estimateId: string): Promise<User> => {
+  const currentUser = getCurrentUser();
+  if (!currentUser) {
+    throw new Error('No user logged in');
+  }
+
+  const savedEstimates = (currentUser.savedEstimates || []).filter(estimate => estimate.id !== estimateId);
+  return updateUser({ savedEstimates });
 };
 
 // Google OAuth Client ID
@@ -423,7 +461,7 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
             localStorage.setItem('cd_auth_user', JSON.stringify(googleUser));
             
             resolve(user);
-          } catch (err) {
+          } catch {
             reject(new Error('Failed to process Google sign-in'));
           }
         },
@@ -521,6 +559,7 @@ export const socialSignIn = async (provider: 'google' | 'facebook' | 'apple'): P
       createdAt: existingUser.createdAt,
       onboardingCompleted: existingUser.onboardingCompleted,
       savedVehicles: existingUser.savedVehicles,
+      savedEstimates: existingUser.savedEstimates,
       newsletterSubscriptions: existingUser.newsletterSubscriptions,
     };
     setCurrentUser(sessionUser);
@@ -546,6 +585,7 @@ export default {
   completeOnboarding,
   addSavedVehicle,
   removeSavedVehicle,
+  savePaymentEstimate,
+  removePaymentEstimate,
   socialSignIn,
 };
-

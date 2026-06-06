@@ -4,7 +4,7 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { User, SignInCredentials, SignUpCredentials, OnboardingData, SavedVehicle } from '../types/auth';
+import type { User, SignInCredentials, SignUpCredentials, OnboardingData, PaymentEstimate, SavedVehicle } from '../types/auth';
 import * as authService from '../services/authService';
 import { getAuthUser, clearAuthUser } from '../components/GoogleOneTap/GoogleOneTap';
 
@@ -21,6 +21,8 @@ interface AuthContextType {
   completeOnboarding: (data: OnboardingData) => Promise<void>;
   addSavedVehicle: (vehicle: SavedVehicle) => Promise<void>;
   removeSavedVehicle: (vehicleId: string) => Promise<void>;
+  savePaymentEstimate: (estimate: PaymentEstimate) => Promise<void>;
+  removePaymentEstimate: (estimateId: string) => Promise<void>;
   clearError: () => void;
 }
 
@@ -199,6 +201,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
+  const savePaymentEstimate = useCallback(async (estimate: PaymentEstimate) => {
+    setError(null);
+    try {
+      const updatedUser = await authService.savePaymentEstimate(estimate);
+      setUser(updatedUser);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to save estimate';
+      setError(message);
+      throw err;
+    }
+  }, []);
+
+  const removePaymentEstimate = useCallback(async (estimateId: string) => {
+    setError(null);
+    try {
+      const updatedUser = await authService.removePaymentEstimate(estimateId);
+      setUser(updatedUser);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to remove estimate';
+      setError(message);
+      throw err;
+    }
+  }, []);
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -212,6 +238,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     completeOnboarding,
     addSavedVehicle,
     removeSavedVehicle,
+    savePaymentEstimate,
+    removePaymentEstimate,
     clearError,
   };
 
@@ -231,7 +259,6 @@ export const useAuth = (): AuthContextType => {
 };
 
 export default AuthContext;
-
 
 
 

@@ -30,7 +30,7 @@ interface RecentlyViewedVehicle {
 }
 
 const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onClose }) => {
-  const { user, addSavedVehicle, removeSavedVehicle } = useAuth();
+  const { user, addSavedVehicle, removeSavedVehicle, removePaymentEstimate } = useAuth();
   const [activeTab, setActiveTab] = useState<'recently-viewed' | 'want' | 'budget'>('recently-viewed');
   const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedVehicle[]>([]);
   
@@ -143,9 +143,26 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
     () => getVehiclesInBudget(budgetSummary.buyingPower, budgetPreferences.bodyStyle),
     [budgetSummary.buyingPower, budgetPreferences.bodyStyle]
   );
+  const savedPaymentEstimates = useMemo(
+    () => [...(user?.savedEstimates || [])].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)),
+    [user?.savedEstimates]
+  );
+  const recentPaymentEstimates = savedPaymentEstimates.slice(0, 3);
   const budgetPreviewVehicles = budgetMatches.slice(0, 3);
   const budgetMatchUrl = `/vehicles?maxPrice=${budgetSummary.buyingPower}&bodyStyle=${encodeURIComponent(budgetPreferences.bodyStyle)}`;
   const getBudgetVehicleName = (vehicle: Vehicle) => `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  const getEstimateHref = (estimateId: string) => (
+    `/auto-loan-calculator/light-steps/review?savedEstimate=${encodeURIComponent(estimateId)}`
+  );
+  const formatEstimateDate = (createdAt: string) => {
+    const date = new Date(createdAt);
+    if (Number.isNaN(date.getTime())) return 'Saved estimate';
+
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
+  };
   const getSavedBudgetVehicle = (vehicle: Vehicle) => {
     const vehicleName = getBudgetVehicleName(vehicle);
     return user?.savedVehicles?.find((savedVehicle) => (
@@ -782,6 +799,66 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
                   <span className="saved-sidebar__budget-count">
                     {budgetMatches.length} {budgetPreferences.bodyStyle} match{budgetMatches.length === 1 ? '' : 'es'}
                   </span>
+                </div>
+                <div className="saved-sidebar__estimate-section" aria-label="Saved payment estimates">
+                  <div className="saved-sidebar__estimate-header">
+                    <span>Saved Estimates</span>
+                    {savedPaymentEstimates.length > 0 ? (
+                      <small>{savedPaymentEstimates.length}</small>
+                    ) : null}
+                  </div>
+                  {recentPaymentEstimates.length > 0 ? (
+                    <div className="saved-sidebar__estimate-list">
+                      {recentPaymentEstimates.map((estimate) => (
+                        <article key={estimate.id} className="saved-sidebar__estimate-card">
+                          <Link
+                            to={getEstimateHref(estimate.id)}
+                            className="saved-sidebar__estimate-card-main"
+                            onClick={onClose}
+                            aria-label={`Open ${estimate.title}`}
+                          >
+                            <div className="saved-sidebar__estimate-card-header">
+                              <strong>{estimate.title}</strong>
+                              <span>{formatEstimateDate(estimate.createdAt)} · {estimate.inputs.loanTermMonths} mo · {estimate.inputs.apr.toFixed(1)}% APR</span>
+                            </div>
+                            <dl className="saved-sidebar__estimate-metrics">
+                              <div>
+                                <dt>Monthly</dt>
+                                <dd>{formatBudgetCurrency(estimate.results.monthlyPayment)}/mo</dd>
+                              </div>
+                              <div>
+                                <dt>Financed</dt>
+                                <dd>{formatBudgetCurrency(estimate.results.amountFinanced)}</dd>
+                              </div>
+                              <div>
+                                <dt>Interest</dt>
+                                <dd>{formatBudgetCurrency(estimate.results.totalInterestPaid)}</dd>
+                              </div>
+                            </dl>
+                          </Link>
+                          <button
+                            type="button"
+                            className="saved-sidebar__estimate-delete"
+                            onClick={() => removePaymentEstimate(estimate.id)}
+                            aria-label={`Remove ${estimate.title}`}
+                            title="Remove estimate"
+                          >
+                            <Trash2 size={14} aria-hidden="true" />
+                          </button>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="saved-sidebar__estimate-empty">
+                      <p>Saved calculator estimates will appear here.</p>
+                      <Link
+                        to="/auto-loan-calculator/light-steps/review"
+                        onClick={onClose}
+                      >
+                        Create an estimate <ChevronRight size={14} />
+                      </Link>
+                    </div>
+                  )}
                 </div>
                 {budgetPreviewVehicles.length > 0 ? (
                   <div className="saved-sidebar__budget-preview" aria-label="Cars I can afford">

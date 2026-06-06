@@ -1,6 +1,6 @@
 import { type CSSProperties, type FocusEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, Mail, RotateCcw, SkipForward } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Bookmark, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, Mail, RotateCcw, SkipForward } from 'lucide-react';
 import { CarProfile, CreditCard as PhosphorCreditCard, ShieldCheck as PhosphorShieldCheck, Umbrella as PhosphorUmbrella } from '@phosphor-icons/react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
@@ -22,6 +22,7 @@ import { getPurchasePaymentSummary, getVehicleCoverageEstimates, getVehiclePrice
 import { toTitleCase } from '../../utils/textCase';
 import { PaymentCalculatorFinanceCharts } from '../../components/PaymentCalculator/PaymentCalculatorFinanceCharts';
 import { DEFAULT_BODY_STYLES } from '../../components/BodyStyleSelector';
+import type { PaymentEstimate } from '../../types/auth';
 import '../../components/Hero/Hero.css';
 import '../../components/PaymentEstimator/PaymentEstimator.css';
 import './AllInOnePaymentCalculatorPage.css';
@@ -1737,13 +1738,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const { stepSlug } = useParams<{ stepSlug?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated, savePaymentEstimate } = useAuth();
   const vehicles = useMemo(() => getAllVehicles(), []);
   const stateRules = useMemo(() => buildStateRules(), []);
   const userAreaStateCode = useMemo(
     () => getUserAreaStateCode(user),
     [user?.budgetPreferences?.stateCode, user?.location],
   );
+  const savedEstimateToOpenId = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('savedEstimate');
+  }, [location.search]);
   const routeLightWizardStep = isLightStepsVariant ? getLightWizardStepFromSlug(stepSlug) : 1;
   const defaultVehicle = vehicles.find((vehicle) => vehicle.make === 'Honda' && vehicle.model === 'CR-V') ?? vehicles[0];
 
@@ -1813,6 +1818,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightWizardStep = routeLightWizardStep;
   const lightWizardStepPrevRef = useRef(lightWizardStep);
   const lightWizardPathPrevRef = useRef(location.pathname);
+  const lastOpenedSavedEstimateIdRef = useRef<string | null>(null);
+  const savedEstimatePriceLockRef = useRef<string | null>(null);
   const lightVehicleBodyStyleHeadingId = useId();
   const lightVehicleBodyStyleGuidanceId = useId();
   const lightVehicleConditionGuidanceId = useId();
@@ -1841,6 +1848,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightEstimateEmailStatus, setLightEstimateEmailStatus] = useState<string | undefined>();
   const [isLightEstimateEmailSending, setIsLightEstimateEmailSending] = useState(false);
+  const [lightEstimateSaveStatus, setLightEstimateSaveStatus] = useState<string | undefined>();
+  const [lightEstimateSaveError, setLightEstimateSaveError] = useState<string | undefined>();
+  const [isLightEstimateSaving, setIsLightEstimateSaving] = useState(false);
   const [lightVehicleStepMode, setLightVehicleStepMode] = useState<'known' | 'browsing'>('known');
   const [lightKnownVehicleSelected, setLightKnownVehicleSelected] = useState(() => !isLightVariant);
   const [lightVehicleDraft, setLightVehicleDraft] = useState<LightVehicleDraft>(() => ({
@@ -1896,6 +1906,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const nextStep = clampLightWizardStep(step);
     if (nextStep !== lightWizardStep) {
       setLightWizardStepMotion(nextStep > lightWizardStep ? 'forward' : 'backward');
+      setIsLightWizardStuck(false);
     }
 
     if (!isLightStepsVariant) return;
@@ -1967,10 +1978,75 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     () => vehicles.find((vehicle) => vehicle.slug === selectedSlug) ?? defaultVehicle,
     [defaultVehicle, selectedSlug, vehicles],
   );
+  const savedEstimateToOpen = useMemo(
+    () => user?.savedEstimates?.find((estimate) => estimate.id === savedEstimateToOpenId),
+    [savedEstimateToOpenId, user?.savedEstimates],
+  );
   const selectedVehiclePageHref = `/${selectedVehicle.slug}`;
   const lightVehicleYearValue = lightKnownVehicleSelected ? selectedYear : lightVehicleDraft.year;
   const lightVehicleMakeValue = lightKnownVehicleSelected ? selectedVehicle.make : lightVehicleDraft.make;
   const lightVehicleModelValue = lightKnownVehicleSelected ? selectedVehicle.model : lightVehicleDraft.model;
+  useEffect(() => {
+    if (!isLightStepsVariant || !savedEstimateToOpenId) return;
+    if (lastOpenedSavedEstimateIdRef.current === savedEstimateToOpenId) return;
+
+    if (!savedEstimateToOpen) return;
+
+    lastOpenedSavedEstimateIdRef.current = savedEstimateToOpenId;
+    savedEstimatePriceLockRef.current = savedEstimateToOpenId;
+    const savedVehicle = savedEstimateToOpen.vehicle;
+    const matchingVehicle = savedVehicle?.slug
+      ? vehicles.find((vehicle) => vehicle.slug === savedVehicle.slug)
+      : undefined;
+    const nextYear = savedVehicle?.year ?? matchingVehicle?.year ?? selectedYear;
+    const nextMake = savedVehicle?.make ?? matchingVehicle?.make ?? selectedVehicle.make;
+    const nextModel = savedVehicle?.model ?? matchingVehicle?.model ?? selectedVehicle.model;
+    const nextRegistrationFees = Math.max(0, savedEstimateToOpen.inputs.registrationFees);
+    const nextDealerFees = Math.max(0, savedEstimateToOpen.inputs.dealerFees);
+
+    setStartMode('price');
+    setCondition(savedVehicle?.condition ?? condition);
+    if (matchingVehicle) {
+      setSelectedSlug(matchingVehicle.slug);
+      setLightKnownVehicleSelected(true);
+    }
+    setSelectedYear(nextYear);
+    setLightVehicleDraft({
+      year: nextYear,
+      make: nextMake,
+      model: nextModel,
+    });
+    setLightVehicleSearchQuery(formatLightVehicleSearchLabel({ year: nextYear, make: nextMake, model: nextModel }));
+    setSelectedTrimId(null);
+    setPrice(Math.max(0, savedEstimateToOpen.inputs.vehiclePrice));
+    setDownPayment(Math.max(0, savedEstimateToOpen.inputs.downPayment));
+    setTradeInValue(Math.max(0, savedEstimateToOpen.inputs.tradeInValue));
+    setAmountOwed(Math.max(0, savedEstimateToOpen.inputs.amountOwedOnTrade));
+    setSelectedCashIds([]);
+    setSelectedFinanceId('custom');
+    setCustomApr(clampLightApr(savedEstimateToOpen.inputs.apr));
+    setLoanTerm(savedEstimateToOpen.inputs.loanTermMonths);
+    setIncludeTaxesAndFeesInLoan(savedEstimateToOpen.inputs.includeTaxesAndFeesInLoan);
+    if (savedEstimateToOpen.inputs.stateCode) {
+      hasAdjustedStateCodeRef.current = true;
+      setStateCode(savedEstimateToOpen.inputs.stateCode);
+    }
+    setSalesTaxOverride(normalizeMoneyInputValue(String(savedEstimateToOpen.inputs.salesTax)));
+    setLightSalesTaxPercentOverride('');
+    setFeesOverride(normalizeMoneyInputValue(String(nextRegistrationFees)));
+    setDealerFeesOverride(normalizeMoneyInputValue(String(nextDealerFees)));
+    setEstimatedFeesOverride(normalizeMoneyInputValue(String(nextRegistrationFees + nextDealerFees)));
+    setLightEstimateSaveError(undefined);
+    setLightEstimateSaveStatus('Estimate opened from My Garage.');
+  }, [
+    isLightStepsVariant,
+    savedEstimateToOpen,
+    savedEstimateToOpenId,
+    selectedVehicle.make,
+    selectedVehicle.model,
+    selectedYear,
+    vehicles,
+  ]);
   const lightVehicleSearchOptions = useMemo<LightVehicleSearchOption[]>(() => {
     const options: LightVehicleSearchOption[] = [];
     const seenLabels = new Set<string>();
@@ -2204,11 +2280,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
     if (availableTrimStyleOptions.some((option) => option.trimId === selectedTrimId)) return;
 
+    if (savedEstimatePriceLockRef.current === savedEstimateToOpenId) {
+      if (selectedTrimId !== null) setSelectedTrimId(null);
+      return;
+    }
+
     setSelectedTrimId(defaultTrimOption.trimId);
     if (canUseCatalogPrice) {
       syncCatalogPrice(defaultTrimOption.price);
     }
-  }, [availableTrimStyleOptions, canUseCatalogPrice, selectedTrimId, syncCatalogPrice]);
+  }, [availableTrimStyleOptions, canUseCatalogPrice, savedEstimateToOpenId, selectedTrimId, syncCatalogPrice]);
 
   useEffect(() => {
     if (condition !== 'used' || USED_YEAR_OPTIONS.includes(selectedYear)) return;
@@ -2350,7 +2431,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     includeTaxesAndFeesInLoan,
   });
   const budgetVehiclePrice = (isBudgetFirstVariant || isLightVariant) && startMode === 'monthly' ? affordableMsrp : price;
-  const usesSelectedCatalogPriceForEstimate = isLightVariant && lightHasSpecificVehicleSelection && canUseCatalogPrice;
+  const usesSavedEstimatePriceForEstimate = isLightVariant && Boolean(savedEstimateToOpen);
+  const usesSelectedCatalogPriceForEstimate = isLightVariant && lightHasSpecificVehicleSelection && canUseCatalogPrice && !usesSavedEstimatePriceForEstimate;
   const usesUsedListingPriceInput = !canUseCatalogPrice;
   const workingPrice = usesSelectedCatalogPriceForEstimate ? selectedCatalogPrice : budgetVehiclePrice;
   const lightVehiclePriceRangeTarget = Math.max(0, startMode === 'monthly' ? affordableMsrp : workingPrice);
@@ -2363,11 +2445,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     : usesUsedListingPriceInput
       ? usedWorkingPriceDescriptor
       : 'target vehicle price';
-	  const workingPriceBreakdownLabel = usesSelectedCatalogPriceForEstimate
-	    ? 'Selected Vehicle Price'
-	    : usesUsedListingPriceInput
-	      ? startMode === 'monthly' ? 'Listing Price Target' : 'Vehicle Listing Price'
-	      : 'Vehicle Target Price';
+  const workingPriceBreakdownLabel = usesSelectedCatalogPriceForEstimate
+    ? 'Selected Vehicle Price'
+    : usesUsedListingPriceInput
+      ? startMode === 'monthly' ? 'Listing Price Target' : 'Vehicle Listing Price'
+      : 'Vehicle Target Price';
   const workingPriceFormulaLabel = usesSelectedCatalogPriceForEstimate
     ? 'selected vehicle price'
     : usesUsedListingPriceInput
@@ -2541,6 +2623,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightEstimateSummaryCopy = isLoanCoveredByTradeEquity
     ? `${currency(tradeEquityApplied)} in trade credit covers the financed amount${hasRemainingTradeEquity ? `, with ${currency(remainingTradeEquity)} remaining outside this loan estimate` : ''}.`
     : `Based on a ${currency(workingPrice)} ${workingPriceDescriptor}, ${loanTerm} months, and ${formatAprPercent(activeApr)} APR.`;
+  const lightSavedEstimateId = `auto-loan-${[
+    selectedVehicle.slug,
+    selectedYear,
+    condition,
+    selectedTrimId ?? 'target',
+    Math.round(workingPrice),
+    Math.round(downPaymentApplied),
+    Math.round(tradeInValue),
+    Math.round(amountOwed),
+    Math.round(activeApr * 10),
+    loanTerm,
+    Math.round(taxesAndFees),
+  ].join('-').replace(/[^a-z0-9-]/gi, '-').toLowerCase()}`;
+  const isCurrentLightEstimateSaved = Boolean(user?.savedEstimates?.some((estimate) => estimate.id === lightSavedEstimateId));
   const lightResultKicker = startMode === 'monthly'
     ? 'Budget Supports About'
     : showNoLoanPaymentState
@@ -3882,6 +3978,67 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       setIsLightEstimateEmailSending(false);
     }
   };
+
+  const handleSaveLightEstimate = async () => {
+    setLightEstimateSaveError(undefined);
+    setLightEstimateSaveStatus(undefined);
+
+    if (!isAuthenticated) {
+      navigate('/sign-in');
+      return;
+    }
+
+    const estimateTitle = lightHasSpecificVehicleSelection
+      ? `${selectedVehicleLabel} estimate`
+      : `${currency(workingPrice)} vehicle estimate`;
+    const paymentEstimate: PaymentEstimate = {
+      id: lightSavedEstimateId,
+      title: estimateTitle,
+      source: 'auto-loan-calculator',
+      createdAt: new Date().toISOString(),
+      vehicle: {
+        slug: selectedVehicle.slug,
+        year: selectedYear,
+        make: selectedVehicle.make,
+        model: selectedVehicle.model,
+        trim: selectedTrimStyleOption?.trimName,
+        label: lightHasSpecificVehicleSelection ? selectedVehicleLabel : undefined,
+        condition,
+      },
+      inputs: {
+        vehiclePrice: workingPrice,
+        downPayment: downPaymentApplied,
+        tradeInValue,
+        amountOwedOnTrade: amountOwed,
+        salesTax,
+        registrationFees,
+        dealerFees,
+        apr: activeApr,
+        loanTermMonths: loanTerm,
+        includeTaxesAndFeesInLoan,
+        stateCode,
+      },
+      results: {
+        monthlyPayment: estimatedMonthlyWithInsurance,
+        amountFinanced: totalLoanAmount,
+        totalInterestPaid: totalLoanInterest,
+        totalLoanPayments,
+        estimatedTotalPaid: estimatedTotalValue,
+        netTradeValue: tradeEquity,
+      },
+    };
+
+    setIsLightEstimateSaving(true);
+    try {
+      await savePaymentEstimate(paymentEstimate);
+      setLightEstimateSaveStatus('Estimate saved to My Garage.');
+    } catch (error) {
+      setLightEstimateSaveError(error instanceof Error ? error.message : 'We could not save this estimate. Please try again.');
+    } finally {
+      setIsLightEstimateSaving(false);
+    }
+  };
+
   const incentiveOfferDetail = useMemo(() => {
     if (!selectedIncentive) return undefined;
     const modalVehicle = lightDealModalVehicle ?? selectedVehicle;
@@ -4337,7 +4494,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         : LIGHT_WIZARD_STEP_REVEAL_OFFSET;
       window.scrollTo({
         top: Math.max(0, shellTop - revealOffset),
-        behavior: getPreferredScrollBehavior(),
+        behavior: 'auto',
       });
       heading.focus({ preventScroll: true });
     });
@@ -5907,6 +6064,37 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-breakdown-total-formula-amount">{currency(estimatedTotalValue)}</span>.
                       </p>
                     ) : null}
+                    <div className="aio-payment__light-estimate-save">
+                      <div className="aio-payment__light-estimate-save__copy">
+                        <strong>Save this estimate</strong>
+                        <span>Keep this payment scenario in My Garage so you can compare it against your budget later.</span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant={isCurrentLightEstimateSaved ? 'outline' : 'primary'}
+                        size="medium"
+                        loading={isLightEstimateSaving}
+                        disabled={isLightEstimateSaving || isCurrentLightEstimateSaved}
+                        iconLeft={<Bookmark size={18} fill={isCurrentLightEstimateSaved ? 'currentColor' : 'none'} strokeWidth={2} aria-hidden="true" />}
+                        onClick={handleSaveLightEstimate}
+                      >
+                        {isCurrentLightEstimateSaved
+                          ? 'Saved to My Garage'
+                          : isAuthenticated
+                            ? 'Save Estimate'
+                            : 'Sign in to Save'}
+                      </Button>
+                      {lightEstimateSaveStatus ? (
+                        <p className="aio-payment__light-estimate-save__status" role="status">
+                          {lightEstimateSaveStatus}
+                        </p>
+                      ) : null}
+                      {lightEstimateSaveError ? (
+                        <p className="aio-payment__light-estimate-save__error" role="alert">
+                          {lightEstimateSaveError}
+                        </p>
+                      ) : null}
+                    </div>
                     {SHOW_LIGHT_ESTIMATE_EMAIL && (
                       <div className="aio-payment__light-estimate-email">
                         <div className="aio-payment__light-estimate-email__panel">
