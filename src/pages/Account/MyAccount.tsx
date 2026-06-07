@@ -1189,46 +1189,53 @@ const MyAccount: React.FC = () => {
                     </div>
                     {affordableVehicles.length > 0 ? (
                       <div className="my-account__vehicle-grid">
-                        {affordableVehicles.map((vehicle) => (
-                          <div key={vehicle.id} className="my-account__vehicle-card my-account__vehicle-card--affordable">
-                            <div className="my-account__vehicle-header">
-                              <h4 className="my-account__vehicle-name">{vehicle.year} {vehicle.make} {vehicle.model}</h4>
-                              <div className="my-account__vehicle-rating-box">
-                                <span className="my-account__vehicle-rating-score">
-                                  {vehicle.staffRating}<span>/10</span>
-                                </span>
-                                <span className="my-account__vehicle-rating-label">C/D Rating</span>
+                        {affordableVehicles.map((vehicle) => {
+                          const savedVehicle = getSavedAffordableVehicle(vehicle);
+                          const vehicleName = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+
+                          return (
+                            <div key={vehicle.id} className="my-account__vehicle-card my-account__vehicle-card--affordable">
+                              <div className="my-account__vehicle-header">
+                                <h4 className="my-account__vehicle-name">{vehicleName}</h4>
+                                <div className="my-account__vehicle-rating-box">
+                                  <span className="my-account__vehicle-rating-score">
+                                    {vehicle.staffRating}<span>/10</span>
+                                  </span>
+                                  <span className="my-account__vehicle-rating-label">C/D Rating</span>
+                                </div>
                               </div>
-                            </div>
-                            <div className="my-account__vehicle-image">
-                              {vehicle.image ? (
-                                <img src={vehicle.image} alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} />
-                              ) : (
-                                <div className="my-account__vehicle-image-missing">Image unavailable</div>
-                              )}
-                            </div>
-                            <div className="my-account__vehicle-footer-section">
-                              <div className="my-account__vehicle-price">
-                                <span className="my-account__vehicle-price-label">Starting At</span>
-                                <span className="my-account__vehicle-price-value">
-                                  {formatBudgetCurrency(vehicle.priceMin)}
-                                </span>
-                              </div>
-                              <div className="my-account__vehicle-actions">
+                              <div className="my-account__vehicle-image">
+                                {vehicle.image ? (
+                                  <img src={vehicle.image} alt={vehicleName} />
+                                ) : (
+                                  <div className="my-account__vehicle-image-missing">Image unavailable</div>
+                                )}
                                 <button
                                   type="button"
-                                  className={`my-account__vehicle-cta my-account__vehicle-cta--save ${getSavedAffordableVehicle(vehicle) ? 'my-account__vehicle-cta--saved' : ''}`}
+                                  className={`my-account__vehicle-unsave my-account__vehicle-unsave--toggle ${savedVehicle ? 'my-account__vehicle-unsave--saved' : ''}`}
                                   onClick={() => handleToggleAffordableVehicleSave(vehicle)}
+                                  aria-label={savedVehicle ? `Remove ${vehicleName} from saved` : `Save ${vehicleName}`}
+                                  title={savedVehicle ? 'Saved' : 'Save vehicle'}
                                 >
-                                  {getSavedAffordableVehicle(vehicle) ? 'Saved' : 'Save'}
+                                  <Bookmark size={16} fill={savedVehicle ? 'currentColor' : 'none'} />
                                 </button>
-                                <Link to={`/${vehicle.slug}`} className="my-account__vehicle-cta">
-                                  View
-                                </Link>
+                              </div>
+                              <div className="my-account__vehicle-footer-section">
+                                <div className="my-account__vehicle-price">
+                                  <span className="my-account__vehicle-price-label">Starting At</span>
+                                  <span className="my-account__vehicle-price-value">
+                                    {formatBudgetCurrency(vehicle.priceMin)}
+                                  </span>
+                                </div>
+                                <div className="my-account__vehicle-actions">
+                                  <Link to={`/${vehicle.slug}`} className="my-account__vehicle-cta">
+                                    View
+                                  </Link>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="my-account__budget-no-matches">

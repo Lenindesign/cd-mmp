@@ -2076,6 +2076,13 @@ label.aio-payment__light-loan-step__label {
   font-weight: 700;
 }
 
+.aio-payment--light .aio-payment__light-loan-guidance .aio-payment__light-loan-guidance-note {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.45;
+}
+
 .aio-payment--light .aio-payment__light-loan-guidance .aio-payment__light-loan-guidance-header svg {
   color: #222222;
 }
@@ -2302,7 +2309,7 @@ label.aio-payment__light-loan-step__label {
   margin: 0;
   padding: var(--spacing-5);
   text-align: left;
-  border: 1px solid var(--color-gray-200);
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-lg);
   background: var(--color-white);
   color: var(--color-dark);
@@ -4466,8 +4473,9 @@ label.aio-payment__light-loan-step__label {
   border-color: var(--color-gray-300);
 }
 
-.aio-payment__light-toggle-button--active {
+.aio-payment__light-toggle-button.aio-payment__light-toggle-button--active {
   background: var(--color-teal-light);
+  border-width: 3px;
   border-color: var(--color-blue-cobalt);
   box-shadow: none;
 }
@@ -5853,6 +5861,7 @@ label.aio-payment__light-loan-step__label {
   --aio-light-wizard-dot-gap: var(--spacing-2);
   --aio-light-wizard-dot-font-size: var(--aio-light-meta);
   --aio-light-wizard-label-font-size: var(--aio-light-meta);
+  --aio-light-wizard-strip-background: color-mix(in srgb, var(--color-white) 96%, var(--color-teal-light) 4%);
 
   grid-column: 1 / -1;
   position: sticky;
@@ -5862,7 +5871,7 @@ label.aio-payment__light-loan-step__label {
   max-width: none;
   margin: 0;
   padding: 0;
-  background: color-mix(in srgb, var(--color-white) 96%, var(--color-teal-light) 4%);
+  background: var(--aio-light-wizard-strip-background);
   border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   border-bottom: 1px solid var(--color-gray-300);
   transition:
@@ -5886,20 +5895,25 @@ label.aio-payment__light-loan-step__label {
   --aio-light-wizard-dot-gap: 0;
   --aio-light-wizard-dot-font-size: var(--font-size-xs);
   --aio-light-wizard-label-font-size: 11px;
+  --aio-light-wizard-strip-background: color-mix(in srgb, var(--color-white) 98%, var(--color-teal-light) 2%);
 
-  background: color-mix(in srgb, var(--color-white) 98%, var(--color-teal-light) 2%);
+  background: var(--aio-light-wizard-strip-background);
   border-radius: 0;
   border-bottom-color: color-mix(in srgb, var(--color-blue-cobalt) 28%, var(--color-gray-300) 72%);
   box-shadow: 0 10px 28px color-mix(in srgb, var(--color-dark-bg) 13%, transparent);
 }
 
 .aio-payment--light-steps .aio-payment__light-wizard-strip--complete {
-  background: color-mix(in srgb, var(--color-white) 88%, var(--color-green-light) 12%);
+  --aio-light-wizard-strip-background: color-mix(in srgb, var(--color-white) 88%, var(--color-green-light) 12%);
+
+  background: var(--aio-light-wizard-strip-background);
   border-bottom-color: color-mix(in srgb, var(--color-success) 28%, var(--color-gray-300) 72%);
 }
 
 .aio-payment--light-steps .aio-payment__light-wizard-strip--complete.aio-payment__light-wizard-strip--stuck {
-  background: color-mix(in srgb, var(--color-white) 92%, var(--color-green-light) 8%);
+  --aio-light-wizard-strip-background: color-mix(in srgb, var(--color-white) 92%, var(--color-green-light) 8%);
+
+  background: var(--aio-light-wizard-strip-background);
   box-shadow: 0 10px 28px color-mix(in srgb, var(--color-success) 14%, transparent);
 }
 
@@ -6113,6 +6127,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-review-hero {
+  position: relative;
   display: grid;
   justify-items: center;
   gap: var(--spacing-5);
@@ -6124,6 +6139,79 @@ label.aio-payment__light-loan-step__label {
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--color-white) 82%, transparent),
     0 18px 44px color-mix(in srgb, var(--color-blue-cobalt) 8%, transparent);
+}
+
+.aio-payment__light-review-save-tooltip.aio-payment__light-review-drivers-tooltip {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  z-index: 3;
+}
+
+.aio-payment__light-review-save {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  padding: 0;
+  color: var(--color-blue-cobalt);
+  background: var(--color-white);
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 24%, var(--color-gray-200) 76%);
+  border-radius: var(--border-radius-full);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--color-blue-cobalt) 12%, transparent);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.aio-payment__light-review-save:hover:not(:disabled),
+.aio-payment__light-review-save:focus-visible {
+  border-color: var(--color-blue-cobalt);
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+  transform: translateY(-1px);
+}
+
+.aio-payment__light-review-save:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 3px;
+}
+
+.aio-payment__light-review-save:disabled {
+  cursor: default;
+}
+
+.aio-payment__light-review-save--saved {
+  color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-white) 88%, var(--color-teal-light) 12%);
+}
+
+.aio-payment__light-review-save-tooltip .aio-payment__light-review-drivers-popover--save {
+  top: calc(100% + var(--spacing-3));
+  right: 0;
+  left: auto;
+  width: min(18rem, calc(100vw - var(--spacing-8)));
+  transform: translateY(var(--spacing-1));
+}
+
+.aio-payment__light-review-save-tooltip .aio-payment__light-review-drivers-popover--save::before,
+.aio-payment__light-review-save-tooltip .aio-payment__light-review-drivers-popover--save::after {
+  right: var(--spacing-4);
+  left: auto;
+  transform: none;
+}
+
+.aio-payment__light-review-save-tooltip.aio-payment__light-review-drivers-tooltip:hover .aio-payment__light-review-drivers-popover--save,
+.aio-payment__light-review-save-tooltip.aio-payment__light-review-drivers-tooltip:focus-within .aio-payment__light-review-drivers-popover--save {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .aio-payment__light-review-hero-main {
@@ -6173,6 +6261,16 @@ label.aio-payment__light-loan-step__label {
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-review-save-error {
+  max-width: 32rem;
+  margin: var(--spacing-1) 0 0;
+  color: var(--color-red);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.4;
 }
 
 .aio-payment__light-review-hero .aio-payment__light-budget-fit {
@@ -6238,12 +6336,20 @@ label.aio-payment__light-loan-step__label {
   background: color-mix(in srgb, var(--color-success) 78%, var(--color-gray-200) 22%);
 }
 
+.aio-payment--light-steps .aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-steps-shell::before {
+  content: none;
+}
+
 .aio-payment--light-steps .aio-payment__light-wizard-steps-shell::after {
   left: calc(var(--aio-light-wizard-shell-x) + var(--aio-light-wizard-dot-half));
   right: calc(var(--aio-light-wizard-shell-x) + var(--aio-light-wizard-dot-half));
   top: calc(var(--aio-light-wizard-shell-y) + var(--aio-light-wizard-dot-half));
   height: 2px;
   transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-steps-shell::after {
+  transform: scaleX(var(--aio-light-wizard-progress-scale));
 }
 
 .aio-payment--light-steps .aio-payment__light-wizard-strip .aio-payment__light-wizard-steps {
@@ -6260,6 +6366,9 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-dot {
+  flex-direction: row;
+  justify-content: center;
+  gap: 0;
   min-height: var(--aio-light-wizard-dot-size);
 }
 
@@ -6315,6 +6424,35 @@ label.aio-payment__light-loan-step__label {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-dot--current,
+.aio-payment--light-steps .aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-dot--final-current {
+  min-width: max-content;
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-label,
+.aio-payment--light-steps .aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-dot--final-current .aio-payment__light-wizard-dot-label {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0 0 0 var(--spacing-2);
+  padding: 0;
+  overflow: visible;
+  clip: auto;
+  background: var(--aio-light-wizard-strip-background);
+  box-shadow:
+    -4px 0 0 var(--aio-light-wizard-strip-background),
+    4px 0 0 var(--aio-light-wizard-strip-background);
+  color: var(--color-dark);
+  font-size: var(--aio-light-wizard-label-font-size);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-strip--complete.aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-dot--current .aio-payment__light-wizard-dot-label,
+.aio-payment--light-steps .aio-payment__light-wizard-strip--complete.aio-payment__light-wizard-strip--stuck .aio-payment__light-wizard-dot--final-current .aio-payment__light-wizard-dot-label {
+  color: var(--color-success-dark);
 }
 
 .aio-payment--light-steps .aio-payment__section-heading--wizard {
@@ -6440,7 +6578,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step__path--selected {
-  border-width: 2px;
+  border-width: 3px;
   background: var(--color-teal-light);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 45%, transparent),
@@ -6456,12 +6594,12 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn:not(.aio-payment__light-vehicle-step__nu-btn--active) {
-  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 52%, var(--color-gray-200) 48%);
+  border: 1px solid var(--color-gray-300);
   color: var(--color-dark);
 }
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn.aio-payment__light-vehicle-step__nu-btn--active {
-  border-width: 2px;
+  border-width: 3px;
   border-color: var(--color-blue-cobalt);
   background: var(--color-teal-light);
   box-shadow:
@@ -7786,71 +7924,6 @@ label.aio-payment__light-loan-step__label {
   padding: var(--spacing-5);
   border-top: 1px solid var(--color-gray-200);
   box-sizing: border-box;
-}
-
-.aio-payment__light-estimate-save {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--spacing-3);
-  align-items: center;
-  margin-top: var(--spacing-6);
-  padding: var(--spacing-4);
-  border: 1px solid color-mix(in srgb, var(--color-gray-200) 86%, var(--color-warm-canvas) 14%);
-  border-radius: var(--border-radius-lg);
-  background: color-mix(in srgb, var(--color-white) 96%, var(--color-warm-canvas) 4%);
-  box-sizing: border-box;
-}
-
-.aio-payment__light-estimate-save__copy {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-  min-width: 0;
-}
-
-.aio-payment__light-estimate-save__copy strong {
-  color: var(--color-dark);
-  font-family: var(--font-body);
-  font-size: var(--aio-light-body);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.3;
-}
-
-.aio-payment__light-estimate-save__copy span,
-.aio-payment__light-estimate-save__status,
-.aio-payment__light-estimate-save__error {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--aio-light-caption);
-  line-height: 1.45;
-}
-
-.aio-payment__light-estimate-save__copy span {
-  color: var(--color-gray-600);
-}
-
-.aio-payment__light-estimate-save__status,
-.aio-payment__light-estimate-save__error {
-  grid-column: 1 / -1;
-  font-weight: var(--font-weight-semibold);
-}
-
-.aio-payment__light-estimate-save__status {
-  color: var(--color-green-dark);
-}
-
-.aio-payment__light-estimate-save__error {
-  color: var(--color-red);
-}
-
-@media (max-width: 640px) {
-  .aio-payment__light-estimate-save {
-    grid-template-columns: 1fr;
-  }
-
-  .aio-payment__light-estimate-save .btn {
-    width: 100%;
-  }
 }
 
 .aio-payment--light-steps .aio-payment__light-estimate-email {

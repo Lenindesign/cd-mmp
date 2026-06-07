@@ -145,6 +145,22 @@
   height: fit-content;
 }
 
+@media (min-width: 901px) {
+  .my-account__sidebar .tabs--pills {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .my-account__sidebar .tabs--pills .tabs__item {
+    justify-content: flex-start;
+    width: 100%;
+    border-radius: var(--border-radius-sm);
+    text-align: left;
+  }
+}
+
 /* ============================================
    CARDS
    ============================================ */
@@ -1426,6 +1442,23 @@
   color: var(--color-red);
   background: var(--color-gray-100);
   transform: scale(1.1);
+}
+
+.my-account__vehicle-unsave--toggle {
+  border: 1px solid rgba(27, 95, 138, 0.2);
+}
+
+.my-account__vehicle-unsave--toggle:not(.my-account__vehicle-unsave--saved) {
+  color: var(--color-gray-600);
+}
+
+.my-account__vehicle-unsave--toggle:not(.my-account__vehicle-unsave--saved):hover {
+  color: var(--color-blue-cobalt);
+  background: var(--color-white);
+}
+
+.my-account__vehicle-unsave--saved {
+  color: var(--color-blue-cobalt);
 }
 
 /* Card Header - Name and Rating */

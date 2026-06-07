@@ -298,7 +298,7 @@ const SavedVehiclesSidebar: React.FC<SavedVehiclesSidebarProps> = ({ isOpen, onC
   if (!isOpen) return null;
 
   const tabs = [
-    { id: 'recently-viewed' as const, label: 'Recently Viewed', icon: <Clock size={16} />, count: recentlyViewed.length },
+    { id: 'recently-viewed' as const, label: 'Viewed', icon: <Clock size={16} />, count: recentlyViewed.length },
     { id: 'want' as const, label: 'Cars I Want', icon: <Bookmark size={16} />, count: carsIWant.length },
     { id: 'budget' as const, label: 'My Budget', icon: <Wallet size={16} />, count: budgetMatches.length },
   ];

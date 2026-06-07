@@ -83,11 +83,12 @@
   border-radius: 50%;
   color: var(--color-white);
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .saved-sidebar__close:hover {
   background: rgba(255, 255, 255, 0.2);
+  color: var(--color-black);
 }
 
 /* Welcome Section */

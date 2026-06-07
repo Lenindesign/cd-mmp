@@ -1738,7 +1738,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const { stepSlug } = useParams<{ stepSlug?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated, savePaymentEstimate } = useAuth();
+  const { user, isAuthenticated, savePaymentEstimate, removePaymentEstimate } = useAuth();
   const vehicles = useMemo(() => getAllVehicles(), []);
   const stateRules = useMemo(() => buildStateRules(), []);
   const userAreaStateCode = useMemo(
@@ -1844,6 +1844,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightEstimateTotalsId = useId();
   const lightMarketplaceHandoffId = useId();
   const lightMarketplaceHandoffTitleId = useId();
+  const lightEstimateSaveTooltipId = useId();
   const [lightEstimateEmail, setLightEstimateEmail] = useState('');
   const [lightEstimateEmailError, setLightEstimateEmailError] = useState<string | undefined>();
   const [lightEstimateEmailStatus, setLightEstimateEmailStatus] = useState<string | undefined>();
@@ -2637,6 +2638,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     Math.round(taxesAndFees),
   ].join('-').replace(/[^a-z0-9-]/gi, '-').toLowerCase()}`;
   const isCurrentLightEstimateSaved = Boolean(user?.savedEstimates?.some((estimate) => estimate.id === lightSavedEstimateId));
+  const lightEstimateSaveTooltipTitle = isCurrentLightEstimateSaved
+    ? 'Remove estimate'
+    : 'Save this estimate';
+  const lightEstimateSaveTooltipCopy = isCurrentLightEstimateSaved
+    ? 'Remove this estimate from My Garage.'
+    : 'Save this estimate to My Garage so you can compare it against your budget later.';
+  const lightEstimateSaveAriaLabel = isCurrentLightEstimateSaved
+    ? 'Remove this estimate from My Garage'
+    : isAuthenticated
+      ? 'Save this estimate to My Garage'
+      : 'Sign in to save this estimate';
   const lightResultKicker = startMode === 'monthly'
     ? 'Budget Supports About'
     : showNoLoanPaymentState
@@ -3988,6 +4000,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       return;
     }
 
+    if (isCurrentLightEstimateSaved) {
+      setIsLightEstimateSaving(true);
+      try {
+        await removePaymentEstimate(lightSavedEstimateId);
+        setLightEstimateSaveStatus('Estimate removed from My Garage.');
+      } catch (error) {
+        setLightEstimateSaveError(error instanceof Error ? error.message : 'We could not remove this estimate. Please try again.');
+      } finally {
+        setIsLightEstimateSaving(false);
+      }
+      return;
+    }
+
     const estimateTitle = lightHasSpecificVehicleSelection
       ? `${selectedVehicleLabel} estimate`
       : `${currency(workingPrice)} vehicle estimate`;
@@ -4729,7 +4754,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <nav className="aio-payment__light-wizard-track" aria-label="Estimate steps">
                     <div
                       className="aio-payment__light-wizard-steps-shell"
-                      style={{ '--aio-light-wizard-progress-scale': lightWizardProgressScale } as CSSProperties}
+                      style={{
+                        '--aio-light-wizard-progress-scale': lightWizardProgressScale,
+                      } as CSSProperties}
                     >
                       <ol className="aio-payment__light-wizard-steps">
                         {LIGHT_WIZARD_STEP_META.map((stepMeta, index) => {
@@ -4799,6 +4826,27 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
               {isLightStepsVariant && lightWizardStep === 5 && (
                 <section className="aio-payment__light-review-hero" aria-label="Personalized estimate summary">
+                  <span className="aio-payment__light-review-save-tooltip aio-payment__light-review-drivers-tooltip">
+                    <button
+                      type="button"
+                      className={`aio-payment__light-review-save${isCurrentLightEstimateSaved ? ' aio-payment__light-review-save--saved' : ''}`}
+                      onClick={handleSaveLightEstimate}
+                      disabled={isLightEstimateSaving}
+                      aria-pressed={isCurrentLightEstimateSaved}
+                      aria-label={lightEstimateSaveAriaLabel}
+                      aria-describedby={lightEstimateSaveTooltipId}
+                    >
+                      <Bookmark size={20} fill={isCurrentLightEstimateSaved ? 'currentColor' : 'none'} strokeWidth={2.25} aria-hidden="true" />
+                    </button>
+                    <span
+                      id={lightEstimateSaveTooltipId}
+                      className="aio-payment__light-review-drivers-popover aio-payment__light-review-drivers-popover--save"
+                      role="tooltip"
+                    >
+                      <span className="aio-payment__light-review-drivers-popover-title">{lightEstimateSaveTooltipTitle}</span>
+                      <span className="aio-payment__light-review-drivers-copy">{lightEstimateSaveTooltipCopy}</span>
+                    </span>
+                  </span>
                   <div className="aio-payment__light-review-hero-main">
                     <p className="aio-payment__light-review-hero-kicker">{lightResultKicker}</p>
                     <p className="aio-payment__light-review-hero-amount" aria-live="polite">
@@ -4806,6 +4854,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       {showLightResultMonthlySuffix && <span className="payment-calc__mo">/mo</span>}
                     </p>
                     <p className="aio-payment__light-review-hero-lede">{lightResultLede}</p>
+                    {lightEstimateSaveStatus ? (
+                      <p className="sr-only" role="status">
+                        {lightEstimateSaveStatus}
+                      </p>
+                    ) : null}
+                    {lightEstimateSaveError ? (
+                      <p className="aio-payment__light-review-save-error" role="alert">
+                        {lightEstimateSaveError}
+                      </p>
+                    ) : null}
                   </div>
                   {showSummaryBudgetFit && (
                     <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${displayedSummaryBudgetFitStatus}`}>
@@ -6064,37 +6122,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <span className="aio-payment__light-breakdown-total-formula-amount">{currency(estimatedTotalValue)}</span>.
                       </p>
                     ) : null}
-                    <div className="aio-payment__light-estimate-save">
-                      <div className="aio-payment__light-estimate-save__copy">
-                        <strong>Save this estimate</strong>
-                        <span>Keep this payment scenario in My Garage so you can compare it against your budget later.</span>
-                      </div>
-                      <Button
-                        type="button"
-                        variant={isCurrentLightEstimateSaved ? 'outline' : 'primary'}
-                        size="medium"
-                        loading={isLightEstimateSaving}
-                        disabled={isLightEstimateSaving || isCurrentLightEstimateSaved}
-                        iconLeft={<Bookmark size={18} fill={isCurrentLightEstimateSaved ? 'currentColor' : 'none'} strokeWidth={2} aria-hidden="true" />}
-                        onClick={handleSaveLightEstimate}
-                      >
-                        {isCurrentLightEstimateSaved
-                          ? 'Saved to My Garage'
-                          : isAuthenticated
-                            ? 'Save Estimate'
-                            : 'Sign in to Save'}
-                      </Button>
-                      {lightEstimateSaveStatus ? (
-                        <p className="aio-payment__light-estimate-save__status" role="status">
-                          {lightEstimateSaveStatus}
-                        </p>
-                      ) : null}
-                      {lightEstimateSaveError ? (
-                        <p className="aio-payment__light-estimate-save__error" role="alert">
-                          {lightEstimateSaveError}
-                        </p>
-                      ) : null}
-                    </div>
                     {SHOW_LIGHT_ESTIMATE_EMAIL && (
                       <div className="aio-payment__light-estimate-email">
                         <div className="aio-payment__light-estimate-email__panel">
