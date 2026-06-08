@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Car and Driver Auto Loan Calculator Walkthrough</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: #0a1628;
+        color: #ffffff;
+        font-family: "Inter", Arial, sans-serif;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 92% 12%, rgba(27, 95, 138, 0.42), rgba(27, 95, 138, 0) 32%),
+          radial-gradient(circle at 8% 92%, rgba(38, 135, 13, 0.18), rgba(38, 135, 13, 0) 34%),
+          #0a1628;
+      }
+
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 48px 48px;
+        opacity: 0.6;
+      }
+
+      .top-rule {
+        position: absolute;
+        left: 64px;
+        right: 64px;
+        top: 46px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.14);
+        overflow: hidden;
+      }
+
+      .top-rule-fill {
+        width: 0;
+        height: 100%;
+        background: #26870d;
+      }
+
+      .brand-pill {
+        position: absolute;
+        left: 70px;
+        top: 92px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 282px;
+        height: 82px;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.24);
+      }
+
+      .brand-pill img {
+        width: 222px;
+        height: auto;
+        display: block;
+      }
+
+      .copy-panel {
+        position: absolute;
+        left: 70px;
+        top: 238px;
+        width: 620px;
+        min-height: 400px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .copy-panel--intro {
+        top: 245px;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .eyebrow {
+        color: #60a5fa;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .copy-panel h1,
+      .copy-panel h2 {
+        margin: 24px 0 0;
+        color: #ffffff;
+        font-size: 62px;
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 1.02;
+      }
+
+      .copy-panel p {
+        margin: 26px 0 0;
+        color: rgba(255, 255, 255, 0.84);
+        font-size: 27px;
+        line-height: 1.35;
+      }
+
+      .script-card {
+        margin-top: 34px;
+        width: 570px;
+        padding: 22px 24px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 18px 54px rgba(0, 0, 0, 0.18);
+      }
+
+      .script-card strong {
+        color: #ffffff;
+      }
+
+      .step-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .step-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 42px;
+        padding: 0 18px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 999px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .step-chip--active {
+        border-color: rgba(96, 165, 250, 0.7);
+        background: rgba(27, 95, 138, 0.5);
+        color: #ffffff;
+      }
+
+      .demo-browser {
+        position: absolute;
+        left: 760px;
+        top: 62px;
+        width: 1080px;
+        height: 900px;
+        overflow: hidden;
+        border: 1px solid rgba(207, 222, 226, 0.9);
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 28px 82px rgba(0, 0, 0, 0.32);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .browser-bar {
+        position: absolute;
+        inset: 0 0 auto 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 40px;
+        padding: 0 18px;
+        border-bottom: 1px solid #d7e2e4;
+        background: #f5fbfb;
+      }
+
+      .browser-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #c6cbcc;
+      }
+
+      .screen-area {
+        position: absolute;
+        inset: 40px 0 0 0;
+        overflow: hidden;
+        background: #f6fbfb;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .screen--goal {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .flow-shot {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .review-shot {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        display: block;
+        width: 760px;
+        height: auto;
+      }
+
+      .screen-label {
+        position: absolute;
+        right: 28px;
+        bottom: 24px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 242px;
+        height: 58px;
+        padding: 0 18px;
+        border-radius: 8px;
+        background: rgba(10, 22, 40, 0.9);
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24);
+        opacity: 0;
+      }
+
+      .screen-label span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: #1b5f8a;
+      }
+
+      .focus-box {
+        position: absolute;
+        border: 3px solid #1b5f8a;
+        border-radius: 9px;
+        background: rgba(27, 95, 138, 0.12);
+        box-shadow: 0 0 0 8px rgba(27, 95, 138, 0.08);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .focus-budget-card {
+        left: 828px;
+        top: 454px;
+        width: 340px;
+        height: 128px;
+      }
+
+      .focus-budget-slider {
+        left: 828px;
+        top: 720px;
+        width: 720px;
+        height: 54px;
+      }
+
+      .focus-loan-terms {
+        left: 840px;
+        top: 520px;
+        width: 730px;
+        height: 240px;
+      }
+
+      .focus-vehicle-search {
+        left: 840px;
+        top: 368px;
+        width: 520px;
+        height: 326px;
+      }
+
+      .focus-vehicle-trim {
+        left: 840px;
+        top: 670px;
+        width: 570px;
+        height: 112px;
+      }
+
+      .focus-trade-context {
+        left: 830px;
+        top: 422px;
+        width: 690px;
+        height: 286px;
+      }
+
+      .focus-review-breakdown {
+        left: 1016px;
+        top: 298px;
+        width: 522px;
+        height: 220px;
+      }
+
+      .focus-review-email {
+        left: 1008px;
+        top: 702px;
+        width: 542px;
+        height: 148px;
+      }
+
+      .cursor {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 46px;
+        height: 46px;
+        z-index: 20;
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.3));
+        transform-origin: 8px 8px;
+        pointer-events: none;
+      }
+
+      .click-ring {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 86px;
+        height: 86px;
+        margin-left: -43px;
+        margin-top: -43px;
+        border: 4px solid #60a5fa;
+        border-radius: 999px;
+        background: rgba(96, 165, 250, 0.2);
+        opacity: 0;
+        z-index: 18;
+        pointer-events: none;
+      }
+
+      .progress-rail {
+        position: absolute;
+        left: 70px;
+        right: 80px;
+        bottom: 48px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
+        z-index: 4;
+      }
+
+      .progress-item {
+        position: relative;
+        height: 74px;
+        padding: 18px 18px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.07);
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .progress-item strong {
+        display: block;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .progress-item span {
+        display: block;
+        margin-top: 6px;
+        font-size: 13px;
+      }
+
+      .progress-item--active {
+        border-color: rgba(96, 165, 250, 0.68);
+        background: rgba(27, 95, 138, 0.48);
+      }
+
+      .end-card {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+          radial-gradient(circle at 70% 20%, rgba(27, 95, 138, 0.46), rgba(27, 95, 138, 0) 32%),
+          #0a1628;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 30;
+      }
+
+      .end-panel {
+        width: 980px;
+        padding: 70px 80px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 34px 90px rgba(0, 0, 0, 0.32);
+        text-align: center;
+      }
+
+      .end-panel .brand-pill {
+        position: static;
+        margin: 0 auto 34px;
+      }
+
+      .end-panel .brand-pill--white-logo {
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .end-panel .brand-pill--white-logo img {
+        filter: brightness(0) invert(1);
+      }
+
+      .end-panel h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 54px;
+        font-weight: 800;
+        line-height: 1.04;
+      }
+
+      .end-panel p {
+        margin: 24px auto 0;
+        max-width: 740px;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 24px;
+        line-height: 1.35;
+      }
+
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 410px;
+        height: 66px;
+        margin-top: 36px;
+        border-radius: 6px;
+        background: #1b5f8a;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="40" data-width="1920" data-height="1080">
+      <div class="grid"></div>
+      <div class="top-rule"><div class="top-rule-fill"></div></div>
+
+      <div class="brand-pill intro-logo">
+        <img src="capture/assets/svgs/header-logo-svg.svg" alt="Car and Driver">
+      </div>
+
+      <section class="copy-panel copy-panel--intro copy-intro">
+        <div class="eyebrow">Auto Loan Calculator</div>
+        <h1>Build the estimate before the showroom.</h1>
+        <p>Watch the calculator turn budget, loan terms, vehicle choice, trade-in, taxes, and fees into one clear shopping plan.</p>
+      </section>
+
+      <section class="copy-panel copy-budget">
+        <div class="eyebrow">Step 1 of 5 · Budget</div>
+        <h2>Start with the number you trust.</h2>
+        <div class="script-card">
+          <p>Choose a vehicle price target or a monthly payment, then keep refining the estimate as the numbers update.</p>
+        </div>
+        <div class="step-chip-row">
+          <span class="step-chip step-chip--active">$30,000 target</span>
+          <span class="step-chip">$592/mo estimate</span>
+        </div>
+      </section>
+
+      <section class="copy-panel copy-loan">
+        <div class="eyebrow">Step 2 of 5 · Loan terms</div>
+        <h2>Tune the levers that change cost.</h2>
+        <div class="script-card">
+          <p>Down payment, APR, and term show how monthly payment and total interest move together.</p>
+        </div>
+        <div class="step-chip-row">
+          <span class="step-chip">$3,000 down</span>
+          <span class="step-chip step-chip--active">7.0% APR</span>
+          <span class="step-chip">60 months</span>
+        </div>
+      </section>
+
+      <section class="copy-panel copy-vehicle">
+        <div class="eyebrow">Step 3 of 5 · Vehicle</div>
+        <h2>Anchor the estimate to the car.</h2>
+        <div class="script-card">
+          <p>Search by year, make, model, or trim so the payment connects to a realistic vehicle decision.</p>
+        </div>
+        <div class="step-chip-row">
+          <span class="step-chip step-chip--active">Vehicle choice</span>
+          <span class="step-chip">Budget fit</span>
+        </div>
+      </section>
+
+      <section class="copy-panel copy-trade">
+        <div class="eyebrow">Step 4 of 5 · Trade & fees</div>
+        <h2>Add the purchase context.</h2>
+        <div class="script-card">
+          <p>Trade-in equity, sales tax, registration, and dealer fees make the estimate more useful before a dealer quote.</p>
+        </div>
+        <div class="step-chip-row">
+          <span class="step-chip">Trade credit</span>
+          <span class="step-chip step-chip--active">Taxes & fees</span>
+        </div>
+      </section>
+
+      <section class="copy-panel copy-review">
+        <div class="eyebrow">Step 5 of 5 · Review</div>
+        <h2>See the full cost before you shop.</h2>
+        <div class="script-card">
+          <p><strong>$592/mo</strong>, total interest, amount financed, and estimated total paid are tied back to the choices the shopper made.</p>
+        </div>
+        <div class="step-chip-row">
+          <span class="step-chip step-chip--active">Save estimate</span>
+          <span class="step-chip">Shop in budget</span>
+        </div>
+      </section>
+
+      <div class="demo-browser">
+        <div class="browser-bar">
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+        </div>
+        <div class="screen-area">
+          <div class="screen screen--goal">
+            <img class="flow-shot" src="capture/screenshots/flow/goal.png" alt="Budget step">
+          </div>
+          <div class="screen screen--loan">
+            <img class="flow-shot" src="capture/screenshots/flow/loan.png" alt="Loan terms step">
+          </div>
+          <div class="screen screen--vehicle">
+            <img class="flow-shot" src="capture/screenshots/flow/vehicle.png" alt="Vehicle step">
+          </div>
+          <div class="screen screen--trade">
+            <img class="flow-shot" src="capture/screenshots/flow/trade.png" alt="Trade and fees step">
+          </div>
+          <div class="screen screen--review">
+            <img class="review-shot" src="capture/screenshots/flow/review.png" alt="Review step">
+          </div>
+        </div>
+        <div class="screen-label"><span>1</span>Budget</div>
+      </div>
+
+      <div class="focus-box focus-budget-card"></div>
+      <div class="focus-box focus-budget-slider"></div>
+      <div class="focus-box focus-loan-terms"></div>
+      <div class="focus-box focus-vehicle-search"></div>
+      <div class="focus-box focus-vehicle-trim"></div>
+      <div class="focus-box focus-trade-context"></div>
+      <div class="focus-box focus-review-breakdown"></div>
+      <div class="focus-box focus-review-email"></div>
+
+      <div class="click-ring"></div>
+      <svg class="cursor" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M8 4L38 25L24 28L31 42L24 45L17 31L8 41Z" fill="#ffffff" stroke="#0a1628" stroke-width="2" stroke-linejoin="round"></path>
+      </svg>
+
+      <div class="progress-rail">
+        <div class="progress-item progress-intro progress-item--active"><strong>Intro</strong><span>Why it matters</span></div>
+        <div class="progress-item progress-budget"><strong>Budget</strong><span>Starting point</span></div>
+        <div class="progress-item progress-loan"><strong>Terms</strong><span>Loan levers</span></div>
+        <div class="progress-item progress-vehicle"><strong>Vehicle</strong><span>Shopping context</span></div>
+        <div class="progress-item progress-trade"><strong>Trade & fees</strong><span>Real totals</span></div>
+        <div class="progress-item progress-review"><strong>Review</strong><span>Save and shop</span></div>
+      </div>
+
+      <section class="end-card">
+        <div class="end-panel">
+          <div class="brand-pill brand-pill--white-logo">
+            <img src="capture/assets/svgs/header-logo-svg-outro.svg" alt="Car and Driver">
+          </div>
+          <h2>Estimate payments. Compare financing costs. Shop with confidence.</h2>
+          <p>A complete calculator workflow that gives shoppers the numbers before the showroom.</p>
+          <a class="cta" href="https://cd-mmp-2025.netlify.app/auto-loan-calculator/light-steps" target="_blank" rel="noopener">Open Auto Loan Calculator</a>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      const tl = gsap.timeline({ paused: true });
+      const screens = [".screen--goal", ".screen--loan", ".screen--vehicle", ".screen--trade", ".screen--review"];
+      const copyPanels = [".copy-intro", ".copy-budget", ".copy-loan", ".copy-vehicle", ".copy-trade", ".copy-review"];
+      const progressItems = [".progress-intro", ".progress-budget", ".progress-loan", ".progress-vehicle", ".progress-trade", ".progress-review"];
+      const focusBoxes = [
+        ".focus-budget-card",
+        ".focus-budget-slider",
+        ".focus-loan-terms",
+        ".focus-vehicle-search",
+        ".focus-vehicle-trim",
+        ".focus-trade-context",
+        ".focus-review-breakdown",
+        ".focus-review-email"
+      ];
+
+      function showCopy(selector, at) {
+        tl.to(copyPanels.filter((panel) => panel !== selector), { autoAlpha: 0, y: -16, duration: 0.28, ease: "power2.in", overwrite: "auto" }, at);
+        tl.fromTo(selector, { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.52, ease: "power3.out", overwrite: "auto" }, at + 0.08);
+      }
+
+      function showScreen(selector, labelNumber, labelText, at) {
+        tl.to(screens.filter((screen) => screen !== selector), { autoAlpha: 0, x: -22, duration: 0.32, ease: "power2.in", overwrite: "auto" }, at);
+        tl.fromTo(selector, { autoAlpha: 0, x: 34, scale: 0.992 }, { autoAlpha: 1, x: 0, scale: 1, duration: 0.54, ease: "power3.out", overwrite: "auto" }, at + 0.08);
+        tl.set(".screen-label span", { textContent: labelNumber }, at + 0.12);
+        tl.set(".screen-label", { textContent: "" }, at + 0.12);
+        tl.call(() => {
+          const label = document.querySelector(".screen-label");
+          label.innerHTML = `<span>${labelNumber}</span>${labelText}`;
+        }, null, at + 0.12);
+        tl.fromTo(".screen-label", { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.32, ease: "power2.out" }, at + 0.34);
+      }
+
+      function activateProgress(selector, at) {
+        progressItems.forEach((item) => {
+          tl.to(item, {
+            backgroundColor: item === selector ? "rgba(27, 95, 138, 0.48)" : "rgba(255, 255, 255, 0.07)",
+            borderColor: item === selector ? "rgba(96, 165, 250, 0.68)" : "rgba(255, 255, 255, 0.16)",
+            duration: 0.22,
+            ease: "none"
+          }, at);
+        });
+      }
+
+      function focus(selector, at, hold = 1.4) {
+        tl.to(focusBoxes.filter((box) => box !== selector), { autoAlpha: 0, duration: 0.18, ease: "none", overwrite: "auto" }, at);
+        tl.fromTo(selector, { autoAlpha: 0, scale: 0.985 }, { autoAlpha: 1, scale: 1, duration: 0.22, ease: "power2.out", overwrite: "auto" }, at);
+        tl.to(selector, { autoAlpha: 0, duration: 0.25, ease: "power2.in", overwrite: "auto" }, at + hold);
+      }
+
+      function cursorTo(x, y, at, duration = 0.62) {
+        tl.to(".cursor", { x, y, duration, ease: "power2.inOut" }, at);
+      }
+
+      function clickAt(x, y, at) {
+        tl.to(".cursor", { scale: 0.88, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.out" }, at);
+        tl.set(".click-ring", { x, y, autoAlpha: 0.82, scale: 0.2 }, at);
+        tl.to(".click-ring", { autoAlpha: 0, scale: 1.75, duration: 0.58, ease: "power2.out" }, at);
+      }
+
+      tl.set(".screen:not(.screen--goal)", { autoAlpha: 0 }, 0);
+      tl.set(".screen--goal", { autoAlpha: 1, x: 0, scale: 1 }, 0);
+      tl.set(".screen-label", { autoAlpha: 0 }, 0);
+      tl.set(".cursor", { x: 1335, y: 842, autoAlpha: 0 }, 0);
+      tl.set(".review-shot", { xPercent: -50, y: 0 }, 0);
+
+      tl.fromTo(".intro-logo", { y: -22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, 0.24);
+      tl.fromTo(".copy-intro .eyebrow", { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: "power3.out" }, 0.58);
+      tl.fromTo(".copy-intro h1", { y: 38, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.58, ease: "power3.out" }, 0.74);
+      tl.fromTo(".copy-intro p", { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.44, ease: "power3.out" }, 1.02);
+      tl.fromTo(".progress-rail", { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.46, ease: "power3.out" }, 1.2);
+      tl.to(".top-rule-fill", { width: "100%", duration: 39, ease: "none" }, 0.5);
+
+      tl.fromTo(".demo-browser", { x: 90, y: 18, autoAlpha: 0, scale: 0.965 }, { x: 0, y: 0, autoAlpha: 1, scale: 1, duration: 0.75, ease: "power3.out" }, 3.65);
+      showCopy(".copy-budget", 4.0);
+      showScreen(".screen--goal", "1", "Budget", 4.05);
+      activateProgress(".progress-budget", 4.05);
+      tl.to(".cursor", { autoAlpha: 1, duration: 0.22, ease: "none" }, 4.35);
+      cursorTo(1015, 518, 4.35, 0.7);
+      focus(".focus-budget-card", 4.55, 1.35);
+      clickAt(1015, 518, 4.9);
+      cursorTo(1142, 746, 5.88, 0.7);
+      focus(".focus-budget-slider", 6.0, 1.4);
+      clickAt(1142, 746, 6.22);
+      tl.to(".cursor", { x: 1258, y: 746, duration: 0.56, ease: "power2.inOut" }, 6.55);
+      clickAt(1258, 746, 7.18);
+      cursorTo(1454, 900, 7.55, 0.64);
+      clickAt(1454, 900, 8.08);
+
+      showCopy(".copy-loan", 9.3);
+      showScreen(".screen--loan", "2", "Loan terms", 9.35);
+      activateProgress(".progress-loan", 9.35);
+      cursorTo(1018, 414, 9.75, 0.6);
+      focus(".focus-loan-terms", 9.82, 2.4);
+      clickAt(1018, 414, 10.12);
+      cursorTo(1148, 596, 10.74, 0.66);
+      clickAt(1148, 596, 11.08);
+      cursorTo(1302, 735, 11.72, 0.66);
+      clickAt(1302, 735, 12.08);
+      cursorTo(1468, 900, 13.02, 0.7);
+      clickAt(1468, 900, 13.5);
+
+      showCopy(".copy-vehicle", 15.0);
+      showScreen(".screen--vehicle", "3", "Vehicle", 15.05);
+      activateProgress(".progress-vehicle", 15.05);
+      cursorTo(1002, 466, 15.45, 0.68);
+      focus(".focus-vehicle-search", 15.56, 1.8);
+      clickAt(1002, 466, 15.9);
+      cursorTo(1110, 690, 16.82, 0.68);
+      focus(".focus-vehicle-trim", 16.92, 1.65);
+      clickAt(1110, 690, 17.22);
+      cursorTo(1460, 902, 18.2, 0.7);
+      clickAt(1460, 902, 18.66);
+
+      showCopy(".copy-trade", 20.1);
+      showScreen(".screen--trade", "4", "Trade & fees", 20.15);
+      activateProgress(".progress-trade", 20.15);
+      cursorTo(998, 466, 20.55, 0.7);
+      focus(".focus-trade-context", 20.68, 2.8);
+      clickAt(998, 466, 21.0);
+      cursorTo(1246, 616, 21.78, 0.7);
+      clickAt(1246, 616, 22.18);
+      cursorTo(1132, 752, 22.82, 0.64);
+      clickAt(1132, 752, 23.2);
+      cursorTo(1448, 900, 24.28, 0.72);
+      clickAt(1448, 900, 24.76);
+
+      showCopy(".copy-review", 26.2);
+      showScreen(".screen--review", "5", "Review", 26.25);
+      activateProgress(".progress-review", 26.25);
+      cursorTo(1310, 398, 26.82, 0.7);
+      focus(".focus-review-breakdown", 26.9, 1.8);
+      clickAt(1310, 398, 27.3);
+      tl.to(".review-shot", { xPercent: -50, y: -690, duration: 3.0, ease: "power1.inOut" }, 28.2);
+      cursorTo(1378, 776, 30.0, 0.72);
+      focus(".focus-review-email", 30.05, 1.8);
+      clickAt(1378, 776, 30.45);
+      tl.to(".review-shot", { xPercent: -50, y: -1440, duration: 3.2, ease: "power1.inOut" }, 31.4);
+      cursorTo(1470, 874, 33.55, 0.64);
+      clickAt(1470, 874, 34.05);
+
+      tl.to([".copy-review", ".demo-browser", ".progress-rail", ".intro-logo", ".cursor"], { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 35.7);
+      tl.to(".end-card", { autoAlpha: 1, duration: 0.52, ease: "power3.out" }, 35.9);
+      tl.fromTo(".end-panel", { y: 28, scale: 0.985, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: 0.58, ease: "power3.out" }, 36.02);
+      tl.fromTo(".end-panel .brand-pill", { y: -14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.36, ease: "power2.out" }, 36.18);
+      tl.fromTo(".end-panel h2", { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.44, ease: "power2.out" }, 36.32);
+      tl.fromTo(".end-panel p", { y: 18, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.36, ease: "power2.out" }, 36.6);
+      tl.fromTo(".cta", { y: 18, scale: 0.97, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: 0.4, ease: "power2.out" }, 36.88);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

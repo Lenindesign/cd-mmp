@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useId } from 'react';
+import { Info } from 'lucide-react';
 import { getRangeInputStyle } from '../../utils/rangeInputStyle';
 import './PaymentCalculator.css';
 
@@ -36,6 +37,7 @@ const LEASE_RESIDUAL_OPTIONS = [50, 54, 58, 62, 66];
 const LEASE_RATE_OPTIONS = [1.5, 3, 5, 7.5, 10];
 const MIN_TRADE_IN_SLIDER_MAX = 50000;
 const TRADE_IN_MAX_PRICE_MULTIPLIER = 1.25;
+const CAD_INFO_ICON_SRC = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/info-regular.348beca.svg?primary=%2523222222';
 
 const fmt = (n: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
@@ -58,6 +60,53 @@ const moneyFactorToAprDisplay = (mf: number) => Math.round(mf * 240000) / 100;
 
 /** MF × 2400 ≈ APR % (dealer convention); APR ÷ 2400 → MF */
 const aprPercentToMoneyFactor = (apr: number) => apr / 2400;
+
+interface PaymentCalcInfoTooltipProps {
+  id: string;
+  title: string;
+  copy: string;
+  ariaLabel?: string;
+  preventSummaryToggle?: boolean;
+}
+
+function PaymentCalcInfoTooltip({ id, title, copy, ariaLabel, preventSummaryToggle = false }: PaymentCalcInfoTooltipProps) {
+  return (
+    <span className="payment-calc__info-tooltip">
+      <button
+        type="button"
+        className="payment-calc__info-trigger"
+        aria-label={ariaLabel ?? `${title} help`}
+        aria-describedby={id}
+        onClick={preventSummaryToggle ? (event) => event.stopPropagation() : undefined}
+        onKeyDown={
+          preventSummaryToggle
+            ? (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.stopPropagation();
+                }
+              }
+            : undefined
+        }
+      >
+        <img
+          className="payment-calc__info-trigger-icon"
+          src={CAD_INFO_ICON_SRC}
+          width="20"
+          height="20"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+      <span id={id} className="payment-calc__info-popover" role="tooltip">
+        <span className="payment-calc__info-popover-header">
+          <Info size={16} strokeWidth={2.25} aria-hidden="true" />
+          <span>{title}</span>
+        </span>
+        <span className="payment-calc__info-popover-copy">{copy}</span>
+      </span>
+    </span>
+  );
+}
 
 function ctaLabel(make: string | undefined, model: string | undefined, vehicleName: string): string {
   const mk = make?.trim();
@@ -118,6 +167,7 @@ const PaymentCalculator = ({
   const [moneyFactor, setMoneyFactor] = useState(0.00125);
   const [mfDraft, setMfDraft] = useState('0.00125');
   const [mfError, setMfError] = useState<string | null>(null);
+  const tooltipIdBase = useId();
 
   useEffect(() => {
     setMfDraft(moneyFactor.toFixed(5));
@@ -283,7 +333,16 @@ const PaymentCalculator = ({
                 <div className="payment-calc__shared-stack">
                   <div className="payment-calc__field payment-calc__field--full">
                     <div className="payment-calc__row-label">
-                      <label htmlFor="pc-price">Expected purchase price</label>
+                      <div className="payment-calc__lab payment-calc__lab-with-help">
+                        <label htmlFor="pc-price">Expected purchase price</label>
+                        {tab === 'finance' && (
+                          <PaymentCalcInfoTooltip
+                            id={`${tooltipIdBase}-finance-price-help`}
+                            title="Expected purchase price"
+                            copy="The estimated selling price before taxes and fees. Adjust it to match the price you expect to pay or negotiate."
+                          />
+                        )}
+                      </div>
                       <span>{fmt(vehiclePrice)}</span>
                     </div>
                     <input
@@ -304,9 +363,20 @@ const PaymentCalculator = ({
                   </div>
 
                   {tab !== 'cash' && (
-                    <label className="payment-calc__field payment-calc__field--full">
+                    <div className="payment-calc__field payment-calc__field--full">
                       <span className="payment-calc__lab">
-                        {tab === 'lease' ? 'Due at signing' : 'Down payment'}
+                        <span className="payment-calc__lab-with-help">
+                          <label htmlFor={tab === 'lease' ? 'pc-cap' : 'pc-down'}>
+                            {tab === 'lease' ? 'Due at signing' : 'Down payment'}
+                          </label>
+                          {tab === 'finance' && (
+                            <PaymentCalcInfoTooltip
+                              id={`${tooltipIdBase}-finance-down-payment-help`}
+                              title="Down payment"
+                              copy="Cash paid upfront. A larger down payment lowers the amount financed and can reduce your monthly payment and interest."
+                            />
+                          )}
+                        </span>
                       </span>
                       <div className="payment-calc__money-input">
                         <span className="payment-calc__money-prefix" aria-hidden="true">$</span>
@@ -321,12 +391,21 @@ const PaymentCalculator = ({
                           autoComplete="off"
                         />
                       </div>
-                    </label>
+                    </div>
                   )}
 
                   <div className="payment-calc__field payment-calc__field--full">
                     <div className="payment-calc__row-label">
-                      <label htmlFor="pc-trade">Trade-in value</label>
+                      <div className="payment-calc__lab payment-calc__lab-with-help">
+                        <label htmlFor="pc-trade">Trade-in value</label>
+                        {tab === 'finance' && (
+                          <PaymentCalcInfoTooltip
+                            id={`${tooltipIdBase}-finance-trade-help`}
+                            title="Trade-in value"
+                            copy="Estimated value of your current vehicle. It lowers the amount financed after any amount owed on the trade."
+                          />
+                        )}
+                      </div>
                     </div>
                     <div className="payment-calc__money-input">
                       <span className="payment-calc__money-prefix" aria-hidden="true">$</span>
@@ -376,8 +455,15 @@ const PaymentCalculator = ({
 
             {tab === 'finance' && (
               <div className="payment-calc__section payment-calc__section--pad">
-                <label className="payment-calc__field payment-calc__field--full">
-                  <span className="payment-calc__lab">Credit score</span>
+                <div className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab payment-calc__lab-with-help">
+                    <label htmlFor="pc-credit">Credit score</label>
+                    <PaymentCalcInfoTooltip
+                      id={`${tooltipIdBase}-finance-credit-help`}
+                      title="Credit score"
+                      copy="Credit score range estimates the APR used for this calculation. Your actual rate may vary by lender and approval."
+                    />
+                  </span>
                   <select
                     id="pc-credit"
                     className="payment-calc__select"
@@ -390,9 +476,16 @@ const PaymentCalculator = ({
                       </option>
                     ))}
                   </select>
-                </label>
-                <label className="payment-calc__field payment-calc__field--full">
-                  <span className="payment-calc__lab">Loan term</span>
+                </div>
+                <div className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab payment-calc__lab-with-help">
+                    <label htmlFor="pc-term">Loan term</label>
+                    <PaymentCalcInfoTooltip
+                      id={`${tooltipIdBase}-finance-term-help`}
+                      title="Loan term"
+                      copy="Loan term is how many months you repay the loan. Longer terms can lower the monthly payment but usually increase interest."
+                    />
+                  </span>
                   <select
                     id="pc-term"
                     className="payment-calc__select"
@@ -405,7 +498,7 @@ const PaymentCalculator = ({
                       </option>
                     ))}
                   </select>
-                </label>
+                </div>
                 {bestApr !== undefined && (
                   <p className="payment-calc__note">
                     The special rate in the banner replaces your range’s rate when it’s lower.
@@ -416,8 +509,15 @@ const PaymentCalculator = ({
 
             {tab === 'lease' && (
               <div className="payment-calc__section payment-calc__section--pad">
-                <label className="payment-calc__field payment-calc__field--full">
-                  <span className="payment-calc__lab">Lease term</span>
+                <div className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab payment-calc__lab-with-help">
+                    <label htmlFor="pc-lease-term">Lease term</label>
+                    <PaymentCalcInfoTooltip
+                      id={`${tooltipIdBase}-lease-term-help`}
+                      title="Lease term"
+                      copy="Lease term is how long the lease runs. A longer term can lower the monthly payment, but it also keeps you in the vehicle longer."
+                    />
+                  </span>
                   <select
                     id="pc-lease-term"
                     className="payment-calc__select"
@@ -430,9 +530,16 @@ const PaymentCalculator = ({
                       </option>
                     ))}
                   </select>
-                </label>
-                <label className="payment-calc__field payment-calc__field--full">
-                  <span className="payment-calc__lab">Lease rate estimate</span>
+                </div>
+                <div className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab payment-calc__lab-with-help">
+                    <label htmlFor="pc-lease-apr">Lease rate estimate</label>
+                    <PaymentCalcInfoTooltip
+                      id={`${tooltipIdBase}-lease-rate-help`}
+                      title="Lease rate estimate"
+                      copy="Dealer leases use a money factor. This APR equivalent helps you compare the lease rate with more familiar financing terms."
+                    />
+                  </span>
                   <select
                     id="pc-lease-apr"
                     className="payment-calc__select"
@@ -449,9 +556,16 @@ const PaymentCalculator = ({
                   <span id="pc-lease-apr-hint" className="payment-calc__muted">
                     Dealer leases use a money factor. This shows the same idea in APR form.
                   </span>
-                </label>
-                <label className="payment-calc__field payment-calc__field--full">
-                  <span className="payment-calc__lab">Lease-end value</span>
+                </div>
+                <div className="payment-calc__field payment-calc__field--full">
+                  <span className="payment-calc__lab payment-calc__lab-with-help">
+                    <label htmlFor="pc-res">Lease-end value</label>
+                    <PaymentCalcInfoTooltip
+                      id={`${tooltipIdBase}-lease-end-value-help`}
+                      title="Lease-end value"
+                      copy="Lease-end value, also called residual value, is the estimated vehicle value when the lease ends. A higher residual usually lowers the monthly payment."
+                    />
+                  </span>
                   <select
                     id="pc-res"
                     className="payment-calc__select"
@@ -464,12 +578,23 @@ const PaymentCalculator = ({
                       </option>
                     ))}
                   </select>
-                </label>
+                </div>
                 <details className="payment-calc__details">
-                  <summary className="payment-calc__details-sum">Have a dealer money factor?</summary>
-                  <label className="payment-calc__field payment-calc__field--full">
-                    <span className="payment-calc__lab">Money factor</span>
+                  <summary className="payment-calc__details-sum">
+                    <span className="payment-calc__details-label">Have a dealer money factor?</span>
+                    <PaymentCalcInfoTooltip
+                      id={`${tooltipIdBase}-money-factor-help`}
+                      title="Dealer money factor"
+                      copy="If your dealer gives you a money factor, enter it here. We convert it to an APR equivalent for the estimate."
+                      preventSummaryToggle
+                    />
+                  </summary>
+                  <div className="payment-calc__field payment-calc__field--full">
+                    <span className="payment-calc__lab">
+                      <label htmlFor="pc-money-factor">Money factor</label>
+                    </span>
                     <input
+                      id="pc-money-factor"
                       type="text"
                       inputMode="decimal"
                       className={`payment-calc__input ${mfError ? 'payment-calc__input--invalid' : ''}`}
@@ -494,7 +619,7 @@ const PaymentCalculator = ({
                         Typical ~0.0005–0.005. About {moneyFactorToAprDisplay(moneyFactor)}% APR equivalent.
                       </span>
                     )}
-                  </label>
+                  </div>
                 </details>
                 <p className="payment-calc__muted">
                   Sticker (MSRP) {fmt(msrp)} · Amount leased after trade and due at signing: {fmt(adjustedCap)}

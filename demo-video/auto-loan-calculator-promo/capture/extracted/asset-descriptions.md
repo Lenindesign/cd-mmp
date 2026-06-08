@@ -1,0 +1,41 @@
+# Asset Descriptions
+
+One line per file. Read this instead of opening every image individually.
+
+- 07-2026-honda-cr-v-trailsport.jpg — 786KB, 07 2026 honda cr v trailsport
+- 2024-kia-telluride-12.jpg — 383KB, 2024 kia telluride 12
+- choose-your-starting-point.svg — 2KB, choose your starting point
+- compare-cars.jpg — 61KB, compare cars
+- shop-for-cars.png — 127KB, shop for cars
+- whats-my-car-worth.png — 124KB, whats my car worth
+- svgs/header-logo-svg.svg — logo: header logo svg
+- svgs/header-user-btn.svg — icon: header user btn
+- svgs/icon-5.svg — icon: icon 5
+- svgs/icon-6.svg — icon: icon 6
+- svgs/lucide-arrow-left.svg — icon: lucide-arrow-left
+- svgs/lucide-arrow-right.svg — icon: lucide-arrow-right
+- svgs/lucide-chevron-down-10.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-11.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-12.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-13.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-14.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-15.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-2.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-3.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-4.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-5.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-6.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-7.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-8.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down-9.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-down.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-left.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-right.svg — icon: lucide-chevron-down
+- svgs/lucide-chevron-up.svg — icon: lucide-chevron-down
+- svgs/lucide-facebook.svg — logo: lucide-facebook
+- svgs/lucide-info.svg — icon: lucide-info
+- svgs/lucide-instagram.svg — logo: lucide-instagram
+- svgs/lucide-menu.svg — icon: lucide-menu
+- svgs/lucide-search.svg — icon: lucide-search
+- svgs/lucide-twitter.svg — logo: lucide-twitter
+- fonts/kJF1BvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oDMzByHX9rA6RzaxHMPdY43zj-jCxv3fzvRNU22ZXGJpEpjC_1v-p_4MrImHCIJIZrDCvHOem.ttf — font file

@@ -6491,10 +6491,10 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-dark-bg);
 }
 
+.aio-payment--light-steps .aio-payment__section-heading--wizard h2:focus,
 .aio-payment--light-steps .aio-payment__section-heading--wizard h2:focus-visible {
-  outline: 2px solid var(--color-blue-cobalt);
-  outline-offset: var(--spacing-1);
-  border-radius: var(--border-radius-sm);
+  /* The heading is focused after step changes for screen-reader context. */
+  outline: none;
 }
 
 .aio-payment--light-steps .aio-payment__section-heading--wizard .aio-payment__light-heading-copy {
@@ -6554,6 +6554,15 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-loan-step {
   gap: var(--spacing-8);
+}
+
+.aio-payment--light-steps .aio-payment__light-loan-step .payment-calc__pill--on {
+  border: 3px solid var(--color-blue-cobalt);
+  background: var(--color-teal-light);
+  color: var(--color-dark);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-blue-cobalt) 45%, transparent),
+    0 10px 28px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
 }
 
 .aio-payment--light-steps .aio-payment__light-vehicle-step {

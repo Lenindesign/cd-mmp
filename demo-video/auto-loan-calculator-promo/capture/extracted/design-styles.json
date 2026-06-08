@@ -1,0 +1,226 @@
+{
+  "typography": [
+    {
+      "role": "display",
+      "fontFamily": "Inter",
+      "fontSize": "48px",
+      "fontWeight": "800",
+      "lineHeight": "52.8px",
+      "letterSpacing": "normal",
+      "color": "#FFFFFF",
+      "sampleText": "Auto Loan Calculator"
+    },
+    {
+      "role": "heading",
+      "fontFamily": "Barlow Condensed",
+      "fontSize": "48px",
+      "fontWeight": "600",
+      "lineHeight": "64px",
+      "letterSpacing": "normal",
+      "color": "#000000",
+      "sampleText": "Understand What You Can Afford"
+    },
+    {
+      "role": "heading-2",
+      "fontFamily": "Inter",
+      "fontSize": "24px",
+      "fontWeight": "700",
+      "lineHeight": "26.88px",
+      "letterSpacing": "normal",
+      "color": "#0A1628",
+      "sampleText": "Choose your starting point"
+    },
+    {
+      "role": "heading-3",
+      "fontFamily": "Inter",
+      "fontSize": "24px",
+      "fontWeight": "800",
+      "lineHeight": "25.2px",
+      "letterSpacing": "normal",
+      "color": "#FFFFFF",
+      "sampleText": "Shop For Cars"
+    },
+    {
+      "role": "body",
+      "fontFamily": "Inter",
+      "fontSize": "18px",
+      "fontWeight": "400",
+      "lineHeight": "27.9px",
+      "letterSpacing": "normal",
+      "color": "color(srgb 1 1 1 / 0.86)",
+      "sampleText": "See what your monthly budget can really buy. Use our interac"
+    },
+    {
+      "role": "heading-3",
+      "fontFamily": "Inter",
+      "fontSize": "16px",
+      "fontWeight": "800",
+      "lineHeight": "18.4px",
+      "letterSpacing": "normal",
+      "color": "#000000",
+      "sampleText": "Budget-First Guidance"
+    },
+    {
+      "role": "link",
+      "fontFamily": "Inter",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "24px",
+      "letterSpacing": "normal",
+      "color": "#000000",
+      "sampleText": ""
+    },
+    {
+      "role": "label",
+      "fontFamily": "Inter",
+      "fontSize": "12px",
+      "fontWeight": "600",
+      "lineHeight": "15px",
+      "letterSpacing": "0.96px",
+      "color": "#222222",
+      "sampleText": "Budget"
+    },
+    {
+      "role": "heading-4",
+      "fontFamily": "Inter",
+      "fontSize": "11px",
+      "fontWeight": "700",
+      "lineHeight": "12.1px",
+      "letterSpacing": "1.1px",
+      "color": "#FFFFFF",
+      "sampleText": "Stay Updated"
+    }
+  ],
+  "spacing": {
+    "observed": [
+      3,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48
+    ],
+    "baseUnit": 4
+  },
+  "radius": [
+    "4px",
+    "6px",
+    "12px",
+    "50%"
+  ],
+  "shadows": [
+    {
+      "value": "color(srgb 0 0 0 / 0.2) 0px 8px 18px 0px",
+      "count": 4
+    },
+    {
+      "value": "rgba(0, 0, 0, 0.25) 0px 0px 4px 0px",
+      "count": 1
+    }
+  ],
+  "buttons": [
+    {
+      "label": "button",
+      "background": "#000000",
+      "color": "#4A4A4A",
+      "padding": "0px",
+      "borderRadius": "50%",
+      "border": "0px none rgb(74, 74, 74)",
+      "boxShadow": "none",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "height": "36px"
+    },
+    {
+      "label": "Subscribe",
+      "background": "#1B5F8A",
+      "color": "#FFFFFF",
+      "padding": "12px",
+      "borderRadius": "6px",
+      "border": "1px solid rgb(255, 255, 255)",
+      "boxShadow": "none",
+      "fontSize": "11px",
+      "fontWeight": "800",
+      "height": "32px"
+    },
+    {
+      "label": "button",
+      "background": "#000000",
+      "color": "#222222",
+      "padding": "0px",
+      "borderRadius": "50%",
+      "border": "0px none rgb(34, 34, 34)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "40px"
+    },
+    {
+      "label": "Start with vehicle priceWe'll use this p",
+      "background": "#F1F7F7",
+      "color": "#222222",
+      "padding": "20px 24px",
+      "borderRadius": "12px",
+      "border": "2px solid rgb(27, 95, 138)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "179.156px"
+    }
+  ],
+  "cards": [
+    {
+      "label": "card",
+      "background": "#FFFFFF",
+      "color": "#222222",
+      "padding": "40px",
+      "borderRadius": "0px 0px 0px 8px",
+      "border": "0px none rgb(34, 34, 34)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "726.188px"
+    },
+    {
+      "label": "card",
+      "background": "#000000",
+      "color": "#222222",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px none rgb(34, 34, 34)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "414.438px"
+    },
+    {
+      "label": "card",
+      "background": "#000000",
+      "color": "#222222",
+      "padding": "0px",
+      "borderRadius": "6px",
+      "border": "0px none rgb(34, 34, 34)",
+      "boxShadow": "color(srgb 0 0 0 / 0.2) 0px 8px 18px 0px",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "300px"
+    }
+  ],
+  "nav": {
+    "label": "navigation",
+    "background": "#FFFFFF",
+    "color": "#000000",
+    "padding": "0px",
+    "borderRadius": "0px",
+    "border": "0px none rgb(0, 0, 0)",
+    "boxShadow": "rgba(0, 0, 0, 0.25) 0px 0px 4px 0px",
+    "fontSize": "16px",
+    "fontWeight": "400",
+    "height": "123.5px"
+  }
+}

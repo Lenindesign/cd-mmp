@@ -1,0 +1,151 @@
+[a] Skip to main content
+[span] Subscribe
+[a] Browse All Vehicles
+[a] Shop New Cars
+[a] Shop Used Cars
+[a] Research Cars
+[a] Expert Reviews
+[a] Buying Deals
+[a] Lease Deals
+[a] 0% APR Deals
+[a] Cash Back Deals
+[a] What's My Car Worth?
+[a] News + Stories
+[a] Auto Loan Calculator
+[span] Guided steps
+[h1] Auto Loan Calculator
+[p] See what your monthly budget can really buy. Use our interactive auto loan calculator to estimate payments, compare financing costs, and discover vehicles that fit your budget.
+[span] Loan Terms
+[span] Trade & Fees
+[span] Estimate
+[span] Step
+[span] of 5
+[span] Budget
+[h2] Choose your starting point
+[p] Start by choosing the vehicle price or monthly payment that feels comfortable. You can refine assumptions as you go.
+[span] Start with vehicle price
+[span] We'll use this price as your budget target throughout the experience. Estimated payment: $592/month, which may change as you refine your estimate.
+[span] Start with monthly budget
+[span] Your monthly payment helps estimate a vehicle budget. Based on your current assumptions, that budget is approximately $28,000 before taxes and fees.
+[label] Vehicle price target
+[span] $5,000
+[span] $120,000
+[p] Your target price stays fixed unless you change it. Estimated payment:
+[p] $592
+[p] /mo before dealer-specific changes.
+[button] Back
+[button] Continue
+[p] Estimated Monthly Payment
+[p] $592
+[span] /mo
+[p] Based on a $30,000 target vehicle price, 60 months, and 7.0% APR.
+[span] Estimate totals
+[dt] Rate & Term
+[dd] 7.0%
+[dd] APR ·
+[dt] Down Payment
+[dd] $3,000
+[dt] Trade-In Value
+[dt] Monthly Payment
+[dd] $592/mo
+[dt] Total Interest Paid
+[dd] $5,618
+[dt] Estimated Total Paid
+[dd] $38,491
+[h2] Understand What You Can Afford
+[h3] Budget-First Guidance
+[h3] Taxes, Fees, and Trade-In Context
+[h3] Personalized Recommendations for Your Budget
+[p] Whether you're starting with a vehicle price or a monthly budget, this calculator helps you connect the numbers behind your next vehicle purchase. Explore payment estimates, financing costs, taxes, fees, and trade-in value to better understand affordability and compare vehicles with confidence. The more informed you are, the better prepared you'll be when it's time to buy.
+[h2] Shopping Tools
+[h3] Shop For Cars
+[p] Research, compare, and find the exact car you're looking for at a dealer near you.
+[a] Shop Now
+[h3] What's My Car Worth?
+[p] Get your car's trade-in and private-party-sale values using the same Black Book® data dealers use to appraise vehicles.
+[a] Get Estimate
+[h3] Compare Cars
+[p] Compare features, specs, prices, and performance between different trim levels on any vehicle.
+[a] Compare
+[h3] Price Calculator
+[p] Estimate monthly payments, total cost, and budget fit before you shop.
+[a] Calculate
+[h2] FAQs
+[span] How does the Car and Driver Auto Loan Calculator work?
+[span] What does estimated buying power mean?
+[span] How much car can I afford based on a monthly payment?
+[span] What is included in a monthly car payment?
+[span] How does APR affect my car payment?
+[span] How does my credit score affect an auto loan estimate?
+[span] Is a longer car loan term better?
+[span] How much should I put down on a car?
+[span] How does a trade-in affect my car loan?
+[span] Should I include taxes and fees in my auto loan estimate?
+[span] What is an out-the-door price, and why does it matter?
+[span] Should I get preapproved before visiting a dealer?
+[span] Why do some vehicles show APR, rebate, or lease deals?
+[span] What should I do after the calculator finds cars in my budget?
+[span] CAR AND DRIVER
+[p] The authoritative source for car reviews, ratings, and comparisons since 1955.
+[h4] Stay Updated
+[h3] New Cars
+[a] Car Rankings
+[a] SUV Rankings
+[a] SUV Rankings Control
+[a] SUV Rankings Control B
+[a] SUV Rankings Incentive Nav
+[a] Truck Rankings
+[a] Buying Deals
+[a] Lease Deals
+[a] 0% APR Deals
+[a] Cash Back Deals
+[h3] Deals by Make
+[a] Chevrolet Deals
+[a] Toyota Deals
+[a] Honda Deals
+[a] Ford Deals
+[a] Hyundai Deals
+[a] Chevrolet Lease Deals
+[a] Toyota Lease Deals
+[a] Honda Lease Deals
+[h3] Research
+[a] Compare Vehicles
+[a] Car Reviews
+[a] Road Tests
+[a] Buyer's Guide
+[a] Best Cars Lists
+[a] Payment Calculator
+[a] Auto Loan Calculator
+[a] All-in-One Payment Calculator
+[a] Budget Payment Calculator
+[a] Advanced payment calculator
+[a] Step-by-step payment estimate
+[a] Step-by-step estimate v2
+[a] AI Lease vs Buy Analyzer
+[a] Car Finder
+[a] Latest News
+[a] Industry News
+[a] Future Cars
+[a] Auto Shows
+[a] Motorsports
+[h3] Prototypes
+[a] Design System
+[a] Honda Accord (Concept)
+[a] Honda Accord (Standard)
+[a] Mazda CX-5
+[a] Toyota Brand Hub
+[a] Vehicle Ranking
+[a] Payment Estimate Email Mock
+[p] Car and Driver. All rights reserved.
+[button] Find My Car
+[button] Create Account
+[a] Privacy Policy
+[a] Terms of Use
+[a] Cookie Policy
+[a] Accessibility
+[a] Design System
+[a] Vehicle Ranking
+[a] Editor Portal
+[a] Comments Dashboard
+[a] Incentives Version A
+[a] Modal Version B

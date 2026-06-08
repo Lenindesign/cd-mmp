@@ -114,6 +114,163 @@
   letter-spacing: 0;
 }
 
+.payment-calc--vehicle .payment-calc__lab-with-help {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1-5);
+  width: max-content;
+  max-width: 100%;
+  line-height: 1;
+}
+
+.payment-calc--vehicle .payment-calc__lab-with-help label,
+.payment-calc--vehicle .payment-calc__details-label {
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.payment-calc--vehicle .payment-calc__info-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.payment-calc--vehicle .payment-calc__info-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  padding: 0;
+  color: var(--color-black);
+  background: transparent;
+  border: 0;
+  border-radius: var(--border-radius-full);
+  cursor: help;
+}
+
+.payment-calc--vehicle .payment-calc__info-trigger-icon {
+  display: block;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+}
+
+.payment-calc--vehicle .payment-calc__info-trigger:hover,
+.payment-calc--vehicle .payment-calc__info-trigger:focus-visible {
+  color: var(--color-black);
+  outline: none;
+}
+
+.payment-calc--vehicle .payment-calc__info-trigger:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-info-light);
+}
+
+.payment-calc--vehicle .payment-calc__info-popover {
+  position: absolute;
+  top: calc(100% + var(--spacing-2));
+  left: 0;
+  z-index: 30;
+  display: grid;
+  gap: var(--spacing-2);
+  width: min(18rem, calc(100vw - var(--spacing-8)));
+  margin: 0;
+  padding: var(--spacing-3);
+  color: var(--color-black);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(calc(var(--spacing-1) * -1));
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
+  visibility: hidden;
+}
+
+.payment-calc--vehicle .payment-calc__info-popover::before,
+.payment-calc--vehicle .payment-calc__info-popover::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: var(--spacing-3);
+  width: 0;
+  height: 0;
+  border-right: var(--spacing-2) solid transparent;
+  border-left: var(--spacing-2) solid transparent;
+}
+
+.payment-calc--vehicle .payment-calc__info-popover::before {
+  border-bottom: var(--spacing-2) solid var(--color-gray-300);
+}
+
+.payment-calc--vehicle .payment-calc__info-popover::after {
+  top: -7px;
+  border-bottom: var(--spacing-2) solid var(--color-white);
+}
+
+.payment-calc--vehicle .payment-calc__info-tooltip:hover .payment-calc__info-popover,
+.payment-calc--vehicle .payment-calc__info-tooltip:focus-within .payment-calc__info-popover {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.payment-calc--vehicle .payment-calc__info-popover-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+}
+
+.payment-calc--vehicle .payment-calc__info-popover-header svg {
+  flex: 0 0 auto;
+  color: var(--color-black);
+}
+
+.payment-calc--vehicle .payment-calc__info-popover-copy {
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .payment-calc--vehicle .payment-calc__info-popover {
+    left: 50%;
+    width: min(16rem, calc(100vw - var(--spacing-8)));
+    transform: translate(-50%, calc(var(--spacing-1) * -1));
+  }
+
+  .payment-calc--vehicle .payment-calc__info-popover::before,
+  .payment-calc--vehicle .payment-calc__info-popover::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .payment-calc--vehicle .payment-calc__info-tooltip:hover .payment-calc__info-popover,
+  .payment-calc--vehicle .payment-calc__info-tooltip:focus-within .payment-calc__info-popover {
+    transform: translate(-50%, 0);
+  }
+}
+
 .payment-calc--vehicle .payment-calc__slider {
   --range-thumb-size: var(--spacing-4);
   --range-track-height: var(--spacing-1-5);
@@ -229,6 +386,13 @@
 .payment-calc--vehicle .payment-calc__pill--on {
   background: var(--color-dark-bg);
   border-color: var(--color-dark-bg);
+}
+
+.payment-calc--vehicle .payment-calc__details-sum {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1-5);
+  width: 100%;
 }
 
 .payment-calc--vehicle .payment-calc__aside {

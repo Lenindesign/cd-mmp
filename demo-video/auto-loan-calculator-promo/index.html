@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Car and Driver Auto Loan Calculator Promo</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: #0a1628;
+        color: #ffffff;
+        font-family: "Inter", Arial, sans-serif;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0a1628;
+        --scene-pad-x: 132px;
+        --scene-pad-y: 96px;
+        --scene-gap: 76px;
+        --panel-gap: 44px;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #scene-1 {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .scene-dark {
+        background-color: #0a1628;
+      }
+
+      .scene-light {
+        background-color: #f5f5f5;
+        color: #222222;
+      }
+
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+        background-size: 44px 44px;
+        opacity: 0.42;
+      }
+
+      .glow {
+        position: absolute;
+        width: 900px;
+        height: 900px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(27, 95, 138, 0.42) 0%, rgba(27, 95, 138, 0) 66%);
+        pointer-events: none;
+      }
+
+      .glow-a {
+        right: -280px;
+        top: -220px;
+      }
+
+      .glow-b {
+        left: -360px;
+        bottom: -320px;
+        background: radial-gradient(circle, rgba(38, 135, 13, 0.22) 0%, rgba(38, 135, 13, 0) 64%);
+      }
+
+      .brand-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 278px;
+        height: 82px;
+        padding: 0 30px;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+      }
+
+      .brand-pill img {
+        display: block;
+        width: 218px;
+        height: auto;
+      }
+
+      .brand-pill--white-logo {
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .brand-pill--white-logo img {
+        filter: brightness(0) invert(1);
+      }
+
+      .eyebrow {
+        color: #1b5f8a;
+        font-family: "Inter", Arial, sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .dark-eyebrow {
+        color: #60a5fa;
+      }
+
+      .headline {
+        max-width: 820px;
+        margin: 22px 0 0;
+        color: #ffffff;
+        font-size: 82px;
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 0.98;
+      }
+
+      .subhead {
+        max-width: 680px;
+        margin: 28px 0 0;
+        color: rgba(255, 255, 255, 0.86);
+        font-size: 28px;
+        line-height: 1.35;
+      }
+
+      .scene-content {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: var(--scene-pad-y) var(--scene-pad-x);
+        gap: var(--scene-gap);
+        z-index: 2;
+      }
+
+      .split-copy {
+        display: flex;
+        flex: 0 0 660px;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .product-stage {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .screen-frame {
+        position: absolute;
+        border: 1px solid rgba(205, 205, 205, 0.9);
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+        overflow: hidden;
+      }
+
+      .screen-frame img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .screen-frame-large {
+        right: 0;
+        top: 110px;
+        width: 900px;
+      }
+
+      .screen-frame-loan {
+        right: 24px;
+        top: 142px;
+        width: 790px;
+      }
+
+      .screen-frame-goal-small {
+        left: 0;
+        top: 260px;
+        width: 640px;
+        opacity: 0.92;
+      }
+
+      .browser-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 16px;
+        border-bottom: 1px solid #e5e5e5;
+        background: #fafafa;
+      }
+
+      .browser-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: #cdcdcd;
+      }
+
+      .callout-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 40px;
+      }
+
+      .metric-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 54px;
+        padding: 0 18px;
+        border: 1px solid rgba(96, 165, 250, 0.35);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .metric-chip strong {
+        color: #ffffff;
+        font-weight: 800;
+      }
+
+      .step-line {
+        position: absolute;
+        left: 56px;
+        right: 56px;
+        top: 138px;
+        height: 2px;
+        background: #e5e5e5;
+      }
+
+      .step-progress {
+        width: 0;
+        height: 100%;
+        background: #26870d;
+      }
+
+      .context-layout {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        width: 100%;
+        height: 100%;
+        padding: 222px 56px 0;
+        gap: 50px;
+        z-index: 2;
+      }
+
+      .context-panel {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+        height: 754px;
+        border: 1px solid #e5e5e5;
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 24px 74px rgba(10, 22, 40, 0.13);
+        overflow: hidden;
+      }
+
+      .context-panel img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .context-title {
+        position: absolute;
+        left: 56px;
+        right: 650px;
+        top: 72px;
+        display: flex;
+        align-items: baseline;
+        gap: 24px;
+        min-width: 0;
+      }
+
+      .context-title h2 {
+        margin: 0;
+        color: #222222;
+        font-size: 46px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .tag-stack {
+        position: absolute;
+        right: 56px;
+        top: 68px;
+        display: flex;
+        gap: 16px;
+        z-index: 4;
+      }
+
+      .feature-tag {
+        padding: 13px 22px;
+        border: 1px solid rgba(27, 95, 138, 0.22);
+        border-radius: 999px;
+        background: #ffffff;
+        color: #154d70;
+        font-size: 18px;
+        font-weight: 800;
+        box-shadow: 0 10px 28px rgba(10, 22, 40, 0.12);
+      }
+
+      .review-scene {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        padding: 88px 86px 88px 126px;
+        gap: 74px;
+        background: #ffffff;
+      }
+
+      .review-copy {
+        flex: 0 0 688px;
+        min-width: 0;
+        transform: translateY(-54px);
+      }
+
+      .review-copy h2 {
+        margin: 18px 0 22px;
+        color: #222222;
+        font-size: 68px;
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 0.98;
+      }
+
+      .review-copy p {
+        margin: 0;
+        max-width: 660px;
+        color: #595959;
+        font-size: 25px;
+        line-height: 1.36;
+      }
+
+      .review-mask {
+        position: relative;
+        flex: 0 0 950px;
+        height: 900px;
+        border: 1px solid #d8dee6;
+        border-radius: 20px;
+        background: #ffffff;
+        box-shadow: 0 24px 72px rgba(10, 22, 40, 0.18);
+        overflow: hidden;
+      }
+
+      .review-image {
+        position: absolute;
+        left: 40px;
+        top: 0;
+        width: calc(100% - 80px);
+      }
+
+      .review-copy .stat-stack {
+        flex-direction: row;
+        gap: 14px;
+        margin-top: 30px;
+      }
+
+      .review-copy .stat-card {
+        width: 218px;
+      }
+
+      .stat-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 32px;
+      }
+
+      .stat-card {
+        width: 320px;
+        padding: 16px 18px;
+        border: 1px solid #d8dee6;
+        border-radius: 12px;
+        background: #f1f7f7;
+      }
+
+      .stat-label {
+        color: #4a4a4a;
+        font-family: "Inter", Arial, sans-serif;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .stat-value {
+        margin-top: 6px;
+        color: #1b5f8a;
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .final-scene {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 112px var(--scene-pad-x);
+        background: #0a1628;
+        overflow: hidden;
+      }
+
+      .final-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 600px;
+        width: 1420px;
+        min-height: 640px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+        overflow: hidden;
+        z-index: 2;
+      }
+
+      .final-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 88px 96px;
+      }
+
+      .final-copy h2 {
+        max-width: 700px;
+        margin: 32px 0 24px;
+        color: #ffffff;
+        font-size: 72px;
+        font-weight: 800;
+        line-height: 0.98;
+      }
+
+      .final-copy p {
+        max-width: 660px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 27px;
+        line-height: 1.35;
+      }
+
+      .final-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 410px;
+        min-height: 66px;
+        margin-top: 48px;
+        border-radius: 6px;
+        background: #1b5f8a;
+        color: #ffffff;
+        font-family: "Inter", Arial, sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .scene1-logo + .scene1-eyebrow {
+        margin-top: 30px;
+      }
+
+      .scene1-headline {
+        max-width: 700px;
+        margin-top: 28px;
+        font-size: 52px;
+        line-height: 1.08;
+      }
+
+      .scene5-headline {
+        max-width: 650px;
+        font-size: 58px;
+        line-height: 1.04;
+      }
+
+      .scene5-cta {
+        font-size: 19px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="24" data-width="1920" data-height="1080">
+      <section id="scene-1" class="clip scene scene-dark" data-start="0" data-duration="5" data-track-index="1">
+        <div class="grid"></div>
+        <div class="glow glow-a" data-layout-allow-overflow=""></div>
+        <div class="glow glow-b" data-layout-allow-overflow=""></div>
+        <div class="scene-content">
+          <div class="split-copy">
+            <div class="brand-pill brand-pill--white-logo scene1-logo">
+              <img src="capture/assets/svgs/header-logo-svg.svg" alt="Car and Driver">
+            </div>
+            <div class="eyebrow dark-eyebrow scene1-eyebrow">Auto Loan Calculator</div>
+            <h1 class="headline scene1-headline">Your monthly budget should explain more than a payment.</h1>
+            <p class="subhead scene1-subhead">Estimate payments, compare financing costs, and see what your target can really buy.</p>
+          </div>
+          <div class="product-stage">
+            <div class="screen-frame screen-frame-large scene1-frame">
+              <div class="browser-bar">
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
+              </div>
+              <img class="scene1-shot" data-layout-allow-overflow="" src="capture/screenshots/flow/goal.png" alt="Calculator starting point">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-2" class="clip scene scene-dark" data-start="4.5" data-duration="5.5" data-track-index="2">
+        <div class="grid"></div>
+        <div class="glow glow-a" data-layout-allow-overflow=""></div>
+        <div class="scene-content">
+          <div class="split-copy">
+            <div class="eyebrow dark-eyebrow scene2-eyebrow">Step-by-step inputs</div>
+            <h2 class="headline scene2-headline">Start with price. Or start with payment.</h2>
+            <div class="callout-row">
+              <span class="metric-chip scene2-chip">$30,000 target</span>
+              <span class="metric-chip scene2-chip">7.0% APR</span>
+              <span class="metric-chip scene2-chip">60 months</span>
+              <span class="metric-chip scene2-chip"><strong>$592/mo</strong></span>
+            </div>
+          </div>
+          <div class="product-stage">
+            <div class="screen-frame screen-frame-loan scene2-loan">
+              <img data-layout-allow-overflow="" src="capture/screenshots/flow/loan.png" alt="Loan term controls">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-3" class="clip scene scene-light" data-start="9.5" data-duration="5.5" data-track-index="3">
+        <div class="step-line"><div class="step-progress"></div></div>
+        <div class="context-title">
+          <div class="eyebrow">Purchase context</div>
+          <h2>Vehicle, tax, and trade-in context.</h2>
+        </div>
+        <div class="tag-stack">
+          <span class="feature-tag scene3-tag">Vehicle choice</span>
+          <span class="feature-tag scene3-tag">Taxes &amp; fees</span>
+          <span class="feature-tag scene3-tag">Trade-in context</span>
+        </div>
+        <div class="context-layout">
+          <div class="context-panel scene3-vehicle">
+            <img data-layout-allow-overflow="" src="capture/screenshots/flow/vehicle.png" alt="Vehicle selection step">
+          </div>
+          <div class="context-panel scene3-trade">
+            <img data-layout-allow-overflow="" src="capture/screenshots/flow/trade.png" alt="Trade-in taxes and fees step">
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-4" class="clip scene scene-light" data-start="14.5" data-duration="6" data-track-index="4">
+        <div class="review-scene">
+          <div class="review-copy">
+            <div class="eyebrow scene4-eyebrow">Personalized estimate</div>
+            <h2 class="scene4-headline">One clear view of payment, interest, and total cost.</h2>
+            <p class="scene4-copy">The review connects every assumption to the final number, then bridges the estimate to vehicles nearby.</p>
+            <div class="stat-stack">
+              <div class="stat-card scene4-stat">
+                <div class="stat-label">Monthly</div>
+                <div class="stat-value">$592/mo</div>
+              </div>
+              <div class="stat-card scene4-stat">
+                <div class="stat-label">Interest</div>
+                <div class="stat-value">$5,618</div>
+              </div>
+              <div class="stat-card scene4-stat">
+                <div class="stat-label">Total paid</div>
+                <div class="stat-value">$38,491</div>
+              </div>
+            </div>
+          </div>
+          <div class="review-mask scene4-mask">
+            <img class="review-image" data-layout-allow-overflow="" src="capture/screenshots/flow/review.png" alt="Final estimate review page">
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-5" class="clip scene scene-dark" data-start="19.5" data-duration="4.5" data-track-index="5">
+        <div class="grid"></div>
+        <div class="glow glow-a" data-layout-allow-overflow=""></div>
+        <div class="final-scene">
+          <div class="final-card scene5-card">
+            <div class="final-copy">
+              <div class="brand-pill brand-pill--white-logo scene5-logo">
+                <img src="capture/assets/svgs/header-logo-svg-outro.svg" alt="Car and Driver">
+              </div>
+              <h2 style="font-size:54px" class="scene5-headline">Estimate payments. Compare financing costs. Shop with confidence.</h2>
+              <p class="scene5-copy">A practical planning tool for shoppers who want the numbers before the showroom.</p>
+              <a class="cta scene5-cta" href="https://cd-mmp-2025.netlify.app/auto-loan-calculator/light-steps" target="_blank" rel="noopener">Open Auto Loan Calculator</a>
+            </div>
+            <img class="final-image scene5-image" data-layout-allow-overflow="" src="capture/assets/07-2026-honda-cr-v-trailsport.jpg" alt="Honda CR-V on trail">
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.set(["#scene-2", "#scene-3", "#scene-4", "#scene-5"], { autoAlpha: 0 }, 0);
+      tl.set("#scene-1", { autoAlpha: 1 }, 0);
+      tl.fromTo(".scene1-logo", { y: -30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" }, 0.18);
+      tl.fromTo(".scene1-eyebrow", { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.48);
+      tl.fromTo(".scene1-headline", { y: 44, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.62);
+      tl.fromTo(".scene1-subhead", { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" }, 0.95);
+      tl.fromTo(".scene1-frame", { x: 90, y: 26, opacity: 0, scale: 0.96 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out" }, 0.72);
+      tl.fromTo(".scene1-shot", { scale: 1 }, { scale: 1.035, duration: 4.2, ease: "none" }, 0.8);
+
+      tl.set("#scene-2", { autoAlpha: 1 }, 4.5);
+      tl.fromTo("#scene-2", { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.42, ease: "power3.out" }, 4.5);
+      tl.set("#scene-1", { autoAlpha: 0 }, 4.64);
+      tl.fromTo(".scene2-eyebrow", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.42, ease: "power3.out" }, 4.56);
+      tl.fromTo(".scene2-headline", { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.52, ease: "power3.out" }, 4.64);
+      tl.fromTo(".scene2-loan", { x: 42, y: 22, opacity: 0, scale: 0.97 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.62, ease: "power3.out" }, 4.68);
+      tl.fromTo(".scene2-chip", { y: 18, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 0.38, stagger: 0.07, ease: "power3.out" }, 5.06);
+      tl.fromTo(".scene2-loan img", { scale: 1 }, { scale: 1.028, duration: 4.0, ease: "none" }, 5.2);
+
+      tl.set("#scene-3", { autoAlpha: 1 }, 9.5);
+      tl.fromTo("#scene-3", { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.42, ease: "power3.out" }, 9.5);
+      tl.set("#scene-2", { autoAlpha: 0 }, 9.64);
+      tl.fromTo(".step-progress", { width: "0%" }, { width: "100%", duration: 1.05, ease: "power2.out" }, 9.62);
+      tl.fromTo(".context-title", { y: -18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.48, ease: "power3.out" }, 9.58);
+      tl.fromTo(".scene3-vehicle", { x: -46, y: 24, opacity: 0, scale: 0.97 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.62, ease: "power3.out" }, 9.68);
+      tl.fromTo(".scene3-trade", { x: 46, y: 24, opacity: 0, scale: 0.97 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.62, ease: "power3.out" }, 9.8);
+      tl.fromTo(".scene3-tag", { y: -14, opacity: 0, scale: 0.94 }, { y: 0, opacity: 1, scale: 1, duration: 0.38, stagger: 0.07, ease: "power3.out" }, 9.72);
+      tl.fromTo(".scene3-vehicle img", { scale: 1 }, { scale: 1.025, duration: 4.2, ease: "none" }, 10.2);
+      tl.fromTo(".scene3-trade img", { scale: 1 }, { scale: 1.025, duration: 4.2, ease: "none" }, 10.38);
+
+      tl.set("#scene-4", { autoAlpha: 1 }, 14.5);
+      tl.fromTo("#scene-4", { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.42, ease: "power3.out" }, 14.5);
+      tl.set("#scene-3", { autoAlpha: 0 }, 14.64);
+      tl.fromTo(".scene4-eyebrow", { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.38, ease: "power3.out" }, 14.54);
+      tl.fromTo(".scene4-headline", {
+            y: 34,
+            opacity: 0,
+            x: 0
+      }, {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: "power3.out",
+            x: 0
+      }, 14.6);
+      tl.fromTo(".scene4-copy", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.42, ease: "power3.out" }, 14.82);
+      tl.fromTo(".scene4-stat", { x: -18, opacity: 0, scale: 0.97 }, { x: 0, opacity: 1, scale: 1, duration: 0.38, stagger: 0.08, ease: "power3.out" }, 15.06);
+      tl.fromTo(".scene4-mask", { y: 28, opacity: 0, scale: 0.98 }, { y: 0, opacity: 1, scale: 1, duration: 0.62, ease: "power3.out" }, 14.62);
+      tl.fromTo(".review-image", {
+            y: -4,
+            x: 0
+      }, {
+            y: -1545,
+            duration: 4.55,
+            ease: "power1.out",
+            x: 0
+      }, 15.25);
+
+      tl.set("#scene-5", { autoAlpha: 1 }, 19.5);
+      tl.fromTo("#scene-5", { scale: 1.01, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.42, ease: "power3.out" }, 19.5);
+      tl.set("#scene-4", { autoAlpha: 0 }, 19.64);
+      tl.fromTo(".scene5-card", { y: 28, opacity: 0, scale: 0.98 }, { y: 0, opacity: 1, scale: 1, duration: 0.58, ease: "power3.out" }, 19.54);
+      tl.fromTo(".scene5-logo", { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.36, ease: "power3.out" }, 19.64);
+      tl.fromTo(".scene5-headline", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.46, ease: "power3.out" }, 19.66);
+      tl.fromTo(".scene5-copy", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 19.9);
+      tl.fromTo(".scene5-cta", { y: 16, opacity: 0, scale: 0.97 }, { y: 0, opacity: 1, scale: 1, duration: 0.38, ease: "power3.out" }, 20.12);
+      tl.fromTo(".scene5-image", { scale: 1.04 }, { scale: 1, duration: 3.4, ease: "none" }, 19.8);
+
+      tl.fromTo(".glow-a", { scale: 0.92, opacity: 0.62 }, { scale: 1.08, opacity: 0.82, duration: 8, ease: "sine.inOut", repeat: 2, yoyo: true }, 0);
+      tl.fromTo(".glow-b", { scale: 1.08, opacity: 0.44 }, { scale: 0.96, opacity: 0.68, duration: 7, ease: "sine.inOut", repeat: 2, yoyo: true }, 0);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
