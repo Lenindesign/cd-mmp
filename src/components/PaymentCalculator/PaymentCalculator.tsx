@@ -1,10 +1,12 @@
 import { useState, useMemo, useEffect, useId } from 'react';
 import { Info } from 'lucide-react';
 import { getRangeInputStyle } from '../../utils/rangeInputStyle';
+import { getVehicleTrims, hasSpecificTrims, type TrimData } from '../../services/trimService';
 import './PaymentCalculator.css';
 
 interface PaymentCalculatorProps {
   msrp: number;
+  priceMax?: number;
   vehicleName: string;
   make?: string;
   model?: string;
@@ -48,6 +50,7 @@ const parseMoneyInput = (value: string) => {
   const digits = value.replace(/[^\d]/g, '');
   return digits ? Number(digits) : 0;
 };
+const parseTrimPrice = (trim: TrimData) => parseMoneyInput(trim.price);
 const formatMoneyInput = (value: number) => Math.round(value).toLocaleString('en-US');
 const formatCondition = (value?: string) =>
   value ? value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, ' ') : '';
@@ -119,6 +122,7 @@ function ctaLabel(make: string | undefined, model: string | undefined, vehicleNa
 
 const PaymentCalculator = ({
   msrp,
+  priceMax,
   vehicleName,
   make,
   model,
@@ -130,12 +134,48 @@ const PaymentCalculator = ({
   const [tab, setTab] = useState<CalcTab>('finance');
 
   const priceFloor = Math.max(5000, Math.round(msrp * 0.75));
-  const priceCeiling = Math.round(msrp * 1.12);
+  const priceCeiling = Math.max(priceFloor, Math.round(priceMax ?? msrp * 1.12));
+  const trimmedMake = make?.trim() ?? '';
+  const trimmedModel = model?.trim() ?? '';
+  const hasTrimData = Boolean(trimmedMake && trimmedModel && hasSpecificTrims(trimmedMake, trimmedModel));
+  const trimOptions = useMemo(
+    () => (hasTrimData ? getVehicleTrims(trimmedMake, trimmedModel, msrp, priceCeiling) : []),
+    [hasTrimData, trimmedMake, trimmedModel, msrp, priceCeiling],
+  );
 
   const [vehiclePrice, setVehiclePrice] = useState(() => clamp(Math.round(msrp), priceFloor, priceCeiling));
   useEffect(() => {
     setVehiclePrice(clamp(Math.round(msrp), priceFloor, priceCeiling));
   }, [msrp, priceFloor, priceCeiling]);
+
+  const [selectedTrimId, setSelectedTrimId] = useState('');
+  useEffect(() => {
+    if (!trimOptions.length) {
+      setSelectedTrimId('');
+      return;
+    }
+
+    setSelectedTrimId(current => {
+      if (trimOptions.some(trim => trim.id === current)) return current;
+
+      const closestTrim = trimOptions.reduce((closest, trim) => {
+        const closestDelta = Math.abs(parseTrimPrice(closest) - msrp);
+        const trimDelta = Math.abs(parseTrimPrice(trim) - msrp);
+        return trimDelta < closestDelta ? trim : closest;
+      }, trimOptions[0]);
+
+      return closestTrim.id;
+    });
+  }, [trimOptions, msrp]);
+
+  const selectedTrim = trimOptions.find(trim => trim.id === selectedTrimId) ?? null;
+  const selectedTrimPrice = selectedTrim ? parseTrimPrice(selectedTrim) : null;
+  const effectiveMsrp = selectedTrimPrice ?? msrp;
+
+  useEffect(() => {
+    if (selectedTrimPrice == null) return;
+    setVehiclePrice(clamp(selectedTrimPrice, priceFloor, priceCeiling));
+  }, [selectedTrimPrice, priceFloor, priceCeiling]);
 
   const [downPayment, setDownPayment] = useState(() => Math.round(msrp * 0.1));
   const downPaymentMax = Math.round(vehiclePrice * 0.5);
@@ -178,7 +218,7 @@ const PaymentCalculator = ({
   const financeApr = bestApr !== undefined && bestApr < selectedTier.apr ? bestApr : selectedTier.apr;
 
   const adjustedCap = Math.max(0, vehiclePrice - downPayment - tradeIn);
-  const residualValue = (msrp * residualPct) / 100;
+  const residualValue = (effectiveMsrp * residualPct) / 100;
 
   const { monthly, totalInterest, financeTotalOutOfPocket } = useMemo(() => {
     const principal = Math.max(0, vehiclePrice - downPayment - tradeIn);
@@ -331,6 +371,29 @@ const PaymentCalculator = ({
 
               <div className="payment-calc__section payment-calc__section--shared">
                 <div className="payment-calc__shared-stack">
+                  {trimOptions.length > 0 && (
+                    <div className="payment-calc__field payment-calc__field--full payment-calc__trim-field">
+                      <span className="payment-calc__lab">
+                        <label htmlFor="pc-trim">Trim / style</label>
+                      </span>
+                      <select
+                        id="pc-trim"
+                        className="payment-calc__select payment-calc__trim-select"
+                        value={selectedTrimId}
+                        onChange={event => setSelectedTrimId(event.target.value)}
+                        aria-describedby="pc-trim-note"
+                      >
+                        {trimOptions.map(trim => (
+                          <option key={trim.id} value={trim.id}>
+                            {trim.name} · {trim.price}
+                          </option>
+                        ))}
+                      </select>
+                      <span id="pc-trim-note" className="payment-calc__muted payment-calc__trim-note">
+                        Changing trim updates the estimate price.
+                      </span>
+                    </div>
+                  )}
                   <div className="payment-calc__field payment-calc__field--full">
                     <div className="payment-calc__row-label">
                       <div className="payment-calc__lab payment-calc__lab-with-help">
@@ -574,7 +637,7 @@ const PaymentCalculator = ({
                   >
                     {LEASE_RESIDUAL_OPTIONS.map(percent => (
                       <option key={percent} value={percent}>
-                        {percent}% of sticker ({fmt((msrp * percent) / 100)})
+                        {percent}% of sticker ({fmt((effectiveMsrp * percent) / 100)})
                       </option>
                     ))}
                   </select>

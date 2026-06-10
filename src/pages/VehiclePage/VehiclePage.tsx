@@ -265,6 +265,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
             />
             <PaymentCalculator
               msrp={vehicle.priceMin}
+              priceMax={vehicle.priceMax}
               vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
               make={vehicle.make}
               model={vehicle.model}

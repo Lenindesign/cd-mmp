@@ -1356,8 +1356,40 @@
   box-shadow: var(--shadow-sm);
 }
 
+.aio-payment__light-step-panel-viewport {
+  display: contents;
+}
+
+.aio-payment--light-steps .aio-payment__light-step-panel-viewport {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-width: 0;
+  overflow: visible;
+  border-radius: var(--border-radius-xl);
+  contain: none;
+}
+
+.aio-payment--light-steps .aio-payment__light-step-panel-viewport[data-step-motion] {
+  overflow: hidden;
+  contain: paint;
+}
+
+@supports (overflow: clip) {
+  .aio-payment--light-steps .aio-payment__light-step-panel-viewport[data-step-motion] {
+    overflow: clip;
+  }
+}
+
+.aio-payment--light-steps .aio-payment__light-step-panel-viewport:has(.aio-payment__light-loan-guidance-tooltip:hover),
+.aio-payment--light-steps .aio-payment__light-step-panel-viewport:has(.aio-payment__light-loan-guidance-tooltip:focus-within) {
+  z-index: 35;
+}
+
 .aio-payment--light-steps .aio-payment__light-card--step-panel {
   --aio-light-step-slide-distance: clamp(var(--spacing-14), 10vw, var(--spacing-24));
+  --aio-light-step-slide-ease: cubic-bezier(0.48, 0, 0.18, 1);
+
   transform-origin: center top;
   backface-visibility: hidden;
 }
@@ -1367,11 +1399,11 @@
 }
 
 .aio-payment--light-steps .aio-payment__light-card--step-panel[data-step-motion='forward'] {
-  animation: aio-light-step-slide-in-forward 440ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: aio-light-step-slide-in-forward 440ms var(--aio-light-step-slide-ease) both;
 }
 
 .aio-payment--light-steps .aio-payment__light-card--step-panel[data-step-motion='backward'] {
-  animation: aio-light-step-slide-in-backward 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: aio-light-step-slide-in-backward 400ms var(--aio-light-step-slide-ease) both;
 }
 
 @keyframes aio-light-step-slide-in-forward {
@@ -1380,7 +1412,11 @@
     transform: translate3d(var(--aio-light-step-slide-distance), 0, 0) scale(0.975);
   }
 
-  65% {
+  24% {
+    opacity: 0.22;
+  }
+
+  78% {
     opacity: 1;
   }
 
@@ -1396,7 +1432,11 @@
     transform: translate3d(calc(var(--aio-light-step-slide-distance) * -1), 0, 0) scale(0.975);
   }
 
-  65% {
+  24% {
+    opacity: 0.22;
+  }
+
+  78% {
     opacity: 1;
   }
 
@@ -1412,7 +1452,11 @@
     transform: translate3d(var(--aio-light-step-mobile-slide-distance), 0, 0);
   }
 
-  60% {
+  24% {
+    opacity: 0.22;
+  }
+
+  78% {
     opacity: 1;
   }
 
@@ -1428,7 +1472,11 @@
     transform: translate3d(calc(var(--aio-light-step-mobile-slide-distance) * -1), 0, 0);
   }
 
-  60% {
+  24% {
+    opacity: 0.22;
+  }
+
+  78% {
     opacity: 1;
   }
 
@@ -2013,6 +2061,10 @@ label.aio-payment__light-loan-step__label {
     transform 0.15s ease,
     visibility 0.15s ease;
   visibility: hidden;
+}
+
+.aio-payment--light-steps .aio-payment__light-loan-guidance {
+  z-index: 60;
 }
 
 .aio-payment__light-loan-guidance--compact {
@@ -3651,7 +3703,7 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment__light-trade-step__row--3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(9rem, 1fr) minmax(8rem, 0.82fr) minmax(13.75rem, 1.18fr);
     align-items: start;
   }
 
@@ -3680,6 +3732,16 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-trade-step__field-with-action {
   min-width: 0;
+}
+
+.aio-payment__light-trade-fees-field .text-field__label-row {
+  flex-wrap: nowrap;
+}
+
+.aio-payment__light-trade-fees-field .text-field__label,
+.aio-payment__light-trade-fees-field .aio-payment__light-loan-guidance-tooltip {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .aio-payment__light-input-prefix,
@@ -5843,6 +5905,7 @@ label.aio-payment__light-loan-step__label {
   overflow: visible;
 }
 
+.aio-payment--light-steps .aio-payment__light-step-panel-viewport,
 .aio-payment--light-steps .aio-payment__light-card--step-panel,
 .aio-payment--light-steps .aio-payment__light-disclosures,
 .aio-payment--light-steps .aio-payment__light-disclosures > *,
@@ -6115,10 +6178,14 @@ label.aio-payment__light-loan-step__label {
   margin-inline: auto;
 }
 
+.aio-payment--light-steps .aio-payment__light-shell--review .aio-payment__light-step-panel-viewport,
 .aio-payment--light-steps .aio-payment__light-shell--review .aio-payment__light-card--step-panel {
   justify-self: center;
   width: 100%;
   max-width: var(--aio-light-steps-review-shell-max-width);
+}
+
+.aio-payment--light-steps .aio-payment__light-shell--review .aio-payment__light-card--step-panel {
   gap: var(--spacing-7);
 }
 
@@ -9288,6 +9355,10 @@ label.aio-payment__light-loan-step__label {
     overflow: visible;
   }
 
+  .aio-payment--light-steps .aio-payment__light-step-panel-viewport {
+    border-radius: 0 0 0 var(--border-radius-lg);
+  }
+
   .aio-payment--light-steps .aio-payment__light-card--step-panel {
     border-radius: 0 0 0 var(--border-radius-lg);
   }
@@ -10253,6 +10324,7 @@ label.aio-payment__light-loan-step__label {
 @media (max-width: 768px) {
   .aio-payment--light-steps .aio-payment__light-card--step-panel {
     --aio-light-step-mobile-slide-distance: min(72vw, var(--spacing-28));
+
     backface-visibility: hidden;
   }
 
@@ -10261,11 +10333,11 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-card--step-panel[data-step-motion='forward'] {
-    animation: aio-light-step-mobile-slide-in-forward 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: aio-light-step-mobile-slide-in-forward 300ms var(--aio-light-step-slide-ease) both;
   }
 
   .aio-payment--light-steps .aio-payment__light-card--step-panel[data-step-motion='backward'] {
-    animation: aio-light-step-mobile-slide-in-backward 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: aio-light-step-mobile-slide-in-backward 280ms var(--aio-light-step-slide-ease) both;
   }
 
   .aio-payment--light-steps .aio-payment__light-result-stack.payment-calc__aside {

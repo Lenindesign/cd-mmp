@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { Fragment, lazy, Suspense, useMemo, useState } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -125,6 +125,155 @@ const CarFinderChatGate = () => {
   );
 };
 
+const authenticationRoutes = (
+  <>
+    <Route path="/sign-in" element={<SignIn />} />
+    <Route path="/sign-up" element={<SignUp />} />
+  </>
+);
+
+const onboardingRoutes = (
+  <>
+    <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
+    <Route path="/onboarding/step-2" element={<OnboardingStep2 />} />
+    <Route path="/onboarding/results" element={<OnboardingResults />} />
+  </>
+);
+
+const editorialRoutes = (
+  <>
+    <Route path="/" element={<NewsPage />} />
+    <Route path="/expert-reviews" element={<ExpertReviewsPage />} />
+    <Route path="/news" element={<NewsPage />} />
+    <Route path="/news-stories" element={<NewsPage />} />
+    <Route path="/news/:slug" element={<ArticlePage />} />
+    <Route path="/article/:slug" element={<ArticlePage />} />
+    <Route path="/listicle/:slug" element={<ListiclePage />} />
+  </>
+);
+
+const vehicleDiscoveryRoutes = (
+  <>
+    <Route path="/vehicles" element={<VehiclesListPage />} />
+    <Route path="/browse" element={<VehiclesListPage />} />
+    <Route path="/used-cars" element={<Navigate to="/?type=used" replace />} />
+    <Route path="/brands/toyota" element={<ToyotaBrandPage />} />
+    <Route path="/brands/honda" element={<HondaBrandPage />} />
+    <Route path="/brands/:brandSlug" element={<BrandHubRoutePage />} />
+    <Route path="/rankings" element={<RankingsPage />} />
+    <Route path="/rankings/:bodyStyle" element={<RankingsPage />} />
+    <Route path="/rankings/:bodyStyle/:subcategory" element={<RankingsPage />} />
+    <Route path="/compare" element={<ComparePage />} />
+  </>
+);
+
+const financeRoutes = (
+  <>
+    <Route path="/financing" element={<FinancingPage />} />
+    <Route path="/payment-calculator" element={<FinancingPage />} />
+    <Route path="/auto-loan-calculator" element={<AutoLoanCalculatorPage />} />
+    <Route path="/auto-loan-calculator/all-in-one" element={<AllInOnePaymentCalculatorPage />} />
+    <Route path="/auto-loan-calculator/all-in-one-budget" element={<AllInOnePaymentCalculatorBudgetPage />} />
+    <Route path="/auto-loan-calculator/light" element={<AllInOnePaymentCalculatorLightPage />} />
+    <Route path="/auto-loan-calculator/light-steps" element={<AllInOnePaymentCalculatorLightStepsPage />} />
+    <Route path="/auto-loan-calculator/light-steps/:stepSlug" element={<AllInOnePaymentCalculatorLightStepsPage />} />
+    <Route path="/auto-loan-calculator/light-steps2" element={<AllInOnePaymentCalculatorLightSteps2Page />} />
+    <Route path="/auto-loan-calculator/light-steps2/:stepSlug" element={<AllInOnePaymentCalculatorLightSteps2Page />} />
+    <Route path="/auto-loan-calculator/lease-vs-buy-ai" element={<LeaseVsBuyAIPage />} />
+  </>
+);
+
+const dealsRoutes = (
+  <>
+    <Route path="/deals" element={<DealsHubPage />} />
+    <Route path={BEST_BUYING_DEALS_PATH} element={<ZeroAprDealsPage />} />
+    <Route path={`${BEST_BUYING_DEALS_PATH}/:slug`} element={<ZeroAprDealsPage />} />
+    <Route path={ZERO_PERCENT_APR_DEALS_PATH} element={<ZeroAprDealsPage />} />
+    <Route path={CASH_BACK_DEALS_PATH} element={<ZeroAprDealsPage />} />
+    <Route path="/deals/zero-apr" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
+    <Route path="/deals/cash-finance" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
+    <Route path="/deals/lease" element={<LeaseDealsPage />} />
+    <Route path="/deals/lease/:slug" element={<LeaseCategoryDispatcher />} />
+    <Route path="/deals/lease/:make/:model" element={<LeaseByMakeModelPage />} />
+    <Route path="/deals/suv" element={<SuvDealsPage />} />
+    <Route path="/deals/truck" element={<TruckDealsPage />} />
+    <Route path="/deals/all" element={<AllDealsPage />} />
+    <Route path="/deals/fuel-type" element={<FuelTypeDealsPage />} />
+    <Route path="/deals/cash-finance-body-style" element={<CashFinanceBodyStylePage />} />
+    <Route path="/:make/deals-incentives" element={<DealsByMakePage />} />
+    <Route path="/:make/:model/deals-incentives" element={<DealsByMakeModelPage />} />
+    <Route path="/lease-deals" element={<LeaseDealsHubPage />} />
+    <Route path="/:make/lease-deals" element={<LeaseByMakePage />} />
+    <Route path="/:make/:model/lease-deals" element={<LeaseByMakeModelPage />} />
+  </>
+);
+
+const tradeInRoutes = (
+  <>
+    <Route path="/whats-my-car-worth" element={<WhatsMyCarWorthPage />} />
+    <Route path="/whats-my-car-worth/results" element={<WhatsMyCarWorthResultsPage />} />
+    <Route path="/trade-in-value" element={<WhatsMyCarWorthPage />} />
+    <Route path="/trade-in-value/results" element={<WhatsMyCarWorthResultsPage />} />
+  </>
+);
+
+const accountRoutes = <Route path="/account" element={<MyAccount />} />;
+
+const internalRoutes = (
+  <>
+    <Route path="/design-system" element={<DesignSystem />} />
+    <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
+    <Route path="/admin/feedback" element={<FeedbackAdmin />} />
+    <Route path="/audit/cards" element={<CardAudit />} />
+    <Route path="/audit/carousels" element={<CarouselAuditPage />} />
+    <Route path="/email-preview" element={<EmailPreviewPage />} />
+  </>
+);
+
+const vehicleDetailRoutes = (
+  <>
+    <Route path="/:year/:make/:model" element={<VehiclePage />} />
+    <Route path="/:year/:make/:model/v1" element={<VehiclePageVariant variant="v1" />} />
+    <Route path="/:year/:make/:model/v2" element={<VehiclePageVariant variant="v2" />} />
+    <Route path="/:year/:make/:model/v3" element={<VehiclePageVariant variant="v3" />} />
+    <Route path="/:year/:make/:model/v4" element={<VehiclePageVariant variant="v4" />} />
+    <Route path="/:year/:make/:model/v5" element={<VehiclePageVariant variant="v5" />} />
+    <Route path="/:year/:make/:model/v10" element={<VehiclePageVariant variant="v10" />} />
+    <Route path="/:year/:make/:model/v1b" element={<VehiclePageVariantB variant="v1b" />} />
+    <Route path="/:year/:make/:model/v2b" element={<VehiclePageVariantB variant="v2b" />} />
+    <Route path="/:year/:make/:model/v3b" element={<VehiclePageVariantB variant="v3b" />} />
+    <Route path="/:year/:make/:model/v4b" element={<VehiclePageVariantB variant="v4b" />} />
+    <Route path="/:year/:make/:model/v5b" element={<VehiclePageVariantB variant="v5b" />} />
+    <Route path="/:year/:make/:model/v1c" element={<VehiclePageVariantC variant="v1c" />} />
+    <Route path="/:year/:make/:model/v2c" element={<VehiclePageVariantC variant="v2c" />} />
+    <Route path="/:year/:make/:model/v3c" element={<VehiclePageVariantC variant="v3c" />} />
+    <Route path="/:year/:make/:model/v4c" element={<VehiclePageVariantC variant="v4c" />} />
+    <Route path="/:year/:make/:model/v5c" element={<VehiclePageVariantC variant="v5c" />} />
+    <Route path="/:year/:make/:model/v1d" element={<VehiclePageVariantD variant="v1d" />} />
+    <Route path="/:year/:make/:model/v2d" element={<VehiclePageVariantD variant="v2d" />} />
+    <Route path="/:year/:make/:model/v3d" element={<VehiclePageVariantD variant="v3d" />} />
+    <Route path="/:year/:make/:model/v4d" element={<VehiclePageVariantD variant="v4d" />} />
+    <Route path="/:year/:make/:model/v5d" element={<VehiclePageVariantD variant="v5d" />} />
+    <Route path="/:year/:make/:model/concept" element={<VehiclePageConcept />} />
+  </>
+);
+
+const fallbackRoutes = <Route path="*" element={<NotFoundPage />} />;
+
+const routeSections = [
+  ['authentication', authenticationRoutes],
+  ['onboarding', onboardingRoutes],
+  ['editorial', editorialRoutes],
+  ['vehicle-discovery', vehicleDiscoveryRoutes],
+  ['finance', financeRoutes],
+  ['deals', dealsRoutes],
+  ['trade-in', tradeInRoutes],
+  ['account', accountRoutes],
+  ['internal', internalRoutes],
+  ['vehicle-detail', vehicleDetailRoutes],
+  ['fallback', fallbackRoutes],
+] as const;
+
 function App() {
   const location = useLocation();
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
@@ -155,146 +304,9 @@ function App() {
         <main id="main-content">
           <Suspense fallback={<PageLoader />}>
             <Routes>
-            {/* Authentication */}
-            <Route path="/sign-in" element={<SignIn />} />
-            <Route path="/sign-up" element={<SignUp />} />
-            
-            {/* Onboarding Flow - 2 Steps */}
-            {/* Step 1: What describes you best */}
-            <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
-            {/* Step 2: Newsletter subscription (final step) */}
-            <Route path="/onboarding/step-2" element={<OnboardingStep2 />} />
-            {/* Results page (optional) */}
-            <Route path="/onboarding/results" element={<OnboardingResults />} />
-            
-            {/* Home Page - News + Stories */}
-            <Route path="/" element={<NewsPage />} />
-            
-            {/* Browse Vehicles */}
-            <Route path="/vehicles" element={<VehiclesListPage />} />
-            <Route path="/browse" element={<VehiclesListPage />} />
-            
-            {/* Used Cars - Redirect to VehiclesListPage with type=used */}
-            <Route path="/used-cars" element={<Navigate to="/?type=used" replace />} />
-            
-            {/* Design System Documentation */}
-            <Route path="/design-system" element={<DesignSystem />} />
-            
-            {/* Admin Pages */}
-            <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
-            <Route path="/admin/feedback" element={<FeedbackAdmin />} />
-            
-            {/* Brand Hub Pages */}
-            <Route path="/brands/toyota" element={<ToyotaBrandPage />} />
-            <Route path="/brands/honda" element={<HondaBrandPage />} />
-            <Route path="/brands/:brandSlug" element={<BrandHubRoutePage />} />
-
-            {/* Rankings Pages */}
-            <Route path="/rankings" element={<RankingsPage />} />
-            <Route path="/rankings/:bodyStyle" element={<RankingsPage />} />
-            <Route path="/rankings/:bodyStyle/:subcategory" element={<RankingsPage />} />
-            
-            {/* Compare Page - no auth required */}
-            <Route path="/compare" element={<ComparePage />} />
-
-            {/* Financing / Payment Calculator Page */}
-            <Route path="/financing" element={<FinancingPage />} />
-            <Route path="/payment-calculator" element={<FinancingPage />} />
-            <Route path="/auto-loan-calculator" element={<AutoLoanCalculatorPage />} />
-            <Route path="/auto-loan-calculator/all-in-one" element={<AllInOnePaymentCalculatorPage />} />
-            <Route path="/auto-loan-calculator/all-in-one-budget" element={<AllInOnePaymentCalculatorBudgetPage />} />
-            <Route path="/auto-loan-calculator/light" element={<AllInOnePaymentCalculatorLightPage />} />
-            <Route path="/auto-loan-calculator/light-steps" element={<AllInOnePaymentCalculatorLightStepsPage />} />
-            <Route path="/auto-loan-calculator/light-steps/:stepSlug" element={<AllInOnePaymentCalculatorLightStepsPage />} />
-            <Route path="/auto-loan-calculator/light-steps2" element={<AllInOnePaymentCalculatorLightSteps2Page />} />
-            <Route path="/auto-loan-calculator/light-steps2/:stepSlug" element={<AllInOnePaymentCalculatorLightSteps2Page />} />
-            <Route path="/auto-loan-calculator/lease-vs-buy-ai" element={<LeaseVsBuyAIPage />} />
-
-            {/* Deals Pages */}
-            <Route path="/deals" element={<DealsHubPage />} />
-            <Route path={BEST_BUYING_DEALS_PATH} element={<ZeroAprDealsPage />} />
-            <Route path={`${BEST_BUYING_DEALS_PATH}/:slug`} element={<ZeroAprDealsPage />} />
-            <Route path={ZERO_PERCENT_APR_DEALS_PATH} element={<ZeroAprDealsPage />} />
-            <Route path={CASH_BACK_DEALS_PATH} element={<ZeroAprDealsPage />} />
-            <Route path="/deals/zero-apr" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
-            <Route path="/deals/cash-finance" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
-            <Route path="/deals/lease" element={<LeaseDealsPage />} />
-            <Route path="/deals/lease/:slug" element={<LeaseCategoryDispatcher />} />
-            <Route path="/deals/lease/:make/:model" element={<LeaseByMakeModelPage />} />
-            <Route path="/deals/suv" element={<SuvDealsPage />} />
-            <Route path="/deals/truck" element={<TruckDealsPage />} />
-            <Route path="/deals/all" element={<AllDealsPage />} />
-            <Route path="/deals/fuel-type" element={<FuelTypeDealsPage />} />
-            <Route path="/deals/cash-finance-body-style" element={<CashFinanceBodyStylePage />} />
-            <Route path="/:make/deals-incentives" element={<DealsByMakePage />} />
-            <Route path="/:make/:model/deals-incentives" element={<DealsByMakeModelPage />} />
-            <Route path="/lease-deals" element={<LeaseDealsHubPage />} />
-            <Route path="/:make/lease-deals" element={<LeaseByMakePage />} />
-            <Route path="/:make/:model/lease-deals" element={<LeaseByMakeModelPage />} />
-            
-            {/* Audit Pages */}
-            <Route path="/audit/cards" element={<CardAudit />} />
-            <Route path="/audit/carousels" element={<CarouselAuditPage />} />
-            
-            {/* Account Pages */}
-            <Route path="/account" element={<MyAccount />} />
-            
-            {/* Expert Reviews */}
-            <Route path="/expert-reviews" element={<ExpertReviewsPage />} />
-
-            {/* News + Stories Pages */}
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/news-stories" element={<NewsPage />} />
-            <Route path="/news/:slug" element={<ArticlePage />} />
-            <Route path="/article/:slug" element={<ArticlePage />} />
-            <Route path="/listicle/:slug" element={<ListiclePage />} />
-            
-            {/* What's My Car Worth */}
-            <Route path="/whats-my-car-worth" element={<WhatsMyCarWorthPage />} />
-            <Route path="/whats-my-car-worth/results" element={<WhatsMyCarWorthResultsPage />} />
-            <Route path="/trade-in-value" element={<WhatsMyCarWorthPage />} />
-            <Route path="/trade-in-value/results" element={<WhatsMyCarWorthResultsPage />} />
-            
-            {/* Email Preview - for testing personalized welcome emails */}
-            <Route path="/email-preview" element={<EmailPreviewPage />} />
-            
-            {/* Individual Vehicle Pages - Dynamic routes based on slug */}
-            <Route path="/:year/:make/:model" element={<VehiclePage />} />
-            
-            {/* A/B Test Variants - Hero CTA variations */}
-            <Route path="/:year/:make/:model/v1" element={<VehiclePageVariant variant="v1" />} />
-            <Route path="/:year/:make/:model/v2" element={<VehiclePageVariant variant="v2" />} />
-            <Route path="/:year/:make/:model/v3" element={<VehiclePageVariant variant="v3" />} />
-            <Route path="/:year/:make/:model/v4" element={<VehiclePageVariant variant="v4" />} />
-            <Route path="/:year/:make/:model/v5" element={<VehiclePageVariant variant="v5" />} />
-            <Route path="/:year/:make/:model/v10" element={<VehiclePageVariant variant="v10" />} />
-            
-            {/* B Test Variants - Pricing CTA variations (full-width section) */}
-            <Route path="/:year/:make/:model/v1b" element={<VehiclePageVariantB variant="v1b" />} />
-            <Route path="/:year/:make/:model/v2b" element={<VehiclePageVariantB variant="v2b" />} />
-            <Route path="/:year/:make/:model/v3b" element={<VehiclePageVariantB variant="v3b" />} />
-            <Route path="/:year/:make/:model/v4b" element={<VehiclePageVariantB variant="v4b" />} />
-            <Route path="/:year/:make/:model/v5b" element={<VehiclePageVariantB variant="v5b" />} />
-            
-            {/* C Test Variants - Inline Marketplace CTA (within Target Price Range section) */}
-            <Route path="/:year/:make/:model/v1c" element={<VehiclePageVariantC variant="v1c" />} />
-            <Route path="/:year/:make/:model/v2c" element={<VehiclePageVariantC variant="v2c" />} />
-            <Route path="/:year/:make/:model/v3c" element={<VehiclePageVariantC variant="v3c" />} />
-            <Route path="/:year/:make/:model/v4c" element={<VehiclePageVariantC variant="v4c" />} />
-            <Route path="/:year/:make/:model/v5c" element={<VehiclePageVariantC variant="v5c" />} />
-            
-            {/* D Test Variants - Trim Selector Marketplace CTA (within Pricing section) */}
-            <Route path="/:year/:make/:model/v1d" element={<VehiclePageVariantD variant="v1d" />} />
-            <Route path="/:year/:make/:model/v2d" element={<VehiclePageVariantD variant="v2d" />} />
-            <Route path="/:year/:make/:model/v3d" element={<VehiclePageVariantD variant="v3d" />} />
-            <Route path="/:year/:make/:model/v4d" element={<VehiclePageVariantD variant="v4d" />} />
-            <Route path="/:year/:make/:model/v5d" element={<VehiclePageVariantD variant="v5d" />} />
-            
-            {/* Concept - Ultraminimalist Design */}
-            <Route path="/:year/:make/:model/concept" element={<VehiclePageConcept />} />
-            
-            {/* 404 Not Found - Catch all unmatched routes */}
-            <Route path="*" element={<NotFoundPage />} />
+              {routeSections.map(([name, routes]) => (
+                <Fragment key={name}>{routes}</Fragment>
+              ))}
             </Routes>
           </Suspense>
         </main>

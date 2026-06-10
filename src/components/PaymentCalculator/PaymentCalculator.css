@@ -341,6 +341,20 @@
   outline: none;
 }
 
+.payment-calc--vehicle .payment-calc__trim-field {
+  padding-bottom: var(--spacing-2);
+}
+
+.payment-calc--vehicle .payment-calc__trim-select {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.payment-calc--vehicle .payment-calc__trim-note {
+  margin-top: calc(var(--spacing-1) * -1);
+}
+
 .payment-calc--vehicle .payment-calc__trade-summary {
   align-items: center;
 }

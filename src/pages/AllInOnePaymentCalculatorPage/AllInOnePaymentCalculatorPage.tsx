@@ -1214,6 +1214,24 @@ const shouldSkipLightWizardArrowNavigation = (target: EventTarget | null) => {
   return Boolean(target.closest(LIGHT_WIZARD_ARROW_KEY_SKIP_SELECTOR));
 };
 
+const getLightWizardArrowStepDelta = (key: string) => {
+  if (key === 'ArrowRight' || key === 'Right') return 1;
+  if (key === 'ArrowLeft' || key === 'Left') return -1;
+  return 0;
+};
+
+const hasVisibleAriaModal = () => {
+  const modals = document.querySelectorAll<HTMLElement>('[aria-modal="true"]');
+
+  return Array.from(modals).some((modal) => {
+    const style = window.getComputedStyle(modal);
+    if (style.display === 'none' || style.visibility === 'hidden') return false;
+
+    const rect = modal.getBoundingClientRect();
+    return modal.getClientRects().length > 0 && rect.width > 0 && rect.height > 0;
+  });
+};
+
 const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
   {
     title: 'Budget-First Guidance',
@@ -1811,6 +1829,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [showMobileSummary, setShowMobileSummary] = useState(false);
   const [isLightWizardStuck, setIsLightWizardStuck] = useState(false);
   const [lightWizardStepMotion, setLightWizardStepMotion] = useState<LightWizardStepMotion>('none');
+  const lightWizardHandledArrowKeyRef = useRef<string | null>(null);
   const lightWizardStep = routeLightWizardStep;
   const lightWizardStepPrevRef = useRef(lightWizardStep);
   const lightWizardPathPrevRef = useRef(location.pathname);
@@ -1924,32 +1943,55 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   useEffect(() => {
     if (!isLightStepsVariant) return undefined;
 
-    const handleLightWizardArrowNavigation = (event: KeyboardEvent) => {
+    const handleLightWizardArrowNavigation = (event: KeyboardEvent, phase: 'keydown' | 'keyup') => {
+      const arrowStepDelta = getLightWizardArrowStepDelta(event.key);
+
       if (
         event.defaultPrevented ||
         event.altKey ||
         event.ctrlKey ||
         event.metaKey ||
         event.shiftKey ||
-        (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') ||
+        arrowStepDelta === 0 ||
         shouldSkipLightWizardArrowNavigation(event.target) ||
-        document.querySelector('[aria-modal="true"]')
+        hasVisibleAriaModal()
       ) {
         return;
       }
 
-      const nextStep = lightWizardStep + (event.key === 'ArrowRight' ? 1 : -1);
+      if (phase === 'keyup' && lightWizardHandledArrowKeyRef.current === event.key) {
+        lightWizardHandledArrowKeyRef.current = null;
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (phase === 'keydown') {
+        lightWizardHandledArrowKeyRef.current = event.key;
+      }
+
+      const nextStep = lightWizardStep + arrowStepDelta;
 
       if (nextStep < 1 || nextStep > LIGHT_WIZARD_STEP_META.length) {
         return;
       }
 
-      event.preventDefault();
       goToLightWizardStep(nextStep);
     };
+    const handleLightWizardArrowKeyDown = (event: KeyboardEvent) => {
+      handleLightWizardArrowNavigation(event, 'keydown');
+    };
+    const handleLightWizardArrowKeyUp = (event: KeyboardEvent) => {
+      handleLightWizardArrowNavigation(event, 'keyup');
+    };
 
-    window.addEventListener('keydown', handleLightWizardArrowNavigation);
-    return () => window.removeEventListener('keydown', handleLightWizardArrowNavigation);
+    window.addEventListener('keydown', handleLightWizardArrowKeyDown, true);
+    window.addEventListener('keyup', handleLightWizardArrowKeyUp, true);
+    return () => {
+      window.removeEventListener('keydown', handleLightWizardArrowKeyDown, true);
+      window.removeEventListener('keyup', handleLightWizardArrowKeyUp, true);
+    };
   }, [goToLightWizardStep, isLightStepsVariant, lightWizardStep]);
 
   useEffect(() => {
@@ -4496,9 +4538,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const previousPath = lightWizardPathPrevRef.current;
     lightWizardStepPrevRef.current = lightWizardStep;
     lightWizardPathPrevRef.current = location.pathname;
-    if (!isLightStepsVariant || (previousStep === lightWizardStep && previousPath === location.pathname)) return;
+    if (!isLightStepsVariant) return;
 
-    if (previousStep !== lightWizardStep) {
+    const isSameStepAndPath = previousStep === lightWizardStep && previousPath === location.pathname;
+
+    if (!isSameStepAndPath && previousStep !== lightWizardStep) {
       const nextMotion = lightWizardStep > previousStep ? 'forward' : 'backward';
       setLightWizardStepMotion((currentMotion) => currentMotion === nextMotion ? currentMotion : nextMotion);
     }
@@ -4509,14 +4553,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     if (!shell || !heading) return;
 
     const scrollFrame = window.requestAnimationFrame(() => {
-      const shellTop = shell.getBoundingClientRect().top + window.scrollY;
-      const revealOffset = lightWizardStep === LIGHT_WIZARD_STEP_META.length
-        ? 0
-        : LIGHT_WIZARD_STEP_REVEAL_OFFSET;
-      window.scrollTo({
-        top: Math.max(0, shellTop - revealOffset),
-        behavior: 'auto',
-      });
+      if (!isSameStepAndPath) {
+        const shellTop = shell.getBoundingClientRect().top + window.scrollY;
+        const revealOffset = lightWizardStep === LIGHT_WIZARD_STEP_META.length
+          ? 0
+          : LIGHT_WIZARD_STEP_REVEAL_OFFSET;
+        window.scrollTo({
+          top: Math.max(0, shellTop - revealOffset),
+          behavior: 'auto',
+        });
+      }
       heading.focus({ preventScroll: true });
     });
 
@@ -4565,8 +4611,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   if (isLightVariant) {
     const lightWizardStepMeta = LIGHT_WIZARD_STEP_META[lightWizardStep - 1];
-    const lightWizardStepMotionAttribute = isLightStepsVariant && lightWizardStepMotion !== 'none'
-      ? lightWizardStepMotion
+    const previousLightWizardStep = lightWizardStepPrevRef.current;
+    const lightWizardStepMotionFromPrevious: LightWizardStepMotion = previousLightWizardStep !== lightWizardStep
+      ? (lightWizardStep > previousLightWizardStep ? 'forward' : 'backward')
+      : lightWizardStepMotion;
+    const lightWizardStepMotionAttribute = isLightStepsVariant && lightWizardStepMotionFromPrevious !== 'none'
+      ? lightWizardStepMotionFromPrevious
       : undefined;
     const lightWizardProgressScale = Math.max(
       0,
@@ -4784,11 +4834,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                 </div>
               ) : null}
               <div
-                key={isLightStepsVariant ? `light-wizard-step-${lightWizardStep}` : 'light-calculator-card'}
-                className={`aio-payment__light-card${isLightStepsVariant ? ' aio-payment__light-card--step-panel' : ''}`}
-                data-step-motion={lightWizardStepMotionAttribute}
-                ref={isLightStepsVariant ? lightWizardPanelRef : undefined}
+                className="aio-payment__light-step-panel-viewport"
+                data-step-motion={isLightStepsVariant ? lightWizardStepMotionAttribute : undefined}
               >
+                <div
+                  key={isLightStepsVariant ? `light-wizard-step-${lightWizardStep}` : 'light-calculator-card'}
+                  className={`aio-payment__light-card${isLightStepsVariant ? ' aio-payment__light-card--step-panel' : ''}`}
+                  data-step-motion={lightWizardStepMotionAttribute}
+                  ref={isLightStepsVariant ? lightWizardPanelRef : undefined}
+                >
               {isLightStepsVariant ? (
                 <div className="aio-payment__section-heading aio-payment__section-heading--wizard">
                   <p className="aio-payment__light-wizard-step-eyebrow">
@@ -5628,6 +5682,29 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           </aside>
                         ) : null}
                       </div>
+
+                      {tradeEquity > 0 ? (
+                        <p className="aio-payment__light-trade-step__equity-note" role="status">
+                          <Check size={18} strokeWidth={2.25} aria-hidden="true" />
+                          <span>
+                            <strong>{currency(tradeEquity)} net trade equity is applied as trade credit.</strong>{' '}
+                            {startMode === 'monthly'
+                              ? 'In monthly-budget mode, that can raise the vehicle price your payment target supports. Any unused equity appears as remaining trade equity on review.'
+                              : 'It lowers the amount financed and cash due before interest is calculated. Any unused equity appears as remaining trade equity on review.'}
+                          </span>
+                        </p>
+                      ) : null}
+
+                      {negativeTradeBalance > 0 ? (
+                        <p className="aio-payment__light-trade-step__negative-equity" role="status">
+                          <AlertTriangle size={18} strokeWidth={2.25} aria-hidden="true" />
+                          <span>
+                            <strong>You may still owe {currency(negativeTradeBalance)} after trade-in.</strong>{' '}
+                            That balance can be rolled into the loan and increase your monthly payment.
+                          </span>
+                        </p>
+                      ) : null}
+
                       <div className="aio-payment__light-trade-step__row aio-payment__light-trade-step__row--3">
                         <LightListboxSelect
                           label="Your state"
@@ -5683,6 +5760,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </div>
                         <TextField
                           label="Registration & Dealer Fees"
+                          wrapperClassName="aio-payment__light-trade-fees-field"
                           labelHelp={renderLightGuidanceTooltip({
                             id: lightRegistrationFeesGuidanceId,
                             title: 'Registration & dealer fees',
@@ -5706,28 +5784,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </strong>{' '}
                       {registrationDealerFeeGuidance.copy}
                     </p>
-
-                    {tradeEquity > 0 ? (
-                      <p className="aio-payment__light-trade-step__equity-note" role="status">
-                        <Check size={18} strokeWidth={2.25} aria-hidden="true" />
-                        <span>
-                          <strong>{currency(tradeEquity)} net trade equity is applied as trade credit.</strong>{' '}
-                          {startMode === 'monthly'
-                            ? 'In monthly-budget mode, that can raise the vehicle price your payment target supports. Any unused equity appears as remaining trade equity on review.'
-                            : 'It lowers the amount financed and cash due before interest is calculated. Any unused equity appears as remaining trade equity on review.'}
-                        </span>
-                      </p>
-                    ) : null}
-
-                    {negativeTradeBalance > 0 ? (
-                      <p className="aio-payment__light-trade-step__negative-equity" role="status">
-                        <AlertTriangle size={18} strokeWidth={2.25} aria-hidden="true" />
-                        <span>
-                          <strong>You may still owe {currency(negativeTradeBalance)} after trade-in.</strong>{' '}
-                          That balance can be rolled into the loan and increase your monthly payment.
-                        </span>
-                      </p>
-                    ) : null}
 
                     <div className="aio-payment__light-trade-step__finance-box">
                       <button
@@ -6267,7 +6323,8 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   </div>
                 </div>
               )}
-            </div>
+                </div>
+              </div>
             <div className="payment-calc__aside aio-payment__light-result-stack aio-payment__light-result--sticky">
               <aside className="payment-calc__aside-inner" aria-label="Current payment estimate">
                 <div className="payment-calc__result aio-payment__light-result">

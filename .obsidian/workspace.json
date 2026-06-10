@@ -1,0 +1,221 @@
+{
+  "main": {
+    "id": "4accf44ca85fc5df",
+    "type": "split",
+    "children": [
+      {
+        "id": "2e253bcf85852a0f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c1d87bc6432d5933",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "node_modules/@types/d3-time/README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "16eca1273d599390",
+    "type": "split",
+    "children": [
+      {
+        "id": "06746cf20433a90e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b1afdf9465accadd",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "7eb8a3a014c75d54",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "f7438dcd18e8f1c5",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "f68f12829d48cc0a",
+    "type": "split",
+    "children": [
+      {
+        "id": "5d0830c8c81b2e52",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d04f48f26b6e9599",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "node_modules/@types/d3-time/README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for README"
+            }
+          },
+          {
+            "id": "61edb44033a5d47e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "node_modules/@types/d3-time/README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from README"
+            }
+          },
+          {
+            "id": "d3264ed6e7499469",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "1d349b541828a124",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "f6acda19772d9dba",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "node_modules/@types/d3-time/README.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "c1d87bc6432d5933",
+  "lastOpenFiles": [
+    "dist/assets/AllInOnePaymentCalculatorPage-s6BH1Sjt.js",
+    "dist/assets/ArticlePage-CYBwNgq3.js",
+    "dist/assets/AllInOnePaymentCalculatorLightStepsPage-92ZfuFNg.js",
+    "dist/assets/AllInOnePaymentCalculatorLightSteps2Page-CshFdS2b.js",
+    "dist/assets/AllInOnePaymentCalculatorLightPage-DLzFoHJq.js",
+    "dist/assets/AllInOnePaymentCalculatorBudgetPage-DkS0otn8.js",
+    "dist/assets/ArticleCard-CQIuRyEB.js",
+    "dist/assets/AutoLoanCalculatorPage-BfivUWwF.js",
+    "dist/assets/AdSidebar-CihmdCUf.js",
+    "dist/assets/AdBanner-suJ6F_GA.js",
+    "dist/assets/AllDealsPage-BPWK9Zno.js",
+    "node_modules/jest-matcher-utils/node_modules/react-is/README.md",
+    "docs/obsidian-app-audit/Flows/Vehicle Research to Finance.md",
+    "Untitled.md",
+    "docs/obsidian-app-audit/Modules/Authentication and Onboarding.md",
+    "docs/obsidian-app-audit/Modules/Account and Garage.md",
+    "docs/obsidian-app-audit/Flows/Deals Discovery.md",
+    "docs/obsidian-app-audit/Routes/Year Make Model V2c.md",
+    "docs/obsidian-app-audit/Modules/Vehicle Detail.md",
+    "docs/obsidian-app-audit/Flows/Editorial to Shopping.md",
+    "docs/obsidian-app-audit/Routes/News Stories.md",
+    "docs/obsidian-app-audit/Modules/Home and Editorial.md",
+    "docs/obsidian-app-audit/Routes/Expert Reviews.md",
+    "docs/obsidian-app-audit/Routes/Deals Best Buying Deals.md",
+    "node_modules/flat-cache/README.md",
+    "docs/obsidian-app-audit/Routes/Deals.md",
+    "docs/obsidian-app-audit/Modules/Deals and Incentives.md",
+    "node_modules/ms/license.md",
+    "docs/obsidian-app-audit/Routes/Year Make Model V4d.md",
+    "node_modules/constants-browserify/README.md",
+    "node_modules/jose/README.md",
+    "docs/obsidian-app-audit/00 App Map.md"
+  ]
+}

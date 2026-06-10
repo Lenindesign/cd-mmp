@@ -18,6 +18,7 @@
     "test:playwright": "playwright test",
     "test:playwright:ui": "playwright test --ui",
     "test:playwright:debug": "playwright test --debug",
+    "audit:obsidian": "node scripts/generate-obsidian-app-audit.mjs",
     "storybook": "EDITOR=none REACT_EDITOR=none storybook dev -p 6006",
     "build-storybook": "storybook build",
     "deploy-storybook": "npm run build-storybook && npx gh-pages -d storybook-static",
