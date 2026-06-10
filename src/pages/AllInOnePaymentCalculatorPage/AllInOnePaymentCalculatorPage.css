@@ -2043,6 +2043,7 @@ label.aio-payment__light-loan-step__label {
   display: grid;
   gap: var(--spacing-3);
   width: min(22rem, calc(100vw - var(--spacing-8)));
+  max-width: calc(100vw - var(--spacing-8));
   margin: 0;
   padding: var(--spacing-4) var(--spacing-3);
   border: 1px solid var(--color-gray-300);
@@ -2051,6 +2052,7 @@ label.aio-payment__light-loan-step__label {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
   color: var(--color-black);
   letter-spacing: 0;
+  overflow-wrap: break-word;
   opacity: 0;
   pointer-events: none;
   text-align: left;
@@ -2073,6 +2075,11 @@ label.aio-payment__light-loan-step__label {
   padding: var(--spacing-3) var(--spacing-2) var(--spacing-3) var(--spacing-3);
 }
 
+.aio-payment__light-loan-guidance--align-end {
+  right: 0;
+  left: auto;
+}
+
 .aio-payment__light-loan-guidance::before,
 .aio-payment__light-loan-guidance::after {
   content: '';
@@ -2083,6 +2090,12 @@ label.aio-payment__light-loan-step__label {
   height: 0;
   border-right: var(--spacing-2) solid transparent;
   border-left: var(--spacing-2) solid transparent;
+}
+
+.aio-payment__light-loan-guidance--align-end::before,
+.aio-payment__light-loan-guidance--align-end::after {
+  right: var(--spacing-4);
+  left: auto;
 }
 
 .aio-payment__light-loan-guidance::before {
@@ -2112,6 +2125,7 @@ label.aio-payment__light-loan-step__label {
   font-size: 14px;
   font-weight: 700;
   line-height: var(--line-height-tight);
+  white-space: normal;
 }
 
 .payment-calc__row-label .aio-payment__light-loan-guidance-header span {
@@ -2133,6 +2147,8 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-regular);
   line-height: 1.45;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .aio-payment--light .aio-payment__light-loan-guidance .aio-payment__light-loan-guidance-header svg {
@@ -2174,6 +2190,8 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-regular);
   line-height: 1.45;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .aio-payment__light-loan-guidance-list dt,
@@ -2203,6 +2221,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-loan-guidance-copy,
 .aio-payment__light-loan-guidance-note {
   display: block;
+  min-width: 0;
 }
 
 .aio-payment__light-loan-guidance-copy {
@@ -2398,7 +2417,12 @@ label.aio-payment__light-loan-step__label {
   flex-shrink: 0;
 }
 
-.aio-payment__light-vehicle-step__path-icon--chat {
+.aio-payment__light-vehicle-step__path-icon--known {
+  color: var(--color-gray-600);
+  background: var(--color-gray-100);
+}
+
+.aio-payment__light-vehicle-step__path--selected .aio-payment__light-vehicle-step__path-icon--known {
   color: var(--color-blue-cobalt);
   background: color-mix(in srgb, var(--color-white) 70%, var(--color-blue-cobalt) 30%);
 }
@@ -3744,6 +3768,14 @@ label.aio-payment__light-loan-step__label {
   white-space: nowrap;
 }
 
+.aio-payment__light-trade-fees-field .aio-payment__light-loan-guidance,
+.aio-payment__light-trade-fees-field .aio-payment__light-loan-guidance-header,
+.aio-payment__light-trade-fees-field .aio-payment__light-loan-guidance-header span,
+.aio-payment__light-trade-fees-field .aio-payment__light-loan-guidance-copy,
+.aio-payment__light-trade-fees-field .aio-payment__light-loan-guidance-note {
+  white-space: normal;
+}
+
 .aio-payment__light-input-prefix,
 .aio-payment__light-input-suffix,
 .aio-payment__light-money-input-prefix,
@@ -3794,29 +3826,6 @@ label.aio-payment__light-loan-step__label {
   font-weight: var(--font-weight-bold);
   line-height: 1;
   pointer-events: none;
-}
-
-.aio-payment__light-percent-input-quality {
-  position: absolute;
-  right: var(--spacing-4);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  max-width: min(12rem, 46%);
-  overflow: hidden;
-  color: var(--color-gray-600);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1;
-  pointer-events: none;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.aio-payment__light-percent-input-control.payment-calc__input {
-  padding-right: min(13rem, 52%);
 }
 
 .aio-payment__light-trade-tax-field {
