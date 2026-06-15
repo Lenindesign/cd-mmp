@@ -18,6 +18,7 @@ import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
 import OfficialELotCarousel from '../../components/OfficialELotCarousel';
+import NegotiationOpportunity from '../../components/NegotiationOpportunity/NegotiationOpportunity';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
@@ -391,6 +392,21 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         <Comparison 
           currentVehicle={{ make: vehicle.make, model: vehicle.model }}
         />
+
+        <section className="vehicle-page__negotiation-opportunity">
+          <div className="container">
+            <NegotiationOpportunity
+              year={parseInt(vehicle.year)}
+              make={vehicle.make}
+              model={vehicle.model}
+              msrp={vehicle.priceMin}
+              priceMin={vehicle.priceMin}
+              priceMax={vehicle.priceMax}
+              locationLabel="Los Angeles, CA"
+              initialLocation={{ lat: 34.0522, lng: -118.2437 }}
+            />
+          </div>
+        </section>
         
         {/* Dealer Locator Map */}
         <section id="find-dealers" className="vehicle-page__dealer-locator">

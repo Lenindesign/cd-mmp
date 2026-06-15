@@ -16,6 +16,8 @@ export interface VehicleInventoryItem {
   stockNumber?: string;
   exteriorColor?: string;
   interiorColor?: string;
+  daysOnLot?: number;
+  recentPriceDropAmount?: number;
   isNew: boolean;
   dealerUrl?: string;
 }
@@ -1203,6 +1205,30 @@ function generatePrice(msrp: number, isNew: boolean, seed: number): number {
   }
 }
 
+function generateDaysOnLot(year: number, isNew: boolean, seed: number): number {
+  const random = Math.abs(Math.sin(seed) * 10000);
+  const normalizedRandom = random - Math.floor(random);
+  const currentYear = new Date().getFullYear();
+
+  const modelYearBonus = Math.max(0, currentYear - year) * (isNew ? 28 : 18);
+  const baseRange = isNew ? 18 + normalizedRandom * 110 : 24 + normalizedRandom * 95;
+
+  return Math.round(baseRange + modelYearBonus);
+}
+
+function generateRecentPriceDrop(price: number, daysOnLot: number, seed: number): number | undefined {
+  if (daysOnLot < 40) {
+    return undefined;
+  }
+
+  const random = Math.abs(Math.sin(seed) * 10000);
+  const normalizedRandom = random - Math.floor(random);
+  const dropRate = daysOnLot >= 90 ? 0.035 + normalizedRandom * 0.03 : 0.012 + normalizedRandom * 0.02;
+  const amount = Math.round(price * dropRate / 50) * 50;
+
+  return amount >= 150 ? amount : undefined;
+}
+
 /**
  * Generate inventory items for a specific vehicle
  */
@@ -1252,7 +1278,9 @@ function generateInventory(
     
     // Generate mileage for used cars
     const mileage = isNew ? undefined : Math.round(5000 + (normalizedRandom * 45000));
-    
+    const daysOnLot = generateDaysOnLot(vehicleYear, isNew, seed + 4);
+    const recentPriceDropAmount = generateRecentPriceDrop(price, daysOnLot, seed + 5);
+
     inventory.push({
       year: vehicleYear,
       make,
@@ -1263,6 +1291,8 @@ function generateInventory(
       isNew,
       exteriorColor: exteriorColors[exteriorIndex],
       interiorColor: interiorColors[interiorIndex],
+      daysOnLot,
+      recentPriceDropAmount,
     });
   }
   

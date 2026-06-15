@@ -1,0 +1,256 @@
+.negotiation-opportunity {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.negotiation-opportunity__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+  padding: var(--spacing-5);
+  border-bottom: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+}
+
+.negotiation-opportunity__eyebrow {
+  margin: 0 0 var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gray-500);
+}
+
+.negotiation-opportunity__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-36);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.1;
+  color: var(--color-black);
+}
+
+.negotiation-opportunity__subtitle {
+  max-width: 52rem;
+  margin: var(--spacing-3) 0 0;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-gray-700);
+}
+
+.negotiation-opportunity__radius {
+  width: min(100%, 260px);
+  flex: 0 0 auto;
+}
+
+.negotiation-opportunity__radius-label {
+  display: block;
+  margin-bottom: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-gray-500);
+}
+
+.negotiation-opportunity__radius-tabs {
+  width: 100%;
+}
+
+.negotiation-opportunity__insights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+}
+
+.negotiation-opportunity__insight-card {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+}
+
+.negotiation-opportunity__insight-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--color-gray-100);
+  color: var(--color-blue-cobalt);
+}
+
+.negotiation-opportunity__insight-label {
+  margin: 0 0 var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-500);
+}
+
+.negotiation-opportunity__insight-value {
+  display: block;
+  margin-bottom: var(--spacing-1);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  line-height: 1.2;
+}
+
+.negotiation-opportunity__insight-note {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-gray-600);
+}
+
+.negotiation-opportunity__table-wrap {
+  padding: 0 var(--spacing-5);
+  overflow-x: auto;
+}
+
+.negotiation-opportunity__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.negotiation-opportunity__table th,
+.negotiation-opportunity__table td {
+  padding: var(--spacing-4) var(--spacing-2);
+  border-bottom: 1px solid var(--color-gray-200);
+  text-align: left;
+  vertical-align: top;
+}
+
+.negotiation-opportunity__table th {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-gray-500);
+}
+
+.negotiation-opportunity__dealer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.negotiation-opportunity__dealer strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+.negotiation-opportunity__dealer span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.negotiation-opportunity__dealer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-1);
+}
+
+.negotiation-opportunity__dealer-action-btn {
+  height: auto;
+  padding: 0;
+  gap: 6px;
+  font-size: 10px;
+}
+
+.negotiation-opportunity__dealer-action-btn:hover:not(:disabled) {
+  box-shadow: none;
+  transform: none;
+}
+
+.negotiation-opportunity__badge {
+  min-width: 6.25rem;
+}
+
+.negotiation-opportunity__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.negotiation-opportunity__footer-copy p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-gray-700);
+}
+
+.negotiation-opportunity__footer-meta {
+  margin-top: var(--spacing-1) !important;
+  color: var(--color-gray-600) !important;
+}
+
+.negotiation-opportunity__footer-action {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 960px) {
+  .negotiation-opportunity__header,
+  .negotiation-opportunity__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .negotiation-opportunity__radius {
+    width: 100%;
+  }
+
+  .negotiation-opportunity__insights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .negotiation-opportunity__header,
+  .negotiation-opportunity__insights,
+  .negotiation-opportunity__footer {
+    padding: var(--spacing-4);
+  }
+
+  .negotiation-opportunity__table-wrap {
+    padding: 0 var(--spacing-4);
+  }
+
+  .negotiation-opportunity__title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .negotiation-opportunity__table th,
+  .negotiation-opportunity__table td {
+    padding: var(--spacing-3) var(--spacing-1);
+  }
+}

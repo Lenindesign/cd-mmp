@@ -210,6 +210,10 @@
   object-fit: cover;
 }
 
+.vehicle-page__negotiation-opportunity {
+  padding: var(--spacing-8) 0 var(--spacing-6);
+}
+
 /* Section Title */
 .vehicle-page__section-title {
   font-family: var(--font-heading);
@@ -463,4 +467,3 @@
     grid-template-columns: 1fr;
   }
 }
-
