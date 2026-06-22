@@ -18,6 +18,15 @@ export interface VehicleInventoryItem {
   interiorColor?: string;
   daysOnLot?: number;
   recentPriceDropAmount?: number;
+  owners?: number;
+  accidents?: number;
+  serviceRecords?: number;
+  titleStatus?: 'Clean' | 'Salvage' | 'Rebuilt' | 'Lemon';
+  personalUse?: boolean;
+  fleetUse?: boolean;
+  rentalUse?: boolean;
+  carfaxScore?: number;
+  isCertified?: boolean;
   isNew: boolean;
   dealerUrl?: string;
 }
@@ -1229,6 +1238,11 @@ function generateRecentPriceDrop(price: number, daysOnLot: number, seed: number)
   return amount >= 150 ? amount : undefined;
 }
 
+function getSeededUnitInterval(seed: number): number {
+  const random = Math.abs(Math.sin(seed) * 10000);
+  return random - Math.floor(random);
+}
+
 /**
  * Generate inventory items for a specific vehicle
  */
@@ -1250,11 +1264,11 @@ function generateInventory(
   
   for (let i = 0; i < count; i++) {
     const seed = dealerSeed + i * 1000;
-    const random = Math.abs(Math.sin(seed) * 10000);
-    const normalizedRandom = random - Math.floor(random);
-    
-    // Determine if new or used (80% new, 20% used)
-    const isNew = normalizedRandom > 0.2;
+    const normalizedRandom = getSeededUnitInterval(seed);
+    const currentYear = new Date().getFullYear();
+
+    // Older model-year pages should synthesize used inventory for the exact requested YMM.
+    const isNew = year >= currentYear ? normalizedRandom > 0.35 : false;
     
     // Pick a trim level
     const trimIndex = Math.floor((Math.sin(seed + 1) * 10000 % trims.length + trims.length) % trims.length);
@@ -1271,15 +1285,36 @@ function generateInventory(
     const exteriorIndex = Math.floor(colorSeed % exteriorColors.length);
     const interiorIndex = Math.floor((colorSeed / 10) % interiorColors.length);
     
-    // Generate year (current year or previous for new, older for used)
-    const vehicleYear = isNew 
-      ? (normalizedRandom > 0.5 ? year : year - 1)
-      : year - Math.floor(normalizedRandom * 3 + 1);
+    const vehicleYear = year;
     
     // Generate mileage for used cars
     const mileage = isNew ? undefined : Math.round(5000 + (normalizedRandom * 45000));
     const daysOnLot = generateDaysOnLot(vehicleYear, isNew, seed + 4);
     const recentPriceDropAmount = generateRecentPriceDrop(price, daysOnLot, seed + 5);
+    const owners = isNew ? 0 : 1 + Math.floor(getSeededUnitInterval(seed + 6) * 3);
+    const accidents = isNew ? 0 : getSeededUnitInterval(seed + 7) > 0.86 ? (getSeededUnitInterval(seed + 8) > 0.92 ? 2 : 1) : 0;
+    const serviceRecords = isNew ? 0 : 4 + Math.floor(getSeededUnitInterval(seed + 9) * 11);
+    const personalUse = isNew ? true : getSeededUnitInterval(seed + 10) > 0.18;
+    const fleetUse = !isNew && !personalUse && getSeededUnitInterval(seed + 11) > 0.45;
+    const rentalUse = !isNew && !personalUse && getSeededUnitInterval(seed + 12) > 0.74;
+    const titleStatus = accidents > 1 ? 'Rebuilt' : accidents === 1 && getSeededUnitInterval(seed + 13) > 0.9 ? 'Salvage' : 'Clean';
+    const isCertified = !isNew && accidents === 0 && titleStatus === 'Clean' && getSeededUnitInterval(seed + 14) > 0.58;
+    const carfaxScore = isNew
+      ? 100
+      : Math.max(
+          68,
+          Math.min(
+            98,
+            Math.round(
+              95 -
+                (owners - 1) * 5 -
+                accidents * 14 -
+                (fleetUse ? 7 : 0) -
+                (rentalUse ? 9 : 0) +
+                serviceRecords * 0.7
+            )
+          )
+        );
 
     inventory.push({
       year: vehicleYear,
@@ -1293,6 +1328,15 @@ function generateInventory(
       interiorColor: interiorColors[interiorIndex],
       daysOnLot,
       recentPriceDropAmount,
+      owners,
+      accidents,
+      serviceRecords,
+      titleStatus,
+      personalUse,
+      fleetUse,
+      rentalUse,
+      carfaxScore,
+      isCertified,
     });
   }
   
@@ -1320,12 +1364,13 @@ export function getDealersForVehicle(
   msrp: number = 21895,
   maxDistanceMiles: number = 100, // Maximum search radius in miles
   priceMin?: number,
-  priceMax?: number
+  priceMax?: number,
+  targetYear?: number
 ): DealerWithScore[] {
   // Use provided price range or calculate from MSRP
   const minPrice = priceMin || msrp;
   const maxPrice = priceMax || Math.round(msrp * 1.3);
-  const currentYear = new Date().getFullYear();
+  const inventoryYear = targetYear || new Date().getFullYear();
   
   // Get base dealer locations and update with dynamic inventory
   const dealersWithDynamicInventory = mockDealers.map((dealer, index) => {
@@ -1339,7 +1384,7 @@ export function getDealersForVehicle(
     const dynamicInventory = generateInventory(
       make,
       model,
-      currentYear,
+      inventoryYear,
       minPrice,
       maxPrice,
       dealerSeed,

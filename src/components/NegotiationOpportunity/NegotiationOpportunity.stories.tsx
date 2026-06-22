@@ -39,16 +39,27 @@ const buildVehicle = (
   trim: string,
   price: number,
   daysOnLot: number,
-  recentPriceDropAmount?: number
+  recentPriceDropAmount?: number,
+  overrides: Partial<VehicleInventoryItem> = {}
 ): VehicleInventoryItem => ({
   year: 2026,
   make: 'Chevrolet',
   model: 'Trax',
   trim,
   price,
-  isNew: true,
+  isNew: false,
+  owners: 1,
+  accidents: 0,
+  serviceRecords: 10,
+  titleStatus: 'Clean',
+  personalUse: true,
+  fleetUse: false,
+  rentalUse: false,
+  carfaxScore: 92,
+  isCertified: true,
   daysOnLot,
   recentPriceDropAmount,
+  ...overrides,
 });
 
 const excellentRows: NegotiationOpportunityRowInput[] = [
@@ -60,13 +71,13 @@ const excellentRows: NegotiationOpportunityRowInput[] = [
   },
   {
     dealer: buildDealer('dealer-2', 'Courtesy Chevrolet', 33.4, '(619) 555-2100', '750 Camino Del Rio'),
-    vehicle: buildVehicle('LS', 20103, 118, 900),
+    vehicle: buildVehicle('LS', 20103, 118, 900, { owners: 2, serviceRecords: 8, isCertified: false }),
     opportunity: 'Excellent',
     score: 87,
   },
   {
     dealer: buildDealer('dealer-3', 'Irvine Chevrolet', 35.8, '(949) 753-1500', '18 Auto Center Dr'),
-    vehicle: buildVehicle('RS', 21151, 120, 950),
+    vehicle: buildVehicle('RS', 21151, 120, 950, { owners: 1, serviceRecords: 12 }),
     opportunity: 'Excellent',
     score: 84,
   },
@@ -75,19 +86,19 @@ const excellentRows: NegotiationOpportunityRowInput[] = [
 const mixedRows: NegotiationOpportunityRowInput[] = [
   {
     dealer: buildDealer('dealer-4', 'Mission Hills Chevrolet', 9.2, '(818) 555-3400', '1100 Sepulveda Blvd'),
-    vehicle: buildVehicle('LT', 21995, 28),
+    vehicle: buildVehicle('LT', 21995, 28, undefined, { owners: 3, accidents: 1, titleStatus: 'Clean', personalUse: false, fleetUse: true, carfaxScore: 73, isCertified: false }),
     opportunity: 'Low',
     score: 48,
   },
   {
     dealer: buildDealer('dealer-5', 'Downtown Chevrolet', 21.4, '(213) 555-1100', '900 S Figueroa St'),
-    vehicle: buildVehicle('1RS', 22350, 46, 350),
+    vehicle: buildVehicle('1RS', 22350, 46, 350, { owners: 2, serviceRecords: 6, isCertified: false }),
     opportunity: 'Moderate',
     score: 61,
   },
   {
     dealer: buildDealer('dealer-6', 'Lake Forest Chevrolet', 42.4, '(949) 830-3100', '23595 Rockfield Blvd'),
-    vehicle: buildVehicle('Premier', 22141, 95, 700),
+    vehicle: buildVehicle('Premier', 22141, 95, 700, { owners: 1, serviceRecords: 9 }),
     opportunity: 'High',
     score: 76,
   },
@@ -130,6 +141,14 @@ type Story = StoryObj<typeof meta>;
 export const ExcellentMarket: Story = {
   args: {
     rowsOverride: excellentRows,
+  },
+};
+
+export const OptionBMarketIntelligence: Story = {
+  args: {
+    rowsOverride: excellentRows,
+    variant: 'option-b',
+    enableVariantExplorer: true,
   },
 };
 

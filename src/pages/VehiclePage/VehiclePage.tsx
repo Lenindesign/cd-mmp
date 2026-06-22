@@ -19,11 +19,13 @@ import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
 import OfficialELotCarousel from '../../components/OfficialELotCarousel';
 import NegotiationOpportunity from '../../components/NegotiationOpportunity/NegotiationOpportunity';
+import VehicleMarketIntelligenceModal from '../../components/VehicleMarketIntelligenceModal/VehicleMarketIntelligenceModal';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import PaymentCalculator from '../../components/PaymentCalculator';
+import { Button } from '../../components/Button';
 import TradeInEstimateModal, {
   type TradeInEstimateCondition,
   type TradeInSelectedOption,
@@ -99,6 +101,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   const params = useParams<{ year: string; make: string; model: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeInModalOpen, setIsTradeInModalOpen] = useState(false);
+  const [isMarketIntelligenceOpen, setIsMarketIntelligenceOpen] = useState(false);
   const [calculatorTradeInEstimate, setCalculatorTradeInEstimate] = useState<CalculatorTradeInEstimate | null>(null);
   
   // Use props if provided (for home page), otherwise use URL params
@@ -258,6 +261,30 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
                 warranty: '3 Years/36,000 Miles',
               }}
             />
+            <section className="vehicle-page__market-intelligence-launch">
+              <div className="vehicle-page__market-intelligence-launch-copy">
+                <p className="vehicle-page__market-intelligence-launch-eyebrow">Vehicle market intelligence</p>
+                <div>
+                  <h2>Open the full market model</h2>
+                  <p>See pricing pressure, dealer leverage, negotiation targets, and better-value alternatives in one decision dashboard.</p>
+                </div>
+              </div>
+              <Button variant="outline" size="small" onClick={() => setIsMarketIntelligenceOpen(true)}>
+                Launch Market Intelligence
+              </Button>
+            </section>
+            <NegotiationOpportunity
+              year={parseInt(vehicle.year)}
+              make={vehicle.make}
+              model={vehicle.model}
+              msrp={vehicle.priceMin}
+              priceMin={vehicle.priceMin}
+              priceMax={vehicle.priceMax}
+              variant="option-b"
+              enableVariantExplorer
+              locationLabel="Los Angeles, CA"
+              initialLocation={{ lat: 34.0522, lng: -118.2437 }}
+            />
             <VehicleOverview 
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}
               highs={vehicle.features?.slice(0, 5) || undefined}
@@ -392,22 +419,6 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         <Comparison 
           currentVehicle={{ make: vehicle.make, model: vehicle.model }}
         />
-
-        <section className="vehicle-page__negotiation-opportunity">
-          <div className="container">
-            <NegotiationOpportunity
-              year={parseInt(vehicle.year)}
-              make={vehicle.make}
-              model={vehicle.model}
-              msrp={vehicle.priceMin}
-              priceMin={vehicle.priceMin}
-              priceMax={vehicle.priceMax}
-              locationLabel="Los Angeles, CA"
-              initialLocation={{ lat: 34.0522, lng: -118.2437 }}
-            />
-          </div>
-        </section>
-        
         {/* Dealer Locator Map */}
         <section id="find-dealers" className="vehicle-page__dealer-locator">
           <DealerLocatorMap
@@ -447,6 +458,13 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         description={`Add your current vehicle, mileage, and condition. We will apply the estimate to this ${vehicle.make} ${vehicle.model} payment calculation.`}
         onClose={() => setIsTradeInModalOpen(false)}
         onApply={(estimate) => setCalculatorTradeInEstimate({ ...estimate, appliedAt: Date.now() })}
+      />
+      <VehicleMarketIntelligenceModal
+        isOpen={isMarketIntelligenceOpen}
+        onClose={() => setIsMarketIntelligenceOpen(false)}
+        vehicle={vehicle}
+        rating={supabaseRating}
+        initialLocation={{ lat: 34.0522, lng: -118.2437 }}
       />
     </>
   );
