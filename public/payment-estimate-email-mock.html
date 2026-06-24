@@ -500,6 +500,107 @@
         text-transform: uppercase;
       }
 
+      .body-style-copy {
+        margin: 0 0 20px;
+        color: #4b5563;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .body-style-grid {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .body-style-grid td {
+        width: 50%;
+        padding: 0 12px 16px 0;
+        vertical-align: top;
+      }
+
+      .body-style-grid td:last-child {
+        padding-right: 0;
+      }
+
+      .body-style-grid td[colspan="2"] {
+        width: 100%;
+        padding-right: 0;
+      }
+
+      .body-style-card {
+        border: 1px solid #d8dee6;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      .body-style-card__image {
+        display: block;
+        width: 100%;
+        height: 168px;
+        object-fit: cover;
+        background: #eef5f7;
+      }
+
+      .body-style-card__image--lead {
+        height: 300px;
+      }
+
+      .body-style-card__content {
+        padding: 18px 16px 16px;
+      }
+
+      .body-style-card__title {
+        margin: 0 0 6px;
+        color: #111827;
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.08;
+      }
+
+      .body-style-card__rank {
+        margin: 0 0 12px;
+        color: #0b5f92;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .body-style-card__rating {
+        margin: 0 0 6px;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .body-style-card__accolades {
+        margin: 0 0 14px;
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .body-style-card__fact-label {
+        margin: 0 0 6px;
+        padding-top: 10px;
+        border-top: 1px solid #e5e7eb;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .body-style-card__fact-value {
+        margin: 0 0 12px;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
       .link-grid {
         width: 100%;
         border-collapse: collapse;
@@ -759,6 +860,18 @@
         line-height: 1.35;
       }
 
+      .footer-variant-link {
+        margin: 18px 0 0;
+        color: #8aa7bb;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .footer-variant-link a {
+        color: #8ed1ff;
+        text-decoration: underline;
+      }
+
       @media (max-width: 560px) {
         .section,
         .header {
@@ -802,6 +915,22 @@
 
         .vehicle-heading {
           font-size: 28px;
+        }
+
+        .body-style-grid,
+        .body-style-grid tbody,
+        .body-style-grid tr,
+        .body-style-grid td {
+          display: block;
+          width: 100% !important;
+        }
+
+        .body-style-grid td {
+          padding: 0 0 16px !important;
+        }
+
+        .body-style-card__title {
+          font-size: 22px;
         }
 
         .payment-amount {
@@ -1015,7 +1144,7 @@
           </td>
         </tr>
 
-        <tr>
+        <tr data-mock-variant="standard">
           <td class="section">
             <p class="eyebrow">Your next vehicle</p>
             <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
@@ -1089,6 +1218,83 @@
                         <td><a class="button button--secondary" href="/vehicles?condition=used&amp;make=Honda&amp;model=CR-V">Shop Used CR-V Hybrid</a></td>
                       </tr>
                     </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr data-mock-variant="body-style" style="display:none;">
+          <td class="section">
+            <p class="eyebrow">Popular picks in your budget</p>
+            <h2>Three SUVs worth shopping starting under $30,000</h2>
+            <p class="body-style-copy">
+              When a shopper is still browsing by body style, this version keeps the estimate but swaps in a compact,
+              side-by-side comparison of strong-rated vehicles with starting MSRPs at or below the target vehicle price.
+            </p>
+            <table class="body-style-grid" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td colspan="2" style="padding: 0 0 16px 0;">
+                  <div class="body-style-card">
+                    <img
+                      class="body-style-card__image body-style-card__image--lead"
+                      src="https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg"
+                      alt="2026 Chevrolet Trax"
+                    >
+                    <div class="body-style-card__content">
+                      <h3 class="body-style-card__title">2026 Chevrolet Trax</h3>
+                      <p class="body-style-card__rank">#1 among SUVs starting under $30,000</p>
+                      <p class="body-style-card__rating">C/D Rating 10.0/10</p>
+                      <p class="body-style-card__accolades">Editor&rsquo;s Choice &middot; 10Best</p>
+                      <p class="body-style-card__fact-label">MSRP Range</p>
+                      <p class="body-style-card__fact-value">$20,400 - $24,400</p>
+                      <p class="body-style-card__fact-label">Fuel Economy</p>
+                      <p class="body-style-card__fact-value">28/32 mpg</p>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Chevrolet&amp;model=Trax">Shop Now</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="body-style-card">
+                    <img
+                      class="body-style-card__image"
+                      src="https://d2kde5ohu8qb21.cloudfront.net/files/690cf1b44df09200022170fe/023-2026-kia-sportage-hybrid.jpg"
+                      alt="2026 Kia Sportage Hybrid"
+                    >
+                    <div class="body-style-card__content">
+                      <h3 class="body-style-card__title">2026 Kia Sportage Hybrid</h3>
+                      <p class="body-style-card__rank">#2 among SUVs starting under $30,000</p>
+                      <p class="body-style-card__rating">C/D Rating 8.5/10</p>
+                      <p class="body-style-card__accolades">Top-rated hybrid pick</p>
+                      <p class="body-style-card__fact-label">MSRP Range</p>
+                      <p class="body-style-card__fact-value">$28,290 - $38,490</p>
+                      <p class="body-style-card__fact-label">Fuel Economy</p>
+                      <p class="body-style-card__fact-value">38/43 mpg</p>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Kia&amp;model=Sportage">Shop Now</a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="body-style-card">
+                    <img
+                      class="body-style-card__image"
+                      src="https://d2kde5ohu8qb21.cloudfront.net/files/67a2b8c5c277ba0008059b12/008-2025-subaru-forester-hybrid.jpg"
+                      alt="2026 Subaru Forester"
+                    >
+                    <div class="body-style-card__content">
+                      <h3 class="body-style-card__title">2026 Subaru Forester</h3>
+                      <p class="body-style-card__rank">#3 among SUVs starting under $30,000</p>
+                      <p class="body-style-card__rating">C/D Rating 8.4/10</p>
+                      <p class="body-style-card__accolades">Top-rated family pick</p>
+                      <p class="body-style-card__fact-label">MSRP Range</p>
+                      <p class="body-style-card__fact-value">$29,695 - $38,195</p>
+                      <p class="body-style-card__fact-label">Fuel Economy</p>
+                      <p class="body-style-card__fact-value">26/33 mpg</p>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Subaru&amp;model=Forester">Shop Now</a>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -1189,9 +1395,33 @@
             </p>
             <p class="footer-publication">Car and Driver is a publication of Hearst Autos, Inc.</p>
             <p class="footer-rights">All Rights Reserved</p>
+            <p class="footer-variant-link">
+              <a data-variant-footer-link href="/payment-estimate-email-mock.html?variant=standard">View standard estimate mock</a>
+            </p>
           </td>
         </tr>
       </table>
     </div>
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const variant = params.get('variant') === 'standard' ? 'standard' : 'body-style';
+        document.querySelectorAll('[data-mock-variant]').forEach((element) => {
+          const shouldShow = element.getAttribute('data-mock-variant') === variant;
+          element.style.display = shouldShow ? '' : 'none';
+        });
+
+        const footerLink = document.querySelector('[data-variant-footer-link]');
+        if (footerLink) {
+          if (variant === 'body-style') {
+            footerLink.setAttribute('href', '/payment-estimate-email-mock.html?variant=standard');
+            footerLink.textContent = 'View standard estimate mock';
+          } else {
+            footerLink.setAttribute('href', '/payment-estimate-email-mock.html');
+            footerLink.textContent = 'View body-style shopper mock';
+          }
+        }
+      })();
+    </script>
   </body>
 </html>

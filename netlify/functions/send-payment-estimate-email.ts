@@ -1,4 +1,6 @@
 import type { Handler } from '@netlify/functions';
+import { getNewVehicles, getUsedVehicles } from '../../src/services/vehicleService';
+import type { Vehicle } from '../../src/types/vehicle';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,6 +19,7 @@ type EstimateEmailPayload = {
   testMode?: boolean;
   userName?: string;
   vehicle?: {
+    selectionMode?: 'specific' | 'bodyStyle';
     condition?: string;
     year?: string;
     make?: string;
@@ -29,9 +32,21 @@ type EstimateEmailPayload = {
   estimate?: {
     monthlyPayment?: string;
     summary?: string;
+    targetVehiclePrice?: number;
     rows?: EstimateRow[];
   };
   mockUrl?: string;
+};
+
+type EstimateRecommendation = {
+  name: string;
+  image?: string;
+  priceRange: string;
+  rating: string;
+  accolades: string;
+  rankLabel: string;
+  fuelEconomy: string;
+  shopUrl: string;
 };
 
 const json = (statusCode: number, body: Record<string, unknown>) => ({
@@ -53,6 +68,89 @@ const escapeHtml = (value: unknown) =>
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+const formatCurrency = (value: number) => `$${Math.round(value).toLocaleString()}`;
+
+const getBodyStylePluralLabel = (bodyStyle: string) => {
+  const normalized = bodyStyle.trim().toLowerCase();
+  if (normalized === 'suv') return 'SUVs';
+  if (normalized === 'ev') return 'EVs';
+  if (normalized === 'hybrid') return 'Hybrids';
+  if (normalized === 'crossover') return 'Crossovers';
+  return `${bodyStyle}s`;
+};
+
+const isBodyStyleEstimate = (payload: EstimateEmailPayload) => payload.vehicle?.selectionMode === 'bodyStyle';
+
+const matchesRecommendationCategory = (vehicle: Vehicle, bodyStyle: string) => {
+  const normalized = bodyStyle.trim().toLowerCase();
+  if (normalized === 'ev') return vehicle.fuelType === 'Electric';
+  if (normalized === 'hybrid') return vehicle.fuelType === 'Hybrid' || vehicle.fuelType === 'Plug-in Hybrid';
+  if (normalized === 'crossover') return vehicle.bodyStyle === 'SUV';
+  return vehicle.bodyStyle.toLowerCase() === normalized;
+};
+
+const buildVehicleAccolades = (vehicle: Vehicle, rank: number) => {
+  const accolades = [
+    vehicle.editorsChoice ? "Editor's Choice" : undefined,
+    vehicle.tenBest ? '10Best' : undefined,
+    vehicle.evOfTheYear ? 'EV of the Year' : undefined,
+    vehicle.award || undefined,
+  ].filter((value, index, all): value is string => Boolean(value) && all.indexOf(value) === index);
+
+  if (accolades.length === 0 && rank <= 3) {
+    accolades.push('Top-rated pick');
+  }
+
+  return accolades.join(' · ');
+};
+
+const buildRecommendationShopUrl = (condition: string | undefined, vehicle: Vehicle) => {
+  const listingCondition = condition === 'used' ? 'used' : 'new';
+  const params = new URLSearchParams({
+    year: vehicle.year,
+    make: vehicle.make,
+    model: vehicle.model,
+  });
+  return `https://www.caranddriver.com/cars-for-sale/${listingCondition}?${params.toString()}`;
+};
+
+const buildBodyStyleRecommendations = (payload: EstimateEmailPayload): EstimateRecommendation[] => {
+  const bodyStyle = payload.vehicle?.bodyStyle?.trim();
+  const targetVehiclePrice = payload.estimate?.targetVehiclePrice;
+  if (!bodyStyle || !targetVehiclePrice || targetVehiclePrice <= 0) return [];
+
+  const sourceVehicles = payload.vehicle?.condition === 'used' ? getUsedVehicles() : getNewVehicles();
+  const rankedVehicles = sourceVehicles
+    .filter((vehicle) => matchesRecommendationCategory(vehicle, bodyStyle))
+    .sort((a, b) => b.staffRating - a.staffRating);
+
+  const seenModels = new Set<string>();
+  const affordableVehicles = rankedVehicles.filter((vehicle) => {
+    if (vehicle.priceMin > targetVehiclePrice) return false;
+    const modelKey = `${vehicle.make.toLowerCase()}::${vehicle.model.toLowerCase()}`;
+    if (seenModels.has(modelKey)) return false;
+    seenModels.add(modelKey);
+    return true;
+  });
+
+  return affordableVehicles.slice(0, 3).map((vehicle, index) => ({
+    name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
+    image: vehicle.image,
+    priceRange: vehicle.priceRange || `${formatCurrency(vehicle.priceMin)} - ${formatCurrency(vehicle.priceMax)}`,
+    rating: `${vehicle.staffRating.toFixed(1)}/10`,
+    accolades: buildVehicleAccolades(vehicle, index + 1),
+    rankLabel: `#${index + 1} among ${getBodyStylePluralLabel(bodyStyle)} starting under ${formatCurrency(targetVehiclePrice)}`,
+    fuelEconomy: vehicle.mpg || 'EPA estimate pending',
+    shopUrl: buildRecommendationShopUrl(payload.vehicle?.condition, vehicle),
+  }));
+};
+
+const buildRecommendationRows = (recommendations: EstimateRecommendation[]) => {
+  if (recommendations.length <= 1) return [recommendations];
+  const [lead, ...rest] = recommendations;
+  return [[lead], rest];
+};
+
 const isLocalOrigin = (origin: string | undefined) => {
   if (!origin) return false;
   try {
@@ -67,6 +165,9 @@ const buildVehicleName = (payload: EstimateEmailPayload) => {
   const vehicle = payload.vehicle ?? {};
   const pieces = [vehicle.year, vehicle.make, vehicle.model, vehicle.trim].filter(Boolean);
   if (pieces.length > 0) return pieces.join(' ');
+  if (vehicle.selectionMode === 'bodyStyle' && vehicle.bodyStyle) {
+    return `${vehicle.condition === 'used' ? 'Used' : 'New'} ${getBodyStylePluralLabel(vehicle.bodyStyle)}`;
+  }
   return `${vehicle.condition === 'used' ? 'Used' : 'New'} ${vehicle.bodyStyle || 'vehicle'}`;
 };
 
@@ -78,6 +179,11 @@ const buildEmailHtml = (payload: EstimateEmailPayload) => {
   const rows = payload.estimate?.rows?.length ? payload.estimate.rows : [];
   const shopUrl = payload.vehicle?.shopUrl || 'https://www.caranddriver.com/cars-for-sale/';
   const mockUrl = payload.mockUrl || 'https://cd-mmp-2025.netlify.app/payment-estimate-email-mock.html';
+  const targetVehiclePrice = payload.estimate?.targetVehiclePrice;
+  const bodyStyleRecommendations = isBodyStyleEstimate(payload) ? buildBodyStyleRecommendations(payload) : [];
+  const bodyStyleLabel = payload.vehicle?.bodyStyle?.trim() || 'vehicle';
+  const bodyStylePlural = getBodyStylePluralLabel(bodyStyleLabel);
+  const bodyStyleRecommendationRows = buildRecommendationRows(bodyStyleRecommendations);
 
   const rowMarkup = rows
     .map((row) => `
@@ -88,8 +194,82 @@ const buildEmailHtml = (payload: EstimateEmailPayload) => {
     `)
     .join('');
 
+  const nextStepMarkup = bodyStyleRecommendations.length > 0
+    ? `
+            <tr>
+              <td style="padding:32px;">
+                <p style="margin:0 0 8px;color:#005a8b;font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;">Popular picks in your budget</p>
+                <h2 style="margin:0 0 12px;color:#111827;font-size:24px;line-height:1.15;">Three ${escapeHtml(bodyStylePlural.toLowerCase())} worth shopping starting under ${escapeHtml(formatCurrency(targetVehiclePrice || 0))}</h2>
+                <p style="margin:0 0 20px;color:#4b5563;font-size:15px;line-height:1.5;">These are strong-rated ${escapeHtml(bodyStylePlural.toLowerCase())} with starting MSRPs at or below your target vehicle price, so you can compare real options before talking numbers with a dealer.</p>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" class="body-style-grid" style="width:100%;border-collapse:separate;border-spacing:0;">
+                  ${bodyStyleRecommendationRows.map((row, rowIndex) => `
+                  <tr>
+                    ${row.map((vehicle, index) => `
+                      <td class="body-style-grid__cell" style="width:${row.length === 1 ? '100%' : '50%'};padding:${index === row.length - 1 ? '0' : '0 12px 0 0'};padding-bottom:${rowIndex === bodyStyleRecommendationRows.length - 1 ? '0' : '16px'};vertical-align:top;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width:100%;border:1px solid #d8e0e5;border-radius:10px;overflow:hidden;background:#ffffff;">
+                          <tr>
+                            <td style="padding:0;">
+                              ${vehicle.image
+                                ? `<img src="${escapeHtml(vehicle.image)}" alt="${escapeHtml(vehicle.name)}" style="display:block;width:100%;height:${row.length === 1 ? '300px' : '168px'};object-fit:cover;border:0;">`
+                                : `<div style="padding:28px 16px;background:#eef5f7;color:#4b5563;font-size:14px;line-height:1.4;text-align:center;">Image unavailable</div>`}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding:18px 16px 16px;">
+                              <p style="margin:0 0 6px;color:#111827;font-size:22px;font-weight:800;line-height:1.1;">${escapeHtml(vehicle.name)}</p>
+                              <p style="margin:0 0 10px;color:#005a8b;font-size:13px;font-weight:800;line-height:1.35;">${escapeHtml(vehicle.rankLabel)}</p>
+                              <p style="margin:0 0 12px;color:#111827;font-size:16px;font-weight:800;line-height:1.3;">C/D Rating ${escapeHtml(vehicle.rating)}</p>
+                              <p style="margin:0 0 14px;color:#4b5563;font-size:14px;line-height:1.45;">${escapeHtml(vehicle.accolades || 'Top-rated pick')}</p>
+                              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;">
+                                <tr>
+                                  <td style="padding:10px 0;border-top:1px solid #e5e7eb;color:#6b7280;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;">MSRP Range</td>
+                                </tr>
+                                <tr>
+                                  <td style="padding:0 0 12px;color:#111827;font-size:18px;font-weight:800;line-height:1.2;">${escapeHtml(vehicle.priceRange)}</td>
+                                </tr>
+                                <tr>
+                                  <td style="padding:10px 0;border-top:1px solid #e5e7eb;color:#6b7280;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;">Fuel Economy</td>
+                                </tr>
+                                <tr>
+                                  <td style="padding:0 0 16px;color:#111827;font-size:18px;font-weight:800;line-height:1.2;">${escapeHtml(vehicle.fuelEconomy)}</td>
+                                </tr>
+                              </table>
+                              <a href="${escapeHtml(vehicle.shopUrl)}" style="display:block;padding:12px 14px;background:#1b6f9f;color:#ffffff;font-size:12px;font-weight:800;letter-spacing:.4px;text-align:center;text-decoration:none;text-transform:uppercase;">Shop now</a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    `).join('')}
+                  </tr>
+                  `).join('')}
+                </table>
+              </td>
+            </tr>`
+    : `
+            <tr>
+              <td style="padding:32px;">
+                <h2 style="margin:0 0 10px;color:#111827;font-size:22px;">Your next step</h2>
+                <p style="margin:0 0 20px;color:#4b5563;font-size:15px;line-height:1.45;">Compare real listings that match this estimate before you talk numbers with a dealer.</p>
+                <a href="${escapeHtml(shopUrl)}" style="display:block;padding:14px 18px;background:#1b6f9f;color:#ffffff;font-size:14px;font-weight:800;letter-spacing:.4px;text-align:center;text-decoration:none;text-transform:uppercase;">Shop matching cars</a>
+                <p style="margin:20px 0 0;color:#4b5563;font-size:13px;line-height:1.45;">Preview mock: <a href="${escapeHtml(mockUrl)}" style="color:#005a8b;">${escapeHtml(mockUrl)}</a></p>
+              </td>
+            </tr>`;
+
   return `<!doctype html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      @media only screen and (max-width: 640px) {
+        .body-style-grid__cell {
+          display: block !important;
+          width: 100% !important;
+          padding: 0 0 16px 0 !important;
+        }
+      }
+    </style>
+  </head>
   <body style="margin:0;background:#f3f5f7;font-family:Arial,Helvetica,sans-serif;color:#111827;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3f5f7;">
       <tr>
@@ -117,12 +297,10 @@ const buildEmailHtml = (payload: EstimateEmailPayload) => {
                 </table>
               </td>
             </tr>
+            ${nextStepMarkup}
             <tr>
-              <td style="padding:32px;">
-                <h2 style="margin:0 0 10px;color:#111827;font-size:22px;">Your next step</h2>
-                <p style="margin:0 0 20px;color:#4b5563;font-size:15px;line-height:1.45;">Compare real listings that match this estimate before you talk numbers with a dealer.</p>
-                <a href="${escapeHtml(shopUrl)}" style="display:block;padding:14px 18px;background:#1b6f9f;color:#ffffff;font-size:14px;font-weight:800;letter-spacing:.4px;text-align:center;text-decoration:none;text-transform:uppercase;">Shop matching cars</a>
-                <p style="margin:20px 0 0;color:#4b5563;font-size:13px;line-height:1.45;">Preview mock: <a href="${escapeHtml(mockUrl)}" style="color:#005a8b;">${escapeHtml(mockUrl)}</a></p>
+              <td style="padding:0 32px 32px;color:#4b5563;font-size:13px;line-height:1.45;">
+                Preview mock: <a href="${escapeHtml(mockUrl)}" style="color:#005a8b;">${escapeHtml(mockUrl)}</a>
               </td>
             </tr>
             <tr>

@@ -299,16 +299,18 @@ const getPaymentEstimateEmailEndpoint = () => {
   return `${origin}${PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH}`;
 };
 
-const getPaymentEstimateEmailMockUrl = () => {
+const getPaymentEstimateEmailMockUrl = (variant?: 'standard' | 'body-style') => {
   const origin = isLocalHost() || typeof window === 'undefined'
     ? PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN
     : window.location.origin;
-  return `${origin}${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}`;
+  const suffix = variant === 'body-style' ? '?variant=body-style' : '';
+  return `${origin}${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}${suffix}`;
 };
 
-const displayPaymentEstimateEmailMock = () => {
+const displayPaymentEstimateEmailMock = (variant?: 'standard' | 'body-style') => {
   if (typeof window === 'undefined') return;
-  window.location.assign(PAYMENT_ESTIMATE_EMAIL_MOCK_PATH);
+  const suffix = variant === 'body-style' ? '?variant=body-style' : '';
+  window.location.assign(`${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}${suffix}`);
 };
 
 const LIGHT_FINANCING_FAQS = [
@@ -3925,11 +3927,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     setLightEstimateEmailError(undefined);
     setLightEstimateEmailStatus(undefined);
     setIsLightEstimateEmailSending(true);
+    const isBodyStyleBrowseEmail = Boolean(
+      !lightHasSpecificVehicleSelection &&
+      lightVehicleStepMode === 'browsing' &&
+      lightVehicleResultBodyStyle,
+    );
+    const emailMockVariant = isBodyStyleBrowseEmail ? 'body-style' : 'standard';
 
     if (useEmailTestMode) {
       setLightEstimateEmailStatus(trimmed ? `Test estimate accepted for ${trimmed}.` : 'Showing email estimate preview.');
       setIsLightEstimateEmailSending(false);
-      displayPaymentEstimateEmailMock();
+      displayPaymentEstimateEmailMock(emailMockVariant);
       return;
     }
 
@@ -3953,6 +3961,30 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ...(showTotalIncludingTradeCredit ? [{ label: cashLoanPaymentsLabel, value: currency(totalCost) }] : []),
       { label: estimatedTotalLabel, value: currency(estimatedTotalValue), emphasis: true },
     ];
+    const emailVehiclePayload = isBodyStyleBrowseEmail
+      ? {
+          selectionMode: 'bodyStyle' as const,
+          condition,
+          bodyStyle: lightVehicleResultBodyStyle,
+          shopUrl: lightELotAllResultsHref,
+        }
+      : {
+          selectionMode: 'specific' as const,
+          condition,
+          year: selectedYear,
+          make: selectedVehicle.make,
+          model: selectedVehicle.model,
+          trim: selectedTrimStyleOption?.trimName,
+          bodyStyle: selectedVehicle.bodyStyle,
+          image: selectedVehicle.image,
+          shopUrl: lightReviewVehicleShopHref,
+        };
+    const emailEstimatePayload = {
+      monthlyPayment: currentMonthlyCostDisplay,
+      summary: lightEstimateSummaryCopy,
+      rows: estimateRows,
+      ...(isBodyStyleBrowseEmail ? { targetVehiclePrice: lightVehiclePriceRangeTarget } : {}),
+    };
 
     try {
       const response = await fetch(getPaymentEstimateEmailEndpoint(), {
@@ -3962,22 +3994,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           email: trimmed,
           testMode: useEmailTestMode,
           userName: user?.name,
-          vehicle: {
-            condition,
-            year: selectedYear,
-            make: selectedVehicle.make,
-            model: selectedVehicle.model,
-            trim: selectedTrimStyleOption?.trimName,
-            bodyStyle: selectedVehicle.bodyStyle,
-            image: selectedVehicle.image,
-            shopUrl: lightReviewVehicleShopHref,
-          },
-          estimate: {
-            monthlyPayment: currentMonthlyCostDisplay,
-            summary: lightEstimateSummaryCopy,
-            rows: estimateRows,
-          },
-          mockUrl: getPaymentEstimateEmailMockUrl(),
+          vehicle: emailVehiclePayload,
+          estimate: emailEstimatePayload,
+          mockUrl: getPaymentEstimateEmailMockUrl(emailMockVariant),
         }),
       });
       const result = await response.json().catch(() => ({}));
@@ -3991,11 +4010,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       }
 
       setLightEstimateEmailStatus(typeof result.message === 'string' ? result.message : `Estimate sent to ${trimmed}.`);
-      displayPaymentEstimateEmailMock();
+      displayPaymentEstimateEmailMock(emailMockVariant);
     } catch (error) {
       if (useEmailTestMode) {
         setLightEstimateEmailStatus(`Test estimate accepted for ${trimmed}.`);
-        displayPaymentEstimateEmailMock();
+        displayPaymentEstimateEmailMock(emailMockVariant);
         return;
       }
       setLightEstimateEmailError(error instanceof Error ? error.message : 'We could not send this estimate. Please try again.');
