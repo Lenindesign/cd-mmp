@@ -5318,7 +5318,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                         <span className="aio-payment__light-vehicle-step__category-match-copy">
                                           <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong>
                                           <span>
-                                            Starts at {currency(vehicle.priceMin)} · {currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo est.
+                                            Starts at {currency(vehicle.priceMin)}
                                           </span>
                                         </span>
                                       </span>
@@ -5763,9 +5763,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
 
                     <p className="aio-payment__light-trade-step__dealer-note">
-                      <strong>
-                        {registrationDealerFeeGuidance.label}:
-                      </strong>{' '}
+                      {registrationDealerFeeGuidance.label !== 'High Fee States' ? (
+                        <>
+                          <strong>
+                            {registrationDealerFeeGuidance.label}:
+                          </strong>{' '}
+                        </>
+                      ) : null}
                       {registrationDealerFeeGuidance.copy}
                     </p>
 
