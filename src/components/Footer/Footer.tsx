@@ -78,7 +78,9 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Mazda CX-5', path: '/2026/Mazda/CX-5/concept' },
         { label: 'Toyota Brand Hub', path: '/brands/toyota' },
         { label: 'Vehicle Ranking', path: '/rankings' },
-        { label: 'Payment Estimate Email Mock (Body Style)', path: '/payment-estimate-email-mock.html', external: true },
+        { label: 'Payment Estimate Email Mock (New Car)', path: '/payment-estimate-email-mock.html?variant=standard', external: true },
+        { label: 'Payment Estimate Email Mock (Used Car)', path: '/payment-estimate-email-mock.html?variant=used-car', external: true },
+        { label: 'Payment Estimate Email Mock (Body Style)', path: '/payment-estimate-email-mock.html?variant=body-style', external: true },
       ],
     },
   ];
@@ -194,7 +196,6 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
 };
 
 export default Footer;
-
 
 
 

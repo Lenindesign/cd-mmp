@@ -299,17 +299,17 @@ const getPaymentEstimateEmailEndpoint = () => {
   return `${origin}${PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH}`;
 };
 
-const getPaymentEstimateEmailMockUrl = (variant?: 'standard' | 'body-style') => {
+const getPaymentEstimateEmailMockUrl = (variant?: 'standard' | 'used-car' | 'body-style') => {
   const origin = isLocalHost() || typeof window === 'undefined'
     ? PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN
     : window.location.origin;
-  const suffix = variant === 'body-style' ? '?variant=body-style' : '';
+  const suffix = variant && variant !== 'standard' ? `?variant=${variant}` : '?variant=standard';
   return `${origin}${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}${suffix}`;
 };
 
-const displayPaymentEstimateEmailMock = (variant?: 'standard' | 'body-style') => {
+const displayPaymentEstimateEmailMock = (variant?: 'standard' | 'used-car' | 'body-style') => {
   if (typeof window === 'undefined') return;
-  const suffix = variant === 'body-style' ? '?variant=body-style' : '';
+  const suffix = variant && variant !== 'standard' ? `?variant=${variant}` : '?variant=standard';
   window.location.assign(`${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}${suffix}`);
 };
 
@@ -3932,7 +3932,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       lightVehicleStepMode === 'browsing' &&
       lightVehicleResultBodyStyle,
     );
-    const emailMockVariant = isBodyStyleBrowseEmail ? 'body-style' : 'standard';
+    const emailMockVariant = isBodyStyleBrowseEmail
+      ? 'body-style'
+      : condition === 'used'
+        ? 'used-car'
+        : 'standard';
 
     if (useEmailTestMode) {
       setLightEstimateEmailStatus(trimmed ? `Test estimate accepted for ${trimmed}.` : 'Showing email estimate preview.');

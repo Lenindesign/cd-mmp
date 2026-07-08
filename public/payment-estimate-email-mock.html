@@ -1062,8 +1062,8 @@
 
         <tr>
           <td class="section">
-              <h1>Your 2026 Honda CR-V Hybrid estimate</h1>
-            <p class="copy">
+              <h1 id="mock-title">Your 2026 Honda CR-V Hybrid estimate</h1>
+            <p class="copy" id="mock-intro-copy">
               Hi Alex, thank you for using Car and Driver to calculate an estimated monthly payment for a
               2026 Honda CR-V Hybrid Sport Touring. Use this estimate as a planning guide while
               shopping, and keep in mind that final pricing, taxes, fees, trade-in value, and
@@ -1076,11 +1076,11 @@
           <td class="section payment-hero">
             <div class="payment-panel">
               <p class="eyebrow">Estimated monthly payment</p>
-              <p class="payment-amount">$688<span>/mo</span></p>
-              <p class="payment-subcopy">
+              <p class="payment-amount" id="mock-payment-amount">$688<span>/mo</span></p>
+              <p class="payment-subcopy" id="mock-payment-subcopy">
                 Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.
               </p>
-              <a class="payment-cta" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">
+              <a class="payment-cta" id="mock-payment-cta" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">
                 See cars in your budget
               </a>
             </div>
@@ -1096,8 +1096,8 @@
 
               <div class="breakdown-highlight">
                 <p class="breakdown-highlight__eyebrow">Amount Financed</p>
-                <p class="breakdown-highlight__value">$41,570</p>
-                <p class="breakdown-highlight__meta">
+                <p class="breakdown-highlight__value" id="mock-highlight-value">$41,570</p>
+                <p class="breakdown-highlight__meta" id="mock-highlight-meta">
                   $42,150 selected vehicle price + <span class="accent-red">$3,420</span> taxes &amp; fees
                   - <span class="accent-green">$4,000</span> down = $41,570 financed
                 </p>
@@ -1106,38 +1106,38 @@
               <table class="breakdown" role="presentation" cellspacing="0" cellpadding="0">
                 <tr>
                   <td>Vehicle Target Price</td>
-                  <td>$42,150</td>
+                  <td id="mock-breakdown-target-price">$42,150</td>
                 </tr>
                 <tr>
                   <td>Down Payment</td>
-                  <td><span class="accent-green">$4,000</span></td>
+                  <td id="mock-breakdown-down-payment"><span class="accent-green">$4,000</span></td>
                 </tr>
                 <tr>
                   <td>Total Interest Paid</td>
-                  <td><span class="accent-red">$7,701</span></td>
+                  <td id="mock-breakdown-interest"><span class="accent-red">$7,701</span></td>
                 </tr>
                 <tr>
                   <td>Net Trade Value</td>
-                  <td>$0</td>
+                  <td id="mock-breakdown-trade">$0</td>
                 </tr>
                 <tr>
                   <td>Taxes &amp; Fees Total</td>
-                  <td><span class="accent-red">$3,420</span></td>
+                  <td id="mock-breakdown-fees"><span class="accent-red">$3,420</span></td>
                 </tr>
                 <tr class="summary">
                   <td>Total Loan Payments Over 60 Months</td>
-                  <td>$49,271</td>
+                  <td id="mock-breakdown-loan-payments">$49,271</td>
                 </tr>
                 <tr>
                   <td>Monthly Payment</td>
-                  <td>$688/mo</td>
+                  <td id="mock-breakdown-monthly">$688/mo</td>
                 </tr>
                 <tr class="total">
                   <td>Estimated Total Paid</td>
-                  <td><span class="accent-blue">$53,271</span></td>
+                  <td id="mock-breakdown-total"><span class="accent-blue">$53,271</span></td>
                 </tr>
               </table>
-              <p class="breakdown-footnote">
+              <p class="breakdown-footnote" id="mock-breakdown-footnote">
                 $49,271 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$53,271</span> estimated total paid
               </p>
             </div>
@@ -1216,6 +1216,81 @@
                       </tr>
                       <tr>
                         <td><a class="button button--secondary" href="/vehicles?condition=used&amp;make=Honda&amp;model=CR-V">Shop Used CR-V Hybrid</a></td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr data-mock-variant="used-car" style="display:none;">
+          <td class="section">
+            <p class="eyebrow">Your next used SUV</p>
+            <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="vehicle-content">
+                  <h2 class="vehicle-heading">2023 Toyota RAV4 XLE</h2>
+                  <p class="vehicle-rank">Popular used compact SUV with strong resale and everyday usability</p>
+                  <table class="vehicle-hero-layout" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td class="vehicle-hero-layout__media">
+                        <img
+                          class="vehicle-image"
+                          src="https://d2kde5ohu8qb21.cloudfront.net/files/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg"
+                          alt="Toyota RAV4 parked outdoors"
+                        >
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p class="copy" style="margin-top: 18px;">
+                    <strong>C/D Says:</strong> The RAV4 remains an easy used-car recommendation because it pairs practical cargo room,
+                    strong efficiency, and broad market availability in one familiar package.
+                    <a href="/vehicles?condition=used&amp;year=2023&amp;make=Toyota&amp;model=RAV4">Learn more</a>
+                  </p>
+
+                  <div class="vehicle-hero-panel" style="margin-top: 18px;">
+                    <table class="vehicle-score-row" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>
+                          <div class="vehicle-score">8.0<span>/10</span></div>
+                          <span class="vehicle-score-label">C/D Rating</span>
+                        </td>
+                        <td class="vehicle-badges">
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" alt="Editor's Choice">
+                            </span>
+                            <span class="vehicle-badge-label">Editor's Choice</span>
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                    <div class="vehicle-stat-rule"></div>
+                    <table class="vehicle-stat-grid" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>
+                          <div class="vehicle-stat-block">
+                            <p class="vehicle-stat-label">Typical Price</p>
+                            <p class="vehicle-stat-value">$28,400</p>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="vehicle-stat-block">
+                            <p class="vehicle-stat-label">Mileage</p>
+                            <p class="vehicle-stat-value">27k</p>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                    <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td><a class="button" href="/vehicles?condition=used&amp;year=2023&amp;make=Toyota&amp;model=RAV4">Shop Used RAV4</a></td>
+                      </tr>
+                      <tr>
+                        <td><a class="button button--secondary" href="/2026/Toyota/RAV4">View Current RAV4 Review</a></td>
                       </tr>
                     </table>
                   </div>
@@ -1396,7 +1471,12 @@
             <p class="footer-publication">Car and Driver is a publication of Hearst Autos, Inc.</p>
             <p class="footer-rights">All Rights Reserved</p>
             <p class="footer-variant-link">
-              <a data-variant-footer-link href="/payment-estimate-email-mock.html?variant=standard">View standard estimate mock</a>
+              Compare variants:
+              <a href="/payment-estimate-email-mock.html?variant=standard">New car</a>
+              <span class="footer-divider" aria-hidden="true">|</span>
+              <a href="/payment-estimate-email-mock.html?variant=used-car">Used car</a>
+              <span class="footer-divider" aria-hidden="true">|</span>
+              <a href="/payment-estimate-email-mock.html?variant=body-style">Body style</a>
             </p>
           </td>
         </tr>
@@ -1405,22 +1485,102 @@
     <script>
       (() => {
         const params = new URLSearchParams(window.location.search);
-        const variant = params.get('variant') === 'standard' ? 'standard' : 'body-style';
+        const requestedVariant = params.get('variant');
+        const variant = requestedVariant === 'used-car' || requestedVariant === 'body-style' || requestedVariant === 'standard'
+          ? requestedVariant
+          : 'standard';
         document.querySelectorAll('[data-mock-variant]').forEach((element) => {
           const shouldShow = element.getAttribute('data-mock-variant') === variant;
           element.style.display = shouldShow ? '' : 'none';
         });
 
-        const footerLink = document.querySelector('[data-variant-footer-link]');
-        if (footerLink) {
-          if (variant === 'body-style') {
-            footerLink.setAttribute('href', '/payment-estimate-email-mock.html?variant=standard');
-            footerLink.textContent = 'View standard estimate mock';
-          } else {
-            footerLink.setAttribute('href', '/payment-estimate-email-mock.html');
-            footerLink.textContent = 'View body-style shopper mock';
-          }
-        }
+        const variantContent = {
+          standard: {
+            title: 'Your 2026 Honda CR-V Hybrid estimate',
+            intro: 'Hi Alex, thank you for using Car and Driver to calculate an estimated monthly payment for a 2026 Honda CR-V Hybrid Sport Touring. Use this estimate as a planning guide while shopping, and keep in mind that final pricing, taxes, fees, trade-in value, and financing terms may vary by vehicle and retailer.',
+            paymentAmount: '$688<span>/mo</span>',
+            paymentSubcopy: 'Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.',
+            ctaHref: '/vehicles?condition=new&year=2026&make=Honda&model=CR-V',
+            ctaLabel: 'See cars in your budget',
+            highlightValue: '$41,570',
+            highlightMeta: '$42,150 selected vehicle price + <span class="accent-red">$3,420</span> taxes &amp; fees - <span class="accent-green">$4,000</span> down = $41,570 financed',
+            targetPrice: '$42,150',
+            downPayment: '<span class="accent-green">$4,000</span>',
+            interest: '<span class="accent-red">$7,701</span>',
+            trade: '$0',
+            fees: '<span class="accent-red">$3,420</span>',
+            loanPayments: '$49,271',
+            monthly: '$688/mo',
+            total: '<span class="accent-blue">$53,271</span>',
+            footnote: '$49,271 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$53,271</span> estimated total paid',
+          },
+          'used-car': {
+            title: 'Your 2023 Toyota RAV4 estimate',
+            intro: 'Hi Alex, thank you for using Car and Driver to estimate a monthly payment for a used 2023 Toyota RAV4 XLE. Use this mock as a planning reference while comparing listings, and expect the final numbers to shift based on mileage, fees, lender terms, and dealer pricing.',
+            paymentAmount: '$688<span>/mo</span>',
+            paymentSubcopy: 'Based on a $28,400 selected vehicle price, $4,000 down, 60 months, and 7.4% APR.',
+            ctaHref: '/vehicles?condition=used&year=2023&make=Toyota&model=RAV4',
+            ctaLabel: 'Shop used RAV4 listings',
+            highlightValue: '$27,734',
+            highlightMeta: '$28,400 selected vehicle price + <span class="accent-red">$3,334</span> taxes &amp; fees - <span class="accent-green">$4,000</span> down = $27,734 financed',
+            targetPrice: '$28,400',
+            downPayment: '<span class="accent-green">$4,000</span>',
+            interest: '<span class="accent-red">$13,546</span>',
+            trade: '$0',
+            fees: '<span class="accent-red">$3,334</span>',
+            loanPayments: '$41,280',
+            monthly: '$688/mo',
+            total: '<span class="accent-blue">$45,280</span>',
+            footnote: '$41,280 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$45,280</span> estimated total paid',
+          },
+          'body-style': {
+            title: 'Your SUV budget estimate',
+            intro: 'Hi Alex, thank you for using Car and Driver to estimate a monthly payment while shopping SUVs by body style. This version keeps the estimate summary and swaps the detail module for side-by-side recommendations that fit your target price range.',
+            paymentAmount: '$688<span>/mo</span>',
+            paymentSubcopy: 'Based on a $30,000 target vehicle price, $4,000 down, 60 months, and 6.9% APR.',
+            ctaHref: '/vehicles?condition=new&bodyStyle=SUV&maxPrice=30000',
+            ctaLabel: 'Shop SUVs in your budget',
+            highlightValue: '$29,270',
+            highlightMeta: '$30,000 target vehicle price + <span class="accent-red">$3,270</span> taxes &amp; fees - <span class="accent-green">$4,000</span> down = $29,270 financed',
+            targetPrice: '$30,000',
+            downPayment: '<span class="accent-green">$4,000</span>',
+            interest: '<span class="accent-red">$11,986</span>',
+            trade: '$0',
+            fees: '<span class="accent-red">$3,270</span>',
+            loanPayments: '$41,256',
+            monthly: '$688/mo',
+            total: '<span class="accent-blue">$45,256</span>',
+            footnote: '$41,256 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$45,256</span> estimated total paid',
+          },
+        };
+
+        const content = variantContent[variant];
+        const setHtml = (selector, value) => {
+          const node = document.querySelector(selector);
+          if (node) node.innerHTML = value;
+        };
+        const setAttr = (selector, attr, value) => {
+          const node = document.querySelector(selector);
+          if (node) node.setAttribute(attr, value);
+        };
+
+        setHtml('#mock-title', content.title);
+        setHtml('#mock-intro-copy', content.intro);
+        setHtml('#mock-payment-amount', content.paymentAmount);
+        setHtml('#mock-payment-subcopy', content.paymentSubcopy);
+        setAttr('#mock-payment-cta', 'href', content.ctaHref);
+        setHtml('#mock-payment-cta', content.ctaLabel);
+        setHtml('#mock-highlight-value', content.highlightValue);
+        setHtml('#mock-highlight-meta', content.highlightMeta);
+        setHtml('#mock-breakdown-target-price', content.targetPrice);
+        setHtml('#mock-breakdown-down-payment', content.downPayment);
+        setHtml('#mock-breakdown-interest', content.interest);
+        setHtml('#mock-breakdown-trade', content.trade);
+        setHtml('#mock-breakdown-fees', content.fees);
+        setHtml('#mock-breakdown-loan-payments', content.loanPayments);
+        setHtml('#mock-breakdown-monthly', content.monthly);
+        setHtml('#mock-breakdown-total', content.total);
+        setHtml('#mock-breakdown-footnote', content.footnote);
       })();
     </script>
   </body>
