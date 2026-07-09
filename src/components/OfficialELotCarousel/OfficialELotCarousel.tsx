@@ -16,6 +16,8 @@ interface OfficialELotCarouselProps {
   location?: string;
   priceThreshold?: number;
   className?: string;
+  title?: string;
+  resultsLinkLabel?: string;
 }
 
 const formatCurrency = (value: number) => (
@@ -64,6 +66,8 @@ const OfficialELotCarousel = ({
   location = 'Miami, FL',
   priceThreshold,
   className = '',
+  title = 'For Sale Near You',
+  resultsLinkLabel,
 }: OfficialELotCarouselProps) => {
   const headingId = useId();
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -145,15 +149,16 @@ const OfficialELotCarousel = ({
   ].filter(Boolean).join(' ');
   const allResultsHref = getMarketplaceUrl(year, make, model);
   const searchLabel = `used ${year} ${make} ${model}`;
+  const resultsText = resultsLinkLabel ?? `See all results for ${searchLabel} for sale near ${location}`;
 
   return (
     <section className={sectionClassName}>
       <div className="container">
         <section className="aio-payment__light-elot" aria-labelledby={headingId}>
           <div className="aio-payment__light-elot-head">
-            <h2 id={headingId}>For Sale Near You</h2>
+            <h2 id={headingId}>{title}</h2>
             <a className="aio-payment__light-elot-results-link" href={allResultsHref}>
-              <span>See all results for <u>{searchLabel} for sale</u> near {location}</span>
+              <span>{resultsText}</span>
               <ArrowRight size={18} aria-hidden="true" />
             </a>
           </div>

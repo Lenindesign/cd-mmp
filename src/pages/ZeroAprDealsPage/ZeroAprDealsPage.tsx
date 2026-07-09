@@ -13,6 +13,7 @@ import { SEO, createBreadcrumbStructuredData, createFAQStructuredData } from '..
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import { GridAd } from '../../components/GridAd';
+import OfficialELotCarousel from '../../components/OfficialELotCarousel/OfficialELotCarousel';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import { getAprRangeLabel } from '../../components/IncentivesModal/incentivesModalUtils';
@@ -23,7 +24,9 @@ import { DealCard } from '../../components/DealCard';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveBuyingFilterDestination } from '../../utils/buyingFilterNavigation';
+import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
 import { ZERO_APR_FAQ, BEST_BUYING_FAQ as FAQ_DATA } from '../../data/faqs';
+import vehicleDatabase from '../../data/vehicles';
 import {
   GRID_BREAKER_AFTER_CARD_COUNT,
   DEALS_GRID_BREAKER_AD_URL,
@@ -75,6 +78,23 @@ const DEFAULT_FILTERS: DealsFilterState = {
   creditTier: null,
   sortBy: 'a-z',
 };
+
+interface EmptyStateElotConfig {
+  year: string;
+  make: string;
+  model: string;
+  bodyStyle: string;
+  priceThreshold?: number;
+  title: string;
+  resultsLinkLabel: string;
+}
+
+interface EmptyStateExploreLink {
+  to: string;
+  title: string;
+  description: string;
+  state?: { filters: DealsFilterState };
+}
 
 const ZeroAprDealsPage = () => {
   const location = useLocation();
@@ -215,6 +235,188 @@ const ZeroAprDealsPage = () => {
     setActiveTab('all');
     setFilters(DEFAULT_FILTERS);
   }, []);
+
+  const emptyStateElotConfig = useMemo<EmptyStateElotConfig | null>(() => {
+    const selectedBodyType = filters.bodyTypes[0] || bodyStyleName;
+    const selectedFuelType = filters.fuelTypes[0] || fuelTypeName;
+    const selectedMake = filters.makes[0] || makeName;
+
+    if (selectedBodyType === 'Convertible') {
+      return {
+        year: '2024',
+        make: 'Mazda',
+        model: 'MX-5 Miata',
+        bodyStyle: 'Convertible',
+        priceThreshold: 38000,
+        title: 'Convertible alternatives near you',
+        resultsLinkLabel: 'We do not have convertible deals right now, but these used Mazda MX-5 Miata listings are available near Miami, FL.',
+      };
+    }
+
+    if (selectedFuelType) {
+      if (selectedFuelType === 'Plug-In Hybrid') {
+        return {
+          year: '2026',
+          make: 'Toyota',
+          model: 'RAV4',
+          bodyStyle: 'SUV',
+          priceThreshold: 42000,
+          title: 'Plug-in hybrid options near you',
+          resultsLinkLabel: 'We do not have plug-in hybrid deals that match this filter right now, but these used Toyota RAV4 listings are available near Miami, FL.',
+        };
+      }
+
+      if (selectedFuelType === 'Hybrid') {
+        return {
+          year: '2025',
+          make: 'Honda',
+          model: 'Accord',
+          bodyStyle: 'Sedan',
+          priceThreshold: 36000,
+          title: 'Hybrid options near you',
+          resultsLinkLabel: 'We do not have hybrid deals that match this filter right now, but these used Honda Accord listings are available near Miami, FL.',
+        };
+      }
+
+      if (selectedFuelType === 'Electric') {
+        return {
+          year: '2026',
+          make: 'Ford',
+          model: 'F-150 Lightning',
+          bodyStyle: 'Truck',
+          priceThreshold: 65000,
+          title: 'Electric options near you',
+          resultsLinkLabel: 'We do not have electric deals that match this filter right now, but these used Ford F-150 Lightning listings are available near Miami, FL.',
+        };
+      }
+
+      return null;
+    }
+
+    if (selectedBodyType) {
+      if (selectedBodyType === 'SUV') {
+        return {
+          year: '2026',
+          make: 'Chevrolet',
+          model: 'Equinox',
+          bodyStyle: 'SUV',
+          priceThreshold: 35000,
+          title: 'SUV options near you',
+          resultsLinkLabel: 'We do not have SUV deals that match this filter right now, but these used Chevrolet Equinox listings are available near Miami, FL.',
+        };
+      }
+
+      if (selectedBodyType === 'Truck') {
+        return {
+          year: '2026',
+          make: 'Ford',
+          model: 'F-150',
+          bodyStyle: 'Truck',
+          priceThreshold: 55000,
+          title: 'Truck options near you',
+          resultsLinkLabel: 'We do not have truck deals that match this filter right now, but these used Ford F-150 listings are available near Miami, FL.',
+        };
+      }
+
+      if (selectedBodyType === 'Sedan') {
+        return {
+          year: '2025',
+          make: 'Honda',
+          model: 'Accord',
+          bodyStyle: 'Sedan',
+          priceThreshold: 36000,
+          title: 'Sedan options near you',
+          resultsLinkLabel: 'We do not have sedan deals that match this filter right now, but these used Honda Accord listings are available near Miami, FL.',
+        };
+      }
+
+      if (selectedBodyType === 'Coupe') {
+        return {
+          year: '2025',
+          make: 'BMW',
+          model: '4 Series',
+          bodyStyle: 'Coupe',
+          priceThreshold: 55000,
+          title: 'Coupe options near you',
+          resultsLinkLabel: 'We do not have coupe deals that match this filter right now, but these used BMW 4 Series listings are available near Miami, FL.',
+        };
+      }
+
+      return null;
+    }
+
+    if (selectedMake) {
+      const makeVehicle = vehicleDatabase.find((vehicle) => vehicle.make === selectedMake);
+
+      if (makeVehicle) {
+        return {
+          year: makeVehicle.year,
+          make: makeVehicle.make,
+          model: makeVehicle.model,
+          bodyStyle: makeVehicle.bodyStyle,
+          priceThreshold: makeVehicle.priceMin,
+          title: `${makeVehicle.make} listings near you`,
+          resultsLinkLabel: `We do not have ${makeVehicle.make} financing deals right now, but these used ${makeVehicle.make} ${makeVehicle.model} listings are available near Miami, FL.`,
+        };
+      }
+    }
+
+    return {
+      year: '2026',
+      make: 'Chevrolet',
+      model: 'Equinox',
+      bodyStyle: 'SUV',
+      priceThreshold: 35000,
+      title: 'Similar options near you',
+      resultsLinkLabel: 'We do not have matching deals right now, but these used Chevrolet Equinox listings are available near Miami, FL.',
+    };
+  }, [bodyStyleName, filters.bodyTypes, filters.fuelTypes, filters.makes, fuelTypeName, makeName]);
+
+  const emptyStateExploreLinks = useMemo<EmptyStateExploreLink[]>(() => {
+    const selectedBodyType = filters.bodyTypes[0] || bodyStyleName;
+    const selectedFuelType = filters.fuelTypes[0] || fuelTypeName;
+    const selectedMake = filters.makes[0] || makeName;
+    const activeCategoryLabel = selectedBodyType || selectedFuelType || selectedMake;
+
+    const buyingDestination = resolveBuyingFilterDestination({
+      ...DEFAULT_FILTERS,
+      ...filters,
+      dealType: 'finance',
+    });
+    const leaseDestination = resolveLeaseFilterDestination({
+      ...DEFAULT_FILTERS,
+      ...filters,
+      dealType: 'lease',
+    });
+
+    const buyingTitle = activeCategoryLabel
+      ? `${activeCategoryLabel} buying deals`
+      : 'All APR & financing deals';
+    const buyingDescription = activeCategoryLabel
+      ? `See the wider APR and financing set for ${activeCategoryLabel.toLowerCase()} shoppers.`
+      : 'See the full set of APR and financing offers.';
+    const leaseTitle = activeCategoryLabel
+      ? `${activeCategoryLabel} lease deals`
+      : 'Best car lease deals';
+    const leaseDescription = activeCategoryLabel
+      ? `Try lease offers for ${activeCategoryLabel.toLowerCase()} vehicles instead.`
+      : 'Switch to lease offers and compare current monthly specials.';
+
+    return [
+      {
+        to: buyingDestination?.path ?? BEST_BUYING_DEALS_PATH,
+        title: buyingTitle,
+        description: buyingDescription,
+        state: buyingDestination?.carryFilters ? { filters } : undefined,
+      },
+      {
+        to: leaseDestination?.path ?? '/deals/lease',
+        title: leaseTitle,
+        description: leaseDescription,
+        state: leaseDestination?.carryFilters ? { filters } : undefined,
+      },
+    ];
+  }, [bodyStyleName, filters, fuelTypeName, makeName]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -603,7 +805,9 @@ const ZeroAprDealsPage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
+      {deals.length > 0 && (
+        <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
+      )}
 
       <div className="zero-apr-page__content">
         <div className={`container${deals.length > 0 ? ' zero-apr-page__container--stacked' : ''}`}>
@@ -614,11 +818,17 @@ const ZeroAprDealsPage = () => {
                   <div className="zero-apr-page__grid">
                     <div className="zero-apr-page__empty-state">
                       <p className="zero-apr-page__empty-state-text">
-                        {isZeroPercentOnlyRoute
+                        {activeFilterPills.length > 0
+                          ? 'No APR financing deals match these filters right now. Try widening or changing your filters to see more options.'
+                          : isZeroPercentOnlyRoute
                           ? 'There are currently no active 0% APR deals. Browse all APR and financing deals or check back soon.'
                           : 'There are currently no active APR financing deals. Check back soon or explore other available deals.'}
                       </p>
-                      {isZeroPercentOnlyRoute ? (
+                      {activeFilterPills.length > 0 ? (
+                        <button type="button" className="zero-apr-page__empty-state-link" onClick={() => setFilterOpen(true)}>
+                          Adjust Filters
+                        </button>
+                      ) : isZeroPercentOnlyRoute ? (
                         <Link to={BEST_BUYING_DEALS_PATH} className="zero-apr-page__empty-state-link">
                           All APR & financing deals
                         </Link>
@@ -630,12 +840,30 @@ const ZeroAprDealsPage = () => {
                     </div>
                   </div>
                 </section>
+                {emptyStateElotConfig && (
+                  <OfficialELotCarousel
+                    year={emptyStateElotConfig.year}
+                    make={emptyStateElotConfig.make}
+                    model={emptyStateElotConfig.model}
+                    bodyStyle={emptyStateElotConfig.bodyStyle}
+                    priceThreshold={emptyStateElotConfig.priceThreshold}
+                    className="zero-apr-page__empty-elot"
+                    title={emptyStateElotConfig.title}
+                    resultsLinkLabel={emptyStateElotConfig.resultsLinkLabel}
+                  />
+                )}
+                <section className="zero-apr-page__links-section zero-apr-page__links-section--empty">
+                  <h2 className="zero-apr-page__section-title">Explore More</h2>
+                  <div className="zero-apr-page__links-grid">
+                    {emptyStateExploreLinks.map((link) => (
+                      <Link key={link.title} to={link.to} state={link.state} className="zero-apr-page__link-card">
+                        <h3>{link.title}</h3>
+                        <p>{link.description}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
               </div>
-              <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
-                <div className="zero-apr-page__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
             </div>
           ) : (
             <>
@@ -667,59 +895,58 @@ const ZeroAprDealsPage = () => {
                   )}
                 </Fragment>
               ))}
-            </>
-          )}
-
-          <div className="zero-apr-page__segment zero-apr-page__segment--tail">
-            <div className="zero-apr-page__main">
-              <section className="zero-apr-page__faq-section" aria-labelledby="zero-apr-faq-heading">
-                <h2 id="zero-apr-faq-heading" className="zero-apr-page__faq-heading">
-                  FAQs
-                </h2>
-                <div className="zero-apr-page__faq-list">
-                  {(isZeroPercentOnlyRoute ? ZERO_APR_FAQ : FAQ_DATA).map((faq, index) => (
-                    <div key={index} className={`zero-apr-page__faq-item ${expandedFaqIndex === index ? 'zero-apr-page__faq-item--expanded' : ''}`}>
-                      <button
-                        type="button"
-                        className="zero-apr-page__faq-question"
-                        onClick={() => setExpandedFaqIndex(expandedFaqIndex === index ? null : index)}
-                        aria-expanded={expandedFaqIndex === index}
-                      >
-                        <span className="zero-apr-page__faq-question-text">{renderFaqQuestionText(faq.question, 'zero-apr-page__faq-question-brand')}</span>
-                        {expandedFaqIndex === index ? <ChevronUp size={24} aria-hidden /> : <ChevronDown size={24} aria-hidden />}
-                      </button>
-                      {expandedFaqIndex === index && (
-                        <div className="zero-apr-page__faq-answer">
-                          {faq.answer.split('\n\n').map((para, j) => <p key={j}>{para}</p>)}
-                          {faq.bullets && faq.bullets.length > 0 && (
-                            <>
-                              <p><strong>Things to keep in mind:</strong></p>
-                              <ul>
-                                {faq.bullets.map((b, j) => <li key={j}>{b}</li>)}
-                              </ul>
-                            </>
+              <div className="zero-apr-page__segment zero-apr-page__segment--tail">
+                <div className="zero-apr-page__main">
+                  <section className="zero-apr-page__faq-section" aria-labelledby="zero-apr-faq-heading">
+                    <h2 id="zero-apr-faq-heading" className="zero-apr-page__faq-heading">
+                      FAQs
+                    </h2>
+                    <div className="zero-apr-page__faq-list">
+                      {(isZeroPercentOnlyRoute ? ZERO_APR_FAQ : FAQ_DATA).map((faq, index) => (
+                        <div key={index} className={`zero-apr-page__faq-item ${expandedFaqIndex === index ? 'zero-apr-page__faq-item--expanded' : ''}`}>
+                          <button
+                            type="button"
+                            className="zero-apr-page__faq-question"
+                            onClick={() => setExpandedFaqIndex(expandedFaqIndex === index ? null : index)}
+                            aria-expanded={expandedFaqIndex === index}
+                          >
+                            <span className="zero-apr-page__faq-question-text">{renderFaqQuestionText(faq.question, 'zero-apr-page__faq-question-brand')}</span>
+                            {expandedFaqIndex === index ? <ChevronUp size={24} aria-hidden /> : <ChevronDown size={24} aria-hidden />}
+                          </button>
+                          {expandedFaqIndex === index && (
+                            <div className="zero-apr-page__faq-answer">
+                              {faq.answer.split('\n\n').map((para, j) => <p key={j}>{para}</p>)}
+                              {faq.bullets && faq.bullets.length > 0 && (
+                                <>
+                                  <p><strong>Things to keep in mind:</strong></p>
+                                  <ul>
+                                    {faq.bullets.map((b, j) => <li key={j}>{b}</li>)}
+                                  </ul>
+                                </>
+                              )}
+                            </div>
                           )}
                         </div>
-                      )}
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </section>
+                  </section>
 
-              <section className="zero-apr-page__links-section">
-                <h2 className="zero-apr-page__section-title">Explore More</h2>
-                <div className="zero-apr-page__links-grid">
-                  <Link to={ZERO_PERCENT_APR_DEALS_PATH} className="zero-apr-page__link-card"><h3>Best 0% APR Deals</h3><p>Interest-free manufacturer financing in one list</p></Link>
-                  <Link to="/deals/lease" className="zero-apr-page__link-card"><h3>Best Car Lease Deals</h3><p>Monthly lease specials on new cars</p></Link>
+                  <section className="zero-apr-page__links-section">
+                    <h2 className="zero-apr-page__section-title">Explore More</h2>
+                    <div className="zero-apr-page__links-grid">
+                      <Link to={ZERO_PERCENT_APR_DEALS_PATH} className="zero-apr-page__link-card"><h3>Best 0% APR Deals</h3><p>Interest-free manufacturer financing in one list</p></Link>
+                      <Link to="/deals/lease" className="zero-apr-page__link-card"><h3>Best Car Lease Deals</h3><p>Monthly lease specials on new cars</p></Link>
+                    </div>
+                  </section>
                 </div>
-              </section>
-            </div>
-            <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
-              <div className="zero-apr-page__sidebar-sticky">
-                <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+                <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
+                  <div className="zero-apr-page__sidebar-sticky">
+                    <AdSidebar {...(dealChunks.length > 1 ? SIDEBAR_AFTER_BREAK_PROPS : {})} />
+                  </div>
+                </aside>
               </div>
-            </aside>
-          </div>
+            </>
+          )}
         </div>
       </div>
 
