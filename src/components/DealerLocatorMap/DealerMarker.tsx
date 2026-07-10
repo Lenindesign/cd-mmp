@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { AdvancedMarker, InfoWindow, useAdvancedMarkerRef } from '@vis.gl/react-google-maps';
-import { Award, Star, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { InfoWindow, Marker, useMarkerRef } from '@vis.gl/react-google-maps';
+import { Award, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { DealerWithScore } from '../../services/dealerService';
 import { formatPrice, formatDistance } from '../../services/dealerService';
 import './DealerLocatorMap.css';
@@ -28,7 +28,7 @@ const DealerMarker = ({
   vehicleImages = [],
   vehicleName,
 }: DealerMarkerProps) => {
-  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [markerRef, marker] = useMarkerRef();
   const [showInfoWindow, setShowInfoWindow] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -72,70 +72,60 @@ const DealerMarker = ({
   const getMarkerStyle = () => {
     if (dealer.dealScore.isBestDeal) {
       return {
-        background: 'var(--color-gold, #DBCA8B)',
-        borderColor: 'var(--color-gold-dark, #A59143)',
+        background: '#DBCA8B',
+        borderColor: '#A59143',
         scale: isSelected || isHovered ? 1.3 : 1.1,
       };
     }
     if (isSelected || isHovered) {
       return {
-        background: 'var(--color-blue-cobalt, #1B5F8A)',
-        borderColor: 'var(--color-blue-cobalt-dark, #154d70)',
+        background: '#1B5F8A',
+        borderColor: '#154d70',
         scale: 1.3,
       };
     }
     return {
-      background: 'var(--color-blue-cobalt, #1B5F8A)',
-      borderColor: 'var(--color-blue-cobalt-dark, #154d70)',
+      background: '#1B5F8A',
+      borderColor: '#154d70',
       scale: 1,
     };
   };
 
   const style = getMarkerStyle();
+  const markerScale = style.scale >= 1.3 ? 13 : style.scale > 1 ? 12 : 11;
+  const markerLabel = index !== undefined
+    ? String(index)
+    : dealer.dealScore.isBestDeal
+      ? '★'
+      : '';
+  const markerIcon = {
+    path: 'M 0,-1 A 1,1 0 1 1 0,1 A 1,1 0 1 1 0,-1',
+    fillColor: style.background,
+    fillOpacity: 1,
+    strokeColor: style.borderColor,
+    strokeWeight: 3,
+    scale: markerScale,
+  };
 
   return (
     <>
-      <AdvancedMarker
+      <Marker
         ref={markerRef}
         position={{ lat: dealer.lat, lng: dealer.lng }}
         onClick={handleClick}
+        onMouseOver={handleMouseEnter}
+        onMouseOut={handleMouseLeave}
         title={dealer.name}
-      >
-        {/* Custom Marker Pin */}
-        <div 
-          className={`dealer-marker ${dealer.dealScore.isBestDeal ? 'dealer-marker--best' : ''} ${isSelected || isHovered ? 'dealer-marker--selected' : ''}`}
-          style={{
-            transform: `scale(${style.scale})`,
-          }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div 
-            className="dealer-marker__pin"
-            style={{
-              backgroundColor: style.background,
-              borderColor: style.borderColor,
-            }}
-          >
-            {/* Show number if provided, otherwise show icon */}
-            {index !== undefined ? (
-              <span className="dealer-marker__number">{index}</span>
-            ) : dealer.dealScore.isBestDeal ? (
-              <Award size={16} className="dealer-marker__icon" />
-            ) : (
-              <MapPin size={16} className="dealer-marker__icon" />
-            )}
-          </div>
-          
-          {/* Pin tail */}
-          <div 
-            className="dealer-marker__tail"
-            style={{
-              borderTopColor: style.borderColor,
-            }}
-          />
-        </div>
-      </AdvancedMarker>
+        zIndex={isSelected || isHovered ? 20 : dealer.dealScore.isBestDeal ? 10 : undefined}
+        icon={markerIcon}
+        label={{
+          text: markerLabel,
+          color: dealer.dealScore.isBestDeal ? '#222222' : '#ffffff',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '12px',
+          fontWeight: '700',
+        }}
+      />
 
       {/* Info Window - show on hover (pin or sidebar) OR when dealer sidebar is active */}
       {(showInfoWindow || isSelected || isHovered) && marker && (
@@ -246,4 +236,3 @@ const DealerMarker = ({
 };
 
 export default DealerMarker;
-

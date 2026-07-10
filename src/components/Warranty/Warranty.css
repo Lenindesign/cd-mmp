@@ -4,6 +4,25 @@
   background: var(--color-gray-100);
 }
 
+.warranty--vehicle-reliability {
+  background: var(--color-gray-50);
+}
+
+.warranty--vehicle-reliability .warranty__nhtsa {
+  margin-bottom: 0;
+}
+
+.warranty--vehicle-reliability .warranty__header {
+  margin-bottom: var(--spacing-5);
+}
+
+.warranty--vehicle-reliability .warranty__title {
+  margin: 0;
+  font-size: var(--font-size-36);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
 /* Header */
 .warranty__header {
   margin-bottom: var(--spacing-8);
@@ -41,6 +60,12 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+}
+
+.warranty__summary-content {
+  display: grid;
+  gap: var(--spacing-5);
   min-width: 0;
 }
 
@@ -107,6 +132,15 @@
 .warranty__summary-source svg {
   flex-shrink: 0;
   color: var(--color-gray-500);
+}
+
+.warranty__editorial-note {
+  max-width: 68ch;
+  margin: var(--spacing-3) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-gray-600);
 }
 
 .warranty__summary-facts {
@@ -285,9 +319,379 @@
   min-width: 0;
 }
 
+.warranty__detail-layout--reliability {
+  grid-template-columns: 1fr;
+}
+
+.warranty--vehicle-reliability .warranty__nhtsa-module {
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+}
+
+.warranty--vehicle-reliability .warranty__summary {
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: var(--spacing-6);
+  align-items: stretch;
+  padding: var(--spacing-6);
+  background: var(--color-white);
+  border: 0;
+  border-bottom: 1px solid var(--color-gray-200);
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.warranty--vehicle-reliability .warranty__summary-eyebrow,
+.warranty--vehicle-reliability .warranty__fact-label,
+.warranty--vehicle-reliability .warranty__complaints-components h4,
+.warranty--vehicle-reliability .warranty__complaints-recent h4 {
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
+  color: var(--color-gray-600);
+}
+
+.warranty--vehicle-reliability .warranty__summary-title {
+  max-width: 760px;
+  margin: var(--spacing-2) 0 var(--spacing-3);
+  font-size: var(--font-size-2xl);
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.warranty--vehicle-reliability .warranty__summary-text {
+  max-width: 70ch;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-dark);
+}
+
+.warranty--vehicle-reliability .warranty__summary-source {
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.warranty--vehicle-reliability .warranty__summary-facts {
+  gap: 0;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.warranty--vehicle-reliability .warranty__vehicle-photo {
+  align-self: stretch;
+  min-width: 0;
+  min-height: 230px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.warranty--vehicle-reliability .warranty__vehicle-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.warranty--vehicle-reliability .warranty__vehicle-photo-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 230px;
+  padding: var(--spacing-5);
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.warranty--vehicle-reliability .warranty__fact,
+.warranty--vehicle-reliability .warranty__fact--success,
+.warranty--vehicle-reliability .warranty__fact--warning {
+  min-height: 0;
+  padding: var(--spacing-4) var(--spacing-5);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--color-gray-200);
+  border-radius: 0;
+}
+
+.warranty--vehicle-reliability .warranty__fact:first-child {
+  padding-left: 0;
+}
+
+.warranty--vehicle-reliability .warranty__fact:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.warranty--vehicle-reliability .warranty__fact strong {
+  margin: var(--spacing-2) 0 var(--spacing-1);
+  font-size: var(--font-size-3xl);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.warranty--vehicle-reliability button.warranty__fact {
+  width: 100%;
+  appearance: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.warranty--vehicle-reliability .warranty__fact--button:hover,
+.warranty--vehicle-reliability .warranty__fact--button:focus-visible,
+.warranty--vehicle-reliability .warranty__fact--active {
+  background: var(--color-gray-50);
+}
+
+.warranty--vehicle-reliability .warranty__fact--button:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: -2px;
+}
+
+.warranty--vehicle-reliability .warranty__fact-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+}
+
+.warranty--vehicle-reliability .warranty__fact-icon {
+  flex: 0 0 auto;
+  color: var(--color-blue-cobalt);
+  transition: transform var(--transition-fast);
+}
+
+.warranty--vehicle-reliability .warranty__fact--button[aria-expanded="true"] .warranty__fact-icon {
+  transform: rotate(180deg);
+}
+
+.warranty--vehicle-reliability .warranty__fact-detail-panel {
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.warranty--vehicle-reliability .warranty__detail-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.warranty--vehicle-reliability .warranty__recalls,
+.warranty--vehicle-reliability .warranty__complaints {
+  min-width: 0;
+  padding: var(--spacing-4) var(--spacing-6) var(--spacing-6);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.warranty--vehicle-reliability .warranty__detail-layout {
+  padding: 0;
+}
+
+.warranty--vehicle-reliability .warranty__recalls {
+  border-right: 0;
+}
+
+.warranty--vehicle-reliability .warranty__complaints {
+  padding-left: var(--spacing-6);
+  padding-right: var(--spacing-6);
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel {
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel:first-child {
+  border-top: 0;
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-summary {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 0.9fr) auto;
+  gap: var(--spacing-4);
+  align-items: center;
+  padding: var(--spacing-4) var(--spacing-6);
+  cursor: pointer;
+  list-style: none;
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-summary::-webkit-details-marker {
+  display: none;
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-summary:hover {
+  background: var(--color-gray-50);
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-black);
+  line-height: 1;
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-note {
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-icon {
+  color: var(--color-gray-500);
+  transition: transform var(--transition-fast);
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel[open] .warranty__reliability-panel-icon {
+  transform: rotate(180deg);
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel-body {
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.warranty--vehicle-reliability .warranty__reliability-panel .warranty__recalls-header,
+.warranty--vehicle-reliability .warranty__reliability-panel .warranty__complaints-header,
+.warranty--vehicle-reliability .warranty__fact-detail-panel .warranty__recalls-header,
+.warranty--vehicle-reliability .warranty__fact-detail-panel .warranty__complaints-header {
+  display: none;
+}
+
+.warranty--vehicle-reliability .warranty__recalls-title svg,
+.warranty--vehicle-reliability .warranty__complaints-title svg {
+  display: none;
+}
+
+.warranty--vehicle-reliability .warranty__recalls-badge,
+.warranty--vehicle-reliability .warranty__complaints-badge,
+.warranty--vehicle-reliability .warranty__recalls-badge--success,
+.warranty--vehicle-reliability .warranty__recalls-badge--warning,
+.warranty--vehicle-reliability .warranty__complaints-badge--success,
+.warranty--vehicle-reliability .warranty__complaints-badge--caution,
+.warranty--vehicle-reliability .warranty__complaints-badge--warning {
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.warranty__record-note,
+.warranty__complaints-signal-line {
+  margin: 0 0 var(--spacing-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-gray-600);
+}
+
+.warranty--vehicle-reliability .warranty__recalls-empty {
+  align-items: flex-start;
+  padding: var(--spacing-4) 0 0;
+  text-align: left;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.warranty--vehicle-reliability .warranty__recalls-empty-icon {
+  display: none;
+}
+
+.warranty--vehicle-reliability .warranty__recalls-empty p {
+  color: var(--color-dark);
+}
+
+.warranty--vehicle-reliability .warranty__complaints-component {
+  padding: var(--spacing-2) 0;
+  background: transparent;
+  border-bottom: 1px solid var(--color-gray-200);
+  border-radius: 0;
+}
+
+.warranty--vehicle-reliability .warranty__complaints-component-count {
+  background: transparent;
+  padding: 0;
+  color: var(--color-dark);
+}
+
+.warranty--vehicle-reliability .warranty__complaint-item {
+  border-color: var(--color-gray-200);
+  border-radius: var(--border-radius-sm);
+}
+
+.warranty--vehicle-reliability .warranty__complaint-header {
+  background: var(--color-white);
+}
+
+.warranty--vehicle-reliability .warranty__complaint-header:hover {
+  background: var(--color-gray-50);
+}
+
+.warranty--vehicle-reliability .warranty__complaint-component {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-dark);
+}
+
+.warranty--vehicle-reliability .warranty__complaint-flags {
+  gap: var(--spacing-2);
+}
+
+.warranty--vehicle-reliability .warranty__complaint-flag {
+  padding: 0;
+  background: transparent;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  text-transform: none;
+}
+
+.warranty--vehicle-reliability .warranty__complaint-action {
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.warranty--vehicle-reliability .warranty__nhtsa-disclaimer {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
 @media (max-width: 1200px) {
   .warranty__summary {
     grid-template-columns: 1fr;
+  }
+
+  .warranty--vehicle-reliability .warranty__summary {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
   }
 
   .warranty__detail-layout {
@@ -301,8 +705,19 @@
     grid-template-columns: 1fr;
   }
 
+  .warranty--vehicle-reliability .warranty__summary {
+    grid-template-columns: 1fr;
+  }
+
   .warranty__fact {
     min-height: 0;
+  }
+
+  .warranty--vehicle-reliability .warranty__vehicle-photo,
+  .warranty--vehicle-reliability .warranty__vehicle-photo img,
+  .warranty--vehicle-reliability .warranty__vehicle-photo-empty {
+    min-height: 0;
+    aspect-ratio: 16 / 9;
   }
 }
 
@@ -322,6 +737,73 @@
   .warranty__benchmark {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .warranty--vehicle-reliability .warranty__summary {
+    padding: var(--spacing-4);
+  }
+
+  .warranty--vehicle-reliability .warranty__summary-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .warranty--vehicle-reliability .warranty__summary-facts {
+    grid-template-columns: 1fr;
+    border-top: 0;
+  }
+
+  .warranty--vehicle-reliability .warranty__fact,
+  .warranty--vehicle-reliability .warranty__fact:first-child,
+  .warranty--vehicle-reliability .warranty__fact:last-child {
+    padding: var(--spacing-3) 0;
+    border-right: 0;
+    border-top: 1px solid var(--color-gray-200);
+  }
+
+  .warranty--vehicle-reliability .warranty__recalls,
+  .warranty--vehicle-reliability .warranty__complaints {
+    padding: var(--spacing-4);
+  }
+
+  .warranty--vehicle-reliability .warranty__nhtsa-module {
+    width: min(100%, calc(100vw - var(--spacing-12)));
+    border-radius: var(--border-radius-md);
+  }
+
+  .warranty--vehicle-reliability .warranty__detail-layout {
+    padding: 0;
+  }
+
+  .warranty--vehicle-reliability .warranty__detail-main {
+    gap: 0;
+  }
+
+  .warranty--vehicle-reliability .warranty__reliability-panel-summary {
+    grid-template-columns: 1fr auto;
+    gap: var(--spacing-2) var(--spacing-3);
+    padding: var(--spacing-4);
+  }
+
+  .warranty--vehicle-reliability .warranty__reliability-panel-value {
+    justify-self: end;
+  }
+
+  .warranty--vehicle-reliability .warranty__reliability-panel-note {
+    grid-column: 1 / -1;
+  }
+
+  .warranty--vehicle-reliability .warranty__reliability-panel-icon {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .warranty--vehicle-reliability .warranty__complaints-component {
+    gap: var(--spacing-3);
+  }
+
+  .warranty--vehicle-reliability .warranty__complaints-component-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 }
 
@@ -945,6 +1427,186 @@
 
 .warranty__complaint-link:hover {
   text-decoration: underline;
+}
+
+.warranty__complaint-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-6);
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.warranty__complaint-modal {
+  width: min(720px, 100%);
+  max-width: calc(100vw - var(--spacing-8));
+  max-height: min(760px, calc(100vh - var(--spacing-12)));
+  overflow: auto;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.warranty__complaint-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.warranty__complaint-modal-eyebrow {
+  display: block;
+  margin-bottom: var(--spacing-2);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-gray-600);
+}
+
+.warranty__complaint-modal h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-28);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.1;
+  color: var(--color-black);
+}
+
+.warranty__complaint-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.warranty__complaint-modal-close:hover {
+  background: var(--color-gray-100);
+}
+
+.warranty__complaint-modal-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.warranty__complaint-modal-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.warranty__complaint-modal-meta span,
+.warranty__complaint-modal-flags span {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+}
+
+.warranty__complaint-modal-meta strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-dark);
+}
+
+.warranty__complaint-modal-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4) var(--spacing-6) 0;
+}
+
+.warranty__complaint-modal-flags span {
+  padding: 2px 0;
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-red);
+}
+
+.warranty__complaint-modal-body {
+  padding: var(--spacing-6);
+}
+
+.warranty__complaint-modal-body p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-dark);
+}
+
+.warranty__complaint-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-4) var(--spacing-6) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.warranty__complaint-modal-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+
+.warranty__complaint-modal-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .warranty__complaint-modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .warranty__complaint-modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: calc(100vh - var(--spacing-8));
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  }
+
+  .warranty__complaint-modal-header,
+  .warranty__complaint-modal-body,
+  .warranty__complaint-modal-footer {
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+  }
+
+  .warranty__complaint-modal h3 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .warranty__complaint-modal-meta {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+  }
+
+  .warranty__complaint-modal-flags {
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+  }
 }
 
 /* ============================================

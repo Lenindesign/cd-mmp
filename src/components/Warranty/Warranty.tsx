@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { AlertTriangle, CheckCircle, ChevronDown, ChevronUp, ExternalLink, Loader2, MessageSquareWarning, Flame, Car, Users, TrendingDown, TrendingUp, Minus, Info, Star, ShieldCheck, Camera } from 'lucide-react';
+import { useState, useEffect, useMemo, type ReactNode } from 'react';
+import { AlertTriangle, CheckCircle, ChevronDown, ChevronUp, ExternalLink, Loader2, MessageSquareWarning, Flame, Car, Users, TrendingDown, TrendingUp, Minus, Info, Star, ShieldCheck, Camera, X } from 'lucide-react';
 import { 
   getRecalls, 
   getComplaints,
@@ -12,6 +12,7 @@ import {
   formatComplaintDate,
   getRecallSeverity, 
   type NHTSARecall,
+  type NHTSAComplaint,
   type NHTSASafetyRating,
   type ComplaintsSummary
 } from '../../services/nhtsaService';
@@ -37,7 +38,11 @@ interface WarrantyProps {
   model?: string;
   year?: number | string;
   bodyStyle?: string;
+  drivetrain?: string;
   nhtsaSafetyVehicleId?: number;
+  vehicleImage?: string;
+  vehicleImageAlt?: string;
+  variant?: 'warranty-safety' | 'vehicle-reliability';
 }
 
 const Warranty = ({ 
@@ -47,14 +52,25 @@ const Warranty = ({
   model,
   year,
   bodyStyle = 'SUV',
+  drivetrain,
   nhtsaSafetyVehicleId,
+  vehicleImage,
+  vehicleImageAlt,
+  variant = 'warranty-safety',
 }: WarrantyProps) => {
+  const isVehicleReliabilityVariant = variant === 'vehicle-reliability';
   const vehicleKey = make && model && year ? `${year}|${make}|${model}|${nhtsaSafetyVehicleId || 'lookup'}` : '';
+  const vehicleName = make && model && year ? `${year} ${make} ${model}` : 'this vehicle';
+  const vehiclePhotoSrc = vehicleImage?.trim() || '';
+  const vehiclePhotoAlt = vehicleImageAlt?.trim() || `${vehicleName} photo`;
   const [recallsState, setRecallsState] = useState<AsyncData<NHTSARecall[]>>({ key: '', data: null });
   const [complaintsState, setComplaintsState] = useState<AsyncData<ComplaintsSummary>>({ key: '', data: null });
   const [safetyState, setSafetyState] = useState<AsyncData<NHTSASafetyRating>>({ key: '', data: null });
   const [expandedRecall, setExpandedRecall] = useState<string | null>(null);
   const [expandedComplaint, setExpandedComplaint] = useState<number | null>(null);
+  const [selectedComplaint, setSelectedComplaint] = useState<NHTSAComplaint | null>(null);
+  const [activeReliabilityDetail, setActiveReliabilityDetail] = useState<'recalls' | 'complaints' | null>(null);
+  const [vehiclePhotoFailed, setVehiclePhotoFailed] = useState(false);
   const [showAllRecalls, setShowAllRecalls] = useState(false);
   const [isCrashTestModalOpen, setIsCrashTestModalOpen] = useState(false);
 
@@ -64,6 +80,7 @@ const Warranty = ({
   const isLoadingRecalls = Boolean(vehicleKey && recallsState.key !== vehicleKey);
   const isLoadingComplaints = Boolean(vehicleKey && complaintsState.key !== vehicleKey);
   const isLoadingSafety = Boolean(vehicleKey && safetyState.key !== vehicleKey);
+  const showVehiclePhoto = Boolean(vehiclePhotoSrc && !vehiclePhotoFailed);
 
   // Fetch recalls, complaints, and safety ratings when vehicle info is available
   useEffect(() => {
@@ -84,7 +101,7 @@ const Warranty = ({
 
     const safetyRequest = nhtsaSafetyVehicleId
       ? getSafetyRatings(nhtsaSafetyVehicleId)
-      : getVehicleSafetyRatings(make, model, year);
+      : getVehicleSafetyRatings(make, model, year, drivetrain);
 
     safetyRequest.then(data => {
       if (!cancelled) {
@@ -95,7 +112,30 @@ const Warranty = ({
     return () => {
       cancelled = true;
     };
-  }, [make, model, year, vehicleKey, nhtsaSafetyVehicleId]);
+  }, [make, model, year, vehicleKey, nhtsaSafetyVehicleId, drivetrain]);
+
+  useEffect(() => {
+    setVehiclePhotoFailed(false);
+  }, [vehiclePhotoSrc]);
+
+  useEffect(() => {
+    if (!selectedComplaint) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedComplaint(null);
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedComplaint]);
 
   const reliabilityContext = useMemo(() => {
     if (!isLoadingRecalls && !isLoadingComplaints && make) {
@@ -114,9 +154,23 @@ const Warranty = ({
     setExpandedComplaint(prev => prev === odiNumber ? null : odiNumber);
   };
 
+  const openComplaintReport = (complaint: NHTSAComplaint) => {
+    setSelectedComplaint(complaint);
+  };
+
+  const closeComplaintReport = () => {
+    setSelectedComplaint(null);
+  };
+
+  const toggleReliabilityDetail = (detail: 'recalls' | 'complaints') => {
+    setActiveReliabilityDetail(prev => prev === detail ? null : detail);
+  };
+
   const displayedRecalls = showAllRecalls ? recalls : recalls.slice(0, 3);
   const hasRecalls = recalls.length > 0;
-  const isLoading = isLoadingRecalls || isLoadingComplaints || isLoadingSafety;
+  const isLoading = isVehicleReliabilityVariant
+    ? isLoadingRecalls || isLoadingComplaints
+    : isLoadingRecalls || isLoadingComplaints || isLoadingSafety;
 
   // Render star rating
   const renderStars = (rating: string | undefined, size: number = 18) => {
@@ -177,14 +231,6 @@ const Warranty = ({
     return 'Near segment avg';
   };
 
-  const getSafetyStatus = () => {
-    if (isLoadingSafety) return 'Checking NHTSA';
-    if (!safetyRatings) return 'Not available';
-    const stars = parseStarRating(safetyRatings.OverallRating);
-    if (stars === null) return 'Not tested yet';
-    return `${stars}/5 overall`;
-  };
-
   const getSafetySummary = () => {
     if (isLoadingSafety) return 'Crash-test ratings are loading.';
     if (!safetyRatings) return 'NHTSA has not published crash-test data for this vehicle yet.';
@@ -215,6 +261,87 @@ const Warranty = ({
     return summary.replace(/\bsuvs\b/g, 'SUVs');
   };
 
+  const formatNhtsaLabel = (value: string | undefined) => {
+    if (!value) return '';
+    return value
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .map((part) => {
+        const lower = part.replace(/\s+/g, ' ').toLowerCase();
+        return lower.charAt(0).toUpperCase() + lower.slice(1);
+      })
+      .join(', ');
+  };
+
+  const formatNhtsaVehicleLabel = (value: string | undefined) => {
+    if (!value) return '';
+    const acronyms = new Set(['AWD', 'EV', 'FWD', 'PHEV', 'RWD', 'SUV']);
+
+    return value
+      .replace(/\s+/g, ' ')
+      .trim()
+      .split(' ')
+      .map((word) => {
+        const upper = word.toUpperCase();
+        if (acronyms.has(upper) || /^\d{4}$/.test(word)) return upper;
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  };
+
+  const getReliabilitySignalSummary = () => {
+    if (isLoadingRecalls || isLoadingComplaints) {
+      return `Checking NHTSA complaint and recall records for the ${vehicleName}.`;
+    }
+
+    const complaintCount = complaintsSummary?.totalComplaints || 0;
+    const recallCount = recalls.length;
+    const topIssue = formatNhtsaLabel(complaintsSummary?.topComponents[0]?.component);
+    const issueCopy = topIssue ? ` ${topIssue} is the most common area.` : '';
+    const recallCopy = recallCount === 0
+      ? 'No model-year recall campaigns are listed.'
+      : `${recallCount} model-year recall campaign${recallCount === 1 ? ' is' : 's are'} listed.`;
+
+    return `NHTSA lists ${complaintCount} owner complaint report${complaintCount === 1 ? '' : 's'} for the ${vehicleName}. ${recallCopy}${issueCopy}`;
+  };
+
+  const getRecallSummaryCopy = () => {
+    if (isLoadingRecalls) {
+      return 'Checking NHTSA recall campaigns.';
+    }
+
+    if (!hasRecalls) {
+      return 'No model-year recall campaigns are listed here. Run a VIN check to confirm the exact car is clear.';
+    }
+
+    return `${recalls.length} model-year recall campaign${recalls.length === 1 ? '' : 's'} appear here. Review the remedy details and confirm completed repairs by VIN.`;
+  };
+
+  const getComplaintSummaryCopy = () => {
+    if (isLoadingComplaints) {
+      return 'Checking owner complaints.';
+    }
+
+    const totalComplaints = complaintsSummary?.totalComplaints || 0;
+    if (totalComplaints === 0) {
+      return 'No owner complaint records appear in this model-year lookup.';
+    }
+
+    const topIssue = formatNhtsaLabel(complaintsSummary?.topComponents[0]?.component);
+    return topIssue
+      ? `${totalComplaints} owner complaint report${totalComplaints === 1 ? '' : 's'} appear in NHTSA records. Most mention ${topIssue}.`
+      : `${totalComplaints} owner complaint report${totalComplaints === 1 ? '' : 's'} appear in NHTSA records.`;
+  };
+
+  const getTopIssueLabel = () => {
+    const topIssue = formatNhtsaLabel(complaintsSummary?.topComponents[0]?.component);
+    if (!topIssue) return 'No pattern yet';
+    return topIssue.replace(/\//g, ' / ');
+  };
+
+  const nhtsaMatchedVehicle = safetyRatings?.VehicleDescription;
+
   // Get comparison icon
   const getComparisonIcon = (comparison: 'below' | 'average' | 'above') => {
     switch (comparison) {
@@ -224,8 +351,33 @@ const Warranty = ({
     }
   };
 
+  const ReliabilityPanel = ({
+    detail,
+    children,
+  }: {
+    detail: 'recalls' | 'complaints';
+    children: ReactNode;
+  }) => {
+    if (!isVehicleReliabilityVariant) {
+      return <>{children}</>;
+    }
+
+    if (activeReliabilityDetail !== detail) {
+      return null;
+    }
+
+    return (
+      <div
+        id={`warranty-${detail}-detail`}
+        className="warranty__fact-detail-panel"
+      >
+        {children}
+      </div>
+    );
+  };
+
   return (
-    <section className="warranty">
+    <section className={`warranty ${isVehicleReliabilityVariant ? 'warranty--vehicle-reliability' : ''}`}>
       <div className="container">
         <div className="warranty__header">
           <h2 className="warranty__title">{title}</h2>
@@ -234,62 +386,143 @@ const Warranty = ({
         {/* NHTSA Data Section */}
         {(make && model && year) && (
           <div className="warranty__nhtsa">
+            <div className={isVehicleReliabilityVariant ? 'warranty__nhtsa-module' : undefined}>
             {reliabilityContext && !isLoading && (
-              <section className="warranty__summary" aria-label="NHTSA ownership snapshot">
-                <div className="warranty__summary-copy">
-                  <span className="warranty__summary-eyebrow">NHTSA ownership snapshot</span>
-                  <h3 className="warranty__summary-title">
-                    Ownership confidence:
-                    <span className={`warranty__summary-rating ${getRatingColorClass(reliabilityContext.overallRating)}`}>
-                      {formatRatingLabel(reliabilityContext.overallRating)}
+              <section
+                className="warranty__summary"
+                aria-label={isVehicleReliabilityVariant ? `${vehicleName} NHTSA reliability signals` : 'NHTSA ownership snapshot'}
+              >
+                <div className="warranty__summary-content">
+                  <div className="warranty__summary-copy">
+                    <span className="warranty__summary-eyebrow">
+                      {isVehicleReliabilityVariant ? 'NHTSA records' : 'NHTSA ownership snapshot'}
                     </span>
-                  </h3>
-                  <p className="warranty__summary-text">
-                    {formatSummaryCopy(reliabilityContext.summary)} {getSafetySummary()}
-                  </p>
-                  <div className="warranty__summary-source">
-                    <Info size={16} />
-                    <span>Based on NHTSA recalls, owner complaints, and crash-test data when available.</span>
+                    <h3 className="warranty__summary-title">
+                      {isVehicleReliabilityVariant ? (
+                        <>NHTSA model-year records</>
+                      ) : (
+                        <>
+                          Ownership confidence:
+                          <span className={`warranty__summary-rating ${getRatingColorClass(reliabilityContext.overallRating)}`}>
+                            {formatRatingLabel(reliabilityContext.overallRating)}
+                          </span>
+                        </>
+                      )}
+                    </h3>
+                    <p className="warranty__summary-text">
+                      {isVehicleReliabilityVariant
+                        ? getReliabilitySignalSummary()
+                        : `${formatSummaryCopy(reliabilityContext.summary)} ${getSafetySummary()}`}
+                    </p>
+                    {isVehicleReliabilityVariant && (
+                      <p className="warranty__editorial-note">
+                        Use this as a pattern check; confirm the exact car by VIN.
+                      </p>
+                    )}
+                    <div className="warranty__summary-source">
+                      <Info size={16} />
+                      <span>
+                        {nhtsaMatchedVehicle
+                          ? `NHTSA match: ${formatNhtsaVehicleLabel(nhtsaMatchedVehicle)}.`
+                          : isVehicleReliabilityVariant
+                            ? 'Based on NHTSA owner complaint and recall campaign records.'
+                            : 'Based on NHTSA recalls, owner complaints, and crash-test data when available.'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="warranty__summary-facts" aria-label="NHTSA key facts">
+                    {isVehicleReliabilityVariant ? (
+                      <>
+                        <button
+                          type="button"
+                          className={`warranty__fact warranty__fact--button ${activeReliabilityDetail === 'complaints' ? 'warranty__fact--active' : ''}`}
+                          aria-expanded={activeReliabilityDetail === 'complaints'}
+                          aria-controls="warranty-complaints-detail"
+                          onClick={() => toggleReliabilityDetail('complaints')}
+                        >
+                          <span className="warranty__fact-label-row">
+                            <span className="warranty__fact-label">Owner reports</span>
+                            <ChevronDown className="warranty__fact-icon" size={16} />
+                          </span>
+                          <strong>{complaintsSummary?.totalComplaints || 0}</strong>
+                          <span>Filed with NHTSA</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`warranty__fact warranty__fact--button ${hasRecalls ? 'warranty__fact--warning' : 'warranty__fact--success'} ${activeReliabilityDetail === 'recalls' ? 'warranty__fact--active' : ''}`}
+                          aria-expanded={activeReliabilityDetail === 'recalls'}
+                          aria-controls="warranty-recalls-detail"
+                          onClick={() => toggleReliabilityDetail('recalls')}
+                        >
+                          <span className="warranty__fact-label-row">
+                            <span className="warranty__fact-label">Recall campaigns</span>
+                            <ChevronDown className="warranty__fact-icon" size={16} />
+                          </span>
+                          <strong>{recalls.length}</strong>
+                          <span>{hasRecalls ? 'Review by VIN' : 'None listed'}</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="warranty__fact">
+                          <span className="warranty__fact-label">Owner reports</span>
+                          <strong>{complaintsSummary?.totalComplaints || 0}</strong>
+                          <span>{getComparisonLabel(reliabilityContext.complaintsVsAverage)}</span>
+                        </div>
+                        <div className={`warranty__fact ${hasRecalls ? 'warranty__fact--warning' : 'warranty__fact--success'}`}>
+                          <span className="warranty__fact-label">Recall campaigns</span>
+                          <strong>{recalls.length}</strong>
+                          <span>{hasRecalls ? 'Review by VIN' : 'None listed'}</span>
+                        </div>
+                      </>
+                    )}
+                    <div className="warranty__fact">
+                      <span className="warranty__fact-label">Most mentioned</span>
+                      <strong>{getTopIssueLabel()}</strong>
+                      <span>In owner reports</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="warranty__summary-facts" aria-label="NHTSA key facts">
-                  <div className={`warranty__fact ${hasRecalls ? 'warranty__fact--warning' : 'warranty__fact--success'}`}>
-                    <span className="warranty__fact-label">Open recalls</span>
-                    <strong>{recalls.length}</strong>
-                    <span>{hasRecalls ? 'Review before buying' : 'None reported'}</span>
-                  </div>
-                  <div className="warranty__fact">
-                    <span className="warranty__fact-label">Owner complaints</span>
-                    <strong>{complaintsSummary?.totalComplaints || 0}</strong>
-                    <span>{getComparisonLabel(reliabilityContext.complaintsVsAverage)}</span>
-                  </div>
-                  <div className="warranty__fact">
-                    <span className="warranty__fact-label">Crash tests</span>
-                    <strong>{getSafetyStatus()}</strong>
-                    <span>NHTSA overall rating</span>
-                  </div>
-                </div>
+                {isVehicleReliabilityVariant && (
+                  <figure className="warranty__vehicle-photo">
+                    {showVehiclePhoto ? (
+                      <img
+                        src={vehiclePhotoSrc}
+                        alt={vehiclePhotoAlt}
+                        loading="lazy"
+                        decoding="async"
+                        onError={() => setVehiclePhotoFailed(true)}
+                      />
+                    ) : (
+                      <div className="warranty__vehicle-photo-empty">
+                        Vehicle photo unavailable
+                      </div>
+                    )}
+                  </figure>
+                )}
               </section>
             )}
 
-            <div className="warranty__detail-layout">
+            <div className={`warranty__detail-layout ${isVehicleReliabilityVariant ? 'warranty__detail-layout--reliability' : ''}`}>
               <div className="warranty__detail-main">
               {/* Recalls Column */}
+              <ReliabilityPanel detail="recalls">
               <div className="warranty__recalls">
                 <div className="warranty__recalls-header">
                   <h3 className="warranty__recalls-title">
                     <AlertTriangle size={20} />
-                    Recalls
+                    Recall Campaigns
                   </h3>
                   {!isLoadingRecalls && (
                     <div className={`warranty__recalls-badge ${hasRecalls ? 'warranty__recalls-badge--warning' : 'warranty__recalls-badge--success'}`}>
                       {hasRecalls ? (
-                        <>{recalls.length} Active</>
+                        <>{recalls.length} Found</>
                       ) : (
                         <>
                           <CheckCircle size={12} />
-                          None
+                          None Found
                         </>
                       )}
                     </div>
@@ -298,13 +531,17 @@ const Warranty = ({
 
                 {/* Segment benchmark */}
                 {reliabilityContext && !isLoadingRecalls && (
-                  <div className="warranty__benchmark">
-                    <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.recallsVsAverage}`}>
-                      {getComparisonIcon(reliabilityContext.recallsVsAverage)}
-                      {getComparisonLabel(reliabilityContext.recallsVsAverage)}
-                    </span>
-                    <span>{recalls.length} issued, segment avg: {reliabilityContext.segmentAvgRecalls}</span>
-                  </div>
+                  isVehicleReliabilityVariant ? (
+                    <p className="warranty__record-note">{getRecallSummaryCopy()}</p>
+                  ) : (
+                    <div className="warranty__benchmark">
+                      <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.recallsVsAverage}`}>
+                        {getComparisonIcon(reliabilityContext.recallsVsAverage)}
+                        {getComparisonLabel(reliabilityContext.recallsVsAverage)}
+                      </span>
+                      <span>{recalls.length} returned, segment avg: {reliabilityContext.segmentAvgRecalls}</span>
+                    </div>
+                  )
                 )}
 
                 {isLoadingRecalls ? (
@@ -402,12 +639,14 @@ const Warranty = ({
                 ) : (
                   <div className="warranty__recalls-empty">
                     <CheckCircle size={28} className="warranty__recalls-empty-icon" />
-                    <p>No open recalls</p>
+                    <p>No recall campaigns returned</p>
                   </div>
                 )}
               </div>
+              </ReliabilityPanel>
 
               {/* Complaints Column */}
+              <ReliabilityPanel detail="complaints">
               <div className="warranty__complaints">
                 <div className="warranty__complaints-header">
                   <h3 className="warranty__complaints-title">
@@ -430,13 +669,17 @@ const Warranty = ({
 
                 {/* Segment benchmark */}
                 {reliabilityContext && !isLoadingComplaints && (
-                  <div className="warranty__benchmark">
-                    <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.complaintsVsAverage}`}>
-                      {getComparisonIcon(reliabilityContext.complaintsVsAverage)}
-                      {getComparisonLabel(reliabilityContext.complaintsVsAverage)}
-                    </span>
-                    <span>{complaintsSummary?.totalComplaints || 0} reported, segment avg: {reliabilityContext.segmentAvgComplaints}</span>
-                  </div>
+                  isVehicleReliabilityVariant ? (
+                    <p className="warranty__record-note">{getComplaintSummaryCopy()}</p>
+                  ) : (
+                    <div className="warranty__benchmark">
+                      <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.complaintsVsAverage}`}>
+                        {getComparisonIcon(reliabilityContext.complaintsVsAverage)}
+                        {getComparisonLabel(reliabilityContext.complaintsVsAverage)}
+                      </span>
+                      <span>{complaintsSummary?.totalComplaints || 0} reported, segment avg: {reliabilityContext.segmentAvgComplaints}</span>
+                    </div>
+                  )
                 )}
 
                 {isLoadingComplaints ? (
@@ -448,26 +691,36 @@ const Warranty = ({
                   <div className="warranty__complaints-content">
                     {/* Stats Row */}
                     {(complaintsSummary.crashCount > 0 || complaintsSummary.fireCount > 0 || complaintsSummary.injuryCount > 0) && (
-                      <div className="warranty__complaints-stats">
-                        {complaintsSummary.crashCount > 0 && (
-                          <div className="warranty__complaints-stat warranty__complaints-stat--crash">
-                            <Car size={16} />
-                            <span>{complaintsSummary.crashCount} Crash{complaintsSummary.crashCount !== 1 ? 'es' : ''}</span>
-                          </div>
-                        )}
-                        {complaintsSummary.fireCount > 0 && (
-                          <div className="warranty__complaints-stat warranty__complaints-stat--fire">
-                            <Flame size={16} />
-                            <span>{complaintsSummary.fireCount} Fire{complaintsSummary.fireCount !== 1 ? 's' : ''}</span>
-                          </div>
-                        )}
-                        {complaintsSummary.injuryCount > 0 && (
-                          <div className="warranty__complaints-stat warranty__complaints-stat--injury">
-                            <Users size={16} />
-                            <span>{complaintsSummary.injuryCount} Injur{complaintsSummary.injuryCount !== 1 ? 'ies' : 'y'}</span>
-                          </div>
-                        )}
-                      </div>
+                      isVehicleReliabilityVariant ? (
+                        <p className="warranty__complaints-signal-line">
+                          Includes {[
+                            complaintsSummary.crashCount > 0 ? `${complaintsSummary.crashCount} crash report${complaintsSummary.crashCount === 1 ? '' : 's'}` : '',
+                            complaintsSummary.fireCount > 0 ? `${complaintsSummary.fireCount} fire report${complaintsSummary.fireCount === 1 ? '' : 's'}` : '',
+                            complaintsSummary.injuryCount > 0 ? `${complaintsSummary.injuryCount} reported injur${complaintsSummary.injuryCount === 1 ? 'y' : 'ies'}` : '',
+                          ].filter(Boolean).join(', ')}.
+                        </p>
+                      ) : (
+                        <div className="warranty__complaints-stats">
+                          {complaintsSummary.crashCount > 0 && (
+                            <div className="warranty__complaints-stat warranty__complaints-stat--crash">
+                              <Car size={16} />
+                              <span>{complaintsSummary.crashCount} Crash{complaintsSummary.crashCount !== 1 ? 'es' : ''}</span>
+                            </div>
+                          )}
+                          {complaintsSummary.fireCount > 0 && (
+                            <div className="warranty__complaints-stat warranty__complaints-stat--fire">
+                              <Flame size={16} />
+                              <span>{complaintsSummary.fireCount} Fire{complaintsSummary.fireCount !== 1 ? 's' : ''}</span>
+                            </div>
+                          )}
+                          {complaintsSummary.injuryCount > 0 && (
+                            <div className="warranty__complaints-stat warranty__complaints-stat--injury">
+                              <Users size={16} />
+                              <span>{complaintsSummary.injuryCount} Injur{complaintsSummary.injuryCount !== 1 ? 'ies' : 'y'}</span>
+                            </div>
+                          )}
+                        </div>
+                      )
                     )}
 
                     {/* Top Components */}
@@ -477,7 +730,7 @@ const Warranty = ({
                         <div className="warranty__complaints-component-list">
                           {complaintsSummary.topComponents.map((item, index) => (
                             <div key={index} className="warranty__complaints-component">
-                              <span className="warranty__complaints-component-name">{item.component}</span>
+                              <span className="warranty__complaints-component-name">{formatNhtsaLabel(item.component)}</span>
                               <span className="warranty__complaints-component-count">{item.count}</span>
                             </div>
                           ))}
@@ -495,11 +748,19 @@ const Warranty = ({
                             <div key={complaint.odiNumber} className="warranty__complaint-item">
                               <button 
                                 className="warranty__complaint-header"
-                                onClick={() => toggleComplaint(complaint.odiNumber)}
-                                aria-expanded={isExpanded}
+                                onClick={() => {
+                                  if (isVehicleReliabilityVariant) {
+                                    openComplaintReport(complaint);
+                                    return;
+                                  }
+
+                                  toggleComplaint(complaint.odiNumber);
+                                }}
+                                aria-expanded={isVehicleReliabilityVariant ? undefined : isExpanded}
+                                aria-haspopup={isVehicleReliabilityVariant ? 'dialog' : undefined}
                               >
                                 <div className="warranty__complaint-info">
-                                  <span className="warranty__complaint-component">{complaint.components}</span>
+                                  <span className="warranty__complaint-component">{formatNhtsaLabel(complaint.components)}</span>
                                   <span className="warranty__complaint-date">
                                     {formatComplaintDate(complaint.dateComplaintFiled)}
                                   </span>
@@ -511,11 +772,15 @@ const Warranty = ({
                                   )}
                                 </div>
                                 <div className="warranty__complaint-toggle">
-                                  {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                  {isVehicleReliabilityVariant ? (
+                                    <span className="warranty__complaint-action">Read report</span>
+                                  ) : (
+                                    isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />
+                                  )}
                                 </div>
                               </button>
                               
-                              {isExpanded && (
+                              {!isVehicleReliabilityVariant && isExpanded && (
                                 <div className="warranty__complaint-details">
                                   <p>{complaint.summary}</p>
                                   <div className="warranty__complaint-footer">
@@ -541,15 +806,16 @@ const Warranty = ({
                 ) : (
                   <div className="warranty__complaints-empty">
                     <CheckCircle size={28} className="warranty__complaints-empty-icon" />
-                    <p>No complaints filed</p>
+                    <p>No owner complaints returned</p>
                   </div>
                 )}
               </div>
+              </ReliabilityPanel>
               </div>
 
-              {/* Safety Ratings Column */}
-              <aside className="warranty__detail-aside">
-              <div className="warranty__safety">
+              {!isVehicleReliabilityVariant && (
+                <aside className="warranty__detail-aside">
+                <div className="warranty__safety">
                 <div className="warranty__safety-header">
                   <h3 className="warranty__safety-title">
                     <ShieldCheck size={20} />
@@ -685,8 +951,10 @@ const Warranty = ({
                     <span className="warranty__safety-empty-note">This vehicle may not have been tested yet</span>
                   </div>
                 )}
-              </div>
-              </aside>
+                </div>
+                </aside>
+              )}
+            </div>
             </div>
 
             <p className="warranty__nhtsa-disclaimer">
@@ -702,23 +970,27 @@ const Warranty = ({
           </div>
         )}
         
-        {/* Warranty Cards */}
-        <div className="warranty__grid">
-          {items.map((item, index) => (
-            <div key={index} className="warranty__card">
-              <div className="warranty__card-icon">
-                {item.icon}
-              </div>
-              <h3 className="warranty__card-title">{item.title}</h3>
-              <div className="warranty__card-coverage">{item.coverage}</div>
-              <p className="warranty__card-description">{item.description}</p>
+        {variant === 'warranty-safety' && items.length > 0 && (
+          <>
+            {/* Warranty Cards */}
+            <div className="warranty__grid">
+              {items.map((item, index) => (
+                <div key={index} className="warranty__card">
+                  <div className="warranty__card-icon">
+                    {item.icon}
+                  </div>
+                  <h3 className="warranty__card-title">{item.title}</h3>
+                  <div className="warranty__card-coverage">{item.coverage}</div>
+                  <p className="warranty__card-description">{item.description}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        
-        <div className="warranty__note">
-          <p>* See dealer for limited warranty details. Warranty coverage varies by manufacturer.</p>
-        </div>
+
+            <div className="warranty__note">
+              <p>* See dealer for limited warranty details. Warranty coverage varies by manufacturer.</p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Crash Test Modal */}
@@ -729,6 +1001,80 @@ const Warranty = ({
           safetyRatings={safetyRatings}
           vehicleName={`${year} ${make} ${model}`}
         />
+      )}
+
+      {selectedComplaint && (
+        <div className="warranty__complaint-modal-backdrop" onClick={closeComplaintReport}>
+          <section
+            className="warranty__complaint-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="warranty-complaint-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className="warranty__complaint-modal-header">
+              <div>
+                <span className="warranty__complaint-modal-eyebrow">Owner complaint</span>
+                <h3 id="warranty-complaint-modal-title">
+                  {formatNhtsaLabel(selectedComplaint.components)}
+                </h3>
+              </div>
+              <button
+                type="button"
+                className="warranty__complaint-modal-close"
+                onClick={closeComplaintReport}
+                autoFocus
+              >
+                <X size={20} />
+                <span className="sr-only">Close complaint details</span>
+              </button>
+            </header>
+
+            <div className="warranty__complaint-modal-meta">
+              <div>
+                <span>Date filed</span>
+                <strong>{formatComplaintDate(selectedComplaint.dateComplaintFiled)}</strong>
+              </div>
+              {selectedComplaint.dateOfIncident && (
+                <div>
+                  <span>Incident date</span>
+                  <strong>{formatComplaintDate(selectedComplaint.dateOfIncident)}</strong>
+                </div>
+              )}
+              <div>
+                <span>NHTSA ODI</span>
+                <strong>#{selectedComplaint.odiNumber}</strong>
+              </div>
+            </div>
+
+            {(selectedComplaint.crash || selectedComplaint.fire || selectedComplaint.numberOfInjuries > 0 || selectedComplaint.numberOfDeaths > 0) && (
+              <div className="warranty__complaint-modal-flags" aria-label="Report signals">
+                {selectedComplaint.crash && <span>Crash reported</span>}
+                {selectedComplaint.fire && <span>Fire reported</span>}
+                {selectedComplaint.numberOfInjuries > 0 && (
+                  <span>{selectedComplaint.numberOfInjuries} injur{selectedComplaint.numberOfInjuries === 1 ? 'y' : 'ies'} reported</span>
+                )}
+                {selectedComplaint.numberOfDeaths > 0 && (
+                  <span>{selectedComplaint.numberOfDeaths} death{selectedComplaint.numberOfDeaths === 1 ? '' : 's'} reported</span>
+                )}
+              </div>
+            )}
+
+            <div className="warranty__complaint-modal-body">
+              <p>{selectedComplaint.summary}</p>
+            </div>
+
+            <footer className="warranty__complaint-modal-footer">
+              <a
+                href={`https://www.nhtsa.gov/vehicle/${year}/${make}/${model}/complaints`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View complaints on NHTSA.gov <ExternalLink size={14} />
+              </a>
+            </footer>
+          </section>
+        </div>
       )}
     </section>
   );

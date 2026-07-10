@@ -241,6 +241,32 @@ export function getReliabilityContext(
 
 const NHTSA_BASE_URL = 'https://api.nhtsa.gov';
 
+function normalizeNhtsaMatchValue(value: string | undefined): string {
+  return (value || '').trim().toUpperCase();
+}
+
+function findPreferredVehicleId(
+  results: VehicleIdResponse['Results'],
+  preferredDrivetrain?: string
+): number | null {
+  if (!results.length) {
+    return null;
+  }
+
+  const normalizedDrivetrain = normalizeNhtsaMatchValue(preferredDrivetrain);
+  if (normalizedDrivetrain) {
+    const drivetrainMatch = results.find((result) => (
+      normalizeNhtsaMatchValue(result.VehicleDescription).includes(normalizedDrivetrain)
+    ));
+
+    if (drivetrainMatch) {
+      return drivetrainMatch.VehicleId;
+    }
+  }
+
+  return results[0].VehicleId;
+}
+
 /**
  * Fetch recalls for a specific vehicle
  */
@@ -292,7 +318,8 @@ export async function getRecalls(
 export async function getVehicleId(
   make: string,
   model: string,
-  modelYear: number | string
+  modelYear: number | string,
+  preferredDrivetrain?: string
 ): Promise<number | null> {
   try {
     // Skip API call for future model years (NHTSA doesn't have data for future years)
@@ -320,11 +347,7 @@ export async function getVehicleId(
     
     const data: VehicleIdResponse = await response.json();
     
-    if (data.Results && data.Results.length > 0) {
-      return data.Results[0].VehicleId;
-    }
-    
-    return null;
+    return findPreferredVehicleId(data.Results || [], preferredDrivetrain);
   } catch (error) {
     console.error('Error fetching NHTSA vehicle ID:', error);
     return null;
@@ -366,9 +389,10 @@ export async function getSafetyRatings(
 export async function getVehicleSafetyRatings(
   make: string,
   model: string,
-  modelYear: number | string
+  modelYear: number | string,
+  preferredDrivetrain?: string
 ): Promise<NHTSASafetyRating | null> {
-  const vehicleId = await getVehicleId(make, model, modelYear);
+  const vehicleId = await getVehicleId(make, model, modelYear, preferredDrivetrain);
   
   if (!vehicleId) {
     return null;
@@ -522,16 +546,15 @@ export function getComplaintsSummary(complaints: NHTSAComplaint[]): ComplaintsSu
 }
 
 /**
- * Format a complaint date string (DD/MM/YYYY format from API)
+ * Format a complaint date string from NHTSA's MM/DD/YYYY API format.
  */
 export function formatComplaintDate(dateString: string): string {
   if (!dateString) return 'Unknown date';
   
   try {
-    // API returns dates in DD/MM/YYYY format
     const parts = dateString.split('/');
     if (parts.length === 3) {
-      const [day, month, year] = parts;
+      const [month, day, year] = parts;
       const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
@@ -544,4 +567,3 @@ export function formatComplaintDate(dateString: string): string {
     return dateString;
   }
 }
-

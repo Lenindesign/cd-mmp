@@ -12,7 +12,7 @@ import PriceHistory from '../../components/PriceHistory';
 import BuyingPotential from '../../components/BuyingPotential';
 import AdSidebar from '../../components/AdSidebar';
 import TrimSelector from '../../components/TrimSelector';
-import Warranty, { defaultWarrantyItems } from '../../components/Warranty';
+import Warranty from '../../components/Warranty';
 import Comparison from '../../components/Comparison';
 import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
@@ -404,15 +404,20 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
             vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
           />
         </section>
-        
-        <section id="warranty">
-          <Warranty 
-            items={defaultWarrantyItems}
+
+        <section id="reliability">
+          <Warranty
+            items={[]}
+            variant="vehicle-reliability"
+            title="Reliability & Recalls"
             make={vehicle.make}
             model={vehicle.model}
             year={vehicle.year}
             bodyStyle={vehicle.bodyStyle}
+            drivetrain={vehicle.drivetrain}
             nhtsaSafetyVehicleId={vehicle.nhtsaSafetyVehicleId}
+            vehicleImage={vehicle.image}
+            vehicleImageAlt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
           />
         </section>
         
