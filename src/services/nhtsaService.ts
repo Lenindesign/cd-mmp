@@ -78,6 +78,9 @@ export interface NHTSAComplaint {
   numberOfDeaths: number;
   dateOfIncident: string;
   dateComplaintFiled: string;
+  mileage?: number | string | null;
+  Mileage?: number | string | null;
+  MILEAGE?: number | string | null;
   vin: string;
   components: string;
   summary: string;

@@ -599,7 +599,8 @@
    Uses <Button variant="ghost"> from design system
    ============================================ */
 
-.vehicle-card__expand-years.btn {
+.vehicle-card__expand-years.btn,
+.vehicle-card__expand-details.btn {
   width: 100%;
   margin-top: auto;
   justify-content: center;
@@ -631,7 +632,8 @@
   }
 }
 
-.vehicle-card__years-overlay {
+.vehicle-card__years-overlay,
+.vehicle-card__details-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -647,16 +649,26 @@
   border-radius: var(--border-radius-md);
 }
 
-.vehicle-card__years-overlay--closing {
+.vehicle-card__years-overlay--closing,
+.vehicle-card__details-overlay--closing {
   animation: slideDownOverlay 0.3s ease-in forwards;
 }
 
-.vehicle-card__years-title {
+.vehicle-card__years-title,
+.vehicle-card__details-title {
   font-family: var(--font-heading);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-blue-cobalt);
   margin: 0 0 var(--spacing-3) 0;
+}
+
+.vehicle-card__details-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .vehicle-card__years-items {
@@ -717,7 +729,8 @@
 }
 
 /* Collapse Button - Uses <Button variant="ghost"> from design system */
-.vehicle-card__collapse-years.btn {
+.vehicle-card__collapse-years.btn,
+.vehicle-card__collapse-details.btn {
   width: 100%;
   margin-top: auto;
   border-top: 1px solid var(--color-gray-200);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, ChevronUp, ChevronDown, ChevronRight, Bookmark } from 'lucide-react';
 import { OptimizedImage } from '../OptimizedImage';
@@ -103,6 +103,11 @@ export interface VehicleCardProps {
   // Incentives
   incentiveCount?: number;
   onIncentiveClick?: (e: React.MouseEvent) => void;
+
+  // Optional in-card disclosure
+  detailToggleLabel?: string;
+  detailOverlayTitle?: string;
+  detailOverlayContent?: ReactNode;
   
   // Variant
   variant?: 'default' | 'next-vehicle';
@@ -117,6 +122,7 @@ const getBadgeLabel = (badge: string) => {
 };
 
 export const VehicleCard = ({
+  id,
   name,
   slug,
   image,
@@ -153,6 +159,9 @@ export const VehicleCard = ({
   showSaveButton = false,
   incentiveCount,
   onIncentiveClick,
+  detailToggleLabel,
+  detailOverlayTitle,
+  detailOverlayContent,
   variant = 'default',
 }: VehicleCardProps) => {
   const { user, isAuthenticated, addSavedVehicle, removeSavedVehicle } = useAuth();
@@ -164,11 +173,14 @@ export const VehicleCard = ({
 
   const [isYearsExpanded, setIsYearsExpanded] = useState(false);
   const [isYearsClosing, setIsYearsClosing] = useState(false);
+  const [isDetailExpanded, setIsDetailExpanded] = useState(false);
+  const [isDetailClosing, setIsDetailClosing] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   
   // Extract model name from the full name (e.g., "Mazda CX-30" -> "CX-30")
   const displayModelName = modelName || name.split(' ').slice(1).join(' ') || name;
   const vehiclePath = `/${slug}`;
+  const detailPanelId = `vehicle-card-detail-${String(id).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
   
   // Check if vehicle is saved
   const isSaved = user?.savedVehicles?.some(v => v.name === name) || false;
@@ -215,6 +227,20 @@ export const VehicleCard = ({
       }, 300); // Match animation duration
     } else {
       setIsYearsExpanded(true);
+    }
+  };
+
+  const handleDetailToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isDetailExpanded) {
+      setIsDetailClosing(true);
+      setTimeout(() => {
+        setIsDetailExpanded(false);
+        setIsDetailClosing(false);
+      }, 300);
+    } else {
+      setIsDetailExpanded(true);
     }
   };
 
@@ -681,6 +707,20 @@ export const VehicleCard = ({
           </button>
         )}
 
+        {/* In-card Detail Disclosure */}
+        {detailOverlayContent && detailToggleLabel && !isDetailExpanded && (
+          <Button
+            variant="ghost"
+            size="small"
+            className="vehicle-card__expand-details"
+            onClick={handleDetailToggle}
+            aria-expanded={false}
+            aria-controls={detailPanelId}
+          >
+            {detailToggleLabel}
+          </Button>
+        )}
+
         {/* Divider before C/D Says */}
         {cdSays && (
           <hr className="vehicle-card__divider-standard" />
@@ -749,6 +789,31 @@ export const VehicleCard = ({
             iconRight={<ChevronDown size={18} aria-hidden="true" />}
           >
             COLLAPSE
+          </Button>
+        </div>
+      )}
+
+      {detailOverlayContent && isDetailExpanded && (
+        <div
+          id={detailPanelId}
+          className={`vehicle-card__details-overlay ${isDetailClosing ? 'vehicle-card__details-overlay--closing' : ''}`}
+          onClick={(e) => e.preventDefault()}
+        >
+          {detailOverlayTitle && (
+            <h4 className="vehicle-card__details-title">{detailOverlayTitle}</h4>
+          )}
+          <div className="vehicle-card__details-content">
+            {detailOverlayContent}
+          </div>
+          <Button
+            variant="ghost"
+            size="small"
+            className="vehicle-card__collapse-details"
+            onClick={handleDetailToggle}
+            aria-expanded={true}
+            aria-controls={detailPanelId}
+          >
+            COLLAPSE DETAILS
           </Button>
         </div>
       )}

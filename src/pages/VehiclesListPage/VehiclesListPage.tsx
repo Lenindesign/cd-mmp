@@ -1,6 +1,6 @@
 import { Fragment, useState, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Filter, ChevronDown, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank, Clock, TrendingDown, Shield, Wrench, User, AlertTriangle, Check } from 'lucide-react';
+import { Search, Filter, ChevronDown, Users, Mountain, Gem, Leaf, Gauge, Briefcase, PiggyBank } from 'lucide-react';
 import { getAllVehicles, getNewVehicles, getUniqueMakes, getUniqueBodyStyles } from '../../services/vehicleService';
 import { useSupabaseRatings, getCategory } from '../../hooks/useSupabaseRating';
 import { getAllListings, getUniqueMakesFromListings, type Listing } from '../../services/listingsService';
@@ -13,13 +13,12 @@ import AdSidebar from '../../components/AdSidebar';
 import { chunkArray } from '../../utils/chunkArray';
 import './VehiclesListPage.css';
 
-// Vehicle History Tooltip Component
-interface TooltipProps {
+// Vehicle History Report Component
+interface HistoryReportProps {
   listing: Listing;
-  position: 'left' | 'right';
 }
 
-const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
+const VehicleHistoryReport = ({ listing }: HistoryReportProps) => {
   if (!listing.history) return null;
   
   const { history } = listing;
@@ -33,21 +32,11 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
   };
 
   return (
-    <div className={`vht vht--${position}`}>
-      {/* Arrow */}
-      <div className="vht__arrow" />
-      
-      {/* Header */}
-      <div className="vht__header">
-        <Shield size={18} />
-        <span>Vehicle History Report</span>
-      </div>
-      
+    <div className="vehicle-history-report">
       {/* Stats Grid */}
       <div className="vht__grid">
         {/* Owners */}
         <div className="vht__stat">
-          <User size={20} className="vht__stat-icon" />
           <div className="vht__stat-content">
             <span className="vht__stat-label">Owners</span>
             <span className="vht__stat-value">{history.owners}</span>
@@ -56,11 +45,6 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
         
         {/* Accidents */}
         <div className={`vht__stat ${history.accidents === 0 ? 'vht__stat--success' : 'vht__stat--warning'}`}>
-          {history.accidents === 0 ? (
-            <Check size={20} className="vht__stat-icon" />
-          ) : (
-            <AlertTriangle size={20} className="vht__stat-icon" />
-          )}
           <div className="vht__stat-content">
             <span className="vht__stat-label">Accidents</span>
             <span className="vht__stat-value">
@@ -71,7 +55,6 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
         
         {/* Title Status */}
         <div className={`vht__stat ${history.titleStatus === 'Clean' ? 'vht__stat--success' : 'vht__stat--warning'}`}>
-          <Check size={20} className="vht__stat-icon" />
           <div className="vht__stat-content">
             <span className="vht__stat-label">Title</span>
             <span className="vht__stat-value">{history.titleStatus}</span>
@@ -80,7 +63,6 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
         
         {/* Service Records */}
         <div className="vht__stat">
-          <Wrench size={20} className="vht__stat-icon" />
           <div className="vht__stat-content">
             <span className="vht__stat-label">Service Records</span>
             <span className="vht__stat-value">{history.serviceRecords}</span>
@@ -89,7 +71,6 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
         
         {/* Days on Market */}
         <div className="vht__stat">
-          <Clock size={20} className="vht__stat-icon" />
           <div className="vht__stat-content">
             <span className="vht__stat-label">Days on Market</span>
             <span className="vht__stat-value">{history.daysOnMarket}</span>
@@ -98,7 +79,6 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
         
         {/* Last Service */}
         <div className="vht__stat">
-          <Wrench size={20} className="vht__stat-icon" />
           <div className="vht__stat-content">
             <span className="vht__stat-label">Last Service</span>
             <span className="vht__stat-value">{history.lastServiceDate || 'N/A'}</span>
@@ -120,7 +100,6 @@ const VehicleHistoryTooltip = ({ listing, position }: TooltipProps) => {
       {history.priceHistory.length > 0 && (
         <div className="vht__price">
           <div className="vht__price-header">
-            <TrendingDown size={18} />
             <span>Price History</span>
           </div>
           <div className="vht__price-list">
@@ -144,7 +123,6 @@ const VehiclesListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [hoveredListing, setHoveredListing] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 24; // Show 24 items per page (6 rows x 4 columns)
   /** In-feed leaderboard after each batch of this many cards (e.g. 6 rows × 2 cols or 3 rows × 4 cols) */
@@ -644,17 +622,11 @@ const VehiclesListPage = () => {
             {inventoryType === 'used' &&
               chunkArray(paginatedListings, GRID_BREAKER_AFTER_CARD_COUNT).map((chunk, chunkIndex, allChunks) => (
                 <Fragment key={`listings-chunk-${chunkIndex}`}>
-                  {chunk.map((listing, index) => {
-                    const globalIndex = chunkIndex * GRID_BREAKER_AFTER_CARD_COUNT + index;
-                    const columnIndex = globalIndex % 4;
-                    const tooltipPosition: 'left' | 'right' = columnIndex < 2 ? 'right' : 'left';
-
+                  {chunk.map((listing) => {
                     return (
                       <div
                         key={listing.id}
-                        className={`vehicles-list-page__card-wrapper vehicles-list-page__card-wrapper--tooltip-${tooltipPosition}`}
-                        onMouseEnter={() => setHoveredListing(listing.id)}
-                        onMouseLeave={() => setHoveredListing(null)}
+                        className="vehicles-list-page__card-wrapper"
                       >
                         <VehicleCard
                           id={listing.id}
@@ -669,10 +641,10 @@ const VehiclesListPage = () => {
                           dealerName={listing.dealerName}
                           distance={listing.distance}
                           showSaveButton={true}
+                          detailToggleLabel={listing.history ? 'VEHICLE HISTORY REPORT' : undefined}
+                          detailOverlayTitle={listing.history ? 'Vehicle History Report' : undefined}
+                          detailOverlayContent={listing.history ? <VehicleHistoryReport listing={listing} /> : undefined}
                         />
-                        {hoveredListing === listing.id && listing.history && (
-                          <VehicleHistoryTooltip listing={listing} position={tooltipPosition} />
-                        )}
                       </div>
                     );
                   })}

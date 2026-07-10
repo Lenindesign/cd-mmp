@@ -45,6 +45,27 @@ interface WarrantyProps {
   variant?: 'warranty-safety' | 'vehicle-reliability';
 }
 
+const formatComplaintMileage = (complaint: NHTSAComplaint): string | null => {
+  const rawMileage = complaint.mileage ?? complaint.Mileage ?? complaint.MILEAGE;
+  const summaryText = complaint.summary || '';
+  const summaryMileageMatch = summaryText.match(/\b(under|about|around|approximately|approx\.?|over|nearly)?\s*(\d{1,3}(?:,\d{3})+|\d+)\s*(?:miles|mile|mi)\b/i);
+  const summaryMileageStatementMatch = summaryText.match(/\b(?:failure\s+)?(?:mileage|odometer(?:\s+reading)?)\s*(?:was|is|read|reads|reading|reported\s+as|:|-)?\s*(under|about|around|approximately|approx\.?|over|nearly)?\s*(\d{1,3}(?:,\d{3})+|\d+)\b/i);
+  const mileagePrefix = (summaryMileageMatch?.[1] || summaryMileageStatementMatch?.[1])
+    ?.replace(/\.$/, '')
+    .toLowerCase();
+  const mileageValue = rawMileage ?? summaryMileageMatch?.[2] ?? summaryMileageStatementMatch?.[2];
+  if (mileageValue === null || mileageValue === undefined || mileageValue === '') return null;
+
+  const numericMileage = typeof mileageValue === 'number'
+    ? mileageValue
+    : Number(String(mileageValue).replace(/[^0-9.]/g, ''));
+
+  if (!Number.isFinite(numericMileage) || numericMileage < 0) return null;
+
+  const formattedMileage = `${new Intl.NumberFormat('en-US').format(Math.round(numericMileage))} mi`;
+  return mileagePrefix ? `${mileagePrefix} ${formattedMileage}` : formattedMileage;
+};
+
 const Warranty = ({ 
   items, 
   title = "Warranty & Safety", 
@@ -182,6 +203,11 @@ const Warranty = ({
   const openComplaintReport = (complaint: NHTSAComplaint) => {
     const complaintIndex = complaintReports.findIndex(report => report.odiNumber === complaint.odiNumber);
     setSelectedComplaintIndex(complaintIndex >= 0 ? complaintIndex : 0);
+  };
+
+  const openAllComplaintReports = () => {
+    if (complaintReportCount === 0) return;
+    setSelectedComplaintIndex(0);
   };
 
   const closeComplaintReport = () => {
@@ -737,18 +763,14 @@ const Warranty = ({
                 </div>
 
                 {/* Segment benchmark */}
-                {reliabilityContext && !isLoadingComplaints && (
-                  isVehicleReliabilityVariant ? (
-                    <p className="warranty__record-note">{getComplaintSummaryCopy()}</p>
-                  ) : (
-                    <div className="warranty__benchmark">
-                      <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.complaintsVsAverage}`}>
-                        {getComparisonIcon(reliabilityContext.complaintsVsAverage)}
-                        {getComparisonLabel(reliabilityContext.complaintsVsAverage)}
-                      </span>
-                      <span>{complaintsSummary?.totalComplaints || 0} reported, segment avg: {reliabilityContext.segmentAvgComplaints}</span>
-                    </div>
-                  )
+                {reliabilityContext && !isLoadingComplaints && !isVehicleReliabilityVariant && (
+                  <div className="warranty__benchmark">
+                    <span className={`warranty__reliability-comparison warranty__reliability-comparison--${reliabilityContext.complaintsVsAverage}`}>
+                      {getComparisonIcon(reliabilityContext.complaintsVsAverage)}
+                      {getComparisonLabel(reliabilityContext.complaintsVsAverage)}
+                    </span>
+                    <span>{complaintsSummary?.totalComplaints || 0} reported, segment avg: {reliabilityContext.segmentAvgComplaints}</span>
+                  </div>
                 )}
 
                 {isLoadingComplaints ? (
@@ -759,16 +781,31 @@ const Warranty = ({
                 ) : complaintsSummary && complaintsSummary.totalComplaints > 0 ? (
                   <div className="warranty__complaints-content">
                     {/* Stats Row */}
-                    {(complaintsSummary.crashCount > 0 || complaintsSummary.fireCount > 0 || complaintsSummary.injuryCount > 0) && (
-                      isVehicleReliabilityVariant ? (
-                        <p className="warranty__complaints-signal-line">
-                          Includes {[
-                            complaintsSummary.crashCount > 0 ? `${complaintsSummary.crashCount} crash report${complaintsSummary.crashCount === 1 ? '' : 's'}` : '',
-                            complaintsSummary.fireCount > 0 ? `${complaintsSummary.fireCount} fire report${complaintsSummary.fireCount === 1 ? '' : 's'}` : '',
-                            complaintsSummary.injuryCount > 0 ? `${complaintsSummary.injuryCount} reported injur${complaintsSummary.injuryCount === 1 ? 'y' : 'ies'}` : '',
-                          ].filter(Boolean).join(', ')}.
-                        </p>
-                      ) : (
+                    {isVehicleReliabilityVariant ? (
+                      <div className="warranty__complaints-intro">
+                        <p className="warranty__record-note">{getComplaintSummaryCopy()}</p>
+                        <div className="warranty__complaints-intro-footer">
+                          {(complaintsSummary.crashCount > 0 || complaintsSummary.fireCount > 0 || complaintsSummary.injuryCount > 0) && (
+                            <p className="warranty__complaints-signal-line">
+                              Includes {[
+                                complaintsSummary.crashCount > 0 ? `${complaintsSummary.crashCount} crash report${complaintsSummary.crashCount === 1 ? '' : 's'}` : '',
+                                complaintsSummary.fireCount > 0 ? `${complaintsSummary.fireCount} fire report${complaintsSummary.fireCount === 1 ? '' : 's'}` : '',
+                                complaintsSummary.injuryCount > 0 ? `${complaintsSummary.injuryCount} reported injur${complaintsSummary.injuryCount === 1 ? 'y' : 'ies'}` : '',
+                              ].filter(Boolean).join(', ')}.
+                            </p>
+                          )}
+                          <button
+                            type="button"
+                            className="warranty__complaints-see-all"
+                            onClick={openAllComplaintReports}
+                          >
+                            See all Reports
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      (complaintsSummary.crashCount > 0 || complaintsSummary.fireCount > 0 || complaintsSummary.injuryCount > 0) && (
                         <div className="warranty__complaints-stats">
                           {complaintsSummary.crashCount > 0 && (
                             <div className="warranty__complaints-stat warranty__complaints-stat--crash">
@@ -1143,48 +1180,58 @@ const Warranty = ({
               aria-label={`${complaintReportCount} owner complaint reports`}
             >
               <div className="warranty__complaint-modal-track">
-                {complaintReports.map((complaint, index) => (
-                  <article
-                    key={complaint.odiNumber}
-                    className="warranty__complaint-modal-slide"
-                    aria-label={`Complaint ${index + 1} of ${complaintReportCount}`}
-                    aria-hidden={index !== selectedComplaintIndex}
-                  >
-                    <div className="warranty__complaint-modal-meta">
-                      <div>
-                        <span>Date filed</span>
-                        <strong>{formatComplaintDate(complaint.dateComplaintFiled)}</strong>
-                      </div>
-                      {complaint.dateOfIncident && (
+                {complaintReports.map((complaint, index) => {
+                  const complaintMileage = formatComplaintMileage(complaint);
+
+                  return (
+                    <article
+                      key={complaint.odiNumber}
+                      className="warranty__complaint-modal-slide"
+                      aria-label={`Complaint ${index + 1} of ${complaintReportCount}`}
+                      aria-hidden={index !== selectedComplaintIndex}
+                    >
+                      <div className="warranty__complaint-modal-meta">
                         <div>
-                          <span>Incident date</span>
-                          <strong>{formatComplaintDate(complaint.dateOfIncident)}</strong>
+                          <span>Date filed</span>
+                          <strong>{formatComplaintDate(complaint.dateComplaintFiled)}</strong>
+                        </div>
+                        {complaint.dateOfIncident && (
+                          <div>
+                            <span>Incident date</span>
+                            <strong>{formatComplaintDate(complaint.dateOfIncident)}</strong>
+                          </div>
+                        )}
+                        {complaintMileage && (
+                          <div>
+                            <span>Mileage</span>
+                            <strong>{complaintMileage}</strong>
+                          </div>
+                        )}
+                        <div>
+                          <span>NHTSA ODI</span>
+                          <strong>#{complaint.odiNumber}</strong>
+                        </div>
+                      </div>
+
+                      {(complaint.crash || complaint.fire || complaint.numberOfInjuries > 0 || complaint.numberOfDeaths > 0) && (
+                        <div className="warranty__complaint-modal-flags" aria-label="Report signals">
+                          {complaint.crash && <span>Crash reported</span>}
+                          {complaint.fire && <span>Fire reported</span>}
+                          {complaint.numberOfInjuries > 0 && (
+                            <span>{complaint.numberOfInjuries} injur{complaint.numberOfInjuries === 1 ? 'y' : 'ies'} reported</span>
+                          )}
+                          {complaint.numberOfDeaths > 0 && (
+                            <span>{complaint.numberOfDeaths} death{complaint.numberOfDeaths === 1 ? '' : 's'} reported</span>
+                          )}
                         </div>
                       )}
-                      <div>
-                        <span>NHTSA ODI</span>
-                        <strong>#{complaint.odiNumber}</strong>
-                      </div>
-                    </div>
 
-                    {(complaint.crash || complaint.fire || complaint.numberOfInjuries > 0 || complaint.numberOfDeaths > 0) && (
-                      <div className="warranty__complaint-modal-flags" aria-label="Report signals">
-                        {complaint.crash && <span>Crash reported</span>}
-                        {complaint.fire && <span>Fire reported</span>}
-                        {complaint.numberOfInjuries > 0 && (
-                          <span>{complaint.numberOfInjuries} injur{complaint.numberOfInjuries === 1 ? 'y' : 'ies'} reported</span>
-                        )}
-                        {complaint.numberOfDeaths > 0 && (
-                          <span>{complaint.numberOfDeaths} death{complaint.numberOfDeaths === 1 ? '' : 's'} reported</span>
-                        )}
+                      <div className="warranty__complaint-modal-body">
+                        <p>{complaint.summary}</p>
                       </div>
-                    )}
-
-                    <div className="warranty__complaint-modal-body">
-                      <p>{complaint.summary}</p>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </div>
 

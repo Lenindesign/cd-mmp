@@ -690,81 +690,14 @@
 }
 
 /* ============================================
-   Vehicle History Tooltip (VHT)
-   Clean, structured design
+   Vehicle History Report
+   In-card disclosure content
    ============================================ */
 
-.vht {
-  position: absolute;
-  top: 0;
-  z-index: 100;
-  width: 380px;
-  background: var(--color-white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
-  padding: var(--spacing-4);
-  transform-origin: left center;
-}
-
-/* Positioning */
-.vht--right {
-  left: calc(100% + 16px);
-  animation: vhtSlideRight 0.25s ease-out;
-}
-
-.vht--left {
-  right: calc(100% + 16px);
-  left: auto;
-  transform-origin: right center;
-  animation: vhtSlideLeft 0.25s ease-out;
-}
-
-/* Arrow */
-.vht__arrow {
-  position: absolute;
-  top: var(--spacing-7);
-  width: var(--spacing-3);
-  height: var(--spacing-3);
-  background: var(--color-white);
-  transform: rotate(45deg);
-  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.vht--right .vht__arrow {
-  left: -6px;
-}
-
-.vht--left .vht__arrow {
-  right: -6px;
-}
-
-@keyframes vhtSlideRight {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes vhtSlideLeft {
-  from { opacity: 0; transform: translateX(10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* Header */
-.vht__header {
+.vehicle-history-report {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-4);
-}
-
-.vht__header svg {
-  color: var(--color-gray-700);
-}
-
-.vht__header span {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-black);
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* Stats Grid - 2 columns */
@@ -776,23 +709,7 @@
 }
 
 .vht__stat {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-2);
-}
-
-.vht__stat-icon {
-  color: var(--color-gray-600);
-  flex-shrink: 0;
-  margin-top: var(--spacing-0-5);
-}
-
-.vht__stat--success .vht__stat-icon {
-  color: var(--color-success);
-}
-
-.vht__stat--warning .vht__stat-icon {
-  color: var(--color-error);
+  min-width: 0;
 }
 
 .vht__stat-content {
@@ -873,12 +790,7 @@
 .vht__price-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
   margin-bottom: var(--spacing-3);
-}
-
-.vht__price-header svg {
-  color: var(--color-gray-600);
 }
 
 .vht__price-header span {
@@ -924,40 +836,19 @@
   border-radius: var(--border-radius-sm);
 }
 
-/* On smaller screens, position tooltip below the card */
-@media (max-width: 1200px) {
-  .vht {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    width: auto;
-    margin-top: var(--spacing-2);
-    transform-origin: top center;
-    animation: vhtFadeDown 0.25s ease-out;
+@media (max-width: 520px) {
+  .vht__grid {
+    grid-template-columns: 1fr;
   }
-  
-  .vht--right,
-  .vht--left {
-    left: 0;
-    right: 0;
-    animation: vhtFadeDown 0.25s ease-out;
-  }
-  
-  .vht__arrow {
-    display: none;
-  }
-  
-  @keyframes vhtFadeDown {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-}
 
-/* Hide tooltip on mobile completely */
-@media (max-width: 768px) {
-  .vht {
-    display: none;
+  .vht__price-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+
+  .vht__price-date {
+    min-width: 0;
   }
 }
 
@@ -1066,4 +957,3 @@
     font-size: var(--font-size-xs);
   }
 }
-
