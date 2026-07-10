@@ -126,8 +126,13 @@ export interface ReliabilityContext {
   summary: string;
 }
 
-// Benchmark data based on NHTSA averages for 2024 model year vehicles
-// These are approximate segment averages compiled from NHTSA data
+interface ReliabilityContextOptions {
+  modelYear?: number | string;
+  complaintSummary?: Pick<ComplaintsSummary, 'crashCount' | 'fireCount' | 'injuryCount' | 'deathCount'>;
+}
+
+// Benchmark data based on approximate NHTSA model-year complaint and recall patterns.
+// The reliability score adjusts these baselines by vehicle age before comparison.
 const SEGMENT_BENCHMARKS: Record<string, { avgComplaints: number; avgRecalls: number }> = {
   'Sedan': { avgComplaints: 25, avgRecalls: 3 },
   'SUV': { avgComplaints: 45, avgRecalls: 5 },
@@ -143,6 +148,45 @@ const SEGMENT_BENCHMARKS: Record<string, { avgComplaints: number; avgRecalls: nu
 // Luxury brands tend to have higher complaint rates due to more complex systems
 const LUXURY_BRANDS = ['BMW', 'Mercedes-Benz', 'Audi', 'Lexus', 'Porsche', 'Land Rover', 'Jaguar', 'Maserati', 'Bentley', 'Rolls-Royce', 'Genesis', 'Infiniti', 'Acura', 'Volvo', 'Lincoln', 'Cadillac'];
 
+const RELIABILITY_SCORE_FLOOR = 60;
+const RELIABILITY_SCORE_CEILING = 100;
+
+const clamp = (value: number, min: number, max: number): number => {
+  return Math.max(min, Math.min(max, value));
+};
+
+const getModelYearAgeFactor = (modelYear?: number | string): number => {
+  const parsedYear = typeof modelYear === 'string' ? parseInt(modelYear, 10) : modelYear;
+  if (!parsedYear || Number.isNaN(parsedYear)) {
+    return 1;
+  }
+
+  const currentYear = new Date().getFullYear();
+  const modelAgeYears = clamp(currentYear - parsedYear + 1, 1, 8);
+
+  // Benchmarks are tuned around a roughly three-model-year exposure window.
+  // Newer vehicles should not be treated like they had the same time to gather complaints.
+  return clamp(modelAgeYears / 3, 0.45, 2);
+};
+
+const getComplaintSeverityLoad = (
+  complaintCount: number,
+  complaintSummary?: ReliabilityContextOptions['complaintSummary'],
+): number => {
+  if (!complaintSummary || complaintCount <= 0) {
+    return 0;
+  }
+
+  const weightedSignals = (
+    complaintSummary.crashCount +
+    complaintSummary.fireCount * 1.5 +
+    complaintSummary.injuryCount * 2 +
+    complaintSummary.deathCount * 4
+  );
+
+  return weightedSignals / complaintCount;
+};
+
 /**
  * Get reliability context comparing this vehicle to segment averages
  */
@@ -150,25 +194,33 @@ export function getReliabilityContext(
   complaintCount: number,
   recallCount: number,
   bodyStyle: string,
-  make: string
+  make: string,
+  options: ReliabilityContextOptions = {},
 ): ReliabilityContext {
   const isLuxury = LUXURY_BRANDS.includes(make);
   const benchmark = SEGMENT_BENCHMARKS[bodyStyle] || SEGMENT_BENCHMARKS['default'];
+  const ageFactor = getModelYearAgeFactor(options.modelYear);
   
   // Adjust benchmarks for luxury brands (they typically have 50% more complaints)
-  const adjustedAvgComplaints = isLuxury ? benchmark.avgComplaints * 1.5 : benchmark.avgComplaints;
-  const adjustedAvgRecalls = isLuxury ? benchmark.avgRecalls * 1.2 : benchmark.avgRecalls;
+  const adjustedAvgComplaints = (isLuxury ? benchmark.avgComplaints * 1.5 : benchmark.avgComplaints) * ageFactor;
+  const adjustedAvgRecalls = (isLuxury ? benchmark.avgRecalls * 1.2 : benchmark.avgRecalls) * Math.sqrt(ageFactor);
   
   // Calculate percentile (0 = best, 100 = worst)
   const complaintsRatio = complaintCount / adjustedAvgComplaints;
   const recallsRatio = recallCount / adjustedAvgRecalls;
+  const complaintSeverityLoad = getComplaintSeverityLoad(complaintCount, options.complaintSummary);
   
   // Convert ratio to percentile (capped at 100)
   const complaintsPercentile = Math.min(Math.round(complaintsRatio * 50), 100);
   const recallsPercentile = Math.min(Math.round(recallsRatio * 50), 100);
-  const reliabilityScore = Math.max(0, Math.min(100, Math.round(
-    100 - ((complaintsPercentile * 0.6) + (recallsPercentile * 0.4))
-  )));
+  const complaintVolumePenalty = clamp((complaintsRatio - 0.35) * 10, 0, 18);
+  const recallPenalty = clamp((recallsRatio - 0.5) * 7, 0, 14);
+  const severityPenalty = clamp(complaintSeverityLoad * 10, 0, 24);
+  const reliabilityScore = clamp(
+    Math.round(100 - complaintVolumePenalty - recallPenalty - severityPenalty),
+    RELIABILITY_SCORE_FLOOR,
+    RELIABILITY_SCORE_CEILING,
+  );
   
   // Determine ratings
   const getComplaintsRating = (ratio: number): ReliabilityContext['complaintsRating'] => {
@@ -417,7 +469,19 @@ export function formatRecallDate(dateString: string): string {
   if (!dateString) return 'Unknown date';
   
   try {
-    const date = new Date(dateString);
+    const dayFirstMatch = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    const date = dayFirstMatch
+      ? new Date(
+        parseInt(dayFirstMatch[3], 10),
+        parseInt(dayFirstMatch[2], 10) - 1,
+        parseInt(dayFirstMatch[1], 10),
+      )
+      : new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+      return dateString;
+    }
+
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -426,33 +490,6 @@ export function formatRecallDate(dateString: string): string {
   } catch {
     return dateString;
   }
-}
-
-/**
- * Get the severity level based on recall consequence
- */
-export function getRecallSeverity(consequence: string): 'high' | 'medium' | 'low' {
-  const lowerConsequence = consequence.toLowerCase();
-  
-  if (
-    lowerConsequence.includes('crash') ||
-    lowerConsequence.includes('fire') ||
-    lowerConsequence.includes('injury') ||
-    lowerConsequence.includes('death') ||
-    lowerConsequence.includes('serious')
-  ) {
-    return 'high';
-  }
-  
-  if (
-    lowerConsequence.includes('stall') ||
-    lowerConsequence.includes('loss of') ||
-    lowerConsequence.includes('fail')
-  ) {
-    return 'medium';
-  }
-  
-  return 'low';
 }
 
 /**
@@ -577,4 +614,29 @@ export function formatComplaintDate(dateString: string): string {
   } catch {
     return dateString;
   }
+}
+
+/**
+ * Format complaint mileage when NHTSA sends a mileage field, or when the report
+ * text includes an odometer-style mileage statement.
+ */
+export function formatComplaintMileage(complaint: NHTSAComplaint): string | null {
+  const rawMileage = complaint.mileage ?? complaint.Mileage ?? complaint.MILEAGE;
+  const summaryText = complaint.summary || '';
+  const summaryMileageMatch = summaryText.match(/\b(under|about|around|approximately|approx\.?|over|nearly)?\s*(\d{1,3}(?:,\d{3})+|\d+)\s*(?:miles|mile|mi)\b/i);
+  const summaryMileageStatementMatch = summaryText.match(/\b(?:failure\s+)?(?:mileage|odometer(?:\s+reading)?)\s*(?:was|is|read|reads|reading|reported\s+as|:|-)?\s*(under|about|around|approximately|approx\.?|over|nearly)?\s*(\d{1,3}(?:,\d{3})+|\d+)\b/i);
+  const mileagePrefix = (summaryMileageMatch?.[1] || summaryMileageStatementMatch?.[1])
+    ?.replace(/\.$/, '')
+    .toLowerCase();
+  const mileageValue = rawMileage ?? summaryMileageMatch?.[2] ?? summaryMileageStatementMatch?.[2];
+  if (mileageValue === null || mileageValue === undefined || mileageValue === '') return null;
+
+  const numericMileage = typeof mileageValue === 'number'
+    ? mileageValue
+    : Number(String(mileageValue).replace(/[^0-9.]/g, ''));
+
+  if (!Number.isFinite(numericMileage) || numericMileage < 0) return null;
+
+  const formattedMileage = `${new Intl.NumberFormat('en-US').format(Math.round(numericMileage))} mi`;
+  return mileagePrefix ? `${mileagePrefix} ${formattedMileage}` : formattedMileage;
 }

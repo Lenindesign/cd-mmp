@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef, type ReactNode, type TouchEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { AlertTriangle, CheckCircle, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ExternalLink, Loader2, MessageSquareWarning, Flame, Car, Users, TrendingDown, TrendingUp, Minus, Info, Star, ShieldCheck, Camera, X } from 'lucide-react';
 import { 
   getRecalls, 
@@ -10,7 +11,7 @@ import {
   parseStarRating,
   formatRecallDate, 
   formatComplaintDate,
-  getRecallSeverity, 
+  formatComplaintMileage,
   type NHTSARecall,
   type NHTSAComplaint,
   type NHTSASafetyRating,
@@ -42,29 +43,9 @@ interface WarrantyProps {
   nhtsaSafetyVehicleId?: number;
   vehicleImage?: string;
   vehicleImageAlt?: string;
+  fullReportUrl?: string;
   variant?: 'warranty-safety' | 'vehicle-reliability';
 }
-
-const formatComplaintMileage = (complaint: NHTSAComplaint): string | null => {
-  const rawMileage = complaint.mileage ?? complaint.Mileage ?? complaint.MILEAGE;
-  const summaryText = complaint.summary || '';
-  const summaryMileageMatch = summaryText.match(/\b(under|about|around|approximately|approx\.?|over|nearly)?\s*(\d{1,3}(?:,\d{3})+|\d+)\s*(?:miles|mile|mi)\b/i);
-  const summaryMileageStatementMatch = summaryText.match(/\b(?:failure\s+)?(?:mileage|odometer(?:\s+reading)?)\s*(?:was|is|read|reads|reading|reported\s+as|:|-)?\s*(under|about|around|approximately|approx\.?|over|nearly)?\s*(\d{1,3}(?:,\d{3})+|\d+)\b/i);
-  const mileagePrefix = (summaryMileageMatch?.[1] || summaryMileageStatementMatch?.[1])
-    ?.replace(/\.$/, '')
-    .toLowerCase();
-  const mileageValue = rawMileage ?? summaryMileageMatch?.[2] ?? summaryMileageStatementMatch?.[2];
-  if (mileageValue === null || mileageValue === undefined || mileageValue === '') return null;
-
-  const numericMileage = typeof mileageValue === 'number'
-    ? mileageValue
-    : Number(String(mileageValue).replace(/[^0-9.]/g, ''));
-
-  if (!Number.isFinite(numericMileage) || numericMileage < 0) return null;
-
-  const formattedMileage = `${new Intl.NumberFormat('en-US').format(Math.round(numericMileage))} mi`;
-  return mileagePrefix ? `${mileagePrefix} ${formattedMileage}` : formattedMileage;
-};
 
 const Warranty = ({ 
   items, 
@@ -77,6 +58,7 @@ const Warranty = ({
   nhtsaSafetyVehicleId,
   vehicleImage,
   vehicleImageAlt,
+  fullReportUrl,
   variant = 'warranty-safety',
 }: WarrantyProps) => {
   const isVehicleReliabilityVariant = variant === 'vehicle-reliability';
@@ -187,10 +169,13 @@ const Warranty = ({
     if (!isLoadingRecalls && !isLoadingComplaints && make) {
       const complaintCount = complaintsSummary?.totalComplaints || 0;
       const recallCount = recalls.length;
-      return getReliabilityContext(complaintCount, recallCount, bodyStyle, make);
+      return getReliabilityContext(complaintCount, recallCount, bodyStyle, make, {
+        modelYear: year,
+        complaintSummary: complaintsSummary || undefined,
+      });
     }
     return null;
-  }, [isLoadingRecalls, isLoadingComplaints, complaintsSummary, recalls.length, bodyStyle, make]);
+  }, [isLoadingRecalls, isLoadingComplaints, complaintsSummary, recalls.length, bodyStyle, make, year]);
 
   const toggleRecall = (campaignNumber: string) => {
     setExpandedRecall(prev => prev === campaignNumber ? null : campaignNumber);
@@ -648,12 +633,11 @@ const Warranty = ({
                   <div className="warranty__recalls-list">
                     {displayedRecalls.map((recall) => {
                       const isExpanded = expandedRecall === recall.NHTSACampaignNumber;
-                      const severity = getRecallSeverity(recall.Consequence);
                       
                       return (
                         <div 
                           key={recall.NHTSACampaignNumber} 
-                          className={`warranty__recall-item warranty__recall-item--${severity}`}
+                          className="warranty__recall-item"
                         >
                           <button 
                             className="warranty__recall-header"
@@ -661,9 +645,7 @@ const Warranty = ({
                             aria-expanded={isExpanded}
                           >
                             <div className="warranty__recall-info">
-                              <span className={`warranty__recall-severity warranty__recall-severity--${severity}`}>
-                                {severity === 'high' ? 'Critical' : severity === 'medium' ? 'Important' : 'Notice'}
-                              </span>
+                              <span className="warranty__recall-type">Recall campaign</span>
                               <span className="warranty__recall-component">{recall.Component}</span>
                               <span className="warranty__recall-date">
                                 {formatRecallDate(recall.ReportReceivedDate)}
@@ -1072,6 +1054,12 @@ const Warranty = ({
               >
                 Verify on NHTSA.gov <ExternalLink size={12} />
               </a>
+              {isVehicleReliabilityVariant && fullReportUrl && (
+                <Link to={fullReportUrl} className="warranty__full-report-link">
+                  View full reliability report
+                  <ChevronRight size={14} />
+                </Link>
+              )}
             </p>
           </div>
         )}

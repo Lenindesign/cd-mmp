@@ -19,6 +19,7 @@ const VehiclePageVariantB = lazy(() => import('./pages/VehiclePage/VehiclePageVa
 const VehiclePageVariantC = lazy(() => import('./pages/VehiclePage/VehiclePageVariantC'));
 const VehiclePageVariantD = lazy(() => import('./pages/VehiclePage/VehiclePageVariantD'));
 const VehiclePageConcept = lazy(() => import('./pages/VehiclePage/VehiclePageConcept'));
+const ReliabilityRecallsPage = lazy(() => import('./pages/ReliabilityRecallsPage/ReliabilityRecallsPage'));
 const VehiclesListPage = lazy(() => import('./pages/VehiclesListPage/VehiclesListPage'));
 const DesignSystem = lazy(() => import('./pages/DesignSystem/DesignSystem'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
@@ -232,6 +233,7 @@ const internalRoutes = (
 
 const vehicleDetailRoutes = (
   <>
+    <Route path="/:year/:make/:model/reliability-recalls" element={<ReliabilityRecallsPage />} />
     <Route path="/:year/:make/:model" element={<VehiclePage />} />
     <Route path="/:year/:make/:model/v1" element={<VehiclePageVariant variant="v1" />} />
     <Route path="/:year/:make/:model/v2" element={<VehiclePageVariant variant="v2" />} />

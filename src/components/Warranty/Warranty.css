@@ -1160,31 +1160,13 @@
   min-width: 0;
 }
 
-.warranty__recall-severity {
-  display: inline-block;
-  padding: 2px var(--spacing-2);
-  font-family: var(--font-body);
-  font-size: 10px;
+.warranty__recall-type {
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
+  line-height: 1.2;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: var(--border-radius-sm);
-  width: fit-content;
-}
-
-.warranty__recall-severity--high {
-  background: var(--color-error-light);
-  color: var(--color-red);
-}
-
-.warranty__recall-severity--medium {
-  background: var(--color-warning-light);
-  color: var(--color-warning-dark);
-}
-
-.warranty__recall-severity--low {
-  background: var(--color-info-light);
-  color: var(--color-blue-cobalt);
 }
 
 .warranty__recall-component {
