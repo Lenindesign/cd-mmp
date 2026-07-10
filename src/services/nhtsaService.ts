@@ -105,6 +105,7 @@ export interface ComplaintsSummary {
   injuryCount: number;
   deathCount: number;
   topComponents: { component: string; count: number }[];
+  complaints: NHTSAComplaint[];
   recentComplaints: NHTSAComplaint[];
 }
 
@@ -113,6 +114,7 @@ export interface ReliabilityContext {
   recallsRating: 'excellent' | 'good' | 'average' | 'below-average' | 'poor';
   complaintsPercentile: number; // 0-100, lower is better
   recallsPercentile: number;
+  reliabilityScore: number;
   segmentAvgComplaints: number;
   segmentAvgRecalls: number;
   complaintsVsAverage: 'below' | 'average' | 'above';
@@ -161,6 +163,9 @@ export function getReliabilityContext(
   // Convert ratio to percentile (capped at 100)
   const complaintsPercentile = Math.min(Math.round(complaintsRatio * 50), 100);
   const recallsPercentile = Math.min(Math.round(recallsRatio * 50), 100);
+  const reliabilityScore = Math.max(0, Math.min(100, Math.round(
+    100 - ((complaintsPercentile * 0.6) + (recallsPercentile * 0.4))
+  )));
   
   // Determine ratings
   const getComplaintsRating = (ratio: number): ReliabilityContext['complaintsRating'] => {
@@ -230,6 +235,7 @@ export function getReliabilityContext(
     recallsRating,
     complaintsPercentile,
     recallsPercentile,
+    reliabilityScore,
     segmentAvgComplaints: Math.round(adjustedAvgComplaints),
     segmentAvgRecalls: Math.round(adjustedAvgRecalls),
     complaintsVsAverage,
@@ -525,14 +531,15 @@ export function getComplaintsSummary(complaints: NHTSAComplaint[]): ComplaintsSu
     .slice(0, 5)
     .map(([component, count]) => ({ component, count }));
   
-  // Get 3 most recent complaints
-  const recentComplaints = [...complaints]
+  const sortedComplaints = [...complaints]
     .sort((a, b) => {
       const dateA = new Date(a.dateComplaintFiled || '');
       const dateB = new Date(b.dateComplaintFiled || '');
       return dateB.getTime() - dateA.getTime();
-    })
-    .slice(0, 3);
+    });
+
+  // Get 3 most recent complaints
+  const recentComplaints = sortedComplaints.slice(0, 3);
   
   return {
     totalComplaints: complaints.length,
@@ -541,6 +548,7 @@ export function getComplaintsSummary(complaints: NHTSAComplaint[]): ComplaintsSu
     injuryCount,
     deathCount,
     topComponents,
+    complaints: sortedComplaints,
     recentComplaints,
   };
 }

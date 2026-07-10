@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, type ReactNode } from 'react';
-import { AlertTriangle, CheckCircle, ChevronDown, ChevronUp, ExternalLink, Loader2, MessageSquareWarning, Flame, Car, Users, TrendingDown, TrendingUp, Minus, Info, Star, ShieldCheck, Camera, X } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef, type ReactNode, type TouchEvent } from 'react';
+import { AlertTriangle, CheckCircle, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ExternalLink, Loader2, MessageSquareWarning, Flame, Car, Users, TrendingDown, TrendingUp, Minus, Info, Star, ShieldCheck, Camera, X } from 'lucide-react';
 import { 
   getRecalls, 
   getComplaints,
@@ -68,15 +68,20 @@ const Warranty = ({
   const [safetyState, setSafetyState] = useState<AsyncData<NHTSASafetyRating>>({ key: '', data: null });
   const [expandedRecall, setExpandedRecall] = useState<string | null>(null);
   const [expandedComplaint, setExpandedComplaint] = useState<number | null>(null);
-  const [selectedComplaint, setSelectedComplaint] = useState<NHTSAComplaint | null>(null);
+  const [selectedComplaintIndex, setSelectedComplaintIndex] = useState<number | null>(null);
   const [activeReliabilityDetail, setActiveReliabilityDetail] = useState<'recalls' | 'complaints' | null>(null);
   const [vehiclePhotoFailed, setVehiclePhotoFailed] = useState(false);
   const [showAllRecalls, setShowAllRecalls] = useState(false);
   const [isCrashTestModalOpen, setIsCrashTestModalOpen] = useState(false);
+  const complaintTouchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const recalls = recallsState.key === vehicleKey ? recallsState.data || [] : [];
   const complaintsSummary = complaintsState.key === vehicleKey ? complaintsState.data : null;
   const safetyRatings = safetyState.key === vehicleKey ? safetyState.data : null;
+  const complaintReports = complaintsSummary?.complaints || complaintsSummary?.recentComplaints || [];
+  const selectedComplaint = selectedComplaintIndex !== null ? complaintReports[selectedComplaintIndex] : null;
+  const selectedComplaintPosition = selectedComplaintIndex !== null ? selectedComplaintIndex + 1 : 0;
+  const complaintReportCount = complaintReports.length;
   const isLoadingRecalls = Boolean(vehicleKey && recallsState.key !== vehicleKey);
   const isLoadingComplaints = Boolean(vehicleKey && complaintsState.key !== vehicleKey);
   const isLoadingSafety = Boolean(vehicleKey && safetyState.key !== vehicleKey);
@@ -119,12 +124,32 @@ const Warranty = ({
   }, [vehiclePhotoSrc]);
 
   useEffect(() => {
-    if (!selectedComplaint) return;
+    if (selectedComplaintIndex !== null && selectedComplaintIndex >= complaintReportCount) {
+      setSelectedComplaintIndex(complaintReportCount ? complaintReportCount - 1 : null);
+    }
+  }, [selectedComplaintIndex, complaintReportCount]);
+
+  useEffect(() => {
+    if (selectedComplaintIndex === null) {
+      return;
+    }
 
     const previousOverflow = document.body.style.overflow;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setSelectedComplaint(null);
+        setSelectedComplaintIndex(null);
+        return;
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        setSelectedComplaintIndex(current => current === null ? current : Math.max(0, current - 1));
+        return;
+      }
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        setSelectedComplaintIndex(current => current === null ? current : Math.min(complaintReportCount - 1, current + 1));
       }
     };
 
@@ -135,7 +160,7 @@ const Warranty = ({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedComplaint]);
+  }, [selectedComplaintIndex, complaintReportCount]);
 
   const reliabilityContext = useMemo(() => {
     if (!isLoadingRecalls && !isLoadingComplaints && make) {
@@ -155,11 +180,43 @@ const Warranty = ({
   };
 
   const openComplaintReport = (complaint: NHTSAComplaint) => {
-    setSelectedComplaint(complaint);
+    const complaintIndex = complaintReports.findIndex(report => report.odiNumber === complaint.odiNumber);
+    setSelectedComplaintIndex(complaintIndex >= 0 ? complaintIndex : 0);
   };
 
   const closeComplaintReport = () => {
-    setSelectedComplaint(null);
+    setSelectedComplaintIndex(null);
+  };
+
+  const showPreviousComplaint = () => {
+    setSelectedComplaintIndex(current => current === null ? current : Math.max(0, current - 1));
+  };
+
+  const showNextComplaint = () => {
+    setSelectedComplaintIndex(current => current === null ? current : Math.min(complaintReportCount - 1, current + 1));
+  };
+
+  const handleComplaintTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    complaintTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleComplaintTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const start = complaintTouchStartRef.current;
+    complaintTouchStartRef.current = null;
+    if (!start) return;
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+    if (deltaX < 0) {
+      showNextComplaint();
+    } else {
+      showPreviousComplaint();
+    }
   };
 
   const toggleReliabilityDetail = (detail: 'recalls' | 'complaints') => {
@@ -393,6 +450,18 @@ const Warranty = ({
                 aria-label={isVehicleReliabilityVariant ? `${vehicleName} NHTSA reliability signals` : 'NHTSA ownership snapshot'}
               >
                 <div className="warranty__summary-content">
+                  {isVehicleReliabilityVariant && (
+                    <div className="warranty__reliability-score-card" aria-label={`Reliability score ${reliabilityContext.reliabilityScore} out of 100`}>
+                      <span className="warranty__reliability-score-card-label">Reliability score</span>
+                      <strong>
+                        {reliabilityContext.reliabilityScore}
+                        <span className="warranty__score-denominator">/100</span>
+                      </strong>
+                      <span className="warranty__reliability-score-card-note">
+                        NHTSA complaints and recalls
+                      </span>
+                    </div>
+                  )}
                   <div className="warranty__summary-copy">
                     <span className="warranty__summary-eyebrow">
                       {isVehicleReliabilityVariant ? 'NHTSA records' : 'NHTSA ownership snapshot'}
@@ -1003,7 +1072,7 @@ const Warranty = ({
         />
       )}
 
-      {selectedComplaint && (
+      {selectedComplaint && selectedComplaintIndex !== null && (
         <div className="warranty__complaint-modal-backdrop" onClick={closeComplaintReport}>
           <section
             className="warranty__complaint-modal"
@@ -1013,8 +1082,13 @@ const Warranty = ({
             onClick={(event) => event.stopPropagation()}
           >
             <header className="warranty__complaint-modal-header">
-              <div>
-                <span className="warranty__complaint-modal-eyebrow">Owner complaint</span>
+              <div className="warranty__complaint-modal-heading">
+                <div className="warranty__complaint-modal-kicker">
+                  <span className="warranty__complaint-modal-eyebrow">Owner complaint</span>
+                  <span className="warranty__complaint-modal-count">
+                    Report {selectedComplaintPosition} of {complaintReportCount}
+                  </span>
+                </div>
                 <h3 id="warranty-complaint-modal-title">
                   {formatNhtsaLabel(selectedComplaint.components)}
                 </h3>
@@ -1030,47 +1104,100 @@ const Warranty = ({
               </button>
             </header>
 
-            <div className="warranty__complaint-modal-meta">
-              <div>
-                <span>Date filed</span>
-                <strong>{formatComplaintDate(selectedComplaint.dateComplaintFiled)}</strong>
+            <div className="warranty__complaint-modal-controls" aria-label="Browse owner complaint reports">
+              <button
+                type="button"
+                className="warranty__complaint-modal-nav"
+                onClick={showPreviousComplaint}
+                disabled={selectedComplaintIndex === 0}
+              >
+                <ChevronLeft size={18} />
+                <span>Previous</span>
+              </button>
+              <div
+                className="warranty__complaint-modal-progress"
+                role="progressbar"
+                aria-label="Complaint report position"
+                aria-valuemin={1}
+                aria-valuemax={complaintReportCount}
+                aria-valuenow={selectedComplaintPosition}
+              >
+                <span style={{ width: `${(selectedComplaintPosition / complaintReportCount) * 100}%` }} />
               </div>
-              {selectedComplaint.dateOfIncident && (
-                <div>
-                  <span>Incident date</span>
-                  <strong>{formatComplaintDate(selectedComplaint.dateOfIncident)}</strong>
-                </div>
-              )}
-              <div>
-                <span>NHTSA ODI</span>
-                <strong>#{selectedComplaint.odiNumber}</strong>
-              </div>
+              <button
+                type="button"
+                className="warranty__complaint-modal-nav"
+                onClick={showNextComplaint}
+                disabled={selectedComplaintIndex >= complaintReportCount - 1}
+              >
+                <span>Next</span>
+                <ChevronRight size={18} />
+              </button>
             </div>
 
-            {(selectedComplaint.crash || selectedComplaint.fire || selectedComplaint.numberOfInjuries > 0 || selectedComplaint.numberOfDeaths > 0) && (
-              <div className="warranty__complaint-modal-flags" aria-label="Report signals">
-                {selectedComplaint.crash && <span>Crash reported</span>}
-                {selectedComplaint.fire && <span>Fire reported</span>}
-                {selectedComplaint.numberOfInjuries > 0 && (
-                  <span>{selectedComplaint.numberOfInjuries} injur{selectedComplaint.numberOfInjuries === 1 ? 'y' : 'ies'} reported</span>
-                )}
-                {selectedComplaint.numberOfDeaths > 0 && (
-                  <span>{selectedComplaint.numberOfDeaths} death{selectedComplaint.numberOfDeaths === 1 ? '' : 's'} reported</span>
-                )}
-              </div>
-            )}
+            <div
+              className="warranty__complaint-modal-slider"
+              onTouchStart={handleComplaintTouchStart}
+              onTouchEnd={handleComplaintTouchEnd}
+              aria-roledescription="carousel"
+              aria-label={`${complaintReportCount} owner complaint reports`}
+            >
+              <div className="warranty__complaint-modal-track">
+                {complaintReports.map((complaint, index) => (
+                  <article
+                    key={complaint.odiNumber}
+                    className="warranty__complaint-modal-slide"
+                    aria-label={`Complaint ${index + 1} of ${complaintReportCount}`}
+                    aria-hidden={index !== selectedComplaintIndex}
+                  >
+                    <div className="warranty__complaint-modal-meta">
+                      <div>
+                        <span>Date filed</span>
+                        <strong>{formatComplaintDate(complaint.dateComplaintFiled)}</strong>
+                      </div>
+                      {complaint.dateOfIncident && (
+                        <div>
+                          <span>Incident date</span>
+                          <strong>{formatComplaintDate(complaint.dateOfIncident)}</strong>
+                        </div>
+                      )}
+                      <div>
+                        <span>NHTSA ODI</span>
+                        <strong>#{complaint.odiNumber}</strong>
+                      </div>
+                    </div>
 
-            <div className="warranty__complaint-modal-body">
-              <p>{selectedComplaint.summary}</p>
+                    {(complaint.crash || complaint.fire || complaint.numberOfInjuries > 0 || complaint.numberOfDeaths > 0) && (
+                      <div className="warranty__complaint-modal-flags" aria-label="Report signals">
+                        {complaint.crash && <span>Crash reported</span>}
+                        {complaint.fire && <span>Fire reported</span>}
+                        {complaint.numberOfInjuries > 0 && (
+                          <span>{complaint.numberOfInjuries} injur{complaint.numberOfInjuries === 1 ? 'y' : 'ies'} reported</span>
+                        )}
+                        {complaint.numberOfDeaths > 0 && (
+                          <span>{complaint.numberOfDeaths} death{complaint.numberOfDeaths === 1 ? '' : 's'} reported</span>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="warranty__complaint-modal-body">
+                      <p>{complaint.summary}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
 
             <footer className="warranty__complaint-modal-footer">
+              <span className="warranty__complaint-modal-helper">
+                Slide or use the arrows to browse NHTSA owner reports.
+              </span>
               <a
                 href={`https://www.nhtsa.gov/vehicle/${year}/${make}/${model}/complaints`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                View complaints on NHTSA.gov <ExternalLink size={14} />
+                View all on NHTSA.gov <ExternalLink size={14} />
               </a>
             </footer>
           </section>
