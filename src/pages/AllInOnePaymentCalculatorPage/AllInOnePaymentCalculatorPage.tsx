@@ -299,7 +299,9 @@ const getPaymentEstimateEmailEndpoint = () => {
   return `${origin}${PAYMENT_ESTIMATE_EMAIL_FUNCTION_PATH}`;
 };
 
-const getPaymentEstimateEmailMockUrl = (variant?: 'standard' | 'used-car' | 'body-style') => {
+type PaymentEstimateEmailMockVariant = 'standard' | 'used-car' | 'body-style';
+
+const getPaymentEstimateEmailMockUrl = (variant?: PaymentEstimateEmailMockVariant) => {
   const origin = isLocalHost() || typeof window === 'undefined'
     ? PAYMENT_ESTIMATE_EMAIL_PRODUCTION_ORIGIN
     : window.location.origin;
@@ -307,7 +309,7 @@ const getPaymentEstimateEmailMockUrl = (variant?: 'standard' | 'used-car' | 'bod
   return `${origin}${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}${suffix}`;
 };
 
-const displayPaymentEstimateEmailMock = (variant?: 'standard' | 'used-car' | 'body-style') => {
+const displayPaymentEstimateEmailMock = (variant?: PaymentEstimateEmailMockVariant) => {
   if (typeof window === 'undefined') return;
   const suffix = variant && variant !== 'standard' ? `?variant=${variant}` : '?variant=standard';
   window.location.assign(`${PAYMENT_ESTIMATE_EMAIL_MOCK_PATH}${suffix}`);
@@ -3910,6 +3912,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const aiDealRisks = aiDealerFlags.length > 0
     ? aiDealerFlags
     : ['No major markup flags from the visible inputs. Still ask for a full worksheet before signing.'];
+  const isBodyStyleBrowseEmail = Boolean(
+    !lightHasSpecificVehicleSelection &&
+    lightVehicleStepMode === 'browsing' &&
+    lightVehicleResultBodyStyle,
+  );
+  const lightEstimateEmailMockVariant: PaymentEstimateEmailMockVariant = isBodyStyleBrowseEmail
+    ? 'body-style'
+    : condition === 'used'
+      ? 'used-car'
+      : 'standard';
 
   const handleSendLightEstimateEmail = async () => {
     const trimmed = lightEstimateEmail.trim();
@@ -3927,21 +3939,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     setLightEstimateEmailError(undefined);
     setLightEstimateEmailStatus(undefined);
     setIsLightEstimateEmailSending(true);
-    const isBodyStyleBrowseEmail = Boolean(
-      !lightHasSpecificVehicleSelection &&
-      lightVehicleStepMode === 'browsing' &&
-      lightVehicleResultBodyStyle,
-    );
-    const emailMockVariant = isBodyStyleBrowseEmail
-      ? 'body-style'
-      : condition === 'used'
-        ? 'used-car'
-        : 'standard';
 
     if (useEmailTestMode) {
       setLightEstimateEmailStatus(trimmed ? `Test estimate accepted for ${trimmed}.` : 'Showing email estimate preview.');
       setIsLightEstimateEmailSending(false);
-      displayPaymentEstimateEmailMock(emailMockVariant);
+      displayPaymentEstimateEmailMock(lightEstimateEmailMockVariant);
       return;
     }
 
@@ -4000,7 +4002,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           userName: user?.name,
           vehicle: emailVehiclePayload,
           estimate: emailEstimatePayload,
-          mockUrl: getPaymentEstimateEmailMockUrl(emailMockVariant),
+          mockUrl: getPaymentEstimateEmailMockUrl(lightEstimateEmailMockVariant),
         }),
       });
       const result = await response.json().catch(() => ({}));
@@ -4014,11 +4016,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       }
 
       setLightEstimateEmailStatus(typeof result.message === 'string' ? result.message : `Estimate sent to ${trimmed}.`);
-      displayPaymentEstimateEmailMock(emailMockVariant);
+      displayPaymentEstimateEmailMock(lightEstimateEmailMockVariant);
     } catch (error) {
       if (useEmailTestMode) {
         setLightEstimateEmailStatus(`Test estimate accepted for ${trimmed}.`);
-        displayPaymentEstimateEmailMock(emailMockVariant);
+        displayPaymentEstimateEmailMock(lightEstimateEmailMockVariant);
         return;
       }
       setLightEstimateEmailError(error instanceof Error ? error.message : 'We could not send this estimate. Please try again.');
@@ -4640,7 +4642,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ? 'Auto Loan Calculator'
       : toTitleCase('Fine-tune your car payment estimate.');
     const lightHeroCopy = isLightStepsVariant
-      ? 'See what your monthly budget can really buy. Use our interactive auto loan calculator to estimate payments, compare financing costs, and discover vehicles that fit your budget.'
+      ? 'See what your monthly budget can really buy, no personal information required. Use our interactive auto loan calculator to estimate payments, compare financing costs, and discover vehicles that fit your budget.'
       : 'Adjust budget, loan terms, vehicle price, trade-in, deals, and payment details together on one page.';
     const lightELotReviewModule = showLightELotSection ? (
       <section
@@ -5322,7 +5324,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                         <span className="aio-payment__light-vehicle-step__category-match-copy">
                                           <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong>
                                           <span>
-                                            Starts at {currency(vehicle.priceMin)}
+                                            Starts at {currency(vehicle.priceMin)} · {currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo est.
                                           </span>
                                         </span>
                                       </span>
@@ -5767,13 +5769,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
 
                     <p className="aio-payment__light-trade-step__dealer-note">
-                      {registrationDealerFeeGuidance.label !== 'High Fee States' ? (
-                        <>
-                          <strong>
-                            {registrationDealerFeeGuidance.label}:
-                          </strong>{' '}
-                        </>
-                      ) : null}
+                      <strong>
+                        {registrationDealerFeeGuidance.label}:
+                      </strong>{' '}
                       {registrationDealerFeeGuidance.copy}
                     </p>
 
@@ -6210,7 +6208,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           {lightEstimateEmailStatus ? (
                             <p className="aio-payment__light-estimate-email__status" role="status">
                               {lightEstimateEmailStatus}{' '}
-                              <a href={PAYMENT_ESTIMATE_EMAIL_MOCK_PATH} target="_blank" rel="noopener noreferrer">
+                              <a href={getPaymentEstimateEmailMockUrl(lightEstimateEmailMockVariant)} target="_blank" rel="noopener noreferrer">
                                 View email mock
                               </a>
                             </p>

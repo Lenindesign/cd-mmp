@@ -18,6 +18,7 @@ interface OfficialELotCarouselProps {
   className?: string;
   title?: string;
   resultsLinkLabel?: string;
+  resultsLinkHref?: string;
 }
 
 const formatCurrency = (value: number) => (
@@ -68,6 +69,7 @@ const OfficialELotCarousel = ({
   className = '',
   title = 'For Sale Near You',
   resultsLinkLabel,
+  resultsLinkHref,
 }: OfficialELotCarouselProps) => {
   const headingId = useId();
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -147,7 +149,7 @@ const OfficialELotCarousel = ({
     'official-elot-section',
     className,
   ].filter(Boolean).join(' ');
-  const allResultsHref = getMarketplaceUrl(year, make, model);
+  const allResultsHref = resultsLinkHref ?? getMarketplaceUrl(year, make, model);
   const searchLabel = `used ${year} ${make} ${model}`;
   const resultsText = resultsLinkLabel ?? `See all results for ${searchLabel} for sale near ${location}`;
 

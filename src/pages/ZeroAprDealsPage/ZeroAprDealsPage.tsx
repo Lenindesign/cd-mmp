@@ -24,7 +24,6 @@ import { DealCard } from '../../components/DealCard';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveBuyingFilterDestination } from '../../utils/buyingFilterNavigation';
-import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
 import { ZERO_APR_FAQ, BEST_BUYING_FAQ as FAQ_DATA } from '../../data/faqs';
 import vehicleDatabase from '../../data/vehicles';
 import {
@@ -87,14 +86,56 @@ interface EmptyStateElotConfig {
   priceThreshold?: number;
   title: string;
   resultsLinkLabel: string;
+  resultsLinkHref: string;
 }
 
-interface EmptyStateExploreLink {
-  to: string;
-  title: string;
-  description: string;
-  state?: { filters: DealsFilterState };
+interface EmptyStateCta {
+  label: string;
+  href: string;
+  external?: boolean;
+  variant?: 'primary' | 'secondary';
 }
+
+const EMPTY_STATE_FALLBACK_ZIP = '10992';
+
+const slugifyValue = (value: string): string =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+
+const pluralizeVehicleLabel = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  if (/^[A-Z0-9-]+$/.test(trimmed)) return `${trimmed}s`;
+  if (/[^aeiou]y$/i.test(trimmed)) return `${trimmed.slice(0, -1)}ies`;
+  if (/(s|x|z|ch|sh)$/i.test(trimmed)) return `${trimmed}es`;
+  return `${trimmed}s`;
+};
+
+const formatBodyStyleLabel = (bodyStyle: string): string =>
+  pluralizeVehicleLabel(bodyStyle);
+
+const formatFuelTypeLabel = (fuelType: string): string =>
+  `${fuelType} vehicles`;
+
+const getEmptyStateZip = (zipCode: string): string =>
+  zipCode && zipCode !== DEFAULT_FILTERS.zipCode ? zipCode : EMPTY_STATE_FALLBACK_ZIP;
+
+const getMarketplaceBrowseUrl = (
+  condition: 'new' | 'used',
+  filters: { make?: string; model?: string; bodyStyle?: string; fuelType?: string },
+) => {
+  const params = new URLSearchParams();
+  if (filters.make) params.set('make', filters.make);
+  if (filters.model) params.set('model', filters.model);
+  if (filters.bodyStyle) params.set('bodyStyle', filters.bodyStyle);
+  if (filters.fuelType) params.set('fuelType', filters.fuelType);
+
+  const query = params.toString();
+  return `https://www.caranddriver.com/cars-for-sale/${condition}${query ? `?${query}` : ''}`;
+};
 
 const ZeroAprDealsPage = () => {
   const location = useLocation();
@@ -236,58 +277,104 @@ const ZeroAprDealsPage = () => {
     setFilters(DEFAULT_FILTERS);
   }, []);
 
+  const emptyStateNoDealsCopy = useMemo(() => {
+    const selectedBodyType = filters.bodyTypes[0] || bodyStyleName;
+    const selectedFuelType = filters.fuelTypes[0] || fuelTypeName;
+    const selectedMake = filters.makes[0] || makeName;
+    const selectedModel = filters.models?.[0];
+    const subjectParts: string[] = [];
+
+    if (selectedMake && selectedModel) {
+      subjectParts.push(`${selectedMake} ${selectedModel}`);
+    } else if (selectedMake) {
+      subjectParts.push(selectedMake);
+    }
+    if (selectedBodyType) subjectParts.push(formatBodyStyleLabel(selectedBodyType));
+    if (selectedFuelType) subjectParts.push(formatFuelTypeLabel(selectedFuelType));
+
+    const subject = subjectParts.length > 0 ? subjectParts.join(' / ') : 'the selected filters';
+    return `There are currently no incentives available for ${subject}. Try changing or expanding your filters to see deals and incentives you may qualify for.`;
+  }, [bodyStyleName, filters.bodyTypes, filters.fuelTypes, filters.makes, filters.models, fuelTypeName, makeName]);
+
   const emptyStateElotConfig = useMemo<EmptyStateElotConfig | null>(() => {
     const selectedBodyType = filters.bodyTypes[0] || bodyStyleName;
     const selectedFuelType = filters.fuelTypes[0] || fuelTypeName;
     const selectedMake = filters.makes[0] || makeName;
+    const selectedModel = filters.models?.[0];
+    const marketZip = getEmptyStateZip(filters.zipCode);
+
+    const addPresentation = (base: Omit<EmptyStateElotConfig, 'title' | 'resultsLinkLabel' | 'resultsLinkHref'>): EmptyStateElotConfig => {
+      const titleLabel = selectedMake
+        ? pluralizeVehicleLabel(selectedModel ? `${selectedMake} ${selectedModel}` : selectedMake)
+        : selectedBodyType
+          ? formatBodyStyleLabel(selectedBodyType)
+          : selectedFuelType
+            ? `${selectedFuelType} Vehicles`
+            : pluralizeVehicleLabel(`${base.make} ${base.model}`);
+
+      const searchLabel = selectedMake
+        ? `used ${pluralizeVehicleLabel(selectedModel ? `${selectedMake} ${selectedModel}` : selectedMake)}`
+        : selectedBodyType
+          ? `used ${formatBodyStyleLabel(selectedBodyType)}`
+          : selectedFuelType
+            ? `used ${formatFuelTypeLabel(selectedFuelType).toLowerCase()}`
+            : `used ${pluralizeVehicleLabel(`${base.make} ${base.model}`)}`;
+
+      const resultsFilters = selectedMake
+        ? { make: selectedMake, model: selectedModel }
+        : selectedBodyType
+          ? { bodyStyle: selectedBodyType }
+          : selectedFuelType
+            ? { fuelType: selectedFuelType }
+            : { make: base.make, model: base.model };
+
+      return {
+        ...base,
+        title: `${titleLabel} For Sale Near You`,
+        resultsLinkLabel: `See all results for ${searchLabel} for sale near ${marketZip}`,
+        resultsLinkHref: getMarketplaceBrowseUrl('used', resultsFilters),
+      };
+    };
 
     if (selectedBodyType === 'Convertible') {
-      return {
+      return addPresentation({
         year: '2024',
         make: 'Mazda',
         model: 'MX-5 Miata',
         bodyStyle: 'Convertible',
         priceThreshold: 38000,
-        title: 'Convertible alternatives near you',
-        resultsLinkLabel: 'We do not have convertible deals right now, but these used Mazda MX-5 Miata listings are available near Miami, FL.',
-      };
+      });
     }
 
     if (selectedFuelType) {
       if (selectedFuelType === 'Plug-In Hybrid') {
-        return {
+        return addPresentation({
           year: '2026',
           make: 'Toyota',
           model: 'RAV4',
           bodyStyle: 'SUV',
           priceThreshold: 42000,
-          title: 'Plug-in hybrid options near you',
-          resultsLinkLabel: 'We do not have plug-in hybrid deals that match this filter right now, but these used Toyota RAV4 listings are available near Miami, FL.',
-        };
+        });
       }
 
       if (selectedFuelType === 'Hybrid') {
-        return {
+        return addPresentation({
           year: '2025',
           make: 'Honda',
           model: 'Accord',
           bodyStyle: 'Sedan',
           priceThreshold: 36000,
-          title: 'Hybrid options near you',
-          resultsLinkLabel: 'We do not have hybrid deals that match this filter right now, but these used Honda Accord listings are available near Miami, FL.',
-        };
+        });
       }
 
       if (selectedFuelType === 'Electric') {
-        return {
+        return addPresentation({
           year: '2026',
           make: 'Ford',
           model: 'F-150 Lightning',
           bodyStyle: 'Truck',
           priceThreshold: 65000,
-          title: 'Electric options near you',
-          resultsLinkLabel: 'We do not have electric deals that match this filter right now, but these used Ford F-150 Lightning listings are available near Miami, FL.',
-        };
+        });
       }
 
       return null;
@@ -295,51 +382,43 @@ const ZeroAprDealsPage = () => {
 
     if (selectedBodyType) {
       if (selectedBodyType === 'SUV') {
-        return {
+        return addPresentation({
           year: '2026',
           make: 'Chevrolet',
           model: 'Equinox',
           bodyStyle: 'SUV',
           priceThreshold: 35000,
-          title: 'SUV options near you',
-          resultsLinkLabel: 'We do not have SUV deals that match this filter right now, but these used Chevrolet Equinox listings are available near Miami, FL.',
-        };
+        });
       }
 
       if (selectedBodyType === 'Truck') {
-        return {
+        return addPresentation({
           year: '2026',
           make: 'Ford',
           model: 'F-150',
           bodyStyle: 'Truck',
           priceThreshold: 55000,
-          title: 'Truck options near you',
-          resultsLinkLabel: 'We do not have truck deals that match this filter right now, but these used Ford F-150 listings are available near Miami, FL.',
-        };
+        });
       }
 
       if (selectedBodyType === 'Sedan') {
-        return {
+        return addPresentation({
           year: '2025',
           make: 'Honda',
           model: 'Accord',
           bodyStyle: 'Sedan',
           priceThreshold: 36000,
-          title: 'Sedan options near you',
-          resultsLinkLabel: 'We do not have sedan deals that match this filter right now, but these used Honda Accord listings are available near Miami, FL.',
-        };
+        });
       }
 
       if (selectedBodyType === 'Coupe') {
-        return {
+        return addPresentation({
           year: '2025',
           make: 'BMW',
           model: '4 Series',
           bodyStyle: 'Coupe',
           priceThreshold: 55000,
-          title: 'Coupe options near you',
-          resultsLinkLabel: 'We do not have coupe deals that match this filter right now, but these used BMW 4 Series listings are available near Miami, FL.',
-        };
+        });
       }
 
       return null;
@@ -349,74 +428,73 @@ const ZeroAprDealsPage = () => {
       const makeVehicle = vehicleDatabase.find((vehicle) => vehicle.make === selectedMake);
 
       if (makeVehicle) {
-        return {
+        return addPresentation({
           year: makeVehicle.year,
           make: makeVehicle.make,
           model: makeVehicle.model,
           bodyStyle: makeVehicle.bodyStyle,
           priceThreshold: makeVehicle.priceMin,
-          title: `${makeVehicle.make} listings near you`,
-          resultsLinkLabel: `We do not have ${makeVehicle.make} financing deals right now, but these used ${makeVehicle.make} ${makeVehicle.model} listings are available near Miami, FL.`,
-        };
+        });
       }
     }
 
-    return {
+    return addPresentation({
       year: '2026',
       make: 'Chevrolet',
       model: 'Equinox',
       bodyStyle: 'SUV',
       priceThreshold: 35000,
-      title: 'Similar options near you',
-      resultsLinkLabel: 'We do not have matching deals right now, but these used Chevrolet Equinox listings are available near Miami, FL.',
-    };
-  }, [bodyStyleName, filters.bodyTypes, filters.fuelTypes, filters.makes, fuelTypeName, makeName]);
+    });
+  }, [bodyStyleName, filters.bodyTypes, filters.fuelTypes, filters.makes, filters.models, filters.zipCode, fuelTypeName, makeName]);
 
-  const emptyStateExploreLinks = useMemo<EmptyStateExploreLink[]>(() => {
+  const emptyStateCtas = useMemo<EmptyStateCta[]>(() => {
     const selectedBodyType = filters.bodyTypes[0] || bodyStyleName;
     const selectedFuelType = filters.fuelTypes[0] || fuelTypeName;
     const selectedMake = filters.makes[0] || makeName;
-    const activeCategoryLabel = selectedBodyType || selectedFuelType || selectedMake;
-
-    const buyingDestination = resolveBuyingFilterDestination({
-      ...DEFAULT_FILTERS,
-      ...filters,
-      dealType: 'finance',
-    });
-    const leaseDestination = resolveLeaseFilterDestination({
-      ...DEFAULT_FILTERS,
-      ...filters,
-      dealType: 'lease',
-    });
-
-    const buyingTitle = activeCategoryLabel
-      ? `${activeCategoryLabel} buying deals`
-      : 'All APR & financing deals';
-    const buyingDescription = activeCategoryLabel
-      ? `See the wider APR and financing set for ${activeCategoryLabel.toLowerCase()} shoppers.`
-      : 'See the full set of APR and financing offers.';
-    const leaseTitle = activeCategoryLabel
-      ? `${activeCategoryLabel} lease deals`
-      : 'Best car lease deals';
-    const leaseDescription = activeCategoryLabel
-      ? `Try lease offers for ${activeCategoryLabel.toLowerCase()} vehicles instead.`
-      : 'Switch to lease offers and compare current monthly specials.';
+    const selectedModel = filters.models?.[0];
+    const fallbackMake = selectedMake || emptyStateElotConfig?.make;
+    const shopLabel = selectedMake
+      ? `Shop New ${pluralizeVehicleLabel(selectedMake)}`
+      : selectedBodyType
+        ? `Shop New ${formatBodyStyleLabel(selectedBodyType)}`
+        : selectedFuelType
+          ? `Shop New ${formatFuelTypeLabel(selectedFuelType)}`
+          : `Shop New ${pluralizeVehicleLabel(fallbackMake ?? 'Cars')}`;
+    const shopHref = getMarketplaceBrowseUrl('new', selectedMake
+      ? { make: selectedMake, model: selectedModel }
+      : selectedBodyType
+        ? { bodyStyle: selectedBodyType }
+        : selectedFuelType
+          ? { fuelType: selectedFuelType }
+          : fallbackMake
+            ? { make: fallbackMake }
+            : {});
+    const learnMoreLabel = fallbackMake
+      ? `Learn More about ${fallbackMake}`
+      : 'Research Cars';
+    const learnMoreHref = fallbackMake
+      ? `/brands/${slugifyValue(fallbackMake)}`
+      : '/vehicles';
 
     return [
       {
-        to: buyingDestination?.path ?? BEST_BUYING_DEALS_PATH,
-        title: buyingTitle,
-        description: buyingDescription,
-        state: buyingDestination?.carryFilters ? { filters } : undefined,
+        label: shopLabel,
+        href: shopHref,
+        external: true,
+        variant: 'primary',
       },
       {
-        to: leaseDestination?.path ?? '/deals/lease',
-        title: leaseTitle,
-        description: leaseDescription,
-        state: leaseDestination?.carryFilters ? { filters } : undefined,
+        label: learnMoreLabel,
+        href: learnMoreHref,
+        variant: 'secondary',
+      },
+      {
+        label: 'Find More Deals',
+        href: '/deals',
+        variant: 'secondary',
       },
     ];
-  }, [bodyStyleName, filters, fuelTypeName, makeName]);
+  }, [bodyStyleName, emptyStateElotConfig?.make, filters.bodyTypes, filters.fuelTypes, filters.makes, filters.models, fuelTypeName, makeName]);
 
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
@@ -819,7 +897,7 @@ const ZeroAprDealsPage = () => {
                     <div className="zero-apr-page__empty-state">
                       <p className="zero-apr-page__empty-state-text">
                         {activeFilterPills.length > 0
-                          ? 'No APR financing deals match these filters right now. Try widening or changing your filters to see more options.'
+                          ? emptyStateNoDealsCopy
                           : isZeroPercentOnlyRoute
                           ? 'There are currently no active 0% APR deals. Browse all APR and financing deals or check back soon.'
                           : 'There are currently no active APR financing deals. Check back soon or explore other available deals.'}
@@ -850,18 +928,23 @@ const ZeroAprDealsPage = () => {
                     className="zero-apr-page__empty-elot"
                     title={emptyStateElotConfig.title}
                     resultsLinkLabel={emptyStateElotConfig.resultsLinkLabel}
+                    resultsLinkHref={emptyStateElotConfig.resultsLinkHref}
                   />
                 )}
-                <section className="zero-apr-page__links-section zero-apr-page__links-section--empty">
-                  <h2 className="zero-apr-page__section-title">Explore More</h2>
-                  <div className="zero-apr-page__links-grid">
-                    {emptyStateExploreLinks.map((link) => (
-                      <Link key={link.title} to={link.to} state={link.state} className="zero-apr-page__link-card">
-                        <h3>{link.title}</h3>
-                        <p>{link.description}</p>
+                <section className="zero-apr-page__empty-ctas" aria-label="More ways to shop">
+                  {emptyStateCtas.map((cta) => {
+                    const className = `zero-apr-page__empty-cta zero-apr-page__empty-cta--${cta.variant ?? 'secondary'}`;
+
+                    return cta.external ? (
+                      <a key={cta.label} href={cta.href} className={className}>
+                        {cta.label}
+                      </a>
+                    ) : (
+                      <Link key={cta.label} to={cta.href} className={className}>
+                        {cta.label}
                       </Link>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </section>
               </div>
             </div>

@@ -9723,6 +9723,14 @@ label.aio-payment__light-loan-step__label {
     padding: var(--spacing-8) 0 var(--spacing-5);
   }
 
+  .aio-payment--light-steps .aio-payment__light-hero h1 {
+    margin-bottom: var(--spacing-2);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-hero p {
+    font-size: 14px;
+  }
+
   .aio-payment__light-main {
     padding: var(--spacing-5) 0 var(--spacing-8);
   }
