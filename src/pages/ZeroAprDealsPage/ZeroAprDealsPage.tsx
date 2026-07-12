@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import { getZeroAprDeals } from '../../services/zeroAprDealsService';
 import { getFinanceDeals, getCashDeals } from '../../services/cashFinanceDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
@@ -496,6 +496,30 @@ const ZeroAprDealsPage = () => {
     ];
   }, [bodyStyleName, emptyStateElotConfig?.make, filters.bodyTypes, filters.fuelTypes, filters.makes, filters.models, fuelTypeName, makeName]);
 
+  const renderEmptyStateCtas = (className = 'zero-apr-page__empty-ctas') => (
+    <section className={className} aria-label="More ways to shop">
+      {emptyStateCtas.map((cta) => {
+        const ctaClassName = `zero-apr-page__empty-cta zero-apr-page__empty-cta--${cta.variant ?? 'secondary'}`;
+        const ctaContent = (
+          <>
+            <span>{cta.label}</span>
+            <ArrowRight size={18} aria-hidden="true" />
+          </>
+        );
+
+        return cta.external ? (
+          <a key={cta.label} href={cta.href} className={ctaClassName}>
+            {ctaContent}
+          </a>
+        ) : (
+          <Link key={cta.label} to={cta.href} className={ctaClassName}>
+            {ctaContent}
+          </Link>
+        );
+      })}
+    </section>
+  );
+
   const toggleOffersPopup = useCallback((e: React.MouseEvent, make: string, model: string, slug: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -889,66 +913,57 @@ const ZeroAprDealsPage = () => {
 
       <div className="zero-apr-page__content">
         <div className={`container${deals.length > 0 ? ' zero-apr-page__container--stacked' : ''}`}>
-          {deals.length === 0 ? (
-            <div className="zero-apr-page__segment">
-              <div className="zero-apr-page__main">
-                <section className="zero-apr-page__deals-section">
-                  <div className="zero-apr-page__grid">
-                    <div className="zero-apr-page__empty-state">
-                      <p className="zero-apr-page__empty-state-text">
-                        {activeFilterPills.length > 0
-                          ? emptyStateNoDealsCopy
-                          : isZeroPercentOnlyRoute
-                          ? 'There are currently no active 0% APR deals. Browse all APR and financing deals or check back soon.'
-                          : 'There are currently no active APR financing deals. Check back soon or explore other available deals.'}
-                      </p>
-                      {activeFilterPills.length > 0 ? (
-                        <button type="button" className="zero-apr-page__empty-state-link" onClick={() => setFilterOpen(true)}>
-                          Adjust Filters
-                        </button>
-                      ) : isZeroPercentOnlyRoute ? (
-                        <Link to={BEST_BUYING_DEALS_PATH} className="zero-apr-page__empty-state-link">
-                          All APR & financing deals
-                        </Link>
-                      ) : (
-                        <Link to="/deals" className="zero-apr-page__empty-state-link">
-                          Browse All Deals
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </section>
-                {emptyStateElotConfig && (
-                  <OfficialELotCarousel
-                    year={emptyStateElotConfig.year}
-                    make={emptyStateElotConfig.make}
-                    model={emptyStateElotConfig.model}
-                    bodyStyle={emptyStateElotConfig.bodyStyle}
-                    priceThreshold={emptyStateElotConfig.priceThreshold}
-                    className="zero-apr-page__empty-elot"
-                    title={emptyStateElotConfig.title}
-                    resultsLinkLabel={emptyStateElotConfig.resultsLinkLabel}
-                    resultsLinkHref={emptyStateElotConfig.resultsLinkHref}
-                  />
-                )}
-                <section className="zero-apr-page__empty-ctas" aria-label="More ways to shop">
-                  {emptyStateCtas.map((cta) => {
-                    const className = `zero-apr-page__empty-cta zero-apr-page__empty-cta--${cta.variant ?? 'secondary'}`;
+              {deals.length === 0 ? (
+                <div className="zero-apr-page__segment">
+                  <div className="zero-apr-page__main">
+                    <section className="zero-apr-page__deals-section zero-apr-page__deals-section--empty">
+                      <div className="zero-apr-page__empty-results">
+                        <div className="zero-apr-page__empty-state">
+                          <p className="zero-apr-page__empty-state-text">
+                            {activeFilterPills.length > 0
+                              ? emptyStateNoDealsCopy
+                              : isZeroPercentOnlyRoute
+                              ? 'There are currently no active 0% APR deals. Browse all APR and financing deals or check back soon.'
+                              : 'There are currently no active APR financing deals. Check back soon or explore other available deals.'}
+                          </p>
+                          {activeFilterPills.length > 0 ? (
+                            <button type="button" className="zero-apr-page__empty-state-link" onClick={() => setFilterOpen(true)}>
+                              Adjust Filters
+                            </button>
+                          ) : isZeroPercentOnlyRoute ? (
+                            <Link to={BEST_BUYING_DEALS_PATH} className="zero-apr-page__empty-state-link">
+                              All APR & financing deals
+                            </Link>
+                          ) : (
+                            <Link to="/deals" className="zero-apr-page__empty-state-link">
+                              Browse All Deals
+                            </Link>
+                          )}
+                        </div>
 
-                    return cta.external ? (
-                      <a key={cta.label} href={cta.href} className={className}>
-                        {cta.label}
-                      </a>
-                    ) : (
-                      <Link key={cta.label} to={cta.href} className={className}>
-                        {cta.label}
-                      </Link>
-                    );
-                  })}
-                </section>
-              </div>
-            </div>
-          ) : (
+                        {emptyStateElotConfig ? (
+                          <section className="zero-apr-page__empty-marketplace-card" aria-label="Vehicles for sale near you">
+                            <OfficialELotCarousel
+                              year={emptyStateElotConfig.year}
+                              make={emptyStateElotConfig.make}
+                              model={emptyStateElotConfig.model}
+                              bodyStyle={emptyStateElotConfig.bodyStyle}
+                              priceThreshold={emptyStateElotConfig.priceThreshold}
+                              className="zero-apr-page__empty-elot"
+                              title={emptyStateElotConfig.title}
+                              resultsLinkLabel={emptyStateElotConfig.resultsLinkLabel}
+                              resultsLinkHref={emptyStateElotConfig.resultsLinkHref}
+                            />
+                            {renderEmptyStateCtas()}
+                          </section>
+                        ) : (
+                          renderEmptyStateCtas('zero-apr-page__empty-ctas zero-apr-page__empty-ctas--standalone')
+                        )}
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              ) : (
             <>
               {dealChunks.map((chunk, chunkIndex) => (
                 <Fragment key={`apr-segment-${chunkIndex}`}>
