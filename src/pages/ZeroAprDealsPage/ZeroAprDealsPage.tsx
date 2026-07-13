@@ -96,6 +96,12 @@ interface EmptyStateCta {
   variant?: 'primary' | 'secondary';
 }
 
+interface RecirculationLink {
+  label: string;
+  href: string;
+  description: string;
+}
+
 const EMPTY_STATE_FALLBACK_ZIP = '10992';
 
 const slugifyValue = (value: string): string =>
@@ -125,13 +131,14 @@ const getEmptyStateZip = (zipCode: string): string =>
 
 const getMarketplaceBrowseUrl = (
   condition: 'new' | 'used',
-  filters: { make?: string; model?: string; bodyStyle?: string; fuelType?: string },
+  filters: { make?: string; model?: string; bodyStyle?: string; fuelType?: string; certified?: boolean },
 ) => {
   const params = new URLSearchParams();
   if (filters.make) params.set('make', filters.make);
   if (filters.model) params.set('model', filters.model);
   if (filters.bodyStyle) params.set('bodyStyle', filters.bodyStyle);
   if (filters.fuelType) params.set('fuelType', filters.fuelType);
+  if (filters.certified) params.set('certified', 'true');
 
   const query = params.toString();
   return `https://www.caranddriver.com/cars-for-sale/${condition}${query ? `?${query}` : ''}`;
@@ -453,14 +460,14 @@ const ZeroAprDealsPage = () => {
     const selectedMake = filters.makes[0] || makeName;
     const selectedModel = filters.models?.[0];
     const fallbackMake = selectedMake || emptyStateElotConfig?.make;
-    const shopLabel = selectedMake
-      ? `Shop New ${pluralizeVehicleLabel(selectedMake)}`
+    const shoppingLabel = selectedMake
+      ? pluralizeVehicleLabel(selectedMake)
       : selectedBodyType
-        ? `Shop New ${formatBodyStyleLabel(selectedBodyType)}`
+        ? formatBodyStyleLabel(selectedBodyType)
         : selectedFuelType
-          ? `Shop New ${formatFuelTypeLabel(selectedFuelType)}`
-          : `Shop New ${pluralizeVehicleLabel(fallbackMake ?? 'Cars')}`;
-    const shopHref = getMarketplaceBrowseUrl('new', selectedMake
+          ? formatFuelTypeLabel(selectedFuelType)
+          : pluralizeVehicleLabel(fallbackMake ?? 'Cars');
+    const marketplaceFilters = selectedMake
       ? { make: selectedMake, model: selectedModel }
       : selectedBodyType
         ? { bodyStyle: selectedBodyType }
@@ -468,33 +475,67 @@ const ZeroAprDealsPage = () => {
           ? { fuelType: selectedFuelType }
           : fallbackMake
             ? { make: fallbackMake }
-            : {});
-    const learnMoreLabel = fallbackMake
-      ? `Learn More about ${fallbackMake}`
-      : 'Research Cars';
-    const learnMoreHref = fallbackMake
-      ? `/brands/${slugifyValue(fallbackMake)}`
-      : '/vehicles';
+            : {};
 
     return [
       {
-        label: shopLabel,
-        href: shopHref,
+        label: `Shop New ${shoppingLabel}`,
+        href: getMarketplaceBrowseUrl('new', marketplaceFilters),
         external: true,
         variant: 'primary',
       },
       {
-        label: learnMoreLabel,
-        href: learnMoreHref,
+        label: `Shop Used ${shoppingLabel}`,
+        href: getMarketplaceBrowseUrl('used', marketplaceFilters),
+        external: true,
         variant: 'secondary',
       },
       {
-        label: 'Find More Deals',
-        href: '/deals',
+        label: `Shop Certified ${shoppingLabel}`,
+        href: getMarketplaceBrowseUrl('used', { ...marketplaceFilters, certified: true }),
+        external: true,
         variant: 'secondary',
       },
     ];
   }, [bodyStyleName, emptyStateElotConfig?.make, filters.bodyTypes, filters.fuelTypes, filters.makes, filters.models, fuelTypeName, makeName]);
+
+  const recirculationLinks = useMemo<RecirculationLink[]>(() => {
+    const selectedBodyType = filters.bodyTypes[0] || bodyStyleName;
+    const selectedFuelType = filters.fuelTypes[0] || fuelTypeName;
+    const selectedMake = filters.makes[0] || makeName;
+    const scopedLabel = selectedMake || selectedBodyType || selectedFuelType;
+    const scopedSlug = scopedLabel ? slugifyValue(scopedLabel) : '';
+    const buyingHref = scopedSlug ? `${BEST_BUYING_DEALS_PATH}/${scopedSlug}` : BEST_BUYING_DEALS_PATH;
+    const leaseHref = scopedSlug ? `/deals/lease/${scopedSlug}` : '/deals/lease';
+
+    if (scopedLabel) {
+      return [
+        {
+          label: `${scopedLabel} buying deals`,
+          href: buyingHref,
+          description: `Current financing and cash-back offers for ${scopedLabel}.`,
+        },
+        {
+          label: `${scopedLabel} lease deals`,
+          href: leaseHref,
+          description: `Monthly lease specials for ${scopedLabel}.`,
+        },
+      ];
+    }
+
+    return [
+      {
+        label: 'Best 0% APR Deals',
+        href: ZERO_PERCENT_APR_DEALS_PATH,
+        description: 'Interest-free manufacturer financing in one list',
+      },
+      {
+        label: 'Best Car Lease Deals',
+        href: '/deals/lease',
+        description: 'Monthly lease specials on new cars',
+      },
+    ];
+  }, [bodyStyleName, filters.bodyTypes, filters.fuelTypes, filters.makes, fuelTypeName, makeName]);
 
   const renderEmptyStateCtas = (className = 'zero-apr-page__empty-ctas') => (
     <section className={className} aria-label="More ways to shop">
@@ -517,6 +558,20 @@ const ZeroAprDealsPage = () => {
           </Link>
         );
       })}
+    </section>
+  );
+
+  const renderRecirculationLinks = (className = 'zero-apr-page__links-section') => (
+    <section className={className} aria-labelledby="zero-apr-explore-more-heading">
+      <h2 id="zero-apr-explore-more-heading" className="zero-apr-page__section-title">Explore More</h2>
+      <div className="zero-apr-page__links-grid">
+        {recirculationLinks.map((link) => (
+          <Link key={link.href} to={link.href} className="zero-apr-page__link-card">
+            <h3>{link.label}</h3>
+            <p>{link.description}</p>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 
@@ -960,6 +1015,8 @@ const ZeroAprDealsPage = () => {
                           renderEmptyStateCtas('zero-apr-page__empty-ctas zero-apr-page__empty-ctas--standalone')
                         )}
                       </div>
+
+                      {renderRecirculationLinks('zero-apr-page__links-section zero-apr-page__links-section--empty')}
                     </section>
                   </div>
                 </div>
@@ -1029,13 +1086,7 @@ const ZeroAprDealsPage = () => {
                     </div>
                   </section>
 
-                  <section className="zero-apr-page__links-section">
-                    <h2 className="zero-apr-page__section-title">Explore More</h2>
-                    <div className="zero-apr-page__links-grid">
-                      <Link to={ZERO_PERCENT_APR_DEALS_PATH} className="zero-apr-page__link-card"><h3>Best 0% APR Deals</h3><p>Interest-free manufacturer financing in one list</p></Link>
-                      <Link to="/deals/lease" className="zero-apr-page__link-card"><h3>Best Car Lease Deals</h3><p>Monthly lease specials on new cars</p></Link>
-                    </div>
-                  </section>
+                  {renderRecirculationLinks()}
                 </div>
                 <aside className="zero-apr-page__sidebar" aria-label="Advertisement">
                   <div className="zero-apr-page__sidebar-sticky">
