@@ -58,6 +58,37 @@ function buildCashDownData(
   return { rows, rangeLabel };
 }
 
+function buildLeaseTrimData(
+  make: string,
+  model: string,
+  msrpMin: number,
+  msrpMax: number,
+  eligibleTrims: string[],
+  baseMonthlyPayment?: number,
+  termMonths = 36,
+) {
+  const cashDownData = buildCashDownData(make, model, msrpMin, msrpMax, eligibleTrims);
+  const baseRow = cashDownData.rows[0];
+  const safeTerm = termMonths > 0 ? termMonths : 36;
+
+  const rows = cashDownData.rows.map((row, index) => {
+    const financedDifference = baseRow
+      ? Math.max(0, row.msrp - baseRow.msrp - (row.down - baseRow.down))
+      : 0;
+    const leaseMonthly = typeof baseMonthlyPayment === 'number'
+      ? Math.round(baseMonthlyPayment + financedDifference / safeTerm)
+      : null;
+
+    return {
+      ...row,
+      isBaseLease: index === 0,
+      leaseMonthly,
+    };
+  });
+
+  return { ...cashDownData, rows };
+}
+
 export type IncentivesModalVariant = 'simple' | 'complete-with-form' | 'edmunds' | 'conversion-a' | 'conversion-b' | 'conversion-b-no-form';
 
 /** Offer detail for the reference-style modal (like the Chevrolet Trax 0% financing example) */
@@ -799,23 +830,41 @@ const IncentivesModal = ({
                             )}
 
                             {activeIncentive.terms && (() => {
-                              const cd = buildCashDownData(offer.make, offer.model, offer.msrpMin, offer.msrpMax, offer.eligibleTrims);
+                              const cd = buildLeaseTrimData(
+                                offer.make,
+                                offer.model,
+                                offer.msrpMin,
+                                offer.msrpMax,
+                                offer.eligibleTrims,
+                                activeIncentive.leaseMonthlyPaymentNum,
+                                activeIncentive.leaseTermMonths,
+                              );
                               return (
                                 <div className="incentives-modal__v5-key-section">
                                   <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
                                   <p className="incentives-modal__v5-key-section-text">
-                                    {activeIncentive.terms} Estimated cash down (10% of MSRP): {cd.rangeLabel}.
+                                    {activeIncentive.terms} Higher-trim monthly estimates use the same term and estimated 10% cash down.
                                   </p>
                                   <table className="incentives-modal__v5-cashdown-table">
                                     <thead>
-                                      <tr><th>Trim</th><th>MSRP</th><th>Est. Cash Down</th></tr>
+                                      <tr>
+                                        <th>Trim</th>
+                                        <th>MSRP</th>
+                                        <th>Est. Cash Down</th>
+                                        <th>Est. Lease/mo</th>
+                                      </tr>
                                     </thead>
                                     <tbody>
                                       {cd.rows.map(r => (
                                         <tr key={r.name}>
                                           <td>{r.name}</td>
                                           <td>${r.msrp.toLocaleString()}</td>
-                                          <td>${r.down.toLocaleString()}</td>
+                                          <td className="incentives-modal__v5-cashdown-cell">${r.down.toLocaleString()}</td>
+                                          <td className="incentives-modal__v5-lease-cell">
+                                            {r.leaseMonthly == null ? 'See dealer' : (
+                                              <>${r.leaseMonthly.toLocaleString()}/mo</>
+                                            )}
+                                          </td>
                                         </tr>
                                       ))}
                                     </tbody>

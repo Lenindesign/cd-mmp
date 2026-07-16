@@ -5324,7 +5324,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                         <span className="aio-payment__light-vehicle-step__category-match-copy">
                                           <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong>
                                           <span>
-                                            Starts at {currency(vehicle.priceMin)} · {currency(getEstimatedMonthlyForVehiclePrice(vehicle.priceMin))}/mo est.
+                                            Starts at {currency(vehicle.priceMin)}
                                           </span>
                                         </span>
                                       </span>

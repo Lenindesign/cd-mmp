@@ -254,10 +254,10 @@ button.zero-apr-page__empty-state-link {
 .zero-apr-page__empty-marketplace-card {
   display: grid;
   gap: var(--spacing-4);
-  padding: var(--spacing-5);
-  background: color-mix(in srgb, var(--color-teal-light) 88%, var(--color-white) 12%);
-  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 18%, var(--color-gray-200) 82%);
-  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-5) 0 0;
+  background: var(--color-white);
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -279,17 +279,41 @@ button.zero-apr-page__empty-state-link {
 }
 
 .zero-apr-page__empty-marketplace-card .aio-payment__light-elot-head h2 {
-  font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-3xl));
+  font-size: clamp(var(--font-size-3xl), 3vw, 2.25rem);
+  line-height: 1;
 }
 
 .zero-apr-page__empty-marketplace-card .aio-payment__light-elot-results-link {
-  font-size: var(--font-size-md);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  color: var(--color-black);
 }
 
 .zero-apr-page__empty-marketplace-card .aio-payment__light-elot-card {
-  flex-basis: 170px;
-  min-height: 328px;
-  background: transparent;
+  flex-basis: 190px;
+  min-height: 378px;
+  background: var(--color-white);
+  border-color: var(--color-gray-300);
+}
+
+.zero-apr-page__empty-marketplace-card .aio-payment__light-elot-price-badge {
+  display: none;
+}
+
+.zero-apr-page__empty-marketplace-card .aio-payment__light-elot-card-body {
+  padding: var(--spacing-2-5);
+}
+
+.zero-apr-page__empty-marketplace-card .aio-payment__light-elot-kicker {
+  font-size: var(--font-size-sm);
+}
+
+.zero-apr-page__empty-marketplace-card .aio-payment__light-elot-card-title {
+  font-size: var(--font-size-lg);
+}
+
+.zero-apr-page__empty-marketplace-card .aio-payment__light-elot-card-price {
+  font-size: var(--font-size-2xl);
 }
 
 .zero-apr-page__empty-marketplace-card .aio-payment__light-elot-nav--left {
@@ -371,7 +395,9 @@ button.zero-apr-page__empty-state-link {
 .zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta--primary,
 .zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta--secondary {
   background: color-mix(in srgb, var(--color-white) 18%, transparent);
+  border-width: 3px;
   color: var(--color-blue-cobalt);
+  font-size: var(--font-size-xl);
 }
 
 .zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta:hover,
@@ -450,7 +476,7 @@ button.zero-apr-page__empty-state-link {
   }
 
   .zero-apr-page__empty-marketplace-card {
-    padding: var(--spacing-4);
+    padding: var(--spacing-4) 0 0;
   }
 
   .zero-apr-page__links-grid {

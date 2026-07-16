@@ -52,6 +52,8 @@ export interface Incentive {
   /** Tiered rate data for finance deals with multiple terms and/or variable cash back. */
   rateTiers?: RateTier[];
   eligibilityTags?: EligibilityTag[];
+  leaseMonthlyPaymentNum?: number;
+  leaseTermMonths?: number;
 }
 
 export interface VehicleIncentives {
@@ -172,6 +174,8 @@ function buildEntry(make: string, model: string): CachedEntry {
       programName: d.programName,
       programDescription: d.programDescription,
       groupAffiliation: 'everyone',
+      leaseMonthlyPaymentNum: d.monthlyPaymentNum,
+      leaseTermMonths: parseInt(d.term, 10) || undefined,
     });
   }
 

@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { ArrowRight, SlidersHorizontal, X } from 'lucide-react';
 import { getLeaseDeals } from '../../services/leaseDealsService';
 import { getCurrentPeriod, formatExpiration } from '../../utils/dateUtils';
 import {
@@ -23,6 +23,7 @@ import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import { GridAd } from '../../components/GridAd';
+import OfficialELotCarousel from '../../components/OfficialELotCarousel/OfficialELotCarousel';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
 import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
@@ -32,6 +33,7 @@ import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
 import { DealCard } from '../../components/DealCard';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
+import vehicleDatabase from '../../data/vehicles';
 import {
   GRID_BREAKER_AFTER_CARD_COUNT,
   DEALS_GRID_BREAKER_AD_URL,
@@ -73,6 +75,53 @@ const DEFAULT_FILTERS: DealsFilterState = {
   terms: [],
   creditTier: null,
   sortBy: 'a-z',
+};
+
+interface EmptyStateCta {
+  label: string;
+  href: string;
+  variant: 'primary' | 'secondary';
+}
+
+interface RecirculationLink {
+  label: string;
+  href: string;
+  description: string;
+}
+
+const EMPTY_STATE_FALLBACK_ZIP = '10992';
+
+const slugifyValue = (value: string): string =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+
+const pluralizeVehicleLabel = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  if (/^[A-Z0-9-]+$/.test(trimmed)) return `${trimmed}s`;
+  if (/[^aeiou]y$/i.test(trimmed)) return `${trimmed.slice(0, -1)}ies`;
+  if (/(s|x|z|ch|sh)$/i.test(trimmed)) return `${trimmed}es`;
+  return `${trimmed}s`;
+};
+
+const getEmptyStateZip = (zipCode: string): string =>
+  zipCode && zipCode !== DEFAULT_FILTERS.zipCode ? zipCode : EMPTY_STATE_FALLBACK_ZIP;
+
+const getMarketplaceBrowseUrl = (
+  condition: 'new' | 'used',
+  filters: { make?: string; model?: string; bodyStyle?: string; certified?: boolean },
+) => {
+  const params = new URLSearchParams();
+  if (filters.make) params.set('make', filters.make);
+  if (filters.model) params.set('model', filters.model);
+  if (filters.bodyStyle) params.set('bodyStyle', filters.bodyStyle);
+  if (filters.certified) params.set('certified', 'true');
+
+  const query = params.toString();
+  return `https://www.caranddriver.com/cars-for-sale/${condition}${query ? `?${query}` : ''}`;
 };
 
 function buildActiveOffer(deal: LeaseByMakeDeal | null): Partial<IncentiveOfferDetail> | undefined {
@@ -291,6 +340,57 @@ const LeaseByMakePage = () => {
       .sort((a, b) => a.label.localeCompare(b.label));
   }, [allDeals, makeName, makeParam]);
 
+  const emptyStateVehicle = useMemo(() => {
+    if (!makeName) return undefined;
+    return vehicleDatabase.find((vehicle) => vehicle.make.toLowerCase() === makeName.toLowerCase());
+  }, [makeName]);
+
+  const emptyShoppingLabel = useMemo(
+    () => pluralizeVehicleLabel(makeName || 'Vehicle'),
+    [makeName],
+  );
+
+  const emptyMarketplaceFilters = useMemo(
+    () => (makeName ? { make: makeName } : {}),
+    [makeName],
+  );
+
+  const emptyStateZip = getEmptyStateZip(filters.zipCode);
+
+  const emptyStateCtas = useMemo<EmptyStateCta[]>(() => [
+    {
+      label: `Shop New ${emptyShoppingLabel}`,
+      href: getMarketplaceBrowseUrl('new', emptyMarketplaceFilters),
+      variant: 'primary',
+    },
+    {
+      label: `Shop Used ${emptyShoppingLabel}`,
+      href: getMarketplaceBrowseUrl('used', emptyMarketplaceFilters),
+      variant: 'secondary',
+    },
+    {
+      label: `Shop Certified ${emptyShoppingLabel}`,
+      href: getMarketplaceBrowseUrl('used', { ...emptyMarketplaceFilters, certified: true }),
+      variant: 'secondary',
+    },
+  ], [emptyMarketplaceFilters, emptyShoppingLabel]);
+
+  const emptyStateRecirculationLinks = useMemo<RecirculationLink[]>(() => {
+    const makeSlug = slugifyValue(makeName);
+    return [
+      {
+        label: `${makeName} buying deals`,
+        href: makeSlug ? `${BEST_BUYING_DEALS_PATH}/${makeSlug}` : BEST_BUYING_DEALS_PATH,
+        description: `Current financing and cash-back offers for ${makeName}.`,
+      },
+      {
+        label: 'All lease deals',
+        href: '/deals/lease',
+        description: 'Monthly lease specials across every make.',
+      },
+    ];
+  }, [makeName]);
+
   const isVehicleSaved = (vehicleName: string) => {
     return user?.savedVehicles?.some((v) => v.name === vehicleName) || false;
   };
@@ -314,6 +414,35 @@ const LeaseByMakePage = () => {
 
   const activeDealObj = activeDealId ? allDeals.find((d) => d.id === activeDealId) : null;
   const activeOffer = buildActiveOffer(activeDealObj ?? null);
+
+  const renderEmptyStateCtas = (className = 'make-lease__empty-ctas') => (
+    <section className={className} aria-label="More ways to shop">
+      {emptyStateCtas.map((cta) => (
+        <a
+          key={cta.label}
+          href={cta.href}
+          className={`make-lease__empty-cta make-lease__empty-cta--${cta.variant}`}
+        >
+          <span>{cta.label}</span>
+          <ArrowRight size={18} aria-hidden="true" />
+        </a>
+      ))}
+    </section>
+  );
+
+  const renderEmptyStateRecirculationLinks = () => (
+    <section className="make-lease__links-section make-lease__links-section--empty">
+      <h2 className="make-lease__section-title">Explore More</h2>
+      <div className="make-lease__links-grid">
+        {emptyStateRecirculationLinks.map((link) => (
+          <Link key={link.href} to={link.href} className="make-lease__link-card">
+            <h3>{link.label}</h3>
+            <p>{link.description}</p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
 
   const renderLeaseDealCard = (deal: LeaseByMakeDeal) => {
     const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
@@ -458,31 +587,53 @@ const LeaseByMakePage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
+      {allDeals.length > 0 && (
+        <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
+      )}
 
       <div className="make-lease__content">
         <div className={`container${allDeals.length > 0 ? ' make-lease__container--stacked' : ''}`}>
           {allDeals.length === 0 ? (
-            <div className="make-lease__segment">
+            <div className="make-lease__segment make-lease__segment--empty">
               <div className="make-lease__main">
-                <section className="make-lease__section">
-                  <div className="make-lease__grid">
+                <section className="make-lease__section make-lease__section--empty">
+                  <div className="make-lease__empty-results">
                     <div className="make-lease__empty-state">
                       <p className="make-lease__empty-state-text">
-                        There are currently no active {makeName} lease deals. Check back soon or browse all lease deals.
+                        There are currently no active {makeName} lease deals. Try changing or expanding your filters to see lease deals you may qualify for.
                       </p>
-                      <Link to="/lease-deals" className="make-lease__empty-state-link">
-                        Browse Lease Deals
-                      </Link>
+                      <button
+                        type="button"
+                        className="make-lease__empty-state-link"
+                        onClick={() => setFilterOpen(true)}
+                      >
+                        Adjust Filters
+                      </button>
                     </div>
+
+                    {emptyStateVehicle ? (
+                      <section className="make-lease__empty-marketplace-card" aria-label={`${emptyShoppingLabel} for sale near you`}>
+                        <OfficialELotCarousel
+                          year={emptyStateVehicle.year}
+                          make={emptyStateVehicle.make}
+                          model={emptyStateVehicle.model}
+                          bodyStyle={emptyStateVehicle.bodyStyle}
+                          priceThreshold={emptyStateVehicle.priceMin}
+                          className="make-lease__empty-elot"
+                          title={`${emptyShoppingLabel} For Sale Near You`}
+                          resultsLinkLabel={`See all results for used ${emptyShoppingLabel} for sale near ${emptyStateZip}`}
+                          resultsLinkHref={getMarketplaceBrowseUrl('used', emptyMarketplaceFilters)}
+                        />
+                        {renderEmptyStateCtas()}
+                      </section>
+                    ) : (
+                      renderEmptyStateCtas('make-lease__empty-ctas make-lease__empty-ctas--standalone')
+                    )}
                   </div>
+
+                  {renderEmptyStateRecirculationLinks()}
                 </section>
               </div>
-              <aside className="make-lease__sidebar" aria-label="Advertisement">
-                <div className="make-lease__sidebar-sticky">
-                  <AdSidebar />
-                </div>
-              </aside>
             </div>
           ) : (
             <>
