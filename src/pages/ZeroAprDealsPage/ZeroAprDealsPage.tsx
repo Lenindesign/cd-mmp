@@ -86,6 +86,8 @@ interface EmptyStateElotConfig {
   priceThreshold?: number;
   title: string;
   resultsLinkLabel: string;
+  resultsLinkAnchorLabel: string;
+  resultsLinkSuffix: string;
   resultsLinkHref: string;
 }
 
@@ -310,7 +312,7 @@ const ZeroAprDealsPage = () => {
     const selectedModel = filters.models?.[0];
     const marketZip = getEmptyStateZip(filters.zipCode);
 
-    const addPresentation = (base: Omit<EmptyStateElotConfig, 'title' | 'resultsLinkLabel' | 'resultsLinkHref'>): EmptyStateElotConfig => {
+    const addPresentation = (base: Omit<EmptyStateElotConfig, 'title' | 'resultsLinkLabel' | 'resultsLinkAnchorLabel' | 'resultsLinkSuffix' | 'resultsLinkHref'>): EmptyStateElotConfig => {
       const titleLabel = selectedMake
         ? pluralizeVehicleLabel(selectedModel ? `${selectedMake} ${selectedModel}` : selectedMake)
         : selectedBodyType
@@ -339,6 +341,8 @@ const ZeroAprDealsPage = () => {
         ...base,
         title: `${titleLabel} For Sale Near You`,
         resultsLinkLabel: `See all results for ${searchLabel} for sale near ${marketZip}`,
+        resultsLinkAnchorLabel: `${searchLabel} for sale`,
+        resultsLinkSuffix: `near ${marketZip}`,
         resultsLinkHref: getMarketplaceBrowseUrl('used', resultsFilters),
       };
     };
@@ -1007,6 +1011,8 @@ const ZeroAprDealsPage = () => {
                               className="zero-apr-page__empty-elot"
                               title={emptyStateElotConfig.title}
                               resultsLinkLabel={emptyStateElotConfig.resultsLinkLabel}
+                              resultsLinkAnchorLabel={emptyStateElotConfig.resultsLinkAnchorLabel}
+                              resultsLinkSuffix={emptyStateElotConfig.resultsLinkSuffix}
                               resultsLinkHref={emptyStateElotConfig.resultsLinkHref}
                             />
                             {renderEmptyStateCtas()}

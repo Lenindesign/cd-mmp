@@ -18,6 +18,9 @@ interface OfficialELotCarouselProps {
   className?: string;
   title?: string;
   resultsLinkLabel?: string;
+  resultsLinkPrefix?: string;
+  resultsLinkAnchorLabel?: string;
+  resultsLinkSuffix?: string;
   resultsLinkHref?: string;
 }
 
@@ -69,6 +72,9 @@ const OfficialELotCarousel = ({
   className = '',
   title = 'For Sale Near You',
   resultsLinkLabel,
+  resultsLinkPrefix,
+  resultsLinkAnchorLabel,
+  resultsLinkSuffix,
   resultsLinkHref,
 }: OfficialELotCarouselProps) => {
   const headingId = useId();
@@ -152,6 +158,7 @@ const OfficialELotCarousel = ({
   const allResultsHref = resultsLinkHref ?? getMarketplaceUrl(year, make, model);
   const searchLabel = `used ${year} ${make} ${model}`;
   const resultsText = resultsLinkLabel ?? `See all results for ${searchLabel} for sale near ${location}`;
+  const hasInlineResultsLink = Boolean(resultsLinkAnchorLabel);
 
   return (
     <section className={sectionClassName}>
@@ -159,10 +166,21 @@ const OfficialELotCarousel = ({
         <section className="aio-payment__light-elot" aria-labelledby={headingId}>
           <div className="aio-payment__light-elot-head">
             <h2 id={headingId}>{title}</h2>
-            <a className="aio-payment__light-elot-results-link" href={allResultsHref}>
-              <span>{resultsText}</span>
-              <ArrowRight size={18} aria-hidden="true" />
-            </a>
+            {hasInlineResultsLink ? (
+              <p className="aio-payment__light-elot-results-line">
+                {resultsLinkPrefix ?? 'See all results for'}{' '}
+                <a className="aio-payment__light-elot-results-link" href={allResultsHref}>
+                  {resultsLinkAnchorLabel}
+                </a>
+                {resultsLinkSuffix ? ` ${resultsLinkSuffix}` : null}
+                <ArrowRight size={18} aria-hidden="true" />
+              </p>
+            ) : (
+              <a className="aio-payment__light-elot-results-link" href={allResultsHref}>
+                <span>{resultsText}</span>
+                <ArrowRight size={18} aria-hidden="true" />
+              </a>
+            )}
           </div>
 
           <div className="aio-payment__light-elot-carousel-wrap">

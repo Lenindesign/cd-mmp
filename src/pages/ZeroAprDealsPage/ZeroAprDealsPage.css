@@ -289,6 +289,11 @@ button.zero-apr-page__empty-state-link {
   color: var(--color-black);
 }
 
+.zero-apr-page__empty-marketplace-card .aio-payment__light-elot-results-line .aio-payment__light-elot-results-link {
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+}
+
 .zero-apr-page__empty-marketplace-card .aio-payment__light-elot-card {
   flex-basis: 190px;
   min-height: 378px;
@@ -355,7 +360,8 @@ button.zero-apr-page__empty-state-link {
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
-    color var(--transition-fast);
+    color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .zero-apr-page__empty-cta svg {
@@ -400,11 +406,26 @@ button.zero-apr-page__empty-state-link {
   font-size: var(--font-size-xl);
 }
 
+.zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta span {
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta svg {
+  color: var(--color-black);
+}
+
 .zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta:hover,
 .zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta:focus-visible {
   background: var(--color-white);
   border-color: var(--color-blue-cobalt-dark);
   color: var(--color-blue-cobalt-dark);
+  transform: translateY(-3px);
+}
+
+.zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta:hover span,
+.zero-apr-page__empty-marketplace-card .zero-apr-page__empty-cta:focus-visible span {
+  text-decoration: underline;
 }
 
 /* FAQ styles handled by shared /styles/faq-section.css */
@@ -437,16 +458,20 @@ button.zero-apr-page__empty-state-link {
 }
 
 .zero-apr-page__link-card h3 {
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: var(--font-weight-normal);
+  font-family: var(--font-article);
+  font-size: 19px;
+  font-weight: var(--font-weight-bold);
+  line-height: 30px;
   color: var(--color-black);
   margin: 0;
+  text-underline-offset: 3px;
   transition: color var(--transition-fast);
 }
 
-.zero-apr-page__link-card:hover h3 {
+.zero-apr-page__link-card:hover h3,
+.zero-apr-page__link-card:focus-visible h3 {
   color: var(--color-blue-cobalt);
+  text-decoration: underline;
 }
 
 .zero-apr-page__link-card p {

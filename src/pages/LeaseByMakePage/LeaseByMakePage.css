@@ -396,6 +396,11 @@
   color: var(--color-black);
 }
 
+.make-lease__empty-marketplace-card .aio-payment__light-elot-results-line .aio-payment__light-elot-results-link {
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+}
+
 .make-lease__empty-marketplace-card .aio-payment__light-elot-card {
   flex-basis: 190px;
   min-height: 378px;
@@ -462,7 +467,8 @@
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
-    color var(--transition-fast);
+    color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .make-lease__empty-cta svg {
@@ -507,11 +513,26 @@
   font-size: var(--font-size-xl);
 }
 
+.make-lease__empty-marketplace-card .make-lease__empty-cta span {
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.make-lease__empty-marketplace-card .make-lease__empty-cta svg {
+  color: var(--color-black);
+}
+
 .make-lease__empty-marketplace-card .make-lease__empty-cta:hover,
 .make-lease__empty-marketplace-card .make-lease__empty-cta:focus-visible {
   background: var(--color-white);
   border-color: var(--color-blue-cobalt-dark);
   color: var(--color-blue-cobalt-dark);
+  transform: translateY(-3px);
+}
+
+.make-lease__empty-marketplace-card .make-lease__empty-cta:hover span,
+.make-lease__empty-marketplace-card .make-lease__empty-cta:focus-visible span {
+  text-decoration: underline;
 }
 
 /* Internal Links */
@@ -542,16 +563,20 @@
 }
 
 .make-lease__link-card h3 {
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: var(--font-weight-normal);
+  font-family: var(--font-article);
+  font-size: 19px;
+  font-weight: var(--font-weight-bold);
+  line-height: 30px;
   color: var(--color-black);
   margin: 0;
+  text-underline-offset: 3px;
   transition: color var(--transition-fast);
 }
 
-.make-lease__link-card:hover h3 {
+.make-lease__link-card:hover h3,
+.make-lease__link-card:focus-visible h3 {
   color: var(--color-blue-cobalt);
+  text-decoration: underline;
 }
 
 .make-lease__link-card p {

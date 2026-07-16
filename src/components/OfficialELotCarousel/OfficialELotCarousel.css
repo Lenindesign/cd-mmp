@@ -49,6 +49,35 @@
   text-decoration: none;
 }
 
+.aio-payment__light-elot-results-line {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--spacing-1);
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  line-height: 1.35;
+}
+
+.aio-payment__light-elot-results-line .aio-payment__light-elot-results-link {
+  display: inline;
+  color: var(--color-blue-cobalt);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.aio-payment__light-elot-results-line .aio-payment__light-elot-results-link:hover,
+.aio-payment__light-elot-results-line .aio-payment__light-elot-results-link:focus-visible {
+  color: var(--color-blue-dark);
+}
+
+.aio-payment__light-elot-results-line svg {
+  flex-shrink: 0;
+  color: var(--color-black);
+}
+
 .aio-payment__light-elot-results-link u {
   color: var(--color-blue-cobalt);
   text-underline-offset: 2px;
@@ -236,6 +265,11 @@
   }
 
   .aio-payment__light-elot-results-link {
+    font-size: var(--font-size-md);
+  }
+
+  .aio-payment__light-elot-results-line {
+    flex-wrap: wrap;
     font-size: var(--font-size-md);
   }
 

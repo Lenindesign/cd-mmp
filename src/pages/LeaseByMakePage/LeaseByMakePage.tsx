@@ -622,6 +622,8 @@ const LeaseByMakePage = () => {
                           className="make-lease__empty-elot"
                           title={`${emptyShoppingLabel} For Sale Near You`}
                           resultsLinkLabel={`See all results for used ${emptyShoppingLabel} for sale near ${emptyStateZip}`}
+                          resultsLinkAnchorLabel={`used ${emptyShoppingLabel} for sale`}
+                          resultsLinkSuffix={`near ${emptyStateZip}`}
                           resultsLinkHref={getMarketplaceBrowseUrl('used', emptyMarketplaceFilters)}
                         />
                         {renderEmptyStateCtas()}
