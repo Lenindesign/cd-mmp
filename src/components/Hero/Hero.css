@@ -258,6 +258,39 @@
   color: var(--color-blue-cobalt);
 }
 
+.hero__rate-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-1) var(--spacing-2);
+  color: var(--color-blue-cobalt);
+  background: transparent;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+}
+
+.hero__rate-action:hover {
+  color: var(--color-dark);
+  background: var(--color-teal-light);
+  border-color: var(--color-blue-cobalt);
+  transform: translateY(-1px);
+}
+
+.hero__rate-action:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-0-5);
+}
+
 /* Gallery */
 .hero__gallery {
   display: grid;
@@ -1452,7 +1485,17 @@
   .hero__rating-badge {
     justify-content: center;
   }
-  
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__rate-action {
+    transition: none;
+  }
+
+  .hero__rate-action:hover {
+    transform: none;
+  }
 }
 
 /* Show carousel on mobile, hide grid */

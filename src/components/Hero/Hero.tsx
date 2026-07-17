@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image } from 'lucide-react';
+import { ChevronDown, Bookmark, ArrowRight, ChevronLeft, ChevronRight, Image, Star } from 'lucide-react';
 import HeroOffersA from './HeroOffersA';
 import HeroOffersB from './HeroOffersB';
 import { getAvailableYears } from '../../services/vehicleService';
@@ -86,6 +86,10 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
         ownership: 'want',
       });
     }
+  };
+
+  const handleRateVehicleClick = () => {
+    navigate(`/rate-your-car?vehicle=${encodeURIComponent(vehicleName)}`);
   };
 
   // Intersection Observer for button animations
@@ -364,6 +368,14 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
                 </svg>
                 <span>C/D RATING</span>
               </div>
+              <button
+                type="button"
+                className="hero__rate-action"
+                onClick={handleRateVehicleClick}
+              >
+                <Star size={13} aria-hidden="true" />
+                <span>Rate this vehicle</span>
+              </button>
             </div>
           </div>
 

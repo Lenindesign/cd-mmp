@@ -99,6 +99,7 @@ const WhatsMyCarWorthResultsPage = lazy(() => import('./pages/WhatsMyCarWorthRes
 
 // Email Preview page - for testing personalized emails
 const EmailPreviewPage = lazy(() => import('./pages/EmailPreviewPage/EmailPreviewPage'));
+const RateYourCarPage = lazy(() => import('./pages/RateYourCarPage/RateYourCarPage'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -112,8 +113,9 @@ const CarFinderChatGate = () => {
   const { carFinderEnabled } = useCarFinder();
   const location = useLocation();
   const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
+  const isImmersivePage = isOnboardingPage || location.pathname === '/rate-your-car';
 
-  if (isOnboardingPage || !carFinderEnabled) return null;
+  if (isImmersivePage || !carFinderEnabled) return null;
 
   return (
     <CarFinderChat
@@ -144,6 +146,7 @@ const onboardingRoutes = (
 const editorialRoutes = (
   <>
     <Route path="/" element={<NewsPage />} />
+    <Route path="/rate-your-car" element={<RateYourCarPage />} />
     <Route path="/expert-reviews" element={<ExpertReviewsPage />} />
     <Route path="/news" element={<NewsPage />} />
     <Route path="/news-stories" element={<NewsPage />} />
@@ -280,6 +283,7 @@ function App() {
   const location = useLocation();
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
+  const isImmersivePage = isOnboardingPage || location.pathname === '/rate-your-car';
   const currentVehicle = useMemo(() => {
     const match = location.pathname.match(/^\/(\d{4})\/([^/]+)\/([^/]+)/);
     if (!match) return null;
@@ -301,7 +305,7 @@ function App() {
         <ScrollToTop />
         
         {/* Only show Header/Footer for non-onboarding pages */}
-        {!isOnboardingPage && <Header onAccountPromptOpen={openAccountModal} />}
+        {!isImmersivePage && <Header onAccountPromptOpen={openAccountModal} />}
         
         <main id="main-content">
           <Suspense fallback={<PageLoader />}>
@@ -313,9 +317,9 @@ function App() {
           </Suspense>
         </main>
         
-        {!isOnboardingPage && <Footer onAccountPromptOpen={openAccountModal} />}
+        {!isImmersivePage && <Footer onAccountPromptOpen={openAccountModal} />}
 
-        {!isOnboardingPage && (
+        {!isImmersivePage && (
           <ExitIntentModal
             isOpen={isAccountModalOpen}
             onClose={() => setIsAccountModalOpen(false)}
