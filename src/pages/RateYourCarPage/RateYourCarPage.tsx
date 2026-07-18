@@ -344,7 +344,7 @@ const RateYourCarPage = () => {
 
       <div className="rate-your-car__container">
         <header className="rate-your-car__hero">
-          <img src="/rate-your-car-logo.svg" alt="Rate Your Car" className="rate-your-car__logo" />
+          <img src="/rate-your-car-logo.svg?v=light" alt="Rate Your Car" className="rate-your-car__logo" />
           <p>Search for your vehicle and rate how it stacks up.</p>
         </header>
 

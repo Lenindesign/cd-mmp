@@ -113,7 +113,7 @@ const CarFinderChatGate = () => {
   const { carFinderEnabled } = useCarFinder();
   const location = useLocation();
   const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
-  const isImmersivePage = isOnboardingPage || location.pathname === '/rate-your-car';
+  const isImmersivePage = isOnboardingPage;
 
   if (isImmersivePage || !carFinderEnabled) return null;
 
@@ -283,7 +283,7 @@ function App() {
   const location = useLocation();
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const isOnboardingPage = location.pathname.startsWith('/onboarding') || location.pathname === '/sign-in' || location.pathname === '/sign-up';
-  const isImmersivePage = isOnboardingPage || location.pathname === '/rate-your-car';
+  const isImmersivePage = isOnboardingPage;
   const currentVehicle = useMemo(() => {
     const match = location.pathname.match(/^\/(\d{4})\/([^/]+)\/([^/]+)/);
     if (!match) return null;

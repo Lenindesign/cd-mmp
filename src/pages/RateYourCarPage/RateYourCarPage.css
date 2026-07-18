@@ -3,11 +3,11 @@
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  color: var(--color-white);
-  background-color: var(--color-dark);
+  color: var(--color-dark);
+  background-color: var(--color-teal-light);
   background-image:
-    linear-gradient(110deg, rgba(0, 0, 0, 0.93) 0%, rgba(0, 0, 0, 0.65) 48%, rgba(0, 0, 0, 0.88) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 44%, rgba(0, 0, 0, 0.9) 100%),
+    linear-gradient(110deg, rgba(255, 255, 255, 0.88) 0%, rgba(241, 247, 247, 0.73) 48%, rgba(255, 255, 255, 0.9) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(241, 247, 247, 0.46) 44%, rgba(255, 255, 255, 0.82) 100%),
     var(--rate-your-car-background);
   background-position: center;
   background-size: cover;
@@ -19,7 +19,7 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: rgba(2, 23, 37, 0.12);
+  background: rgba(241, 247, 247, 0.04);
   content: '';
   pointer-events: none;
 }
@@ -37,7 +37,7 @@
   top: var(--spacing-4);
   left: var(--spacing-4);
   z-index: 1;
-  color: var(--color-gray-300);
+  color: var(--color-gray-600);
   font-size: var(--font-size-xs);
 }
 
@@ -59,13 +59,13 @@
   width: min(100%, 320px);
   height: auto;
   margin: 0 auto var(--spacing-2);
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 8px 18px rgba(27, 95, 138, 0.12));
 }
 
 .rate-your-car__hero > p {
   max-width: 520px;
   margin: 0 auto;
-  color: var(--color-gray-200);
+  color: var(--color-gray-700);
   font-size: var(--font-size-lg);
   line-height: 1.5;
 }
@@ -76,7 +76,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
+  box-shadow: 0 18px 48px rgba(11, 34, 48, 0.16);
 }
 
 .rate-your-car__select-step {
@@ -504,7 +504,7 @@
 
 .rate-your-car__benefits > h2 {
   margin: 0 0 var(--spacing-5);
-  color: var(--color-white);
+  color: var(--color-black);
   font-size: var(--font-size-2xl);
   text-align: center;
 }
@@ -512,7 +512,7 @@
 .rate-your-car__benefit-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid rgba(255, 255, 255, 0.38);
+  border-top: 1px solid var(--color-gray-400);
 }
 
 .rate-your-car__benefit-grid article {
@@ -521,25 +521,25 @@
 }
 
 .rate-your-car__benefit-grid article + article {
-  border-left: 1px solid rgba(255, 255, 255, 0.28);
+  border-left: 1px solid var(--color-gray-300);
 }
 
 .rate-your-car__benefit-grid svg {
   width: 28px;
   height: 28px;
-  color: var(--color-white);
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.65));
+  color: var(--color-blue-cobalt);
+  filter: none;
 }
 
 .rate-your-car__benefit-grid h3 {
   margin: var(--spacing-3) 0 var(--spacing-2);
-  color: var(--color-white);
+  color: var(--color-black);
   font-size: var(--font-size-base);
 }
 
 .rate-your-car__benefit-grid p {
   margin: 0;
-  color: var(--color-gray-200);
+  color: var(--color-gray-700);
   font-size: var(--font-size-sm);
   line-height: 1.45;
 }
@@ -649,7 +649,7 @@
   }
 
   .rate-your-car__benefit-grid article + article {
-    border-top: 1px solid rgba(255, 255, 255, 0.28);
+    border-top: 1px solid var(--color-gray-300);
     border-left: 0;
   }
 
