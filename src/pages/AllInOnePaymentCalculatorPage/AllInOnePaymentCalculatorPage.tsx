@@ -507,7 +507,7 @@ const LIGHT_APR_SLIDER_MIN = 0;
 const LIGHT_APR_SLIDER_MAX = 20;
 const LIGHT_APR_SLIDER_STEP = 0.1;
 const LIGHT_APR_INPUT_STEP = 0.1;
-const LIGHT_DEFAULT_NEW_APR = 7;
+const LIGHT_DEFAULT_NEW_APR = 7.5;
 const LIGHT_DEFAULT_USED_APR = 11;
 
 const clampLightApr = (value: number) => {
@@ -521,7 +521,11 @@ const clampLightAprSlider = (value: number) => {
   return clampLightApr(rounded);
 };
 
-const formatAprPercent = (value: number) => `${clampLightApr(value).toFixed(APR_INPUT_DECIMAL_PLACES)}%`;
+const formatAprPercent = (value: number) => {
+  const clamped = Math.min(LIGHT_APR_SLIDER_MAX, Math.max(LIGHT_APR_SLIDER_MIN, value));
+  const hasHundredths = Math.abs((clamped * 10) - Math.round(clamped * 10)) > Number.EPSILON;
+  return `${clamped.toFixed(hasHundredths ? 2 : APR_INPUT_DECIMAL_PLACES)}%`;
+};
 
 const monthlyPayment = (principal: number, apr: number, termMonths: number) => {
   if (principal <= 0 || termMonths <= 0) return 0;
@@ -2710,6 +2714,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : monthlyInsuranceAmount > 0
         ? `Includes ${currency(estimatedMonthly)}/mo loan payment plus ${currency(monthlyInsuranceAmount)}/mo insurance.`
         : lightEstimateSummaryCopy;
+  const showLightStepOneAssumptionNote = isLightStepsVariant && routeLightWizardStep === 1;
   const renderLightBreakdownValue = (value: number, operation?: 'add' | 'subtract') => {
     if (!operation) return currency(value);
 
@@ -4418,6 +4423,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     }
   };
 
+  const applyRateTierToEstimate = (
+    incentive: Incentive,
+    tier: NonNullable<Incentive['rateTiers']>[number],
+  ) => {
+    setLoanTerm(tier.term);
+    setSelectedFinanceId(incentive.id);
+  };
+
   const applyTradeToolEstimate = (estimate: {
     vehicle: string;
     mileage: number;
@@ -5430,6 +5443,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               <HeroOffersB
                                 vehicleIncentives={lightVehiclePriceIncentives}
                                 onOfferClick={applyOfferToEstimate}
+                                onRateTierSelect={applyRateTierToEstimate}
+                                onRateTierRemove={() => setSelectedFinanceId('custom')}
+                                selectedRateTierTerm={selectedFinanceId === 'custom' ? null : loanTerm}
                                 title={null}
                                 showBuyDealLink={false}
                                 showLeaseDealLink={false}
@@ -5916,6 +5932,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </p>
                       <HeroOffersB
                         vehicleIncentives={vehicleIncentives}
+                        onRateTierSelect={isLightStepsVariant ? applyRateTierToEstimate : undefined}
+                        onRateTierRemove={isLightStepsVariant ? () => setSelectedFinanceId('custom') : undefined}
+                        selectedRateTierTerm={selectedFinanceId === 'custom' ? null : loanTerm}
                         onOfferClick={isLightStepsVariant ? applyOfferToEstimate : handleOfferClick}
                         title={isLightStepsVariant ? null : 'Special deals and incentives'}
                         showBuyDealLink={!isLightStepsVariant}
@@ -6481,6 +6500,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </p>
                       )}
                     </div>
+                    {showLightStepOneAssumptionNote && (
+                      <p className="aio-payment__light-result-assumption-note">
+                        Starting estimate using common loan assumptions. You can adjust down payment, APR, term, trade-in, taxes, and fees as you go.
+                      </p>
+                    )}
                   </div>
                   {showSummaryBudgetFit && (
                     <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${displayedSummaryBudgetFitStatus}`}>

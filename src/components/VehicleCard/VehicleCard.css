@@ -606,6 +606,11 @@
   justify-content: center;
 }
 
+.vehicle-card__expand-details--placeholder.btn {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* ============================================
    YEARS OVERLAY (Expanded State)
    ============================================ */
@@ -647,6 +652,10 @@
   overflow-y: auto;
   animation: slideUpOverlay 0.3s ease-out forwards;
   border-radius: var(--border-radius-md);
+}
+
+.vehicle-card--used .vehicle-card__details-overlay {
+  padding: var(--spacing-3);
 }
 
 .vehicle-card__years-overlay--closing,

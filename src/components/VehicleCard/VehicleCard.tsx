@@ -708,14 +708,16 @@ export const VehicleCard = ({
         )}
 
         {/* In-card Detail Disclosure */}
-        {detailOverlayContent && detailToggleLabel && !isDetailExpanded && (
+        {detailOverlayContent && detailToggleLabel && (
           <Button
             variant="ghost"
             size="small"
-            className="vehicle-card__expand-details"
+            className={`vehicle-card__expand-details ${isDetailExpanded ? 'vehicle-card__expand-details--placeholder' : ''}`}
             onClick={handleDetailToggle}
-            aria-expanded={false}
+            aria-expanded={isDetailExpanded}
             aria-controls={detailPanelId}
+            aria-hidden={isDetailExpanded}
+            tabIndex={isDetailExpanded ? -1 : undefined}
           >
             {detailToggleLabel}
           </Button>

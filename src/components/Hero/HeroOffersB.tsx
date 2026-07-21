@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ChevronDown, ChevronRight, ChevronUp, Minus, Plus } from 'lucide-react';
+import { Check, ChevronDown, ChevronRight, ChevronUp, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 import { getAprRangeLabel } from '../IncentivesModal/incentivesModalUtils';
@@ -9,7 +9,10 @@ interface HeroOffersBProps {
   vehicleIncentives: VehicleIncentives;
   onOfferClick: (inc: Incentive) => void;
   onApplyOffer?: (inc: Incentive) => void;
+  onRateTierSelect?: (inc: Incentive, tier: NonNullable<Incentive['rateTiers']>[number]) => void;
+  onRateTierRemove?: (inc: Incentive) => void;
   selectedOfferIds?: string[];
+  selectedRateTierTerm?: number | null;
   title?: string | null;
   showBuyDealLink?: boolean;
   showLeaseDealLink?: boolean;
@@ -65,7 +68,10 @@ const HeroOffersB = ({
   vehicleIncentives,
   onOfferClick,
   onApplyOffer,
+  onRateTierSelect,
+  onRateTierRemove,
   selectedOfferIds = [],
+  selectedRateTierTerm = null,
   title = 'SPECIAL DEALS AND INCENTIVES',
   showBuyDealLink = true,
   showLeaseDealLink = true,
@@ -73,6 +79,7 @@ const HeroOffersB = ({
   showToggleIndicator = false,
 }: HeroOffersBProps) => {
   const [showMoreDeals, setShowMoreDeals] = useState(false);
+  const [expandedRateTierOfferId, setExpandedRateTierOfferId] = useState<string | null>(null);
   const topOffers = useMemo(() => {
     const finance = vehicleIncentives.incentives.find(i => i.type === 'finance');
     const lease = vehicleIncentives.incentives.find(i => i.type === 'lease');
@@ -111,53 +118,119 @@ const HeroOffersB = ({
 
   const renderOfferPill = (inc: Incentive) => {
     const isSelected = selectedOfferIds.includes(inc.id);
-    const label = getOfferDisplayLabel(inc);
+    const rateTiers = inc.rateTiers ?? [];
+    const canSelectRateTier = inc.type === 'finance'
+      && rateTiers.length > 1
+      && Boolean(onRateTierSelect);
+    const isRateTierExpanded = canSelectRateTier && expandedRateTierOfferId === inc.id;
+    const selectedRateTier = isSelected
+      ? rateTiers.find((tier) => tier.term === selectedRateTierTerm)
+      : undefined;
+    const label = selectedRateTier
+      ? `${selectedRateTier.apr.toFixed(2)}% APR for ${selectedRateTier.term} months`
+      : getOfferDisplayLabel(inc);
+    const rateTierPanelId = `hero-offers-b-rate-tiers-${slugify(inc.id)}`;
+    const handlePillClick = () => {
+      if (canSelectRateTier) {
+        setExpandedRateTierOfferId((current) => current === inc.id ? null : inc.id);
+        return;
+      }
+      onOfferClick(inc);
+    };
     const showInlineToggleIndicator = showToggleIndicator && !onApplyOffer;
 
     return (
-      <div
-        key={inc.id}
-        role="button"
-        aria-pressed={isSelected}
-        tabIndex={0}
-        className={`hero__offers-b-pill ${isSelected ? 'hero__offers-b-pill--selected' : ''}`}
-        onClick={() => onOfferClick(inc)}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            onOfferClick(inc);
-          }
-        }}
-      >
-        <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
-        <span className="hero__offers-b-pill-text">{label}</span>
-        <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
-        {showInlineToggleIndicator && (
-          <span
-            className={`hero__offers-b-pill-toggle ${isSelected ? 'hero__offers-b-pill-toggle--selected' : ''}`}
-            aria-hidden="true"
-          >
-            {isSelected ? <Minus size={14} strokeWidth={3} /> : <Plus size={14} strokeWidth={3} />}
-          </span>
-        )}
-        {isSelected && !onApplyOffer && (
-          <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
-            Applied
-          </span>
-        )}
-        {onApplyOffer && (
-          <span className="hero__offers-b-pill-actions">
-            <button
-              type="button"
-              className="hero__offers-b-pill-apply"
-              onClick={(event) => {
-                event.stopPropagation();
-                onApplyOffer(inc);
-              }}
+      <div key={inc.id} className="hero__offers-b-offer">
+        <div
+          role="button"
+          aria-pressed={isSelected}
+          aria-expanded={canSelectRateTier ? isRateTierExpanded : undefined}
+          aria-controls={canSelectRateTier ? rateTierPanelId : undefined}
+          tabIndex={0}
+          className={`hero__offers-b-pill ${isSelected ? 'hero__offers-b-pill--selected' : ''} ${isRateTierExpanded ? 'hero__offers-b-pill--expanded' : ''}`}
+          onClick={handlePillClick}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              handlePillClick();
+            }
+          }}
+        >
+          <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
+          <span className="hero__offers-b-pill-text">{label}</span>
+          <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
+          {showInlineToggleIndicator && (
+            <span
+              className={`hero__offers-b-pill-toggle ${isSelected ? 'hero__offers-b-pill-toggle--selected' : ''}`}
+              aria-hidden="true"
             >
-              {isSelected ? 'Applied' : 'Apply'}
-            </button>
-          </span>
+              {canSelectRateTier
+                ? isRateTierExpanded
+                  ? <ChevronUp size={14} strokeWidth={3} />
+                  : <ChevronDown size={14} strokeWidth={3} />
+                : isSelected
+                  ? <Minus size={14} strokeWidth={3} />
+                  : <Plus size={14} strokeWidth={3} />}
+            </span>
+          )}
+          {isSelected && !onApplyOffer && (
+            <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
+              Applied
+            </span>
+          )}
+          {onApplyOffer && (
+            <span className="hero__offers-b-pill-actions">
+              <button
+                type="button"
+                className="hero__offers-b-pill-apply"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onApplyOffer(inc);
+                }}
+              >
+                {isSelected ? 'Applied' : 'Apply'}
+              </button>
+            </span>
+          )}
+        </div>
+        {isRateTierExpanded && (
+          <div id={rateTierPanelId} className="hero__offers-b-rate-tiers">
+            <div className="hero__offers-b-rate-tiers-heading">
+              <strong>Choose a rate and term</strong>
+              <span>Select the APR and term to apply to this estimate.</span>
+            </div>
+            <div className="hero__offers-b-rate-tier-list" role="group" aria-label="Available rates and terms">
+              {rateTiers.map((tier) => {
+                const isTierSelected = isSelected && selectedRateTierTerm === tier.term;
+                return (
+                  <button
+                    key={`${tier.term}-${tier.apr}`}
+                    type="button"
+                    className={`hero__offers-b-rate-tier ${isTierSelected ? 'hero__offers-b-rate-tier--selected' : ''}`}
+                    aria-pressed={isTierSelected}
+                    onClick={() => onRateTierSelect?.(inc, tier)}
+                  >
+                    <span className="hero__offers-b-rate-tier-term">{tier.term} months</span>
+                    <span className="hero__offers-b-rate-tier-offer">
+                      <strong>{tier.apr.toFixed(2)}% APR</strong>
+                    </span>
+                    <span className="hero__offers-b-rate-tier-action">
+                      {isTierSelected ? <><Check size={15} strokeWidth={3} aria-hidden /> Selected</> : 'Choose'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {isSelected && onRateTierRemove && (
+              <button
+                type="button"
+                className="hero__offers-b-rate-tier-remove"
+                onClick={() => onRateTierRemove(inc)}
+              >
+                Remove rate offer
+              </button>
+            )}
+          </div>
         )}
       </div>
     );

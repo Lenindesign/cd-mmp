@@ -12,17 +12,19 @@ import PriceHistory from '../../components/PriceHistory';
 import BuyingPotential from '../../components/BuyingPotential';
 import AdSidebar from '../../components/AdSidebar';
 import TrimSelector from '../../components/TrimSelector';
-import Warranty from '../../components/Warranty';
 import Comparison from '../../components/Comparison';
 import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
 import OfficialELotCarousel from '../../components/OfficialELotCarousel';
+import NegotiationOpportunity from '../../components/NegotiationOpportunity/NegotiationOpportunity';
+import VehicleMarketIntelligenceModal from '../../components/VehicleMarketIntelligenceModal/VehicleMarketIntelligenceModal';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import PaymentCalculator from '../../components/PaymentCalculator';
+import { Button } from '../../components/Button';
 import TradeInEstimateModal, {
   type TradeInEstimateCondition,
   type TradeInSelectedOption,
@@ -98,6 +100,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   const params = useParams<{ year: string; make: string; model: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeInModalOpen, setIsTradeInModalOpen] = useState(false);
+  const [isMarketIntelligenceOpen, setIsMarketIntelligenceOpen] = useState(false);
   const [calculatorTradeInEstimate, setCalculatorTradeInEstimate] = useState<CalculatorTradeInEstimate | null>(null);
   
   // Use props if provided (for home page), otherwise use URL params
@@ -257,19 +260,28 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
                 warranty: '3 Years/36,000 Miles',
               }}
             />
-            <Warranty
-              items={[]}
-              variant="vehicle-reliability"
-              title="Reliability & Recalls"
+            <section className="vehicle-page__market-intelligence-launch">
+              <div className="vehicle-page__market-intelligence-launch-copy">
+                <p className="vehicle-page__market-intelligence-launch-eyebrow">Vehicle market intelligence</p>
+                <div>
+                  <h2>Open the market view</h2>
+                  <p>Compare nearby inventory, pricing, and buying leverage for this vehicle.</p>
+                </div>
+              </div>
+              <Button variant="outline" size="small" onClick={() => setIsMarketIntelligenceOpen(true)}>
+                Launch Market Intelligence
+              </Button>
+            </section>
+            <NegotiationOpportunity
+              year={parseInt(vehicle.year)}
               make={vehicle.make}
               model={vehicle.model}
-              year={vehicle.year}
-              bodyStyle={vehicle.bodyStyle}
-              drivetrain={vehicle.drivetrain}
-              nhtsaSafetyVehicleId={vehicle.nhtsaSafetyVehicleId}
-              vehicleImage={vehicle.image}
-              vehicleImageAlt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-              fullReportUrl={`/${vehicle.slug}/reliability-recalls`}
+              msrp={vehicle.priceMin}
+              priceMin={vehicle.priceMin}
+              priceMax={vehicle.priceMax}
+              variant="option-b"
+              locationLabel="Miami, FL"
+              initialLocation={{ lat: 25.7617, lng: -80.1917 }}
             />
             <VehicleOverview 
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}
@@ -424,6 +436,13 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         vehicleImage={vehicle.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg'}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+      />
+      <VehicleMarketIntelligenceModal
+        isOpen={isMarketIntelligenceOpen}
+        onClose={() => setIsMarketIntelligenceOpen(false)}
+        vehicle={vehicle}
+        rating={supabaseRating}
+        initialLocation={{ lat: 25.7617, lng: -80.1917 }}
       />
       <TradeInEstimateModal
         isOpen={isTradeInModalOpen}

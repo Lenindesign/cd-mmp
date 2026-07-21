@@ -6088,17 +6088,21 @@ label.aio-payment__light-loan-step__label {
   order: 2;
 }
 
-.aio-payment--light-steps .aio-payment__light-sidebar-tip {
+.aio-payment--light-steps .aio-payment__light-result-assumption-note {
   order: 3;
+}
+
+.aio-payment--light-steps .aio-payment__light-sidebar-tip {
+  order: 4;
   margin-top: 0;
 }
 
 .aio-payment--light-steps .aio-payment__light-result-shop {
-  order: 4;
+  order: 5;
 }
 
 .aio-payment--light-steps .aio-payment__light-ai-button {
-  order: 5;
+  order: 6;
 }
 
 .aio-payment--light-steps .aio-payment__light-result-amount.payment-calc__result-big {
@@ -6115,6 +6119,13 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment--light-steps .aio-payment__light-result-lede.payment-calc__muted {
   margin: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-result-assumption-note {
+  margin: var(--spacing-2) 0 0;
+  font-size: var(--font-size-xs);
+  line-height: 1.45;
+  color: var(--color-gray-600);
 }
 
 .aio-payment--light-steps .aio-payment__light-result-metrics.payment-calc__sum {
@@ -6913,6 +6924,11 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-offers--hero .hero__offers-b-pills {
   flex-direction: column;
   gap: var(--spacing-3);
+}
+
+.aio-payment__light-offers--hero .hero__offers-b-offer {
+  flex: none;
+  width: 100%;
 }
 
 .aio-payment__light-offers--hero .hero__offers-b-pill {
