@@ -1231,35 +1231,29 @@
   white-space: nowrap;
 }
 
-.hero__offers-b-rate-tier-action {
+.hero__offers-b-rate-tier-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   justify-self: end;
-  gap: var(--spacing-1);
-  color: var(--color-blue-cobalt);
-  font-family: var(--font-heading);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  white-space: nowrap;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid color-mix(in srgb, var(--color-success) 70%, var(--color-white));
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-success);
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.hero__offers-b-rate-tier-remove {
-  justify-self: start;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-blue-cobalt);
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.hero__offers-b-rate-tier:hover .hero__offers-b-rate-tier-toggle,
+.hero__offers-b-rate-tier:focus-visible .hero__offers-b-rate-tier-toggle {
+  border-color: var(--color-success);
 }
 
-.hero__offers-b-rate-tier-remove:hover,
-.hero__offers-b-rate-tier-remove:focus-visible {
-  color: var(--color-blue-cobalt-dark);
+.hero__offers-b-rate-tier-toggle--selected {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: var(--color-white);
 }
 
 .hero__offers-b-more-wrap {
@@ -1374,12 +1368,7 @@
   }
 
   .hero__offers-b-rate-tier {
-    grid-template-columns: minmax(5.5rem, 0.8fr) minmax(0, 1.5fr);
-  }
-
-  .hero__offers-b-rate-tier-action {
-    grid-column: 2;
-    justify-self: start;
+    grid-template-columns: minmax(5.5rem, 0.8fr) minmax(0, 1.5fr) auto;
   }
 
   .hero__offers-b-rate-tier-offer {

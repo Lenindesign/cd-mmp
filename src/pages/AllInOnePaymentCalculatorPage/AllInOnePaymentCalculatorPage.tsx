@@ -152,8 +152,8 @@ const CUSTOM_RATE_TERMS = [12, 24, 36, 48, 60, 72, 84];
 const USED_YEAR_OPTIONS = Array.from({ length: 10 }, (_, index) => String(2025 - index));
 const LIGHT_AFFORDABLE_DEAL_CARD_LIMIT = 9;
 const LIGHT_BODY_STYLE_MATCH_LIMIT = 5;
-const LIGHT_BODY_STYLE_NEAR_RANGE_BUFFER = 3500;
-const LIGHT_BODY_STYLE_NEAR_RANGE_MULTIPLIER = 1.12;
+const LIGHT_BODY_STYLE_MATCH_BELOW_TARGET = 5000;
+const LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET = 2000;
 const LIGHT_CURRENT_MODEL_YEAR = 2026;
 const AREA_ESTIMATE_TOOLTIP_COPY = 'This is an estimation based on your area.';
 const USED_PRICING_GUIDANCE_LEAD = 'Used car prices can vary widely due to factors like mileage, condition, and features.';
@@ -2896,6 +2896,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ),
       value: renderLightBreakdownValue(downPaymentApplied, 'subtract'),
     },
+    ...(rebateTotal > 0 ? [{
+      key: 'cash-incentives',
+      label: 'Cash Incentives',
+      value: renderLightBreakdownValue(rebateTotal, 'subtract'),
+    }] : []),
     {
       key: 'finance-cost',
       label: renderLightBreakdownLabelWithHelp(
@@ -3262,26 +3267,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   ]);
   const lightBrowseVehicleMatches = useMemo<LightBrowseVehicleMatch[]>(() => {
     const ceiling = Math.max(0, lightAffordableBudgetCeiling);
+    const floor = Math.max(0, ceiling - LIGHT_BODY_STYLE_MATCH_BELOW_TARGET);
+    const nearRangeCeiling = ceiling + LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET;
     const categoryVehicles = vehicles.filter((vehicle) => (
       isLightBrowseVehicleInCondition(vehicle, condition) &&
-      matchesLightBrowseCategory(vehicle, lightBrowseBodyStyle)
+      matchesLightBrowseCategory(vehicle, lightBrowseBodyStyle) &&
+      vehicle.priceMin >= floor &&
+      vehicle.priceMin <= nearRangeCeiling
     ));
-    const inRangeVehicles = categoryVehicles
-      .filter((vehicle) => vehicle.priceMin <= ceiling)
-      .sort(sortLightBrowseVehicleMatch);
-    const nearRangeCeiling = Math.max(
-      ceiling * LIGHT_BODY_STYLE_NEAR_RANGE_MULTIPLIER,
-      ceiling + LIGHT_BODY_STYLE_NEAR_RANGE_BUFFER,
-    );
-    const nearRangeVehicles = categoryVehicles
-      .filter((vehicle) => vehicle.priceMin > ceiling && vehicle.priceMin <= nearRangeCeiling)
-      .sort(sortLightBrowseVehicleMatch);
     const seenSlugs = new Set<string>();
 
-    return [
-      ...inRangeVehicles.map((vehicle) => ({ vehicle, isNearRange: false })),
-      ...nearRangeVehicles.map((vehicle) => ({ vehicle, isNearRange: true })),
-    ].filter((match) => {
+    return categoryVehicles.sort(sortLightBrowseVehicleMatch).map((vehicle) => ({
+      vehicle,
+      isNearRange: vehicle.priceMin > ceiling,
+    })).filter((match) => {
       if (seenSlugs.has(match.vehicle.slug)) return false;
       seenSlugs.add(match.vehicle.slug);
       return true;
@@ -5321,43 +5320,48 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               </span>
                             </summary>
                             {lightBrowseVehicleMatches.length ? (
-                              <div className="aio-payment__light-vehicle-step__category-matches-list" role="list">
-                                {lightBrowseVehicleMatches.map(({ vehicle, isNearRange }, index) => (
-                                  <div key={vehicle.slug} className="aio-payment__light-vehicle-step__category-match" role="listitem">
-                                    <button
-                                      type="button"
-                                      className="aio-payment__light-vehicle-step__category-match-button"
-                                      onClick={() => handleLightBrowseVehicleMatchSelect(vehicle)}
-                                      aria-label={`Select ${vehicle.year} ${vehicle.make} ${vehicle.model} for this estimate`}
-                                    >
-                                      <span className="aio-payment__light-vehicle-step__category-match-main">
-                                        <span className="aio-payment__light-vehicle-step__category-match-rank">
-                                          #{index + 1}
-                                        </span>
-                                        <span className="aio-payment__light-vehicle-step__category-match-copy">
-                                          <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong>
-                                          <span>
-                                            Starts at {currency(vehicle.priceMin)}
+                              <>
+                                <p className="aio-payment__light-vehicle-step__category-matches-rule">
+                                  Top-rated {lightBrowseVehicleMatchesLabel} priced from {currency(LIGHT_BODY_STYLE_MATCH_BELOW_TARGET)} below to {currency(LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET)} above your Vehicle Target Price.
+                                </p>
+                                <div className="aio-payment__light-vehicle-step__category-matches-list" role="list">
+                                  {lightBrowseVehicleMatches.map(({ vehicle, isNearRange }, index) => (
+                                    <div key={vehicle.slug} className="aio-payment__light-vehicle-step__category-match" role="listitem">
+                                      <button
+                                        type="button"
+                                        className="aio-payment__light-vehicle-step__category-match-button"
+                                        onClick={() => handleLightBrowseVehicleMatchSelect(vehicle)}
+                                        aria-label={`Select ${vehicle.year} ${vehicle.make} ${vehicle.model} for this estimate`}
+                                      >
+                                        <span className="aio-payment__light-vehicle-step__category-match-main">
+                                          <span className="aio-payment__light-vehicle-step__category-match-rank">
+                                            #{index + 1}
+                                          </span>
+                                          <span className="aio-payment__light-vehicle-step__category-match-copy">
+                                            <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong>
+                                            <span>
+                                              Starts at {currency(vehicle.priceMin)}
+                                            </span>
                                           </span>
                                         </span>
-                                      </span>
-                                      <span className="aio-payment__light-vehicle-step__category-match-meta">
-                                        <span className="aio-payment__light-vehicle-step__category-match-rating">
-                                          C/D {formatLightStaffRating(vehicle.staffRating)}
+                                        <span className="aio-payment__light-vehicle-step__category-match-meta">
+                                          <span className="aio-payment__light-vehicle-step__category-match-rating">
+                                            C/D {formatLightStaffRating(vehicle.staffRating)}
+                                          </span>
+                                          <span
+                                            className={`aio-payment__light-vehicle-step__category-match-range aio-payment__light-listbox-select__status aio-payment__light-listbox-select__status--${isNearRange ? 'neutral' : 'fit'}`}
+                                          >
+                                            {isNearRange ? 'Near range' : 'In range'}
+                                          </span>
                                         </span>
-                                        <span
-                                          className={`aio-payment__light-vehicle-step__category-match-range aio-payment__light-listbox-select__status aio-payment__light-listbox-select__status--${isNearRange ? 'neutral' : 'fit'}`}
-                                        >
-                                          {isNearRange ? 'Near range' : 'In range'}
-                                        </span>
-                                      </span>
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
                             ) : (
                               <p className="aio-payment__light-vehicle-step__category-matches-empty">
-                                No {lightBrowseVehicleMatchesLabel.toLowerCase()} found around {currency(lightAffordableBudgetCeiling)} with the current filters.
+                                No top-rated {lightBrowseVehicleMatchesLabel.toLowerCase()} found from {currency(LIGHT_BODY_STYLE_MATCH_BELOW_TARGET)} below to {currency(LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET)} above your Vehicle Target Price.
                               </p>
                             )}
                           </details>
@@ -5403,6 +5407,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <p className="aio-payment__light-vehicle-step__price-value">
                               {lightKnownVehicleSelected ? currency(selectedCatalogPrice) : 'Not selected'}
                             </p>
+                          )}
+                          {lightKnownVehicleSelected && (
+                            <button
+                              type="button"
+                              className="aio-payment__light-vehicle-step__change-vehicle"
+                              onClick={clearLightSpecificVehicleSelection}
+                            >
+                              Change vehicle
+                            </button>
                           )}
                           {lightKnownVehicleSelected && !canUseCatalogPrice && startMode === 'price' && (
                             <TextField
@@ -6403,6 +6416,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <dt>Rate &amp; Term</dt>
                             <dd>{formatAprPercent(activeApr)} APR · {loanTerm} mo</dd>
                           </div>
+                          {rebateTotal > 0 && (
+                            <div className="payment-calc__sum-row">
+                              <dt>Cash Incentives</dt>
+                              <dd>{renderLightBreakdownValue(rebateTotal, 'subtract')}</dd>
+                            </div>
+                          )}
                           <div className="payment-calc__sum-row">
                             <dt>Total Interest Paid</dt>
                             <dd>{currency(totalLoanInterest)}</dd>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, ChevronDown, ChevronRight, ChevronUp, Minus, Plus } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronUp, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Incentive, VehicleIncentives } from '../../services/incentivesService';
 import { getAprRangeLabel } from '../IncentivesModal/incentivesModalUtils';
@@ -208,28 +208,33 @@ const HeroOffersB = ({
                     type="button"
                     className={`hero__offers-b-rate-tier ${isTierSelected ? 'hero__offers-b-rate-tier--selected' : ''}`}
                     aria-pressed={isTierSelected}
-                    onClick={() => onRateTierSelect?.(inc, tier)}
+                    onClick={() => {
+                      if (isTierSelected && onRateTierRemove) {
+                        onRateTierRemove(inc);
+                        return;
+                      }
+                      onRateTierSelect?.(inc, tier);
+                    }}
                   >
                     <span className="hero__offers-b-rate-tier-term">{tier.term} months</span>
                     <span className="hero__offers-b-rate-tier-offer">
                       <strong>{tier.apr.toFixed(2)}% APR</strong>
                     </span>
-                    <span className="hero__offers-b-rate-tier-action">
-                      {isTierSelected ? <><Check size={15} strokeWidth={3} aria-hidden /> Selected</> : 'Choose'}
+                    <span
+                      className={`hero__offers-b-rate-tier-toggle ${isTierSelected ? 'hero__offers-b-rate-tier-toggle--selected' : ''}`}
+                      aria-hidden="true"
+                    >
+                      {isTierSelected
+                        ? <Minus size={14} strokeWidth={3} />
+                        : <Plus size={14} strokeWidth={3} />}
+                    </span>
+                    <span className="sr-only">
+                      {isTierSelected ? 'Remove this rate offer' : 'Choose this rate offer'}
                     </span>
                   </button>
                 );
               })}
             </div>
-            {isSelected && onRateTierRemove && (
-              <button
-                type="button"
-                className="hero__offers-b-rate-tier-remove"
-                onClick={() => onRateTierRemove(inc)}
-              >
-                Remove rate offer
-              </button>
-            )}
           </div>
         )}
       </div>
