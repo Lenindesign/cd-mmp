@@ -44,6 +44,9 @@ type EstimateRecommendation = {
   priceRange: string;
   rating: string;
   accolades: string;
+  editorsChoice: boolean;
+  tenBest: boolean;
+  evOfTheYear: boolean;
   rankLabel: string;
   fuelEconomy: string;
   shopUrl: string;
@@ -137,8 +140,11 @@ const buildBodyStyleRecommendations = (payload: EstimateEmailPayload): EstimateR
     name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
     image: vehicle.image,
     priceRange: vehicle.priceRange || `${formatCurrency(vehicle.priceMin)} - ${formatCurrency(vehicle.priceMax)}`,
-    rating: `${vehicle.staffRating.toFixed(1)}/10`,
+    rating: vehicle.staffRating.toFixed(1),
     accolades: buildVehicleAccolades(vehicle, index + 1),
+    editorsChoice: Boolean(vehicle.editorsChoice),
+    tenBest: Boolean(vehicle.tenBest),
+    evOfTheYear: Boolean(vehicle.evOfTheYear),
     rankLabel: `#${index + 1} among ${getBodyStylePluralLabel(bodyStyle)} starting under ${formatCurrency(targetVehiclePrice)}`,
     fuelEconomy: vehicle.mpg || 'EPA estimate pending',
     shopUrl: buildRecommendationShopUrl(payload.vehicle?.condition, vehicle),
@@ -149,6 +155,41 @@ const buildRecommendationRows = (recommendations: EstimateRecommendation[]) => {
   if (recommendations.length <= 1) return [recommendations];
   const [lead, ...rest] = recommendations;
   return [[lead], rest];
+};
+
+const buildRecommendationAccolades = (vehicle: EstimateRecommendation) => {
+  const badges = [
+    vehicle.editorsChoice ? {
+      label: "Editor's Choice",
+      image: 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE',
+    } : null,
+    vehicle.tenBest ? {
+      label: '10Best',
+      image: 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg',
+    } : null,
+    vehicle.evOfTheYear ? {
+      label: 'EV of the Year',
+      image: 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ev-of-the-year.721e420.svg',
+    } : null,
+  ].filter((badge): badge is { label: string; image: string } => badge !== null);
+
+  if (badges.length === 0) {
+    return `<p style="margin:0 0 14px;color:#4b5563;font-size:14px;line-height:1.45;">${escapeHtml(vehicle.accolades || 'Top-rated pick')}</p>`;
+  }
+
+  return `
+    <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 14px;border-collapse:collapse;">
+      <tr>
+        ${badges.map((badge) => `
+          <td align="center" style="padding:0 10px 0 0;vertical-align:top;">
+            <span style="display:inline-block;width:44px;height:44px;border:1px solid #d7dde5;border-radius:999px;background:#ffffff;text-align:center;line-height:44px;box-shadow:0 2px 6px rgba(15,23,42,.08);">
+              <img src="${escapeHtml(badge.image)}" alt="${escapeHtml(badge.label)}" width="24" height="24" style="display:inline-block;width:24px;height:24px;vertical-align:middle;object-fit:contain;border:0;">
+            </span>
+            <span style="display:block;margin-top:5px;color:#5d6670;font-size:9px;font-weight:700;letter-spacing:.3px;line-height:1.1;text-transform:uppercase;">${escapeHtml(badge.label)}</span>
+          </td>
+        `).join('')}
+      </tr>
+    </table>`;
 };
 
 const isLocalOrigin = (origin: string | undefined) => {
@@ -175,7 +216,6 @@ const buildEmailHtml = (payload: EstimateEmailPayload) => {
   const vehicleName = buildVehicleName(payload);
   const firstName = payload.userName?.trim().split(/\s+/)[0] || 'there';
   const monthlyPayment = payload.estimate?.monthlyPayment || '$0/mo';
-  const summary = payload.estimate?.summary || `Based on the current calculator assumptions for a ${vehicleName}.`;
   const rows = payload.estimate?.rows?.length ? payload.estimate.rows : [];
   const shopUrl = payload.vehicle?.shopUrl || 'https://www.caranddriver.com/cars-for-sale/';
   const mockUrl = payload.mockUrl || 'https://cd-mmp-2025.netlify.app/payment-estimate-email-mock.html';
@@ -200,7 +240,6 @@ const buildEmailHtml = (payload: EstimateEmailPayload) => {
               <td style="padding:32px;">
                 <p style="margin:0 0 8px;color:#005a8b;font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;">Popular picks in your budget</p>
                 <h2 style="margin:0 0 12px;color:#111827;font-size:24px;line-height:1.15;">Three ${escapeHtml(bodyStylePlural.toLowerCase())} worth shopping starting under ${escapeHtml(formatCurrency(targetVehiclePrice || 0))}</h2>
-                <p style="margin:0 0 20px;color:#4b5563;font-size:15px;line-height:1.5;">These are strong-rated ${escapeHtml(bodyStylePlural.toLowerCase())} with starting MSRPs at or below your target vehicle price, so you can compare real options before talking numbers with a dealer.</p>
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" class="body-style-grid" style="width:100%;border-collapse:separate;border-spacing:0;">
                   ${bodyStyleRecommendationRows.map((row, rowIndex) => `
                   <tr>
@@ -218,8 +257,9 @@ const buildEmailHtml = (payload: EstimateEmailPayload) => {
                             <td style="padding:18px 16px 16px;">
                               <p style="margin:0 0 6px;color:#111827;font-size:22px;font-weight:800;line-height:1.1;">${escapeHtml(vehicle.name)}</p>
                               <p style="margin:0 0 10px;color:#005a8b;font-size:13px;font-weight:800;line-height:1.35;">${escapeHtml(vehicle.rankLabel)}</p>
-                              <p style="margin:0 0 12px;color:#111827;font-size:16px;font-weight:800;line-height:1.3;">C/D Rating ${escapeHtml(vehicle.rating)}</p>
-                              <p style="margin:0 0 14px;color:#4b5563;font-size:14px;line-height:1.45;">${escapeHtml(vehicle.accolades || 'Top-rated pick')}</p>
+                              <p style="margin:0;color:#111827;font-size:36px;font-weight:800;line-height:1;">${escapeHtml(vehicle.rating)}<span style="font-size:18px;">/10</span></p>
+                              <p style="margin:5px 0 12px;color:#4b5563;font-size:11px;letter-spacing:1px;line-height:1.2;text-transform:uppercase;">C/D Rating</p>
+                              ${buildRecommendationAccolades(vehicle)}
                               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;">
                                 <tr>
                                   <td style="padding:10px 0;border-top:1px solid #e5e7eb;color:#6b7280;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;">MSRP Range</td>
@@ -290,8 +330,7 @@ const buildEmailHtml = (payload: EstimateEmailPayload) => {
             <tr>
               <td style="padding:32px;background:#eef5f7;border-top:1px solid #d8e0e5;border-bottom:1px solid #d8e0e5;">
                 <p style="margin:0 0 6px;color:#4b5563;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;">Estimated monthly payment</p>
-                <p style="margin:0 0 10px;color:#1b6695;font-size:56px;font-weight:800;line-height:1;">${escapeHtml(monthlyPayment)}</p>
-                <p style="margin:0 0 22px;color:#4b5563;font-size:16px;line-height:1.45;">${escapeHtml(summary)}</p>
+                <p style="margin:0 0 22px;color:#1b6695;font-size:56px;font-weight:800;line-height:1;">${escapeHtml(monthlyPayment)}</p>
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border:1px solid #d8e0e5;border-collapse:collapse;">
                   ${rowMarkup}
                 </table>

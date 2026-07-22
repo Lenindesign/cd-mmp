@@ -3959,7 +3959,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       { label: 'Net Trade Value', value: currency(tradeEquity) },
       { label: 'Trade-In Value', value: tradeInValue > 0 ? currency(tradeInValue) : currency(0) },
       { label: 'Amount Owed on Trade', value: amountOwed > 0 ? currency(amountOwed) : currency(0) },
-      { label: 'Taxes & Fees Total', value: currency(taxesAndFees) },
+      { label: 'Estimated Taxes & Fees', value: currency(taxesAndFees) },
       { label: 'Sales Tax', value: currency(salesTax) },
       { label: 'Dealer & Registration Fee', value: currency(fees) },
       ...(optionalFinancedAddOns > 0 ? [{ label: 'Extended Warranty', value: currency(optionalFinancedAddOns) }] : []),

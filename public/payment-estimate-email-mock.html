@@ -140,14 +140,6 @@
         letter-spacing: 0;
       }
 
-      .payment-subcopy {
-        margin: 12px 0 0;
-        color: #555555;
-        font-size: 16px;
-        line-height: 1.45;
-        text-align: center;
-      }
-
       .payment-cta {
         display: inline-block;
         min-width: 320px;
@@ -263,13 +255,6 @@
         color: #111827;
         font-size: 17px;
         font-weight: 800;
-      }
-
-      .breakdown-footnote {
-        margin: 12px 0 0;
-        color: #555555;
-        font-size: 13px;
-        line-height: 1.45;
       }
 
       .vehicle-card {
@@ -399,54 +384,6 @@
         object-fit: contain;
       }
 
-      .vehicle-stat-rule {
-        margin: 0 0 18px;
-        border-top: 3px dotted #444444;
-      }
-
-      .vehicle-stat-block {
-        margin: 0 0 20px;
-      }
-
-      .vehicle-stat-block:last-of-type {
-        margin-bottom: 18px;
-      }
-
-      .vehicle-stat-grid {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0 0 18px;
-      }
-
-      .vehicle-stat-grid td {
-        width: 50%;
-        vertical-align: top;
-      }
-
-      .vehicle-stat-grid td:first-child {
-        padding-right: 12px;
-      }
-
-      .vehicle-stat-grid td:last-child {
-        padding-left: 12px;
-      }
-
-      .vehicle-stat-label {
-        margin: 0 0 8px;
-        color: #6b7280;
-        font-size: 12px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-      }
-
-      .vehicle-stat-value {
-        margin: 0;
-        color: #111111;
-        font-size: 34px;
-        font-weight: 800;
-        line-height: 1.05;
-      }
-
       .vehicle-image {
         display: block;
         width: 100%;
@@ -498,13 +435,6 @@
         font-size: 13px;
         letter-spacing: 0.8px;
         text-transform: uppercase;
-      }
-
-      .body-style-copy {
-        margin: 0 0 20px;
-        color: #4b5563;
-        font-size: 15px;
-        line-height: 1.5;
       }
 
       .body-style-grid {
@@ -566,12 +496,24 @@
         line-height: 1.35;
       }
 
-      .body-style-card__rating {
-        margin: 0 0 6px;
-        color: #111827;
-        font-size: 17px;
-        font-weight: 800;
-        line-height: 1.2;
+      .body-style-card__rating-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 14px;
+      }
+
+      .body-style-card__rating-row .vehicle-badge-item {
+        margin-left: 6px;
+      }
+
+      .body-style-card__score {
+        margin: 0 0 8px;
+      }
+
+      .body-style-card__rating-row .body-style-card__score {
+        margin: 0;
       }
 
       .body-style-card__accolades {
@@ -969,24 +911,6 @@
           margin: 0;
         }
 
-        .vehicle-stat-value {
-          font-size: 28px;
-        }
-
-        .vehicle-stat-grid,
-        .vehicle-stat-grid tbody,
-        .vehicle-stat-grid tr,
-        .vehicle-stat-grid td {
-          display: block;
-          width: 100% !important;
-          box-sizing: border-box;
-        }
-
-        .vehicle-stat-grid td:first-child,
-        .vehicle-stat-grid td:last-child {
-          padding: 0;
-        }
-
         .cta-cell,
         .link-grid td,
         .vehicle-facts td {
@@ -1063,10 +987,8 @@
           <td class="section">
               <h1 id="mock-title">Your 2026 Honda CR-V Hybrid estimate</h1>
             <p class="copy" id="mock-intro-copy">
-              Hi Alex, thank you for using Car and Driver to calculate an estimated monthly payment for a
-              2026 Honda CR-V Hybrid Sport Touring. Use this estimate as a planning guide while
-              shopping, and keep in mind that final pricing, taxes, fees, trade-in value, and
-              financing terms may vary by vehicle and retailer.
+              Hi Alex,<br>
+              Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate for a new 2026 Toyota RAV4 XLE is designed to help you shop with confidence and better understand your budget. As you continue your search, remember that actual payments may vary based on vehicle pricing, financing approval, taxes, fees, trade-in value, and dealer-specific costs.
             </p>
           </td>
         </tr>
@@ -1076,9 +998,6 @@
             <div class="payment-panel">
               <p class="eyebrow">Estimated monthly payment</p>
               <p class="payment-amount" id="mock-payment-amount">$688<span>/mo</span></p>
-              <p class="payment-subcopy" id="mock-payment-subcopy">
-                Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.
-              </p>
               <a class="payment-cta" id="mock-payment-cta" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">
                 See cars in your budget
               </a>
@@ -1120,7 +1039,7 @@
                   <td id="mock-breakdown-trade">$0</td>
                 </tr>
                 <tr>
-                  <td>Taxes &amp; Fees Total</td>
+                  <td>Estimated Taxes &amp; Fees</td>
                   <td id="mock-breakdown-fees"><span class="accent-red">$3,420</span></td>
                 </tr>
                 <tr class="summary">
@@ -1136,9 +1055,6 @@
                   <td id="mock-breakdown-total"><span class="accent-blue">$53,271</span></td>
                 </tr>
               </table>
-              <p class="breakdown-footnote" id="mock-breakdown-footnote">
-                $49,271 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$53,271</span> estimated total paid
-              </p>
             </div>
           </td>
         </tr>
@@ -1192,23 +1108,6 @@
                         </td>
                       </tr>
                     </table>
-                    <div class="vehicle-stat-rule"></div>
-                    <table class="vehicle-stat-grid" role="presentation" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>
-                          <div class="vehicle-stat-block">
-                            <p class="vehicle-stat-label">MSRP Range</p>
-                            <p class="vehicle-stat-value">$35,700</p>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="vehicle-stat-block">
-                            <p class="vehicle-stat-label">EPA MPG</p>
-                            <p class="vehicle-stat-value">40/34</p>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
                     <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
                       <tr>
                         <td><a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Shop New CR-V Hybrid</a></td>
@@ -1231,7 +1130,7 @@
               <tr>
                 <td class="vehicle-content">
                   <h2 class="vehicle-heading">2023 Toyota RAV4 XLE</h2>
-                  <p class="vehicle-rank">Popular used compact SUV with strong resale and everyday usability</p>
+                  <p class="vehicle-rank">#2 in Compact SUVs</p>
                   <table class="vehicle-hero-layout" role="presentation" cellspacing="0" cellpadding="0">
                     <tr>
                       <td class="vehicle-hero-layout__media">
@@ -1267,29 +1166,12 @@
                         </td>
                       </tr>
                     </table>
-                    <div class="vehicle-stat-rule"></div>
-                    <table class="vehicle-stat-grid" role="presentation" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>
-                          <div class="vehicle-stat-block">
-                            <p class="vehicle-stat-label">Typical Price</p>
-                            <p class="vehicle-stat-value">$28,400</p>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="vehicle-stat-block">
-                            <p class="vehicle-stat-label">Mileage</p>
-                            <p class="vehicle-stat-value">27k</p>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
                     <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
                       <tr>
                         <td><a class="button" href="/vehicles?condition=used&amp;year=2023&amp;make=Toyota&amp;model=RAV4">Shop Used RAV4</a></td>
                       </tr>
                       <tr>
-                        <td><a class="button button--secondary" href="/2026/Toyota/RAV4">View Current RAV4 Review</a></td>
+                        <td><a class="button button--secondary" href="/vehicles?condition=used&amp;year=2023&amp;make=Toyota&amp;model=RAV4&amp;certified=true">Shop Certified Used RAV4</a></td>
                       </tr>
                     </table>
                   </div>
@@ -1303,10 +1185,6 @@
           <td class="section">
             <p class="eyebrow">Popular picks in your budget</p>
             <h2>Three SUVs worth shopping starting under $30,000</h2>
-            <p class="body-style-copy">
-              When a shopper is still browsing by body style, this version keeps the estimate but swaps in a compact,
-              side-by-side comparison of strong-rated vehicles with starting MSRPs at or below the target vehicle price.
-            </p>
             <table class="body-style-grid" role="presentation" cellspacing="0" cellpadding="0">
               <tr>
                 <td colspan="2" style="padding: 0 0 16px 0;">
@@ -1319,13 +1197,31 @@
                     <div class="body-style-card__content">
                       <h3 class="body-style-card__title">2026 Chevrolet Trax</h3>
                       <p class="body-style-card__rank">#1 among SUVs starting under $30,000</p>
-                      <p class="body-style-card__rating">C/D Rating 10.0/10</p>
-                      <p class="body-style-card__accolades">Editor&rsquo;s Choice &middot; 10Best</p>
+                      <div class="body-style-card__rating-row">
+                        <div class="body-style-card__score">
+                          <div class="vehicle-score">10.0<span>/10</span></div>
+                          <span class="vehicle-score-label">C/D Rating</span>
+                        </div>
+                        <div aria-label="Accolades">
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" alt="Editor's Choice">
+                            </span>
+                            <span class="vehicle-badge-label">Editor's Choice</span>
+                          </span>
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" alt="10Best">
+                            </span>
+                            <span class="vehicle-badge-label">10Best</span>
+                          </span>
+                        </div>
+                      </div>
                       <p class="body-style-card__fact-label">MSRP Range</p>
                       <p class="body-style-card__fact-value">$20,400 - $24,400</p>
                       <p class="body-style-card__fact-label">Fuel Economy</p>
                       <p class="body-style-card__fact-value">28/32 mpg</p>
-                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Chevrolet&amp;model=Trax">Shop Now</a>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Chevrolet&amp;model=Trax">Shop New Trax</a>
                     </div>
                   </div>
                 </td>
@@ -1341,13 +1237,16 @@
                     <div class="body-style-card__content">
                       <h3 class="body-style-card__title">2026 Kia Sportage Hybrid</h3>
                       <p class="body-style-card__rank">#2 among SUVs starting under $30,000</p>
-                      <p class="body-style-card__rating">C/D Rating 8.5/10</p>
+                      <div class="body-style-card__score">
+                        <div class="vehicle-score">8.5<span>/10</span></div>
+                        <span class="vehicle-score-label">C/D Rating</span>
+                      </div>
                       <p class="body-style-card__accolades">Top-rated hybrid pick</p>
                       <p class="body-style-card__fact-label">MSRP Range</p>
                       <p class="body-style-card__fact-value">$28,290 - $38,490</p>
                       <p class="body-style-card__fact-label">Fuel Economy</p>
                       <p class="body-style-card__fact-value">38/43 mpg</p>
-                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Kia&amp;model=Sportage">Shop Now</a>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Kia&amp;model=Sportage">Shop New Sportage Hybrid</a>
                     </div>
                   </div>
                 </td>
@@ -1361,13 +1260,16 @@
                     <div class="body-style-card__content">
                       <h3 class="body-style-card__title">2026 Subaru Forester</h3>
                       <p class="body-style-card__rank">#3 among SUVs starting under $30,000</p>
-                      <p class="body-style-card__rating">C/D Rating 8.4/10</p>
+                      <div class="body-style-card__score">
+                        <div class="vehicle-score">8.4<span>/10</span></div>
+                        <span class="vehicle-score-label">C/D Rating</span>
+                      </div>
                       <p class="body-style-card__accolades">Top-rated family pick</p>
                       <p class="body-style-card__fact-label">MSRP Range</p>
                       <p class="body-style-card__fact-value">$29,695 - $38,195</p>
                       <p class="body-style-card__fact-label">Fuel Economy</p>
                       <p class="body-style-card__fact-value">26/33 mpg</p>
-                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Subaru&amp;model=Forester">Shop Now</a>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Subaru&amp;model=Forester">Shop New Forester</a>
                     </div>
                   </div>
                 </td>
@@ -1496,9 +1398,8 @@
         const variantContent = {
           standard: {
             title: 'Your 2026 Honda CR-V Hybrid estimate',
-            intro: 'Hi Alex, thank you for using Car and Driver to calculate an estimated monthly payment for a 2026 Honda CR-V Hybrid Sport Touring. Use this estimate as a planning guide while shopping, and keep in mind that final pricing, taxes, fees, trade-in value, and financing terms may vary by vehicle and retailer.',
+            intro: 'Hi Alex,<br>Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate for a new 2026 Toyota RAV4 XLE is designed to help you shop with confidence and better understand your budget. As you continue your search, remember that actual payments may vary based on vehicle pricing, financing approval, taxes, fees, trade-in value, and dealer-specific costs.',
             paymentAmount: '$688<span>/mo</span>',
-            paymentSubcopy: 'Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.',
             ctaHref: '/vehicles?condition=new&year=2026&make=Honda&model=CR-V',
             ctaLabel: 'See cars in your budget',
             highlightValue: '$41,570',
@@ -1511,13 +1412,11 @@
             loanPayments: '$49,271',
             monthly: '$688/mo',
             total: '<span class="accent-blue">$53,271</span>',
-            footnote: '$49,271 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$53,271</span> estimated total paid',
           },
           'used-car': {
             title: 'Your 2023 Toyota RAV4 estimate',
-            intro: 'Hi Alex, thank you for using Car and Driver to estimate a monthly payment for a used 2023 Toyota RAV4 XLE. Use this mock as a planning reference while comparing listings, and expect the final numbers to shift based on mileage, fees, lender terms, and dealer pricing.',
+            intro: 'Hi Alex,<br>Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate for a used 2023 Toyota RAV4 XLE is designed to help you shop with confidence and better understand your budget. As you continue your search, remember that actual payments may vary based on vehicle pricing, financing approval, taxes, fees, trade-in value, and dealer-specific costs.',
             paymentAmount: '$688<span>/mo</span>',
-            paymentSubcopy: 'Based on a $28,400 selected vehicle price, $4,000 down, 60 months, and 7.4% APR.',
             ctaHref: '/vehicles?condition=used&year=2023&make=Toyota&model=RAV4',
             ctaLabel: 'Shop used RAV4 listings',
             highlightValue: '$27,734',
@@ -1530,13 +1429,11 @@
             loanPayments: '$41,280',
             monthly: '$688/mo',
             total: '<span class="accent-blue">$45,280</span>',
-            footnote: '$41,280 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$45,280</span> estimated total paid',
           },
           'body-style': {
             title: 'Your SUV budget estimate',
-            intro: 'Hi Alex, thank you for using Car and Driver to estimate a monthly payment while shopping SUVs by body style. This version keeps the estimate summary and swaps the detail module for side-by-side recommendations that fit your target price range.',
+            intro: 'Hi Alex,<br>Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate is designed to help you explore SUVs that fit your budget and shop with confidence. As you continue your search, remember that actual payments may vary based on the specific vehicle you choose, financing approval, taxes, fees, trade-in value, and dealer-specific costs.',
             paymentAmount: '$688<span>/mo</span>',
-            paymentSubcopy: 'Based on a $30,000 target vehicle price, $4,000 down, 60 months, and 6.9% APR.',
             ctaHref: '/vehicles?condition=new&bodyStyle=SUV&maxPrice=30000',
             ctaLabel: 'Shop SUVs in your budget',
             highlightValue: '$29,270',
@@ -1549,7 +1446,6 @@
             loanPayments: '$41,256',
             monthly: '$688/mo',
             total: '<span class="accent-blue">$45,256</span>',
-            footnote: '$41,256 loan payments over 60 months + $4,000 cash paid upfront = <span class="accent-blue">$45,256</span> estimated total paid',
           },
         };
 
@@ -1566,7 +1462,6 @@
         setHtml('#mock-title', content.title);
         setHtml('#mock-intro-copy', content.intro);
         setHtml('#mock-payment-amount', content.paymentAmount);
-        setHtml('#mock-payment-subcopy', content.paymentSubcopy);
         setAttr('#mock-payment-cta', 'href', content.ctaHref);
         setHtml('#mock-payment-cta', content.ctaLabel);
         setHtml('#mock-highlight-value', content.highlightValue);
@@ -1579,7 +1474,6 @@
         setHtml('#mock-breakdown-loan-payments', content.loanPayments);
         setHtml('#mock-breakdown-monthly', content.monthly);
         setHtml('#mock-breakdown-total', content.total);
-        setHtml('#mock-breakdown-footnote', content.footnote);
       })();
     </script>
   </body>
