@@ -5798,9 +5798,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
 
                     <p className="aio-payment__light-trade-step__dealer-note">
-                      <strong>
-                        {registrationDealerFeeGuidance.label}:
-                      </strong>{' '}
                       {registrationDealerFeeGuidance.copy}
                     </p>
 

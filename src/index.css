@@ -263,6 +263,7 @@
   --border-radius-xl: 12px;     /* Extra large: hero cards */
   --border-radius-2xl: 16px;    /* 2X large: feature cards */
   --border-radius-full: 9999px; /* Circular: avatars, badges */
+  --border-radius-pill: var(--border-radius-full); /* Alias for pill controls */
   --border-radius-circle: var(--border-radius-full); /* Alias */
   
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);

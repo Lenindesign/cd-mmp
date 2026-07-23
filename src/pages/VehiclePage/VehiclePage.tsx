@@ -17,20 +17,23 @@ import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
 import OfficialELotCarousel from '../../components/OfficialELotCarousel';
-import NegotiationOpportunity from '../../components/NegotiationOpportunity/NegotiationOpportunity';
+import MarketIntelligenceSnapshot from '../../components/MarketIntelligenceSnapshot';
 import VehicleMarketIntelligenceModal from '../../components/VehicleMarketIntelligenceModal/VehicleMarketIntelligenceModal';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
 import { SEO, createVehicleStructuredData } from '../../components/SEO';
 import { DealerLocatorMap } from '../../components/DealerLocatorMap';
 import PaymentCalculator from '../../components/PaymentCalculator';
-import { Button } from '../../components/Button';
 import TradeInEstimateModal, {
   type TradeInEstimateCondition,
   type TradeInSelectedOption,
 } from '../../components/TradeInEstimateModal';
 import { GoogleOneTap } from '../../components/GoogleOneTap';
 import { useGoogleOneTap } from '../../hooks/useGoogleOneTap';
+import {
+  MARKET_LOCATION_OPTIONS,
+  type DealerRadius,
+} from '../../services/marketIntelligenceService';
 import './VehiclePage.css';
 
 interface VehiclePageProps {
@@ -101,6 +104,8 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeInModalOpen, setIsTradeInModalOpen] = useState(false);
   const [isMarketIntelligenceOpen, setIsMarketIntelligenceOpen] = useState(false);
+  const [marketLocation, setMarketLocation] = useState(MARKET_LOCATION_OPTIONS[0]);
+  const [marketIntelligenceRadius, setMarketIntelligenceRadius] = useState<DealerRadius>(25);
   const [calculatorTradeInEstimate, setCalculatorTradeInEstimate] = useState<CalculatorTradeInEstimate | null>(null);
   
   // Use props if provided (for home page), otherwise use URL params
@@ -260,28 +265,13 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
                 warranty: '3 Years/36,000 Miles',
               }}
             />
-            <section className="vehicle-page__market-intelligence-launch">
-              <div className="vehicle-page__market-intelligence-launch-copy">
-                <p className="vehicle-page__market-intelligence-launch-eyebrow">Vehicle market intelligence</p>
-                <div>
-                  <h2>Open the market view</h2>
-                  <p>Compare nearby inventory, pricing, and buying leverage for this vehicle.</p>
-                </div>
-              </div>
-              <Button variant="outline" size="small" onClick={() => setIsMarketIntelligenceOpen(true)}>
-                Launch Market Intelligence
-              </Button>
-            </section>
-            <NegotiationOpportunity
-              year={parseInt(vehicle.year)}
-              make={vehicle.make}
-              model={vehicle.model}
-              msrp={vehicle.priceMin}
-              priceMin={vehicle.priceMin}
-              priceMax={vehicle.priceMax}
-              variant="option-b"
-              locationLabel="Miami, FL"
-              initialLocation={{ lat: 25.7617, lng: -80.1917 }}
+            <MarketIntelligenceSnapshot
+              vehicle={vehicle}
+              location={marketLocation}
+              radiusMiles={marketIntelligenceRadius}
+              onLocationChange={setMarketLocation}
+              onRadiusChange={setMarketIntelligenceRadius}
+              onSeeLocalInventory={() => setIsMarketIntelligenceOpen(true)}
             />
             <VehicleOverview 
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}
@@ -424,8 +414,8 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
             }}
             showVehiclePreview={true}
             defaultView="list"
-            initialLocation={{ lat: 34.0522, lng: -118.2437 }}
-            initialZipCode="Los Angeles, CA"
+            initialLocation={{ lat: marketLocation.lat, lng: marketLocation.lng }}
+            initialZipCode={marketLocation.label}
           />
         </section>
       </main>
@@ -442,7 +432,8 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
         onClose={() => setIsMarketIntelligenceOpen(false)}
         vehicle={vehicle}
         rating={supabaseRating}
-        initialLocation={{ lat: 25.7617, lng: -80.1917 }}
+        location={marketLocation}
+        radiusMiles={marketIntelligenceRadius}
       />
       <TradeInEstimateModal
         isOpen={isTradeInModalOpen}

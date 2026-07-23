@@ -16,13 +16,19 @@ import {
 import { Badge } from '../Badge';
 import { Button } from '../Button';
 import { OptimizedImage } from '../OptimizedImage';
+import { Select } from '../TextField';
+import { Tabs, type TabItem } from '../Tabs';
 import {
   formatDistance,
   formatPrice,
-  getDealersForVehicle,
   type DealerWithScore,
   type VehicleInventoryItem,
 } from '../../services/dealerService';
+import {
+  getVehicleMarketInventory,
+  type DealerRadius,
+  type MarketLocation,
+} from '../../services/marketIntelligenceService';
 import { getCompetitorVehicles, type Vehicle as VehicleRecord } from '../../services/vehicleService';
 import './VehicleMarketIntelligenceModal.css';
 
@@ -36,7 +42,8 @@ interface VehicleMarketIntelligenceModalProps {
   onClose: () => void;
   vehicle: VehicleRecord;
   rating: number;
-  initialLocation?: { lat: number; lng: number };
+  location: MarketLocation;
+  radiusMiles: DealerRadius;
 }
 
 interface DealerInsight {
@@ -53,12 +60,10 @@ interface KpiCardData {
   value: string;
   comparison: string;
   trend: TrendDirection;
-  sparkline: number[];
 }
 
 interface TimelineMetric {
   label: string;
-  series: number[];
   trend: TrendDirection;
   insight: string;
 }
@@ -77,6 +82,18 @@ const dealerSortOptions: { value: DealerSort; label: string }[] = [
   { value: 'days', label: 'Most days on lot' },
   { value: 'negotiation', label: 'Negotiation potential' },
 ];
+
+const dealerFilterTabs: TabItem<DealerFilter>[] = [
+  { value: 'all', label: 'All dealers' },
+  { value: 'best', label: 'Best overall' },
+  { value: 'price', label: 'Best price' },
+  { value: 'negotiation', label: 'Best negotiation' },
+];
+
+const marketWindowTabs: TabItem<MarketWindow>[] = windowOptions.map((option) => ({
+  value: option.value,
+  label: option.label,
+}));
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -119,25 +136,6 @@ const getOfferStrength = (dealScore: number, savingsVsMarket: number): DealerIns
   return 'Monitor';
 };
 
-const Sparkline = ({ values }: { values: number[] }) => {
-  const max = Math.max(...values);
-  const min = Math.min(...values);
-  const range = Math.max(max - min, 1);
-  const points = values
-    .map((value, index) => {
-      const x = (index / Math.max(values.length - 1, 1)) * 100;
-      const y = 100 - ((value - min) / range) * 100;
-      return `${x},${y}`;
-    })
-    .join(' ');
-
-  return (
-    <svg className="market-intelligence-modal__sparkline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <polyline fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" points={points} />
-    </svg>
-  );
-};
-
 const ProgressTrack = ({
   value,
   max = 100,
@@ -167,14 +165,13 @@ const getBestInventoryUnit = (dealer: DealerWithScore, year: number, make: strin
   return match ?? dealer.inventory[0];
 };
 
-const buildSeries = (base: number, deltas: number[]) => deltas.map((delta) => Math.max(0, Math.round(base * (1 + delta))));
-
 const VehicleMarketIntelligenceModal = ({
   isOpen,
   onClose,
   vehicle,
   rating,
-  initialLocation = { lat: 34.0522, lng: -118.2437 },
+  location,
+  radiusMiles,
 }: VehicleMarketIntelligenceModalProps) => {
   const [marketWindow, setMarketWindow] = useState<MarketWindow>('90d');
   const [dealerSort, setDealerSort] = useState<DealerSort>('deal');
@@ -198,24 +195,15 @@ const VehicleMarketIntelligenceModal = ({
 
   const marketData = useMemo(() => {
     const year = parseInt(vehicle.year, 10);
-    const dealers = getDealersForVehicle(
-      vehicle.make,
-      vehicle.model,
-      initialLocation.lat,
-      initialLocation.lng,
-      vehicle.priceMin,
-      100,
-      vehicle.priceMin,
-      vehicle.priceMax,
-      year
-    );
+    const localMarket = getVehicleMarketInventory({ vehicle, location, radiusMiles });
+    const dealers = localMarket.dealers;
 
     const dealerInsights: DealerInsight[] = dealers
       .map((dealer) => {
         const unit = getBestInventoryUnit(dealer, year, vehicle.make, vehicle.model);
         if (!unit) return null;
 
-        const marketAverage = (vehicle.priceMin + vehicle.priceMax) / 2;
+        const marketAverage = localMarket.averagePrice;
         const savingsVsMarket = Math.round(marketAverage - unit.price);
         const daysOnLot = unit.daysOnLot ?? 0;
         const negotiationPotential = clamp(
@@ -223,17 +211,10 @@ const VehicleMarketIntelligenceModal = ({
           24,
           96
         );
-        const dealScore = clamp(
-          Math.round(
-            52 +
-              Math.max(0, savingsVsMarket) / 130 +
-              Math.max(0, 90 - Math.abs((dealer.distance ?? 0) - 22)) * 0.08 +
-              daysOnLot * 0.2 +
-              dealer.rating * 3.2
-          ),
-          38,
-          100
-        );
+        const sharedValueScore = localMarket.matches
+          .filter((match) => match.dealer.id === dealer.id)
+          .reduce((score, match) => Math.max(score, match.valueScore), 0);
+        const dealScore = clamp(Math.round(58 + sharedValueScore), 38, 100);
 
         return {
           dealer,
@@ -252,13 +233,9 @@ const VehicleMarketIntelligenceModal = ({
     const bestDeal = sortedByDeal[0];
     const bestPrice = sortedByPrice[0];
     const bestNegotiation = sortedByNegotiation[0];
-    const averageAskingPrice = Math.round(
-      dealerInsights.reduce((sum, row) => sum + row.vehicle.price, 0) / Math.max(dealerInsights.length, 1)
-    );
-    const avgDaysOnLot = Math.round(
-      dealerInsights.reduce((sum, row) => sum + (row.vehicle.daysOnLot ?? 0), 0) / Math.max(dealerInsights.length, 1)
-    );
-    const localInventory = dealerInsights.reduce((sum, row) => sum + row.dealer.inventoryCount, 0);
+    const averageAskingPrice = localMarket.averagePrice;
+    const avgDaysOnLot = localMarket.averageDaysOnLot;
+    const localInventory = localMarket.inventoryCount;
     const nationalInventory = Math.round(localInventory * 26.5);
     const inventoryTrend = clamp(Math.round((localInventory / Math.max(dealerInsights.length, 1)) * 1.8), -2, 18);
     const demandTrend = clamp(Math.round((rating - 7.6) * 7.5), -4, 12);
@@ -284,103 +261,77 @@ const VehicleMarketIntelligenceModal = ({
     const expectedNegotiationHigh = Math.max(expectedNegotiationLow + 600, Math.round((averageAskingPrice - targetNegotiationPrice) * 1.3));
     const buyerPower = getBuyerPowerLabel(bestNegotiation.negotiationPotential);
     const marketStatus = getMarketStatus(opportunityScore, inventoryTrend, demandTrend);
-
-    const sparkTemplate = {
-      '30d': [-0.01, 0, 0.015, 0.024, 0.04, 0.055],
-      '90d': [-0.06, -0.03, 0, 0.04, 0.09, 0.14],
-      '12m': [-0.16, -0.1, -0.05, 0.02, 0.09, 0.17],
-    } as const;
-
-    const currentDeltas = sparkTemplate[marketWindow];
+    const selectedWindowLabel = windowOptions.find((option) => option.value === marketWindow)?.label ?? '90 days';
 
     const kpiCards: KpiCardData[] = [
       {
-        label: 'MSRP',
+        label: localMarket.condition === 'used' ? 'Vehicle asking price' : 'Base MSRP',
         value: formatPrice(vehicle.priceMin),
-        comparison: `${formatPercent(1.8)} vs last quarter`,
-        trend: 'up',
-        sparkline: buildSeries(vehicle.priceMin, currentDeltas.map((value) => value * 0.4)),
+        comparison: localMarket.condition === 'used' ? 'Price shown for this used vehicle' : 'Manufacturer starting price',
+        trend: 'flat',
       },
       {
         label: 'Current market price',
         value: formatPrice(averageAskingPrice),
-        comparison: `${formatPercent(priceTrend)} vs 90-day avg`,
+        comparison: `${formatPercent(priceTrend)} in the modeled ${selectedWindowLabel.toLowerCase()} scenario`,
         trend: getTrendDirection(priceTrend),
-        sparkline: buildSeries(averageAskingPrice, currentDeltas.map((value) => value * -0.2)),
       },
       {
         label: 'Fair purchase price',
         value: formatPrice(fairPurchasePrice),
-        comparison: `${formatSignedCurrency(averageAskingPrice - fairPurchasePrice)} under ask`,
+        comparison: `${formatPrice(Math.max(0, averageAskingPrice - fairPurchasePrice))} under the local average`,
         trend: 'down',
-        sparkline: buildSeries(fairPurchasePrice, currentDeltas.map((value) => value * -0.18)),
       },
       {
         label: 'Average transaction',
         value: formatPrice(Math.round((fairPurchasePrice + targetNegotiationPrice) / 2)),
         comparison: 'Below current ask',
         trend: 'down',
-        sparkline: buildSeries(Math.round((fairPurchasePrice + targetNegotiationPrice) / 2), currentDeltas.map((value) => value * -0.14)),
       },
       {
         label: 'Best available deal',
         value: formatPrice(bestPrice.vehicle.price),
         comparison: `${formatSignedCurrency(bestPrice.savingsVsMarket)} vs market`,
         trend: 'down',
-        sparkline: buildSeries(bestPrice.vehicle.price, currentDeltas.map((value) => value * -0.1)),
       },
       {
         label: 'Local inventory',
         value: `${localInventory} units`,
         comparison: `${formatPercent(inventoryTrend)} in view`,
         trend: 'up',
-        sparkline: buildSeries(localInventory, currentDeltas.map((value) => value * 0.8)),
-      },
-      {
-        label: 'National inventory',
-        value: `${nationalInventory} units`,
-        comparison: 'Broad market supply rising',
-        trend: 'up',
-        sparkline: buildSeries(nationalInventory, currentDeltas.map((value) => value * 0.65)),
       },
       {
         label: 'Average days on lot',
         value: `${avgDaysOnLot} days`,
         comparison: `${formatPercent(daysTrend)} vs segment`,
         trend: getTrendDirection(daysTrend),
-        sparkline: buildSeries(avgDaysOnLot, currentDeltas.map((value) => value * 0.5)),
       },
       {
         label: 'Demand score',
         value: `${clamp(Math.round(60 + demandTrend * 2.4 + rating * 2), 44, 94)}`,
         comparison: demandTrend > 0 ? 'Demand remains active' : 'Demand softening',
         trend: getTrendDirection(demandTrend),
-        sparkline: buildSeries(clamp(Math.round(60 + demandTrend * 2.4 + rating * 2), 44, 94), currentDeltas.map((value) => value * 0.35)),
       },
     ];
 
     const timelineMetrics: TimelineMetric[] = [
       {
         label: 'Inventory trend',
-        series: buildSeries(localInventory, currentDeltas.map((value) => value * 0.9)),
         trend: 'up',
         insight: 'Inventory is building faster than typical for this nameplate.',
       },
       {
         label: 'Demand trend',
-        series: buildSeries(100, currentDeltas.map((value) => value * (demandTrend > 0 ? 0.35 : -0.25))),
         trend: getTrendDirection(demandTrend),
         insight: demandTrend > 0 ? 'Demand is still healthy, but not outrunning supply.' : 'Demand has cooled enough to create better pricing pressure.',
       },
       {
         label: 'Price trend',
-        series: buildSeries(averageAskingPrice, currentDeltas.map((value) => value * -0.22)),
         trend: 'down',
         insight: 'Transaction pricing is drifting down as listings age.',
       },
       {
         label: 'Days on lot trend',
-        series: buildSeries(avgDaysOnLot, currentDeltas.map((value) => value * 0.45)),
         trend: 'up',
         insight: 'More inventory is lingering, which helps buyers push on price.',
       },
@@ -439,8 +390,9 @@ const VehicleMarketIntelligenceModal = ({
         inventoryTrend > demandTrend
           ? 'Inventory is growing faster than demand, creating downward pressure on prices.'
           : 'Demand is still supporting pricing, so focus on the few dealers with aged inventory.',
+      sourceNote: `Modeled from ${localInventory} matching listings across ${localMarket.dealerCount} ${localMarket.dealerCount === 1 ? 'dealer' : 'dealers'} within ${radiusMiles} miles of ${location.label}. Taxes, fees, and availability may vary.`,
     };
-  }, [initialLocation.lat, initialLocation.lng, marketWindow, rating, vehicle]);
+  }, [location, marketWindow, radiusMiles, rating, vehicle]);
 
   const sortedDealers = useMemo(() => {
     const filtered = marketData.dealerInsights.filter((row) => {
@@ -507,14 +459,9 @@ const VehicleMarketIntelligenceModal = ({
                 {vehicle.year} {vehicle.make} {vehicle.model}
               </h2>
               <p className="market-intelligence-modal__subhead">
-                {vehicle.trim || vehicle.bodyStyle} · Current market price {formatPrice(marketData.averageAskingPrice)}
+                {vehicle.trim || vehicle.bodyStyle} · {location.label} · {radiusMiles} mi radius · Current market price {formatPrice(marketData.averageAskingPrice)}
               </p>
-              <div className="market-intelligence-modal__hero-badges">
-                <Badge variant="dark">Opportunity {scoreToGrade(marketData.opportunityScore)}</Badge>
-                <Badge variant="primary">Deal score {marketData.dealScore}</Badge>
-                <Badge variant={marketData.buyerPower === 'Strong' ? 'success' : 'info'}>Buyer power {marketData.buyerPower}</Badge>
-                <Badge variant="neutral">{marketData.marketStatus}</Badge>
-              </div>
+              <p className="market-intelligence-modal__source-note">{marketData.sourceNote}</p>
             </div>
           </div>
           <div className="market-intelligence-modal__header-actions">
@@ -527,14 +474,6 @@ const VehicleMarketIntelligenceModal = ({
                 <span>Deal score</span>
                 <strong>{marketData.dealScore}</strong>
               </div>
-            </div>
-            <div className="market-intelligence-modal__header-cta-row">
-              <Button as="a" href="#market-intelligence-dealers" size="small">
-                View Best Local Deals
-              </Button>
-              <Button as="a" href="#market-intelligence-alternatives" variant="outline" size="small">
-                Compare Alternatives
-              </Button>
             </div>
           </div>
           <button className="market-intelligence-modal__close" onClick={onClose} aria-label="Close market intelligence">
@@ -591,7 +530,6 @@ const VehicleMarketIntelligenceModal = ({
                   </div>
                   <strong>{card.value}</strong>
                   <p>{card.comparison}</p>
-                  <Sparkline values={card.sparkline} />
                 </article>
               ))}
             </div>
@@ -628,7 +566,7 @@ const VehicleMarketIntelligenceModal = ({
                 <div className="market-intelligence-modal__callout">
                   <span>Price position vs market</span>
                   <strong>{marketData.bestPrice.savingsVsMarket >= 0 ? 'Below market' : 'Above market'}</strong>
-                  <p>Best live listing is {formatSignedCurrency(marketData.bestPrice.savingsVsMarket)} versus the current market baseline.</p>
+                  <p>Best modeled listing is {formatPrice(Math.abs(marketData.bestPrice.savingsVsMarket))} {marketData.bestPrice.savingsVsMarket >= 0 ? 'below' : 'above'} the local average.</p>
                 </div>
               </div>
             </div>
@@ -641,22 +579,21 @@ const VehicleMarketIntelligenceModal = ({
                 <h3 className="market-intelligence-modal__section-title">Sortable dealer comparison</h3>
               </div>
               <div className="market-intelligence-modal__filters">
-                <label>
-                  <span>Sort</span>
-                  <select value={dealerSort} onChange={(event) => setDealerSort(event.target.value as DealerSort)}>
-                    {dealerSortOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <div className="market-intelligence-modal__filter-chips">
-                  <button type="button" className={dealerFilter === 'all' ? 'is-active' : ''} onClick={() => setDealerFilter('all')}>All</button>
-                  <button type="button" className={dealerFilter === 'best' ? 'is-active' : ''} onClick={() => setDealerFilter('best')}>Best overall</button>
-                  <button type="button" className={dealerFilter === 'price' ? 'is-active' : ''} onClick={() => setDealerFilter('price')}>Best price</button>
-                  <button type="button" className={dealerFilter === 'negotiation' ? 'is-active' : ''} onClick={() => setDealerFilter('negotiation')}>Best negotiation</button>
-                </div>
+                <Select
+                  label="Sort dealers"
+                  value={dealerSort}
+                  options={dealerSortOptions}
+                  onChange={(event) => setDealerSort(event.target.value as DealerSort)}
+                  wrapperClassName="market-intelligence-modal__sort"
+                />
+                <Tabs
+                  items={dealerFilterTabs}
+                  value={dealerFilter}
+                  onChange={setDealerFilter}
+                  variant="pills"
+                  fullWidth={false}
+                  ariaLabel="Filter dealers"
+                />
               </div>
             </div>
             <div className="market-intelligence-modal__table-wrap">
@@ -704,21 +641,20 @@ const VehicleMarketIntelligenceModal = ({
           <section className="market-intelligence-modal__section">
             <div className="market-intelligence-modal__section-head market-intelligence-modal__section-head--controls">
               <div>
-                <p className="market-intelligence-modal__section-kicker">Supply and demand</p>
-                <h3 className="market-intelligence-modal__section-title">Trend pressure across the market</h3>
+                <p className="market-intelligence-modal__section-kicker">Modeled scenarios</p>
+                <h3 className="market-intelligence-modal__section-title">How market pressure could shift</h3>
+                <p className="market-intelligence-modal__source-note">
+                  Illustrative scenarios based on the current local sample, not historical transaction data.
+                </p>
               </div>
-              <div className="market-intelligence-modal__window-switch">
-                {windowOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={marketWindow === option.value ? 'is-active' : ''}
-                    onClick={() => setMarketWindow(option.value)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
+              <Tabs
+                items={marketWindowTabs}
+                value={marketWindow}
+                onChange={setMarketWindow}
+                variant="pills"
+                fullWidth={false}
+                ariaLabel="Market scenario window"
+              />
             </div>
             <div className="market-intelligence-modal__timeline-grid">
               {marketData.timelineMetrics.map((metric) => (
@@ -729,7 +665,6 @@ const VehicleMarketIntelligenceModal = ({
                       {metric.trend === 'up' ? 'Rising' : metric.trend === 'down' ? 'Falling' : 'Flat'}
                     </Badge>
                   </div>
-                  <Sparkline values={metric.series} />
                   <p>{metric.insight}</p>
                 </article>
               ))}
