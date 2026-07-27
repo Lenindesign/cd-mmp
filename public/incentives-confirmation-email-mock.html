@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Car and Driver Incentives Confirmation Email Mock</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f2f4f7;
+        color: #111827;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      a {
+        color: #0b5f92;
+        text-decoration: underline;
+      }
+
+      .email-preview-shell {
+        padding: 32px 12px;
+      }
+
+      .email-preview-note {
+        max-width: 680px;
+        margin: 0 auto 16px;
+        color: #4b5563;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .email {
+        width: 100%;
+        max-width: 680px;
+        margin: 0 auto;
+        background: #ffffff;
+        border: 1px solid #d8dee6;
+        border-collapse: collapse;
+      }
+
+      .header {
+        padding: 26px 32px;
+        border-bottom: 1px solid #d8dee6;
+        text-align: center;
+      }
+
+      .logo {
+        display: inline-block;
+        width: 240px;
+        height: auto;
+      }
+
+      .section {
+        padding: 28px 32px;
+        border-bottom: 1px solid #d8dee6;
+      }
+
+      .section--tint {
+        background: #f6fbfe;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: #0b5f92;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.6px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 12px;
+        color: #111827;
+        font-size: 32px;
+        line-height: 1.08;
+      }
+
+      h2 {
+        margin-bottom: 16px;
+        color: #111827;
+        font-size: 24px;
+        line-height: 1.15;
+      }
+
+      h3 {
+        margin-bottom: 8px;
+        color: #111827;
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .copy {
+        margin-bottom: 0;
+        color: #4b5563;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .offer-card {
+        margin-top: 16px;
+        padding: 22px;
+        border: 1px solid #c8d9e7;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .offer-card--primary {
+        border-top-width: 1px;
+      }
+
+      .offer-label {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 5px 8px;
+        border-radius: 3px;
+        background: #e8f3f8;
+        color: #0b5f92;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .offer-value {
+        margin: 0 0 8px;
+        color: #1d6797;
+        font-size: 42px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .offer-value span {
+        color: #444444;
+        font-size: 18px;
+      }
+
+      .offer-summary {
+        margin: 0 0 18px;
+        color: #4b5563;
+        font-size: 15px;
+        line-height: 1.45;
+      }
+
+      .offer-details {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .offer-details td {
+        padding: 11px 0;
+        border-top: 1px solid #e5e7eb;
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.3;
+      }
+
+      .offer-details td:last-child {
+        color: #111827;
+        font-weight: 700;
+        text-align: right;
+      }
+
+      .offer-grid {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 10px 0;
+      }
+
+      .offer-grid td {
+        width: 50%;
+        vertical-align: top;
+      }
+
+      .offer-grid .offer-card {
+        height: 100%;
+        margin-top: 0;
+        box-sizing: border-box;
+      }
+
+      .offer-grid .offer-value {
+        font-size: 34px;
+      }
+
+      .button {
+        display: block;
+        padding: 14px 16px;
+        border-radius: 4px;
+        background: #1f6c99;
+        color: #ffffff !important;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+        line-height: 1.2;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .button--secondary {
+        background: #111827;
+      }
+
+      .cta-grid {
+        width: 100%;
+        margin-top: 18px;
+        border-collapse: separate;
+        border-spacing: 8px;
+      }
+
+      .cta-grid td {
+        width: 50%;
+        vertical-align: top;
+      }
+
+      .dealer-card {
+        padding: 22px;
+        border: 1px solid #d8dee6;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .dealer-card p {
+        margin-bottom: 8px;
+      }
+
+      .dealer-card p:last-child {
+        margin-bottom: 0;
+      }
+
+      .vehicle-card {
+        width: 100%;
+        border: 1px solid #d8dee6;
+        border-collapse: collapse;
+      }
+
+      .vehicle-image,
+      .vehicle-image-missing {
+        display: block;
+        width: 100%;
+        height: 320px;
+        box-sizing: border-box;
+      }
+
+      .vehicle-image {
+        object-fit: cover;
+      }
+
+      .vehicle-image-missing {
+        padding: 142px 20px 0;
+        background: #f2f4f7;
+        color: #4b5563;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .vehicle-content {
+        padding: 22px;
+      }
+
+      .vehicle-heading {
+        margin: 0 0 8px;
+        color: #111827;
+        font-size: 29px;
+        font-weight: 800;
+        line-height: 1.05;
+      }
+
+      .vehicle-rank {
+        margin: 0 0 16px;
+        color: #1d6797;
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .vehicle-hero-panel {
+        padding: 18px 20px;
+        background: #f8f8f8;
+        border-radius: 10px;
+      }
+
+      .vehicle-score-row {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .vehicle-score-row td {
+        vertical-align: top;
+      }
+
+      .vehicle-score {
+        color: #111111;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 0.95;
+      }
+
+      .vehicle-score span {
+        font-size: 22px;
+      }
+
+      .vehicle-score-label {
+        display: block;
+        margin-top: 8px;
+        color: #222222;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .vehicle-badges {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .vehicle-badge-item {
+        display: inline-block;
+        width: 62px;
+        margin-left: 8px;
+        text-align: center;
+        vertical-align: top;
+        white-space: normal;
+      }
+
+      .vehicle-badge-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        border: 1px solid #d7dde5;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      .vehicle-badge-mark img {
+        display: block;
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+      }
+
+      .vehicle-badge-label {
+        display: block;
+        margin-top: 5px;
+        color: #5d6670;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        line-height: 1.1;
+        text-transform: uppercase;
+      }
+
+      .vehicle-facts {
+        width: 100%;
+        margin-top: 18px;
+        border-collapse: collapse;
+      }
+
+      .vehicle-facts td {
+        width: 50%;
+        padding: 12px 0;
+        border-top: 1px solid #e5e7eb;
+        color: #111827;
+        font-size: 15px;
+        font-weight: 700;
+        vertical-align: top;
+      }
+
+      .vehicle-facts span {
+        display: block;
+        margin-bottom: 4px;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+      }
+
+      .shopping-tools-grid {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 8px;
+      }
+
+      .shopping-tools-grid td {
+        width: 33.333%;
+        vertical-align: top;
+      }
+
+      .shopping-tool-card {
+        display: block;
+        min-height: 130px;
+        padding: 18px;
+        border-radius: 6px;
+        background: #111827;
+        color: #ffffff !important;
+        text-decoration: none;
+        box-sizing: border-box;
+      }
+
+      .shopping-tool-card--primary {
+        background: #1f6c99;
+      }
+
+      .shopping-tool-title {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+
+      .shopping-tool-copy {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .advice-mosaic {
+        width: 100%;
+        margin-top: 18px;
+        border-collapse: collapse;
+      }
+
+      .advice-mosaic td {
+        width: 50%;
+        padding: 0 6px 18px 0;
+        vertical-align: top;
+      }
+
+      .advice-mosaic__cell--end {
+        padding-right: 0 !important;
+        padding-left: 6px !important;
+      }
+
+      .advice-mosaic__cell--bottom {
+        padding-bottom: 0 !important;
+      }
+
+      .advice-card {
+        display: block;
+        color: #111827 !important;
+        text-decoration: none;
+      }
+
+      .advice-card__image {
+        display: block;
+        width: 100%;
+        border: 0;
+        background: #eef5f7;
+        object-fit: cover;
+      }
+
+      .advice-card__image--tile {
+        height: 150px;
+      }
+
+      .advice-card__content {
+        display: block;
+        padding-top: 12px;
+      }
+
+      .advice-card__kicker {
+        display: block;
+        margin: 0 0 4px;
+        color: #0b5f92;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .advice-card__title {
+        display: block;
+        margin: 0;
+        color: #111827;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
+      .footer {
+        padding: 44px 32px;
+        background: #000000;
+        color: #b7b7b7;
+        font-size: 14px;
+        line-height: 1.5;
+        text-align: center;
+      }
+
+      .footer-logo {
+        display: inline-block;
+        width: auto;
+        max-width: 82%;
+        height: 45.67px;
+        margin-bottom: 22px;
+        filter: brightness(0) invert(1);
+      }
+
+      .footer a {
+        color: #ffffff;
+      }
+
+      .footer-links {
+        margin: 0 0 14px;
+      }
+
+      .footer-meta {
+        margin: 0 0 6px;
+      }
+
+      .footer-cross-link {
+        margin: 22px 0 0;
+        font-size: 12px;
+      }
+
+      @media only screen and (max-width: 620px) {
+        .email-preview-shell {
+          padding: 16px 0;
+        }
+
+        .email-preview-note {
+          padding: 0 16px;
+        }
+
+        .section,
+        .header {
+          padding: 24px 20px;
+        }
+
+        h1 {
+          font-size: 28px;
+        }
+
+        .offer-grid,
+        .cta-grid,
+        .shopping-tools-grid {
+          border-spacing: 0;
+        }
+
+        .offer-grid td,
+        .cta-grid td,
+        .shopping-tools-grid td {
+          display: block;
+          width: 100%;
+          padding: 0 0 12px;
+        }
+
+        .vehicle-image,
+        .vehicle-image-missing {
+          height: 230px;
+        }
+
+        .vehicle-image-missing {
+          padding-top: 100px;
+        }
+
+        .advice-mosaic td {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0 0 18px !important;
+        }
+
+        .advice-card__image--tile {
+          height: auto;
+          aspect-ratio: 16 / 9;
+        }
+
+        .footer {
+          padding: 40px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-preview-shell">
+      <p class="email-preview-note">
+        HTML email mock for an incentives lead confirmation. Offer values and dealer details are illustrative prototype content.
+      </p>
+
+      <table class="email" role="presentation" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="header">
+            <img class="logo" src="/car-and-driver-logo.svg" alt="Car and Driver">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">Incentive request confirmed</p>
+            <h1>Your 2026 Honda CR-V Hybrid incentives</h1>
+            <p class="copy">
+              Hi Alex,<br>
+              Thank you for using Car and Driver to learn more about current incentives and deals for the 2026 Honda CR-V Hybrid Sport Touring. We shared your request with a local dealer, who can confirm your eligibility, availability, and final terms.
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section section--tint">
+            <p class="eyebrow">Your incentives</p>
+            <h2>The offer you asked about</h2>
+            <div class="offer-card offer-card--primary">
+              <span class="offer-label">Primary lease incentive</span>
+              <p class="offer-value">$369<span>/month</span></p>
+              <p class="offer-summary">2026 Honda CR-V Hybrid Sport Touring AWD lease offer</p>
+              <table class="offer-details" role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>Offer expires</td>
+                  <td>September 2, 2026</td>
+                </tr>
+                <tr>
+                  <td>Term</td>
+                  <td>36 months</td>
+                </tr>
+                <tr>
+                  <td>Mileage allowance</td>
+                  <td>10,000 miles/year</td>
+                </tr>
+                <tr>
+                  <td>Down payment</td>
+                  <td>$3,999</td>
+                </tr>
+              </table>
+            </div>
+
+            <h3 style="margin-top: 28px;">Also available</h3>
+            <table class="offer-grid" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>
+                  <div class="offer-card">
+                    <span class="offer-label">Cash incentive</span>
+                    <p class="offer-value">$1,500</p>
+                    <p class="offer-summary">Customer bonus cash toward an eligible CR-V Hybrid purchase.</p>
+                    <table class="offer-details" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>Expires</td>
+                        <td>Sep. 2, 2026</td>
+                      </tr>
+                      <tr>
+                        <td>Term</td>
+                        <td>At purchase</td>
+                      </tr>
+                      <tr>
+                        <td>Est. off MSRP</td>
+                        <td>3% to 4%</td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+                <td>
+                  <div class="offer-card">
+                    <span class="offer-label">Financing incentive</span>
+                    <p class="offer-value">2.9%<span> APR</span></p>
+                    <p class="offer-summary">Promotional financing for qualified buyers through the participating lender.</p>
+                    <table class="offer-details" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>Expires</td>
+                        <td>Sep. 2, 2026</td>
+                      </tr>
+                      <tr>
+                        <td>Term</td>
+                        <td>36 months</td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <p class="copy" style="margin-top: 18px; font-size: 13px;">
+              Offers may vary by location, credit approval, vehicle availability, and eligibility. Offers may not be combined. Your dealer will confirm the terms that apply to you.
+            </p>
+
+            <table class="cta-grid" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td><a class="button" href="/honda/cr-v/lease-deals">Honda CR-V Lease Deals</a></td>
+                <td><a class="button" href="/honda/cr-v/deals-incentives">Honda CR-V Cash and Financing Deals</a></td>
+              </tr>
+              <tr>
+                <td><a class="button button--secondary" href="/deals/lease?bodyStyle=SUV">SUV Lease Deals</a></td>
+                <td><a class="button button--secondary" href="/deals?bodyStyle=SUV">SUV Cash and Financing Deals</a></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">Your dealer</p>
+            <h2>What happens next</h2>
+            <div class="dealer-card">
+              <p><strong>A participating local Honda dealer will contact you.</strong></p>
+              <p class="copy">
+                They can explain eligibility requirements, confirm which incentives can be combined, check vehicle availability, and answer your questions. You are not obligated to purchase or lease a vehicle.
+              </p>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">Your next vehicle</p>
+            <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>
+                  <img
+                    class="vehicle-image"
+                    src="https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg"
+                    alt="2026 Honda CR-V Hybrid on road"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+                  >
+                  <div class="vehicle-image-missing" style="display:none;" role="img" aria-label="Vehicle image unavailable">
+                    Vehicle image unavailable
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="vehicle-content">
+                  <h2 class="vehicle-heading">2026 Honda CR-V Hybrid Sport Touring</h2>
+                  <p class="vehicle-rank">#2 in Compact SUVs</p>
+                  <p class="copy">
+                    <strong>C/D Says:</strong> The CR-V Hybrid combines strong fuel economy, smart cargo packaging, and easy everyday drivability in a polished compact SUV.
+                  </p>
+
+                  <div class="vehicle-hero-panel" style="margin-top: 18px;">
+                    <table class="vehicle-score-row" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>
+                          <div class="vehicle-score">9.5<span>/10</span></div>
+                          <span class="vehicle-score-label">C/D Rating</span>
+                        </td>
+                        <td class="vehicle-badges">
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" alt="Editor's Choice">
+                            </span>
+                            <span class="vehicle-badge-label">Editor's Choice</span>
+                          </span>
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" alt="10Best">
+                            </span>
+                            <span class="vehicle-badge-label">10Best</span>
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <table class="vehicle-facts" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><span>MSRP Range</span>$35,630 to $42,150</td>
+                      <td><span>Fuel Economy</span>37/34 mpg city/highway</td>
+                    </tr>
+                  </table>
+
+                  <table class="cta-grid" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Shop New Honda CR-V</a></td>
+                      <td><a class="button" href="/vehicles?condition=used&amp;make=Honda&amp;model=CR-V">Shop Used Honda CR-V</a></td>
+                    </tr>
+                    <tr>
+                      <td><a class="button" href="/vehicles?condition=certified&amp;make=Honda&amp;model=CR-V">Shop Certified Honda CR-V</a></td>
+                      <td><a class="button button--secondary" href="/vehicles?condition=new&amp;bodyStyle=SUV">Shop New SUVs</a></td>
+                    </tr>
+                    <tr>
+                      <td><a class="button button--secondary" href="/vehicles?condition=used&amp;bodyStyle=SUV">Shop Used SUVs</a></td>
+                      <td><a class="button button--secondary" href="/vehicles?condition=certified&amp;bodyStyle=SUV">Shop Certified SUVs</a></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section section--tint">
+            <p class="eyebrow">Shopping tools</p>
+            <table class="shopping-tools-grid" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>
+                  <a class="shopping-tool-card shopping-tool-card--primary" href="/vehicles">
+                    <span class="shopping-tool-title">Shop For Cars</span>
+                    <span class="shopping-tool-copy">Research and find the right vehicle near you.</span>
+                  </a>
+                </td>
+                <td>
+                  <a class="shopping-tool-card" href="/whats-my-car-worth">
+                    <span class="shopping-tool-title">What's My Car Worth?</span>
+                    <span class="shopping-tool-copy">Estimate your current car's trade-in value.</span>
+                  </a>
+                </td>
+                <td>
+                  <a class="shopping-tool-card" href="/compare">
+                    <span class="shopping-tool-title">Compare Cars</span>
+                    <span class="shopping-tool-copy">Compare features, specs, and prices.</span>
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <p class="eyebrow">More from Car and Driver</p>
+            <h2>Shopping advice for your next step</h2>
+            <table class="advice-mosaic" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="advice-mosaic__cell">
+                  <a class="advice-card" href="https://www.caranddriver.com/shopping-advice/a35768730/how-to-lease-buy-new-car/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/loving-car-driver-under-pressure-6761cc7dc7272.jpg?crop=1.00xw:0.766xh;0,0.130xh&amp;resize=2048:*" alt="Car shopper signing vehicle purchase paperwork">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Buying and leasing</span>
+                      <span class="advice-card__title">How to Lease or Buy a New Car</span>
+                    </span>
+                  </a>
+                </td>
+                <td class="advice-mosaic__cell advice-mosaic__cell--end">
+                  <a class="advice-card" href="https://www.caranddriver.com/shopping-advice/a35772417/how-to-buy-used-car/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/loving-car-driver-what-to-expect-6761cbdd81ec3.jpg?crop=1.00xw:0.766xh;0,0.177xh&amp;resize=2048:*" alt="Car shopper under pressure during vehicle purchase">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Used cars</span>
+                      <span class="advice-card__title">How to Buy a Used Car</span>
+                    </span>
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td class="advice-mosaic__cell advice-mosaic__cell--bottom">
+                  <a class="advice-card" href="https://www.caranddriver.com/features/a22652499/car-dealerships-donts/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/dealership-dos-and-donts-1628009822.jpg?crop=1.00xw:1.00xh;0,0&amp;resize=1800:*" alt="Car dealership do's and don'ts illustration">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Dealer prep</span>
+                      <span class="advice-card__title">Car Dealership Do's and Don'ts</span>
+                    </span>
+                  </a>
+                </td>
+                <td class="advice-mosaic__cell advice-mosaic__cell--end advice-mosaic__cell--bottom">
+                  <a class="advice-card" href="https://www.caranddriver.com/auto-loans/a42414553/how-to-trade-in-car/">
+                    <img class="advice-card__image advice-card__image--tile" src="https://hips.hearstapps.com/hmg-prod/images/pre-owned-vehicles-are-seen-at-the-roger-beasley-south-news-photo-1715021136.jpg?crop=1.00xw:0.845xh;0,0.121xh&amp;resize=1200:*" alt="Used vehicles lined up at a dealership">
+                    <span class="advice-card__content">
+                      <span class="advice-card__kicker">Trade-in</span>
+                      <span class="advice-card__title">How to Trade In a Car</span>
+                    </span>
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="footer">
+            <img class="footer-logo" src="/car-and-driver-logo.svg" alt="Car and Driver">
+            <p class="footer-links">
+              <a href="/privacy">Privacy Notice</a>
+              &nbsp;|&nbsp;
+              <a href="/california-privacy">CA Notice at Collection</a>
+            </p>
+            <p class="footer-meta">Car and Driver is a publication of Hearst Autos, Inc.</p>
+            <p class="footer-meta">All Rights Reserved</p>
+            <p class="footer-cross-link">
+              Prototype: <a href="/payment-estimate-email-mock.html?variant=standard">View the payment estimate email</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

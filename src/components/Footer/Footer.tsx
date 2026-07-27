@@ -82,6 +82,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Payment Estimate Email Mock (New Car)', path: '/payment-estimate-email-mock.html?variant=standard', external: true },
         { label: 'Payment Estimate Email Mock (Used Car)', path: '/payment-estimate-email-mock.html?variant=used-car', external: true },
         { label: 'Payment Estimate Email Mock (Body Style)', path: '/payment-estimate-email-mock.html?variant=body-style', external: true },
+        { label: 'Incentives Confirmation Email Mock', path: '/incentives-confirmation-email-mock.html', external: true },
       ],
     },
   ];
@@ -197,5 +198,4 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
 };
 
 export default Footer;
-
 
