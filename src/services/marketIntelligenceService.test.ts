@@ -3,6 +3,7 @@ import { getVehicleBySlug } from './vehicleService';
 import {
   MARKET_LOCATION_OPTIONS,
   getVehicleMarketInventory,
+  getVisibleMarketMetricKeys,
   resolveMarketLocationFromZip,
 } from './marketIntelligenceService';
 
@@ -32,6 +33,32 @@ describe('getVehicleMarketInventory', () => {
     expect(fiftyMiles.matches.every(({ unit, dealer }) => unit.isNew && (dealer.distance ?? 0) <= 50)).toBe(true);
     expect(fiveMiles.inventoryCount).toBeLessThanOrEqual(twentyFiveMiles.inventoryCount);
     expect(twentyFiveMiles.inventoryCount).toBeLessThanOrEqual(fiftyMiles.inventoryCount);
+    expect(twentyFiveMiles.statistics.currentYearCount).toBe(twentyFiveMiles.inventoryCount);
+    expect(twentyFiveMiles.statistics.followingYearCount).toBe(0);
+    expect(getVisibleMarketMetricKeys(twentyFiveMiles).slice(0, 5)).toEqual([
+      'matches',
+      'averagePrice',
+      'lowPrice',
+      'highPrice',
+      'averageDays',
+    ]);
+
+    const priceDropFallbackMarket = {
+      ...twentyFiveMiles,
+      statistics: {
+        ...twentyFiveMiles.statistics,
+        newlyListedCount: 0,
+        priceDropCount: 3,
+      },
+    };
+    expect(getVisibleMarketMetricKeys(priceDropFallbackMarket).slice(0, 6)).toEqual([
+      'matches',
+      'averagePrice',
+      'lowPrice',
+      'highPrice',
+      'averageDays',
+      'priceDrops',
+    ]);
   });
 
   it('does not fall back to new inventory for a used vehicle', () => {
@@ -47,6 +74,27 @@ describe('getVehicleMarketInventory', () => {
     expect(market.condition).toBe('used');
     expect(market.matches.length).toBeGreaterThan(0);
     expect(market.matches.every(({ unit }) => !unit.isNew)).toBe(true);
+    expect(market.statistics.currentYearCount).toBe(market.inventoryCount);
+    expect(market.statistics.averageMileage).toBeGreaterThan(0);
+    expect(market.statistics.lowMileage).toBeLessThanOrEqual(market.statistics.highMileage!);
+    expect(market.statistics.oneOwnerCount).toBeLessThanOrEqual(market.inventoryCount);
+    expect(market.statistics.noAccidentCount).toBeLessThanOrEqual(market.inventoryCount);
+    expect(market.statistics.goodGreatPriceCount).toBeLessThanOrEqual(market.inventoryCount);
+    expect(getVisibleMarketMetricKeys(market).slice(0, 5)).toEqual([
+      'matches',
+      'averagePrice',
+      'averageMileage',
+      'mileageRange',
+      'averageDays',
+    ]);
+    expect(getVisibleMarketMetricKeys(market)).toEqual(expect.arrayContaining([
+      'goodGreatPrice',
+      'oneOwner',
+      'noAccidents',
+      'priceDrops',
+      'previousYear',
+      'followingYear',
+    ]));
   });
 
   it('resolves supported ZIP codes to a dealer market', () => {

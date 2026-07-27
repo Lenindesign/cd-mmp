@@ -264,6 +264,54 @@
   gap: var(--spacing-4);
 }
 
+.market-snapshot__secondary {
+  display: grid;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-5);
+  border-top: var(--spacing-px) solid var(--color-gray-200);
+}
+
+.market-snapshot__secondary > h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--spacing-px);
+  margin: 0;
+  border: var(--spacing-px) solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-200);
+  overflow: hidden;
+}
+
+.market-snapshot__secondary-grid > div {
+  min-width: 0;
+  padding: var(--spacing-4);
+  background: var(--color-white);
+}
+
+.market-snapshot__secondary-grid dt {
+  margin: 0 0 var(--spacing-1);
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+.market-snapshot__secondary-grid dd {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
+}
+
 .market-snapshot__card {
   position: relative;
   display: flex;
@@ -424,6 +472,7 @@
   .market-snapshot__grid {
     grid-template-columns: 1fr;
   }
+
 }
 
 @media (max-width: 600px) {
@@ -456,6 +505,10 @@
   .market-snapshot__recommendation-price {
     align-items: flex-start;
     text-align: left;
+  }
+
+  .market-snapshot__secondary-grid {
+    grid-template-columns: 1fr;
   }
 
   .market-snapshot__recommendation ul {

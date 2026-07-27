@@ -7,8 +7,10 @@ import { Tabs, type TabItem } from '../Tabs';
 import { formatDistance, formatPrice } from '../../services/dealerService';
 import {
   getVehicleMarketInventory,
+  getVisibleMarketMetricKeys,
   resolveMarketLocationFromZip,
   type DealerRadius,
+  type MarketMetricKey,
   type MarketLocation,
 } from '../../services/marketIntelligenceService';
 import type { Vehicle } from '../../services/vehicleService';
@@ -113,16 +115,14 @@ const getDealSignal = (price: number, marketAverage: number): {
   };
 };
 
-const average = (values: number[]) => {
-  if (values.length === 0) return 0;
-  return values.reduce((sum, value) => sum + value, 0) / values.length;
-};
-
-const percentile = (values: number[], amount: number) => {
-  const sorted = [...values].sort((a, b) => a - b);
-  if (sorted.length === 0) return 0;
-  return sorted[Math.round((sorted.length - 1) * amount)];
-};
+interface MarketMetricCard {
+  key: MarketMetricKey;
+  label: string;
+  value: string;
+  detail: string;
+  signal?: ReturnType<typeof getDaysOnLotSignal>;
+  tooltip?: MarketInfoTooltipProps;
+}
 
 const MarketIntelligenceSnapshot = ({
   vehicle,
@@ -143,7 +143,10 @@ const MarketIntelligenceSnapshot = ({
   const bestValue = market.bestValueMatch;
   const bestDealHref = bestValue?.unit.dealerUrl ?? bestValue?.dealer.website ?? '#market-intelligence-dealers';
   const bestDealIsExternal = bestDealHref.startsWith('http');
-  const prices = market.matches.map(({ unit }) => unit.price);
+  const metricKeys = getVisibleMarketMetricKeys(market);
+  const primaryMetricKeys = metricKeys.slice(0, 6);
+  const secondaryMetricKeys = metricKeys.slice(6);
+  const { statistics } = market;
   const savings = bestValue ? Math.max(0, market.averagePrice - bestValue.unit.price) : 0;
   const daysOnLotSignal = getDaysOnLotSignal(market.averageDaysOnLot || 0);
   const dealSignal = bestValue
@@ -162,53 +165,100 @@ const MarketIntelligenceSnapshot = ({
       ? `Expand search to ${nextRadius} mi`
       : 'No matching local inventory';
 
-  const supportingCards = isUsed
-    ? [
-        {
-          label: 'Fair value range',
-          value: prices.length > 0
-            ? `${formatPrice(percentile(prices, 0.25))}–${formatPrice(percentile(prices, 0.75))}`
-            : 'Not available',
-          detail: `Your vehicle asking price: ${formatPrice(vehicle.priceMin)}`,
-        },
-        {
-          label: 'Local selection',
-          value: `${market.inventoryCount} ${market.inventoryCount === 1 ? 'vehicle' : 'vehicles'}`,
-          detail: `Across ${market.dealerCount} ${market.dealerCount === 1 ? 'dealer' : 'dealers'}`,
-        },
-        {
-          label: 'Comparable mileage',
-          value: market.inventoryCount > 0
-            ? `${Math.round(average(market.matches.map(({ unit }) => unit.mileage ?? 0))).toLocaleString()} mi`
-            : 'Not available',
-          detail: 'Compare mileage, condition, history, and certification before buying',
-        },
-      ]
-    : [
-        {
-          label: 'Average market price',
-          value: market.inventoryCount > 0 ? formatPrice(market.averagePrice) : 'Not available',
-          detail: `Base MSRP: ${formatPrice(vehicle.priceMin)}`,
-        },
-        {
-          label: 'Local selection',
-          value: `${market.inventoryCount} ${market.inventoryCount === 1 ? 'vehicle' : 'vehicles'}`,
-          detail: `Across ${market.dealerCount} ${market.dealerCount === 1 ? 'dealer' : 'dealers'}`,
-        },
-        {
-          label: 'Average days on lot',
-          value: market.inventoryCount > 0 ? `${market.averageDaysOnLot || 1} days` : 'Not available',
-          detail: market.inventoryCount > 0 ? daysOnLotSignal.detail : 'No local inventory to compare',
-          signal: market.inventoryCount > 0 ? daysOnLotSignal : undefined,
-          tooltip: market.inventoryCount > 0
-            ? {
-                title: 'What days on lot means',
-                copy: `${market.averageDaysOnLot || 1} days is the average time these matching listings have been advertised. We use ${DAYS_ON_LOT_REFERENCE} days as a reference. Vehicles listed for 45 days or more are aging inventory and may give buyers more negotiating room.`,
-                ariaLabel: 'Explain average days on lot',
-              }
-            : undefined,
-        },
-      ];
+  const metricCards: Record<MarketMetricKey, MarketMetricCard> = {
+    matches: {
+      key: 'matches',
+      label: `${vehicle.year} matches`,
+      value: `${statistics.currentYearCount} ${statistics.currentYearCount === 1 ? 'vehicle' : 'vehicles'}`,
+      detail: `Across ${market.dealerCount} ${market.dealerCount === 1 ? 'dealer' : 'dealers'}`,
+    },
+    averagePrice: {
+      key: 'averagePrice',
+      label: 'Average price',
+      value: formatPrice(market.averagePrice),
+      detail: isUsed ? 'Average asking price for matching used vehicles' : `Base MSRP: ${formatPrice(vehicle.priceMin)}`,
+    },
+    lowPrice: {
+      key: 'lowPrice',
+      label: 'Low price',
+      value: formatPrice(statistics.lowPrice ?? 0),
+      detail: 'Lowest asking price in this comparison set',
+    },
+    highPrice: {
+      key: 'highPrice',
+      label: 'High price',
+      value: formatPrice(statistics.highPrice ?? 0),
+      detail: 'Highest asking price in this comparison set',
+    },
+    averageDays: {
+      key: 'averageDays',
+      label: 'Average days on market',
+      value: `${market.averageDaysOnLot} days`,
+      detail: daysOnLotSignal.detail,
+      signal: daysOnLotSignal,
+      tooltip: {
+        title: 'What days on market means',
+        copy: `${market.averageDaysOnLot} days is the average time these matching listings have been advertised. We use ${DAYS_ON_LOT_REFERENCE} days as a reference. Vehicles listed for 45 days or more are aging inventory and may give buyers more negotiating room.`,
+        ariaLabel: 'Explain average days on market',
+      },
+    },
+    newlyListed: {
+      key: 'newlyListed',
+      label: 'Newly listed',
+      value: `${statistics.newlyListedCount} ${statistics.newlyListedCount === 1 ? 'vehicle' : 'vehicles'}`,
+      detail: 'Listed within the last 30 days',
+    },
+    priceDrops: {
+      key: 'priceDrops',
+      label: 'Recent price drops',
+      value: `${statistics.priceDropCount} ${statistics.priceDropCount === 1 ? 'vehicle' : 'vehicles'}`,
+      detail: 'Matching listings with a recent price reduction',
+    },
+    previousYear: {
+      key: 'previousYear',
+      label: `${Number(vehicle.year) - 1} vehicles`,
+      value: `${statistics.previousYearCount} available`,
+      detail: 'Prior model-year listings in this search area',
+    },
+    followingYear: {
+      key: 'followingYear',
+      label: `${Number(vehicle.year) + 1} vehicles`,
+      value: `${statistics.followingYearCount} available`,
+      detail: 'Following model-year used listings in this search area',
+    },
+    goodGreatPrice: {
+      key: 'goodGreatPrice',
+      label: 'Good or great price',
+      value: `${statistics.goodGreatPriceCount} ${statistics.goodGreatPriceCount === 1 ? 'vehicle' : 'vehicles'}`,
+      detail: 'At least 2% below the local average',
+    },
+    oneOwner: {
+      key: 'oneOwner',
+      label: 'One owner',
+      value: `${statistics.oneOwnerCount} ${statistics.oneOwnerCount === 1 ? 'vehicle' : 'vehicles'}`,
+      detail: 'Reported with one previous owner',
+    },
+    noAccidents: {
+      key: 'noAccidents',
+      label: 'No accidents reported',
+      value: `${statistics.noAccidentCount} ${statistics.noAccidentCount === 1 ? 'vehicle' : 'vehicles'}`,
+      detail: 'Based on available vehicle-history data',
+    },
+    averageMileage: {
+      key: 'averageMileage',
+      label: 'Average mileage',
+      value: `${(statistics.averageMileage ?? 0).toLocaleString()} mi`,
+      detail: 'Average odometer reading for matching used vehicles',
+    },
+    mileageRange: {
+      key: 'mileageRange',
+      label: 'Mileage range',
+      value: `${(statistics.lowMileage ?? 0).toLocaleString()}–${(statistics.highMileage ?? 0).toLocaleString()} mi`,
+      detail: 'Lowest to highest mileage in this comparison set',
+    },
+  };
+  const supportingCards = primaryMetricKeys.map((key) => metricCards[key]);
+  const secondaryCards = secondaryMetricKeys.map((key) => metricCards[key]);
 
   const handlePrimaryAction = () => {
     if (market.inventoryCount === 0 && nextRadius) {
@@ -298,6 +348,20 @@ const MarketIntelligenceSnapshot = ({
           </article>
         ))}
       </div>
+
+      {secondaryCards.length > 0 && (
+        <section className="market-snapshot__secondary" aria-labelledby="market-snapshot-secondary-title">
+          <h3 id="market-snapshot-secondary-title">More local signals</h3>
+          <dl className="market-snapshot__secondary-grid">
+            {secondaryCards.map((card) => (
+              <div key={card.key}>
+                <dt>{card.label}</dt>
+                <dd>{card.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
 
       <div className="market-snapshot__context-summary">
         <strong>Why these numbers matter</strong>

@@ -29,9 +29,42 @@ export interface VehicleMarketInventory {
   dealerCount: number;
   averagePrice: number;
   averageDaysOnLot: number;
+  statistics: VehicleMarketStatistics;
   bestPriceMatch?: MarketInventoryMatch;
   bestValueMatch?: MarketInventoryMatch;
 }
+
+export interface VehicleMarketStatistics {
+  currentYearCount: number;
+  previousYearCount: number;
+  followingYearCount: number;
+  priceDropCount: number;
+  newlyListedCount: number;
+  goodGreatPriceCount: number;
+  oneOwnerCount: number;
+  noAccidentCount: number;
+  lowPrice?: number;
+  highPrice?: number;
+  averageMileage?: number;
+  lowMileage?: number;
+  highMileage?: number;
+}
+
+export type MarketMetricKey =
+  | 'matches'
+  | 'averagePrice'
+  | 'lowPrice'
+  | 'highPrice'
+  | 'averageDays'
+  | 'newlyListed'
+  | 'priceDrops'
+  | 'previousYear'
+  | 'followingYear'
+  | 'goodGreatPrice'
+  | 'oneOwner'
+  | 'noAccidents'
+  | 'averageMileage'
+  | 'mileageRange';
 
 export const MARKET_LOCATION_OPTIONS: MarketLocation[] = [
   { label: 'Miami, FL', lat: 25.7617, lng: -80.1917, zipCode: '33101' },
@@ -64,6 +97,8 @@ export const resolveMarketLocationFromZip = (zipCode: string): MarketLocation | 
 };
 
 const CURRENT_MODEL_YEAR = 2026;
+const NEWLY_LISTED_DAYS = 30;
+const GOOD_PRICE_DISCOUNT = 0.015;
 
 const average = (values: number[]) => {
   if (values.length === 0) return 0;
@@ -72,6 +107,92 @@ const average = (values: number[]) => {
 
 export const getVehicleMarketCondition = (vehicle: Vehicle): VehicleCondition =>
   vehicle.condition === 'used' || parseInt(vehicle.year, 10) < CURRENT_MODEL_YEAR ? 'used' : 'new';
+
+const getAdjacentYearCount = ({
+  vehicle,
+  location,
+  radiusMiles,
+  targetYear,
+  condition,
+}: {
+  vehicle: Vehicle;
+  location: MarketLocation;
+  radiusMiles: DealerRadius;
+  targetYear: number;
+  condition: VehicleCondition;
+}) => {
+  const dealers = getDealersForVehicle(
+    vehicle.make,
+    vehicle.model,
+    location.lat,
+    location.lng,
+    vehicle.priceMin,
+    radiusMiles,
+    vehicle.priceMin,
+    vehicle.priceMax,
+    targetYear
+  );
+
+  return dealers.reduce(
+    (count, dealer) =>
+      count +
+      dealer.inventory.filter((unit) => condition === 'new' || !unit.isNew).length,
+    0
+  );
+};
+
+export const getVisibleMarketMetricKeys = (
+  market: VehicleMarketInventory
+): MarketMetricKey[] => {
+  const { statistics } = market;
+  const priority: MarketMetricKey[] = market.condition === 'used'
+    ? [
+        'matches',
+        'averagePrice',
+        'averageMileage',
+        'mileageRange',
+        'averageDays',
+        'goodGreatPrice',
+        'noAccidents',
+        'oneOwner',
+        'lowPrice',
+        'highPrice',
+        'priceDrops',
+        'newlyListed',
+        'previousYear',
+        'followingYear',
+      ]
+    : [
+        'matches',
+        'averagePrice',
+        'lowPrice',
+        'highPrice',
+        'averageDays',
+        'newlyListed',
+        'priceDrops',
+        'previousYear',
+      ];
+
+  const isAvailable: Record<MarketMetricKey, boolean> = {
+    matches: true,
+    averagePrice: market.inventoryCount > 0,
+    lowPrice: statistics.lowPrice !== undefined,
+    highPrice: statistics.highPrice !== undefined,
+    averageDays: market.averageDaysOnLot > 0,
+    newlyListed: statistics.newlyListedCount > 0,
+    priceDrops: statistics.priceDropCount > 0,
+    previousYear: statistics.previousYearCount > 0,
+    followingYear: statistics.followingYearCount > 0,
+    goodGreatPrice: statistics.goodGreatPriceCount > 0,
+    oneOwner: statistics.oneOwnerCount > 0,
+    noAccidents: statistics.noAccidentCount > 0,
+    averageMileage: statistics.averageMileage !== undefined,
+    mileageRange:
+      statistics.lowMileage !== undefined && statistics.highMileage !== undefined,
+  };
+
+  return priority.filter((key) => isAvailable[key]);
+};
 
 export const getVehicleMarketInventory = ({
   vehicle,
@@ -131,6 +252,26 @@ export const getVehicleMarketInventory = ({
   const daysOnLot = matches
     .map(({ unit }) => unit.daysOnLot ?? 0)
     .filter((value) => value > 0);
+  const prices = matches.map(({ unit }) => unit.price);
+  const mileages = matches
+    .map(({ unit }) => unit.mileage)
+    .filter((value): value is number => value !== undefined);
+  const previousYearCount = getAdjacentYearCount({
+    vehicle,
+    location,
+    radiusMiles,
+    targetYear: year - 1,
+    condition,
+  });
+  const followingYearCount = condition === 'used'
+    ? getAdjacentYearCount({
+        vehicle,
+        location,
+        radiusMiles,
+        targetYear: year + 1,
+        condition,
+      })
+    : 0;
 
   return {
     condition,
@@ -140,6 +281,25 @@ export const getVehicleMarketInventory = ({
     dealerCount: dealers.length,
     averagePrice,
     averageDaysOnLot: Math.round(average(daysOnLot)),
+    statistics: {
+      currentYearCount: matches.length,
+      previousYearCount,
+      followingYearCount,
+      priceDropCount: matches.filter(({ unit }) => (unit.recentPriceDropAmount ?? 0) > 0).length,
+      newlyListedCount: matches.filter(
+        ({ unit }) => (unit.daysOnLot ?? Number.POSITIVE_INFINITY) <= NEWLY_LISTED_DAYS
+      ).length,
+      goodGreatPriceCount: matches.filter(
+        ({ unit }) => unit.price <= averagePrice * (1 - GOOD_PRICE_DISCOUNT)
+      ).length,
+      oneOwnerCount: matches.filter(({ unit }) => unit.owners === 1).length,
+      noAccidentCount: matches.filter(({ unit }) => unit.accidents === 0).length,
+      lowPrice: prices.length > 0 ? Math.min(...prices) : undefined,
+      highPrice: prices.length > 0 ? Math.max(...prices) : undefined,
+      averageMileage: mileages.length > 0 ? Math.round(average(mileages)) : undefined,
+      lowMileage: mileages.length > 0 ? Math.min(...mileages) : undefined,
+      highMileage: mileages.length > 0 ? Math.max(...mileages) : undefined,
+    },
     bestPriceMatch: [...matches].sort((a, b) => a.unit.price - b.unit.price)[0],
     bestValueMatch: [...matches].sort((a, b) => {
       const scoreDelta = b.valueScore - a.valueScore;
