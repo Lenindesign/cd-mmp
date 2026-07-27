@@ -10,7 +10,7 @@
 }
 
 .market-intelligence-modal {
-  width: min(1120px, 100%);
+  width: min(1080px, 100%);
   max-height: calc(100vh - var(--spacing-12));
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -38,17 +38,61 @@
 .market-intelligence-modal__header {
   top: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, auto) auto;
+  gap: var(--spacing-6);
+  align-items: center;
+  padding: var(--spacing-6) var(--spacing-8);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.market-intelligence-modal__header--compact {
   grid-template-columns: minmax(0, 1fr) auto auto;
   gap: var(--spacing-4);
-  align-items: start;
-  padding: var(--spacing-5) var(--spacing-6);
-  border-bottom: 1px solid var(--color-gray-200);
+  padding: var(--spacing-2) var(--spacing-4);
+}
+
+.market-intelligence-modal__header--compact .market-intelligence-modal__hero {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.market-intelligence-modal__header--compact .market-intelligence-modal__hero-media,
+.market-intelligence-modal__header--compact .market-intelligence-modal__eyebrow,
+.market-intelligence-modal__header--compact .market-intelligence-modal__subhead,
+.market-intelligence-modal__header--compact .market-intelligence-modal__source-note {
+  display: none;
+}
+
+.market-intelligence-modal__header--compact .market-intelligence-modal__title {
+  overflow: hidden;
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-none);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.market-intelligence-modal__header--compact .market-intelligence-modal__header-metrics {
+  gap: var(--spacing-4);
+  padding-left: var(--spacing-4);
+}
+
+.market-intelligence-modal__header--compact .market-intelligence-modal__header-metric-label {
+  margin-bottom: 2px;
+}
+
+.market-intelligence-modal__header--compact .market-intelligence-modal__header-metric > strong {
+  font-size: var(--font-size-xl);
+}
+
+.market-intelligence-modal__header--compact .market-intelligence-modal__close {
+  width: 2rem;
+  height: 2rem;
 }
 
 .market-intelligence-modal__hero {
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: var(--spacing-4);
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: var(--spacing-5);
   align-items: center;
 }
 
@@ -69,18 +113,21 @@
 
 .market-intelligence-modal__eyebrow {
   margin: 0 0 var(--spacing-1);
-  font-family: var(--font-condensed);
-  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+  line-height: var(--line-height-none);
   text-transform: uppercase;
-  color: var(--color-gray-500);
+  color: var(--color-blue-cobalt);
 }
 
 .market-intelligence-modal__title {
   margin: 0;
-  font-size: 2rem;
-  line-height: 1;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-snug);
   letter-spacing: -0.025em;
   text-wrap: balance;
   color: var(--color-black);
@@ -104,41 +151,160 @@
 }
 
 .market-intelligence-modal__header-actions {
-  display: grid;
-  gap: var(--spacing-3);
-  align-self: stretch;
+  align-self: center;
 }
 
 .market-intelligence-modal__header-metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacing-2);
+  gap: var(--spacing-5);
+  padding-left: var(--spacing-6);
+  border-left: 1px solid var(--color-gray-200);
 }
 
-.market-intelligence-modal__header-metrics div {
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-gray-50);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
+.market-intelligence-modal__header-metrics > .market-intelligence-modal__header-metric {
+  position: relative;
+  min-width: 5.5rem;
 }
 
-.market-intelligence-modal__header-metrics span {
-  display: block;
+.market-intelligence-modal__header-metric-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
   margin-bottom: var(--spacing-1);
   font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-gray-500);
 }
 
-.market-intelligence-modal__header-metrics strong {
-  font-size: 1.75rem;
-  line-height: 1;
+.market-intelligence-modal__header-metric > strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-none);
   letter-spacing: -0.025em;
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--color-black);
+}
+
+.market-intelligence-modal__score-tooltip {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+}
+
+.market-intelligence-modal__score-tooltip-trigger {
+  width: 1.125rem;
+  height: 1.125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-gray-500);
+  cursor: help;
+}
+
+.market-intelligence-modal__score-tooltip-trigger:hover {
+  color: var(--color-blue-cobalt);
+}
+
+.market-intelligence-modal__score-tooltip-trigger:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+  color: var(--color-blue-cobalt);
+}
+
+.market-intelligence-modal__score-tooltip-content {
+  position: absolute;
+  top: calc(100% + var(--spacing-2));
+  z-index: 5;
+  width: min(18rem, calc(100vw - var(--spacing-8)));
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-gray-700);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: normal;
+  line-height: var(--line-height-normal);
+  text-align: left;
+  text-transform: none;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-0.25rem);
+  pointer-events: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
+}
+
+.market-intelligence-modal__header-metric--opportunity .market-intelligence-modal__score-tooltip-content {
+  left: 0;
+}
+
+.market-intelligence-modal__header-metric--deal .market-intelligence-modal__score-tooltip-content {
+  right: 0;
+}
+
+.market-intelligence-modal__score-tooltip:hover .market-intelligence-modal__score-tooltip-content,
+.market-intelligence-modal__score-tooltip:focus-within .market-intelligence-modal__score-tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.market-intelligence-modal__score-tooltip-title,
+.market-intelligence-modal__score-tooltip-intro,
+.market-intelligence-modal__score-tooltip-summary {
+  display: block;
+}
+
+.market-intelligence-modal__score-tooltip-title {
+  margin-bottom: var(--spacing-2);
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.market-intelligence-modal__score-tooltip-intro {
+  margin-bottom: var(--spacing-2);
+}
+
+.market-intelligence-modal__score-tooltip-factors {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.market-intelligence-modal__score-tooltip-factors > span {
+  position: relative;
+  display: block;
+  padding-left: var(--spacing-3);
+}
+
+.market-intelligence-modal__score-tooltip-factors > span::before {
+  content: '';
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 50%;
+  background: var(--color-blue-cobalt);
+}
+
+.market-intelligence-modal__score-tooltip-summary {
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+  color: var(--color-gray-600);
 }
 
 .market-intelligence-modal__close {
@@ -170,7 +336,7 @@
 .market-intelligence-modal__body {
   min-height: 0;
   overflow: auto;
-  padding: var(--spacing-6);
+  padding: var(--spacing-8);
   background: var(--color-white);
 }
 
@@ -187,11 +353,13 @@
 }
 
 .market-intelligence-modal__section-kicker {
-  margin: 0 0 var(--spacing-2);
-  font-family: var(--font-condensed);
-  font-size: var(--font-size-sm);
-  line-height: 1.3;
-  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--spacing-1);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-none);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--color-blue-cobalt);
 }
 
@@ -209,8 +377,10 @@
 
 .market-intelligence-modal__section-title {
   margin: 0;
-  font-size: 1.5rem;
-  line-height: 1.1;
+  font-family: var(--font-body) !important;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold) !important;
+  line-height: var(--line-height-snug);
   letter-spacing: -0.02em;
   text-wrap: balance;
   color: var(--color-black);
@@ -218,19 +388,22 @@
 
 .market-intelligence-modal__intelligence-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.9fr);
-  gap: var(--spacing-5);
-  padding: var(--spacing-5);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-  background: var(--color-gray-50);
+  grid-template-columns: minmax(0, 1.2fr) minmax(20rem, 0.8fr);
+  gap: var(--spacing-8);
+  align-items: start;
+  padding: var(--spacing-6);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
 }
 
 .market-intelligence-modal__intelligence-copy {
-  margin: var(--spacing-3) 0 var(--spacing-3);
-  max-width: 40ch;
-  font-size: 1.625rem;
-  line-height: 1.15;
+  margin: var(--spacing-3) 0 var(--spacing-2);
+  max-width: 44ch;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
   letter-spacing: -0.02em;
   text-wrap: pretty;
   color: var(--color-black);
@@ -239,18 +412,22 @@
 .market-intelligence-modal__intelligence-note {
   margin: 0;
   max-width: 60ch;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
   text-wrap: pretty;
   color: var(--color-gray-600);
 }
 
 .market-intelligence-modal__intelligence-metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--spacing-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
   margin: 0;
   align-content: start;
+  overflow: hidden;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-50);
 }
 
 .market-intelligence-modal__intelligence-metrics div,
@@ -258,8 +435,7 @@
 .market-intelligence-modal__strategy-card,
 .market-intelligence-modal__timeline-card,
 .market-intelligence-modal__toolkit-notes article,
-.market-intelligence-modal__alternative-card,
-.market-intelligence-modal__kpi-card {
+.market-intelligence-modal__alternative-card {
   border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-md);
   background: var(--color-white);
@@ -267,14 +443,26 @@
 
 .market-intelligence-modal__intelligence-metrics div {
   padding: var(--spacing-4);
+  border: 0;
+  background: transparent;
+}
+
+.market-intelligence-modal__intelligence-metrics div + div {
+  border-left: 1px solid var(--color-gray-200);
+}
+
+.market-intelligence-modal__intelligence-metrics div:nth-child(3) {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--color-gray-200);
+  border-left: 0;
 }
 
 .market-intelligence-modal__intelligence-metrics dt,
 .market-intelligence-modal__toolkit-metrics dt,
 .market-intelligence-modal__alternative-body dt {
   margin: 0 0 var(--spacing-2);
-  font-family: var(--font-condensed);
-  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -285,8 +473,10 @@
 .market-intelligence-modal__toolkit-metrics dd,
 .market-intelligence-modal__alternative-body dd {
   margin: 0;
-  font-size: 1.625rem;
-  line-height: 1.02;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-none);
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--color-black);
@@ -294,12 +484,17 @@
 
 .market-intelligence-modal__kpi-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--spacing-3);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-px);
+  overflow: hidden;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-gray-200);
 }
 
 .market-intelligence-modal__kpi-card {
-  padding: var(--spacing-4);
+  padding: var(--spacing-5);
+  background: var(--color-white);
 }
 
 .market-intelligence-modal__kpi-head,
@@ -312,8 +507,8 @@
 }
 
 .market-intelligence-modal__kpi-head span:first-child {
-  font-family: var(--font-condensed);
-  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -323,8 +518,10 @@
 .market-intelligence-modal__kpi-card strong {
   display: block;
   margin-top: var(--spacing-3);
-  font-size: 1.875rem;
-  line-height: 1;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-28);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-none);
   letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--color-black);
@@ -335,7 +532,7 @@
 .market-intelligence-modal__strategy-card p,
 .market-intelligence-modal__callout p,
 .market-intelligence-modal__toolkit-notes p,
-.market-intelligence-modal__dealer-cell span,
+.market-intelligence-modal__dealer-cell > span,
 .market-intelligence-modal__alternative-metrics,
 .market-intelligence-modal__alternative-body dl {
   margin: var(--spacing-2) 0 0;
@@ -343,30 +540,6 @@
   line-height: 1.55;
   text-wrap: pretty;
   color: var(--color-gray-600);
-}
-
-.market-intelligence-modal__trend {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--spacing-7);
-  height: var(--spacing-7);
-  border-radius: 50%;
-  background: var(--color-gray-100);
-}
-
-.market-intelligence-modal__trend--up {
-  color: var(--color-success);
-  background: var(--color-success-light);
-}
-
-.market-intelligence-modal__trend--down {
-  color: var(--color-blue-cobalt);
-  background: rgba(27, 95, 138, 0.1);
-}
-
-.market-intelligence-modal__trend--flat {
-  color: var(--color-gray-500);
 }
 
 .market-intelligence-modal__split {
@@ -391,7 +564,7 @@
 
 .market-intelligence-modal__ladder-row {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--spacing-4);
   align-items: center;
 }
@@ -416,6 +589,18 @@
   margin-bottom: var(--spacing-1);
 }
 
+.market-intelligence-modal__ladder-value {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--color-black);
+}
+
+.market-intelligence-modal__ladder-row--emphasis .market-intelligence-modal__ladder-copy strong,
+.market-intelligence-modal__ladder-row--emphasis .market-intelligence-modal__ladder-value {
+  color: var(--color-success);
+}
+
 .market-intelligence-modal__ladder-copy span,
 .market-intelligence-modal__callout span,
 .market-intelligence-modal__footer-summary span {
@@ -424,46 +609,16 @@
   color: var(--color-gray-500);
 }
 
-.market-intelligence-modal__progress-track {
-  height: 56px;
-  padding: var(--spacing-2);
-  display: flex;
-  align-items: center;
-  border-radius: var(--border-radius-md);
-  background: var(--color-gray-100);
-}
-
-.market-intelligence-modal__progress-fill {
-  height: 100%;
-  min-width: 48px;
-  border-radius: calc(var(--border-radius-md) - 2px);
-  transition: width var(--transition-fast);
-}
-
-.market-intelligence-modal__progress-fill--green {
-  background: var(--color-success);
-}
-
-.market-intelligence-modal__progress-fill--blue {
-  background: var(--color-blue-cobalt);
-}
-
-.market-intelligence-modal__progress-fill--dark {
-  background: var(--color-black);
-}
-
-.market-intelligence-modal__progress-fill--neutral {
-  background: var(--color-gray-500);
-}
-
 .market-intelligence-modal__callout {
   padding: var(--spacing-4);
 }
 
 .market-intelligence-modal__callout strong {
   margin-top: var(--spacing-2);
-  font-size: 2.15rem;
-  line-height: 1;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-28);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-none);
   letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums lining-nums;
 }
@@ -508,7 +663,7 @@
   position: sticky;
   top: 0;
   background: var(--color-gray-50);
-  font-family: var(--font-condensed);
+  font-family: var(--font-body);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.05em;
@@ -544,7 +699,6 @@
   padding: var(--spacing-4);
 }
 
-.market-intelligence-modal__strategy-card svg,
 .market-intelligence-modal__insight-banner svg {
   color: var(--color-blue-cobalt);
 }
@@ -649,7 +803,7 @@
   gap: var(--spacing-4);
   padding: var(--spacing-4) var(--spacing-6);
   border-top: 1px solid var(--color-gray-200);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .market-intelligence-modal__footer-summary {
@@ -661,26 +815,13 @@
 .market-intelligence-modal__footer-summary strong {
   display: block;
   margin-top: var(--spacing-1);
-  font-size: 1.9rem;
-  line-height: 1;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-none);
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--color-black);
-}
-
-.market-intelligence-modal .badge,
-.market-intelligence-modal .btn,
-.market-intelligence-modal .btn__text {
-  font-family: var(--font-body);
-}
-
-.market-intelligence-modal .badge {
-  padding: 0.375rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-semibold);
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .market-intelligence-modal__footer-actions {
@@ -702,6 +843,33 @@
 
   .market-intelligence-modal__header-actions {
     grid-column: 1 / -1;
+  }
+
+  .market-intelligence-modal__header-metrics {
+    padding-top: var(--spacing-4);
+    padding-left: 0;
+    border-top: 1px solid var(--color-gray-200);
+    border-left: 0;
+  }
+
+  .market-intelligence-modal__header--compact {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .market-intelligence-modal__header--compact .market-intelligence-modal__header-actions {
+    grid-column: auto;
+  }
+
+  .market-intelligence-modal__header--compact .market-intelligence-modal__header-metrics {
+    padding-top: 0;
+    padding-left: var(--spacing-4);
+    border-top: 0;
+    border-left: 1px solid var(--color-gray-200);
+  }
+
+  .market-intelligence-modal__header--compact .market-intelligence-modal__close {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .market-intelligence-modal__kpi-grid,
@@ -732,7 +900,6 @@
   }
 
   .market-intelligence-modal__header,
-  .market-intelligence-modal__hero,
   .market-intelligence-modal__intelligence-card,
   .market-intelligence-modal__split,
   .market-intelligence-modal__toolkit,
@@ -744,28 +911,64 @@
   }
 
   .market-intelligence-modal__header {
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--spacing-4);
   }
 
   .market-intelligence-modal__hero {
-    grid-template-columns: 1fr;
+    grid-column: 1;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: var(--spacing-3);
+  }
+
+  .market-intelligence-modal__header-actions {
+    grid-column: 1 / -1;
+  }
+
+  .market-intelligence-modal__close {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .market-intelligence-modal__header--compact {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--spacing-2);
+    padding-top: var(--spacing-2);
+    padding-bottom: var(--spacing-2);
+  }
+
+  .market-intelligence-modal__header--compact .market-intelligence-modal__header-actions {
+    grid-column: 1 / -1;
+  }
+
+  .market-intelligence-modal__header--compact .market-intelligence-modal__header-metrics {
+    gap: var(--spacing-4);
+    padding-top: var(--spacing-2);
+    padding-left: 0;
+    border-top: 1px solid var(--color-gray-200);
+    border-left: 0;
+  }
+
+  .market-intelligence-modal__header--compact .market-intelligence-modal__close {
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .market-intelligence-modal__hero-media {
-    max-width: 208px;
+    max-width: none;
   }
 
   .market-intelligence-modal__title {
-    font-size: 2.25rem;
+    font-size: var(--font-size-2xl);
   }
 
   .market-intelligence-modal__section-title {
-    font-size: 1.625rem;
+    font-size: var(--font-size-xl);
   }
 
   .market-intelligence-modal__intelligence-copy {
     max-width: none;
-    font-size: 2.125rem;
+    font-size: var(--font-size-lg);
   }
 
   .market-intelligence-modal__footer-actions,
@@ -783,6 +986,11 @@
   .market-intelligence-modal__toolkit-metrics,
   .market-intelligence-modal__alternative-body dl {
     grid-template-columns: 1fr;
+  }
+
+  .market-intelligence-modal__intelligence-metrics div + div {
+    border-top: 1px solid var(--color-gray-200);
+    border-left: 0;
   }
 
   .market-intelligence-modal__table th,
@@ -803,10 +1011,6 @@
   .market-intelligence-modal__footer-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .market-intelligence-modal__footer-actions .btn:first-child {
-    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
   }
 }
