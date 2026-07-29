@@ -361,6 +361,7 @@ const RateYourCarPage = () => {
           </div>
           <div className="rate-your-car__wordmark">What's Your Verdict?</div>
           <p>Every car leaves an impression. We want yours.</p>
+          <img src="/icon-candd.svg" alt="" aria-hidden="true" className="rate-your-car__brand-mark" />
         </header>
 
         <section className={`rate-your-car__card rate-your-car__card--${step}`} aria-live="polite">
