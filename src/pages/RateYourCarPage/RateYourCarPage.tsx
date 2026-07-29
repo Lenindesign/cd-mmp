@@ -9,11 +9,6 @@ import {
 } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Search, Star } from 'lucide-react';
-import {
-  Star as PhosphorStar,
-  TrendUp as PhosphorTrendUp,
-  UsersThree as PhosphorUsersThree,
-} from '@phosphor-icons/react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import './RateYourCarPage.css';
 
@@ -64,6 +59,21 @@ const POPULAR_VEHICLES = [
   'Honda CR-V',
   'Toyota Camry',
   'Mazda CX-5',
+];
+
+const BODY_STYLE_ICONS = [
+  {
+    label: 'Sedan',
+    src: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
+  },
+  {
+    label: 'Pickup',
+    src: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*',
+  },
+  {
+    label: 'SUV',
+    src: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
+  },
 ];
 
 const getVehicleName = (vehicle: Vehicle) => `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
@@ -344,18 +354,32 @@ const RateYourCarPage = () => {
 
       <div className="rate-your-car__container">
         <header className="rate-your-car__hero">
-          <img src="/rate-your-car-logo.svg?v=light" alt="Rate Your Car" className="rate-your-car__logo" />
-          <p>Search for your vehicle and rate how it stacks up.</p>
+          <div className="rate-your-car__hero-stars" aria-hidden="true">
+            {Array.from({ length: 5 }, (_, index) => (
+              <Star key={index} fill="currentColor" strokeWidth={1.5} />
+            ))}
+          </div>
+          <div className="rate-your-car__wordmark">What's Your Verdict?</div>
+          <p>Every car leaves an impression. We want yours.</p>
         </header>
 
         <section className={`rate-your-car__card rate-your-car__card--${step}`} aria-live="polite">
           {step === 'select' && (
             <div className="rate-your-car__select-step">
-              <div className="rate-your-car__vehicle-trio" aria-hidden="true">
-                {featuredVehicles.map((vehicle) => (
-                  <VehiclePhoto key={vehicle.id} vehicle={vehicle} className="rate-your-car__trio-photo" />
+              <ul className="rate-your-car__body-style-row" aria-label="Vehicle body styles">
+                {BODY_STYLE_ICONS.map(({ label, src }) => (
+                  <li key={label}>
+                    <img
+                      src={src}
+                      alt=""
+                      onError={(event) => {
+                        event.currentTarget.hidden = true;
+                      }}
+                    />
+                    <span>{label}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
               <div className="rate-your-car__select-intro">
                 <p className="rate-your-car__eyebrow">Car and Driver community</p>
                 <h1>What do you drive?</h1>
@@ -501,22 +525,19 @@ const RateYourCarPage = () => {
 
         {step !== 'done' && (
           <section className="rate-your-car__benefits" aria-labelledby="rate-your-car-benefits-title">
-            <h2 id="rate-your-car-benefits-title">Why your rating matters</h2>
+            <h2 id="rate-your-car-benefits-title">Put Your Experience on the Record</h2>
             <div className="rate-your-car__benefit-grid">
               <article>
-                <PhosphorUsersThree aria-hidden="true" weight="bold" />
-                <h3>Help real buyers</h3>
-                <p>Your honest opinion helps shoppers make more confident decisions.</p>
+                <h3>Add to the Expert Perspective</h3>
+                <p>Your firsthand experience complements Car and Driver’s expert reviews with insight from everyday ownership.</p>
               </article>
               <article>
-                <PhosphorStar aria-hidden="true" weight="bold" />
-                <h3>Guide C/D research</h3>
-                <p>Owner ratings add real-world context to vehicle research.</p>
+                <h3>Share What Stands Out</h3>
+                <p>Tell us what you love, what you would change, and what other drivers should know.</p>
               </article>
               <article>
-                <PhosphorTrendUp aria-hidden="true" weight="bold" />
-                <h3>Shape the market</h3>
-                <p>Your rating contributes to the community scores shoppers compare.</p>
+                <h3>Make Your Miles Count</h3>
+                <p>Add your voice to a community of drivers sharing honest, real-world opinions about their cars.</p>
               </article>
             </div>
           </section>
