@@ -241,6 +241,33 @@
   line-height: var(--line-height-normal);
 }
 
+.market-snapshot__elot.aio-payment__light-affordable-section {
+  margin: 0;
+  padding: var(--spacing-5) 0 0;
+  background: transparent;
+  border-top: var(--spacing-px) solid var(--color-gray-200);
+}
+
+.market-snapshot__elot > .container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+.market-snapshot__elot .aio-payment__light-elot-head h2 {
+  font-size: var(--font-size-24);
+}
+
+.market-snapshot__elot .aio-payment__light-elot-results-line {
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+}
+
+.market-snapshot__elot .aio-payment__light-elot-results-line svg {
+  color: var(--color-gray-700);
+}
+
 .market-snapshot__empty {
   padding: var(--spacing-6);
   background: var(--color-white);

@@ -79,6 +79,8 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Toyota Brand Hub', path: '/brands/toyota' },
         { label: 'Vehicle Ranking', path: '/rankings' },
         { label: 'Rate Your Car', path: '/rate-your-car' },
+        { label: 'Market Snapshot (New Car)', path: '/2026/Chevrolet/Trax#market-intelligence-snapshot' },
+        { label: 'Market Snapshot (Used Car)', path: '/2025/Chevrolet/Trax#market-intelligence-snapshot' },
         { label: 'Payment Estimate Email Mock (New Car)', path: '/payment-estimate-email-mock.html?variant=standard', external: true },
         { label: 'Payment Estimate Email Mock (Used Car)', path: '/payment-estimate-email-mock.html?variant=used-car', external: true },
         { label: 'Payment Estimate Email Mock (Body Style)', path: '/payment-estimate-email-mock.html?variant=body-style', external: true },
@@ -189,6 +191,8 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <Link to="/admin/feedback" className="footer__legal-link">Comments Dashboard</Link>
               <Link to="/2026/Chevrolet/Trax?offersVersion=a" className="footer__legal-link">Incentives Version A</Link>
               <Link to="/2026/Chevrolet/Trax?modalVersion=b" className="footer__legal-link">Modal Version B</Link>
+              <Link to="/2026/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot New</Link>
+              <Link to="/2025/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot Used</Link>
             </div>
           </div>
         </div>
@@ -198,4 +202,3 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
 };
 
 export default Footer;
-
