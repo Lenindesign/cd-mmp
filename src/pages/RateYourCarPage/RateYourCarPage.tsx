@@ -38,6 +38,8 @@ interface VehicleSearchFieldProps {
 }
 
 const RATING_STORAGE_KEY = 'cd-mmp:vehicle-ratings';
+const RATE_YOUR_CAR_BACKGROUND_IMAGE = 'https://hips.hearstapps.com/hmg-prod/images/10best-cars-group-1546439689.jpg';
+const VEHICLE_SELECTOR_IMAGE = 'https://hips.hearstapps.com/hmg-prod/images/2025-editors-choice-illustration-by-ryan-olbrysh-copy-67996747e6975.jpeg';
 
 const RATING_LABELS: Record<number, string> = {
   10: 'Awful',
@@ -61,18 +63,21 @@ const POPULAR_VEHICLES = [
   'Mazda CX-5',
 ];
 
-const BODY_STYLE_ICONS = [
+const BENEFIT_ITEMS = [
   {
-    label: 'Sedan',
-    src: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/sedans-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
+    title: 'Add to the Expert Perspective',
+    body: 'Your firsthand experience complements Car and Driver’s expert reviews with insight from everyday ownership.',
+    icon: '/rate-your-car-icons/share-feedback.png',
   },
   {
-    label: 'Pickup',
-    src: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/trucks-1585158794.png?crop=1.00xw:0.502xh;0,0.236xh&resize=180:*',
+    title: 'Share What Stands Out',
+    body: 'Tell us what you love, what you would change, and what other drivers should know.',
+    icon: '/rate-your-car-icons/expert-star.svg',
   },
   {
-    label: 'SUV',
-    src: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/suv-1585158794.png?crop=1.00xw:0.502xh;0,0.260xh&resize=180:*',
+    title: 'Make Your Miles Count',
+    body: 'Add your voice to a community of drivers sharing honest, real-world opinions about their cars.',
+    icon: '/rate-your-car-icons/road-horizon.svg',
   },
 ];
 
@@ -275,27 +280,12 @@ const RateYourCarPage = () => {
       .filter((vehicle): vehicle is VehicleOption => Boolean(vehicle))
   ), [vehicles]);
 
-  const featuredVehicles = useMemo(() => {
-    const choices = [
-      popularVehicles[2],
-      popularVehicles[0],
-      popularVehicles[1],
-      ...vehicles,
-    ].filter((vehicle): vehicle is VehicleOption => Boolean(vehicle));
-    const seen = new Set<string>();
-    return choices.filter((vehicle) => {
-      if (seen.has(vehicle.id)) return false;
-      seen.add(vehicle.id);
-      return true;
-    }).slice(0, 3);
-  }, [popularVehicles, vehicles]);
-
   const [step, setStep] = useState<RatingStep>('select');
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleOption | null>(null);
   const [selectedRating, setSelectedRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [backgroundFailed, setBackgroundFailed] = useState(false);
-  const backgroundVehicle = selectedVehicle || featuredVehicles[0];
+  const [selectorImageFailed, setSelectorImageFailed] = useState(false);
   const displayRating = hoveredRating || selectedRating;
 
   const selectVehicle = (vehicle: VehicleOption) => {
@@ -314,10 +304,6 @@ const RateYourCarPage = () => {
     if (match) selectVehicle(match);
   }, [searchParams, selectedVehicle, vehicles]);
 
-  useEffect(() => {
-    setBackgroundFailed(false);
-  }, [backgroundVehicle?.image]);
-
   const submitRating = () => {
     if (!selectedVehicle || selectedRating === 0) return;
     storeRating(selectedVehicle, selectedRating);
@@ -333,22 +319,22 @@ const RateYourCarPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const backgroundStyle = backgroundVehicle?.image && !backgroundFailed
-    ? ({ '--rate-your-car-background': `url("${backgroundVehicle.image}")` } as CSSProperties)
+  const backgroundStyle = !backgroundFailed
+    ? ({ '--rate-your-car-background': `url("${RATE_YOUR_CAR_BACKGROUND_IMAGE}")` } as CSSProperties)
     : undefined;
 
   return (
     <div className="rate-your-car" style={backgroundStyle}>
-      {backgroundVehicle?.image && !backgroundFailed && (
+      {!backgroundFailed && (
         <img
           className="rate-your-car__background-probe"
-          src={backgroundVehicle.image}
+          src={RATE_YOUR_CAR_BACKGROUND_IMAGE}
           alt=""
           aria-hidden="true"
           onError={() => setBackgroundFailed(true)}
         />
       )}
-      {backgroundVehicle?.image && backgroundFailed && (
+      {backgroundFailed && (
         <span className="rate-your-car__background-missing">Vehicle photo unavailable</span>
       )}
 
@@ -359,40 +345,39 @@ const RateYourCarPage = () => {
               <Star key={index} fill="currentColor" strokeWidth={1.5} />
             ))}
           </div>
-          <div className="rate-your-car__wordmark">What's Your Verdict?</div>
+          <div className="rate-your-car__wordmark">Review Your Car</div>
           <p>Every car leaves an impression. We want yours.</p>
-          <img src="/icon-candd.svg" alt="" aria-hidden="true" className="rate-your-car__brand-mark" />
         </header>
 
         <section className={`rate-your-car__card rate-your-car__card--${step}`} aria-live="polite">
           {step === 'select' && (
             <div className="rate-your-car__select-step">
-              <ul className="rate-your-car__body-style-row" aria-label="Vehicle body styles">
-                {BODY_STYLE_ICONS.map(({ label, src }) => (
-                  <li key={label}>
-                    <img
-                      src={src}
-                      alt=""
-                      onError={(event) => {
-                        event.currentTarget.hidden = true;
-                      }}
-                    />
-                    <span>{label}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="rate-your-car__select-intro">
-                <p className="rate-your-car__eyebrow">Car and Driver community</p>
-                <h1>What do you drive?</h1>
-                <p>Search for your vehicle to get started.</p>
+              <div className="rate-your-car__selector-art">
+                {!selectorImageFailed ? (
+                  <img
+                    src={VEHICLE_SELECTOR_IMAGE}
+                    alt=""
+                    aria-hidden="true"
+                    onError={() => setSelectorImageFailed(true)}
+                  />
+                ) : (
+                  <span>Illustration unavailable</span>
+                )}
               </div>
-              <VehicleSearchField
-                large
-                placeholder="Search by year, make, or model..."
-                options={vehicles}
-                popularOptions={popularVehicles}
-                onSelect={selectVehicle}
-              />
+              <div className="rate-your-car__select-content">
+                <div className="rate-your-car__select-intro">
+                  <p className="rate-your-car__eyebrow">Car and Driver wants to know</p>
+                  <h1>What do you drive?</h1>
+                  <p>Search for your vehicle to get started.</p>
+                </div>
+                <VehicleSearchField
+                  large
+                  placeholder="Search by year, make, or model..."
+                  options={vehicles}
+                  popularOptions={popularVehicles}
+                  onSelect={selectVehicle}
+                />
+              </div>
             </div>
           )}
 
@@ -528,18 +513,15 @@ const RateYourCarPage = () => {
           <section className="rate-your-car__benefits" aria-labelledby="rate-your-car-benefits-title">
             <h2 id="rate-your-car-benefits-title">Put Your Experience on the Record</h2>
             <div className="rate-your-car__benefit-grid">
-              <article>
-                <h3>Add to the Expert Perspective</h3>
-                <p>Your firsthand experience complements Car and Driver’s expert reviews with insight from everyday ownership.</p>
-              </article>
-              <article>
-                <h3>Share What Stands Out</h3>
-                <p>Tell us what you love, what you would change, and what other drivers should know.</p>
-              </article>
-              <article>
-                <h3>Make Your Miles Count</h3>
-                <p>Add your voice to a community of drivers sharing honest, real-world opinions about their cars.</p>
-              </article>
+              {BENEFIT_ITEMS.map((item) => (
+                <article key={item.title}>
+                  <span className="rate-your-car__benefit-icon" aria-hidden="true">
+                    <img src={item.icon} alt="" />
+                  </span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </article>
+              ))}
             </div>
           </section>
         )}

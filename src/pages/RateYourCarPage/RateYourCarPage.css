@@ -43,7 +43,7 @@
 .rate-your-car__container {
   position: relative;
   z-index: 1;
-  width: min(100%, 720px);
+  width: min(100%, 1120px);
   margin: 0 auto;
   padding: 52px 32px 72px;
 }
@@ -72,11 +72,10 @@
   margin: 0 auto var(--spacing-2);
   color: var(--color-white);
   font-family: var(--font-display);
-  font-size: clamp(3rem, 8vw, 3.375rem);
+  font-size: clamp(3rem, 8vw, 4rem);
   font-weight: var(--font-weight-black);
-  letter-spacing: -0.045em;
+  letter-spacing: 0;
   line-height: 0.95;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -88,13 +87,6 @@
   line-height: 1.5;
 }
 
-.rate-your-car__brand-mark {
-  display: block;
-  width: 16px;
-  height: auto;
-  margin: var(--spacing-3) auto 0;
-}
-
 .rate-your-car__card {
   overflow: visible;
   color: var(--color-dark);
@@ -104,45 +96,50 @@
   box-shadow: 0 18px 48px rgba(11, 34, 48, 0.16);
 }
 
+.rate-your-car__card--rate,
+.rate-your-car__card--done {
+  width: min(100%, 720px);
+  margin: 0 auto;
+}
+
+.rate-your-car__card--select {
+  width: min(100%, 840px);
+  margin: 0 auto;
+}
+
 .rate-your-car__select-step {
-  padding: 28px 40px 44px;
+  overflow: hidden;
+  border-radius: inherit;
 }
 
-.rate-your-car__body-style-row {
+.rate-your-car__selector-art {
   display: flex;
-  gap: var(--spacing-4);
-  align-items: flex-end;
   justify-content: center;
-  width: min(100%, 626px);
-  margin: 0 auto var(--spacing-6);
-  padding: 0;
-  list-style: none;
+  aspect-ratio: 2.52 / 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--color-gray-100);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
-.rate-your-car__body-style-row li {
-  display: grid;
-  flex: 1 1 0;
-  gap: var(--spacing-2);
-  justify-items: center;
-  min-width: 0;
-  max-width: 198px;
-}
-
-.rate-your-car__body-style-row img {
+.rate-your-car__selector-art img {
   display: block;
   width: 100%;
-  height: 99px;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 52%;
 }
 
-.rate-your-car__body-style-row span {
-  color: var(--color-blue-cobalt);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.06em;
-  line-height: 1;
-  text-transform: uppercase;
+.rate-your-car__selector-art span {
+  align-self: center;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+}
+
+.rate-your-car__select-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px clamp(28px, 5vw, 56px) 32px;
 }
 
 .rate-your-car__photo-missing {
@@ -157,7 +154,7 @@
 }
 
 .rate-your-car__select-intro {
-  margin-bottom: var(--spacing-6);
+  margin-bottom: 30px;
   text-align: center;
 }
 
@@ -182,7 +179,18 @@
   line-height: 1.1;
 }
 
-.rate-your-car__select-intro > p:last-child,
+.rate-your-car__select-intro h1 {
+  font-size: clamp(2.25rem, 4.8vw, 3.375rem);
+  line-height: 1;
+}
+
+.rate-your-car__select-intro > p:last-child {
+  margin: var(--spacing-3) 0 0;
+  color: var(--color-gray-600);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.35;
+}
+
 .rate-your-car__done-step > p:not(.rate-your-car__eyebrow) {
   margin: var(--spacing-2) 0 0;
   color: var(--color-gray-600);
@@ -233,13 +241,16 @@
 }
 
 .rate-your-car__search-control--large input {
-  min-height: 64px;
-  padding-left: 56px;
-  font-size: var(--font-size-lg);
+  min-height: 68px;
+  padding-left: 68px;
+  border: 2px solid var(--color-gray-500);
+  border-radius: var(--border-radius-lg);
+  box-shadow: none;
+  font-size: clamp(1.125rem, 2.2vw, 1.5rem);
 }
 
 .rate-your-car__search-control--large > svg {
-  left: var(--spacing-5);
+  left: 28px;
   color: var(--color-blue-cobalt);
 }
 
@@ -545,42 +556,76 @@
 }
 
 .rate-your-car__benefits {
+  width: min(100%, 840px);
   margin-top: var(--spacing-8);
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
 }
 
 .rate-your-car__benefits > h2 {
   margin: 0 0 var(--spacing-5);
   color: var(--color-white);
-  font-size: var(--font-size-2xl);
-  text-align: center;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0;
+  line-height: 1.1;
 }
 
 .rate-your-car__benefit-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid rgb(255 255 255 / 42%);
+  gap: var(--spacing-4);
 }
 
 .rate-your-car__benefit-grid article {
-  padding: var(--spacing-5) var(--spacing-4) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  min-height: 206px;
+  padding: var(--spacing-5) var(--spacing-4);
+  color: var(--color-dark);
+  background: rgb(255 255 255 / 94%);
+  border: 1px solid rgb(255 255 255 / 56%);
+  border-radius: var(--border-radius-sm);
+  box-shadow: 0 18px 42px rgba(11, 34, 48, 0.2);
   text-align: center;
 }
 
-.rate-your-car__benefit-grid article + article {
-  border-left: 1px solid rgb(255 255 255 / 28%);
+.rate-your-car__benefit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--spacing-3);
+  background: transparent;
+  border: 0;
+}
+
+.rate-your-car__benefit-icon img {
+  display: block;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
 }
 
 .rate-your-car__benefit-grid h3 {
   margin: 0 0 var(--spacing-2);
-  color: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-heading);
   font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
 }
 
 .rate-your-car__benefit-grid p {
   margin: 0;
-  color: rgb(255 255 255 / 84%);
+  color: var(--color-gray-600);
   font-size: var(--font-size-sm);
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 @media (max-width: 640px) {
@@ -605,29 +650,43 @@
     font-size: var(--font-size-base);
   }
 
-  .rate-your-car__brand-mark {
-    width: 14px;
-  }
-
   .rate-your-car__select-step {
-    padding: var(--spacing-5) var(--spacing-4) var(--spacing-6);
+    padding: 0;
   }
 
-  .rate-your-car__body-style-row {
-    gap: var(--spacing-2);
+  .rate-your-car__selector-art {
+    aspect-ratio: 1.65 / 1;
   }
 
-  .rate-your-car__body-style-row img {
-    height: 54px;
+  .rate-your-car__select-content {
+    padding: var(--spacing-6) var(--spacing-4) var(--spacing-7);
   }
 
   .rate-your-car h1 {
     font-size: var(--font-size-2xl);
   }
 
+  .rate-your-car__select-intro {
+    margin-bottom: var(--spacing-5);
+  }
+
+  .rate-your-car__select-intro h1 {
+    font-size: clamp(2.4rem, 12vw, 3.5rem);
+  }
+
+  .rate-your-car__select-intro > p:last-child {
+    margin-top: var(--spacing-3);
+    font-size: var(--font-size-lg);
+  }
+
   .rate-your-car__search-control--large input {
-    min-height: 56px;
-    font-size: var(--font-size-base);
+    min-height: 64px;
+    padding-left: 56px;
+    font-size: var(--font-size-lg);
+  }
+
+  .rate-your-car__search-control--large > svg {
+    left: var(--spacing-5);
   }
 
   .rate-your-car__vehicle-header {
@@ -688,13 +747,8 @@
   }
 
   .rate-your-car__benefit-grid article {
-    padding: var(--spacing-4) 0;
-    text-align: left;
-  }
-
-  .rate-your-car__benefit-grid article + article {
-    border-top: 1px solid rgb(255 255 255 / 28%);
-    border-left: 0;
+    min-height: 0;
+    padding: var(--spacing-5);
   }
 
   .rate-your-car__benefit-grid h3 {
