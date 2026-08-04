@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Instagram, Youtube, Mail, Sparkles } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Mail, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
 import { Button } from '../Button';
@@ -79,6 +79,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Toyota Brand Hub', path: '/brands/toyota' },
         { label: 'Vehicle Ranking', path: '/rankings' },
         { label: 'Rate Your Car', path: '/rate-your-car' },
+        { label: 'Chatbot Experience Guide', path: '/chatbot-experience' },
         { label: 'Market Snapshot (New Car)', path: '/2026/Chevrolet/Trax#market-intelligence-snapshot' },
         { label: 'Market Snapshot (Used Car)', path: '/2025/Chevrolet/Trax#market-intelligence-snapshot' },
         { label: 'Payment Estimate Email Mock (New Car)', path: '/payment-estimate-email-mock.html?variant=standard', external: true },
@@ -165,12 +166,13 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
             <div className="footer__legal">
               <button
                 type="button"
-                className="footer__legal-link footer__legal-link--button"
+                className={`footer__legal-link footer__legal-link--button footer__chat-toggle${carFinderEnabled ? ' footer__chat-toggle--active' : ''}`}
                 onClick={toggleCarFinder}
                 aria-pressed={carFinderEnabled}
+                aria-label={carFinderEnabled ? 'Deactivate chatbot' : 'Activate chatbot'}
               >
-                <Sparkles size={14} aria-hidden />
-                {carFinderEnabled ? 'Hide Find My Car' : 'Find My Car'}
+                <MessageCircle size={14} aria-hidden />
+                {carFinderEnabled ? 'Deactivate chatbot' : 'Activate chatbot'}
               </button>
               {onAccountPromptOpen && (
                 <button

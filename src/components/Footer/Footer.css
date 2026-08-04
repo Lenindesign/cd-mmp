@@ -229,6 +229,14 @@
   color: inherit;
 }
 
+.footer__chat-toggle {
+  color: var(--color-gray-400);
+}
+
+.footer__chat-toggle--active {
+  color: var(--color-white);
+}
+
 .footer__legal-link:hover,
 .footer__legal-link--button:hover {
   color: var(--color-white);

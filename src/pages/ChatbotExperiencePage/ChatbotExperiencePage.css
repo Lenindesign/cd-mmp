@@ -1,0 +1,330 @@
+.chatbot-experience {
+  min-height: 100vh;
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.chatbot-experience__hero {
+  background: var(--color-black);
+  color: var(--color-white);
+  padding: var(--spacing-16) 0 var(--spacing-12);
+}
+
+.chatbot-experience__hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  gap: var(--spacing-10);
+  align-items: center;
+}
+
+.chatbot-experience__hero-copy h1,
+.chatbot-experience__section-heading h2,
+.chatbot-experience__section-copy h2,
+.chatbot-experience__handoff h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.chatbot-experience__hero-copy h1 {
+  max-width: 820px;
+  margin-top: var(--spacing-4);
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  text-transform: uppercase;
+}
+
+.chatbot-experience__hero-copy p,
+.chatbot-experience__section-heading p,
+.chatbot-experience__section-copy p,
+.chatbot-experience__handoff p {
+  max-width: 720px;
+  margin: var(--spacing-4) 0 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+}
+
+.chatbot-experience__hero-copy p {
+  color: var(--color-gray-400);
+}
+
+.chatbot-experience__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chatbot-experience__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-8);
+}
+
+.chatbot-experience__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  min-height: 44px;
+  padding: var(--spacing-3) var(--spacing-5);
+  border: 1px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-md);
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.chatbot-experience__button:hover {
+  border-color: var(--color-white);
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.chatbot-experience__button--secondary {
+  background: transparent;
+  border-color: var(--color-gray-700);
+}
+
+.chatbot-experience__button--inline:hover {
+  border-color: var(--color-black);
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.chatbot-experience__hero-panel {
+  padding: var(--spacing-6);
+  border: 1px solid var(--color-gray-800);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-gray-900);
+}
+
+.chatbot-experience__panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.chatbot-experience__flow-list {
+  display: grid;
+  gap: var(--spacing-3);
+  margin: var(--spacing-5) 0 0;
+  padding-left: var(--spacing-5);
+  color: var(--color-gray-300);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.chatbot-experience__section {
+  padding: var(--spacing-16) 0;
+}
+
+.chatbot-experience__section--gray {
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.chatbot-experience__section--dark {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.chatbot-experience__section--dark .chatbot-experience__section-copy p {
+  color: var(--color-gray-400);
+}
+
+.chatbot-experience__section-heading {
+  margin-bottom: var(--spacing-8);
+}
+
+.chatbot-experience__section-heading h2,
+.chatbot-experience__section-copy h2,
+.chatbot-experience__handoff h2 {
+  margin-top: var(--spacing-3);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  text-transform: uppercase;
+}
+
+.chatbot-experience__experience-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.78fr) minmax(320px, 1fr);
+  gap: var(--spacing-10);
+  align-items: start;
+}
+
+.chatbot-experience__demo-shell {
+  min-width: 0;
+}
+
+.chatbot-experience__demo-shell .car-finder-chat {
+  height: 620px;
+  max-height: none;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.chatbot-experience__offer-grid,
+.chatbot-experience__architecture-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.chatbot-experience__offer-card,
+.chatbot-experience__architecture-card {
+  min-width: 0;
+  padding: var(--spacing-5);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-white);
+}
+
+.chatbot-experience__offer-card svg {
+  color: var(--color-blue-cobalt);
+}
+
+.chatbot-experience__offer-card h3,
+.chatbot-experience__architecture-card h3 {
+  margin: var(--spacing-4) 0 var(--spacing-2);
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.chatbot-experience__offer-card p,
+.chatbot-experience__architecture-card p {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.chatbot-experience__architecture-card span {
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chatbot-experience__implementation-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(320px, 1fr);
+  gap: var(--spacing-10);
+  align-items: start;
+}
+
+.chatbot-experience__step-list {
+  display: grid;
+  gap: var(--spacing-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chatbot-experience__step-list li {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: var(--spacing-3);
+  align-items: start;
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-800);
+  border-radius: var(--border-radius-md);
+  background: var(--color-gray-900);
+  color: var(--color-gray-300);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.chatbot-experience__step-list svg {
+  margin-top: 2px;
+  color: var(--color-blue-cobalt-light);
+}
+
+.chatbot-experience__handoff {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--spacing-4);
+  align-items: end;
+}
+
+.chatbot-experience__text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.chatbot-experience__text-link:hover {
+  color: var(--color-black);
+}
+
+@media (max-width: 1024px) {
+  .chatbot-experience__hero-inner,
+  .chatbot-experience__experience-grid,
+  .chatbot-experience__implementation-grid,
+  .chatbot-experience__handoff {
+    grid-template-columns: 1fr;
+  }
+
+  .chatbot-experience__offer-grid,
+  .chatbot-experience__architecture-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chatbot-experience__handoff {
+    align-items: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .chatbot-experience__hero,
+  .chatbot-experience__section {
+    padding: var(--spacing-10) 0;
+  }
+
+  .chatbot-experience__hero-actions {
+    flex-direction: column;
+  }
+
+  .chatbot-experience__button,
+  .chatbot-experience__text-link {
+    width: 100%;
+  }
+
+  .chatbot-experience__offer-grid,
+  .chatbot-experience__architecture-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chatbot-experience__demo-shell .car-finder-chat {
+    height: 620px;
+  }
+}

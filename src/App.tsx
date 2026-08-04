@@ -22,6 +22,7 @@ const VehiclePageConcept = lazy(() => import('./pages/VehiclePage/VehiclePageCon
 const ReliabilityRecallsPage = lazy(() => import('./pages/ReliabilityRecallsPage/ReliabilityRecallsPage'));
 const VehiclesListPage = lazy(() => import('./pages/VehiclesListPage/VehiclesListPage'));
 const DesignSystem = lazy(() => import('./pages/DesignSystem/DesignSystem'));
+const ChatbotExperiencePage = lazy(() => import('./pages/ChatbotExperiencePage/ChatbotExperiencePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 
 // Onboarding pages - lazy loaded as a group (2-step flow)
@@ -120,6 +121,7 @@ const CarFinderChatGate = () => {
   return (
     <CarFinderChat
       floating
+      defaultOpen
       position="bottom-right"
       onVehicleSelect={(vehicle) => {
         window.location.href = `/${vehicle.year}/${vehicle.make.toLowerCase()}/${vehicle.model.toLowerCase().replace(/\s+/g, '-')}`;
@@ -226,6 +228,7 @@ const accountRoutes = <Route path="/account" element={<MyAccount />} />;
 const internalRoutes = (
   <>
     <Route path="/design-system" element={<DesignSystem />} />
+    <Route path="/chatbot-experience" element={<ChatbotExperiencePage />} />
     <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
     <Route path="/admin/feedback" element={<FeedbackAdmin />} />
     <Route path="/audit/cards" element={<CardAudit />} />
