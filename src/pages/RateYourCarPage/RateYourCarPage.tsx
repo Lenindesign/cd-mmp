@@ -5,14 +5,16 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type FormEvent,
   type KeyboardEvent,
 } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Search, Star } from 'lucide-react';
+import { Check, Search, Star, X } from 'lucide-react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import './RateYourCarPage.css';
 
 type RatingStep = 'select' | 'rate' | 'done';
+type ReviewCategory = 'driverExperience' | 'reliability' | 'manufacturerWarranty' | 'budgetFriendly';
 
 interface VehicleOption {
   id: string;
@@ -28,6 +30,19 @@ interface StoredRating {
   timestamp: number;
 }
 
+interface StoredReview {
+  id: string;
+  vehicleId: string;
+  vehicleName: string;
+  rating: number;
+  title: string;
+  body: string;
+  relationship: string;
+  experience: string;
+  categoryRatings: Record<ReviewCategory, number>;
+  timestamp: number;
+}
+
 interface VehicleSearchFieldProps {
   label?: string;
   placeholder: string;
@@ -38,6 +53,7 @@ interface VehicleSearchFieldProps {
 }
 
 const RATING_STORAGE_KEY = 'cd-mmp:vehicle-ratings';
+const REVIEW_STORAGE_KEY = 'cd-mmp:vehicle-reviews';
 const RATE_YOUR_CAR_BACKGROUND_IMAGE = 'https://hips.hearstapps.com/hmg-prod/images/10best-cars-group-1546439689.jpg';
 const VEHICLE_SELECTOR_IMAGE = 'https://hips.hearstapps.com/hmg-prod/images/2025-editors-choice-illustration-by-ryan-olbrysh-copy-67996747e6975.jpeg';
 
@@ -81,6 +97,36 @@ const BENEFIT_ITEMS = [
   },
 ];
 
+const REVIEW_CATEGORY_ITEMS: Array<{ key: ReviewCategory; label: string; body: string }> = [
+  {
+    key: 'driverExperience',
+    label: 'Driver Experience',
+    body: 'Handling, comfort, and overall driving feel',
+  },
+  {
+    key: 'reliability',
+    label: 'Reliability',
+    body: 'Dependability and performance over time',
+  },
+  {
+    key: 'manufacturerWarranty',
+    label: 'Manufacturer Warranty',
+    body: 'Coverage quality and support experience',
+  },
+  {
+    key: 'budgetFriendly',
+    label: 'Budget Friendly',
+    body: 'Cost of ownership and overall value',
+  },
+];
+
+const EMPTY_REVIEW_CATEGORY_RATINGS: Record<ReviewCategory, number> = {
+  driverExperience: 0,
+  reliability: 0,
+  manufacturerWarranty: 0,
+  budgetFriendly: 0,
+};
+
 const getVehicleName = (vehicle: Vehicle) => `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
 
 const toVehicleOption = (vehicle: Vehicle): VehicleOption => ({
@@ -111,6 +157,42 @@ const storeRating = (vehicle: VehicleOption, rating: number) => {
     localStorage.setItem(RATING_STORAGE_KEY, JSON.stringify(ratings));
   } catch {
     // A storage failure should not block the rating confirmation state.
+  }
+};
+
+const readStoredReview = (vehicleId: string): StoredReview | null => {
+  try {
+    const reviews = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}') as Record<string, StoredReview>;
+    return reviews[vehicleId] || null;
+  } catch {
+    return null;
+  }
+};
+
+const storeReview = (review: StoredReview) => {
+  try {
+    const reviews = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY) || '{}') as Record<string, StoredReview>;
+    reviews[review.vehicleId] = review;
+    localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(reviews));
+  } catch {
+    // A storage failure should not block the local confirmation state.
+  }
+};
+
+const getReviewRelationshipLabel = (relationship: string) => {
+  switch (relationship) {
+    case 'current-owner':
+      return 'Current owner';
+    case 'previous-owner':
+      return 'Previous owner';
+    case 'leased':
+      return 'Leased';
+    case 'test-drove':
+      return 'Test drove';
+    case 'passenger':
+      return 'Passenger';
+    default:
+      return 'Driver';
   }
 };
 
@@ -286,12 +368,26 @@ const RateYourCarPage = () => {
   const [hoveredRating, setHoveredRating] = useState(0);
   const [backgroundFailed, setBackgroundFailed] = useState(false);
   const [selectorImageFailed, setSelectorImageFailed] = useState(false);
+  const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
+  const [submittedReview, setSubmittedReview] = useState<StoredReview | null>(null);
+  const [reviewTitle, setReviewTitle] = useState('');
+  const [reviewBody, setReviewBody] = useState('');
+  const [reviewRelationship, setReviewRelationship] = useState('current-owner');
+  const [reviewExperience, setReviewExperience] = useState('');
+  const [reviewCategoryRatings, setReviewCategoryRatings] = useState<Record<ReviewCategory, number>>({ ...EMPTY_REVIEW_CATEGORY_RATINGS });
   const displayRating = hoveredRating || selectedRating;
 
   const selectVehicle = (vehicle: VehicleOption) => {
     setSelectedVehicle(vehicle);
     setSelectedRating(readStoredRating(vehicle.id));
     setHoveredRating(0);
+    setIsReviewFormOpen(false);
+    setSubmittedReview(readStoredReview(vehicle.id));
+    setReviewTitle('');
+    setReviewBody('');
+    setReviewRelationship('current-owner');
+    setReviewExperience('');
+    setReviewCategoryRatings({ ...EMPTY_REVIEW_CATEGORY_RATINGS });
     setStep('rate');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -307,6 +403,14 @@ const RateYourCarPage = () => {
   const submitRating = () => {
     if (!selectedVehicle || selectedRating === 0) return;
     storeRating(selectedVehicle, selectedRating);
+    const storedReview = readStoredReview(selectedVehicle.id);
+    setSubmittedReview(storedReview);
+    setReviewTitle(storedReview?.title || '');
+    setReviewBody(storedReview?.body || '');
+    setReviewRelationship(storedReview?.relationship || 'current-owner');
+    setReviewExperience(storedReview?.experience || '');
+    setReviewCategoryRatings(storedReview?.categoryRatings || { ...EMPTY_REVIEW_CATEGORY_RATINGS });
+    setIsReviewFormOpen(false);
     setStep('done');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -315,9 +419,69 @@ const RateYourCarPage = () => {
     setSelectedVehicle(null);
     setSelectedRating(0);
     setHoveredRating(0);
+    setIsReviewFormOpen(false);
+    setSubmittedReview(null);
+    setReviewTitle('');
+    setReviewBody('');
+    setReviewRelationship('current-owner');
+    setReviewExperience('');
+    setReviewCategoryRatings({ ...EMPTY_REVIEW_CATEGORY_RATINGS });
     setStep('select');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const openReviewForm = () => {
+    if (submittedReview) {
+      setReviewTitle(submittedReview.title);
+      setReviewBody(submittedReview.body);
+      setReviewRelationship(submittedReview.relationship);
+      setReviewExperience(submittedReview.experience);
+      setReviewCategoryRatings(submittedReview.categoryRatings || { ...EMPTY_REVIEW_CATEGORY_RATINGS });
+    }
+    setIsReviewFormOpen(true);
+  };
+
+  const submitReview = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedVehicle || selectedRating === 0 || !reviewTitle.trim() || !reviewBody.trim()) return;
+
+    const review: StoredReview = {
+      id: submittedReview?.id || `review-${Date.now()}`,
+      vehicleId: selectedVehicle.id,
+      vehicleName: selectedVehicle.name,
+      rating: selectedRating,
+      title: reviewTitle.trim(),
+      body: reviewBody.trim(),
+      relationship: reviewRelationship,
+      experience: reviewExperience.trim(),
+      categoryRatings: reviewCategoryRatings,
+      timestamp: Date.now(),
+    };
+    storeReview(review);
+    setSubmittedReview(review);
+    setIsReviewFormOpen(false);
+  };
+
+  const setReviewCategoryRating = (category: ReviewCategory, rating: number) => {
+    setReviewCategoryRatings((current) => ({
+      ...current,
+      [category]: rating,
+    }));
+  };
+
+  useEffect(() => {
+    if (!isReviewFormOpen) return;
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') setIsReviewFormOpen(false);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isReviewFormOpen]);
 
   const backgroundStyle = !backgroundFailed
     ? ({ '--rate-your-car-background': `url("${RATE_YOUR_CAR_BACKGROUND_IMAGE}")` } as CSSProperties)
@@ -395,7 +559,7 @@ const RateYourCarPage = () => {
                 <div className="rate-your-car__rating-panel">
                   <div className="rate-your-car__score-star" aria-hidden="true">
                     <Star fill="currentColor" strokeWidth={1.5} />
-                    <span>{displayRating ? (displayRating / 20).toFixed(1) : '—'}</span>
+                    <span>{displayRating ? (displayRating / 20).toFixed(1) : '0'}</span>
                   </div>
                   <p className="rate-your-car__rating-label">
                     {displayRating ? RATING_LABELS[displayRating] : 'Rate this'}
@@ -501,10 +665,24 @@ const RateYourCarPage = () => {
                 <button type="button" className="rate-your-car__primary-button" onClick={rateAnother}>
                   Rate Another Car
                 </button>
+                <button type="button" className="rate-your-car__primary-button" onClick={openReviewForm}>
+                  {submittedReview ? 'Edit Review' : 'Write A Review'}
+                </button>
                 <button type="button" className="rate-your-car__secondary-button" onClick={() => navigate(-1)}>
                   Done
                 </button>
               </div>
+              {submittedReview && !isReviewFormOpen && (
+                <div className="rate-your-car__review-summary" aria-live="polite">
+                  <p className="rate-your-car__eyebrow">Review saved</p>
+                  <h2>{submittedReview.title}</h2>
+                  <div className="rate-your-car__review-meta">
+                    <span>{getReviewRelationshipLabel(submittedReview.relationship)}</span>
+                    {submittedReview.experience && <span>{submittedReview.experience}</span>}
+                  </div>
+                  <p>{submittedReview.body}</p>
+                </div>
+              )}
             </div>
           )}
         </section>
@@ -526,6 +704,168 @@ const RateYourCarPage = () => {
           </section>
         )}
       </div>
+      {isReviewFormOpen && selectedVehicle && (
+        <div className="rate-your-car__review-drawer-shell" role="presentation">
+          <button
+            type="button"
+            className="rate-your-car__review-drawer-scrim"
+            aria-label="Close review form"
+            onClick={() => setIsReviewFormOpen(false)}
+          />
+          <aside
+            className="rate-your-car__review-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="rate-your-car-review-title"
+          >
+            <div className="rate-your-car__review-drawer-topbar">
+              <button
+                type="button"
+                className="rate-your-car__review-close"
+                aria-label="Close review form"
+                onClick={() => setIsReviewFormOpen(false)}
+                autoFocus
+              >
+                <X aria-hidden="true" />
+              </button>
+            </div>
+            <form className="rate-your-car__review-drawer-form" onSubmit={submitReview}>
+              <div className="rate-your-car__review-drawer-content">
+                <div className="rate-your-car__review-title-row">
+                  <h2 id="rate-your-car-review-title">{submittedReview ? 'Edit Your Review' : 'Add User Review'}</h2>
+                  <p>Help other shoppers understand what this car is like in real life.</p>
+                </div>
+
+                <div className="rate-your-car__review-vehicle-card">
+                  <VehiclePhoto vehicle={selectedVehicle} className="rate-your-car__review-vehicle-photo" />
+                  <div>
+                    <strong>{selectedVehicle.name}</strong>
+                    <span>Car and Driver community review</span>
+                  </div>
+                </div>
+
+                <section className="rate-your-car__review-rating-card" aria-labelledby="rate-your-car-review-rating-title">
+                  <div className="rate-your-car__review-section-header">
+                    <h3 id="rate-your-car-review-rating-title">Rate Your Experience (1-5)</h3>
+                    <strong>{selectedRating > 0 ? (selectedRating / 20).toFixed(1) : '?'}/5</strong>
+                  </div>
+                  <div className="rate-your-car__review-rating-buttons" role="radiogroup" aria-label={`Rate ${selectedVehicle.name}`}>
+                    {Array.from({ length: 5 }, (_, index) => {
+                      const value = (index + 1) * 20;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          className={`rate-your-car__review-star-button${selectedRating >= value ? ' rate-your-car__review-star-button--active' : ''}`}
+                          role="radio"
+                          aria-checked={selectedRating === value}
+                          aria-label={`${index + 1} out of 5`}
+                          onClick={() => setSelectedRating(value)}
+                        >
+                          <Star fill="currentColor" aria-hidden="true" />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                <section className="rate-your-car__review-section" aria-labelledby="rate-your-car-review-copy-title">
+                  <div className="rate-your-car__review-section-header rate-your-car__review-section-header--stacked">
+                    <h3 id="rate-your-car-review-copy-title">Your Review</h3>
+                    <p>Share your thoughts and experiences.</p>
+                  </div>
+                  <label>
+                    <span>Review Title</span>
+                    <input
+                      type="text"
+                      value={reviewTitle}
+                      placeholder="Give your review a title"
+                      onChange={(event) => setReviewTitle(event.target.value)}
+                      required
+                    />
+                  </label>
+                  <label>
+                    <span>Your Review</span>
+                    <textarea
+                      value={reviewBody}
+                      placeholder="Let others know what you like and dislike based on your hands-on experience with this vehicle."
+                      rows={5}
+                      onChange={(event) => setReviewBody(event.target.value)}
+                      required
+                    />
+                  </label>
+                  <label>
+                    <span>Your experience with this vehicle</span>
+                    <select
+                      value={reviewRelationship}
+                      onChange={(event) => setReviewRelationship(event.target.value)}
+                    >
+                      <option value="current-owner">I currently own this vehicle</option>
+                      <option value="previous-owner">I previously owned this vehicle</option>
+                      <option value="leased">I leased this vehicle</option>
+                      <option value="test-drove">I test drove this vehicle</option>
+                      <option value="passenger">I was a passenger</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Experience duration</span>
+                    <input
+                      type="text"
+                      value={reviewExperience}
+                      placeholder="Six months, 12,000 miles"
+                      onChange={(event) => setReviewExperience(event.target.value)}
+                    />
+                  </label>
+                </section>
+
+                <section className="rate-your-car__review-section" aria-labelledby="rate-your-car-review-category-title">
+                  <div className="rate-your-car__review-section-header rate-your-car__review-section-header--stacked">
+                    <h3 id="rate-your-car-review-category-title">Rate Your Experience</h3>
+                    <p>Optional details help readers understand your rating.</p>
+                  </div>
+                  <div className="rate-your-car__review-category-list">
+                    {REVIEW_CATEGORY_ITEMS.map((item) => (
+                      <div className="rate-your-car__review-category" key={item.key}>
+                        <div>
+                          <strong>{item.label}</strong>
+                          <span>{item.body}</span>
+                        </div>
+                        <div className="rate-your-car__review-category-stars" role="radiogroup" aria-label={item.label}>
+                          {Array.from({ length: 5 }, (_, index) => {
+                            const value = (index + 1) * 20;
+                            return (
+                              <button
+                                key={value}
+                                type="button"
+                                className={`rate-your-car__review-category-star${reviewCategoryRatings[item.key] >= value ? ' rate-your-car__review-category-star--active' : ''}`}
+                                role="radio"
+                                aria-checked={reviewCategoryRatings[item.key] === value}
+                                aria-label={`${item.label}: ${index + 1} out of 5`}
+                                onClick={() => setReviewCategoryRating(item.key, value)}
+                              >
+                                <Star fill="currentColor" aria-hidden="true" />
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+              <div className="rate-your-car__review-drawer-footer">
+                <button
+                  type="submit"
+                  className="rate-your-car__primary-button"
+                  disabled={selectedRating === 0 || !reviewTitle.trim() || !reviewBody.trim()}
+                >
+                  {submittedReview ? 'Update Review' : 'Submit Your Review'}
+                </button>
+              </div>
+            </form>
+          </aside>
+        </div>
+      )}
     </div>
   );
 };

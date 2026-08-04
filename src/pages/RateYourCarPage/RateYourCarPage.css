@@ -103,12 +103,14 @@
 }
 
 .rate-your-car__card--select {
+  position: relative;
+  z-index: 2;
   width: min(100%, 840px);
   margin: 0 auto;
 }
 
 .rate-your-car__select-step {
-  overflow: hidden;
+  overflow: visible;
   border-radius: inherit;
 }
 
@@ -120,6 +122,7 @@
   overflow: hidden;
   background: var(--color-gray-100);
   border-bottom: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
 }
 
 .rate-your-car__selector-art img {
@@ -533,6 +536,7 @@
 
 .rate-your-car__done-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: var(--spacing-3);
   margin-top: var(--spacing-6);
@@ -553,6 +557,405 @@
   background: var(--color-black);
   border-color: var(--color-black);
   transform: translateY(-1px);
+}
+
+.rate-your-car__review-summary {
+  width: min(100%, 560px);
+  margin: var(--spacing-6) auto 0;
+  padding: var(--spacing-5);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  text-align: left;
+}
+
+.rate-your-car__review-summary h2 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.15;
+}
+
+.rate-your-car__review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+}
+
+.rate-your-car__review-meta span {
+  padding: 5px var(--spacing-2);
+  color: var(--color-gray-700);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rate-your-car__review-summary p:not(.rate-your-car__eyebrow) {
+  margin: var(--spacing-3) 0 0;
+  color: var(--color-gray-700);
+  line-height: 1.55;
+}
+
+.rate-your-car__review-drawer-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  color: var(--color-dark);
+}
+
+.rate-your-car__review-drawer-scrim {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  background: rgb(0 0 0 / 54%);
+  border: 0;
+  cursor: pointer;
+  animation: rate-your-car-scrim-in 180ms ease-out both;
+}
+
+.rate-your-car__review-drawer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(100vw, 400px);
+  height: 100%;
+  max-height: 100dvh;
+  background: var(--color-white);
+  box-shadow: -18px 0 42px rgb(0 0 0 / 26%);
+  animation: rate-your-car-drawer-in 220ms ease-out both;
+}
+
+.rate-your-car__review-drawer-topbar {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 52px;
+  padding: var(--spacing-2);
+  background: var(--color-black);
+}
+
+.rate-your-car__review-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--color-white);
+  background: transparent;
+  border: 1px solid rgb(255 255 255 / 28%);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.rate-your-car__review-close:hover {
+  background: rgb(255 255 255 / 12%);
+  border-color: rgb(255 255 255 / 48%);
+}
+
+.rate-your-car__review-close:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.rate-your-car__review-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.rate-your-car__review-drawer-form {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.rate-your-car__review-drawer-content {
+  display: grid;
+  flex: 1;
+  gap: var(--spacing-4);
+  min-height: 0;
+  padding: var(--spacing-5);
+  overflow-y: auto;
+}
+
+.rate-your-car__review-title-row h2 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.rate-your-car__review-title-row p,
+.rate-your-car__review-section-header p {
+  margin: var(--spacing-2) 0 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.rate-your-car__review-vehicle-card {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: var(--spacing-3);
+  align-items: center;
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.rate-your-car__review-vehicle-photo {
+  width: 92px;
+  height: 62px;
+  object-fit: cover;
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-sm);
+}
+
+.rate-your-car__review-vehicle-card strong {
+  display: block;
+  color: var(--color-black);
+  font-size: var(--font-size-base);
+  line-height: 1.2;
+}
+
+.rate-your-car__review-vehicle-card span {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+
+.rate-your-car__review-rating-card,
+.rate-your-car__review-section {
+  display: grid;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.rate-your-car__review-rating-card {
+  background: var(--color-dark);
+  border-color: var(--color-dark);
+}
+
+.rate-your-car__review-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.rate-your-car__review-section-header--stacked {
+  display: block;
+}
+
+.rate-your-car__review-section-header h3 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+}
+
+.rate-your-car__review-rating-card h3,
+.rate-your-car__review-rating-card strong {
+  color: var(--color-white);
+}
+
+.rate-your-car__review-rating-card .rate-your-car__review-section-header strong {
+  color: var(--color-gold);
+  font-size: var(--font-size-lg);
+}
+
+.rate-your-car__review-rating-buttons,
+.rate-your-car__review-category-stars {
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+.rate-your-car__review-star-button,
+.rate-your-car__review-category-star {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--color-gray-300);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.rate-your-car__review-star-button {
+  width: 38px;
+  height: 38px;
+}
+
+.rate-your-car__review-category-star {
+  width: 24px;
+  height: 24px;
+}
+
+.rate-your-car__review-star-button svg,
+.rate-your-car__review-category-star svg {
+  width: 100%;
+  height: 100%;
+}
+
+.rate-your-car__review-star-button--active,
+.rate-your-car__review-category-star--active {
+  color: var(--color-gold);
+}
+
+.rate-your-car__review-star-button:hover,
+.rate-your-car__review-category-star:hover {
+  transform: translateY(-1px);
+}
+
+.rate-your-car__review-star-button:focus-visible,
+.rate-your-car__review-category-star:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.rate-your-car__review-rating-card .rate-your-car__review-star-button:focus-visible {
+  outline-color: var(--color-white);
+}
+
+.rate-your-car__review-section label {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.rate-your-car__review-section label span {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rate-your-car__review-section input,
+.rate-your-car__review-section select,
+.rate-your-car__review-section textarea {
+  width: 100%;
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.rate-your-car__review-section input,
+.rate-your-car__review-section select {
+  min-height: 48px;
+  padding: 0 var(--spacing-3);
+}
+
+.rate-your-car__review-section textarea {
+  min-height: 132px;
+  padding: var(--spacing-3);
+  resize: vertical;
+}
+
+.rate-your-car__review-section input:focus,
+.rate-your-car__review-section select:focus,
+.rate-your-car__review-section textarea:focus {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 3px rgba(27, 95, 138, 0.2);
+}
+
+.rate-your-car__review-category-list {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.rate-your-car__review-category {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-3);
+  align-items: center;
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.rate-your-car__review-category:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.rate-your-car__review-category strong {
+  display: block;
+  color: var(--color-black);
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+}
+
+.rate-your-car__review-category span {
+  display: block;
+  margin-top: 3px;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+
+.rate-your-car__review-drawer-footer {
+  position: sticky;
+  bottom: 0;
+  padding: var(--spacing-4) var(--spacing-5) calc(var(--spacing-4) + env(safe-area-inset-bottom));
+  background: var(--color-white);
+  border-top: 1px solid var(--color-gray-200);
+  box-shadow: 0 -8px 18px rgb(0 0 0 / 8%);
+}
+
+.rate-your-car__review-drawer-footer .rate-your-car__primary-button {
+  width: 100%;
+  margin-top: 0;
+}
+
+@keyframes rate-your-car-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes rate-your-car-scrim-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .rate-your-car__benefits {
@@ -742,6 +1145,32 @@
     flex-direction: column;
   }
 
+  .rate-your-car__review-summary {
+    padding: var(--spacing-4);
+  }
+
+  .rate-your-car__review-drawer {
+    width: 100vw;
+  }
+
+  .rate-your-car__review-drawer-content {
+    padding: var(--spacing-4);
+  }
+
+  .rate-your-car__review-category {
+    grid-template-columns: 1fr;
+  }
+
+  .rate-your-car__review-category-stars {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .rate-your-car__review-category-star {
+    width: 30px;
+    height: 30px;
+  }
+
   .rate-your-car__benefit-grid {
     grid-template-columns: 1fr;
   }
@@ -762,5 +1191,10 @@
   .rate-your-car *::after {
     scroll-behavior: auto !important;
     transition: none !important;
+  }
+
+  .rate-your-car__review-drawer,
+  .rate-your-car__review-drawer-scrim {
+    animation: none !important;
   }
 }
