@@ -5,7 +5,7 @@ import {
 } from './dealerService';
 import type { Vehicle } from './vehicleService';
 
-export type DealerRadius = 5 | 10 | 25 | 50;
+export type DealerRadius = 10 | 25 | 50 | 75;
 export type VehicleCondition = 'new' | 'used';
 
 export interface MarketLocation {

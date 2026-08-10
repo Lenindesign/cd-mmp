@@ -12,10 +12,10 @@ describe('getVehicleMarketInventory', () => {
     const vehicle = getVehicleBySlug('2026/Chevrolet/Trax');
     expect(vehicle).toBeDefined();
 
-    const fiveMiles = getVehicleMarketInventory({
+    const tenMiles = getVehicleMarketInventory({
       vehicle: vehicle!,
       location: MARKET_LOCATION_OPTIONS[0],
-      radiusMiles: 5,
+      radiusMiles: 10,
     });
     const twentyFiveMiles = getVehicleMarketInventory({
       vehicle: vehicle!,
@@ -28,10 +28,10 @@ describe('getVehicleMarketInventory', () => {
       radiusMiles: 50,
     });
 
-    expect(fiveMiles.matches.every(({ unit, dealer }) => unit.isNew && (dealer.distance ?? 0) <= 5)).toBe(true);
+    expect(tenMiles.matches.every(({ unit, dealer }) => unit.isNew && (dealer.distance ?? 0) <= 10)).toBe(true);
     expect(twentyFiveMiles.matches.every(({ unit, dealer }) => unit.isNew && (dealer.distance ?? 0) <= 25)).toBe(true);
     expect(fiftyMiles.matches.every(({ unit, dealer }) => unit.isNew && (dealer.distance ?? 0) <= 50)).toBe(true);
-    expect(fiveMiles.inventoryCount).toBeLessThanOrEqual(twentyFiveMiles.inventoryCount);
+    expect(tenMiles.inventoryCount).toBeLessThanOrEqual(twentyFiveMiles.inventoryCount);
     expect(twentyFiveMiles.inventoryCount).toBeLessThanOrEqual(fiftyMiles.inventoryCount);
     expect(twentyFiveMiles.statistics.currentYearCount).toBe(twentyFiveMiles.inventoryCount);
     expect(twentyFiveMiles.statistics.followingYearCount).toBe(0);

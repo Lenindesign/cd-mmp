@@ -25,7 +25,7 @@ interface MarketIntelligenceSnapshotProps {
   onSeeLocalInventory: () => void;
 }
 
-const DEALER_RADIUS_OPTIONS: DealerRadius[] = [5, 10, 25, 50];
+const DEALER_RADIUS_OPTIONS: DealerRadius[] = [10, 25, 50, 75];
 const DEALER_RADIUS_TABS: TabItem[] = DEALER_RADIUS_OPTIONS.map((radius) => ({
   value: radius.toString(),
   label: `${radius} mi`,
@@ -59,34 +59,17 @@ const MarketInfoTooltip = ({ title, copy, ariaLabel }: MarketInfoTooltipProps) =
   );
 };
 
-const getDaysOnLotSignal = (days: number) => {
-  if (days >= 45) {
-    return {
-      label: 'Buyer advantage',
-      variant: 'success' as const,
-      detail: `${days - DAYS_ON_LOT_REFERENCE} days above the ${DAYS_ON_LOT_REFERENCE}-day reference`,
-    };
-  }
-  if (days >= 20) {
-    return {
-      label: 'Average pace',
-      variant: 'neutral' as const,
-      detail: `Near the ${DAYS_ON_LOT_REFERENCE}-day reference`,
-    };
-  }
-  return {
-    label: 'Fast-moving market',
-    variant: 'info' as const,
-    detail: `${DAYS_ON_LOT_REFERENCE - days} days below the ${DAYS_ON_LOT_REFERENCE}-day reference`,
-  };
-};
+interface MarketSignalBadge {
+  label: string;
+  variant: 'primary' | 'success' | 'info' | 'dark' | 'neutral';
+}
 
 interface MarketMetricCard {
   key: string;
   label: string;
   value: string;
   detail: string;
-  signal?: ReturnType<typeof getDaysOnLotSignal>;
+  signals?: MarketSignalBadge[];
   tooltip?: MarketInfoTooltipProps;
 }
 
@@ -118,11 +101,86 @@ const formatMileageRange = (mileages: number[]) => {
   return low === high ? `${low} miles` : `${low} - ${high} miles`;
 };
 
+const formatMileageValue = (mileage?: number) =>
+  mileage !== undefined ? `${mileage.toLocaleString()} mi` : 'Mileage unavailable';
+
 const isGoodOrGreatPrice = (match: MarketInventoryMatch, averagePrice: number) =>
   match.unit.price <= averagePrice * 0.985;
 
+const isGreatPrice = (match: MarketInventoryMatch, averagePrice: number) =>
+  match.unit.price <= averagePrice * 0.94;
+
 const getVehicleMatchTitle = ({ unit }: MarketInventoryMatch) =>
   `${unit.year} ${unit.make} ${unit.model} ${unit.trim}`.replace(/\s+/g, ' ').trim();
+
+const getVehicleYmm = (vehicle: Vehicle) => `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+
+const getInventoryResultsText = ({
+  condition,
+  vehicle,
+  zipCode,
+}: {
+  condition: 'new' | 'used';
+  vehicle: Vehicle;
+  zipCode?: string;
+}) => {
+  const locationLabel = zipCode ? `near ${zipCode}` : 'near you';
+  return `See all results for ${condition} ${getVehicleYmm(vehicle)} for sale ${locationLabel}`;
+};
+
+const getVehicleSignalBadges = ({
+  match,
+  averagePrice,
+  averageMileage,
+}: {
+  match: MarketInventoryMatch;
+  averagePrice: number;
+  averageMileage?: number;
+}): MarketSignalBadge[] => {
+  const badges: MarketSignalBadge[] = [];
+  const daysOnLot = match.unit.daysOnLot ?? 0;
+  const isUsedListing = !match.unit.isNew;
+
+  if (isGreatPrice(match, averagePrice)) {
+    badges.push({ label: 'Great Price', variant: 'success' });
+  } else if (isGoodOrGreatPrice(match, averagePrice)) {
+    badges.push({ label: 'Good Price', variant: 'success' });
+  }
+
+  if ((match.unit.recentPriceDropAmount ?? 0) > 0) {
+    badges.push({ label: 'Price Drop', variant: 'primary' });
+  }
+
+  if (daysOnLot <= 30) {
+    badges.push({ label: 'Newly Listed', variant: 'info' });
+  }
+
+  if (isUsedListing && match.unit.owners === 1) {
+    badges.push({ label: 'One-Owner', variant: 'dark' });
+  }
+
+  if (
+    isUsedListing &&
+    averageMileage !== undefined &&
+    (match.unit.mileage ?? Number.POSITIVE_INFINITY) < averageMileage
+  ) {
+    badges.push({ label: 'Low Mileage', variant: 'dark' });
+  }
+
+  if (isUsedListing && match.unit.carfaxScore) {
+    badges.push({ label: 'Free History Report', variant: 'neutral' });
+  }
+
+  if (daysOnLot >= 50) {
+    badges.push({ label: '50+ Days on Market', variant: 'neutral' });
+  } else if (daysOnLot >= 40) {
+    badges.push({ label: '40+ Days on Market', variant: 'neutral' });
+  } else if (daysOnLot >= 30) {
+    badges.push({ label: '30+ Days on Market', variant: 'neutral' });
+  }
+
+  return badges.slice(0, 4);
+};
 
 const getListingUrl = ({ unit }: MarketInventoryMatch) => {
   const params = new URLSearchParams({
@@ -249,7 +307,6 @@ const MarketIntelligenceSnapshot = ({
     [isUsed, location, market, radiusMiles, vehicle]
   );
   const { statistics } = market;
-  const daysOnLotSignal = getDaysOnLotSignal(market.averageDaysOnLot || 0);
   const nextRadius = DEALER_RADIUS_OPTIONS.find((radius) => radius > radiusMiles);
   const ctaLabel = market.inventoryCount > 0
     ? `Compare ${market.inventoryCount} ${isUsed ? 'used ' : ''}${market.inventoryCount === 1 ? 'deal' : 'deals'} within ${radiusMiles} mi`
@@ -263,6 +320,12 @@ const MarketIntelligenceSnapshot = ({
     condition: market.condition,
   });
   const newMarket = isUsed ? undefined : market;
+  const vehicleYmm = getVehicleYmm(vehicle);
+  const inventoryResultsText = getInventoryResultsText({
+    condition: isUsed ? 'used' : 'new',
+    vehicle,
+    zipCode: location.zipCode,
+  });
   const dealerSummary = !isUsed
     ? getDealerSummary({
         dealerId: market.dealers[0]?.id,
@@ -275,14 +338,15 @@ const MarketIntelligenceSnapshot = ({
     {
       key: 'matches',
       label: 'Available Near You',
-      value: '25',
-      detail: `40 ${Number(vehicle.year) - 1} - ${Number(vehicle.year) + 1} models available`,
+      value: `25 ${vehicle.year} ${vehicle.model}`,
+      detail: `40 ${Number(vehicle.year) - 1} - ${Number(vehicle.year) + 1} ${vehicle.model} models available`,
     },
     {
       key: 'priceRange',
       label: 'Local Price Range',
       value: '$14,000 - $32,000',
       detail: '$24,000 average asking price',
+      signals: [{ label: 'Buyer Advantage', variant: 'success' }],
     },
     {
       key: 'mileageRange',
@@ -295,7 +359,7 @@ const MarketIntelligenceSnapshot = ({
       label: 'Average Days on Market',
       value: '32',
       detail: `${vehicle.model} in your area range from 3 - 45 days on lot`,
-      signal: daysOnLotSignal,
+      signals: [{ label: 'Low Inventory', variant: 'dark' }],
       tooltip: {
         title: 'What days on market means',
         copy: `${market.averageDaysOnLot} days is the average time these matching listings have been advertised. We use ${DAYS_ON_LOT_REFERENCE} days as a reference. Vehicles listed for 45 days or more are aging inventory and may give buyers more negotiating room.`,
@@ -307,19 +371,21 @@ const MarketIntelligenceSnapshot = ({
       label: '# with a Good or Great Price',
       value: '5',
       detail: '3 models have a recent price drop',
+      signals: [{ label: 'Act Fast', variant: 'primary' }],
     },
     {
       key: 'newlyListed',
       label: '# Newly Listed',
       value: '2',
       detail: `$22,000 - $28,500 price range for newly listed ${vehicle.model}`,
+      signals: [{ label: 'New Listings', variant: 'info' }],
     },
   ];
   const newMetricCards: MarketMetricCard[] = [
     {
       key: 'matches',
       label: 'Available Near You',
-      value: '18',
+      value: '18 New Vehicles',
       detail: '12 certified used models available',
     },
     {
@@ -333,7 +399,7 @@ const MarketIntelligenceSnapshot = ({
       label: 'Average Days on Market',
       value: '32',
       detail: 'Vehicles are selling quickly compared to most new vehicles.',
-      signal: daysOnLotSignal,
+      signals: [{ label: 'Going Fast', variant: 'dark' }],
       tooltip: {
         title: 'What days on market means',
         copy: `${market.averageDaysOnLot} days is the average time these matching listings have been advertised. We use ${DAYS_ON_LOT_REFERENCE} days as a reference. Vehicles listed for 45 days or more are aging inventory and may give buyers more negotiating room.`,
@@ -345,18 +411,24 @@ const MarketIntelligenceSnapshot = ({
       label: '# Newly Listed',
       value: '2',
       detail: `$35,000 - $38,500 price range for newly listed ${vehicle.model}`,
+      signals: [
+        { label: 'New Listings', variant: 'info' },
+        { label: 'High Demand', variant: 'primary' },
+      ],
     },
     {
       key: 'financeSpecial',
       label: `${vehicle.make} Finance Specials`,
       value: '3.99% - 5.99%',
       detail: 'Expires 9/8/26',
+      signals: [{ label: 'Great Rates Available', variant: 'success' }],
     },
     {
       key: 'cashSpecial',
       label: `${vehicle.make} Cash Back Special`,
       value: '$1,500',
       detail: 'Expires 9/8/26',
+      signals: [{ label: 'Expiring Soon', variant: 'primary' }],
     },
   ];
   const supportingCards = isUsed ? usedMetricCards : newMetricCards;
@@ -395,7 +467,7 @@ const MarketIntelligenceSnapshot = ({
             {isUsed ? 'Used Market Snapshot' : 'New Market Snapshot'}
           </h2>
           <p>
-            Compare the local signals that matter most for this {isUsed ? 'used' : 'new'} {vehicle.make} {vehicle.model}.
+            Understand the local signals that matter most for the {vehicleYmm}.
           </p>
         </div>
         <form className="market-snapshot__location-form" onSubmit={handleZipSubmit}>
@@ -445,10 +517,14 @@ const MarketIntelligenceSnapshot = ({
               )}
             </div>
             <strong>{card.value}</strong>
-            {'signal' in card && card.signal && (
-              <Badge variant={card.signal.variant} className="market-snapshot__signal">
-                {card.signal.label}
-              </Badge>
+            {card.signals && card.signals.length > 0 && (
+              <div className="market-snapshot__signals" aria-label={`${card.label} signals`}>
+                {card.signals.map((signal) => (
+                  <Badge key={signal.label} variant={signal.variant} className="market-snapshot__signal">
+                    {signal.label}
+                  </Badge>
+                ))}
+              </div>
             )}
             <p className="market-snapshot__detail">{card.detail}</p>
           </article>
@@ -460,24 +536,23 @@ const MarketIntelligenceSnapshot = ({
           <section className="market-snapshot__inventory-picks" aria-labelledby="market-snapshot-inventory-title">
             <div className="market-snapshot__section-head">
               <p className="market-snapshot__section-kicker">Inventory</p>
-              <h3 id="market-snapshot-inventory-title">Best local matches</h3>
-              <p>
-                {isUsed
-                  ? 'Prioritized for no accidents, below average mileage, free VHR, and good or great price.'
-                  : 'Prioritized for good or great price, newly listed status, and higher days on lot.'}
-              </p>
+              <h3 id="market-snapshot-inventory-title">Vehicles Worth a Closer Look</h3>
+              <p>{inventoryResultsText}</p>
             </div>
             <div className="market-snapshot__vehicle-picks" role="list">
               {prioritizedMatches.map((match) => {
-                const isGoodPrice = isGoodOrGreatPrice(match, market.averagePrice);
-                const isBelowAverageMileage = statistics.averageMileage !== undefined &&
-                  (match.unit.mileage ?? Number.POSITIVE_INFINITY) < statistics.averageMileage;
-                const isNewlyListed = (match.unit.daysOnLot ?? Number.POSITIVE_INFINITY) <= 30;
                 const conditionLabel = match.unit.isNew
                   ? 'New'
                   : match.unit.isCertified
                     ? 'Certified used'
                     : 'Used';
+                const signalBadges = getVehicleSignalBadges({
+                  match,
+                  averagePrice: market.averagePrice,
+                  averageMileage: statistics.averageMileage,
+                });
+                const vehicleTitle = `${match.unit.year} ${match.unit.make} ${match.unit.model}`;
+                const trimLabel = match.unit.trim.replace(vehicleTitle, '').trim();
 
                 return (
                   <article key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}`} className="market-snapshot__vehicle-pick" role="listitem">
@@ -497,30 +572,34 @@ const MarketIntelligenceSnapshot = ({
                       <span>{conditionLabel}</span>
                       <strong>{formatPrice(match.unit.price)}</strong>
                     </div>
-                    <h4>{getVehicleMatchTitle(match)}</h4>
-                    <p>{match.dealer.name}</p>
+                    <div className="market-snapshot__vehicle-pick-title">
+                      <h4>{vehicleTitle}</h4>
+                      {trimLabel && <span>{trimLabel}</span>}
+                    </div>
+                    <p className="market-snapshot__vehicle-pick-dealer">
+                      <span>Dealer</span>
+                      {match.dealer.name}
+                    </p>
                     <dl className="market-snapshot__vehicle-pick-metrics">
                       <div>
-                        <dt>Distance</dt>
-                        <dd>{match.dealer.distance !== undefined ? `${match.dealer.distance.toFixed(1)} mi` : 'N/A'}</dd>
+                        <dt>Mileage</dt>
+                        <dd>{match.unit.isNew ? 'New vehicle' : formatMileageValue(match.unit.mileage)}</dd>
                       </div>
                       <div>
-                        <dt>Days on lot</dt>
-                        <dd>{match.unit.daysOnLot ?? 'N/A'}</dd>
+                        <dt>Distance</dt>
+                        <dd>{match.dealer.distance !== undefined ? `${match.dealer.distance.toFixed(1)} mi` : 'Unavailable'}</dd>
                       </div>
-                      {!match.unit.isNew && (
-                        <div>
-                          <dt>Mileage</dt>
-                          <dd>{match.unit.mileage !== undefined ? match.unit.mileage.toLocaleString() : 'N/A'}</dd>
-                        </div>
-                      )}
+                      <div>
+                        <dt>Days on Market</dt>
+                        <dd>{match.unit.daysOnLot !== undefined ? `${match.unit.daysOnLot} days` : 'Unavailable'}</dd>
+                      </div>
                     </dl>
                     <div className="market-snapshot__vehicle-pick-badges" aria-label="Vehicle signals">
-                      {isGoodPrice && <Badge variant="success">Good price</Badge>}
-                      {!match.unit.isNew && match.unit.accidents === 0 && <Badge variant="neutral">No accidents</Badge>}
-                      {!match.unit.isNew && isBelowAverageMileage && <Badge variant="info">Below avg mileage</Badge>}
-                      {!match.unit.isNew && match.unit.carfaxScore && <Badge variant="neutral">Free VHR</Badge>}
-                      {match.unit.isNew && isNewlyListed && <Badge variant="info">Newly listed</Badge>}
+                      {signalBadges.map((badge) => (
+                        <Badge key={badge.label} variant={badge.variant}>
+                          {badge.label}
+                        </Badge>
+                      ))}
                     </div>
                     <a className="market-snapshot__vehicle-pick-cta" href={getListingUrl(match)}>
                       View Listing
