@@ -514,27 +514,27 @@
   margin-left: 0;
 }
 
-.hero__bottom-row--used .hero__msrp {
+.hero__bottom-row--used-no-accolades .hero__msrp {
   width: 100%;
 }
 
-.hero__bottom-row--used .hero__msrp-price-row {
+.hero__bottom-row--used-no-accolades .hero__msrp-price-row {
   justify-content: space-between;
   width: 100%;
 }
 
-.hero__bottom-row--used .hero__shop-buttons {
+.hero__bottom-row--used-no-accolades .hero__shop-buttons {
   justify-content: flex-end;
   margin-left: auto;
 }
 
 @media (max-width: 938px) {
-  .hero__bottom-row--used .hero__msrp-price-row,
-  .hero__bottom-row--used .hero__shop-buttons {
+  .hero__bottom-row--used-no-accolades .hero__msrp-price-row,
+  .hero__bottom-row--used-no-accolades .hero__shop-buttons {
     justify-content: center;
   }
 
-  .hero__bottom-row--used .hero__shop-buttons {
+  .hero__bottom-row--used-no-accolades .hero__shop-buttons {
     margin-left: 0;
   }
 }
