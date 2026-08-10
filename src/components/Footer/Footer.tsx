@@ -80,6 +80,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Vehicle Ranking', path: '/rankings' },
         { label: 'Rate Your Car', path: '/rate-your-car' },
         { label: 'Chatbot Experience Guide', path: '/chatbot-experience' },
+        { label: 'Market Snapshot Concepts', path: '/market-snapshot-concepts' },
         { label: 'Used MMP Shopping CTAs', path: '/2025/Chevrolet/Trax' },
         { label: 'Market Snapshot (New Car)', path: '/2026/Chevrolet/Trax#market-intelligence-snapshot' },
         { label: 'Market Snapshot (Used Car)', path: '/2025/Chevrolet/Trax#market-intelligence-snapshot' },

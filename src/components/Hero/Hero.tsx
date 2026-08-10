@@ -505,7 +505,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
           </div>
 
           {/* MSRP and Accolades Row */}
-          <div className="hero__bottom-row">
+          <div className={`hero__bottom-row${isUsedMmp ? ' hero__bottom-row--used' : ''}`}>
             <div className="hero__msrp">
               <span className="hero__msrp-label">MSRP</span>
               <div className="hero__msrp-price-row">
