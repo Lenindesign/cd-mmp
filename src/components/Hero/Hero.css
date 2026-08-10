@@ -491,6 +491,7 @@
 .hero__msrp-price-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--spacing-8);
 }
 
@@ -507,6 +508,7 @@
 .hero__shop-buttons {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: flex-start;
   gap: var(--spacing-4);
   margin-left: 0;
@@ -878,7 +880,7 @@
 }
 
 /* =============================================
-   VERSION B — Flat pill-style offers
+   VERSION B: Flat pill-style offers
    ============================================= */
 
 .hero__offers-b {

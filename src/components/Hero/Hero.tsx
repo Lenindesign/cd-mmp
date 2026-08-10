@@ -18,6 +18,7 @@ interface HeroProps {
     make: string;
     model: string;
     year: number;
+    condition?: 'new' | 'used';
     tagline: string;
     rating: number;
     priceRange: string;
@@ -42,6 +43,25 @@ interface HeroProps {
   animateButtons?: boolean;
   showModelInButtons?: boolean;
 }
+
+const CURRENT_MODEL_YEAR = 2026;
+const TRADE_IN_VALUE_URL = 'https://www.caranddriver.com/car-value-estimator/?origin=mmpHero';
+
+const slugifyMarketplaceSegment = (value: string) =>
+  value.trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+const getMarketplaceUrl = (condition: 'new' | 'used', vehicle: HeroProps['vehicle']) => {
+  const params = new URLSearchParams({
+    year: String(vehicle.year),
+    make: vehicle.make,
+    model: vehicle.model,
+  });
+
+  return `https://www.caranddriver.com/cars-for-sale/${condition}?${params.toString()}`;
+};
+
+const getCertifiedUsedMarketplaceUrl = (vehicle: HeroProps['vehicle']) =>
+  `https://www.caranddriver.com/cars-for-sale/certified/${slugifyMarketplaceSegment(vehicle.make)}/${slugifyMarketplaceSegment(vehicle.model)}`;
 
 const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: HeroProps) => {
   const [searchParams] = useSearchParams();
@@ -149,6 +169,10 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   }, []);
 
   const hasAccolades = vehicle.editorsChoice || vehicle.tenBest || vehicle.evOfTheYear;
+  const isUsedMmp = vehicle.condition === 'used' || vehicle.year < CURRENT_MODEL_YEAR;
+  const shopNewUrl = getMarketplaceUrl('new', vehicle);
+  const shopUsedUrl = getMarketplaceUrl('used', vehicle);
+  const shopCertifiedUsedUrl = getCertifiedUsedMarketplaceUrl(vehicle);
   const reviewSummaryItems = vehicle.reviewSummary ? [
     { label: 'HIGHS', copy: vehicle.reviewSummary.highs },
     { label: 'LOWS', copy: vehicle.reviewSummary.lows },
@@ -490,20 +514,36 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
                   ref={buttonsRef}
                   className={`hero__shop-buttons ${animateButtons ? (buttonsInView ? 'hero__shop-buttons--animated' : 'hero__shop-buttons--hidden') : ''}`}
                 >
-                  <Button variant="primary" size="small" className={`hero__shop-btn ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-1' : ''}`}>
-                    {showModelInButtons ? `SHOP NEW ${vehicle.model.toUpperCase()}` : 'SHOP NEW'}
-                  </Button>
-                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--outline ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-2' : ''}`}>
-                    {showModelInButtons ? `SHOP USED ${vehicle.model.toUpperCase()}` : 'SHOP USED'}
-                  </Button>
-                  <Button variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--trade-in ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-3' : ''}`}>
-                    GET YOUR TRADE-IN VALUE
-                  </Button>
+                  {isUsedMmp ? (
+                    <>
+                      <Button as="a" href={shopUsedUrl} variant="primary" size="small" className={`hero__shop-btn ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-1' : ''}`}>
+                        Shop Used
+                      </Button>
+                      <Button as="a" href={shopCertifiedUsedUrl} variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--outline ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-2' : ''}`}>
+                        Shop Certified Used
+                      </Button>
+                      <Button as="a" href={TRADE_IN_VALUE_URL} variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--trade-in ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-3' : ''}`}>
+                        Get Your Trade-In Value
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button as="a" href={shopNewUrl} variant="primary" size="small" className={`hero__shop-btn ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-1' : ''}`}>
+                        {showModelInButtons ? `SHOP NEW ${vehicle.model.toUpperCase()}` : 'SHOP NEW'}
+                      </Button>
+                      <Button as="a" href={shopUsedUrl} variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--outline ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-2' : ''}`}>
+                        {showModelInButtons ? `SHOP USED ${vehicle.model.toUpperCase()}` : 'SHOP USED'}
+                      </Button>
+                      <Button as="a" href={TRADE_IN_VALUE_URL} variant="outline" size="small" className={`hero__shop-btn hero__shop-btn--trade-in ${animateButtons && buttonsInView ? 'hero__shop-btn--animate-3' : ''}`}>
+                        GET YOUR TRADE-IN VALUE
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Desktop accolades — inline with price row */}
+            {/* Desktop accolades: inline with price row */}
             {renderAccolades('hero__accolades--desktop')}
           </div>
 
@@ -542,7 +582,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
             </div>
           )}
 
-          {/* Mobile accolades — below offers */}
+          {/* Mobile accolades: below offers */}
           {renderAccolades('hero__accolades--mobile')}
         </div>
       </div>

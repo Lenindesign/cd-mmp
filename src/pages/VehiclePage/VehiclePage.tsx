@@ -186,6 +186,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
     make: vehicle.make,
     model: vehicle.model,
     year: parseInt(vehicle.year),
+    condition: vehicle.condition,
     tagline: `The ${vehicle.make} ${vehicle.model}delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent features and value'}. A compelling choice in the ${vehicle.bodyStyle.toLowerCase()} segment.`,
     rating: supabaseRating,
     priceRange: vehicle.priceRange,

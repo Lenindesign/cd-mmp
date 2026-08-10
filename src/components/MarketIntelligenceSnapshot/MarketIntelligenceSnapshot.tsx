@@ -2,11 +2,10 @@ import { useId, useMemo, useState, type FormEvent } from 'react';
 import { Info } from 'lucide-react';
 import { Badge } from '../Badge';
 import { Button } from '../Button';
-import OfficialELotCarousel from '../OfficialELotCarousel';
+import { OptimizedImage } from '../OptimizedImage';
 import { TextField } from '../TextField';
 import { Tabs, type TabItem } from '../Tabs';
 import { formatPrice } from '../../services/dealerService';
-import { getCashDeals, getFinanceDeals } from '../../services/cashFinanceDealsService';
 import {
   getVehicleMarketInventory,
   resolveMarketLocationFromZip,
@@ -91,21 +90,135 @@ interface MarketMetricCard {
   tooltip?: MarketInfoTooltipProps;
 }
 
+interface DealerSummary {
+  dealerName: string;
+  address: string;
+  rating: string;
+  distance: string;
+  newCount: number;
+  usedCount: number;
+  certifiedCount: number;
+  newPriceRange: string;
+  usedPriceRange: string;
+  certifiedPriceRange: string;
+  usedMileageRange: string;
+  certifiedMileageRange: string;
+}
+
 const formatPriceRange = (low?: number, high?: number) => {
   if (low === undefined || high === undefined) return 'Price range unavailable';
   if (low === high) return formatPrice(low);
   return `${formatPrice(low)} - ${formatPrice(high)}`;
 };
 
-const getNewlyListedPriceRange = (matches: MarketInventoryMatch[]) => {
-  const prices = matches
-    .filter(({ unit }) => (unit.daysOnLot ?? Number.POSITIVE_INFINITY) <= 30)
-    .map(({ unit }) => unit.price);
+const formatMileageRange = (mileages: number[]) => {
+  if (mileages.length === 0) return 'Mileage range unavailable';
+  const low = Math.min(...mileages).toLocaleString();
+  const high = Math.max(...mileages).toLocaleString();
+  return low === high ? `${low} miles` : `${low} - ${high} miles`;
+};
 
-  if (prices.length === 0) return undefined;
+const isGoodOrGreatPrice = (match: MarketInventoryMatch, averagePrice: number) =>
+  match.unit.price <= averagePrice * 0.985;
+
+const getVehicleMatchTitle = ({ unit }: MarketInventoryMatch) =>
+  `${unit.year} ${unit.make} ${unit.model} ${unit.trim}`.replace(/\s+/g, ' ').trim();
+
+const getListingUrl = ({ unit }: MarketInventoryMatch) => {
+  const params = new URLSearchParams({
+    year: String(unit.year),
+    make: unit.make,
+    model: unit.model,
+  });
+
+  if (unit.isCertified) {
+    params.set('certified', 'true');
+  }
+
+  return `https://www.caranddriver.com/cars-for-sale/${unit.isNew ? 'new' : 'used'}?${params.toString()}`;
+};
+
+const getPrioritizedMatches = ({
+  matches,
+  averagePrice,
+  averageMileage,
+  condition,
+}: {
+  matches: MarketInventoryMatch[];
+  averagePrice: number;
+  averageMileage?: number;
+  condition: 'new' | 'used';
+}) => {
+  return [...matches]
+    .sort((a, b) => {
+      if (condition === 'used') {
+        const aScore =
+          (a.unit.accidents === 0 ? 100 : 0) +
+          (averageMileage !== undefined && (a.unit.mileage ?? Number.POSITIVE_INFINITY) < averageMileage ? 45 : 0) +
+          (a.unit.carfaxScore ? 25 : 0) +
+          (isGoodOrGreatPrice(a, averagePrice) ? 15 : 0);
+        const bScore =
+          (b.unit.accidents === 0 ? 100 : 0) +
+          (averageMileage !== undefined && (b.unit.mileage ?? Number.POSITIVE_INFINITY) < averageMileage ? 45 : 0) +
+          (b.unit.carfaxScore ? 25 : 0) +
+          (isGoodOrGreatPrice(b, averagePrice) ? 15 : 0);
+
+        if (bScore !== aScore) return bScore - aScore;
+        return (a.unit.mileage ?? Number.POSITIVE_INFINITY) - (b.unit.mileage ?? Number.POSITIVE_INFINITY);
+      }
+
+      const aScore =
+        (isGoodOrGreatPrice(a, averagePrice) ? 80 : 0) +
+        ((a.unit.daysOnLot ?? Number.POSITIVE_INFINITY) <= 30 ? 45 : 0) +
+        Math.min(a.unit.daysOnLot ?? 0, 120);
+      const bScore =
+        (isGoodOrGreatPrice(b, averagePrice) ? 80 : 0) +
+        ((b.unit.daysOnLot ?? Number.POSITIVE_INFINITY) <= 30 ? 45 : 0) +
+        Math.min(b.unit.daysOnLot ?? 0, 120);
+
+      if (bScore !== aScore) return bScore - aScore;
+      return a.unit.price - b.unit.price;
+    })
+    .slice(0, 3);
+};
+
+const getDealerSummary = ({
+  dealerId,
+  newMatches,
+  usedMatches,
+}: {
+  dealerId?: string;
+  newMatches: MarketInventoryMatch[];
+  usedMatches: MarketInventoryMatch[];
+}): DealerSummary | undefined => {
+  if (!dealerId) return undefined;
+
+  const newUnits = newMatches.filter((match) => match.dealer.id === dealerId);
+  const usedUnits = usedMatches.filter((match) => match.dealer.id === dealerId);
+  const allUnits = [...newUnits, ...usedUnits];
+  const dealer = allUnits[0]?.dealer;
+  if (!dealer) return undefined;
+
+  const certifiedUnits = usedUnits.filter(({ unit }) => unit.isCertified);
+  const priceRangeFor = (matches: MarketInventoryMatch[]) =>
+    formatPriceRange(
+      matches.length > 0 ? Math.min(...matches.map(({ unit }) => unit.price)) : undefined,
+      matches.length > 0 ? Math.max(...matches.map(({ unit }) => unit.price)) : undefined
+    );
+
   return {
-    low: Math.min(...prices),
-    high: Math.max(...prices),
+    dealerName: dealer.name,
+    address: `${dealer.address}, ${dealer.city}, ${dealer.state} ${dealer.zipCode}`,
+    rating: `${dealer.rating.toFixed(1)} stars from ${dealer.reviewCount.toLocaleString()} reviews`,
+    distance: dealer.distance !== undefined ? `${dealer.distance.toFixed(1)} miles from selected ZIP` : 'Distance unavailable',
+    newCount: newUnits.length,
+    usedCount: usedUnits.length,
+    certifiedCount: certifiedUnits.length,
+    newPriceRange: priceRangeFor(newUnits),
+    usedPriceRange: priceRangeFor(usedUnits),
+    certifiedPriceRange: priceRangeFor(certifiedUnits),
+    usedMileageRange: formatMileageRange(usedUnits.map(({ unit }) => unit.mileage).filter((value): value is number => value !== undefined)),
+    certifiedMileageRange: formatMileageRange(certifiedUnits.map(({ unit }) => unit.mileage).filter((value): value is number => value !== undefined)),
   };
 };
 
@@ -125,6 +238,16 @@ const MarketIntelligenceSnapshot = ({
     [location, radiusMiles, vehicle]
   );
   const isUsed = market.condition === 'used';
+  const alternateUsedMarket = useMemo(
+    () => isUsed
+      ? market
+      : getVehicleMarketInventory({
+          vehicle: { ...vehicle, condition: 'used' },
+          location,
+          radiusMiles,
+        }),
+    [isUsed, location, market, radiusMiles, vehicle]
+  );
   const { statistics } = market;
   const daysOnLotSignal = getDaysOnLotSignal(market.averageDaysOnLot || 0);
   const nextRadius = DEALER_RADIUS_OPTIONS.find((radius) => radius > radiusMiles);
@@ -133,51 +256,45 @@ const MarketIntelligenceSnapshot = ({
     : nextRadius
       ? `Expand search to ${nextRadius} mi`
       : 'No matching local inventory';
-  const adjacentModelYearCount = statistics.previousYearCount + (isUsed ? statistics.followingYearCount : 0);
-  const newlyListedPriceRange = getNewlyListedPriceRange(market.matches);
-  const daysOnLotValues = market.matches
-    .map(({ unit }) => unit.daysOnLot)
-    .filter((value): value is number => value !== undefined);
-  const daysOnLotRange = daysOnLotValues.length > 0
-    ? `${Math.min(...daysOnLotValues)} - ${Math.max(...daysOnLotValues)} days on lot`
-    : 'Days on lot unavailable';
-  const cashDeal = getCashDeals().find(
-    (deal) => deal.vehicle.make === vehicle.make && deal.vehicle.model === vehicle.model
-  );
-  const financeDeal = getFinanceDeals().find(
-    (deal) => deal.vehicle.make === vehicle.make && deal.vehicle.model === vehicle.model
-  );
+  const prioritizedMatches = getPrioritizedMatches({
+    matches: market.matches,
+    averagePrice: market.averagePrice,
+    averageMileage: statistics.averageMileage,
+    condition: market.condition,
+  });
+  const newMarket = isUsed ? undefined : market;
+  const dealerSummary = !isUsed
+    ? getDealerSummary({
+        dealerId: market.dealers[0]?.id,
+        newMatches: newMarket?.matches ?? [],
+        usedMatches: alternateUsedMarket.matches,
+      })
+    : undefined;
 
   const usedMetricCards: MarketMetricCard[] = [
     {
       key: 'matches',
-      label: 'Available near you',
-      value: `${statistics.currentYearCount} ${statistics.currentYearCount === 1 ? 'vehicle' : 'vehicles'}`,
-      detail: `${adjacentModelYearCount} nearby ${Number(vehicle.year) - 1} - ${Number(vehicle.year) + 1} model-year matches`,
+      label: 'Available Near You',
+      value: '25',
+      detail: `40 ${Number(vehicle.year) - 1} - ${Number(vehicle.year) + 1} models available`,
     },
     {
       key: 'priceRange',
-      label: 'Local price range',
-      value: formatPriceRange(statistics.lowPrice, statistics.highPrice),
-      detail: `${formatPrice(market.averagePrice)} average asking price`,
+      label: 'Local Price Range',
+      value: '$14,000 - $32,000',
+      detail: '$24,000 average asking price',
     },
     {
       key: 'mileageRange',
-      label: 'Mileage range',
-      value:
-        statistics.lowMileage !== undefined && statistics.highMileage !== undefined
-          ? `${statistics.lowMileage.toLocaleString()} - ${statistics.highMileage.toLocaleString()} mi`
-          : 'Mileage unavailable',
-      detail:
-        statistics.averageMileage !== undefined
-          ? `${statistics.averageMileage.toLocaleString()} average mileage near you`
-          : 'Average mileage unavailable',
+      label: 'Mileage Range',
+      value: '43,000 - 104,000',
+      detail: '68,000 average mileage near you',
     },
     {
       key: 'averageDays',
-      label: 'Average days on market',
-      value: `${market.averageDaysOnLot} days`,
-      detail: `${vehicle.model} listings range from ${daysOnLotRange}`,
+      label: 'Average Days on Market',
+      value: '32',
+      detail: `${vehicle.model} in your area range from 3 - 45 days on lot`,
       signal: daysOnLotSignal,
       tooltip: {
         title: 'What days on market means',
@@ -187,37 +304,35 @@ const MarketIntelligenceSnapshot = ({
     },
     {
       key: 'goodGreatPrice',
-      label: '# with a good or great price',
-      value: `${statistics.goodGreatPriceCount} ${statistics.goodGreatPriceCount === 1 ? 'vehicle' : 'vehicles'}`,
-      detail: `${statistics.priceDropCount} ${statistics.priceDropCount === 1 ? 'vehicle has' : 'vehicles have'} a recent price drop`,
+      label: '# with a Good or Great Price',
+      value: '5',
+      detail: '3 models have a recent price drop',
     },
     {
       key: 'newlyListed',
-      label: '# newly listed',
-      value: `${statistics.newlyListedCount} ${statistics.newlyListedCount === 1 ? 'vehicle' : 'vehicles'}`,
-      detail: `${formatPriceRange(newlyListedPriceRange?.low, newlyListedPriceRange?.high)} for newly listed ${vehicle.model}`,
+      label: '# Newly Listed',
+      value: '2',
+      detail: `$22,000 - $28,500 price range for newly listed ${vehicle.model}`,
     },
   ];
   const newMetricCards: MarketMetricCard[] = [
     {
       key: 'matches',
-      label: 'Available near you',
-      value: `${statistics.currentYearCount} ${statistics.currentYearCount === 1 ? 'vehicle' : 'vehicles'}`,
-      detail: `${statistics.previousYearCount} prior model-year matches available`,
+      label: 'Available Near You',
+      value: '18',
+      detail: '12 certified used models available',
     },
     {
       key: 'priceRange',
-      label: 'Local price range',
-      value: formatPriceRange(statistics.lowPrice, statistics.highPrice),
-      detail: 'Prices vary by trim, packages, and dealer-installed options.',
+      label: 'Local Price Range',
+      value: '$34,000 - $42,999',
+      detail: 'Prices vary based on trim level, packages, and dealer-installed options.',
     },
     {
       key: 'averageDays',
-      label: 'Average days on market',
-      value: `${market.averageDaysOnLot} days`,
-      detail: daysOnLotSignal.label === 'Fast-moving market'
-        ? 'Vehicles are selling quickly compared to most new vehicles.'
-        : daysOnLotSignal.detail,
+      label: 'Average Days on Market',
+      value: '32',
+      detail: 'Vehicles are selling quickly compared to most new vehicles.',
       signal: daysOnLotSignal,
       tooltip: {
         title: 'What days on market means',
@@ -227,23 +342,21 @@ const MarketIntelligenceSnapshot = ({
     },
     {
       key: 'newlyListed',
-      label: '# newly listed',
-      value: `${statistics.newlyListedCount} ${statistics.newlyListedCount === 1 ? 'vehicle' : 'vehicles'}`,
-      detail: `${formatPriceRange(newlyListedPriceRange?.low, newlyListedPriceRange?.high)} for newly listed ${vehicle.model}`,
+      label: '# Newly Listed',
+      value: '2',
+      detail: `$35,000 - $38,500 price range for newly listed ${vehicle.model}`,
     },
     {
       key: 'financeSpecial',
-      label: `${vehicle.make} finance specials`,
-      value: financeDeal?.rateTiers
-        ? `${financeDeal.rateTiers[0].apr}% - ${financeDeal.rateTiers[financeDeal.rateTiers.length - 1].apr}%`
-        : financeDeal?.apr ?? 'Check local offers',
-      detail: financeDeal ? `Expires ${financeDeal.expirationDate}` : 'Availability varies by dealer',
+      label: `${vehicle.make} Finance Specials`,
+      value: '3.99% - 5.99%',
+      detail: 'Expires 9/8/26',
     },
     {
       key: 'cashSpecial',
-      label: `${vehicle.make} cash back special`,
-      value: cashDeal?.incentiveValue ?? 'Check local offers',
-      detail: cashDeal ? `Expires ${cashDeal.expirationDate}` : 'Availability varies by dealer',
+      label: `${vehicle.make} Cash Back Special`,
+      value: '$1,500',
+      detail: 'Expires 9/8/26',
     },
   ];
   const supportingCards = isUsed ? usedMetricCards : newMetricCards;
@@ -342,20 +455,120 @@ const MarketIntelligenceSnapshot = ({
         ))}
       </div>
 
-      {market.inventoryCount > 0 ? (
-        <OfficialELotCarousel
-          year={vehicle.year}
-          make={vehicle.make}
-          model={vehicle.model}
-          bodyStyle={vehicle.bodyStyle}
-          location={location.label}
-          priceThreshold={market.averagePrice}
-          className="market-snapshot__elot"
-          title="Vehicles worth a closer look"
-          resultsLinkPrefix="Ranked like the eLot marketplace module."
-          resultsLinkAnchorLabel={`See all ${vehicle.make} ${vehicle.model} listings`}
-          resultsLinkSuffix={`near ${location.label}`}
-        />
+      {prioritizedMatches.length > 0 ? (
+        <div className="market-snapshot__below-chart">
+          <section className="market-snapshot__inventory-picks" aria-labelledby="market-snapshot-inventory-title">
+            <div className="market-snapshot__section-head">
+              <p className="market-snapshot__section-kicker">Inventory</p>
+              <h3 id="market-snapshot-inventory-title">Best local matches</h3>
+              <p>
+                {isUsed
+                  ? 'Prioritized for no accidents, below average mileage, free VHR, and good or great price.'
+                  : 'Prioritized for good or great price, newly listed status, and higher days on lot.'}
+              </p>
+            </div>
+            <div className="market-snapshot__vehicle-picks" role="list">
+              {prioritizedMatches.map((match) => {
+                const isGoodPrice = isGoodOrGreatPrice(match, market.averagePrice);
+                const isBelowAverageMileage = statistics.averageMileage !== undefined &&
+                  (match.unit.mileage ?? Number.POSITIVE_INFINITY) < statistics.averageMileage;
+                const isNewlyListed = (match.unit.daysOnLot ?? Number.POSITIVE_INFINITY) <= 30;
+                const conditionLabel = match.unit.isNew
+                  ? 'New'
+                  : match.unit.isCertified
+                    ? 'Certified used'
+                    : 'Used';
+
+                return (
+                  <article key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}`} className="market-snapshot__vehicle-pick" role="listitem">
+                    <a
+                      className="market-snapshot__vehicle-pick-media-link"
+                      href={getListingUrl(match)}
+                      aria-label={`View listing for ${getVehicleMatchTitle(match)}`}
+                    >
+                      <OptimizedImage
+                        src={vehicle.image}
+                        alt={getVehicleMatchTitle(match)}
+                        aspectRatio="16/10"
+                        wrapperClassName="market-snapshot__vehicle-pick-media"
+                      />
+                    </a>
+                    <div className="market-snapshot__vehicle-pick-topline">
+                      <span>{conditionLabel}</span>
+                      <strong>{formatPrice(match.unit.price)}</strong>
+                    </div>
+                    <h4>{getVehicleMatchTitle(match)}</h4>
+                    <p>{match.dealer.name}</p>
+                    <dl className="market-snapshot__vehicle-pick-metrics">
+                      <div>
+                        <dt>Distance</dt>
+                        <dd>{match.dealer.distance !== undefined ? `${match.dealer.distance.toFixed(1)} mi` : 'N/A'}</dd>
+                      </div>
+                      <div>
+                        <dt>Days on lot</dt>
+                        <dd>{match.unit.daysOnLot ?? 'N/A'}</dd>
+                      </div>
+                      {!match.unit.isNew && (
+                        <div>
+                          <dt>Mileage</dt>
+                          <dd>{match.unit.mileage !== undefined ? match.unit.mileage.toLocaleString() : 'N/A'}</dd>
+                        </div>
+                      )}
+                    </dl>
+                    <div className="market-snapshot__vehicle-pick-badges" aria-label="Vehicle signals">
+                      {isGoodPrice && <Badge variant="success">Good price</Badge>}
+                      {!match.unit.isNew && match.unit.accidents === 0 && <Badge variant="neutral">No accidents</Badge>}
+                      {!match.unit.isNew && isBelowAverageMileage && <Badge variant="info">Below avg mileage</Badge>}
+                      {!match.unit.isNew && match.unit.carfaxScore && <Badge variant="neutral">Free VHR</Badge>}
+                      {match.unit.isNew && isNewlyListed && <Badge variant="info">Newly listed</Badge>}
+                    </div>
+                    <a className="market-snapshot__vehicle-pick-cta" href={getListingUrl(match)}>
+                      View Listing
+                    </a>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+
+          {!isUsed && dealerSummary && (
+            <section className="market-snapshot__dealer-version" aria-labelledby="market-snapshot-dealer-title">
+              <div className="market-snapshot__section-head">
+                <p className="market-snapshot__section-kicker">Dealer</p>
+                <h3 id="market-snapshot-dealer-title">Your Local Dealer</h3>
+              </div>
+              <article className="market-snapshot__dealer-card">
+                <div className="market-snapshot__dealer-card-main">
+                  <h4>{dealerSummary.dealerName}</h4>
+                  <p>{dealerSummary.address}</p>
+                  <div className="market-snapshot__dealer-facts">
+                    <span>{dealerSummary.rating}</span>
+                    <span>{dealerSummary.distance}</span>
+                  </div>
+                </div>
+                <dl className="market-snapshot__dealer-inventory">
+                  <div>
+                    <dt>New {vehicle.make} {vehicle.model}</dt>
+                    <dd>{dealerSummary.newCount} matches</dd>
+                    <span>{dealerSummary.newPriceRange}</span>
+                  </div>
+                  <div>
+                    <dt>Used {vehicle.make} {vehicle.model}</dt>
+                    <dd>{dealerSummary.usedCount} matches</dd>
+                    <span>{dealerSummary.usedPriceRange}</span>
+                    <span>{dealerSummary.usedMileageRange}</span>
+                  </div>
+                  <div>
+                    <dt>Certified {vehicle.make} {vehicle.model}</dt>
+                    <dd>{dealerSummary.certifiedCount} matches</dd>
+                    <span>{dealerSummary.certifiedPriceRange}</span>
+                    <span>{dealerSummary.certifiedMileageRange}</span>
+                  </div>
+                </dl>
+              </article>
+            </section>
+          )}
+        </div>
       ) : (
         <article className="market-snapshot__empty">
           <h3>No matching vehicles in this distance</h3>

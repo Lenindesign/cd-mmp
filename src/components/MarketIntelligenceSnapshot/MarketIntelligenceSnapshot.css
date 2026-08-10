@@ -241,33 +241,6 @@
   line-height: var(--line-height-normal);
 }
 
-.market-snapshot__elot.aio-payment__light-affordable-section {
-  margin: 0;
-  padding: var(--spacing-5) 0 0;
-  background: transparent;
-  border-top: var(--spacing-px) solid var(--color-gray-200);
-}
-
-.market-snapshot__elot > .container {
-  width: 100%;
-  max-width: none;
-  padding: 0;
-}
-
-.market-snapshot__elot .aio-payment__light-elot-head h2 {
-  font-size: var(--font-size-24);
-}
-
-.market-snapshot__elot .aio-payment__light-elot-results-line {
-  color: var(--color-gray-600);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-}
-
-.market-snapshot__elot .aio-payment__light-elot-results-line svg {
-  color: var(--color-gray-700);
-}
-
 .market-snapshot__empty {
   padding: var(--spacing-6);
   background: var(--color-white);
@@ -407,6 +380,266 @@
   line-height: var(--line-height-normal);
 }
 
+.market-snapshot__below-chart {
+  display: grid;
+  gap: var(--spacing-5);
+  padding-top: var(--spacing-5);
+  border-top: var(--spacing-px) solid var(--color-gray-200);
+}
+
+.market-snapshot__inventory-picks,
+.market-snapshot__dealer-version {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.market-snapshot__section-head {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.market-snapshot__section-kicker {
+  margin: 0;
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  line-height: var(--line-height-none);
+  text-transform: uppercase;
+}
+
+.market-snapshot__section-head h3 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__section-head p {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.market-snapshot__vehicle-picks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.market-snapshot__vehicle-pick,
+.market-snapshot__dealer-card {
+  min-width: 0;
+  padding: var(--spacing-5);
+  background: var(--color-white);
+  border: var(--spacing-px) solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.market-snapshot__vehicle-pick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.market-snapshot__vehicle-pick-media-link {
+  display: block;
+  color: inherit;
+  border-radius: var(--border-radius-md);
+  outline-offset: 3px;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.market-snapshot__vehicle-pick-media-link:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+}
+
+.market-snapshot__vehicle-pick-media {
+  min-height: 0;
+  background: var(--color-gray-100);
+  border: var(--spacing-px) solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.market-snapshot__vehicle-pick-media .optimized-image__img {
+  object-position: center 58%;
+}
+
+.market-snapshot__vehicle-pick-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.market-snapshot__vehicle-pick-topline span {
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: var(--line-height-none);
+  text-transform: uppercase;
+}
+
+.market-snapshot__vehicle-pick-topline strong {
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__vehicle-pick h4,
+.market-snapshot__dealer-card h4 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__vehicle-pick > p,
+.market-snapshot__dealer-card-main > p {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.market-snapshot__vehicle-pick-metrics,
+.market-snapshot__dealer-inventory {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: 0;
+}
+
+.market-snapshot__vehicle-pick-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: var(--spacing-3);
+  border-top: var(--spacing-px) solid var(--color-gray-200);
+}
+
+.market-snapshot__vehicle-pick-metrics div,
+.market-snapshot__dealer-inventory div {
+  min-width: 0;
+}
+
+.market-snapshot__vehicle-pick-metrics dt,
+.market-snapshot__dealer-inventory dt {
+  margin: 0 0 2px;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+.market-snapshot__vehicle-pick-metrics dd,
+.market-snapshot__dealer-inventory dd {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__vehicle-pick-badges,
+.market-snapshot__dealer-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.market-snapshot__vehicle-pick-badges .badge {
+  width: fit-content;
+}
+
+.market-snapshot__vehicle-pick-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 36px;
+  margin-top: auto;
+  padding: 0 var(--spacing-3);
+  color: var(--color-blue-cobalt);
+  background: var(--color-white);
+  border: 1px solid var(--color-blue-cobalt);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.market-snapshot__vehicle-pick-cta:hover {
+  color: var(--color-white);
+  background: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.market-snapshot__vehicle-pick-cta:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 3px;
+}
+
+.market-snapshot__dealer-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: var(--spacing-5);
+  align-items: start;
+}
+
+.market-snapshot__dealer-card-main {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.market-snapshot__dealer-facts span {
+  padding: 5px var(--spacing-2);
+  color: var(--color-gray-700);
+  background: var(--color-gray-50);
+  border: var(--spacing-px) solid var(--color-gray-200);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__dealer-inventory {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-px);
+  overflow: hidden;
+  background: var(--color-gray-200);
+  border: var(--spacing-px) solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.market-snapshot__dealer-inventory div {
+  padding: var(--spacing-4);
+  background: var(--color-white);
+}
+
+.market-snapshot__dealer-inventory span {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
 .market-snapshot__tooltip {
   position: relative;
   display: inline-flex;
@@ -500,6 +733,12 @@
     grid-template-columns: 1fr;
   }
 
+  .market-snapshot__vehicle-picks,
+  .market-snapshot__dealer-card,
+  .market-snapshot__dealer-inventory {
+    grid-template-columns: 1fr;
+  }
+
 }
 
 @media (max-width: 600px) {
@@ -546,6 +785,21 @@
 
   .market-snapshot__card {
     padding: var(--spacing-4);
+  }
+
+  .market-snapshot__vehicle-pick,
+  .market-snapshot__dealer-card {
+    padding: var(--spacing-4);
+  }
+
+  .market-snapshot__vehicle-pick-topline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+
+  .market-snapshot__vehicle-pick-metrics {
+    grid-template-columns: 1fr;
   }
 
   .market-snapshot__context-summary {
