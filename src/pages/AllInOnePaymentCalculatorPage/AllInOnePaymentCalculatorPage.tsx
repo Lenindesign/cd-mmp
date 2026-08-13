@@ -4773,9 +4773,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
               <Link to="/">Home</Link>
               <span>/</span>
-              <Link to="/auto-loan-calculator">Auto Loan Calculator</Link>
-              <span>/</span>
-              <span>{isLightStepsVariant ? 'Guided steps' : 'Advanced mode'}</span>
+              <span>Auto Loan Calculator</span>
             </nav>
             <div className="aio-payment__light-hero-grid">
               <div>
