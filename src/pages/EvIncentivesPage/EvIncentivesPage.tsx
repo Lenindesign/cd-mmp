@@ -13,8 +13,10 @@ import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { useActiveFilterPills } from '../../hooks/useActiveFilterPills';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import {
-  EV_INCENTIVE_CATEGORY_LABELS,
-  EV_INCENTIVE_CATEGORY_DESCRIPTIONS,
+  EV_INCENTIVE_DISPLAY_TYPE_ORDER,
+  EV_INCENTIVE_TYPE_LABELS,
+  EV_INCENTIVE_TYPE_DESCRIPTIONS,
+  getEvIncentiveDisplayType,
   getEvIncentives,
   type EvIncentive,
 } from '../../services/evIncentivesService';
@@ -49,6 +51,7 @@ const DEFAULT_FILTERS: DealsFilterState = {
   terms: [],
   creditTier: null,
   buyingDealTypes: [],
+  evIncentiveTypes: [],
   sortBy: 'a-z',
 };
 
@@ -72,23 +75,10 @@ const isConditional = (incentive: EvIncentive) => (
   !/no specific group affiliation/i.test(incentive.eligibility)
 );
 
-const getBenefitLabel = (incentive: EvIncentive) => {
-  if (incentive.category === 'direct-vehicle-savings') return 'Vehicle Savings';
-  if (incentive.category === 'lease-rate') return 'Lease Rate';
-  if (incentive.category === 'tax-credit' || incentive.category === 'tax-exemption') return 'Tax Program';
-  if (incentive.category === 'charging-rebate') return 'Charging Rebate';
-  if (incentive.category === 'utility-program') return 'Utility Program';
-  return 'Conditional Offer';
-};
-
 const getSortValue = (incentive: EvIncentive) => {
-  if (incentive.category === 'direct-vehicle-savings') return 0;
-  if (incentive.category === 'lease-rate') return 1;
-  if (incentive.category === 'tax-credit') return 2;
-  if (incentive.category === 'tax-exemption') return 3;
-  if (incentive.category === 'charging-rebate') return 4;
-  if (incentive.category === 'utility-program') return 5;
-  return 6;
+  const displayType = getEvIncentiveDisplayType(incentive);
+  const index = EV_INCENTIVE_DISPLAY_TYPE_ORDER.indexOf(displayType);
+  return index === -1 ? EV_INCENTIVE_DISPLAY_TYPE_ORDER.length : index;
 };
 
 const matchesEvFilters = (incentive: EvIncentive, filters: DealsFilterState) => {
@@ -96,6 +86,7 @@ const matchesEvFilters = (incentive: EvIncentive, filters: DealsFilterState) => 
   if (filters.makes.length > 0 && !filters.makes.includes(incentive.make)) return false;
   if ((filters.models?.length ?? 0) > 0 && !filters.models?.includes(incentive.model)) return false;
   if (filters.fuelTypes.length > 0 && !filters.fuelTypes.includes(incentive.fuelType)) return false;
+  if ((filters.evIncentiveTypes?.length ?? 0) > 0 && !filters.evIncentiveTypes?.includes(getEvIncentiveDisplayType(incentive))) return false;
   if (filters.terms.length > 0) {
     const termMatch = incentive.amountLabel.match(/(\d+)\s*month/i);
     const term = termMatch ? Number(termMatch[1]) : null;
@@ -143,6 +134,10 @@ const EvIncentivesPage = () => {
         ]),
       ),
       fuelTypes: [...new Set(allIncentives.map(incentive => incentive.fuelType))].sort(),
+      evIncentiveTypes: EV_INCENTIVE_DISPLAY_TYPE_ORDER.map(value => ({
+        value,
+        label: EV_INCENTIVE_TYPE_LABELS[value],
+      })),
     };
   }, [allIncentives]);
 
@@ -209,6 +204,7 @@ const EvIncentivesPage = () => {
         const vehicle = getVehicleBySlug(activeIncentive.vehicleSlug);
         const priceParts = activeIncentive.msrpRange.replace(/[^0-9,-]/g, '').split('-');
         const vehicleLabel = `${activeIncentive.year} ${activeIncentive.make} ${activeIncentive.model}`;
+        const displayType = getEvIncentiveDisplayType(activeIncentive);
         return {
           year: activeIncentive.year,
           make: activeIncentive.make,
@@ -225,9 +221,9 @@ const EvIncentivesPage = () => {
           dontWaitText: activeIncentive.expirationDate
             ? `This program expires ${formatExpiration(activeIncentive.expirationDate)}. Confirm eligibility, local availability, and stackability before you shop.`
             : `${activeIncentive.stackabilityNote} Confirm local availability before you shop.`,
-          eventLabel: `EV incentive: ${EV_INCENTIVE_CATEGORY_LABELS[activeIncentive.category]} from ${activeIncentive.providerName}`,
+          eventLabel: `EV incentive: ${EV_INCENTIVE_TYPE_LABELS[displayType]} from ${activeIncentive.providerName}`,
           expirationDate: activeIncentive.expirationDate ?? 'Expiration varies by program',
-          offerChipLabel: EV_INCENTIVE_CATEGORY_LABELS[activeIncentive.category],
+          offerChipLabel: EV_INCENTIVE_TYPE_LABELS[displayType],
           formHeading: 'Questions About This EV Incentive?',
           defaultLeadMessage: `I would like more information about the ${activeIncentive.programName} EV incentive for the ${vehicleLabel}.`,
           primaryFormCtaLabel: 'ASK ABOUT INCENTIVE',
@@ -258,9 +254,9 @@ const EvIncentivesPage = () => {
     <div className="zero-apr-page ev-incentives-page">
       <SEO
         title={`Best EV Incentives for ${month} ${year}`}
-        description={`Find EV incentives for ${month} ${year}. Compare electric and hybrid vehicle savings, charging rebates, utility programs, and clean-vehicle offers near you.`}
+        description={`Find EV incentives for ${month} ${year}. Compare rebates, financing, bill credits, vehicle retirement programs, tax credits, and tax exemptions near you.`}
         canonical={`${BASE_URL}${EV_INCENTIVES_PATH}`}
-        keywords={['EV incentives', 'electric vehicle incentives', 'EV tax credits', 'charging rebates', `EV deals ${month} ${year}`]}
+        keywords={['EV incentives', 'electric vehicle incentives', 'EV rebates', 'EV tax credits', 'EV tax exemptions', `EV deals ${month} ${year}`]}
         structuredData={createBreadcrumbStructuredData([
           { name: 'Home', url: BASE_URL },
           { name: 'Deals', url: `${BASE_URL}/deals` },
@@ -281,7 +277,7 @@ const EvIncentivesPage = () => {
             </nav>
             <h1 className="zero-apr-page__title">Best EV Incentives<br />for {month} {year}</h1>
             <p className="zero-apr-page__description">
-              Compare electric and hybrid vehicle savings, charging rebates, utility benefits, and conditional clean-vehicle programs. These incentives are grouped into the same deals experience, but each card makes clear what the benefit actually applies to.
+              Compare electric and hybrid rebates, financing support, bill credits, vehicle retirement programs, tax credits, and tax exemptions. These incentives are grouped into the same deals experience, but each card makes clear what the benefit actually applies to.
             </p>
             <div className="ev-incentives-page__hero-links">
               <Link to={BEST_BUYING_DEALS_PATH}>Buying Deals <ChevronRight size={14} aria-hidden /></Link>
@@ -360,7 +356,8 @@ const EvIncentivesPage = () => {
                         <div className="zero-apr-page__grid" role="list">
                           {chunk.map((incentive, index) => {
                             const vehicle = getVehicleBySlug(incentive.vehicleSlug);
-                            const categoryLabel = EV_INCENTIVE_CATEGORY_LABELS[incentive.category];
+                            const displayType = getEvIncentiveDisplayType(incentive);
+                            const incentiveTypeLabel = EV_INCENTIVE_TYPE_LABELS[displayType];
                             const expirationLabel = incentive.expirationDate ? undefined : 'Expiration varies by program';
                             return (
                               <Fragment key={incentive.id}>
@@ -374,8 +371,8 @@ const EvIncentivesPage = () => {
                                   vehicleModel={incentive.model}
                                   rating={vehicle?.staffRating ?? null}
                                   dealTypeTag="EV"
-                                  imageBadge={categoryLabel}
-                                  imageBadgeTooltip={EV_INCENTIVE_CATEGORY_DESCRIPTIONS[incentive.category]}
+                                  imageBadge={incentiveTypeLabel}
+                                  imageBadgeTooltip={EV_INCENTIVE_TYPE_DESCRIPTIONS[displayType]}
                                   editorsChoice={vehicle?.editorsChoice}
                                   tenBest={vehicle?.tenBest}
                                   isSaved={savedIncentives.has(incentive.id)}
@@ -386,7 +383,7 @@ const EvIncentivesPage = () => {
                                   onCloseOffersPopup={(event) => event.preventDefault()}
                                   payment={{
                                     amount: incentive.amountLabel,
-                                    period: getBenefitLabel(incentive),
+                                    period: incentiveTypeLabel,
                                     savings: { type: 'plain', text: incentive.purchaseLeaseImpact },
                                     expirationDate: incentive.expirationDate ?? '',
                                     expirationLabel,

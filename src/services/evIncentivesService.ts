@@ -16,6 +16,14 @@ export type EvIncentiveProviderType =
   | 'state'
   | 'utility';
 
+export type EvIncentiveDisplayType =
+  | 'vehicle-retirement'
+  | 'rebate'
+  | 'financing'
+  | 'bill-credit'
+  | 'tax-credit'
+  | 'tax-exemption';
+
 export interface EvIncentive {
   id: string;
   year: number;
@@ -65,6 +73,33 @@ export const EV_INCENTIVE_CATEGORY_DESCRIPTIONS: Record<EvIncentiveCategory, str
   'conditional-offer': 'Programs that require military, employee, affinity, loyalty, or targeted eligibility.',
 };
 
+export const EV_INCENTIVE_TYPE_LABELS: Record<EvIncentiveDisplayType, string> = {
+  'vehicle-retirement': 'Vehicle Retirement',
+  rebate: 'Rebate',
+  financing: 'Financing',
+  'bill-credit': 'Bill Credit',
+  'tax-credit': 'Tax Credit',
+  'tax-exemption': 'Tax Exemption',
+};
+
+export const EV_INCENTIVE_TYPE_DESCRIPTIONS: Record<EvIncentiveDisplayType, string> = {
+  'vehicle-retirement': 'Programs tied to retiring or replacing an older vehicle.',
+  rebate: 'Cash, charger, or clean-vehicle rebates that may reduce eligible costs.',
+  financing: 'Loan, APR, or lease support tied to approved credit and eligible vehicles.',
+  'bill-credit': 'Utility bill credits or account benefits after purchase or lease.',
+  'tax-credit': 'Credits that may apply outside the negotiated vehicle price.',
+  'tax-exemption': 'Tax programs that may reduce eligible state or local taxes.',
+};
+
+export const EV_INCENTIVE_DISPLAY_TYPE_ORDER: EvIncentiveDisplayType[] = [
+  'vehicle-retirement',
+  'rebate',
+  'financing',
+  'bill-credit',
+  'tax-credit',
+  'tax-exemption',
+];
+
 export const EV_INCENTIVES: EvIncentive[] = evIncentivesData as EvIncentive[];
 
 export const EV_INCENTIVE_CATEGORY_ORDER: EvIncentiveCategory[] = [
@@ -81,18 +116,26 @@ export function getEvIncentives(): EvIncentive[] {
   return EV_INCENTIVES;
 }
 
+export function getEvIncentiveDisplayType(incentive: EvIncentive): EvIncentiveDisplayType {
+  if (incentive.category === 'tax-credit') return 'tax-credit';
+  if (incentive.category === 'tax-exemption') return 'tax-exemption';
+
+  const offerType = incentive.offerType.toLowerCase();
+  if (offerType.includes('vehicle retirement')) return 'vehicle-retirement';
+  if (offerType.includes('bill credit')) return 'bill-credit';
+  if (offerType.includes('financing')) return 'financing';
+  return 'rebate';
+}
+
 export function getTopEvIncentive(incentives = EV_INCENTIVES): EvIncentive | null {
   return [...incentives].sort((a, b) => {
-    const categoryScore = (value: EvIncentiveCategory) => {
-      if (value === 'direct-vehicle-savings') return 0;
-      if (value === 'lease-rate') return 1;
-      if (value === 'tax-credit') return 2;
-      if (value === 'charging-rebate') return 3;
-      return 4;
+    const typeScore = (value: EvIncentiveDisplayType) => {
+      const index = EV_INCENTIVE_DISPLAY_TYPE_ORDER.indexOf(value);
+      return index === -1 ? EV_INCENTIVE_DISPLAY_TYPE_ORDER.length : index;
     };
 
-    const categoryDelta = categoryScore(a.category) - categoryScore(b.category);
-    if (categoryDelta !== 0) return categoryDelta;
+    const typeDelta = typeScore(getEvIncentiveDisplayType(a)) - typeScore(getEvIncentiveDisplayType(b));
+    if (typeDelta !== 0) return typeDelta;
     return (b.amountValue ?? 0) - (a.amountValue ?? 0);
   })[0] ?? null;
 }

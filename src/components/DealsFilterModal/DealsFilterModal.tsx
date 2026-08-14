@@ -38,6 +38,7 @@ export interface DealsFilterState {
   creditTier: CreditTier | null;
   eligibilityTags?: EligibilityTag[];
   buyingDealTypes?: BuyingDealTypeFilter[];
+  evIncentiveTypes?: string[];
   sortBy: SortOption;
 }
 
@@ -48,6 +49,7 @@ export interface DealsFilterOptions {
   makes?: string[];
   modelOptionsByMake?: Record<string, string[]>;
   fuelTypes?: string[];
+  evIncentiveTypes?: { value: string; label: string }[];
 }
 
 interface DealsFilterModalProps {
@@ -116,6 +118,7 @@ const DealsFilterModal = ({
     dueAtSigning: false,
     fuelType: false,
     accolades: false,
+    evIncentiveType: false,
   });
   const [expandedMakeModels, setExpandedMakeModels] = useState<Record<string, boolean>>({});
 
@@ -133,6 +136,7 @@ const DealsFilterModal = ({
         term: prev.term || normalizedFilters.terms.length > 0,
         accolades: prev.accolades || normalizedFilters.accolades.length > 0,
         buyingDealType: prev.buyingDealType || (normalizedFilters.buyingDealTypes?.length ?? 0) > 0,
+        evIncentiveType: prev.evIncentiveType || (normalizedFilters.evIncentiveTypes?.length ?? 0) > 0,
       }));
     }
   }, [isOpen, externalFilters]);
@@ -260,6 +264,7 @@ const DealsFilterModal = ({
   const resolvedMakes = filterOptions?.makes ?? makes;
   const resolvedModelOptionsByMake = filterOptions?.modelOptionsByMake ?? modelOptionsByMake;
   const resolvedFuelTypes = filterOptions?.fuelTypes ?? fuelTypes;
+  const resolvedEvIncentiveTypes = filterOptions?.evIncentiveTypes ?? [];
 
   const availableModels = useMemo(
     () => Object.values(resolvedModelOptionsByMake).flat(),
@@ -346,7 +351,7 @@ const DealsFilterModal = ({
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   }, []);
 
-  const toggleArrayItem = useCallback((field: 'bodyTypes' | 'makes' | 'models' | 'fuelTypes' | 'accolades' | 'buyingDealTypes', value: string) => {
+  const toggleArrayItem = useCallback((field: 'bodyTypes' | 'makes' | 'models' | 'fuelTypes' | 'accolades' | 'buyingDealTypes' | 'evIncentiveTypes', value: string) => {
     setDraft(prev => {
       const arr = (prev[field] ?? []) as string[];
       return {
@@ -398,8 +403,11 @@ const DealsFilterModal = ({
     for (const opt of BUYING_DEAL_TYPE_FILTER_OPTIONS) {
       counts[`buying-deal-type-${opt.value}`] = effectiveCount({ ...base, buyingDealTypes: [opt.value] });
     }
+    for (const opt of resolvedEvIncentiveTypes) {
+      counts[`ev-incentive-type-${opt.value}`] = effectiveCount({ ...base, evIncentiveTypes: [opt.value] });
+    }
     return counts;
-  }, [effectiveCount, draft, resolvedBodyTypes, resolvedMakes, resolvedModelOptionsByMake, availableTerms, resolvedFuelTypes]);
+  }, [effectiveCount, draft, resolvedBodyTypes, resolvedMakes, resolvedModelOptionsByMake, availableTerms, resolvedFuelTypes, resolvedEvIncentiveTypes]);
 
   const handleClearAll = useCallback(() => {
     setDraft(prev => ({
@@ -418,6 +426,7 @@ const DealsFilterModal = ({
       creditTier: null,
       eligibilityTags: [],
       buyingDealTypes: [],
+      evIncentiveTypes: [],
       sortBy: 'a-z',
     }));
   }, [paymentRange, signingRange]);
@@ -554,20 +563,25 @@ const DealsFilterModal = ({
 
           {showBuyingDealType && (
             <FilterSection
-              title="Deal Type"
+              title={isEvDealPage ? 'Incentive Type' : 'Deal Type'}
               expanded={expandedSections.buyingDealType}
               onToggle={() => toggleSection('buyingDealType')}
             >
               <div className="deals-filter__chips">
-                {isEvDealPage ? (
-                  <button
-                    type="button"
-                    className="deals-filter__chip deals-filter__chip--active"
-                    aria-pressed="true"
-                  >
-                    EV Incentives ({effectiveCount(draft)})
-                  </button>
-                ) : BUYING_DEAL_TYPE_FILTER_OPTIONS.map(opt => {
+                {isEvDealPage ? resolvedEvIncentiveTypes.map(opt => {
+                  const count = optionCounts?.[`ev-incentive-type-${opt.value}`];
+                  const activeTypes = draft.evIncentiveTypes ?? [];
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={`deals-filter__chip ${activeTypes.includes(opt.value) ? 'deals-filter__chip--active' : ''}`}
+                      onClick={() => toggleArrayItem('evIncentiveTypes', opt.value)}
+                    >
+                      {opt.label}{count != null ? ` (${count})` : ''}
+                    </button>
+                  );
+                }) : BUYING_DEAL_TYPE_FILTER_OPTIONS.map(opt => {
                   const count = optionCounts?.[`buying-deal-type-${opt.value}`];
                   const activeTypes = draft.buyingDealTypes ?? [];
                   return (

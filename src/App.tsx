@@ -24,6 +24,7 @@ const VehiclesListPage = lazy(() => import('./pages/VehiclesListPage/VehiclesLis
 const DesignSystem = lazy(() => import('./pages/DesignSystem/DesignSystem'));
 const ChatbotExperiencePage = lazy(() => import('./pages/ChatbotExperiencePage/ChatbotExperiencePage'));
 const MarketSnapshotConceptsPage = lazy(() => import('./pages/MarketSnapshotConceptsPage/MarketSnapshotConceptsPage'));
+const EvIncentivesExperiencePage = lazy(() => import('./pages/EvIncentivesExperiencePage/EvIncentivesExperiencePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 
 // Onboarding pages - lazy loaded as a group (2-step flow)
@@ -233,6 +234,7 @@ const internalRoutes = (
     <Route path="/design-system" element={<DesignSystem />} />
     <Route path="/chatbot-experience" element={<ChatbotExperiencePage />} />
     <Route path="/market-snapshot-concepts" element={<MarketSnapshotConceptsPage />} />
+    <Route path="/ev-incentives-experience" element={<EvIncentivesExperiencePage />} />
     <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
     <Route path="/admin/feedback" element={<FeedbackAdmin />} />
     <Route path="/audit/cards" element={<CardAudit />} />

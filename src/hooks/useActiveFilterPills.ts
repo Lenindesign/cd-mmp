@@ -46,6 +46,7 @@ const GLOBAL_DEFAULTS: DealsFilterState = {
   creditTier: null,
   eligibilityTags: [],
   buyingDealTypes: [],
+  evIncentiveTypes: [],
   sortBy: 'a-z',
 };
 
@@ -126,6 +127,16 @@ export function useActiveFilterPills(
         id: `buying-deal-type-${type}`,
         label: BUYING_DEAL_TYPE_LABELS[type] || type,
         onRemove: () => setFilters(f => ({ ...f, buyingDealTypes: (f.buyingDealTypes ?? []).filter(x => x !== type) })),
+      });
+    }
+
+    const defaultEvIncentiveTypes = new Set(defaults.evIncentiveTypes ?? []);
+    for (const type of filters.evIncentiveTypes ?? []) {
+      if (defaultEvIncentiveTypes.has(type)) continue;
+      result.push({
+        id: `ev-incentive-type-${type}`,
+        label: type.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '),
+        onRemove: () => setFilters(f => ({ ...f, evIncentiveTypes: (f.evIncentiveTypes ?? []).filter(x => x !== type) })),
       });
     }
 
