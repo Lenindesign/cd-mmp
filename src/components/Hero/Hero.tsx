@@ -11,6 +11,7 @@ import { Button } from '../Button';
 import { OptimizedImage } from '../OptimizedImage';
 import SignInToSaveModal from '../SignInToSaveModal';
 import IncentivesModal from '../IncentivesModal/IncentivesModal';
+import { EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import './Hero.css';
 
 interface HeroProps {
@@ -62,6 +63,24 @@ const getMarketplaceUrl = (condition: 'new' | 'used', vehicle: HeroProps['vehicl
 
 const getCertifiedUsedMarketplaceUrl = (vehicle: HeroProps['vehicle']) =>
   `https://www.caranddriver.com/cars-for-sale/certified/${slugifyMarketplaceSegment(vehicle.make)}/${slugifyMarketplaceSegment(vehicle.model)}`;
+
+const isEvOrHybridVehicle = (vehicle: HeroProps['vehicle']) => {
+  const vehicleText = `${vehicle.fuelType || ''} ${vehicle.model}`.toLowerCase();
+  return /\b(ev|electric|hybrid|plug-in|phev)\b/.test(vehicleText);
+};
+
+const getEvIncentivesUrl = (vehicle: HeroProps['vehicle']) => {
+  const params = new URLSearchParams({
+    make: vehicle.make,
+    model: vehicle.model,
+  });
+
+  if (vehicle.fuelType) {
+    params.set('fuelType', vehicle.fuelType);
+  }
+
+  return `${EV_INCENTIVES_PATH}?${params.toString()}`;
+};
 
 const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: HeroProps) => {
   const [searchParams] = useSearchParams();
@@ -173,6 +192,8 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   const shopNewUrl = getMarketplaceUrl('new', vehicle);
   const shopUsedUrl = getMarketplaceUrl('used', vehicle);
   const shopCertifiedUsedUrl = getCertifiedUsedMarketplaceUrl(vehicle);
+  const showEvIncentivesLink = isEvOrHybridVehicle(vehicle);
+  const evIncentivesUrl = getEvIncentivesUrl(vehicle);
   const reviewSummaryItems = vehicle.reviewSummary ? [
     { label: 'HIGHS', copy: vehicle.reviewSummary.highs },
     { label: 'LOWS', copy: vehicle.reviewSummary.lows },
@@ -559,6 +580,8 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
             <HeroOffersB
               vehicleIncentives={vehicleIncentives}
               onOfferClick={handleOfferClick}
+              showEvIncentivesLink={showEvIncentivesLink}
+              evIncentivesPath={evIncentivesUrl}
             />
           )}
 

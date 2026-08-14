@@ -18,7 +18,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
-import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
 import { LEASE_FAQ as FAQ_DATA } from '../../data/faqs';
@@ -81,6 +81,11 @@ const LeaseDealsPage = () => {
   }, [navigate]);
 
   const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'ev') {
+      navigate(EV_INCENTIVES_PATH, { state: { filters: carriedFilters } });
+      return;
+    }
+
     if (dealType === 'finance' || dealType === 'cash' || dealType === 'all') {
       navigate(BEST_BUYING_DEALS_PATH, { state: { filters: carriedFilters } });
     }

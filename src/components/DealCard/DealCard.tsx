@@ -15,6 +15,7 @@ import './DealCard.css';
 export interface DealCardDetail {
   label: string;
   value: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 export interface DealCardPayment {
@@ -24,6 +25,7 @@ export interface DealCardPayment {
   savings?: { type: 'savings-text'; text: string } | { type: 'plain'; text: string };
   savingsTooltip?: string;
   expirationDate: string;
+  expirationLabel?: string;
   /** Optional cash back label for tiered finance deals (e.g. "+ up to $2,000 cash back") */
   cashBackLabel?: string;
 }
@@ -53,6 +55,7 @@ export interface DealCardProps {
 
   /** Extra badge on the image (e.g. body-style or fuel-type label) */
   imageBadge?: string;
+  imageBadgeTooltip?: string;
 
   /** Award badges */
   editorsChoice?: boolean;
@@ -106,6 +109,7 @@ const DealCard: React.FC<DealCardProps> = ({
   rating,
   dealTypeTag,
   imageBadge,
+  imageBadgeTooltip,
   editorsChoice,
   tenBest,
   isSaved,
@@ -215,7 +219,21 @@ const DealCard: React.FC<DealCardProps> = ({
         )}
 
         {imageBadge && (
-          <span className="deal-card__image-badge">{imageBadge}</span>
+          <span className="deal-card__image-badge">
+            <span>{imageBadge}</span>
+            {imageBadgeTooltip && (
+              <button
+                type="button"
+                className="deal-card__image-badge-tooltip"
+                aria-label={imageBadgeTooltip}
+              >
+                <Info size={12} aria-hidden="true" />
+                <span className="deal-card__image-badge-tooltip-text" role="tooltip">
+                  {imageBadgeTooltip}
+                </span>
+              </button>
+            )}
+          </span>
         )}
 
         {(editorsChoice || tenBest) && (
@@ -261,7 +279,7 @@ const DealCard: React.FC<DealCardProps> = ({
             </span>
           )}
           <span className="deal-card__payment-expires">
-            Expires {formatExpiration(payment.expirationDate)}
+            {payment.expirationLabel ?? `Expires ${formatExpiration(payment.expirationDate)}`}
             {eligibilityLabels && eligibilityLabels.length > 0 && (
               <>
                 <span className="deal-card__payment-meta-separator" aria-hidden="true">•</span>
@@ -293,7 +311,7 @@ const DealCard: React.FC<DealCardProps> = ({
         {details.length > 0 && (
           <div className="deal-card__details">
             {details.map((d, i) => (
-              <div key={i} className="deal-card__detail">
+              <div key={i} className={`deal-card__detail ${d.fullWidth ? 'deal-card__detail--full' : ''}`}>
                 <span className="deal-card__detail-label">{d.label}</span>
                 <span className="deal-card__detail-value">{d.value}</span>
               </div>

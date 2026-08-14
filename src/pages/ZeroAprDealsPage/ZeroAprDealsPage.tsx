@@ -21,7 +21,7 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { DealCard } from '../../components/DealCard';
-import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveBuyingFilterDestination } from '../../utils/buyingFilterNavigation';
 import { ZERO_APR_FAQ, BEST_BUYING_FAQ as FAQ_DATA } from '../../data/faqs';
@@ -266,6 +266,11 @@ const ZeroAprDealsPage = () => {
   );
 
   const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'ev') {
+      navigate(EV_INCENTIVES_PATH, { state: { filters: carriedFilters } });
+      return;
+    }
+
     if (dealType === 'lease' || dealType === 'all') {
       navigate('/deals/lease', { state: { filters: carriedFilters } });
     }

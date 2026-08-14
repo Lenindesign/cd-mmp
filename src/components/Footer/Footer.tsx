@@ -1,6 +1,6 @@
 import { Facebook, Twitter, Instagram, Youtube, Mail, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from '../../constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import { Button } from '../Button';
 import { useCarFinder } from '../../contexts/CarFinderContext';
 import './Footer.css';
@@ -23,6 +23,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Truck Rankings', path: '/rankings' },
         { label: 'Buying Deals', path: BEST_BUYING_DEALS_PATH },
         { label: 'Lease Deals', path: '/deals/lease' },
+        { label: 'EV Incentives', path: EV_INCENTIVES_PATH },
         { label: '0% APR Deals', path: ZERO_PERCENT_APR_DEALS_PATH },
         { label: 'Cash Back Deals', path: CASH_BACK_DEALS_PATH },
       ],
@@ -81,6 +82,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Rate Your Car', path: '/rate-your-car' },
         { label: 'Chatbot Experience Guide', path: '/chatbot-experience' },
         { label: 'Market Snapshot Concepts', path: '/market-snapshot-concepts' },
+        { label: 'EV Incentives Page', path: EV_INCENTIVES_PATH },
         { label: 'Used MMP Shopping CTAs', path: '/2025/Chevrolet/Trax' },
         { label: 'Market Snapshot (New Car)', path: '/2026/Chevrolet/Trax#market-intelligence-snapshot' },
         { label: 'Market Snapshot (Used Car)', path: '/2025/Chevrolet/Trax#market-intelligence-snapshot' },
@@ -197,6 +199,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <Link to="/2026/Chevrolet/Trax?modalVersion=b" className="footer__legal-link">Modal Version B</Link>
               <Link to="/2026/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot New</Link>
               <Link to="/2025/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot Used</Link>
+              <Link to={EV_INCENTIVES_PATH} className="footer__legal-link">EV Incentives</Link>
             </div>
           </div>
         </div>

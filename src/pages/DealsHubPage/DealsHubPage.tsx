@@ -14,7 +14,7 @@ import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { DealCard } from '../../components/DealCard';
-import { BEST_BUYING_DEALS_PATH } from '../../constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import './DealsHubPage.css';
 
@@ -70,6 +70,11 @@ const DealsHubPage = () => {
   const [filterOpen, setFilterOpen] = useFilterOpen();
   const [filters] = useState<DealsFilterState>(DEFAULT_FILTERS);
   const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'ev') {
+      navigate(EV_INCENTIVES_PATH, { state: { filters: carriedFilters } });
+      return;
+    }
+
     if (dealType === 'lease') navigate('/deals/lease', { state: { filters: carriedFilters } });
     else if (dealType === 'finance' || dealType === 'cash' || dealType === 'all') navigate(BEST_BUYING_DEALS_PATH, { state: { filters: carriedFilters } });
   }, [navigate]);
@@ -452,6 +457,9 @@ const DealsHubPage = () => {
               <Link to="/deals/lease" className="deals-hub__view-all-link">
                 Leasing Deals <ChevronRight size={14} aria-hidden />
               </Link>
+              <Link to={EV_INCENTIVES_PATH} className="deals-hub__view-all-link">
+                EV Incentives <ChevronRight size={14} aria-hidden />
+              </Link>
             </div>
           </div>
         </div>
@@ -549,6 +557,10 @@ const DealsHubPage = () => {
               <Link to="/vehicles" className="deals-hub__link-card">
                 <h3>Browse All Vehicles</h3>
                 <p>Search our complete new and used car database</p>
+              </Link>
+              <Link to={EV_INCENTIVES_PATH} className="deals-hub__link-card">
+                <h3>EV Incentives</h3>
+                <p>Find tax credits, charging rebates, utility programs, and EV savings</p>
               </Link>
             </div>
           </div>

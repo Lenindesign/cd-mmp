@@ -9,7 +9,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { CarFinderProvider, useCarFinder } from './contexts/CarFinderContext';
 import { CarFinderChat } from './components/CarFinderChat';
 import { getVehicleBySlug } from './services/vehicleService';
-import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH } from './constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH } from './constants/dealRoutes';
 import './App.css';
 
 // Lazy load pages for code splitting
@@ -62,6 +62,7 @@ const LeaseDealsHubPage = lazy(() => import('./pages/LeaseDealsHubPage/LeaseDeal
 const LeaseByMakePage = lazy(() => import('./pages/LeaseByMakePage/LeaseByMakePage'));
 const LeaseByMakeModelPage = lazy(() => import('./pages/LeaseByMakeModelPage/LeaseByMakeModelPage'));
 const LeaseCategoryDispatcher = lazy(() => import('./pages/LeaseCategoryDispatcher/LeaseCategoryDispatcher'));
+const EvIncentivesPage = lazy(() => import('./pages/EvIncentivesPage/EvIncentivesPage'));
 
 // Financing page - lazy loaded
 const FinancingPage = lazy(() => import('./pages/FinancingPage/FinancingPage'));
@@ -200,6 +201,7 @@ const dealsRoutes = (
     <Route path="/deals/zero-apr" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
     <Route path="/deals/cash-finance" element={<Navigate to={BEST_BUYING_DEALS_PATH} replace />} />
     <Route path="/deals/lease" element={<LeaseDealsPage />} />
+    <Route path={EV_INCENTIVES_PATH} element={<EvIncentivesPage />} />
     <Route path="/deals/lease/:slug" element={<LeaseCategoryDispatcher />} />
     <Route path="/deals/lease/:make/:model" element={<LeaseByMakeModelPage />} />
     <Route path="/deals/suv" element={<SuvDealsPage />} />

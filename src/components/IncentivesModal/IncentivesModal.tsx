@@ -108,6 +108,11 @@ export interface IncentiveOfferDetail {
   dontWaitText: string;
   eventLabel?: string;
   expirationDate?: string;
+  offerChipLabel?: string;
+  formHeading?: string;
+  defaultLeadMessage?: string;
+  primaryFormCtaLabel?: string;
+  secondaryActionLabel?: string;
 }
 
 export interface IncentivesModalFormData {
@@ -186,7 +191,7 @@ const EXPERT_TIPS: Record<Incentive['type'], string> = {
   finance: "Low-rate financing deals can beat cash rebates if you qualify. Always compare the total interest saved versus the rebate you\u2019re giving up before deciding.",
   cash: "Cash incentives (loyalty discounts, cash-back deals) can lower the purchase price significantly. That\u2019s especially valuable if you\u2019re paying up front or securing financing outside the dealership.",
   lease: "Lease incentives work best if you prefer lower monthly payments and driving a new car every few years, but pay close attention to mileage limits and end-of-lease fees to avoid surprises.",
-  special: "Special incentives like military, college grad, or loyalty bonuses can stack with other deals. Ask the dealer which programs you qualify for to maximize your savings.",
+  special: "Review eligibility, expiration, and whether the program applies at purchase, lease, tax filing, charging, or utility enrollment before you shop.",
 };
 
 const getExpertTip = (inc: Incentive): string => EXPERT_TIPS[inc.type] ?? (inc.terms || inc.description);
@@ -228,6 +233,7 @@ const IncentivesModal = ({
   const offer = useMemo<IncentiveOfferDetail>(() => ({ ...DEFAULT_OFFER, ...offerProp }), [offerProp]);
   const vehicleLabel = `${offer.year} ${offer.make} ${offer.model}`;
   const ctaLabel = `GET THIS DEAL ON THE ${offer.make.toUpperCase()} ${offer.model.toUpperCase()}`;
+  const defaultLeadMessage = offer.defaultLeadMessage ?? `I would like more information about available deals for the New ${vehicleLabel}.`;
   const vehicleUrl = offer.slug ? `/${offer.slug}` : `/vehicles?make=${encodeURIComponent(offer.make)}&model=${encodeURIComponent(offer.model)}`;
 
   const [firstName, setFirstName] = useState('');
@@ -302,7 +308,7 @@ const IncentivesModal = ({
       document.removeEventListener('keydown', handleKeyDown);
       // Only restore scroll if body was actually locked. This guards against
       // the cleanup firing when the modal opens (first deps change) and
-      // against open-to-open re-renders — we only want to restore when
+      // against open-to-open re-renders. We only want to restore when
       // transitioning out of the locked state.
       if (wasLockedRef.current && isOpen) {
         wasLockedRef.current = false;
@@ -346,7 +352,7 @@ const IncentivesModal = ({
   const submitLead = useCallback(() => {
     const resolvedMessage =
       message.trim() ||
-      `I would like more information about available deals for the New ${vehicleLabel}.`;
+      defaultLeadMessage;
     onSubmitForm?.({ firstName, lastName, email, phone, message: resolvedMessage });
 
     if (variant === 'conversion-b') {
@@ -355,7 +361,7 @@ const IncentivesModal = ({
       return;
     }
     handleClose();
-  }, [firstName, lastName, email, phone, message, vehicleLabel, onSubmitForm, handleClose, variant, offer]);
+  }, [firstName, lastName, email, phone, message, defaultLeadMessage, onSubmitForm, handleClose, variant, offer]);
 
   /** Sticky CTA sits outside the <form>; validate the real form node then submit via React state (same as onSubmit). */
   const handleConversionBContactClick = useCallback(() => {
@@ -693,7 +699,7 @@ const IncentivesModal = ({
                     <div className="incentives-modal__v5-detail">
                       <div className="incentives-modal__v5-offer-row">
                         <span className="incentives-modal__v5-offer-chip">
-                          {getOfferRowChipLabel(activeIncentive.type)}
+                          {offer.offerChipLabel ?? getOfferRowChipLabel(activeIncentive.type)}
                         </span>
                         <div className="incentives-modal__v5-offer-value-block">
                           <span className="incentives-modal__v5-offer-apr">
@@ -795,7 +801,7 @@ const IncentivesModal = ({
                                       <td className="incentives-modal__rate-cell">{row.apr}%</td>
                                       {showCashBackColumn && (
                                         <td className="incentives-modal__rate-cashback">
-                                          {row.cashBack ? `$${row.cashBack.toLocaleString()}` : '—'}
+                                          {row.cashBack ? `$${row.cashBack.toLocaleString()}` : '-'}
                                         </td>
                                       )}
                                     </tr>
@@ -879,9 +885,7 @@ const IncentivesModal = ({
                             </div>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
-                              <p className="incentives-modal__v5-key-section-text">
-                                This deal expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
-                              </p>
+                              <p className="incentives-modal__v5-key-section-text">{offer.dontWaitText}</p>
                             </div>
                           </>
                         ) : (
@@ -904,9 +908,7 @@ const IncentivesModal = ({
                             </div>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">DON&apos;T WAIT TOO LONG</h4>
-                              <p className="incentives-modal__v5-key-section-text">
-                                This deal expires {activeIncentive.expirationDate}. Manufacturer deals change monthly. Once it&apos;s gone, there&apos;s no guarantee it&apos;ll come back.
-                              </p>
+                              <p className="incentives-modal__v5-key-section-text">{offer.dontWaitText}</p>
                             </div>
                           </>
                         )}
@@ -922,7 +924,7 @@ const IncentivesModal = ({
                 <div className="incentives-modal__v5-right" id="incentives-modal-dealer-panel">
                   {conversionBPostSubmit === null && (
                     <>
-                      <h3 className="incentives-modal__v5-form-heading">Got Questions? Contact the Dealer</h3>
+                      <h3 className="incentives-modal__v5-form-heading">{offer.formHeading ?? 'Got Questions? Contact the Dealer'}</h3>
 
                       <div className="incentives-modal__v5-form-image-wrap">
                         {offer.imageUrl ? (
@@ -977,7 +979,7 @@ const IncentivesModal = ({
                         />
                         <label className="incentives-modal__v5-message-label">MESSAGE</label>
                         <textarea
-                          value={message || `I would like more information about available deals for the New ${vehicleLabel}.`}
+                          value={message || defaultLeadMessage}
                           onChange={(e) => setMessage(e.target.value)}
                           rows={3}
                           aria-label="Message"
@@ -1071,7 +1073,7 @@ const IncentivesModal = ({
                         className="incentives-modal__v5-submit"
                         onClick={handleConversionBContactClick}
                       >
-                        CONTACT DEALER
+                        {offer.primaryFormCtaLabel ?? 'CONTACT DEALER'}
                       </button>
                     ) : (
                       <button type="button" className="incentives-modal__v5-submit" onClick={handleClose}>
@@ -1086,7 +1088,7 @@ const IncentivesModal = ({
                         navigate(vehicleUrl);
                       }}
                     >
-                      SHOP NEW {offer.model.toUpperCase()}
+                      {offer.secondaryActionLabel ?? `SHOP NEW ${offer.model.toUpperCase()}`}
                     </button>
                   </div>
                 </div>
@@ -1128,7 +1130,7 @@ const IncentivesModal = ({
                     <div className="incentives-modal__v5-detail">
                       <div className="incentives-modal__v5-offer-row">
                         <span className="incentives-modal__v5-offer-chip">
-                          {getOfferRowChipLabel(activeIncentive.type)}
+                          {offer.offerChipLabel ?? getOfferRowChipLabel(activeIncentive.type)}
                         </span>
                         <div className="incentives-modal__v5-offer-value-block">
                           <span className="incentives-modal__v5-offer-apr">
@@ -1229,7 +1231,7 @@ const IncentivesModal = ({
                                       <td className="incentives-modal__rate-cell">{row.apr}%</td>
                                       {showCashBackColumn && (
                                         <td className="incentives-modal__rate-cashback">
-                                          {row.cashBack ? `$${row.cashBack.toLocaleString()}` : '—'}
+                                          {row.cashBack ? `$${row.cashBack.toLocaleString()}` : '-'}
                                         </td>
                                       )}
                                     </tr>

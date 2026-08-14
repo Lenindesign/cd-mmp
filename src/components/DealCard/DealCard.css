@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DealCard — shared deal card component
+   DealCard - shared deal card component
    ========================================================================== */
 
 /* Card wrapper */
@@ -133,14 +133,81 @@
 }
 
 .deal-card__image-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
   top: var(--spacing-2);
   left: var(--spacing-2);
   padding: var(--spacing-0-5) var(--spacing-2);
   font-size: 10px;
 }
 
+.deal-card__image-badge-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  padding: 0;
+  color: var(--color-white);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--border-radius-circle);
+  cursor: help;
+}
+
+.deal-card__image-badge-tooltip:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: var(--spacing-0-5);
+}
+
+.deal-card__image-badge-tooltip-text {
+  position: absolute;
+  top: calc(100% + var(--spacing-2));
+  left: 0;
+  z-index: 5;
+  width: min(232px, 70vw);
+  padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-3);
+  background: var(--color-dark);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  transform: translateY(calc(-1 * var(--spacing-1)));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    visibility var(--transition-fast);
+}
+
+.deal-card__image-badge-tooltip-text::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: var(--spacing-2);
+  border: var(--spacing-1) solid transparent;
+  border-bottom-color: var(--color-dark);
+}
+
+.deal-card__image-badge-tooltip:hover .deal-card__image-badge-tooltip-text,
+.deal-card__image-badge-tooltip:focus .deal-card__image-badge-tooltip-text {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 /* Save / heart button
- * Solid white chip with a ring — glassmorphism (backdrop-filter) reads as
+ * Solid white chip with a ring. Glassmorphism (backdrop-filter) reads as
  * generic UI chrome; this is more considered and has identical affordance. */
 .deal-card__save {
   position: absolute;
@@ -485,7 +552,7 @@
   font: inherit;
 }
 
-/* Label-info tooltip (the "?" icon tooltips) — matches the accolade
+/* Label-info tooltip (the "?" icon tooltips). Matches the accolade
  * tooltip surface so all card tooltips feel like one system. */
 .deal-card__tooltip-wrap {
   position: relative;
@@ -623,6 +690,15 @@
   flex-direction: column;
   gap: var(--spacing-0-5);
   min-width: 0;
+}
+
+.deal-card__detail--full {
+  grid-column: 1 / -1;
+}
+
+.deal-card__detail--full .deal-card__detail-value {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .deal-card__detail-label {
@@ -770,7 +846,7 @@
 }
 
 /* Very narrow viewports (<= 360px, e.g. iPhone SE with large text). The
- * details grid's 2-col side-by-side becomes cramped — stack vertically so
+ * details grid's 2-col side-by-side becomes cramped. Stack vertically so
  * labels and values never wrap mid-word. */
 @media (max-width: 360px) {
   .deal-card__details {

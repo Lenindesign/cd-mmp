@@ -19,7 +19,7 @@ export type SortOption =
 
 export type Accolade = 'editorsChoice' | 'tenBest' | 'evOfTheYear';
 
-export type DealTypeOption = 'all' | 'lease' | 'finance' | 'cash';
+export type DealTypeOption = 'all' | 'lease' | 'finance' | 'cash' | 'ev';
 
 export interface DealsFilterState {
   tab: DealFilterTab;
@@ -41,7 +41,14 @@ export interface DealsFilterState {
   sortBy: SortOption;
 }
 
-export type DealPageType = 'lease' | 'finance' | 'all' | 'general';
+export type DealPageType = 'lease' | 'finance' | 'all' | 'general' | 'ev';
+
+export interface DealsFilterOptions {
+  bodyTypes?: string[];
+  makes?: string[];
+  modelOptionsByMake?: Record<string, string[]>;
+  fuelTypes?: string[];
+}
 
 interface DealsFilterModalProps {
   isOpen: boolean;
@@ -51,6 +58,7 @@ interface DealsFilterModalProps {
   totalResults: number;
   getResultCount?: (filters: DealsFilterState) => number;
   dealPageType?: DealPageType;
+  filterOptions?: DealsFilterOptions;
   /**
    * Called from `Show Results` when the user's draft deal-type points to a
    * different page than the one hosting this modal. Receives the destination
@@ -94,6 +102,7 @@ const DealsFilterModal = ({
   totalResults,
   getResultCount,
   dealPageType,
+  filterOptions,
   onDealTypeNavigate,
 }: DealsFilterModalProps) => {
   const [draft, setDraft] = useState<DealsFilterState>(externalFilters);
@@ -218,12 +227,13 @@ const DealsFilterModal = ({
   /**
    * Which side (lease vs buy) the draft is currently pointing at. This drives
    * the result count displayed in the modal and the highlighted Lease/Buy
-   * button — neither of which should alter the page behind the modal.
+   * button. Neither should alter the page behind the modal.
    */
   const selectedSide: 'lease' | 'buy' = useMemo(() => {
     if (draft.dealType === 'lease') return 'lease';
     if (draft.dealType === 'finance' || draft.dealType === 'cash') return 'buy';
-    // draft.dealType === 'all' → defer to the hosting page's native scope.
+    if (dealPageType === 'ev') return 'buy';
+    // draft.dealType === 'all' defers to the hosting page's native scope.
     if (dealPageType === 'lease') return 'lease';
     if (dealPageType === 'finance') return 'buy';
     return 'lease';
@@ -246,9 +256,14 @@ const DealsFilterModal = ({
     ) as Record<string, string[]>;
   }, [selectedSide, leaseDeals, buyingDeals]);
 
+  const resolvedBodyTypes = filterOptions?.bodyTypes ?? bodyTypes;
+  const resolvedMakes = filterOptions?.makes ?? makes;
+  const resolvedModelOptionsByMake = filterOptions?.modelOptionsByMake ?? modelOptionsByMake;
+  const resolvedFuelTypes = filterOptions?.fuelTypes ?? fuelTypes;
+
   const availableModels = useMemo(
-    () => Object.values(modelOptionsByMake).flat(),
-    [modelOptionsByMake],
+    () => Object.values(resolvedModelOptionsByMake).flat(),
+    [resolvedModelOptionsByMake],
   );
 
   useEffect(() => {
@@ -265,7 +280,7 @@ const DealsFilterModal = ({
   /**
    * Cross-scope result counter used for the in-modal preview. Mirrors the
    * shared predicate logic each page applies, but operates on whichever pool
-   * (lease or buying) the user has selected inside the modal — regardless of
+   * (lease or buying) the user has selected inside the modal, regardless of
    * which page is hosting it. Lease-only ranges (monthly payment, cash down,
    * terms) are ignored on the buy side because those fields don't exist on
    * zero-APR/finance/cash deals.
@@ -316,13 +331,15 @@ const DealsFilterModal = ({
    */
   const pageNativeSide: 'lease' | 'buy' | null =
     dealPageType === 'lease' ? 'lease' : dealPageType === 'finance' ? 'buy' : null;
+  const isEvDealPage = dealPageType === 'ev';
   const sideMatchesHostingPage = pageNativeSide !== null && pageNativeSide === selectedSide;
   const effectiveCount = useCallback(
     (d: DealsFilterState): number => {
+      if (isEvDealPage && getResultCount) return getResultCount(d);
       if (sideMatchesHostingPage && getResultCount) return getResultCount(d);
       return getScopedCount(d, selectedSide);
     },
-    [sideMatchesHostingPage, getResultCount, getScopedCount, selectedSide],
+    [isEvDealPage, sideMatchesHostingPage, getResultCount, getScopedCount, selectedSide],
   );
 
   const toggleSection = useCallback((section: string) => {
@@ -361,13 +378,13 @@ const DealsFilterModal = ({
     const base = { ...draft };
     const counts: Record<string, number> = {};
 
-    for (const bt of bodyTypes) {
+    for (const bt of resolvedBodyTypes) {
       counts[`body-${bt}`] = effectiveCount({ ...base, bodyTypes: [bt] });
     }
-    for (const m of makes) {
+    for (const m of resolvedMakes) {
       counts[`make-${m}`] = effectiveCount({ ...base, makes: [m], models: [] });
     }
-    for (const [make, modelsForMake] of Object.entries(modelOptionsByMake)) {
+    for (const [make, modelsForMake] of Object.entries(resolvedModelOptionsByMake)) {
       for (const model of modelsForMake) {
         counts[`model-${make}-${model}`] = effectiveCount({ ...base, makes: [make], models: [model] });
       }
@@ -375,14 +392,14 @@ const DealsFilterModal = ({
     for (const t of availableTerms) {
       counts[`term-${t}`] = effectiveCount({ ...base, terms: [t] });
     }
-    for (const ft of fuelTypes) {
+    for (const ft of resolvedFuelTypes) {
       counts[`fuel-${ft}`] = effectiveCount({ ...base, fuelTypes: [ft] });
     }
     for (const opt of BUYING_DEAL_TYPE_FILTER_OPTIONS) {
       counts[`buying-deal-type-${opt.value}`] = effectiveCount({ ...base, buyingDealTypes: [opt.value] });
     }
     return counts;
-  }, [effectiveCount, draft, bodyTypes, makes, modelOptionsByMake, availableTerms, fuelTypes]);
+  }, [effectiveCount, draft, resolvedBodyTypes, resolvedMakes, resolvedModelOptionsByMake, availableTerms, resolvedFuelTypes]);
 
   const handleClearAll = useCallback(() => {
     setDraft(prev => ({
@@ -419,6 +436,7 @@ const DealsFilterModal = ({
   }, [draft, onApply, onClose, onDealTypeNavigate, pageNativeSide, selectedSide]);
 
   const isLeaseMode = selectedSide === 'lease';
+  const showDealTypeToggle = true;
   const showMonthlyPayment = isLeaseMode;
   const showCashDown = isLeaseMode;
   const showTermLength = isLeaseMode;
@@ -453,25 +471,64 @@ const DealsFilterModal = ({
 
         {/* Scrollable body */}
         <div className="deals-filter__body">
-          {/* Deal Type toggle — updates the modal preview only. Actual
+          {/* Deal Type toggle updates the modal preview only. Actual
               page navigation is deferred to "Show Results" so the page
               behind the modal stays put while the user explores. */}
-          <div className="deals-filter__deal-type-row">
-            <button
-              type="button"
-              className={`deals-filter__deal-type-btn ${selectedSide === 'lease' ? 'deals-filter__deal-type-btn--active' : ''}`}
-              onClick={() => setDraft(prev => ({ ...prev, dealType: 'lease' }))}
-            >
-              Lease
-            </button>
-            <button
-              type="button"
-              className={`deals-filter__deal-type-btn ${selectedSide === 'buy' ? 'deals-filter__deal-type-btn--active' : ''}`}
-              onClick={() => setDraft(prev => ({ ...prev, dealType: 'finance' }))}
-            >
-              Buy
-            </button>
-          </div>
+          {showDealTypeToggle && (
+            <div className="deals-filter__deal-type-row">
+              <button
+                type="button"
+                className={`deals-filter__deal-type-btn ${!isEvDealPage && selectedSide === 'buy' ? 'deals-filter__deal-type-btn--active' : ''}`}
+                onClick={() => {
+                  if (isEvDealPage && onDealTypeNavigate) {
+                    onDealTypeNavigate('finance', draft);
+                    onClose();
+                    return;
+                  }
+                  setDraft(prev => ({ ...prev, dealType: 'finance' }));
+                }}
+                aria-current={!isEvDealPage && selectedSide === 'buy' ? 'page' : undefined}
+              >
+                Buy
+              </button>
+              <button
+                type="button"
+                className={`deals-filter__deal-type-btn ${!isEvDealPage && selectedSide === 'lease' ? 'deals-filter__deal-type-btn--active' : ''}`}
+                onClick={() => {
+                  if (isEvDealPage && onDealTypeNavigate) {
+                    onDealTypeNavigate('lease', draft);
+                    onClose();
+                    return;
+                  }
+                  setDraft(prev => ({ ...prev, dealType: 'lease' }));
+                }}
+                aria-current={!isEvDealPage && selectedSide === 'lease' ? 'page' : undefined}
+              >
+                Lease
+              </button>
+              {isEvDealPage && (
+                <button
+                  type="button"
+                  className="deals-filter__deal-type-btn deals-filter__deal-type-btn--active"
+                  aria-current="page"
+                >
+                  EV
+                </button>
+              )}
+              {!isEvDealPage && (
+                <button
+                  type="button"
+                  className="deals-filter__deal-type-btn"
+                  onClick={() => {
+                    onDealTypeNavigate?.('ev', draft);
+                    onClose();
+                  }}
+                >
+                  EV
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Sort By */}
           <FilterSection
@@ -502,7 +559,15 @@ const DealsFilterModal = ({
               onToggle={() => toggleSection('buyingDealType')}
             >
               <div className="deals-filter__chips">
-                {BUYING_DEAL_TYPE_FILTER_OPTIONS.map(opt => {
+                {isEvDealPage ? (
+                  <button
+                    type="button"
+                    className="deals-filter__chip deals-filter__chip--active"
+                    aria-pressed="true"
+                  >
+                    EV Incentives ({effectiveCount(draft)})
+                  </button>
+                ) : BUYING_DEAL_TYPE_FILTER_OPTIONS.map(opt => {
                   const count = optionCounts?.[`buying-deal-type-${opt.value}`];
                   const activeTypes = draft.buyingDealTypes ?? [];
                   return (
@@ -527,7 +592,7 @@ const DealsFilterModal = ({
             onToggle={() => toggleSection('bodyType')}
           >
             <div className="deals-filter__chips">
-              {bodyTypes.map(bt => {
+              {resolvedBodyTypes.map(bt => {
                 const count = optionCounts?.[`body-${bt}`];
                 return (
                   <button
@@ -550,9 +615,9 @@ const DealsFilterModal = ({
             onToggle={() => toggleSection('make')}
           >
             <div className="deals-filter__make-list">
-              {makes.map(m => {
+              {resolvedMakes.map(m => {
                 const count = optionCounts?.[`make-${m}`];
-                const modelsForMake = modelOptionsByMake[m] ?? [];
+                const modelsForMake = resolvedModelOptionsByMake[m] ?? [];
                 const hasModels = modelsForMake.length > 0;
                 const selectedModels = draft.models ?? [];
                 const selectedModelCount = modelsForMake.filter(model => selectedModels.includes(model)).length;
@@ -625,7 +690,7 @@ const DealsFilterModal = ({
             onToggle={() => toggleSection('fuelType')}
           >
             <div className="deals-filter__chips">
-              {fuelTypes.map(ft => {
+              {resolvedFuelTypes.map(ft => {
                 const count = optionCounts?.[`fuel-${ft}`];
                 return (
                   <button
@@ -641,7 +706,7 @@ const DealsFilterModal = ({
             </div>
           </FilterSection>
 
-          {/* Monthly Payment — lease only */}
+          {/* Monthly Payment: lease only */}
           {showMonthlyPayment && (
             <FilterSection
               title="Monthly Payment"
@@ -660,7 +725,7 @@ const DealsFilterModal = ({
             </FilterSection>
           )}
 
-          {/* Cash Down — lease only */}
+          {/* Cash Down: lease only */}
           {showCashDown && (
             <FilterSection
               title="Cash Down"
@@ -679,7 +744,7 @@ const DealsFilterModal = ({
             </FilterSection>
           )}
 
-          {/* Term Length — lease only */}
+          {/* Term Length: lease only */}
           {showTermLength && (
             <FilterSection
               title="Term Length"

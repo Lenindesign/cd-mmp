@@ -8,7 +8,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import { getAprRangeLabel } from '../../components/IncentivesModal/incentivesModalUtils';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
-import type { DealsFilterState } from '../../components/DealsFilterModal';
+import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { SEO, createBreadcrumbStructuredData } from '../../components/SEO';
 import { DealCard } from '../../components/DealCard';
 import SignInToSaveModal from '../../components/SignInToSaveModal';
@@ -25,6 +25,7 @@ import {
   DEALS_GRID_BREAKER_AD_URL,
   SIDEBAR_AFTER_BREAK_PROPS,
 } from '../../constants/dealsLayout';
+import { EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import { chunkArray } from '../../utils/chunkArray';
 import './AllDealsPage.css';
 
@@ -148,16 +149,27 @@ const AllDealsPage = () => {
 
   const { pills: activeFilterPills, clearAllFilters } = useActiveFilterPills(filters, setFilters, DEFAULT_FILTERS);
 
-  // The all-deals dataset only contains 0% APR, finance, and cash rows —
+  // The all-deals dataset only contains 0% APR, finance, and cash rows.
   // lease deals live on `/deals/lease`. Choosing lease on this page used
   // to silently return zero results (P0.2 in the 2026-04-18 audit); now
   // we route the user to the lease listing carrying their filter context.
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
+    if (applied.dealType === 'ev') {
+      navigate(EV_INCENTIVES_PATH, { state: { filters: applied } });
+      return;
+    }
+
     if (applied.dealType === 'lease') {
       navigate('/deals/lease', { state: { filters: applied } });
       return;
     }
     setFilters(applied);
+  }, [navigate]);
+
+  const handleDealTypeNavigate = useCallback((dealType: DealTypeOption, carriedFilters: DealsFilterState) => {
+    if (dealType === 'ev') {
+      navigate(EV_INCENTIVES_PATH, { state: { filters: carriedFilters } });
+    }
   }, [navigate]);
 
   const allDeals = useMemo(() => {
@@ -529,6 +541,7 @@ const AllDealsPage = () => {
         onApply={handleFilterApply}
         totalResults={filteredDeals.length}
         getResultCount={getResultCount}
+        onDealTypeNavigate={handleDealTypeNavigate}
       />
 
       <SignInToSaveModal

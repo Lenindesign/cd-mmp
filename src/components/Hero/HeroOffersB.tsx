@@ -16,6 +16,9 @@ interface HeroOffersBProps {
   title?: string | null;
   showBuyDealLink?: boolean;
   showLeaseDealLink?: boolean;
+  showEvIncentivesLink?: boolean;
+  evIncentivesPath?: string;
+  evIncentivesLabel?: string;
   showMoreDealsAccordion?: boolean;
   showToggleIndicator?: boolean;
 }
@@ -75,6 +78,9 @@ const HeroOffersB = ({
   title = 'SPECIAL DEALS AND INCENTIVES',
   showBuyDealLink = true,
   showLeaseDealLink = true,
+  showEvIncentivesLink = false,
+  evIncentivesPath = '/deals/ev-incentives',
+  evIncentivesLabel = 'EV & Hybrid Incentives',
   showMoreDealsAccordion = false,
   showToggleIndicator = false,
 }: HeroOffersBProps) => {
@@ -112,7 +118,7 @@ const HeroOffersB = ({
 
   const showBuyLink = showBuyDealLink && dealCounts.buy > 0;
   const showLeaseLink = showLeaseDealLink && dealCounts.lease > 0;
-  const showHeader = Boolean(title) || showBuyLink || showLeaseLink;
+  const showHeader = Boolean(title) || showBuyLink || showLeaseLink || showEvIncentivesLink;
   const showMoreDealsControl = showMoreDealsAccordion && moreOffers.length > 0;
   const moreDealsId = `hero-offers-b-more-${slugify(vehicleIncentives.make)}-${slugify(vehicleIncentives.model)}`;
 
@@ -246,7 +252,7 @@ const HeroOffersB = ({
       {showHeader && (
         <div className="hero__offers-b-header">
           {title && <h3 className="hero__offers-b-title">{title}</h3>}
-          {(showBuyLink || showLeaseLink) && (
+          {(showBuyLink || showLeaseLink || showEvIncentivesLink) && (
             <nav className="hero__offers-b-deal-links" aria-label={`${vehicleIncentives.make} ${vehicleIncentives.model} deal pages`}>
               {showBuyLink && (
                 <Link
@@ -264,6 +270,16 @@ const HeroOffersB = ({
                   aria-label={`View ${formatDealCount(dealCounts.lease, 'Lease').toLowerCase()} for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
                 >
                   {renderDealLink('Lease')}
+                </Link>
+              )}
+              {showEvIncentivesLink && (
+                <Link
+                  to={evIncentivesPath}
+                  className="hero__offers-b-deal-link hero__offers-b-deal-link--ev"
+                  aria-label={`View EV and hybrid incentives for ${vehicleIncentives.make} ${vehicleIncentives.model}`}
+                >
+                  <span className="hero__offers-b-deal-link-label">{evIncentivesLabel}</span>
+                  <ChevronRight className="hero__offers-b-deal-link-icon" size={14} aria-hidden />
                 </Link>
               )}
             </nav>
