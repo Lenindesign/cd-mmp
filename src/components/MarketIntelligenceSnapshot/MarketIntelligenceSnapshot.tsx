@@ -37,11 +37,8 @@ interface FactorItem {
 const formatMileageValue = (mileage?: number) =>
   mileage !== undefined ? `${mileage.toLocaleString()} mi` : 'New';
 
-const formatCompactPrice = (price: number) => {
-  const compactValue = price / 1000;
-  const displayValue = compactValue >= 100 ? Math.round(compactValue).toString() : compactValue.toFixed(1);
-  return `$${displayValue.replace(/\.0$/, '')}K`;
-};
+const formatPriceDelta = (amount: number) =>
+  formatPrice(Math.round(amount / 100) * 100);
 
 const isGoodOrGreatPrice = (match: MarketInventoryMatch, averagePrice: number) =>
   match.unit.price <= averagePrice * 0.985;
@@ -232,19 +229,45 @@ const MarketIntelligenceSnapshot = ({
   const targetStart = getPercentWithinRange(targetLow, rangeLow, rangeHigh);
   const targetEnd = getPercentWithinRange(targetHigh, rangeLow, rangeHigh);
   const askingPosition = getPercentWithinRange(askingPrice, rangeLow, rangeHigh);
+  const targetCenter = targetStart + (targetEnd - targetStart) / 2;
   const priceRangeStyle = {
     '--target-start': `${targetStart}%`,
     '--target-width': `${Math.max(8, targetEnd - targetStart)}%`,
+    '--target-center': `${targetCenter}%`,
     '--asking-position': `${askingPosition}%`,
   } as CSSProperties;
   const priceTrend = '-3.8% (30d)';
   const inventoryLabel = market.inventoryCount >= 24 ? 'High Supply' : market.inventoryCount >= 10 ? 'Moderate' : 'Limited';
   const demandLabel = market.averageDaysOnLot <= 22 ? 'High' : market.averageDaysOnLot >= 45 ? 'Soft' : 'Moderate';
-  const priceAdvantage = targetHigh - askingPrice;
-  const priceAdvantagePercent = priceAdvantage / askingPrice;
-  const verdictCopy = priceAdvantage >= 750 || priceAdvantagePercent >= 0.04
+  const amountBelowTarget = Math.max(0, targetLow - askingPrice);
+  const amountOverTarget = Math.max(0, askingPrice - targetHigh);
+  const isInsideTargetRange = askingPrice >= targetLow && askingPrice <= targetHigh;
+  const priceAdvantagePercent = amountBelowTarget / askingPrice;
+  const pricePositionLabel = amountBelowTarget >= 750 || priceAdvantagePercent >= 0.04
+    ? 'Great Price'
+    : amountBelowTarget > 0
+      ? 'Good Price'
+      : isInsideTargetRange
+        ? 'Fair Market Price'
+        : 'Over Market';
+  const pricePositionCopy = amountBelowTarget > 0
+    ? `${formatPriceDelta(amountBelowTarget)} below target range`
+    : amountOverTarget > 0
+      ? `${formatPriceDelta(amountOverTarget)} above target range`
+      : 'Inside the target range';
+  const leadDaysOnLot = leadMatch?.unit.daysOnLot ?? market.averageDaysOnLot;
+  const hasLeadPriceDrop = (leadMatch?.unit.recentPriceDropAmount ?? 0) > 0;
+  const hasHighNegotiationLeverage = leadDaysOnLot >= 90 || (leadDaysOnLot >= 45 && (hasLeadPriceDrop || demandLabel === 'Soft'));
+  const hasModerateNegotiationLeverage = leadDaysOnLot >= 30 || hasLeadPriceDrop || demandLabel === 'Soft';
+  const negotiationLeverage = hasHighNegotiationLeverage ? 'High' : hasModerateNegotiationLeverage ? 'Moderate' : 'Low';
+  const negotiationReasons = [
+    leadDaysOnLot >= 30 ? `${leadDaysOnLot} days on lot` : null,
+    hasLeadPriceDrop ? 'recent price drop' : null,
+    demandLabel === 'Soft' ? 'soft demand' : null,
+  ].filter(Boolean).join(', ') || 'priced close to market';
+  const verdictCopy = amountBelowTarget >= 750 || priceAdvantagePercent >= 0.04
     ? 'Buyer advantage - asking price is meaningfully below target'
-    : priceAdvantage >= 0
+    : amountBelowTarget > 0 || isInsideTargetRange
       ? 'Fair deal - asking price is inside the target range'
       : 'Worth watching - compare price and local inventory';
 
@@ -356,20 +379,43 @@ const MarketIntelligenceSnapshot = ({
           aria-label={`Target price range ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, asking price ${formatPrice(askingPrice)}`}
           style={priceRangeStyle}
         >
-          <div className="market-snapshot__price-range-head">
-            <strong>Target: {formatCompactPrice(targetLow)} - {formatCompactPrice(targetHigh)}</strong>
-            <strong>Asking: {formatCompactPrice(askingPrice)}</strong>
+          <div className="market-snapshot__price-summary">
+            <div className="market-snapshot__price-summary-copy">
+              <span className="market-snapshot__price-pill">{pricePositionLabel}</span>
+              <h3>{pricePositionCopy}</h3>
+              <p>Target range: {formatPrice(targetLow)} to {formatPrice(targetHigh)}</p>
+            </div>
+            <div className="market-snapshot__asking-price">
+              <span>Asking price</span>
+              <strong>{formatPrice(askingPrice)}</strong>
+            </div>
           </div>
           <div className="market-snapshot__price-bar" aria-hidden="true">
             <span className="market-snapshot__price-bar-track" />
             <span className="market-snapshot__price-bar-target" />
+            <span className="market-snapshot__price-bar-target-label">
+              Target {formatPrice(targetLow)} to {formatPrice(targetHigh)}
+            </span>
+            <span className="market-snapshot__price-bar-marker-label">
+              Asking {formatPrice(askingPrice)}
+            </span>
             <span className="market-snapshot__price-bar-marker" />
           </div>
           <div className="market-snapshot__price-range-labels">
-            <span>Fair Deal</span>
-            <span>Excellent Target Range</span>
-            <span>Over Asking Range</span>
+            <span>Below Target</span>
+            <span>Target Range</span>
+            <span>Above Target</span>
           </div>
+          <dl className="market-snapshot__leverage">
+            <div>
+              <dt>Negotiation leverage</dt>
+              <dd>{negotiationLeverage}</dd>
+            </div>
+            <div>
+              <dt>Why it matters</dt>
+              <dd>{negotiationReasons}</dd>
+            </div>
+          </dl>
         </section>
 
         <section className="market-snapshot__factors" aria-labelledby="market-snapshot-factors-title">
