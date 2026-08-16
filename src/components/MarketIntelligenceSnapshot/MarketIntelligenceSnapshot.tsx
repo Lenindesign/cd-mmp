@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useId, useMemo, useState } from 'react';
+import { type CSSProperties, useId, useMemo, useState } from 'react';
 import { Badge } from '../Badge';
 import { OptimizedImage } from '../OptimizedImage';
 import { formatPrice } from '../../services/dealerService';
@@ -34,11 +34,34 @@ interface FactorItem {
   tone?: 'success' | 'dark';
 }
 
+interface ZipInputState {
+  sourceZipCode: string;
+  value: string;
+  error: string;
+}
+
+interface PriceAssessment {
+  label: 'Great Price' | 'Good Price' | 'Fair Market Price' | 'Over Market';
+  copy: string;
+  tone: 'opportunity' | 'market' | 'over';
+}
+
+interface BuyerGuidance {
+  targetCopy: string;
+  closeCopy: string;
+  position: 'Strong' | 'Moderate' | 'Limited';
+  positionCopy: string;
+  openingOffer?: string;
+}
+
 const formatMileageValue = (mileage?: number) =>
   mileage !== undefined ? `${mileage.toLocaleString()} mi` : 'New';
 
 const formatPriceDelta = (amount: number) =>
   formatPrice(Math.round(amount / 100) * 100);
+
+const formatPriceRange = (low: number, high: number) =>
+  low === high ? formatPrice(low) : `${formatPrice(low)}-${formatPrice(high)}`;
 
 const isGoodOrGreatPrice = (match: MarketInventoryMatch, averagePrice: number) =>
   match.unit.price <= averagePrice * 0.985;
@@ -50,6 +73,118 @@ const getVehicleYmm = (vehicle: Vehicle) => `${vehicle.year} ${vehicle.make} ${v
 
 const getVehicleMatchTitle = ({ unit }: MarketInventoryMatch) =>
   `${unit.year} ${unit.make} ${unit.model} ${unit.trim}`.replace(/\s+/g, ' ').trim();
+
+const getPriceAssessment = ({
+  askingPrice,
+  targetLow,
+  targetHigh,
+}: {
+  askingPrice: number;
+  targetLow: number;
+  targetHigh: number;
+}): PriceAssessment => {
+  const amountBelowTarget = Math.max(0, targetLow - askingPrice);
+  const amountOverTarget = Math.max(0, askingPrice - targetHigh);
+  const isInsideTargetRange = askingPrice >= targetLow && askingPrice <= targetHigh;
+  const priceAdvantagePercent = amountBelowTarget / askingPrice;
+
+  if (amountBelowTarget >= 750 || priceAdvantagePercent >= 0.04) {
+    return {
+      label: 'Great Price',
+      copy: `About ${formatPriceDelta(amountBelowTarget)} below fair market value`,
+      tone: 'opportunity',
+    };
+  }
+
+  if (amountBelowTarget > 0) {
+    return {
+      label: 'Good Price',
+      copy: `About ${formatPriceDelta(amountBelowTarget)} below fair market value`,
+      tone: 'opportunity',
+    };
+  }
+
+  if (isInsideTargetRange) {
+    return {
+      label: 'Fair Market Price',
+      copy: 'Inside fair market range',
+      tone: 'market',
+    };
+  }
+
+  return {
+    label: 'Over Market',
+    copy: `About ${formatPriceDelta(amountOverTarget)} above fair market value`,
+    tone: 'over',
+  };
+};
+
+const getBottomLineCopy = (assessment: PriceAssessment, hasHistoryRisk: boolean) => {
+  if (assessment.label === 'Great Price') {
+    if (hasHistoryRisk) {
+      return 'Bottom line: The price is strong, but check the vehicle history before treating it as a good buy.';
+    }
+
+    return 'Bottom line: This looks like a good buy at the current asking price.';
+  }
+
+  if (assessment.label === 'Good Price') {
+    if (hasHistoryRisk) {
+      return 'Bottom line: This is priced well, but the history should drive the final decision.';
+    }
+
+    return 'Bottom line: This is priced better than similar local listings.';
+  }
+
+  if (assessment.label === 'Fair Market Price') {
+    return 'Bottom line: This price is in line with the local market.';
+  }
+
+  return 'Bottom line: This is above market, so compare carefully and negotiate.';
+};
+
+const getBuyerGuidance = ({
+  askingPrice,
+  targetLow,
+  targetHigh,
+  priceAssessment,
+  negotiationLeverage,
+}: {
+  askingPrice: number;
+  targetLow: number;
+  targetHigh: number;
+  priceAssessment: PriceAssessment;
+  negotiationLeverage: 'High' | 'Moderate' | 'Low';
+}): BuyerGuidance => {
+  const targetMidpoint = Math.round(((targetLow + targetHigh) / 2) / 100) * 100;
+
+  if (priceAssessment.tone === 'opportunity') {
+    return {
+      targetCopy: `At or below ${formatPrice(askingPrice)}`,
+      closeCopy: `I'd aim to close around ${formatPrice(askingPrice)}. It is already below fair market.`,
+      position: negotiationLeverage === 'Low' ? 'Moderate' : 'Strong',
+      positionCopy: 'The current price is already favorable, so focus on keeping taxes, fees, and add-ons controlled.',
+    };
+  }
+
+  if (priceAssessment.tone === 'market') {
+    return {
+      targetCopy: formatPriceRange(targetLow, targetHigh),
+      closeCopy: `I'd aim to stay near ${formatPrice(targetMidpoint)} or lower.`,
+      position: negotiationLeverage === 'High' ? 'Strong' : 'Moderate',
+      positionCopy: 'The asking price is fair, but local supply and lot age may still give you room to negotiate.',
+      openingOffer: negotiationLeverage !== 'Low' ? formatPrice(targetLow) : undefined,
+    };
+  }
+
+  return {
+    targetCopy: formatPriceRange(targetLow, targetHigh),
+    closeCopy: `I'd try to bring this closer to ${formatPrice(targetHigh)} before moving forward.`,
+    position: negotiationLeverage === 'High' ? 'Moderate' : 'Limited',
+    positionCopy: 'The asking price is above fair market, so use comparable listings as your negotiation anchor.',
+    openingOffer: formatPrice(targetHigh),
+  };
+};
 
 const getListingUrl = ({ unit }: MarketInventoryMatch) => {
   const params = new URLSearchParams({
@@ -189,6 +324,36 @@ const getConditionLabel = (match: MarketInventoryMatch) => {
   return 'Used';
 };
 
+const getRecommendationSignals = ({
+  match,
+  averageMileage,
+  demandLabel,
+  inventoryLabel,
+  isUsed,
+}: {
+  match?: MarketInventoryMatch;
+  averageMileage?: number;
+  demandLabel: string;
+  inventoryLabel: string;
+  isUsed: boolean;
+}) => {
+  if (!match) return ['local inventory benchmark'];
+
+  const signals = [
+    demandLabel === 'High' ? 'high demand' : null,
+    inventoryLabel === 'Limited' ? 'limited local supply' : null,
+    isUsed && match.unit.accidents === 0 ? 'no accidents' : null,
+    isUsed && match.unit.owners === 1 ? 'one owner' : null,
+    isUsed && averageMileage !== undefined && (match.unit.mileage ?? Number.POSITIVE_INFINITY) < averageMileage
+      ? 'low mileage'
+      : null,
+    match.unit.daysOnLot !== undefined && match.unit.daysOnLot <= 14 ? 'newly listed' : null,
+    (match.unit.recentPriceDropAmount ?? 0) > 0 ? 'recent price drop' : null,
+  ].filter(Boolean) as string[];
+
+  return signals.length > 0 ? signals.slice(0, 3) : ['local inventory benchmark'];
+};
+
 const MarketIntelligenceSnapshot = ({
   vehicle,
   location,
@@ -198,13 +363,14 @@ const MarketIntelligenceSnapshot = ({
   onSeeLocalInventory,
 }: MarketIntelligenceSnapshotProps) => {
   const zipErrorId = useId();
-  const [zipCode, setZipCode] = useState(location.zipCode ?? '');
-  const [zipError, setZipError] = useState('');
-
-  useEffect(() => {
-    setZipCode(location.zipCode ?? '');
-    setZipError('');
-  }, [location.zipCode]);
+  const currentLocationZipCode = location.zipCode ?? '';
+  const [zipInput, setZipInput] = useState<ZipInputState>({
+    sourceZipCode: currentLocationZipCode,
+    value: currentLocationZipCode,
+    error: '',
+  });
+  const zipCode = zipInput.sourceZipCode === currentLocationZipCode ? zipInput.value : currentLocationZipCode;
+  const zipError = zipInput.sourceZipCode === currentLocationZipCode ? zipInput.error : '';
 
   const market = useMemo(
     () => getVehicleMarketInventory({ vehicle, location, radiusMiles }),
@@ -230,8 +396,12 @@ const MarketIntelligenceSnapshot = ({
   const targetEnd = getPercentWithinRange(targetHigh, rangeLow, rangeHigh);
   const askingPosition = getPercentWithinRange(askingPrice, rangeLow, rangeHigh);
   const targetCenter = targetStart + (targetEnd - targetStart) / 2;
+  const greatDealEndPrice = Math.min(targetLow, Math.max(rangeLow, Math.max(targetLow - 750, targetLow / 1.04)));
+  const greatDealEnd = getPercentWithinRange(greatDealEndPrice, rangeLow, rangeHigh);
   const priceRangeStyle = {
+    '--great-end': `${greatDealEnd}%`,
     '--target-start': `${targetStart}%`,
+    '--target-end': `${targetEnd}%`,
     '--target-width': `${Math.max(8, targetEnd - targetStart)}%`,
     '--target-center': `${targetCenter}%`,
     '--asking-position': `${askingPosition}%`,
@@ -239,55 +409,74 @@ const MarketIntelligenceSnapshot = ({
   const priceTrend = '-3.8% (30d)';
   const inventoryLabel = market.inventoryCount >= 24 ? 'High Supply' : market.inventoryCount >= 10 ? 'Moderate' : 'Limited';
   const demandLabel = market.averageDaysOnLot <= 22 ? 'High' : market.averageDaysOnLot >= 45 ? 'Soft' : 'Moderate';
+  const priceAssessment = getPriceAssessment({ askingPrice, targetLow, targetHigh });
   const amountBelowTarget = Math.max(0, targetLow - askingPrice);
-  const amountOverTarget = Math.max(0, askingPrice - targetHigh);
   const isInsideTargetRange = askingPrice >= targetLow && askingPrice <= targetHigh;
-  const priceAdvantagePercent = amountBelowTarget / askingPrice;
-  const pricePositionLabel = amountBelowTarget >= 750 || priceAdvantagePercent >= 0.04
-    ? 'Great Price'
-    : amountBelowTarget > 0
-      ? 'Good Price'
-      : isInsideTargetRange
-        ? 'Fair Market Price'
-        : 'Over Market';
-  const pricePositionCopy = amountBelowTarget > 0
-    ? `${formatPriceDelta(amountBelowTarget)} below target range`
-    : amountOverTarget > 0
-      ? `${formatPriceDelta(amountOverTarget)} above target range`
-      : 'Inside the target range';
+  const hasHistoryRisk = isUsed && Boolean(leadMatch) && (
+    (leadMatch?.unit.accidents ?? 0) > 0 ||
+    (leadMatch?.unit.titleStatus !== undefined && leadMatch.unit.titleStatus !== 'Clean')
+  );
   const leadDaysOnLot = leadMatch?.unit.daysOnLot ?? market.averageDaysOnLot;
   const hasLeadPriceDrop = (leadMatch?.unit.recentPriceDropAmount ?? 0) > 0;
   const hasHighNegotiationLeverage = leadDaysOnLot >= 90 || (leadDaysOnLot >= 45 && (hasLeadPriceDrop || demandLabel === 'Soft'));
   const hasModerateNegotiationLeverage = leadDaysOnLot >= 30 || hasLeadPriceDrop || demandLabel === 'Soft';
   const negotiationLeverage = hasHighNegotiationLeverage ? 'High' : hasModerateNegotiationLeverage ? 'Moderate' : 'Low';
-  const negotiationReasons = [
-    leadDaysOnLot >= 30 ? `${leadDaysOnLot} days on lot` : null,
-    hasLeadPriceDrop ? 'recent price drop' : null,
-    demandLabel === 'Soft' ? 'soft demand' : null,
-  ].filter(Boolean).join(', ') || 'priced close to market';
-  const verdictCopy = amountBelowTarget >= 750 || priceAdvantagePercent >= 0.04
-    ? 'Buyer advantage - asking price is meaningfully below target'
-    : amountBelowTarget > 0 || isInsideTargetRange
-      ? 'Fair deal - asking price is inside the target range'
-      : 'Worth watching - compare price and local inventory';
-
-  useEffect(() => {
-    if (zipCode.length < 5) {
-      setZipError('');
-      return;
-    }
-
-    const nextLocation = resolveMarketLocationFromZip(zipCode);
-    if (!nextLocation) {
-      setZipError('Enter a supported 5-digit ZIP code.');
-      return;
-    }
-
-    setZipError('');
-    if (nextLocation.zipCode !== location.zipCode) {
-      onLocationChange(nextLocation);
-    }
-  }, [location.zipCode, onLocationChange, zipCode]);
+  const recommendationSignals = getRecommendationSignals({
+    match: leadMatch,
+    averageMileage: statistics.averageMileage,
+    demandLabel,
+    inventoryLabel,
+    isUsed,
+  });
+  const recommendationSignalCopy = recommendationSignals.join(', ');
+  const leadRecommendationLabel = priceAssessment.tone === 'opportunity'
+    ? 'Best Price Match'
+    : priceAssessment.tone === 'over'
+      ? 'Best Available Match'
+      : 'Best Balanced Match';
+  const leadRecommendationCopy = priceAssessment.tone === 'over'
+    ? `${leadRecommendationLabel} because of ${recommendationSignalCopy}, even though it is above fair market.`
+    : `${leadRecommendationLabel} based on ${recommendationSignalCopy}.`;
+  const verdictCopy = priceAssessment.label === 'Great Price'
+    ? 'Buyer advantage: asking price is meaningfully below fair market'
+    : amountBelowTarget > 0
+      ? 'Good price: asking price is below fair market'
+      : isInsideTargetRange
+      ? 'Fair market: asking price is inside fair market range'
+      : `Above market: ${leadRecommendationLabel.toLowerCase()} in this local market`;
+  const buyerGuidance = getBuyerGuidance({
+    askingPrice,
+    targetLow,
+    targetHigh,
+    priceAssessment,
+    negotiationLeverage,
+  });
+  const bottomLineCopy = getBottomLineCopy(priceAssessment, hasHistoryRisk);
+  const buyerConditionReasons = [
+    inventoryLabel === 'High Supply' ? 'inventory is high' : null,
+    demandLabel === 'Soft' ? 'demand is soft' : null,
+    hasLeadPriceDrop || statistics.priceDropCount > 0 ? 'price reductions are active' : null,
+    priceAssessment.tone === 'opportunity' ? 'the lead listing is below fair market' : null,
+  ].filter(Boolean);
+  const marketSummary = buyerConditionReasons.length >= 2
+    ? `Market conditions favor buyers. ${buyerConditionReasons.join(', ')}.`
+    : inventoryLabel === 'Limited' || demandLabel === 'High'
+      ? 'Market conditions are tighter. Compare similar listings before making an offer.'
+      : 'Market conditions are mixed. Use the fair market range as your anchor.';
+  const confidenceLabel = market.inventoryCount >= 24 ? 'High' : market.inventoryCount >= 10 ? 'Moderate' : 'Limited';
+  const confidenceCopy = `Based on ${market.inventoryCount} comparable local listings within ${radiusMiles} miles.`;
+  const comparablePriceSummary = statistics.lowPrice !== undefined && statistics.highPrice !== undefined
+    ? `Similar vehicles are currently listed from ${formatPrice(statistics.lowPrice)} to ${formatPrice(statistics.highPrice)}.`
+    : 'Comparable listings are limited for this search.';
+  const whyPriceFactors = [
+    'comparable local listings',
+    statistics.averageMileage !== undefined ? 'mileage' : null,
+    'vehicle configuration',
+    isUsed ? 'condition history' : null,
+    'inventory',
+    'demand',
+    'recent price trends',
+  ].filter(Boolean).join(', ');
 
   const factors: FactorItem[] = [
     {
@@ -317,7 +506,7 @@ const MarketIntelligenceSnapshot = ({
       className={`market-snapshot market-snapshot--${market.condition}`}
       aria-labelledby="market-snapshot-title"
     >
-      <div className="market-snapshot__verdict">
+      <div className={`market-snapshot__verdict market-snapshot__verdict--${priceAssessment.tone}`}>
         <span aria-hidden="true">★</span>
         <strong>{verdictCopy}</strong>
       </div>
@@ -345,8 +534,25 @@ const MarketIntelligenceSnapshot = ({
                 aria-invalid={zipError ? 'true' : undefined}
                 aria-describedby={zipError ? zipErrorId : undefined}
                 onChange={(event) => {
-                  setZipCode(event.target.value.replace(/\D/g, '').slice(0, 5));
-                  if (zipError) setZipError('');
+                  const nextZipCode = event.target.value.replace(/\D/g, '').slice(0, 5);
+                  let nextError = '';
+
+                  if (nextZipCode.length === 5) {
+                    const nextLocation = resolveMarketLocationFromZip(nextZipCode);
+                    if (nextLocation) {
+                      if (nextLocation.zipCode !== location.zipCode) {
+                        onLocationChange(nextLocation);
+                      }
+                    } else {
+                      nextError = 'Enter a supported 5-digit ZIP code.';
+                    }
+                  }
+
+                  setZipInput({
+                    sourceZipCode: currentLocationZipCode,
+                    value: nextZipCode,
+                    error: nextError,
+                  });
                 }}
               />
             </div>
@@ -376,50 +582,89 @@ const MarketIntelligenceSnapshot = ({
 
         <section
           className="market-snapshot__price-range"
-          aria-label={`Target price range ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, asking price ${formatPrice(askingPrice)}`}
+          aria-label={`Fair market price ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, asking price ${formatPrice(askingPrice)}`}
           style={priceRangeStyle}
         >
-          <div className="market-snapshot__price-summary">
-            <div className="market-snapshot__price-summary-copy">
-              <span className="market-snapshot__price-pill">{pricePositionLabel}</span>
-              <h3>{pricePositionCopy}</h3>
-              <p>Target range: {formatPrice(targetLow)} to {formatPrice(targetHigh)}</p>
+          <div className="market-snapshot__decision">
+            <div className="market-snapshot__decision-main">
+              <span className={`market-snapshot__price-pill market-snapshot__price-pill--${priceAssessment.tone}`}>
+                {priceAssessment.label}
+              </span>
+              <h3>{formatPrice(askingPrice)} <span>{priceAssessment.label.toLowerCase()}</span></h3>
+              <p>{priceAssessment.copy}</p>
+              <strong>{bottomLineCopy}</strong>
             </div>
-            <div className="market-snapshot__asking-price">
-              <span>Asking price</span>
-              <strong>{formatPrice(askingPrice)}</strong>
-            </div>
+            <dl className="market-snapshot__decision-values">
+              <div>
+                <dt>Fair market</dt>
+                <dd>{formatPriceRange(targetLow, targetHigh)}</dd>
+              </div>
+              <div>
+                <dt>Your target</dt>
+                <dd>{buyerGuidance.targetCopy}</dd>
+              </div>
+              <div>
+                <dt>Current asking price</dt>
+                <dd>{formatPrice(askingPrice)}</dd>
+              </div>
+            </dl>
           </div>
-          <div className="market-snapshot__price-bar" aria-hidden="true">
-            <span className="market-snapshot__price-bar-track" />
-            <span className="market-snapshot__price-bar-target" />
-            <span className="market-snapshot__price-bar-target-label">
-              Target {formatPrice(targetLow)} to {formatPrice(targetHigh)}
+
+          <div className="market-snapshot__price-visual" aria-hidden="true">
+            <div className="market-snapshot__price-zones">
+              <span className="market-snapshot__price-zone market-snapshot__price-zone--great" />
+              <span className="market-snapshot__price-zone market-snapshot__price-zone--good" />
+              <span className="market-snapshot__price-zone market-snapshot__price-zone--fair" />
+              <span className="market-snapshot__price-zone market-snapshot__price-zone--above" />
+            </div>
+            <span className="market-snapshot__price-fair-label">
+              Fair market {formatPriceRange(targetLow, targetHigh)}
             </span>
             <span className="market-snapshot__price-bar-marker-label">
               Asking {formatPrice(askingPrice)}
             </span>
             <span className="market-snapshot__price-bar-marker" />
+            <div className="market-snapshot__price-zone-labels">
+              <span>Great deal</span>
+              <span>Good deal</span>
+              <span>Fair market</span>
+              <span>Above market</span>
+            </div>
           </div>
-          <div className="market-snapshot__price-range-labels">
-            <span>Below Target</span>
-            <span>Target Range</span>
-            <span>Above Target</span>
+
+          <div className="market-snapshot__buying-guidance">
+            <section aria-labelledby="market-snapshot-pay-title">
+              <p className="market-snapshot__section-kicker">What should I pay?</p>
+              <h3 id="market-snapshot-pay-title">{buyerGuidance.targetCopy}</h3>
+              <p>{buyerGuidance.closeCopy}</p>
+            </section>
+            <section aria-labelledby="market-snapshot-position-title">
+              <p className="market-snapshot__section-kicker">Your negotiating position</p>
+              <h3 id="market-snapshot-position-title">{buyerGuidance.position}</h3>
+              <p>{buyerGuidance.positionCopy}</p>
+              {buyerGuidance.openingOffer && (
+                <strong>Suggested opening offer: {buyerGuidance.openingOffer}</strong>
+              )}
+            </section>
           </div>
-          <dl className="market-snapshot__leverage">
+
+          <div className="market-snapshot__why-price">
             <div>
-              <dt>Negotiation leverage</dt>
-              <dd>{negotiationLeverage}</dd>
+              <p className="market-snapshot__section-kicker">Why this price?</p>
+              <p>{market.inventoryCount} comparable listings, {whyPriceFactors}.</p>
             </div>
             <div>
-              <dt>Why it matters</dt>
-              <dd>{negotiationReasons}</dd>
+              <p className="market-snapshot__section-kicker">Confidence</p>
+              <p><strong>{confidenceLabel}</strong>. {confidenceCopy}</p>
             </div>
-          </dl>
+          </div>
         </section>
 
         <section className="market-snapshot__factors" aria-labelledby="market-snapshot-factors-title">
-          <h3 id="market-snapshot-factors-title">Market Factors Evaluation</h3>
+          <div className="market-snapshot__factors-head">
+            <h3 id="market-snapshot-factors-title">Market Factors</h3>
+            <p>{marketSummary}</p>
+          </div>
           <div className="market-snapshot__factor-grid">
             {factors.map((factor) => (
               <div key={factor.label} className="market-snapshot__factor">
@@ -435,11 +680,10 @@ const MarketIntelligenceSnapshot = ({
         {prioritizedMatches.length > 0 ? (
           <section className="market-snapshot__matches" aria-labelledby="market-snapshot-matches-title">
             <div className="market-snapshot__matches-head">
-              <p className="market-snapshot__section-kicker">Recommended First</p>
-              <h3 id="market-snapshot-matches-title">Best balance of clean history, mileage, and price.</h3>
+              <p className="market-snapshot__section-kicker">Supporting Evidence</p>
+              <h3 id="market-snapshot-matches-title">Closest comparable listings</h3>
               <p>
-                Showcasing the lead recommendation matching your criteria with the highest target value score.
-                Comparison units are provided below.
+                {comparablePriceSummary} {leadRecommendationCopy}
               </p>
             </div>
 
@@ -477,12 +721,12 @@ const MarketIntelligenceSnapshot = ({
                         aspectRatio="4/3"
                         wrapperClassName="market-snapshot__vehicle-pick-media"
                       />
-                      {index === 0 && <span className="market-snapshot__best-match">Best Match</span>}
+                      {index === 0 && <span className="market-snapshot__best-match">{leadRecommendationLabel}</span>}
                     </a>
 
                     <div className="market-snapshot__vehicle-pick-body">
                       <div className="market-snapshot__vehicle-pick-topline">
-                        <span>{displayMatchScore} Match Score</span>
+                        <span>{displayMatchScore}% comparable</span>
                         <strong>{formatPrice(match.unit.price)}</strong>
                       </div>
 
