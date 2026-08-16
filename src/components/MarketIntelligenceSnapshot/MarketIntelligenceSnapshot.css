@@ -1,13 +1,11 @@
 .market-snapshot {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-6);
   width: 100%;
   margin: var(--spacing-8) 0;
-  padding: var(--spacing-8);
-  background: var(--color-gray-50);
+  overflow: hidden;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
-  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
 }
 
 .market-snapshot,
@@ -15,237 +13,494 @@
   box-sizing: border-box;
 }
 
-.market-snapshot__header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(16rem, 19rem);
-  gap: var(--spacing-5);
-  align-items: end;
+.market-snapshot__verdict {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  min-height: 50px;
+  padding: var(--spacing-3) var(--spacing-5);
+  color: var(--color-white);
+  background: var(--color-success);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  text-align: center;
 }
 
-.market-snapshot__titles {
+.market-snapshot__inner {
+  display: grid;
+  gap: var(--spacing-7);
+  padding: var(--spacing-7);
+}
+
+.market-snapshot__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
+  gap: var(--spacing-5);
+  align-items: start;
+}
+
+.market-snapshot__header-copy {
+  display: grid;
+  gap: var(--spacing-1);
+  max-width: 58rem;
+}
+
+.market-snapshot__eyebrow,
+.market-snapshot__section-kicker,
+.market-snapshot__factors h3 {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__header h2 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-28);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__header-copy > p:last-child,
+.market-snapshot__matches-head p,
+.market-snapshot__methodology {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.market-snapshot__market-form {
+  display: grid;
+  grid-template-columns: minmax(120px, 150px) minmax(112px, 132px);
+  gap: var(--spacing-3);
+  justify-self: end;
+  width: min(100%, 296px);
+}
+
+.market-snapshot__field {
+  display: grid;
+  gap: var(--spacing-1);
   min-width: 0;
 }
 
-.market-snapshot__eyebrow {
-  margin: 0 0 var(--spacing-1);
-  color: var(--color-blue-cobalt);
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.04em;
-  line-height: var(--line-height-none);
-  text-transform: uppercase;
-}
-
-.market-snapshot__titles h2 {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-36);
-  font-weight: var(--font-weight-extrabold);
-  line-height: var(--line-height-snug);
-}
-
-.market-snapshot__titles > p:last-child {
-  margin: var(--spacing-1) 0 0;
+.market-snapshot__field label {
   color: var(--color-gray-600);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__location-form {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--spacing-2);
-  align-items: end;
-  margin: 0;
-}
-
-.market-snapshot__location {
-  margin: 0;
-}
-
-.market-snapshot__location .text-field__label {
-  font-size: var(--font-size-xs);
-}
-
-.market-snapshot__location-form > .button {
-  min-height: var(--spacing-11);
-}
-
-.market-snapshot__radius {
-  display: flex;
-  flex-wrap: wrap;
-  grid-column: 1 / -1;
-  gap: var(--spacing-3);
-  align-items: center;
-}
-
-.market-snapshot__radius > span {
-  color: var(--color-gray-700);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.market-snapshot__radius .tabs__item {
-  min-height: var(--spacing-11);
-}
-
-.market-snapshot__context-summary {
-  display: grid;
-  grid-template-columns: minmax(9rem, auto) minmax(0, 1fr);
-  gap: var(--spacing-4);
-  align-items: start;
-  padding: var(--spacing-4) 0;
-  border-top: 1px solid var(--color-gray-200);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.market-snapshot__context-summary strong {
   font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__context-summary p {
-  margin: 0;
-  color: var(--color-gray-700);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__recommendation {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--spacing-5);
-  padding: var(--spacing-6);
-  background: var(--color-white);
-  border: var(--spacing-px) solid var(--color-gray-300);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.market-snapshot__recommendation-label {
-  margin: 0;
-  color: var(--color-success);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.04em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
-.market-snapshot__recommendation-label-row {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-2);
-}
-
-.market-snapshot__recommendation-label-row .market-snapshot__tooltip {
-  position: static;
-}
-
-.market-snapshot__recommendation-label-row .market-snapshot__tooltip-popover {
-  top: calc(100% + var(--spacing-2));
-  left: 0;
-  width: min(18rem, 100%);
-  transform: translateY(calc(var(--spacing-1) * -1));
-}
-
-.market-snapshot__recommendation-label-row .market-snapshot__tooltip:hover .market-snapshot__tooltip-popover,
-.market-snapshot__recommendation-label-row .market-snapshot__tooltip:focus-within .market-snapshot__tooltip-popover {
-  transform: translateY(0);
-}
-
-.market-snapshot__deal-signal,
-.market-snapshot__signal {
-  flex-shrink: 0;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-family: var(--font-heading);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+.market-snapshot__field input,
+.market-snapshot__field select {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 var(--spacing-3);
+  color: var(--color-black);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  font: inherit;
+  font-size: var(--font-size-sm);
   line-height: 1;
 }
 
-.market-snapshot__deal-signal.badge--success,
-.market-snapshot__signal.badge--success {
-  background-color: var(--color-badge-special-text);
+.market-snapshot__field input:focus,
+.market-snapshot__field select:focus {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: 0 0 0 2px rgba(27, 95, 138, 0.18);
+  outline: none;
 }
 
-.market-snapshot__recommendation h3 {
+.market-snapshot__field input[aria-invalid='true'] {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.14);
+}
+
+.market-snapshot__error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__factor,
+.market-snapshot__vehicle-pick,
+.market-snapshot__empty {
+  min-width: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.market-snapshot__price-range {
+  display: grid;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-lg);
+}
+
+.market-snapshot__price-range-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.market-snapshot__price-range-head strong {
   margin: 0;
   font-family: var(--font-heading);
   font-size: var(--font-size-xl);
-  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
 }
 
-.market-snapshot__recommendation-location {
-  margin: var(--spacing-1) 0 0;
+.market-snapshot__price-range-head strong:first-child {
   color: var(--color-gray-600);
-  font-size: var(--font-size-sm);
 }
 
-.market-snapshot__recommendation-link {
-  display: inline-block;
-  margin-top: var(--spacing-3);
+.market-snapshot__price-range-head strong:last-child {
   color: var(--color-blue-cobalt);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  text-decoration: underline;
-  text-underline-offset: var(--spacing-1);
-}
-
-.market-snapshot__recommendation-link:hover {
-  color: var(--color-blue-navy);
-}
-
-.market-snapshot__recommendation-link:focus-visible {
-  outline: var(--spacing-0-5) solid var(--color-blue-cobalt);
-  outline-offset: var(--spacing-1);
-}
-
-.market-snapshot__recommendation-price {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
   text-align: right;
 }
 
-.market-snapshot__recommendation-price strong {
-  font-family: var(--font-heading);
-  font-size: var(--font-size-28);
-  line-height: var(--line-height-none);
+.market-snapshot__factor-value--success {
+  color: var(--color-success) !important;
 }
 
-.market-snapshot__recommendation-price span {
-  margin-top: var(--spacing-2);
+.market-snapshot__price-bar {
+  position: relative;
+  min-height: 20px;
+}
+
+.market-snapshot__price-bar-track,
+.market-snapshot__price-bar-target {
+  position: absolute;
+  top: 50%;
+  height: 16px;
+  border-radius: var(--border-radius-pill);
+  transform: translateY(-50%);
+}
+
+.market-snapshot__price-bar-track {
+  right: 0;
+  left: 0;
+  background: var(--color-gray-100);
+}
+
+.market-snapshot__price-bar-target {
+  left: var(--target-start);
+  width: var(--target-width);
+  background: var(--color-success);
+}
+
+.market-snapshot__price-bar-marker {
+  position: absolute;
+  top: 50%;
+  left: var(--asking-position);
+  width: 12px;
+  height: 20px;
+  background: var(--color-blue-cobalt);
+  border-radius: var(--border-radius-sm);
+  transform: translate(-50%, -50%);
+}
+
+.market-snapshot__price-range-labels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  align-items: start;
+}
+
+.market-snapshot__price-range-labels span {
+  color: var(--color-gray-500);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
+  line-height: var(--line-height-tight);
+  text-transform: uppercase;
+}
+
+.market-snapshot__price-range-labels span:nth-child(2) {
   color: var(--color-success);
+  text-align: center;
+}
+
+.market-snapshot__price-range-labels span:nth-child(3) {
+  color: var(--color-blue-cobalt);
+  text-align: right;
+}
+
+.market-snapshot__factors {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.market-snapshot__factor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+.market-snapshot__factor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  min-height: 44px;
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+.market-snapshot__factor span {
+  color: var(--color-gray-600);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
+  line-height: 1;
 }
 
-.market-snapshot__recommendation ul {
+.market-snapshot__factor strong {
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1;
+  text-align: right;
+}
+
+.market-snapshot__factor-value--dark {
+  color: var(--color-black);
+}
+
+.market-snapshot__matches {
+  display: grid;
+  gap: var(--spacing-5);
+  padding-top: var(--spacing-7);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.market-snapshot__matches-head {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.market-snapshot__matches-head h3 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__vehicle-picks {
+  display: grid;
+  gap: var(--spacing-5);
+}
+
+.market-snapshot__vehicle-pick {
+  display: grid;
+  grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.market-snapshot__vehicle-pick-media-link {
+  position: relative;
+  display: block;
+  min-height: 180px;
+  color: inherit;
+  background: var(--color-gray-100);
+  text-decoration: none;
+}
+
+.market-snapshot__vehicle-pick-media-link:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: -4px;
+}
+
+.market-snapshot__vehicle-pick-media {
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  background: var(--color-gray-100);
+}
+
+.market-snapshot__vehicle-pick-media .optimized-image__img {
+  object-position: center 58%;
+}
+
+.market-snapshot__best-match {
+  position: absolute;
+  top: var(--spacing-3);
+  left: var(--spacing-3);
+  padding: var(--spacing-1) var(--spacing-2);
+  color: var(--color-white);
+  background: var(--color-black);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__vehicle-pick-body {
+  display: grid;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+}
+
+.market-snapshot__vehicle-pick-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.market-snapshot__vehicle-pick-topline span {
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__vehicle-pick-topline strong {
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.market-snapshot__vehicle-pick-title h4 {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__vehicle-pick-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  margin: 0;
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.market-snapshot__vehicle-pick-metrics div {
+  min-width: 0;
+}
+
+.market-snapshot__vehicle-pick-metrics dt {
+  margin: 0 0 var(--spacing-1);
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  line-height: 1;
+}
+
+.market-snapshot__vehicle-pick-metrics dd {
+  margin: 0;
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__vehicle-pick-footer {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.market-snapshot__vehicle-pick-badges {
   display: flex;
   flex-wrap: wrap;
-  grid-column: 1 / -1;
-  gap: var(--spacing-3) var(--spacing-6);
-  margin: 0;
-  padding-top: var(--spacing-4);
-  padding-left: var(--spacing-5);
-  border-top: var(--spacing-px) solid var(--color-gray-200);
-  color: var(--color-gray-700);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
+  gap: var(--spacing-2);
+}
+
+.market-snapshot__vehicle-pick-badges .badge {
+  width: fit-content;
+}
+
+.market-snapshot__vehicle-pick-cta,
+.market-snapshot__all-results {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 var(--spacing-4);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.market-snapshot__vehicle-pick--lead .market-snapshot__vehicle-pick-cta {
+  color: var(--color-white);
+  background: var(--color-blue-cobalt);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.market-snapshot__vehicle-pick:not(.market-snapshot__vehicle-pick--lead) .market-snapshot__vehicle-pick-cta,
+.market-snapshot__all-results {
+  color: var(--color-blue-cobalt);
+  background: var(--color-white);
+  border: 1px solid var(--color-blue-cobalt);
+}
+
+.market-snapshot__vehicle-pick-cta:hover,
+.market-snapshot__vehicle-pick-cta:focus-visible,
+.market-snapshot__all-results:hover,
+.market-snapshot__all-results:focus-visible {
+  color: var(--color-white);
+  background: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.market-snapshot__vehicle-pick-cta:focus-visible,
+.market-snapshot__all-results:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 3px;
+}
+
+.market-snapshot__all-results {
+  justify-self: start;
+  cursor: pointer;
 }
 
 .market-snapshot__empty {
   padding: var(--spacing-6);
-  background: var(--color-white);
-  border: var(--spacing-px) solid var(--color-gray-300);
-  border-radius: var(--border-radius-lg);
 }
 
 .market-snapshot__empty h3,
@@ -258,586 +513,85 @@
   color: var(--color-gray-600);
 }
 
-.market-snapshot__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--spacing-4);
-}
-
-.market-snapshot__secondary {
-  display: grid;
-  gap: var(--spacing-3);
-  padding-top: var(--spacing-5);
-  border-top: var(--spacing-px) solid var(--color-gray-200);
-}
-
-.market-snapshot__secondary > h3 {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__secondary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  gap: var(--spacing-px);
-  margin: 0;
-  border: var(--spacing-px) solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-  background: var(--color-gray-200);
-  overflow: hidden;
-}
-
-.market-snapshot__secondary-grid > div {
-  min-width: 0;
-  padding: var(--spacing-4);
-  background: var(--color-white);
-}
-
-.market-snapshot__secondary-grid dt {
-  margin: 0 0 var(--spacing-1);
-  color: var(--color-gray-600);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__secondary-grid dd {
-  margin: 0;
-  color: var(--color-black);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-snug);
-}
-
-.market-snapshot__card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 0;
-  padding: var(--spacing-5);
-  background: var(--color-white);
-  border: var(--spacing-px) solid var(--color-gray-200);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.market-snapshot__card-heading .market-snapshot__tooltip {
-  position: static;
-}
-
-.market-snapshot__card-heading .market-snapshot__tooltip-popover {
-  top: var(--spacing-12);
-  right: var(--spacing-5);
-  left: var(--spacing-5);
-  width: auto;
-  transform: translateY(calc(var(--spacing-1) * -1));
-}
-
-.market-snapshot__card-heading .market-snapshot__tooltip:hover .market-snapshot__tooltip-popover,
-.market-snapshot__card-heading .market-snapshot__tooltip:focus-within .market-snapshot__tooltip-popover {
-  transform: translateY(0);
-}
-
-.market-snapshot__card h3 {
-  margin: 0;
-  color: var(--color-gray-600);
-  font-family: var(--font-body);
-  font-size: var(--font-size-13);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__card-heading {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  min-height: var(--spacing-5);
-  margin-bottom: var(--spacing-3);
-}
-
-.market-snapshot__card strong {
-  margin: 0 0 var(--spacing-2);
-  color: var(--color-black);
-  font-family: var(--font-heading);
-  font-size: clamp(var(--font-size-xl), 2.2vw, var(--font-size-28));
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-snug);
-  overflow-wrap: anywhere;
-}
-
-.market-snapshot__signal {
-  margin-bottom: var(--spacing-2);
-}
-
-.market-snapshot__signals {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-2);
-}
-
-.market-snapshot__signals .market-snapshot__signal {
-  margin-bottom: 0;
-}
-
-.market-snapshot__detail {
-  margin: auto 0 0;
-  color: var(--color-gray-600);
-  font-size: var(--font-size-13);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__below-chart {
-  display: grid;
-  gap: var(--spacing-5);
-  padding-top: var(--spacing-5);
-  border-top: var(--spacing-px) solid var(--color-gray-200);
-}
-
-.market-snapshot__inventory-picks,
-.market-snapshot__dealer-version {
-  display: grid;
-  gap: var(--spacing-4);
-}
-
-.market-snapshot__section-head {
-  display: grid;
-  gap: var(--spacing-1);
-}
-
-.market-snapshot__section-kicker {
-  margin: 0;
-  color: var(--color-blue-cobalt);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.05em;
-  line-height: var(--line-height-none);
-  text-transform: uppercase;
-}
-
-.market-snapshot__section-head h3 {
-  margin: 0;
-  color: var(--color-black);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-24);
-  font-weight: var(--font-weight-extrabold);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__section-head p {
-  max-width: 44rem;
-  margin: 0;
-  color: var(--color-gray-600);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__vehicle-picks {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--spacing-4);
-}
-
-.market-snapshot__vehicle-pick,
-.market-snapshot__dealer-card {
-  min-width: 0;
-  padding: var(--spacing-5);
-  background: var(--color-white);
-  border: var(--spacing-px) solid var(--color-gray-200);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.market-snapshot__vehicle-pick {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-}
-
-.market-snapshot__vehicle-pick-media-link {
-  display: block;
-  color: inherit;
-  border-radius: var(--border-radius-md);
-  outline-offset: 3px;
-  overflow: hidden;
-  text-decoration: none;
-}
-
-.market-snapshot__vehicle-pick-media-link:focus-visible {
-  outline: 2px solid var(--color-blue-cobalt);
-}
-
-.market-snapshot__vehicle-pick-media {
-  min-height: 0;
-  background: var(--color-gray-100);
-  border: var(--spacing-px) solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-}
-
-.market-snapshot__vehicle-pick-media .optimized-image__img {
-  object-position: center 58%;
-}
-
-.market-snapshot__vehicle-pick-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-3);
-}
-
-.market-snapshot__vehicle-pick-topline span {
-  color: var(--color-gray-600);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.04em;
-  line-height: var(--line-height-none);
-  text-transform: uppercase;
-}
-
-.market-snapshot__vehicle-pick-topline strong {
-  color: var(--color-black);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xl);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__vehicle-pick-title {
-  display: grid;
-  gap: 2px;
-}
-
-.market-snapshot__vehicle-pick h4,
-.market-snapshot__dealer-card h4 {
-  margin: 0;
-  color: var(--color-black);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__vehicle-pick-title span {
-  color: var(--color-gray-600);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__vehicle-pick > p,
-.market-snapshot__dealer-card-main > p {
-  margin: 0;
-  color: var(--color-gray-600);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__vehicle-pick-dealer {
-  display: grid;
-  gap: 2px;
-}
-
-.market-snapshot__vehicle-pick-dealer span {
-  color: var(--color-gray-600);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__vehicle-pick-metrics,
-.market-snapshot__dealer-inventory {
-  display: grid;
-  gap: var(--spacing-2);
-  margin: 0;
-}
-
-.market-snapshot__vehicle-pick-metrics {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding-top: var(--spacing-3);
-  border-top: var(--spacing-px) solid var(--color-gray-200);
-}
-
-.market-snapshot__vehicle-pick-metrics div,
-.market-snapshot__dealer-inventory div {
-  min-width: 0;
-}
-
-.market-snapshot__vehicle-pick-metrics dt,
-.market-snapshot__dealer-inventory dt {
-  margin: 0 0 2px;
-  color: var(--color-gray-600);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__vehicle-pick-metrics dd,
-.market-snapshot__dealer-inventory dd {
-  margin: 0;
-  color: var(--color-black);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__vehicle-pick-badges,
-.market-snapshot__dealer-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-2);
-}
-
-.market-snapshot__vehicle-pick-badges .badge {
-  width: fit-content;
-}
-
-.market-snapshot__vehicle-pick-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  min-height: 36px;
-  margin-top: auto;
-  padding: 0 var(--spacing-3);
-  color: var(--color-blue-cobalt);
-  background: var(--color-white);
-  border: 1px solid var(--color-blue-cobalt);
-  border-radius: var(--border-radius-sm);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
-}
-
-.market-snapshot__vehicle-pick-cta:hover {
-  color: var(--color-white);
-  background: var(--color-black);
-  border-color: var(--color-black);
-}
-
-.market-snapshot__vehicle-pick-cta:focus-visible {
-  outline: 2px solid var(--color-blue-cobalt);
-  outline-offset: 3px;
-}
-
-.market-snapshot__dealer-card {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
-  gap: var(--spacing-5);
-  align-items: start;
-}
-
-.market-snapshot__dealer-card-main {
-  display: grid;
-  gap: var(--spacing-3);
-}
-
-.market-snapshot__dealer-facts span {
-  padding: 5px var(--spacing-2);
-  color: var(--color-gray-700);
-  background: var(--color-gray-50);
-  border: var(--spacing-px) solid var(--color-gray-200);
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__dealer-inventory {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--spacing-px);
-  overflow: hidden;
-  background: var(--color-gray-200);
-  border: var(--spacing-px) solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
-}
-
-.market-snapshot__dealer-inventory div {
-  padding: var(--spacing-4);
-  background: var(--color-white);
-}
-
-.market-snapshot__dealer-inventory span {
-  display: block;
-  margin-top: var(--spacing-1);
-  color: var(--color-gray-600);
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__tooltip {
-  position: relative;
-  display: inline-flex;
-  flex: 0 0 auto;
-}
-
-.market-snapshot__tooltip-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--spacing-6);
-  height: var(--spacing-6);
-  padding: 0;
-  color: var(--color-gray-600);
-  background: transparent;
-  border: 0;
-  border-radius: var(--border-radius-full);
-  cursor: help;
-}
-
-.market-snapshot__tooltip-trigger:hover {
-  color: var(--color-black);
-}
-
-.market-snapshot__tooltip-trigger:focus-visible {
-  color: var(--color-black);
-  outline: 2px solid var(--color-blue-cobalt);
-  outline-offset: 2px;
-}
-
-.market-snapshot__tooltip-popover {
-  position: absolute;
-  top: calc(100% + var(--spacing-2));
-  left: 50%;
-  z-index: 20;
-  display: grid;
-  gap: var(--spacing-2);
-  width: min(18rem, calc(100vw - var(--spacing-8)));
-  padding: var(--spacing-3);
-  color: var(--color-black);
-  text-align: left;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-lg);
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, calc(var(--spacing-1) * -1));
-  transition:
-    opacity var(--transition-fast),
-    transform var(--transition-fast),
-    visibility var(--transition-fast);
-  visibility: hidden;
-}
-
-.market-snapshot__tooltip-popover strong {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__tooltip-popover span {
-  color: var(--color-gray-700);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-normal);
-}
-
-.market-snapshot__tooltip:hover .market-snapshot__tooltip-popover,
-.market-snapshot__tooltip:focus-within .market-snapshot__tooltip-popover {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translate(-50%, 0);
-  visibility: visible;
-}
-
 .market-snapshot__methodology {
-  margin: 0;
-  color: var(--color-gray-600);
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-normal);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-gray-200);
 }
 
-@media (max-width: 900px) {
-  .market-snapshot {
-    padding: var(--spacing-6);
-  }
-
-  .market-snapshot__grid {
+@media (max-width: 1100px) {
+  .market-snapshot__header {
     grid-template-columns: 1fr;
   }
 
-  .market-snapshot__vehicle-picks,
-  .market-snapshot__dealer-card,
-  .market-snapshot__dealer-inventory {
-    grid-template-columns: 1fr;
+  .market-snapshot__market-form {
+    justify-self: start;
+    width: min(100%, 296px);
   }
 
+  .market-snapshot__factor-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-@media (max-width: 600px) {
-  .market-snapshot {
+@media (max-width: 760px) {
+  .market-snapshot__inner {
     gap: var(--spacing-5);
-    margin: var(--spacing-6) 0;
     padding: var(--spacing-5);
-    border-radius: var(--border-radius-md);
   }
 
-  .market-snapshot__header,
-  .market-snapshot__recommendation {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-3);
+  .market-snapshot__header h2 {
+    font-size: var(--font-size-24);
   }
 
-  .market-snapshot__titles h2 {
-    font-size: var(--font-size-28);
+  .market-snapshot__market-form {
+    width: min(100%, 296px);
   }
 
-  .market-snapshot__location-form,
-  .market-snapshot__location {
-    width: 100%;
-  }
-
-  .market-snapshot__radius {
-    grid-column: 1;
-  }
-
-  .market-snapshot__recommendation-price {
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .market-snapshot__secondary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .market-snapshot__recommendation ul {
-    grid-column: 1;
-    flex-direction: column;
-    gap: var(--spacing-2);
-  }
-
-  .market-snapshot__card {
-    padding: var(--spacing-4);
-  }
-
+  .market-snapshot__factor-grid,
   .market-snapshot__vehicle-pick,
-  .market-snapshot__dealer-card {
-    padding: var(--spacing-4);
-  }
-
-  .market-snapshot__vehicle-pick-topline {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: var(--spacing-1);
-  }
-
   .market-snapshot__vehicle-pick-metrics {
     grid-template-columns: 1fr;
   }
 
-  .market-snapshot__context-summary {
+  .market-snapshot__vehicle-pick-media-link,
+  .market-snapshot__vehicle-pick-media {
+    min-height: 220px;
+  }
+
+  .market-snapshot__vehicle-pick-topline,
+  .market-snapshot__vehicle-pick-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .market-snapshot__vehicle-pick-topline strong {
+    text-align: left;
+  }
+
+  .market-snapshot__vehicle-pick-cta,
+  .market-snapshot__all-results {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .market-snapshot {
+    margin: var(--spacing-6) 0;
+    border-radius: var(--border-radius-md);
+  }
+
+  .market-snapshot__verdict {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .market-snapshot__factor,
+  .market-snapshot__vehicle-pick-body {
+    padding: var(--spacing-4);
+  }
+
+  .market-snapshot__market-form {
     grid-template-columns: 1fr;
-    gap: var(--spacing-2);
+    width: 100%;
   }
 }
