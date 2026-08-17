@@ -944,177 +944,189 @@ const MarketIntelligenceSnapshot = ({
               ))}
             </div>
           </div>
-
-          <div className="market-snapshot__buying-guidance">
-            <section className="market-snapshot__guidance-panel" aria-labelledby="market-snapshot-pay-title">
-              <p className="market-snapshot__section-kicker">What should I pay?</p>
-              <h3 id="market-snapshot-pay-title">{buyerGuidance.targetCopy}</h3>
-              <p>{buyerGuidance.closeCopy}</p>
-            </section>
-            <section className="market-snapshot__guidance-panel market-snapshot__guidance-panel--position" aria-labelledby="market-snapshot-position-title">
-              <p className="market-snapshot__section-kicker">Your negotiating position</p>
-              <h3 id="market-snapshot-position-title">{buyerGuidance.position}</h3>
-              <strong>Next move: keep taxes, fees, and add-ons controlled.</strong>
-              <p>{buyerGuidance.positionCopy}</p>
-              {buyerGuidance.openingOffer && (
-                <strong>Suggested opening offer: {buyerGuidance.openingOffer}</strong>
-              )}
-            </section>
-          </div>
-
-          <div className="market-snapshot__why-price">
-            <div>
-              <p className="market-snapshot__section-kicker">Why this price?</p>
-              <p>{market.inventoryCount} comparable listings, {whyPriceFactors}.</p>
-            </div>
-            <div>
-              <p className="market-snapshot__section-kicker">Confidence</p>
-              <p><strong>{confidenceLabel}</strong>. {confidenceCopy}</p>
-            </div>
-          </div>
         </section>
 
-        <section className="market-snapshot__factors" aria-labelledby="market-snapshot-factors-title">
-          <div className="market-snapshot__factors-head">
-            <h3 id="market-snapshot-factors-title">Market Factors</h3>
-            <p>{marketSummary}</p>
-          </div>
-          <div className="market-snapshot__factor-grid">
-            {factors.map((factor) => (
-              <div key={factor.label} className="market-snapshot__factor">
-                <span>{factor.label}</span>
-                <strong className={factor.tone ? `market-snapshot__factor-value--${factor.tone}` : undefined}>
-                  {factor.value}
-                </strong>
+        <details className="market-snapshot__details-accordion">
+          <summary>
+            <span>
+              <strong>More market details</strong>
+              <em>Buying guidance, market factors, and comparable listings</em>
+            </span>
+            <span className="market-snapshot__details-icon" aria-hidden="true" />
+          </summary>
+
+          <div className="market-snapshot__details-content">
+            <div className="market-snapshot__buying-guidance">
+              <section className="market-snapshot__guidance-panel" aria-labelledby="market-snapshot-pay-title">
+                <p className="market-snapshot__section-kicker">What should I pay?</p>
+                <h3 id="market-snapshot-pay-title">{buyerGuidance.targetCopy}</h3>
+                <p>{buyerGuidance.closeCopy}</p>
+              </section>
+              <section className="market-snapshot__guidance-panel market-snapshot__guidance-panel--position" aria-labelledby="market-snapshot-position-title">
+                <p className="market-snapshot__section-kicker">Your negotiating position</p>
+                <h3 id="market-snapshot-position-title">{buyerGuidance.position}</h3>
+                <strong>Next move: keep taxes, fees, and add-ons controlled.</strong>
+                <p>{buyerGuidance.positionCopy}</p>
+                {buyerGuidance.openingOffer && (
+                  <strong>Suggested opening offer: {buyerGuidance.openingOffer}</strong>
+                )}
+              </section>
+            </div>
+
+            <div className="market-snapshot__why-price">
+              <div>
+                <p className="market-snapshot__section-kicker">Why this price?</p>
+                <p>{market.inventoryCount} comparable listings, {whyPriceFactors}.</p>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {prioritizedMatches.length > 0 ? (
-          <section className="market-snapshot__matches" aria-labelledby="market-snapshot-matches-title">
-            <div className="market-snapshot__matches-head">
-              <p className="market-snapshot__section-kicker">Supporting Evidence</p>
-              <h3 id="market-snapshot-matches-title">Closest comparable listings</h3>
-              <p>
-                {comparablePriceSummary} {leadRecommendationCopy}
-              </p>
+              <div>
+                <p className="market-snapshot__section-kicker">Confidence</p>
+                <p><strong>{confidenceLabel}</strong>. {confidenceCopy}</p>
+              </div>
             </div>
 
-            <div className="market-snapshot__vehicle-picks" role="list">
-              {prioritizedMatches.map((match, index) => {
-                const signalBadges = getVehicleSignalBadges({
-                  match,
-                  averagePrice: market.averagePrice,
-                  averageMileage: statistics.averageMileage,
-                });
-                const vehicleTitle = `${match.unit.year} ${match.unit.make} ${match.unit.model}`;
-                const trimLabel = getMatchTrimLabel(match);
-                const matchScore = getMatchScore({
-                  match,
-                  averagePrice: market.averagePrice,
-                  averageMileage: statistics.averageMileage,
-                  condition: market.condition,
-                });
-                const displayMatchScore = getRankedDisplayScore(matchScore, index);
-                const comparableFitLabel = getComparableFitLabel({ match, leadMatch, vehicle, index });
-                const qualitySignals = getVehicleQualitySignals({
-                  match,
-                  averageMileage: statistics.averageMileage,
-                });
+            <section className="market-snapshot__factors" aria-labelledby="market-snapshot-factors-title">
+              <div className="market-snapshot__factors-head">
+                <h3 id="market-snapshot-factors-title">Market Factors</h3>
+                <p>{marketSummary}</p>
+              </div>
+              <div className="market-snapshot__factor-grid">
+                {factors.map((factor) => (
+                  <div key={factor.label} className="market-snapshot__factor">
+                    <span>{factor.label}</span>
+                    <strong className={factor.tone ? `market-snapshot__factor-value--${factor.tone}` : undefined}>
+                      {factor.value}
+                    </strong>
+                  </div>
+                ))}
+              </div>
+            </section>
 
-                return (
-                  <article
-                    key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}`}
-                    className={`market-snapshot__vehicle-pick ${index === 0 ? 'market-snapshot__vehicle-pick--lead' : ''}`}
-                    role="listitem"
-                  >
-                    <a
-                      className="market-snapshot__vehicle-pick-media-link"
-                      href={getListingUrl(match)}
-                      aria-label={`View listing for ${getVehicleMatchTitle(match)}`}
-                    >
-                      <OptimizedImage
-                        src={vehicle.image}
-                        alt={getVehicleMatchTitle(match)}
-                        aspectRatio="4/3"
-                        wrapperClassName="market-snapshot__vehicle-pick-media"
-                      />
-                      {index === 0 && <span className="market-snapshot__best-match">{leadRecommendationLabel}</span>}
-                    </a>
+            {prioritizedMatches.length > 0 ? (
+              <section className="market-snapshot__matches" aria-labelledby="market-snapshot-matches-title">
+                <div className="market-snapshot__matches-head">
+                  <p className="market-snapshot__section-kicker">Supporting Evidence</p>
+                  <h3 id="market-snapshot-matches-title">Closest comparable listings</h3>
+                  <p>
+                    {comparablePriceSummary} {leadRecommendationCopy}
+                  </p>
+                </div>
 
-                    <div className="market-snapshot__vehicle-pick-body">
-                      <div className="market-snapshot__vehicle-pick-topline">
-                        <span className="market-snapshot__comparison-copy">
-                          <strong>{comparableFitLabel}</strong>
-                          <em>{displayMatchScore}% comparable</em>
-                        </span>
-                        <strong>{formatPrice(match.unit.price)}</strong>
-                      </div>
+                <div className="market-snapshot__vehicle-picks" role="list">
+                  {prioritizedMatches.map((match, index) => {
+                    const signalBadges = getVehicleSignalBadges({
+                      match,
+                      averagePrice: market.averagePrice,
+                      averageMileage: statistics.averageMileage,
+                    });
+                    const vehicleTitle = `${match.unit.year} ${match.unit.make} ${match.unit.model}`;
+                    const trimLabel = getMatchTrimLabel(match);
+                    const matchScore = getMatchScore({
+                      match,
+                      averagePrice: market.averagePrice,
+                      averageMileage: statistics.averageMileage,
+                      condition: market.condition,
+                    });
+                    const displayMatchScore = getRankedDisplayScore(matchScore, index);
+                    const comparableFitLabel = getComparableFitLabel({ match, leadMatch, vehicle, index });
+                    const qualitySignals = getVehicleQualitySignals({
+                      match,
+                      averageMileage: statistics.averageMileage,
+                    });
 
-                      <div className="market-snapshot__vehicle-pick-title">
-                        <h4>{vehicleTitle}{trimLabel ? ` ${trimLabel}` : ''}</h4>
-                        {qualitySignals.length > 0 && (
-                          <div className="market-snapshot__quality-signals" aria-label="Vehicle quality signals">
-                            {qualitySignals.map((signal) => (
-                              <span key={signal}>{signal}</span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <dl className="market-snapshot__vehicle-pick-metrics">
-                        <div>
-                          <dt>Mileage</dt>
-                          <dd>{formatMileageValue(match.unit.mileage)}</dd>
-                        </div>
-                        <div>
-                          <dt>Dealer</dt>
-                          <dd>{match.dealer.name}</dd>
-                        </div>
-                        <div>
-                          <dt>Distance</dt>
-                          <dd>{match.dealer.distance !== undefined ? `${match.dealer.distance.toFixed(1)} mi` : 'Unavailable'}</dd>
-                        </div>
-                        <div>
-                          <dt>Days on Lot</dt>
-                          <dd>{match.unit.daysOnLot !== undefined ? `${match.unit.daysOnLot} days` : 'Unavailable'}</dd>
-                        </div>
-                      </dl>
-
-                      <div className="market-snapshot__vehicle-pick-footer">
-                        <div className="market-snapshot__vehicle-pick-badges" aria-label="Vehicle signals">
-                          <Badge variant={match.unit.isNew ? 'info' : 'neutral'}>{getConditionLabel(match)}</Badge>
-                          {signalBadges.map((badge) => (
-                            <Badge key={badge.label} variant={badge.variant}>
-                              {badge.label}
-                            </Badge>
-                          ))}
-                        </div>
-                        <a className="market-snapshot__vehicle-pick-cta" href={getListingUrl(match)}>
-                          {index === 0 ? 'View This Car' : 'Compare'}
+                    return (
+                      <article
+                        key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}`}
+                        className={`market-snapshot__vehicle-pick ${index === 0 ? 'market-snapshot__vehicle-pick--lead' : ''}`}
+                        role="listitem"
+                      >
+                        <a
+                          className="market-snapshot__vehicle-pick-media-link"
+                          href={getListingUrl(match)}
+                          aria-label={`View listing for ${getVehicleMatchTitle(match)}`}
+                        >
+                          <OptimizedImage
+                            src={vehicle.image}
+                            alt={getVehicleMatchTitle(match)}
+                            aspectRatio="4/3"
+                            wrapperClassName="market-snapshot__vehicle-pick-media"
+                          />
+                          {index === 0 && <span className="market-snapshot__best-match">{leadRecommendationLabel}</span>}
                         </a>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
 
-            <button type="button" className="market-snapshot__all-results" onClick={onSeeLocalInventory}>
-              See all local matches
-            </button>
-          </section>
-        ) : (
-          <article className="market-snapshot__empty">
-            <h3>No matching vehicles in this distance</h3>
-            <p>Try a wider search radius or another market to see comparable local listings.</p>
-          </article>
-        )}
+                        <div className="market-snapshot__vehicle-pick-body">
+                          <div className="market-snapshot__vehicle-pick-topline">
+                            <span className="market-snapshot__comparison-copy">
+                              <strong>{comparableFitLabel}</strong>
+                              <em>{displayMatchScore}% comparable</em>
+                            </span>
+                            <strong>{formatPrice(match.unit.price)}</strong>
+                          </div>
 
-        <p className="market-snapshot__methodology">
-          Estimated from modeled listings for this vehicle and selected area. Prices exclude taxes and fees; availability may change.
-        </p>
+                          <div className="market-snapshot__vehicle-pick-title">
+                            <h4>{vehicleTitle}{trimLabel ? ` ${trimLabel}` : ''}</h4>
+                            {qualitySignals.length > 0 && (
+                              <div className="market-snapshot__quality-signals" aria-label="Vehicle quality signals">
+                                {qualitySignals.map((signal) => (
+                                  <span key={signal}>{signal}</span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          <dl className="market-snapshot__vehicle-pick-metrics">
+                            <div>
+                              <dt>Mileage</dt>
+                              <dd>{formatMileageValue(match.unit.mileage)}</dd>
+                            </div>
+                            <div>
+                              <dt>Dealer</dt>
+                              <dd>{match.dealer.name}</dd>
+                            </div>
+                            <div>
+                              <dt>Distance</dt>
+                              <dd>{match.dealer.distance !== undefined ? `${match.dealer.distance.toFixed(1)} mi` : 'Unavailable'}</dd>
+                            </div>
+                            <div>
+                              <dt>Days on Lot</dt>
+                              <dd>{match.unit.daysOnLot !== undefined ? `${match.unit.daysOnLot} days` : 'Unavailable'}</dd>
+                            </div>
+                          </dl>
+
+                          <div className="market-snapshot__vehicle-pick-footer">
+                            <div className="market-snapshot__vehicle-pick-badges" aria-label="Vehicle signals">
+                              <Badge variant={match.unit.isNew ? 'info' : 'neutral'}>{getConditionLabel(match)}</Badge>
+                              {signalBadges.map((badge) => (
+                                <Badge key={badge.label} variant={badge.variant}>
+                                  {badge.label}
+                                </Badge>
+                              ))}
+                            </div>
+                            <a className="market-snapshot__vehicle-pick-cta" href={getListingUrl(match)}>
+                              {index === 0 ? 'View This Car' : 'Compare'}
+                            </a>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+
+                <button type="button" className="market-snapshot__all-results" onClick={onSeeLocalInventory}>
+                  See all local matches
+                </button>
+              </section>
+            ) : (
+              <article className="market-snapshot__empty">
+                <h3>No matching vehicles in this distance</h3>
+                <p>Try a wider search radius or another market to see comparable local listings.</p>
+              </article>
+            )}
+
+            <p className="market-snapshot__methodology">
+              Estimated from modeled listings for this vehicle and selected area. Prices exclude taxes and fees; availability may change.
+            </p>
+          </div>
+        </details>
       </div>
     </section>
   );

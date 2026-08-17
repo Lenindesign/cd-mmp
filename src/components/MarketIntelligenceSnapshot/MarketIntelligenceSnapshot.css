@@ -1071,6 +1071,89 @@
   white-space: nowrap;
 }
 
+.market-snapshot__details-accordion {
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.market-snapshot__details-accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  min-height: 56px;
+  padding: var(--spacing-3) 0;
+  color: var(--color-black);
+  cursor: pointer;
+  list-style: none;
+}
+
+.market-snapshot__details-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.market-snapshot__details-accordion summary:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 3px;
+}
+
+.market-snapshot__details-accordion summary > span:first-child {
+  display: grid;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.market-snapshot__details-accordion summary strong {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+  text-transform: uppercase;
+}
+
+.market-snapshot__details-accordion summary em {
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  font-style: normal;
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__details-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-pill);
+}
+
+.market-snapshot__details-icon::before,
+.market-snapshot__details-icon::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 2px;
+  background: var(--color-black);
+  border-radius: var(--border-radius-pill);
+  content: '';
+  transform: translate(-50%, -50%);
+  transition: transform var(--transition-fast);
+}
+
+.market-snapshot__details-icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.market-snapshot__details-accordion[open] .market-snapshot__details-icon::after {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.market-snapshot__details-content {
+  display: grid;
+  gap: var(--spacing-5);
+  padding-bottom: var(--spacing-2);
+}
+
 .market-snapshot__buying-guidance {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
