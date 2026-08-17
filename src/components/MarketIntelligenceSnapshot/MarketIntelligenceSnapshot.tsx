@@ -288,11 +288,13 @@ const getPrioritizedMatches = ({
   averagePrice,
   averageMileage,
   condition,
+  limit = 3,
 }: {
   matches: MarketInventoryMatch[];
   averagePrice: number;
   averageMileage?: number;
   condition: 'new' | 'used';
+  limit?: number;
 }) => {
   return [...matches]
     .sort((a, b) => {
@@ -304,7 +306,7 @@ const getPrioritizedMatches = ({
       }
       return a.unit.price - b.unit.price;
     })
-    .slice(0, 3);
+    .slice(0, limit);
 };
 
 const getRankedDisplayScore = (score: number, index: number) => {
@@ -322,6 +324,23 @@ const getConditionLabel = (match: MarketInventoryMatch) => {
   if (match.unit.isNew) return 'New';
   if (match.unit.isCertified) return 'Certified used';
   return 'Used';
+};
+
+const getPriceBandTone = ({
+  price,
+  greatDealEndPrice,
+  targetLow,
+  targetHigh,
+}: {
+  price: number;
+  greatDealEndPrice: number;
+  targetLow: number;
+  targetHigh: number;
+}) => {
+  if (price <= greatDealEndPrice) return 'great';
+  if (price < targetLow) return 'good';
+  if (price <= targetHigh) return 'fair';
+  return 'above';
 };
 
 const getRecommendationSignals = ({
@@ -386,18 +405,30 @@ const MarketIntelligenceSnapshot = ({
     averageMileage: statistics.averageMileage,
     condition: market.condition,
   });
+  const plottedMatches = getPrioritizedMatches({
+    matches: market.matches,
+    averagePrice: market.averagePrice,
+    averageMileage: statistics.averageMileage,
+    condition: market.condition,
+    limit: 10,
+  });
   const leadMatch = prioritizedMatches[0];
   const targetLow = Math.round((market.averagePrice * 0.94) / 100) * 100;
   const targetHigh = Math.round((market.averagePrice * 0.975) / 100) * 100;
   const askingPrice = leadMatch ? leadMatch.unit.price : market.averagePrice;
-  const rangeLow = Math.min(targetLow * 0.93, askingPrice * 0.93);
-  const rangeHigh = Math.max(targetHigh * 1.08, askingPrice * 1.08);
+  const plottedPrices = plottedMatches.map((match) => match.unit.price);
+  const lowestPlottedPrice = plottedPrices.length > 0 ? Math.min(...plottedPrices) : askingPrice;
+  const highestPlottedPrice = plottedPrices.length > 0 ? Math.max(...plottedPrices) : askingPrice;
+  const rangeLow = Math.min(targetLow * 0.93, askingPrice * 0.93, lowestPlottedPrice * 0.96);
+  const rangeHigh = Math.max(targetHigh * 1.08, askingPrice * 1.08, highestPlottedPrice * 1.04);
   const targetStart = getPercentWithinRange(targetLow, rangeLow, rangeHigh);
   const targetEnd = getPercentWithinRange(targetHigh, rangeLow, rangeHigh);
   const askingPosition = getPercentWithinRange(askingPrice, rangeLow, rangeHigh);
   const targetCenter = targetStart + (targetEnd - targetStart) / 2;
   const greatDealEndPrice = Math.min(targetLow, Math.max(rangeLow, Math.max(targetLow - 750, targetLow / 1.04)));
   const greatDealEnd = getPercentWithinRange(greatDealEndPrice, rangeLow, rangeHigh);
+  const axisTickPrices = [rangeLow, rangeLow + (rangeHigh - rangeLow) / 3, rangeLow + ((rangeHigh - rangeLow) * 2) / 3, rangeHigh]
+    .map((price) => Math.round(price / 500) * 500);
   const priceRangeStyle = {
     '--great-end': `${greatDealEnd}%`,
     '--target-start': `${targetStart}%`,
@@ -430,7 +461,7 @@ const MarketIntelligenceSnapshot = ({
   });
   const recommendationSignalCopy = recommendationSignals.join(', ');
   const leadRecommendationLabel = priceAssessment.tone === 'opportunity'
-    ? 'Best Price Match'
+    ? 'Best Local Deal'
     : priceAssessment.tone === 'over'
       ? 'Best Available Match'
       : 'Best Balanced Match';
@@ -610,25 +641,101 @@ const MarketIntelligenceSnapshot = ({
             </dl>
           </div>
 
-          <div className="market-snapshot__price-visual" aria-hidden="true">
-            <div className="market-snapshot__price-zones">
-              <span className="market-snapshot__price-zone market-snapshot__price-zone--great" />
-              <span className="market-snapshot__price-zone market-snapshot__price-zone--good" />
-              <span className="market-snapshot__price-zone market-snapshot__price-zone--fair" />
-              <span className="market-snapshot__price-zone market-snapshot__price-zone--above" />
+          <div
+            className="market-snapshot__price-visual"
+            aria-label={`Market value pricing bands showing ${plottedMatches.length} local deals from great deal to above market`}
+          >
+            <div className="market-snapshot__price-visual-head">
+              <div className="market-snapshot__price-visual-copy">
+                <h4>Market value pricing bands</h4>
+                <p>Top local matches plotted by asking price</p>
+              </div>
+              <details className="market-snapshot__local-deals-menu">
+                <summary aria-label={`Show ${plottedMatches.length} local deals plotted on the pricing bands`}>
+                  <span>{plottedMatches.length}/10 local deals</span>
+                  <span className="market-snapshot__local-deals-menu-icon" aria-hidden="true" />
+                </summary>
+                <div className="market-snapshot__local-deals-panel">
+                  {plottedMatches.map((match, index) => (
+                    <a
+                      key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}-menu`}
+                      className="market-snapshot__local-deal-link"
+                      href={getListingUrl(match)}
+                    >
+                      <span className="market-snapshot__local-deal-rank">{index + 1}</span>
+                      <span className="market-snapshot__local-deal-main">
+                        <strong>{formatPrice(match.unit.price)}</strong>
+                        <span>{getVehicleMatchTitle(match)}</span>
+                      </span>
+                      <span className="market-snapshot__local-deal-meta">
+                        {match.dealer.name}
+                        {match.dealer.distance !== undefined ? `, ${match.dealer.distance.toFixed(1)} mi` : ''}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </details>
             </div>
-            <span className="market-snapshot__price-fair-label">
-              Fair market {formatPriceRange(targetLow, targetHigh)}
-            </span>
-            <span className="market-snapshot__price-bar-marker-label">
-              Asking {formatPrice(askingPrice)}
-            </span>
-            <span className="market-snapshot__price-bar-marker" />
-            <div className="market-snapshot__price-zone-labels">
-              <span>Great deal</span>
-              <span>Good deal</span>
-              <span>Fair market</span>
-              <span>Above market</span>
+            <div className="market-snapshot__price-band-chart">
+              <div className="market-snapshot__price-zone-labels" aria-hidden="true">
+                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--great">Great deal</span>
+                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--good">Good deal</span>
+                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--fair">Fair market</span>
+                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--above">Above market</span>
+              </div>
+              <div className="market-snapshot__price-zones" aria-hidden="true">
+                <span className="market-snapshot__price-zone market-snapshot__price-zone--great" />
+                <span className="market-snapshot__price-zone market-snapshot__price-zone--good" />
+                <span className="market-snapshot__price-zone market-snapshot__price-zone--fair" />
+                <span className="market-snapshot__price-zone market-snapshot__price-zone--above" />
+              </div>
+              <span className="market-snapshot__price-axis-line" />
+              <div className="market-snapshot__price-points">
+                {plottedMatches.map((match, index) => {
+                  const dotPosition = getPercentWithinRange(match.unit.price, rangeLow, rangeHigh);
+                  const dotTone = getPriceBandTone({
+                    price: match.unit.price,
+                    greatDealEndPrice,
+                    targetLow,
+                    targetHigh,
+                  });
+                  const tooltipAlign = dotPosition < 18 ? 'start' : dotPosition > 82 ? 'end' : 'center';
+                  const dotStyle = {
+                    '--dot-position': `${dotPosition}%`,
+                    '--dot-offset': `${index % 2 === 0 ? -1 : 1}px`,
+                  } as CSSProperties;
+                  const isLeadDot = index === 0;
+
+                  return (
+                    <span
+                      key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}-dot`}
+                      className={`market-snapshot__price-point market-snapshot__price-point--${dotTone} ${isLeadDot ? 'market-snapshot__price-point--lead' : ''}`}
+                      style={dotStyle}
+                      tabIndex={0}
+                      aria-label={`${isLeadDot ? 'Best local deal' : 'Local deal'}: ${formatPrice(match.unit.price)} at ${match.dealer.name}`}
+                    >
+                      <span className="market-snapshot__price-dot" />
+                      <span className={`market-snapshot__price-tooltip market-snapshot__price-tooltip--${tooltipAlign}`}>
+                        <strong>{isLeadDot ? 'Best local deal' : formatPrice(match.unit.price)}</strong>
+                        <span>{formatPrice(match.unit.price)} at {match.dealer.name}</span>
+                        <span>
+                          {formatMileageValue(match.unit.mileage)}
+                          {match.dealer.distance !== undefined ? `, ${match.dealer.distance.toFixed(1)} mi away` : ''}
+                        </span>
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
+              <span className="market-snapshot__your-car-marker">
+                <span className="market-snapshot__your-car-stem" />
+                <strong>Your car: {formatPrice(askingPrice)}</strong>
+              </span>
+            </div>
+            <div className="market-snapshot__price-axis">
+              {axisTickPrices.map((price, index) => (
+                <span key={`${price}-${index}`}>{formatPrice(price)}</span>
+              ))}
             </div>
           </div>
 
