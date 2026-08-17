@@ -54,6 +54,10 @@ interface BuyerGuidance {
   openingOffer?: string;
 }
 
+type LocalDealSort = 'price' | 'discount' | 'distance';
+
+const LOCAL_DEAL_ALL_TRIMS = 'all';
+
 const formatMileageValue = (mileage?: number) =>
   mileage !== undefined ? `${mileage.toLocaleString()} mi` : 'New';
 
@@ -62,6 +66,26 @@ const formatPriceDelta = (amount: number) =>
 
 const formatPriceRange = (low: number, high: number) =>
   low === high ? formatPrice(low) : `${formatPrice(low)}-${formatPrice(high)}`;
+
+const normalizeTrim = (trim?: string) =>
+  (trim ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+const getMatchTrimLabel = (match: MarketInventoryMatch) => {
+  const vehicleTitle = `${match.unit.year} ${match.unit.make} ${match.unit.model}`;
+  return match.unit.trim.replace(vehicleTitle, '').replace(/\s+/g, ' ').trim();
+};
+
+const getDisplayMsrp = (match: MarketInventoryMatch) =>
+  match.unit.msrp ?? match.unit.price;
+
+const getMsrpDifference = (match: MarketInventoryMatch) =>
+  getDisplayMsrp(match) - match.unit.price;
+
+const getMsrpDifferenceCopy = (difference: number) => {
+  if (difference > 0) return `${formatPrice(difference)} off`;
+  if (difference < 0) return `${formatPrice(Math.abs(difference))} over`;
+  return 'At MSRP';
+};
 
 const isGoodOrGreatPrice = (match: MarketInventoryMatch, averagePrice: number) =>
   match.unit.price <= averagePrice * 0.985;
@@ -119,6 +143,26 @@ const getPriceAssessment = ({
   };
 };
 
+const getPriceRelationshipCopy = ({
+  askingPrice,
+  targetLow,
+  targetHigh,
+}: {
+  askingPrice: number;
+  targetLow: number;
+  targetHigh: number;
+}) => {
+  if (askingPrice < targetLow) {
+    return `${formatPrice(targetLow - askingPrice)} below the low end of fair market`;
+  }
+
+  if (askingPrice <= targetHigh) {
+    return 'Inside the estimated fair market range';
+  }
+
+  return `${formatPrice(askingPrice - targetHigh)} above the high end of fair market`;
+};
+
 const getBottomLineCopy = (assessment: PriceAssessment, hasHistoryRisk: boolean) => {
   if (assessment.label === 'Great Price') {
     if (hasHistoryRisk) {
@@ -163,7 +207,7 @@ const getBuyerGuidance = ({
       targetCopy: `At or below ${formatPrice(askingPrice)}`,
       closeCopy: `I'd aim to close around ${formatPrice(askingPrice)}. It is already below fair market.`,
       position: negotiationLeverage === 'Low' ? 'Moderate' : 'Strong',
-      positionCopy: 'The current price is already favorable, so focus on keeping taxes, fees, and add-ons controlled.',
+      positionCopy: 'The current price is already favorable. Ask the dealer to itemize the out-the-door price before you commit.',
     };
   }
 
@@ -250,6 +294,51 @@ const getVehicleSignalBadges = ({
   }
 
   return badges.slice(0, 4);
+};
+
+const getVehicleQualitySignals = ({
+  match,
+  averageMileage,
+}: {
+  match: MarketInventoryMatch;
+  averageMileage?: number;
+}) => {
+  if (match.unit.isNew) {
+    return [
+      match.unit.daysOnLot !== undefined && match.unit.daysOnLot <= 14 ? 'New arrival' : null,
+      (match.unit.recentPriceDropAmount ?? 0) > 0 ? 'Recent price drop' : null,
+      match.unit.isCertified ? 'Certified' : null,
+    ].filter(Boolean).slice(0, 3) as string[];
+  }
+
+  return [
+    match.unit.accidents === 0 ? 'No accidents' : null,
+    match.unit.owners === 1 ? 'One owner' : null,
+    averageMileage !== undefined && (match.unit.mileage ?? Number.POSITIVE_INFINITY) < averageMileage
+      ? 'Low mileage'
+      : null,
+    match.unit.titleStatus === 'Clean' ? 'Clean title' : null,
+  ].filter(Boolean).slice(0, 3) as string[];
+};
+
+const getComparableFitLabel = ({
+  match,
+  leadMatch,
+  vehicle,
+  index,
+}: {
+  match: MarketInventoryMatch;
+  leadMatch?: MarketInventoryMatch;
+  vehicle: Vehicle;
+  index: number;
+}) => {
+  const matchTrim = normalizeTrim(getMatchTrimLabel(match) || match.unit.trim);
+  const leadTrim = normalizeTrim(leadMatch ? getMatchTrimLabel(leadMatch) || leadMatch.unit.trim : vehicle.trim);
+  const sameTrim = matchTrim !== '' && leadTrim !== '' && matchTrim === leadTrim;
+
+  if (sameTrim && index === 0) return 'Same trim / closest match';
+  if (sameTrim) return 'Same trim / strong match';
+  return 'Similar trim / supporting match';
 };
 
 const getMatchScore = ({
@@ -388,6 +477,8 @@ const MarketIntelligenceSnapshot = ({
     value: currentLocationZipCode,
     error: '',
   });
+  const [localDealSort, setLocalDealSort] = useState<LocalDealSort>('price');
+  const [localDealTrimFilter, setLocalDealTrimFilter] = useState<string>('Base');
   const zipCode = zipInput.sourceZipCode === currentLocationZipCode ? zipInput.value : currentLocationZipCode;
   const zipError = zipInput.sourceZipCode === currentLocationZipCode ? zipInput.error : '';
 
@@ -411,6 +502,36 @@ const MarketIntelligenceSnapshot = ({
     averageMileage: statistics.averageMileage,
     condition: market.condition,
     limit: 10,
+  });
+  const localDealTrimOptions = useMemo(() => {
+    const trims = plottedMatches
+      .map((match) => getMatchTrimLabel(match) || match.unit.trim)
+      .filter((trim): trim is string => Boolean(trim));
+    const uniqueTrims = Array.from(new Set(trims));
+    const baseTrim = uniqueTrims.find((trim) => normalizeTrim(trim) === 'base');
+    const remainingTrims = uniqueTrims.filter((trim) => trim !== baseTrim);
+
+    return baseTrim ? [baseTrim, ...remainingTrims] : uniqueTrims;
+  }, [plottedMatches]);
+  const defaultLocalDealTrim = localDealTrimOptions.find((trim) => normalizeTrim(trim) === 'base') ?? LOCAL_DEAL_ALL_TRIMS;
+  const activeLocalDealTrim =
+    localDealTrimFilter === LOCAL_DEAL_ALL_TRIMS || localDealTrimOptions.includes(localDealTrimFilter)
+      ? localDealTrimFilter
+      : defaultLocalDealTrim;
+  const filteredLocalDeals =
+    activeLocalDealTrim === LOCAL_DEAL_ALL_TRIMS
+      ? plottedMatches
+      : plottedMatches.filter((match) => (getMatchTrimLabel(match) || match.unit.trim) === activeLocalDealTrim);
+  const sortedLocalDeals = [...filteredLocalDeals].sort((a, b) => {
+    if (localDealSort === 'discount') {
+      return getMsrpDifference(b) - getMsrpDifference(a);
+    }
+
+    if (localDealSort === 'distance') {
+      return (a.dealer.distance ?? Number.POSITIVE_INFINITY) - (b.dealer.distance ?? Number.POSITIVE_INFINITY);
+    }
+
+    return a.unit.price - b.unit.price;
   });
   const leadMatch = prioritizedMatches[0];
   const targetLow = Math.round((market.averagePrice * 0.94) / 100) * 100;
@@ -443,6 +564,7 @@ const MarketIntelligenceSnapshot = ({
   const priceAssessment = getPriceAssessment({ askingPrice, targetLow, targetHigh });
   const amountBelowTarget = Math.max(0, targetLow - askingPrice);
   const isInsideTargetRange = askingPrice >= targetLow && askingPrice <= targetHigh;
+  const priceRelationshipCopy = getPriceRelationshipCopy({ askingPrice, targetLow, targetHigh });
   const hasHistoryRisk = isUsed && Boolean(leadMatch) && (
     (leadMatch?.unit.accidents ?? 0) > 0 ||
     (leadMatch?.unit.titleStatus !== undefined && leadMatch.unit.titleStatus !== 'Clean')
@@ -621,8 +743,11 @@ const MarketIntelligenceSnapshot = ({
               <span className={`market-snapshot__price-pill market-snapshot__price-pill--${priceAssessment.tone}`}>
                 {priceAssessment.label}
               </span>
-              <h3>{formatPrice(askingPrice)} <span>{priceAssessment.label.toLowerCase()}</span></h3>
-              <p>{priceAssessment.copy}</p>
+              <h3>{formatPrice(askingPrice)} <span>asking price</span></h3>
+              <p className={`market-snapshot__advantage-copy market-snapshot__advantage-copy--${priceAssessment.tone}`}>
+                {priceRelationshipCopy}
+              </p>
+              <p>Fair market starts at {formatPrice(targetLow)}.</p>
               <strong>{bottomLineCopy}</strong>
             </div>
             <dl className="market-snapshot__decision-values">
@@ -651,28 +776,106 @@ const MarketIntelligenceSnapshot = ({
                 <p>Top local matches plotted by asking price</p>
               </div>
               <details className="market-snapshot__local-deals-menu">
-                <summary aria-label={`Show ${plottedMatches.length} local deals plotted on the pricing bands`}>
-                  <span>{plottedMatches.length}/10 local deals</span>
+                <summary aria-label={`Show ${plottedMatches.length} comparable local listings plotted on the pricing bands`}>
+                  <span>{plottedMatches.length} local matches</span>
                   <span className="market-snapshot__local-deals-menu-icon" aria-hidden="true" />
                 </summary>
                 <div className="market-snapshot__local-deals-panel">
-                  {plottedMatches.map((match, index) => (
-                    <a
-                      key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}-menu`}
-                      className="market-snapshot__local-deal-link"
-                      href={getListingUrl(match)}
-                    >
-                      <span className="market-snapshot__local-deal-rank">{index + 1}</span>
-                      <span className="market-snapshot__local-deal-main">
-                        <strong>{formatPrice(match.unit.price)}</strong>
-                        <span>{getVehicleMatchTitle(match)}</span>
-                      </span>
-                      <span className="market-snapshot__local-deal-meta">
-                        {match.dealer.name}
-                        {match.dealer.distance !== undefined ? `, ${match.dealer.distance.toFixed(1)} mi` : ''}
-                      </span>
-                    </a>
-                  ))}
+                  <div className="market-snapshot__local-deal-toolbar">
+                    <div className="market-snapshot__local-deal-sort" aria-label="Sort local matches">
+                      <span>Sort</span>
+                      <button
+                        type="button"
+                        className={localDealSort === 'price' ? 'market-snapshot__local-deal-sort-button--active' : undefined}
+                        aria-pressed={localDealSort === 'price'}
+                        onClick={() => setLocalDealSort('price')}
+                      >
+                        Price
+                      </button>
+                      <button
+                        type="button"
+                        className={localDealSort === 'discount' ? 'market-snapshot__local-deal-sort-button--active' : undefined}
+                        aria-pressed={localDealSort === 'discount'}
+                        onClick={() => setLocalDealSort('discount')}
+                      >
+                        Savings
+                      </button>
+                      <button
+                        type="button"
+                        className={localDealSort === 'distance' ? 'market-snapshot__local-deal-sort-button--active' : undefined}
+                        aria-pressed={localDealSort === 'distance'}
+                        onClick={() => setLocalDealSort('distance')}
+                      >
+                        Distance
+                      </button>
+                    </div>
+
+                    <label className="market-snapshot__local-deal-trim-filter">
+                      <span>Trim</span>
+                      <select
+                        value={activeLocalDealTrim}
+                        onChange={(event) => setLocalDealTrimFilter(event.target.value)}
+                      >
+                        <option value={LOCAL_DEAL_ALL_TRIMS}>All trims</option>
+                        {localDealTrimOptions.map((trim) => (
+                          <option key={trim} value={trim}>
+                            {trim}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <div className="market-snapshot__local-deal-table" aria-label="Comparable local dealer inventory">
+                    <div className="market-snapshot__local-deal-header">
+                      <span>Dealer</span>
+                      <span>Trim</span>
+                      <span>Advertised price</span>
+                      <span>MSRP</span>
+                      <span>Vs. MSRP</span>
+                    </div>
+                    {sortedLocalDeals.map((match) => {
+                      const localDealTone = getPriceBandTone({
+                        price: match.unit.price,
+                        greatDealEndPrice,
+                        targetLow,
+                        targetHigh,
+                      });
+                      const trimLabel = getMatchTrimLabel(match) || match.unit.trim;
+                      const displayMsrp = getDisplayMsrp(match);
+                      const msrpDifference = getMsrpDifference(match);
+                      const isBestLocalDeal = match === leadMatch;
+
+                      return (
+                        <a
+                          key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}-menu`}
+                          className={`market-snapshot__local-deal-row market-snapshot__local-deal-row--${localDealTone}`}
+                          href={getListingUrl(match)}
+                          aria-label={`View ${getVehicleMatchTitle(match)} at ${match.dealer.name} for ${formatPrice(match.unit.price)}`}
+                        >
+                          <span className="market-snapshot__local-deal-dealer">
+                            <strong>{match.dealer.name}</strong>
+                            {match.dealer.distance !== undefined && <em>{match.dealer.distance.toFixed(1)} mi</em>}
+                            {isBestLocalDeal && <b>Best price</b>}
+                          </span>
+                          <span className="market-snapshot__local-deal-trim">{trimLabel}</span>
+                          <strong className="market-snapshot__local-deal-price">{formatPrice(match.unit.price)}</strong>
+                          <span className="market-snapshot__local-deal-msrp">{formatPrice(displayMsrp)}</span>
+                          <strong className={`market-snapshot__local-deal-discount ${
+                            msrpDifference < 0
+                              ? 'market-snapshot__local-deal-discount--over'
+                              : msrpDifference === 0
+                                ? 'market-snapshot__local-deal-discount--empty'
+                                : ''
+                          }`}
+                          >
+                            {getMsrpDifferenceCopy(msrpDifference)}
+                          </strong>
+                          <span className="market-snapshot__local-deal-action" aria-hidden="true">View</span>
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
               </details>
             </div>
@@ -683,6 +886,9 @@ const MarketIntelligenceSnapshot = ({
                 <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--fair">Fair market</span>
                 <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--above">Above market</span>
               </div>
+              <span className="market-snapshot__fair-market-marker" aria-hidden="true">
+                Fair market {formatPriceRange(targetLow, targetHigh)}
+              </span>
               <div className="market-snapshot__price-zones" aria-hidden="true">
                 <span className="market-snapshot__price-zone market-snapshot__price-zone--great" />
                 <span className="market-snapshot__price-zone market-snapshot__price-zone--good" />
@@ -729,7 +935,7 @@ const MarketIntelligenceSnapshot = ({
               </div>
               <span className="market-snapshot__your-car-marker">
                 <span className="market-snapshot__your-car-stem" />
-                <strong>Your car: {formatPrice(askingPrice)}</strong>
+                <strong>Current asking: {formatPrice(askingPrice)}</strong>
               </span>
             </div>
             <div className="market-snapshot__price-axis">
@@ -740,14 +946,15 @@ const MarketIntelligenceSnapshot = ({
           </div>
 
           <div className="market-snapshot__buying-guidance">
-            <section aria-labelledby="market-snapshot-pay-title">
+            <section className="market-snapshot__guidance-panel" aria-labelledby="market-snapshot-pay-title">
               <p className="market-snapshot__section-kicker">What should I pay?</p>
               <h3 id="market-snapshot-pay-title">{buyerGuidance.targetCopy}</h3>
               <p>{buyerGuidance.closeCopy}</p>
             </section>
-            <section aria-labelledby="market-snapshot-position-title">
+            <section className="market-snapshot__guidance-panel market-snapshot__guidance-panel--position" aria-labelledby="market-snapshot-position-title">
               <p className="market-snapshot__section-kicker">Your negotiating position</p>
               <h3 id="market-snapshot-position-title">{buyerGuidance.position}</h3>
+              <strong>Next move: keep taxes, fees, and add-ons controlled.</strong>
               <p>{buyerGuidance.positionCopy}</p>
               {buyerGuidance.openingOffer && (
                 <strong>Suggested opening offer: {buyerGuidance.openingOffer}</strong>
@@ -802,7 +1009,7 @@ const MarketIntelligenceSnapshot = ({
                   averageMileage: statistics.averageMileage,
                 });
                 const vehicleTitle = `${match.unit.year} ${match.unit.make} ${match.unit.model}`;
-                const trimLabel = match.unit.trim.replace(vehicleTitle, '').trim();
+                const trimLabel = getMatchTrimLabel(match);
                 const matchScore = getMatchScore({
                   match,
                   averagePrice: market.averagePrice,
@@ -810,6 +1017,11 @@ const MarketIntelligenceSnapshot = ({
                   condition: market.condition,
                 });
                 const displayMatchScore = getRankedDisplayScore(matchScore, index);
+                const comparableFitLabel = getComparableFitLabel({ match, leadMatch, vehicle, index });
+                const qualitySignals = getVehicleQualitySignals({
+                  match,
+                  averageMileage: statistics.averageMileage,
+                });
 
                 return (
                   <article
@@ -833,12 +1045,22 @@ const MarketIntelligenceSnapshot = ({
 
                     <div className="market-snapshot__vehicle-pick-body">
                       <div className="market-snapshot__vehicle-pick-topline">
-                        <span>{displayMatchScore}% comparable</span>
+                        <span className="market-snapshot__comparison-copy">
+                          <strong>{comparableFitLabel}</strong>
+                          <em>{displayMatchScore}% comparable</em>
+                        </span>
                         <strong>{formatPrice(match.unit.price)}</strong>
                       </div>
 
                       <div className="market-snapshot__vehicle-pick-title">
                         <h4>{vehicleTitle}{trimLabel ? ` ${trimLabel}` : ''}</h4>
+                        {qualitySignals.length > 0 && (
+                          <div className="market-snapshot__quality-signals" aria-label="Vehicle quality signals">
+                            {qualitySignals.map((signal) => (
+                              <span key={signal}>{signal}</span>
+                            ))}
+                          </div>
+                        )}
                       </div>
 
                       <dl className="market-snapshot__vehicle-pick-metrics">
@@ -870,7 +1092,7 @@ const MarketIntelligenceSnapshot = ({
                           ))}
                         </div>
                         <a className="market-snapshot__vehicle-pick-cta" href={getListingUrl(match)}>
-                          View Listing
+                          {index === 0 ? 'View This Car' : 'Compare'}
                         </a>
                       </div>
                     </div>

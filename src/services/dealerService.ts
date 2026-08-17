@@ -1150,8 +1150,7 @@ function toRad(deg: number): number {
  */
 function calculateDealScore(
   dealer: Dealer,
-  allDealers: Dealer[],
-  _msrp: number
+  allDealers: Dealer[]
 ): DealScore {
   // Get all prices and distances for normalization
   const allPrices = allDealers.flatMap(d => d.inventory.map(i => i.price));
@@ -1322,6 +1321,7 @@ function generateInventory(
       model,
       trim,
       price,
+      msrp: Math.round(trimBasePrice),
       mileage,
       isNew,
       exteriorColor: exteriorColors[exteriorIndex],
@@ -1414,7 +1414,7 @@ export function getDealersForVehicle(
     const prices = dealer.inventory.map(i => i.price);
     return {
       ...dealer,
-      dealScore: calculateDealScore(dealer, dealersWithDistance, msrp),
+      dealScore: calculateDealScore(dealer, dealersWithDistance),
       lowestPrice: Math.min(...prices),
       highestPrice: Math.max(...prices),
       inventoryCount: dealer.inventory.length,

@@ -184,17 +184,21 @@
 }
 
 .market-snapshot__decision-main h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--spacing-2);
   margin: 0;
   color: var(--color-black);
   font-family: var(--font-heading);
-  font-size: var(--font-size-28);
+  font-size: var(--font-size-32);
   font-weight: var(--font-weight-extrabold);
   line-height: var(--line-height-tight);
 }
 
 .market-snapshot__decision-main h3 span {
   color: var(--color-gray-600);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
 }
 
@@ -212,6 +216,22 @@
 .market-snapshot__decision-main strong {
   color: var(--color-black);
   font-weight: var(--font-weight-bold);
+}
+
+.market-snapshot__decision-main .market-snapshot__advantage-copy {
+  color: var(--color-success);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+}
+
+.market-snapshot__advantage-copy--market {
+  color: var(--color-blue-cobalt) !important;
+}
+
+.market-snapshot__advantage-copy--over {
+  color: var(--color-error) !important;
 }
 
 .market-snapshot__decision-values {
@@ -421,89 +441,306 @@
   right: 0;
   z-index: 20;
   display: grid;
-  width: min(360px, calc(100vw - 48px));
-  max-height: 360px;
-  overflow: auto;
+  width: min(660px, calc(100vw - 48px));
+  max-height: 420px;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-md);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
 }
 
-.market-snapshot__local-deal-link {
+.market-snapshot__local-deal-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.market-snapshot__local-deal-sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.market-snapshot__local-deal-sort span {
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__local-deal-sort button {
+  min-height: 28px;
+  padding: 0 var(--spacing-2);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__local-deal-sort button:hover,
+.market-snapshot__local-deal-sort button:focus-visible,
+.market-snapshot__local-deal-sort button.market-snapshot__local-deal-sort-button--active {
+  color: var(--color-white) !important;
+  background: var(--color-black) !important;
+  border-color: var(--color-black) !important;
+}
+
+.market-snapshot__local-deal-sort button:focus-visible {
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.market-snapshot__local-deal-trim-filter {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: auto;
+  min-width: 0;
+}
+
+.market-snapshot__local-deal-trim-filter span {
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__local-deal-trim-filter select {
+  width: 104px;
+  min-height: 28px;
+  padding: 0 var(--spacing-6) 0 var(--spacing-2);
+  color: var(--color-black);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+}
+
+.market-snapshot__local-deal-trim-filter select:focus-visible {
+  border-color: var(--color-blue-cobalt);
+  outline: 2px solid var(--color-blue-cobalt);
+  outline-offset: 2px;
+}
+
+.market-snapshot__local-deal-table {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: var(--spacing-2) var(--spacing-3);
-  padding: var(--spacing-3);
+  min-width: 0;
+}
+
+.market-snapshot__local-deal-header,
+.market-snapshot__local-deal-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 1.15fr) minmax(72px, 0.58fr) 108px 82px 112px 30px;
+  column-gap: var(--spacing-3);
+  row-gap: var(--spacing-2);
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+.market-snapshot__local-deal-header {
+  color: var(--color-gray-600);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__local-deal-header span:nth-child(n + 3) {
+  text-align: right;
+}
+
+.market-snapshot__local-deal-row {
+  --local-deal-tone-color: var(--color-black);
+
   color: var(--color-black);
   text-decoration: none;
   border-bottom: 1px solid var(--color-gray-200);
 }
 
-.market-snapshot__local-deal-link:last-child {
+.market-snapshot__local-deal-row:last-child {
   border-bottom: 0;
 }
 
-.market-snapshot__local-deal-link:hover,
-.market-snapshot__local-deal-link:focus-visible {
+.market-snapshot__local-deal-row:hover,
+.market-snapshot__local-deal-row:focus-visible {
   background: var(--color-gray-50);
 }
 
-.market-snapshot__local-deal-link:focus-visible {
+.market-snapshot__local-deal-row:focus-visible {
   outline: 2px solid var(--color-blue-cobalt);
   outline-offset: -2px;
 }
 
-.market-snapshot__local-deal-rank {
-  display: inline-grid;
-  align-items: center;
-  justify-items: center;
-  width: 24px;
-  height: 24px;
-  color: var(--color-white);
-  background: var(--color-black);
-  border-radius: var(--border-radius-pill);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-extrabold);
-  line-height: 1;
-}
-
-.market-snapshot__local-deal-main {
+.market-snapshot__local-deal-dealer {
   display: grid;
-  gap: 2px;
+  gap: var(--spacing-1);
   min-width: 0;
 }
 
-.market-snapshot__local-deal-main strong {
+.market-snapshot__local-deal-dealer strong {
+  min-width: 0;
   color: var(--color-black);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-extrabold);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
-}
-
-.market-snapshot__local-deal-main span,
-.market-snapshot__local-deal-meta {
-  color: var(--color-gray-600);
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-tight);
-}
-
-.market-snapshot__local-deal-main span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.market-snapshot__local-deal-meta {
-  grid-column: 2;
+.market-snapshot__local-deal-dealer em {
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  line-height: 1;
+}
+
+.market-snapshot__local-deal-dealer b {
+  justify-self: start;
+  width: fit-content;
+  padding: 3px var(--spacing-1);
+  color: var(--color-white);
+  background: var(--color-black);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.market-snapshot__local-deal-trim {
+  min-width: 0;
+  color: var(--color-gray-700);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.market-snapshot__local-deal-price,
+.market-snapshot__local-deal-msrp,
+.market-snapshot__local-deal-discount {
+  font-family: var(--font-heading);
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.market-snapshot__local-deal-price {
+  color: var(--color-black);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.market-snapshot__local-deal-row--great {
+  --local-deal-tone-color: var(--color-success);
+}
+
+.market-snapshot__local-deal-row--good {
+  --local-deal-tone-color: var(--color-warning-dark);
+}
+
+.market-snapshot__local-deal-row--fair {
+  --local-deal-tone-color: var(--color-blue-cobalt);
+}
+
+.market-snapshot__local-deal-row--above {
+  --local-deal-tone-color: var(--color-error);
+}
+
+.market-snapshot__local-deal-row--great .market-snapshot__local-deal-price,
+.market-snapshot__local-deal-row--good .market-snapshot__local-deal-price,
+.market-snapshot__local-deal-row--fair .market-snapshot__local-deal-price,
+.market-snapshot__local-deal-row--above .market-snapshot__local-deal-price {
+  color: var(--local-deal-tone-color);
+}
+
+.market-snapshot__local-deal-msrp {
+  color: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.market-snapshot__local-deal-discount {
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.market-snapshot__local-deal-discount--empty {
+  color: var(--color-gray-500);
+  font-weight: var(--font-weight-bold);
+}
+
+.market-snapshot__local-deal-discount--over {
+  color: var(--local-deal-tone-color);
+}
+
+.market-snapshot__local-deal-action {
+  align-self: center;
+  color: var(--color-blue-cobalt);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  opacity: 0;
+  text-transform: uppercase;
+  transform: translateX(-4px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+}
+
+.market-snapshot__local-deal-action::after {
+  content: ' >';
+}
+
+.market-snapshot__local-deal-row:hover .market-snapshot__local-deal-action,
+.market-snapshot__local-deal-row:focus-visible .market-snapshot__local-deal-action {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .market-snapshot__price-band-chart {
   position: relative;
   min-height: 116px;
-  padding-top: var(--spacing-6);
+  padding-top: var(--spacing-7);
   overflow: visible;
 }
 
@@ -552,16 +789,16 @@
 
 .market-snapshot__price-axis-line {
   position: absolute;
-  top: calc(var(--spacing-6) + 36px);
+  top: calc(var(--spacing-7) + 36px);
   right: 0;
   left: 0;
-  height: 2px;
-  background: color-mix(in srgb, var(--color-gray-500) 26%, var(--color-white));
+  height: 3px;
+  background: color-mix(in srgb, var(--color-gray-500) 30%, var(--color-white));
 }
 
 .market-snapshot__price-points {
   position: absolute;
-  top: calc(var(--spacing-6) + 36px);
+  top: calc(var(--spacing-7) + 36px);
   right: 0;
   left: 0;
   height: 1px;
@@ -578,8 +815,8 @@
 
 .market-snapshot__price-dot {
   display: block;
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   background: var(--color-gray-500);
   border: 3px solid var(--color-white);
   border-radius: var(--border-radius-pill);
@@ -607,8 +844,8 @@
 }
 
 .market-snapshot__price-point--lead .market-snapshot__price-dot {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   background: var(--color-success);
   box-shadow: 0 0 0 4px var(--color-white), 0 0 0 6px color-mix(in srgb, var(--color-success) 18%, transparent);
 }
@@ -722,7 +959,7 @@
 
 .market-snapshot__your-car-marker {
   position: absolute;
-  top: calc(var(--spacing-6) + 47px);
+  top: calc(var(--spacing-7) + 48px);
   left: clamp(4.25rem, var(--asking-position), calc(100% - 4.25rem));
   z-index: 6;
   display: grid;
@@ -738,10 +975,32 @@
   transform: translateX(-50%);
 }
 
-.market-snapshot__your-car-stem {
-  width: 2px;
-  height: 30px;
+.market-snapshot__your-car-marker::before {
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin-bottom: calc(var(--spacing-1) * -1);
   background: var(--color-success);
+  border: 3px solid var(--color-white);
+  border-radius: var(--border-radius-pill);
+  box-shadow: 0 0 0 2px var(--color-success);
+  content: '';
+}
+
+.market-snapshot__your-car-stem {
+  width: 3px;
+  height: 26px;
+  background: var(--color-success);
+}
+
+.market-snapshot__your-car-marker strong {
+  padding: var(--spacing-1) var(--spacing-2);
+  color: var(--color-success);
+  background: var(--color-white);
+  border: 1px solid color-mix(in srgb, var(--color-success) 35%, var(--color-gray-200));
+  border-radius: var(--border-radius-sm);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
 }
 
 .market-snapshot__price-axis {
@@ -793,6 +1052,25 @@
   color: var(--color-error);
 }
 
+.market-snapshot__fair-market-marker {
+  position: absolute;
+  top: var(--spacing-4);
+  left: clamp(5.5rem, var(--target-center), calc(100% - 5.5rem));
+  z-index: 3;
+  padding: 2px var(--spacing-2);
+  color: var(--color-blue-cobalt);
+  background: var(--color-white);
+  border: 1px solid color-mix(in srgb, var(--color-blue-cobalt) 26%, var(--color-gray-200));
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
 .market-snapshot__buying-guidance {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -805,6 +1083,18 @@
   display: grid;
   gap: var(--spacing-2);
   min-width: 0;
+}
+
+.market-snapshot__guidance-panel {
+  padding: var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+}
+
+.market-snapshot__guidance-panel--position {
+  background: color-mix(in srgb, var(--color-success) 6%, var(--color-white));
+  border-color: color-mix(in srgb, var(--color-success) 24%, var(--color-gray-200));
 }
 
 .market-snapshot__buying-guidance h3 {
@@ -827,10 +1117,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
   gap: var(--spacing-4);
-  padding: var(--spacing-4);
-  background: var(--color-gray-50);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-md);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .market-snapshot__why-price div {
@@ -1009,8 +1297,8 @@
 
 .market-snapshot__matches {
   display: grid;
-  gap: var(--spacing-5);
-  padding-top: var(--spacing-7);
+  gap: var(--spacing-4);
+  padding-top: var(--spacing-6);
   border-top: 1px solid var(--color-gray-200);
 }
 
@@ -1030,7 +1318,7 @@
 
 .market-snapshot__vehicle-picks {
   display: grid;
-  gap: var(--spacing-5);
+  gap: var(--spacing-4);
 }
 
 .market-snapshot__vehicle-pick {
@@ -1084,7 +1372,7 @@
 
 .market-snapshot__vehicle-pick-body {
   display: grid;
-  gap: var(--spacing-4);
+  gap: var(--spacing-3);
   padding: var(--spacing-5);
 }
 
@@ -1095,7 +1383,14 @@
   gap: var(--spacing-4);
 }
 
-.market-snapshot__vehicle-pick-topline span {
+.market-snapshot__comparison-copy {
+  display: grid;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.market-snapshot__comparison-copy strong,
+.market-snapshot__comparison-copy em {
   color: var(--color-gray-600);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
@@ -1105,7 +1400,16 @@
   text-transform: uppercase;
 }
 
-.market-snapshot__vehicle-pick-topline strong {
+.market-snapshot__comparison-copy strong {
+  color: var(--color-black);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.market-snapshot__comparison-copy em {
+  font-style: normal;
+}
+
+.market-snapshot__vehicle-pick-topline > strong {
   color: var(--color-black);
   font-family: var(--font-heading);
   font-size: var(--font-size-24);
@@ -1122,6 +1426,29 @@
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-extrabold);
   line-height: var(--line-height-tight);
+}
+
+.market-snapshot__vehicle-pick-title {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+.market-snapshot__quality-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.market-snapshot__quality-signals span {
+  width: fit-content;
+  padding: 4px var(--spacing-2);
+  color: var(--color-gray-700);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
 }
 
 .market-snapshot__vehicle-pick-metrics {
@@ -1201,6 +1528,13 @@
   border: 1px solid var(--color-blue-cobalt);
 }
 
+.market-snapshot__vehicle-pick:not(.market-snapshot__vehicle-pick--lead) .market-snapshot__vehicle-pick-cta {
+  min-height: 34px;
+  padding-inline: var(--spacing-3);
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-300);
+}
+
 .market-snapshot__vehicle-pick-cta:hover,
 .market-snapshot__vehicle-pick-cta:focus-visible,
 .market-snapshot__all-results:hover,
@@ -1268,6 +1602,10 @@
     font-size: var(--font-size-24);
   }
 
+  .market-snapshot__decision-main .market-snapshot__advantage-copy {
+    font-size: var(--font-size-xl);
+  }
+
   .market-snapshot__decision-values div {
     align-items: flex-start;
     flex-direction: column;
@@ -1279,7 +1617,7 @@
   }
 
   .market-snapshot__price-visual {
-    min-height: 112px;
+    min-height: 180px;
   }
 
   .market-snapshot__price-visual-head {
@@ -1338,7 +1676,7 @@
     flex-direction: column;
   }
 
-  .market-snapshot__vehicle-pick-topline strong {
+  .market-snapshot__vehicle-pick-topline > strong {
     text-align: left;
   }
 
