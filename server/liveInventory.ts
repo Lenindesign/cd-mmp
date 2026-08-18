@@ -7,6 +7,7 @@ export interface LiveInventoryVehicle {
   msrp?: number;
   vin?: string;
   stockNumber?: string;
+  imageUrl?: string;
   exteriorColor?: string;
   interiorColor?: string;
   isNew: boolean;
@@ -252,6 +253,16 @@ const parseDealerOnPriceLibrary = (
   }
 };
 
+const resolveDealerOnImageUrl = (
+  source: DealerFeedSource,
+  vehicle: DealerOnVehicleCard
+): string | undefined => {
+  const firstPhoto = vehicle.VehicleImageModel?.VehicleImageCarouselModel?.PhotoList?.find(Boolean);
+  if (!firstPhoto) return undefined;
+
+  return new URL(firstPhoto, source.baseUrl).toString();
+};
+
 const mapDealerComVehicle = (
   source: DealerFeedSource,
   vehicle: DealerComVehicle
@@ -387,6 +398,7 @@ const mapDealerOnVehicle = (
     msrp,
     vin: vehicle.VehicleVin,
     stockNumber: vehicle.VehicleStockNumber,
+    imageUrl: resolveDealerOnImageUrl(source, vehicle),
     exteriorColor: vehicle.ExteriorColorLabel,
     interiorColor: vehicle.InteriorColorLabel,
     isNew: true,

@@ -81,7 +81,7 @@ const sampleArticle: ArticleData = {
   author: {
     name: 'Jack Fitzgerald',
     title: 'Associate News Editor',
-    avatar: 'https://d2kde5ohu8qb21.cloudfront.net/files/avatars/jack-fitzgerald.jpg',
+    avatar: 'https://hips.hearstapps.com/mtg-prod/avatars/jack-fitzgerald.jpg',
     bio: "Jack Fitzgerald's love for cars stems from his as yet unshakable addiction to Formula 1. After a brief stint as a detailer for a local dealership group in college, he knew he needed a more permanent way to drive all the new cars he couldn't afford and decided to pursue a career in auto writing.",
   },
   publishDate: 'Dec 24, 2025',

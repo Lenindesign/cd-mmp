@@ -21,14 +21,14 @@ const OnboardingResults: React.FC = () => {
     // Simulate loading
     setIsLoading(true);
     const allVehicles = vehicleDatabase;
-    
+
     // Filter by user preferences if any
     let filtered = allVehicles;
     if (vehicleTypePref.length > 0) {
       filtered = allVehicles.filter(v => {
         const type = v.bodyStyle?.toLowerCase() || '';
-        return vehicleTypePref.some((pref: string) => 
-          type.includes(pref) || 
+        return vehicleTypePref.some((pref: string) =>
+          type.includes(pref) ||
           pref === 'suv' && type.includes('suv') ||
           pref === 'sedan' && type.includes('sedan') ||
           pref === 'truck' && type.includes('truck') ||
@@ -72,8 +72,8 @@ const OnboardingResults: React.FC = () => {
       <header className="onboarding-results__header">
         <div className="onboarding-results__header-content">
           <Link to="/" className="onboarding-results__logo">
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/693c48e911a35f00029a6a6b/logo.svg"
               alt="Car and Driver"
             />
           </Link>
@@ -136,9 +136,9 @@ const OnboardingResults: React.FC = () => {
         ) : (
           <div className="onboarding-results__grid">
             {filteredVehicles.slice(0, 12).map((vehicle) => (
-              <VehicleCard 
-                key={vehicle.id} 
-                vehicle={vehicle} 
+              <VehicleCard
+                key={vehicle.id}
+                vehicle={vehicle}
                 onClick={() => handleVehicleClick(vehicle)}
               />
             ))}
@@ -166,7 +166,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onClick }) => {
   return (
     <article className="results-card" onClick={onClick}>
       <div className="results-card__image">
-        <img 
+        <img
           src={vehicle.image || `https://via.placeholder.com/400x250?text=${vehicle.make}+${vehicle.model}`}
           alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
         />

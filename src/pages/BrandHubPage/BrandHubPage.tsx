@@ -466,7 +466,7 @@ const BrandHubPage = ({
               rel="noopener noreferrer"
             >
               <img
-                src="https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg"
+                src="https://hips.hearstapps.com/mtg-prod/69387d364230820002694996/300x600.jpg"
                 alt="Advertisement"
                 width={300}
                 height={600}

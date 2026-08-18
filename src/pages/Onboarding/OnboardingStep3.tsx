@@ -6,17 +6,17 @@ import './OnboardingStep3.css';
 // Speedometer Step Indicator Component (consistent with Step 1 & 2)
 const StepIndicator: React.FC<{ step: number }> = ({ step }) => {
   const stepImages: Record<number, string> = {
-    1: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e811a35f00029a6a69/step1.svg',
-    2: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e711a35f00029a6a67/step2.svg',
-    3: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a65/step3.svg',
-    4: 'https://d2kde5ohu8qb21.cloudfront.net/files/693c48e611a35f00029a6a63/step4.svg',
+    1: 'https://hips.hearstapps.com/mtg-prod/693c48e811a35f00029a6a69/step1.svg',
+    2: 'https://hips.hearstapps.com/mtg-prod/693c48e711a35f00029a6a67/step2.svg',
+    3: 'https://hips.hearstapps.com/mtg-prod/693c48e611a35f00029a6a65/step3.svg',
+    4: 'https://hips.hearstapps.com/mtg-prod/693c48e611a35f00029a6a63/step4.svg',
   };
 
   return (
     <div className="step-indicator">
-      <img 
-        src={stepImages[step]} 
-        alt={`Step ${step} of 4`} 
+      <img
+        src={stepImages[step]}
+        alt={`Step ${step} of 4`}
         className="step-indicator-img"
       />
     </div>
@@ -107,7 +107,7 @@ const OnboardingStep3: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        suggestionsRef.current && 
+        suggestionsRef.current &&
         !suggestionsRef.current.contains(event.target as Node) &&
         inputRef.current &&
         !inputRef.current.contains(event.target as Node)
@@ -175,7 +175,7 @@ const OnboardingStep3: React.FC = () => {
           <label htmlFor="vehicle-search" className="step3-label">
             SEARCH FOR A VEHICLE
           </label>
-          
+
           <div className="step3-search-wrapper">
             <SearchIcon />
             <input
@@ -231,8 +231,8 @@ const OnboardingStep3: React.FC = () => {
 
         {/* Navigation - Using CTA classes from design system (same as Step 1 & 2) */}
         <nav className="step3-navigation" aria-label="Onboarding navigation">
-          <button 
-            className="cta cta--md cta--secondary" 
+          <button
+            className="cta cta--md cta--secondary"
             onClick={handleBack}
             type="button"
           >
@@ -240,16 +240,16 @@ const OnboardingStep3: React.FC = () => {
             Back
           </button>
 
-          <button 
-            className="step3-skip" 
+          <button
+            className="step3-skip"
             onClick={handleSkip}
             type="button"
           >
             Skip this step
           </button>
 
-          <button 
-            className="cta cta--md cta--primary" 
+          <button
+            className="cta cta--md cta--primary"
             onClick={handleContinue}
             type="button"
           >
@@ -260,9 +260,9 @@ const OnboardingStep3: React.FC = () => {
 
         {/* Car and Driver Logo */}
         <div className="step3-logo">
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
-            alt="Car and Driver" 
+          <img
+            src="https://hips.hearstapps.com/mtg-prod/693c48e911a35f00029a6a6b/logo.svg"
+            alt="Car and Driver"
             className="step3-logo-img"
           />
         </div>

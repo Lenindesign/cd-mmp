@@ -21,10 +21,10 @@ interface SidebarCreativeProps {
 export const GRID_BREAKER_AFTER_CARD_COUNT = 12;
 
 export const DEALS_GRID_BREAKER_AD_URL =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+  'https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg';
 
 export const DEALS_SIDEBAR_PRIMARY_IMAGE =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg';
+  'https://hips.hearstapps.com/mtg-prod/69387d364230820002694996/300x600.jpg';
 
 /**
  * Sidebar creative shown in any grid segment AFTER the first full-bleed

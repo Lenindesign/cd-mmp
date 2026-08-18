@@ -272,7 +272,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
   }, [selectedIncentive, vehicle]);
 
   // Fallback placeholder image (Lamborghini Revuelto)
-  const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
+  const PLACEHOLDER_IMAGE = 'https://hips.hearstapps.com/mtg-prod/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
 
   // Gallery images from vehicle data
   const galleryImages = vehicle.galleryImages || [];

@@ -9,6 +9,7 @@ export interface LiveInventoryVehicle {
   msrp?: number;
   vin?: string;
   stockNumber?: string;
+  imageUrl?: string;
   exteriorColor?: string;
   interiorColor?: string;
   daysOnLot?: number;
@@ -81,6 +82,7 @@ const toVehicleInventoryItem = (
   msrp: vehicle.msrp,
   vin: vehicle.vin,
   stockNumber: vehicle.stockNumber,
+  imageUrl: vehicle.imageUrl,
   exteriorColor: vehicle.exteriorColor,
   interiorColor: vehicle.interiorColor,
   daysOnLot: vehicle.daysOnLot ?? deriveDaysOnLot(vehicle, dealerId, index),

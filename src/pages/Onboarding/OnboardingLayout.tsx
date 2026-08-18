@@ -37,10 +37,10 @@ const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
               </svg>
             </button>
           )}
-          
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
-            alt="Car and Driver" 
+
+          <img
+            src="https://hips.hearstapps.com/mtg-prod/693c48e911a35f00029a6a6b/logo.svg"
+            alt="Car and Driver"
             className="onboarding-header__logo"
           />
 

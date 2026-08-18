@@ -20,7 +20,7 @@ const BANNER_CONFIG: Record<string, { make: string; model: string }> = {
 };
 
 // Default banner image
-const DEFAULT_BANNER = 'https://d2kde5ohu8qb21.cloudfront.net/files/65a4ab44cd06f600080e4953/14-2024-kia-forte-front-view.jpg';
+const DEFAULT_BANNER = 'https://hips.hearstapps.com/mtg-prod/65a4ab44cd06f600080e4953/14-2024-kia-forte-front-view.jpg';
 
 /**
  * Get the banner image URL for a given banner ID

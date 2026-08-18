@@ -14,6 +14,7 @@ export interface VehicleInventoryItem {
   mileage?: number; // For used vehicles
   vin?: string;
   stockNumber?: string;
+  imageUrl?: string;
   exteriorColor?: string;
   interiorColor?: string;
   daysOnLot?: number;

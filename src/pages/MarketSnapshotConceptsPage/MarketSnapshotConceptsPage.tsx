@@ -36,7 +36,7 @@ interface Concept {
   layout: 'baseline' | 'new' | 'recommended' | 'history' | 'value';
 }
 
-const vehicleImage = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg';
+const vehicleImage = 'https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg';
 
 const signalLibrary: { tone: SignalTone; label: string; examples: string[] }[] = [
   {

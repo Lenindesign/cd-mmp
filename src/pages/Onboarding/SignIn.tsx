@@ -66,9 +66,9 @@ const SignIn: React.FC = () => {
       <div className="signin-container">
         {/* Logo */}
         <div className="signin-logo">
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
-            alt="Car and Driver" 
+          <img
+            src="https://hips.hearstapps.com/mtg-prod/693c48e911a35f00029a6a6b/logo.svg"
+            alt="Car and Driver"
             className="signin-logo-img"
           />
         </div>
@@ -120,7 +120,7 @@ const SignIn: React.FC = () => {
                 autoComplete="current-password"
                 required
               />
-              <button 
+              <button
                 type="button"
                 className="signin-password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
@@ -148,8 +148,8 @@ const SignIn: React.FC = () => {
           </Link>
 
           {/* Continue Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="signin-submit-btn"
             disabled={isLoading}
           >
@@ -176,43 +176,43 @@ const SignIn: React.FC = () => {
 
         {/* Social Login Buttons */}
         <div className="signin-social-buttons">
-          <button 
+          <button
             className="signin-social-btn signin-social-btn--google"
             onClick={() => handleSocialLogin('google')}
             type="button"
             disabled={isLoading}
           >
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e311a35f00029a6a61/google.svg" 
-              alt="" 
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/693c48e311a35f00029a6a61/google.svg"
+              alt=""
               className="signin-social-icon"
             />
             Continue with Google
           </button>
 
-          <button 
+          <button
             className="signin-social-btn signin-social-btn--facebook"
             onClick={() => handleSocialLogin('facebook')}
             type="button"
             disabled={isLoading}
           >
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e311a35f00029a6a5f/facebook.svg" 
-              alt="" 
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/693c48e311a35f00029a6a5f/facebook.svg"
+              alt=""
               className="signin-social-icon"
             />
             Continue with Facebook
           </button>
 
-          <button 
+          <button
             className="signin-social-btn signin-social-btn--apple"
             onClick={() => handleSocialLogin('apple')}
             type="button"
             disabled={isLoading}
           >
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e211a35f00029a6a5d/apple.svg" 
-              alt="" 
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/693c48e211a35f00029a6a5d/apple.svg"
+              alt=""
               className="signin-social-icon"
             />
             Continue with Apple

@@ -1,26 +1,26 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { 
-  Clock, Check, X, Info, FileText, 
-  Award, Tag, Zap, Fuel, Leaf, 
+import {
+  Clock, Check, X, Info, FileText,
+  Award, Tag, Zap, Fuel, Leaf,
   Car, ShieldCheck, History, User,
   TrendingDown, Minus
 } from 'lucide-react';
 
 /**
  * # Car and Driver Badges
- * 
+ *
  * Official accolade badges from Car and Driver, used to highlight award-winning vehicles.
  * These badges are sourced from the Car and Driver design tokens CDN and should be used
  * consistently across all components.
- * 
+ *
  * ## Badge Types
- * 
+ *
  * ### Award Badges
  * - **Editor's Choice**: Awarded to vehicles that represent the best in their class
  * - **10Best**: Awarded to vehicles that make the annual Top 10 list
  * - **EV of the Year**: Awarded to the best electric vehicle of the year
- * 
+ *
  * ### Status Badges
  * Used to communicate the current state of processes, offers, or items:
  * - **Pending**: Waiting for action (yellow/orange)
@@ -28,9 +28,9 @@ import {
  * - **Rejected/Error**: Failed or declined (red)
  * - **Info**: Informational state (blue)
  * - **Draft**: Inactive or draft state (gray)
- * 
+ *
  * ## Database Properties
- * 
+ *
  * Vehicles in the database have boolean flags for accolades:
  * - `editorsChoice: boolean`
  * - `tenBest: boolean`
@@ -444,11 +444,11 @@ export const AllBadges: Story = {
       <div style={indexStyles.pageHeader}>
         <h1 style={indexStyles.pageTitle}>Badge System</h1>
         <p style={indexStyles.pageDescription}>
-          A comprehensive collection of badges used throughout the Car and Driver Marketplace. 
+          A comprehensive collection of badges used throughout the Car and Driver Marketplace.
           Badges communicate status, awards, attributes, and trust indicators to users at a glance.
         </p>
       </div>
-      
+
       {/* Award Badges */}
       <div style={indexStyles.categoryCard}>
         <div style={indexStyles.categoryHeader}>
@@ -467,7 +467,7 @@ export const AllBadges: Story = {
           <BadgeDisplay type="evOfTheYear" size={40} />
         </div>
       </div>
-      
+
       {/* Status Badges */}
       <div style={indexStyles.categoryCard}>
         <div style={indexStyles.categoryHeader}>
@@ -488,7 +488,7 @@ export const AllBadges: Story = {
           <MiniStatusBadge status="draft" />
         </div>
       </div>
-      
+
       {/* Rank Badges */}
       <div style={indexStyles.categoryCard}>
         <div style={indexStyles.categoryHeader}>
@@ -508,7 +508,7 @@ export const AllBadges: Story = {
           <span style={{ fontSize: '12px', color: '#888' }}>... 10</span>
         </div>
       </div>
-      
+
       {/* Deal/Value Badges */}
       <div style={indexStyles.categoryCard}>
         <div style={indexStyles.categoryHeader}>
@@ -529,7 +529,7 @@ export const AllBadges: Story = {
           <MiniDealBadge type="Price Drop" color="#ef4444" />
         </div>
       </div>
-      
+
       {/* Vehicle Attribute Tags */}
       <div style={indexStyles.categoryCard}>
         <div style={indexStyles.categoryHeader}>
@@ -571,7 +571,7 @@ export const AllBadges: Story = {
           </div>
         </div>
       </div>
-      
+
       {/* Trust/Pricing Badges */}
       <div style={indexStyles.categoryCard}>
         <div style={indexStyles.categoryHeader}>
@@ -601,12 +601,12 @@ export const AllBadges: Story = {
           </span>
         </div>
       </div>
-      
+
       {/* Quick Reference */}
-      <div style={{ 
-        marginTop: '32px', 
-        padding: '24px', 
-        backgroundColor: 'var(--color-gray-50, #f9f9f9)', 
+      <div style={{
+        marginTop: '32px',
+        padding: '24px',
+        backgroundColor: 'var(--color-gray-50, #f9f9f9)',
         borderRadius: '12px',
         border: '1px solid var(--color-gray-200, #e5e5e5)',
       }}>
@@ -653,7 +653,7 @@ export const Sizes: Story = {
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '1.5rem' }}>
           Use appropriate sizes based on context: small for inline/card badges, medium for lists, large for hero sections.
         </p>
-        
+
         {(['editorsChoice', 'tenBest', 'evOfTheYear'] as const).map((type) => (
           <div key={type} style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem', textTransform: 'capitalize' }}>
@@ -685,7 +685,7 @@ export const WithBackground: Story = {
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '1.5rem' }}>
           When placing badges on images, use a white circular background for visibility.
         </p>
-        
+
         <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
           <div style={{ padding: '2rem', backgroundColor: '#333', borderRadius: '12px' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
@@ -695,7 +695,7 @@ export const WithBackground: Story = {
             </div>
             <p style={{ color: '#999', fontSize: '0.75rem', marginTop: '1rem', textAlign: 'center' }}>On dark background</p>
           </div>
-          
+
           <div style={{ padding: '2rem', background: 'linear-gradient(149.73deg, rgba(38, 118, 223, 1) 0%, rgba(19, 52, 129, 1) 100%)', borderRadius: '12px' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <BadgeDisplay type="editorsChoice" size={32} withBackground />
@@ -704,8 +704,8 @@ export const WithBackground: Story = {
             </div>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', marginTop: '1rem', textAlign: 'center' }}>On gradient background</p>
           </div>
-          
-          <div style={{ padding: '2rem', backgroundImage: 'url(https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '12px' }}>
+
+          <div style={{ padding: '2rem', backgroundImage: 'url(https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', borderRadius: '12px' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <BadgeDisplay type="editorsChoice" size={32} withBackground />
               <BadgeDisplay type="tenBest" size={32} withBackground />
@@ -730,14 +730,14 @@ export const InContext: Story = {
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '1.5rem' }}>
           Examples of how badges are displayed in various components throughout the application.
         </p>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Vehicle Card</h3>
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
           {/* Card with Editor's Choice */}
           <div style={styles.contextCard}>
             <div style={styles.contextImage}>
-              <img 
-                src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg" 
+              <img
+                src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
                 alt="Honda Accord"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
               />
@@ -752,12 +752,12 @@ export const InContext: Story = {
               <div style={styles.contextPrice}>Starting at $29,610</div>
             </div>
           </div>
-          
+
           {/* Card with 10Best */}
           <div style={styles.contextCard}>
             <div style={styles.contextImage}>
-              <img 
-                src="https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg" 
+              <img
+                src="https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg"
                 alt="Chevrolet Trax"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
               />
@@ -772,12 +772,12 @@ export const InContext: Story = {
               <div style={styles.contextPrice}>Starting at $21,495</div>
             </div>
           </div>
-          
+
           {/* Card with multiple badges */}
           <div style={styles.contextCard}>
             <div style={styles.contextImage}>
-              <img 
-                src="https://d2kde5ohu8qb21.cloudfront.net/files/66e8824d603db5000878f458/2025hondaaccordhybridfrontthreequarters.jpg" 
+              <img
+                src="https://hips.hearstapps.com/mtg-prod/66e8824d603db5000878f458/2025hondaaccordhybridfrontthreequarters.jpg"
                 alt="Honda Accord Hybrid"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
               />
@@ -796,7 +796,7 @@ export const InContext: Story = {
             </div>
           </div>
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Accolades Section</h3>
         <div style={{ maxWidth: '400px' }}>
           <div style={styles.accoladeRow}>
@@ -840,7 +840,7 @@ export const Implementation: Story = {
     <div style={styles.container}>
       <div style={styles.section}>
         <h2 style={styles.sectionTitle}>Implementation</h2>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '0.5rem' }}>Badge URLs</h3>
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '0.5rem' }}>
           Import these constants at the top of your component:
@@ -852,27 +852,27 @@ const TEN_BEST_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/c
 
 const EV_OF_THE_YEAR_BADGE_URL = 'https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ev-of-the-year.721e420.svg';`}
         </pre>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginTop: '2rem', marginBottom: '0.5rem' }}>Basic Usage</h3>
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '0.5rem' }}>
           Simple image element with the badge:
         </p>
         <pre style={styles.codeBlock}>
-{`<img 
+{`<img
   src={EDITORS_CHOICE_BADGE_URL}
   alt="Editor's Choice"
   width="32"
   height="32"
 />`}
         </pre>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginTop: '2rem', marginBottom: '0.5rem' }}>With Background Circle</h3>
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '0.5rem' }}>
           For use on images or dark backgrounds:
         </p>
         <pre style={styles.codeBlock}>
 {`<div className="badge-container">
-  <img 
+  <img
     src={TEN_BEST_BADGE_URL}
     alt="10Best"
     width="20"
@@ -892,7 +892,7 @@ const EV_OF_THE_YEAR_BADGE_URL = 'https://www.caranddriver.com/_assets/design-to
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }`}
         </pre>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginTop: '2rem', marginBottom: '0.5rem' }}>Conditional Rendering</h3>
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '0.5rem' }}>
           Show badges based on vehicle database properties:
@@ -930,10 +930,10 @@ const EV_OF_THE_YEAR_BADGE_URL = 'https://www.caranddriver.com/_assets/design-to
 // Status Badge types and colors
 type StatusType = 'pending' | 'approved' | 'rejected' | 'info' | 'draft';
 
-const STATUS_CONFIG: Record<StatusType, { 
-  label: string; 
-  bgColor: string; 
-  textColor: string; 
+const STATUS_CONFIG: Record<StatusType, {
+  label: string;
+  bgColor: string;
+  textColor: string;
   icon: React.FC<{ size?: number }>;
 }> = {
   pending: {
@@ -976,23 +976,23 @@ interface StatusBadgeProps {
   showIcon?: boolean;
 }
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({ 
-  status, 
+const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
   label,
   size = 'md',
   showIcon = true,
 }) => {
   const config = STATUS_CONFIG[status];
   const Icon = config.icon;
-  
+
   const sizes = {
     sm: { padding: '4px 8px', fontSize: '10px', iconSize: 10, gap: '4px' },
     md: { padding: '6px 12px', fontSize: '12px', iconSize: 14, gap: '6px' },
     lg: { padding: '8px 16px', fontSize: '14px', iconSize: 16, gap: '8px' },
   };
-  
+
   const sizeConfig = sizes[size];
-  
+
   return (
     <span style={{
       display: 'inline-flex',
@@ -1025,10 +1025,10 @@ export const StatusBadges: Story = {
       <div style={styles.section}>
         <h2 style={styles.sectionTitle}>Status Badges</h2>
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
-          Status badges communicate the current state of processes, offers, or items. 
+          Status badges communicate the current state of processes, offers, or items.
           They use color-coding for quick recognition and include icons for additional clarity.
         </p>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>All Status Types</h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <StatusBadge status="pending" />
@@ -1037,7 +1037,7 @@ export const StatusBadges: Story = {
           <StatusBadge status="info" />
           <StatusBadge status="draft" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Sizes</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
@@ -1053,7 +1053,7 @@ export const StatusBadges: Story = {
             <span style={{ fontSize: '0.75rem', color: 'var(--color-gray-500)' }}>Large</span>
           </div>
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Without Icons</h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <StatusBadge status="pending" showIcon={false} />
@@ -1062,7 +1062,7 @@ export const StatusBadges: Story = {
           <StatusBadge status="info" showIcon={false} />
           <StatusBadge status="draft" showIcon={false} />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Custom Labels</h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <StatusBadge status="pending" label="In Review" />
@@ -1087,7 +1087,7 @@ export const StatusInContext: Story = {
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
           Examples of how status badges appear in modals, cards, and lists.
         </p>
-        
+
         {/* Modal Header Example */}
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Modal Header</h3>
         <div style={{
@@ -1108,7 +1108,7 @@ export const StatusInContext: Story = {
             AutoNation Honda Costa Mesa
           </p>
         </div>
-        
+
         {/* List Items Example */}
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>List Items</h3>
         <div style={{ maxWidth: '500px', marginBottom: '2rem' }}>
@@ -1138,7 +1138,7 @@ export const StatusInContext: Story = {
             </div>
           ))}
         </div>
-        
+
         {/* Card Example */}
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Offer Card</h3>
         <div style={{
@@ -1156,8 +1156,8 @@ export const StatusInContext: Story = {
             justifyContent: 'center',
             position: 'relative',
           }}>
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
               alt="Honda Accord"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -1195,7 +1195,7 @@ export const StatusImplementation: Story = {
     <div style={styles.container}>
       <div style={styles.section}>
         <h2 style={styles.sectionTitle}>Status Badge Implementation</h2>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '0.5rem' }}>Component Props</h3>
         <pre style={styles.codeBlock}>
 {`interface StatusBadgeProps {
@@ -1205,7 +1205,7 @@ export const StatusImplementation: Story = {
   showIcon?: boolean;       // Default: true
 }`}
         </pre>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginTop: '2rem', marginBottom: '0.5rem' }}>Basic Usage</h3>
         <pre style={styles.codeBlock}>
 {`import { StatusBadge } from '@/components/StatusBadge';
@@ -1222,7 +1222,7 @@ export const StatusImplementation: Story = {
 // Without icon
 <StatusBadge status="info" showIcon={false} />`}
         </pre>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginTop: '2rem', marginBottom: '0.5rem' }}>Color Reference</h3>
         <pre style={styles.codeBlock}>
 {`// Status colors
@@ -1234,7 +1234,7 @@ const STATUS_COLORS = {
   draft:    '#6b7280', // Gray - Inactive
 };`}
         </pre>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginTop: '2rem', marginBottom: '0.5rem' }}>CSS-Only Alternative</h3>
         <pre style={styles.codeBlock}>
 {`.status-badge {
@@ -1296,10 +1296,10 @@ const RankBadge: React.FC<RankBadgeProps> = ({ rank, size = 'md', variant = 'def
     md: { dimension: 40, fontSize: '16px', border: '2px' },
     lg: { dimension: 56, fontSize: '22px', border: '3px' },
   };
-  
+
   const sizeConfig = sizes[size];
   const isSpecial = variant === 'first' || variant === 'current' || rank === 1;
-  
+
   return (
     <div style={{
       width: sizeConfig.dimension,
@@ -1333,14 +1333,14 @@ export const RankBadges: Story = {
           Circular badges displaying ranking position. Used on vehicle cards for Top 10 lists and comparisons.
           The #1 position gets special blue styling.
         </p>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Top 10 Rankings</h3>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rank) => (
             <RankBadge key={rank} rank={rank} />
           ))}
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Sizes</h3>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '2rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
@@ -1356,7 +1356,7 @@ export const RankBadges: Story = {
             <span style={{ fontSize: '0.75rem', color: 'var(--color-gray-500)' }}>Large</span>
           </div>
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>In Context - Vehicle Card</h3>
         <div style={{
           width: '280px',
@@ -1367,8 +1367,8 @@ export const RankBadges: Story = {
           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
         }}>
           <div style={{ position: 'relative', height: '160px' }}>
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
               alt="Honda Accord"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -1392,9 +1392,9 @@ export const RankBadges: Story = {
 
 type DealType = 'best-deal' | 'good-deal' | 'fair-deal' | 'best-value' | 'price-drop';
 
-const DEAL_CONFIG: Record<DealType, { 
-  label: string; 
-  bgColor: string; 
+const DEAL_CONFIG: Record<DealType, {
+  label: string;
+  bgColor: string;
   textColor: string;
   icon: React.FC<{ size?: number }>;
 }> = {
@@ -1440,15 +1440,15 @@ interface DealBadgeProps {
 const DealBadge: React.FC<DealBadgeProps> = ({ type, label, size = 'md', showIcon = true }) => {
   const config = DEAL_CONFIG[type];
   const Icon = config.icon;
-  
+
   const sizes = {
     sm: { padding: '4px 8px', fontSize: '10px', iconSize: 10, gap: '4px' },
     md: { padding: '6px 12px', fontSize: '12px', iconSize: 14, gap: '6px' },
     lg: { padding: '8px 16px', fontSize: '14px', iconSize: 16, gap: '8px' },
   };
-  
+
   const sizeConfig = sizes[size];
-  
+
   return (
     <span style={{
       display: 'inline-flex',
@@ -1482,7 +1482,7 @@ export const DealBadges: Story = {
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
           Badges indicating deal quality and pricing status. Used on dealer cards, vehicle listings, and pricing sections.
         </p>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>All Deal Types</h3>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <DealBadge type="best-deal" />
@@ -1491,21 +1491,21 @@ export const DealBadges: Story = {
           <DealBadge type="best-value" />
           <DealBadge type="price-drop" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Sizes</h3>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <DealBadge type="best-deal" size="sm" />
           <DealBadge type="best-deal" size="md" />
           <DealBadge type="best-deal" size="lg" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Without Icons</h3>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <DealBadge type="best-deal" showIcon={false} />
           <DealBadge type="good-deal" showIcon={false} />
           <DealBadge type="fair-deal" showIcon={false} />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>In Context - Dealer Card</h3>
         <div style={{
           width: '320px',
@@ -1544,9 +1544,9 @@ export const DealBadges: Story = {
 
 type AttributeType = 'new' | 'used' | 'certified' | 'ev' | 'hybrid' | 'gas' | 'diesel' | 'awd' | 'fwd' | 'rwd' | '4wd';
 
-const ATTRIBUTE_CONFIG: Record<AttributeType, { 
-  label: string; 
-  bgColor: string; 
+const ATTRIBUTE_CONFIG: Record<AttributeType, {
+  label: string;
+  bgColor: string;
   textColor: string;
   icon?: React.FC<{ size?: number }>;
 }> = {
@@ -1575,14 +1575,14 @@ interface AttributeTagProps {
 const AttributeTag: React.FC<AttributeTagProps> = ({ type, size = 'md', showIcon = false }) => {
   const config = ATTRIBUTE_CONFIG[type];
   const Icon = config.icon;
-  
+
   const sizes = {
     sm: { padding: '2px 6px', fontSize: '10px', iconSize: 10, gap: '3px' },
     md: { padding: '4px 8px', fontSize: '11px', iconSize: 12, gap: '4px' },
   };
-  
+
   const sizeConfig = sizes[size];
-  
+
   return (
     <span style={{
       display: 'inline-flex',
@@ -1617,14 +1617,14 @@ export const VehicleAttributeTags: Story = {
           Small tags indicating vehicle attributes like inventory status, fuel type, and drivetrain.
           Used on vehicle cards and listings for quick identification.
         </p>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Inventory Status</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <AttributeTag type="new" />
           <AttributeTag type="used" />
           <AttributeTag type="certified" showIcon />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Fuel Types</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <AttributeTag type="ev" showIcon />
@@ -1632,7 +1632,7 @@ export const VehicleAttributeTags: Story = {
           <AttributeTag type="gas" showIcon />
           <AttributeTag type="diesel" showIcon />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Drivetrain</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <AttributeTag type="awd" />
@@ -1640,7 +1640,7 @@ export const VehicleAttributeTags: Story = {
           <AttributeTag type="rwd" />
           <AttributeTag type="4wd" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Combined Tags</h3>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <AttributeTag type="new" />
@@ -1657,7 +1657,7 @@ export const VehicleAttributeTags: Story = {
           <AttributeTag type="gas" />
           <AttributeTag type="4wd" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>In Context - Vehicle Listing</h3>
         <div style={{
           display: 'flex',
@@ -1669,8 +1669,8 @@ export const VehicleAttributeTags: Story = {
           maxWidth: '500px',
         }}>
           <div style={{ width: '140px', height: '100px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
               alt="Honda Accord"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -1697,8 +1697,8 @@ export const VehicleAttributeTags: Story = {
 
 type TrustBadgeType = 'owner-verified' | 'clean-history' | 'one-owner' | 'no-accidents' | 'service-records';
 
-const TRUST_CONFIG: Record<TrustBadgeType, { 
-  label: string; 
+const TRUST_CONFIG: Record<TrustBadgeType, {
+  label: string;
   icon: React.FC<{ size?: number }>;
 }> = {
   'owner-verified': { label: 'Owner Verified', icon: User },
@@ -1717,15 +1717,15 @@ interface TrustBadgeProps {
 const TrustBadge: React.FC<TrustBadgeProps> = ({ type, variant = 'outlined', size = 'md' }) => {
   const config = TRUST_CONFIG[type];
   const Icon = config.icon;
-  
+
   const sizes = {
     sm: { padding: '4px 8px', fontSize: '10px', iconSize: 12, gap: '4px' },
     md: { padding: '6px 10px', fontSize: '11px', iconSize: 14, gap: '6px' },
   };
-  
+
   const sizeConfig = sizes[size];
   const isFilled = variant === 'filled';
-  
+
   return (
     <span style={{
       display: 'inline-flex',
@@ -1758,9 +1758,9 @@ const CountBadge: React.FC<CountBadgeProps> = ({ count, label = 'available', siz
     sm: { padding: '4px 8px', fontSize: '10px' },
     md: { padding: '6px 10px', fontSize: '11px' },
   };
-  
+
   const sizeConfig = sizes[size];
-  
+
   return (
     <span style={{
       display: 'inline-flex',
@@ -1791,7 +1791,7 @@ export const PricingTrustBadges: Story = {
         <p style={{ color: 'var(--color-gray-600)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
           Badges that build trust and provide transparency about vehicle history and availability.
         </p>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Trust Badges - Outlined</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <TrustBadge type="owner-verified" />
@@ -1800,7 +1800,7 @@ export const PricingTrustBadges: Story = {
           <TrustBadge type="no-accidents" />
           <TrustBadge type="service-records" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Trust Badges - Filled</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <TrustBadge type="owner-verified" variant="filled" />
@@ -1809,14 +1809,14 @@ export const PricingTrustBadges: Story = {
           <TrustBadge type="no-accidents" variant="filled" />
           <TrustBadge type="service-records" variant="filled" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>Count Badges</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '2rem' }}>
           <CountBadge count={3} label="available" />
           <CountBadge count={12} label="in stock" />
           <CountBadge count={5} label="nearby" />
         </div>
-        
+
         <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '1rem' }}>In Context - Used Car Listing</h3>
         <div style={{
           width: '350px',
@@ -1826,8 +1826,8 @@ export const PricingTrustBadges: Story = {
           overflow: 'hidden',
         }}>
           <div style={{ position: 'relative', height: '180px' }}>
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
               alt="Honda Accord"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -1840,13 +1840,13 @@ export const PricingTrustBadges: Story = {
             <p style={{ fontSize: '0.875rem', color: 'var(--color-gray-500)', marginBottom: '12px' }}>
               32,450 miles · Costa Mesa, CA
             </p>
-            
+
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
               <TrustBadge type="clean-history" size="sm" />
               <TrustBadge type="one-owner" size="sm" />
               <TrustBadge type="service-records" size="sm" />
             </div>
-            
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid var(--color-gray-200, #e5e5e5)' }}>
               <div>
                 <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>$26,995</div>

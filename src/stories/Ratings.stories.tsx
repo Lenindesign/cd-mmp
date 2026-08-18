@@ -500,7 +500,7 @@ export const CDScores: Story = {
                 position: 'relative',
               }}>
                 <img 
-                  src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
+                  src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
                   alt="Honda Accord"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
@@ -709,7 +709,7 @@ export const InContext: Story = {
                 justifyContent: 'center',
               }}>
                 <img 
-                  src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
+                  src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
                   alt="Honda Accord"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />

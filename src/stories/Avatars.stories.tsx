@@ -178,37 +178,37 @@ interface LifestyleAvatarProps {
 
 const LIFESTYLE_IMAGES: Record<string, { image: string; label: string; icon: React.ReactNode }> = {
   family: {
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466b819cbba1000852d78b/2025-honda-pilot-exterior-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/66466b819cbba1000852d78b/2025-honda-pilot-exterior-front-view.jpg',
     label: 'Family',
     icon: <User size={16} />,
   },
   adventure: {
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466a749cbba1000852d76d/2025-jeep-wrangler-exterior-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/66466a749cbba1000852d76d/2025-jeep-wrangler-exterior-front-view.jpg',
     label: 'Adventure',
     icon: <Compass size={16} />,
   },
   luxury: {
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
     label: 'Luxury',
     icon: <Car size={16} />,
   },
   'eco-friendly': {
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
     label: 'Eco-Friendly',
     icon: <Leaf size={16} />,
   },
   performance: {
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66e8824d603db5000878f458/2025hondaaccordhybridfrontthreequarters.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/66e8824d603db5000878f458/2025hondaaccordhybridfrontthreequarters.jpg',
     label: 'Performance',
     icon: <Zap size={16} />,
   },
   commuter: {
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
     label: 'Commuter',
     icon: <Car size={16} />,
   },
   value: {
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
     label: 'Value',
     icon: <DollarSign size={16} />,
   },
@@ -324,7 +324,7 @@ export const Variants: Story = {
                     size="lg" 
                     name="User" 
                     variant="image"
-                    image="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
+                    image="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
                   />
                   <span style={styles.label}>Custom image</span>
                 </div>

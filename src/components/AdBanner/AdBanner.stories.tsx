@@ -20,14 +20,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
+    imageUrl: 'https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg',
     altText: 'Nissan Advertisement',
   },
 };
 
 export const WithLink: Story = {
   args: {
-    imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg',
+    imageUrl: 'https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg',
     altText: 'Nissan Advertisement',
     link: 'https://www.nissan.com',
   },
@@ -40,7 +40,7 @@ export const InContext: Story = {
         <p>Content above the ad</p>
       </div>
       <AdBanner 
-        imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
+        imageUrl="https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg"
         altText="Nissan Advertisement"
       />
       <div style={{ maxWidth: '728px', margin: '0 auto', background: '#f5f5f5', padding: '20px', marginTop: '16px' }}>

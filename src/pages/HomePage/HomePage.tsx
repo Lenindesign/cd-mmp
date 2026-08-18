@@ -35,11 +35,11 @@ const HomePage = () => {
     tagline: 'The Trax is an affordable subcompact SUV that delivers impressive interior space, practical features, and excellent value for budget-conscious buyers seeking reliable transportation without compromising on modern amenities.',
     rating: 10, // Editorial rating override
     priceRange: '$21,895–$25,895',
-    image: traxFromDB?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg',
+    image: traxFromDB?.image || 'https://hips.hearstapps.com/mtg-prod/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg',
     galleryImages: traxFromDB?.galleryImages || [
-      'https://d2kde5ohu8qb21.cloudfront.net/files/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg',
-      'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
-      'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
+      'https://hips.hearstapps.com/mtg-prod/66466c0b6e89190008af75b2/005-2025-chevrolet-trax-exterior-front-view.jpg',
+      'https://hips.hearstapps.com/mtg-prod/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg',
+      'https://hips.hearstapps.com/mtg-prod/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg',
     ],
     photographer: 'MICHAEL SIMARI',
     // Additional data from database
@@ -145,7 +145,7 @@ const HomePage = () => {
             <BuyingPotential 
               bodyStyle={traxFromDB?.bodyStyle || 'SUV'}
               vehicleName="2025 Chevrolet Trax"
-              vehicleImage={traxFromDB?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png'}
+              vehicleImage={traxFromDB?.image || 'https://hips.hearstapps.com/mtg-prod/66c5ee7c8a192c000814f46b/suvs-0029-2025-chevrolet-trax.png'}
             />
             <VehicleRanking />
             <MarketSpeed 

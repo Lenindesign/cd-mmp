@@ -47,7 +47,7 @@ const HeroContent = ({ vehicle, children }: { vehicle: HeroProps['vehicle']; chi
   };
 
   // Fallback placeholder image (Lamborghini Revuelto)
-  const PLACEHOLDER_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
+  const PLACEHOLDER_IMAGE = 'https://hips.hearstapps.com/mtg-prod/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg';
 
   const galleryImages = vehicle.galleryImages || [];
   const mainImage = vehicle.image || PLACEHOLDER_IMAGE;

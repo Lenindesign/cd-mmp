@@ -51,7 +51,7 @@ export const SaveVehicle: Story = {
     onClose: () => console.log('Modal closed'),
     itemType: 'vehicle',
     itemName: '2025 Honda Accord',
-    itemImage: 'https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccd79afa860008125aac/2024-honda-accord-12.jpg',
+    itemImage: 'https://hips.hearstapps.com/mtg-prod/65a1ccd79afa860008125aac/2024-honda-accord-12.jpg',
   },
 };
 
@@ -73,7 +73,7 @@ export const SaveVideo: Story = {
     onClose: () => console.log('Modal closed'),
     itemType: 'video',
     itemName: '2025 Porsche 911 GT3 RS Track Test',
-    itemImage: 'https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccd79afa860008125aac/2024-porsche-911-gt3-rs-12.jpg',
+    itemImage: 'https://hips.hearstapps.com/mtg-prod/65a1ccd79afa860008125aac/2024-porsche-911-gt3-rs-12.jpg',
   },
 };
 

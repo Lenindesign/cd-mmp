@@ -72,7 +72,7 @@ export const CustomArticle: Story = {
       readTime: 5,
       heroImage: {
         id: 'hero',
-        src: 'https://d2kde5ohu8qb21.cloudfront.net/files/2025-honda-accord-101.jpg',
+        src: 'https://hips.hearstapps.com/mtg-prod/2025-honda-accord-101.jpg',
         alt: '2025 Honda Accord Hybrid front view',
         caption: 'View Exterior Photos',
         credit: 'Honda',
@@ -80,7 +80,7 @@ export const CustomArticle: Story = {
       galleryImages: [
         {
           id: '1',
-          src: 'https://d2kde5ohu8qb21.cloudfront.net/files/2025-honda-accord-101.jpg',
+          src: 'https://hips.hearstapps.com/mtg-prod/2025-honda-accord-101.jpg',
           alt: '2025 Honda Accord exterior',
           caption: '2025 Honda Accord Hybrid',
           credit: 'Honda',
@@ -100,14 +100,14 @@ export const CustomArticle: Story = {
         {
           id: '1',
           title: 'Best Hybrid Sedans of 2025',
-          image: 'https://d2kde5ohu8qb21.cloudfront.net/files/hybrid-sedans-2025.jpg',
+          image: 'https://hips.hearstapps.com/mtg-prod/hybrid-sedans-2025.jpg',
           href: '/news/best-hybrid-sedans-2025',
           category: 'Buyer\'s Guide',
         },
         {
           id: '2',
           title: 'Toyota Camry vs Honda Accord: Which Is Better?',
-          image: 'https://d2kde5ohu8qb21.cloudfront.net/files/camry-vs-accord.jpg',
+          image: 'https://hips.hearstapps.com/mtg-prod/camry-vs-accord.jpg',
           href: '/news/camry-vs-accord-comparison',
           category: 'Comparison',
         },

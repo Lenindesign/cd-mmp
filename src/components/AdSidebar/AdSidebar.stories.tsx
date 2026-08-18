@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+    imageUrl: 'https://hips.hearstapps.com/mtg-prod/69387d364230820002694996/300x600.jpg',
     altText: 'Advertisement',
     link: '#',
     secondaryImageUrl:
@@ -39,7 +39,7 @@ export const Default: Story = {
 
 export const NissanAd: Story = {
   args: {
-    imageUrl: 'https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg',
+    imageUrl: 'https://hips.hearstapps.com/mtg-prod/69387d364230820002694996/300x600.jpg',
     altText: 'Nissan Advertisement',
     link: 'https://www.nissan.com',
     secondaryImageUrl:
@@ -65,7 +65,7 @@ export const InSidebarLayout: Story = {
       </div>
       <div style={{ width: '300px' }}>
         <AdSidebar
-          imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/69387d364230820002694996/300x600.jpg"
+          imageUrl="https://hips.hearstapps.com/mtg-prod/69387d364230820002694996/300x600.jpg"
           altText="Advertisement"
           secondaryImageUrl="https://pub-4345f0f77c424370b4354c6a404ac802.r2.dev/300x250.jpg"
           secondaryAltText="Advertisement"

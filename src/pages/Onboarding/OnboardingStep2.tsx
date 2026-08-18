@@ -106,7 +106,7 @@ const OnboardingStep2: React.FC = () => {
                   {option.icon}
                 </div>
               </div>
-              
+
               {/* Text Content */}
               <div className="step2-card__content">
                 <h3 className="step2-card__title">{option.title}</h3>
@@ -118,16 +118,16 @@ const OnboardingStep2: React.FC = () => {
 
         {/* Navigation - No Back button on step one */}
         <nav className="step2-navigation" aria-label="Onboarding navigation">
-          <button 
-            className="step2-skip" 
+          <button
+            className="step2-skip"
             onClick={handleSkip}
             type="button"
           >
             Skip this step
           </button>
 
-          <button 
-            className="cta cta--md cta--primary" 
+          <button
+            className="cta cta--md cta--primary"
             onClick={handleContinue}
             type="button"
             disabled={!selectedType}
@@ -138,9 +138,9 @@ const OnboardingStep2: React.FC = () => {
 
         {/* Car and Driver Logo */}
         <div className="step2-logo">
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
-            alt="Car and Driver" 
+          <img
+            src="https://hips.hearstapps.com/mtg-prod/693c48e911a35f00029a6a6b/logo.svg"
+            alt="Car and Driver"
             className="step2-logo-img"
           />
         </div>

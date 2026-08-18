@@ -77,7 +77,7 @@ export const Default: Story = {
   args: {
     vehicleName: '2025 Chevrolet Trax',
     bodyStyle: 'SUV',
-    vehicleImage: 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
+    vehicleImage: 'https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg',
   },
   parameters: {
     docs: {
@@ -92,7 +92,7 @@ export const SUV: Story = {
   args: {
     vehicleName: '2025 Chevrolet Trailblazer',
     bodyStyle: 'SUV',
-    vehicleImage: 'https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4f9417c9000085e7bba/003-2024-chevrolet-trailblazer-front-three-quarters-view.jpg',
+    vehicleImage: 'https://hips.hearstapps.com/mtg-prod/65f7e4f9417c9000085e7bba/003-2024-chevrolet-trailblazer-front-three-quarters-view.jpg',
   },
   parameters: {
     docs: {
@@ -107,7 +107,7 @@ export const Truck: Story = {
   args: {
     vehicleName: '2025 Chevrolet Silverado',
     bodyStyle: 'Truck',
-    vehicleImage: 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg',
+    vehicleImage: 'https://hips.hearstapps.com/mtg-prod/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg',
   },
   parameters: {
     docs: {

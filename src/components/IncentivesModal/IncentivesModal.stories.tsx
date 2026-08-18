@@ -15,7 +15,7 @@ import './IncentivesModal.stories.css';
  * --------------------------------------------------------------------------- */
 
 const EQUINOX_IMAGE =
-  'https://d2kde5ohu8qb21.cloudfront.net/files/65f7e4f9417c9000085e7bba/003-2024-chevrolet-trailblazer-front-three-quarters-view.jpg';
+  'https://hips.hearstapps.com/mtg-prod/65f7e4f9417c9000085e7bba/003-2024-chevrolet-trailblazer-front-three-quarters-view.jpg';
 const CAMRY_IMAGE =
   'https://hips.hearstapps.com/hmg-prod/images/2024-toyota-camry-102-64cbc4858e198.jpg';
 

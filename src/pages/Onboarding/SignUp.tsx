@@ -109,7 +109,7 @@ const SignUp: React.FC = () => {
   // Password strength indicator
   const getPasswordStrength = (): { strength: number; label: string; color: string } => {
     if (!password) return { strength: 0, label: '', color: '' };
-    
+
     let score = 0;
     if (password.length >= 8) score++;
     if (password.length >= 12) score++;
@@ -130,9 +130,9 @@ const SignUp: React.FC = () => {
       <div className="signup-container">
         {/* Logo */}
         <div className="signup-logo">
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
-            alt="Car and Driver" 
+          <img
+            src="https://hips.hearstapps.com/mtg-prod/693c48e911a35f00029a6a6b/logo.svg"
+            alt="Car and Driver"
             className="signup-logo-img"
           />
         </div>
@@ -185,7 +185,7 @@ const SignUp: React.FC = () => {
                 autoComplete="new-password"
                 required
               />
-              <button 
+              <button
                 type="button"
                 className="signup-password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
@@ -205,16 +205,16 @@ const SignUp: React.FC = () => {
                 )}
               </button>
             </div>
-            
+
             {/* Password Strength Indicator */}
             {password && (
               <div className="signup-password-strength">
                 <div className="signup-strength-bars">
                   {[1, 2, 3].map((level) => (
-                    <div 
+                    <div
                       key={level}
                       className="signup-strength-bar"
-                      style={{ 
+                      style={{
                         backgroundColor: level <= passwordStrength.strength ? passwordStrength.color : 'var(--color-gray-200)'
                       }}
                     />
@@ -242,7 +242,7 @@ const SignUp: React.FC = () => {
                 autoComplete="new-password"
                 required
               />
-              <button 
+              <button
                 type="button"
                 className="signup-password-toggle"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -286,8 +286,8 @@ const SignUp: React.FC = () => {
           </div>
 
           {/* Create Account Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="signup-submit-btn"
             disabled={isLoading}
           >
@@ -314,43 +314,43 @@ const SignUp: React.FC = () => {
 
         {/* Social Login Buttons */}
         <div className="signup-social-buttons">
-          <button 
+          <button
             className="signup-social-btn signup-social-btn--google"
             onClick={() => handleSocialLogin('google')}
             type="button"
             disabled={isLoading}
           >
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e311a35f00029a6a61/google.svg" 
-              alt="" 
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/693c48e311a35f00029a6a61/google.svg"
+              alt=""
               className="signup-social-icon"
             />
             Google
           </button>
 
-          <button 
+          <button
             className="signup-social-btn signup-social-btn--facebook"
             onClick={() => handleSocialLogin('facebook')}
             type="button"
             disabled={isLoading}
           >
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e311a35f00029a6a5f/facebook.svg" 
-              alt="" 
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/693c48e311a35f00029a6a5f/facebook.svg"
+              alt=""
               className="signup-social-icon"
             />
             Facebook
           </button>
 
-          <button 
+          <button
             className="signup-social-btn signup-social-btn--apple"
             onClick={() => handleSocialLogin('apple')}
             type="button"
             disabled={isLoading}
           >
-            <img 
-              src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e211a35f00029a6a5d/apple.svg" 
-              alt="" 
+            <img
+              src="https://hips.hearstapps.com/mtg-prod/693c48e211a35f00029a6a5d/apple.svg"
+              alt=""
               className="signup-social-icon"
             />
             Apple

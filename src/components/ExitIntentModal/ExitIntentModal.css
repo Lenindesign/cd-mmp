@@ -152,7 +152,7 @@
   width: 140%;
   height: 140%;
   transform: translate(-50%, -50%);
-  background-image: var(--vehicle-image, url('https://d2kde5ohu8qb21.cloudfront.net/files/65a1ccd79afa860008125aac/2024-kia-telluride-12.jpg'));
+  background-image: var(--vehicle-image, url('https://hips.hearstapps.com/mtg-prod/65a1ccd79afa860008125aac/2024-kia-telluride-12.jpg'));
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -297,7 +297,7 @@
   width: 140%;
   height: 140%;
   transform: translate(-50%, -50%);
-  background-image: var(--vehicle-image, url('https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg'));
+  background-image: var(--vehicle-image, url('https://hips.hearstapps.com/mtg-prod/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg'));
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

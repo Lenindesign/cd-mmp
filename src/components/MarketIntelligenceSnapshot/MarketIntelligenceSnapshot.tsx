@@ -486,6 +486,11 @@ const MarketIntelligenceSnapshot = ({
     () => getVehicleMarketInventory({ vehicle, location, radiusMiles }),
     [location, radiusMiles, vehicle]
   );
+  const tooltipGalleryImages = useMemo(() => {
+    const images = [vehicle.image, ...(vehicle.galleryImages ?? [])].filter(Boolean);
+
+    return Array.from(new Set(images));
+  }, [vehicle.galleryImages, vehicle.image]);
   const { statistics } = market;
   const isUsed = market.condition === 'used';
   const vehicleYmm = getVehicleYmm(vehicle);
@@ -738,33 +743,27 @@ const MarketIntelligenceSnapshot = ({
           aria-label={`Fair market price ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, asking price ${formatPrice(askingPrice)}`}
           style={priceRangeStyle}
         >
-          <div className="market-snapshot__decision">
-            <div className="market-snapshot__decision-main">
-              <span className={`market-snapshot__price-pill market-snapshot__price-pill--${priceAssessment.tone}`}>
-                {priceAssessment.label}
-              </span>
-              <h3>{formatPrice(askingPrice)} <span>asking price</span></h3>
-              <p className={`market-snapshot__advantage-copy market-snapshot__advantage-copy--${priceAssessment.tone}`}>
-                {priceRelationshipCopy}
-              </p>
-              <p>Fair market starts at {formatPrice(targetLow)}.</p>
-              <strong>{bottomLineCopy}</strong>
+          <section className="market-snapshot__factors market-snapshot__factors--summary" aria-labelledby="market-snapshot-factors-title">
+            <div className="market-snapshot__factors-head">
+              <div className="market-snapshot__factors-title-row">
+                <h3 id="market-snapshot-factors-title">Market Factors</h3>
+                <span className={`market-snapshot__price-pill market-snapshot__price-pill--${priceAssessment.tone}`}>
+                  {priceAssessment.label}
+                </span>
+              </div>
+              <p>{marketSummary}</p>
             </div>
-            <dl className="market-snapshot__decision-values">
-              <div>
-                <dt>Fair market</dt>
-                <dd>{formatPriceRange(targetLow, targetHigh)}</dd>
-              </div>
-              <div>
-                <dt>Your target</dt>
-                <dd>{buyerGuidance.targetCopy}</dd>
-              </div>
-              <div>
-                <dt>Current asking price</dt>
-                <dd>{formatPrice(askingPrice)}</dd>
-              </div>
-            </dl>
-          </div>
+            <div className="market-snapshot__factor-grid">
+              {factors.map((factor) => (
+                <div key={factor.label} className="market-snapshot__factor">
+                  <span>{factor.label}</span>
+                  <strong className={factor.tone ? `market-snapshot__factor-value--${factor.tone}` : undefined}>
+                    {factor.value}
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </section>
 
           <div
             className="market-snapshot__price-visual"
@@ -911,9 +910,13 @@ const MarketIntelligenceSnapshot = ({
                     '--dot-offset': `${index % 2 === 0 ? -1 : 1}px`,
                   } as CSSProperties;
                   const isLeadDot = index === 0;
+                  const tooltipImageUrl =
+                    match.unit.imageUrl ??
+                    tooltipGalleryImages[index % tooltipGalleryImages.length] ??
+                    vehicle.image;
 
                   return (
-                    <span
+                    <div
                       key={`${match.dealer.id}-${match.unit.year}-${match.unit.trim}-${match.unit.price}-dot`}
                       className={`market-snapshot__price-point market-snapshot__price-point--${dotTone} ${isLeadDot ? 'market-snapshot__price-point--lead' : ''}`}
                       style={dotStyle}
@@ -921,15 +924,23 @@ const MarketIntelligenceSnapshot = ({
                       aria-label={`${isLeadDot ? 'Best local deal' : 'Local deal'}: ${formatPrice(match.unit.price)} at ${match.dealer.name}`}
                     >
                       <span className="market-snapshot__price-dot" />
-                      <span className={`market-snapshot__price-tooltip market-snapshot__price-tooltip--${tooltipAlign}`}>
-                        <strong>{isLeadDot ? 'Best local deal' : formatPrice(match.unit.price)}</strong>
-                        <span>{formatPrice(match.unit.price)} at {match.dealer.name}</span>
-                        <span>
-                          {formatMileageValue(match.unit.mileage)}
-                          {match.dealer.distance !== undefined ? `, ${match.dealer.distance.toFixed(1)} mi away` : ''}
+                      <div className={`market-snapshot__price-tooltip market-snapshot__price-tooltip--${tooltipAlign}`}>
+                        <OptimizedImage
+                          src={tooltipImageUrl}
+                          alt={getVehicleMatchTitle(match)}
+                          aspectRatio="4/3"
+                          wrapperClassName="market-snapshot__price-tooltip-media"
+                        />
+                        <span className="market-snapshot__price-tooltip-body">
+                          <strong>{isLeadDot ? 'Best local deal' : formatPrice(match.unit.price)}</strong>
+                          <span>{formatPrice(match.unit.price)} at {match.dealer.name}</span>
+                          <span>
+                            {formatMileageValue(match.unit.mileage)}
+                            {match.dealer.distance !== undefined ? `, ${match.dealer.distance.toFixed(1)} mi away` : ''}
+                          </span>
                         </span>
-                      </span>
-                    </span>
+                      </div>
+                    </div>
                   );
                 })}
               </div>
@@ -950,7 +961,7 @@ const MarketIntelligenceSnapshot = ({
           <summary>
             <span>
               <strong>More market details</strong>
-              <em>Buying guidance, market factors, and comparable listings</em>
+              <em>Buying guidance, price details, and comparable listings</em>
             </span>
             <span className="market-snapshot__details-icon" aria-hidden="true" />
           </summary>
@@ -984,22 +995,33 @@ const MarketIntelligenceSnapshot = ({
               </div>
             </div>
 
-            <section className="market-snapshot__factors" aria-labelledby="market-snapshot-factors-title">
-              <div className="market-snapshot__factors-head">
-                <h3 id="market-snapshot-factors-title">Market Factors</h3>
-                <p>{marketSummary}</p>
+            <div className="market-snapshot__decision market-snapshot__decision--details">
+              <div className="market-snapshot__decision-main">
+                <span className={`market-snapshot__price-pill market-snapshot__price-pill--${priceAssessment.tone}`}>
+                  {priceAssessment.label}
+                </span>
+                <h3>{formatPrice(askingPrice)} <span>asking price</span></h3>
+                <p className={`market-snapshot__advantage-copy market-snapshot__advantage-copy--${priceAssessment.tone}`}>
+                  {priceRelationshipCopy}
+                </p>
+                <p>Fair market starts at {formatPrice(targetLow)}.</p>
+                <strong>{bottomLineCopy}</strong>
               </div>
-              <div className="market-snapshot__factor-grid">
-                {factors.map((factor) => (
-                  <div key={factor.label} className="market-snapshot__factor">
-                    <span>{factor.label}</span>
-                    <strong className={factor.tone ? `market-snapshot__factor-value--${factor.tone}` : undefined}>
-                      {factor.value}
-                    </strong>
-                  </div>
-                ))}
-              </div>
-            </section>
+              <dl className="market-snapshot__decision-values">
+                <div>
+                  <dt>Fair market</dt>
+                  <dd>{formatPriceRange(targetLow, targetHigh)}</dd>
+                </div>
+                <div>
+                  <dt>Your target</dt>
+                  <dd>{buyerGuidance.targetCopy}</dd>
+                </div>
+                <div>
+                  <dt>Current asking price</dt>
+                  <dd>{formatPrice(askingPrice)}</dd>
+                </div>
+              </dl>
+            </div>
 
             {prioritizedMatches.length > 0 ? (
               <section className="market-snapshot__matches" aria-labelledby="market-snapshot-matches-title">

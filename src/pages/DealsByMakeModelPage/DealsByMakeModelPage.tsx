@@ -503,7 +503,7 @@ const DealsByMakeModelPage = () => {
         </div>
       </div>
 
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
+      <AdBanner imageUrl="https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
 
       <div className="mm-deals__content">
         <div className={`container${filteredDeals.length > 0 ? ' mm-deals__container--stacked' : ''}`}>

@@ -17,7 +17,7 @@ const StepIndicator: React.FC<{ currentStep: number; totalSteps?: number }> = ({
           const isCompleted = stepNumber < currentStep;
           const isCurrent = stepNumber === currentStep;
           const isUpcoming = stepNumber > currentStep;
-          
+
           return (
             <React.Fragment key={i}>
               <div className={`step-indicator__step ${isCompleted ? 'step-indicator__step--completed' : ''} ${isCurrent ? 'step-indicator__step--current' : ''} ${isUpcoming ? 'step-indicator__step--upcoming' : ''}`}>
@@ -75,11 +75,11 @@ const CarAndDriverLogo = () => (
     justifyContent: 'center',
     padding: '12px',
   }}>
-    <img 
-      src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/logos/logo.68b8e69.svg?primary=%23fff" 
-      alt="Car and Driver" 
-      style={{ 
-        width: '100%', 
+    <img
+      src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/logos/logo.68b8e69.svg?primary=%23fff"
+      alt="Car and Driver"
+      style={{
+        width: '100%',
         height: 'auto',
         objectFit: 'contain',
       }}
@@ -123,8 +123,8 @@ const OnboardingStep4: React.FC = () => {
   }, [user]);
 
   const toggleNewsletter = (newsletterId: string) => {
-    setSelectedNewsletters(prev => 
-      prev.includes(newsletterId) 
+    setSelectedNewsletters(prev =>
+      prev.includes(newsletterId)
         ? prev.filter(id => id !== newsletterId)
         : [...prev, newsletterId]
     );
@@ -206,8 +206,8 @@ const OnboardingStep4: React.FC = () => {
 
         {/* Navigation - Using CTA classes from design system (same as Steps 1-3) */}
         <nav className="step4-navigation" aria-label="Onboarding navigation">
-          <button 
-            className="cta cta--md cta--secondary" 
+          <button
+            className="cta cta--md cta--secondary"
             onClick={handleBack}
             type="button"
           >
@@ -215,16 +215,16 @@ const OnboardingStep4: React.FC = () => {
             Back
           </button>
 
-          <button 
-            className="step4-skip" 
+          <button
+            className="step4-skip"
             onClick={handleSkip}
             type="button"
           >
             Skip this step
           </button>
 
-          <button 
-            className="cta cta--md cta--primary" 
+          <button
+            className="cta cta--md cta--primary"
             onClick={handleFinish}
             type="button"
           >
@@ -235,9 +235,9 @@ const OnboardingStep4: React.FC = () => {
 
         {/* Car and Driver Logo */}
         <div className="step4-logo">
-          <img 
-            src="https://d2kde5ohu8qb21.cloudfront.net/files/693c48e911a35f00029a6a6b/logo.svg" 
-            alt="Car and Driver" 
+          <img
+            src="https://hips.hearstapps.com/mtg-prod/693c48e911a35f00029a6a6b/logo.svg"
+            alt="Car and Driver"
             className="step4-logo-img"
           />
         </div>

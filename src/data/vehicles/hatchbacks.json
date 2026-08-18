@@ -6,12 +6,12 @@
     "model": "Prius",
     "bodyStyle": "Hatchback",
     "imageSource": "2025 Toyota Prius",
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
     "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6736957ca044ac0008cbef57/009-2025-toyota-prius-limited-fwd-side-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/673695791d14ea00080a7013/008-2025-toyota-prius-limited-fwd-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6736955fa044ac0008cbef56/001-2025-toyota-prius-limited-fwd-interior.jpg"
+      "https://hips.hearstapps.com/mtg-prod/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6736957ca044ac0008cbef57/009-2025-toyota-prius-limited-fwd-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/673695791d14ea00080a7013/008-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6736955fa044ac0008cbef56/001-2025-toyota-prius-limited-fwd-interior.jpg"
     ],
     "priceRange": "$28,545 - $35,000",
     "priceMin": 28545,
@@ -109,12 +109,12 @@
     "model": "Golf R",
     "bodyStyle": "Hatchback",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a49394868c9f0008520249/18-2024-volkswagen-golf-r-front-view.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/65a49394868c9f0008520249/18-2024-volkswagen-golf-r-front-view.jpg",
     "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a49394868c9f0008520249/18-2024-volkswagen-golf-r-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4c/14-2024-volkswagen-golf-r-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a493942d6fea0008acca4d/22-2024-volkswagen-golf-r-rear-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a493862d6fea0008acca49/21-2024-volkswagen-golf-r-front-view.jpg"
+      "https://hips.hearstapps.com/mtg-prod/65a49394868c9f0008520249/18-2024-volkswagen-golf-r-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a493942d6fea0008acca4c/14-2024-volkswagen-golf-r-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a493942d6fea0008acca4d/22-2024-volkswagen-golf-r-rear-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a493862d6fea0008acca49/21-2024-volkswagen-golf-r-front-view.jpg"
     ],
     "priceRange": "$44,640 - $46,640",
     "priceMin": 44640,
@@ -175,7 +175,7 @@
     "model": "A3",
     "bodyStyle": "Hatchback",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a43ba87d3f4d000813019e/2024-audi-a3-side-view-17.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/65a43ba87d3f4d000813019e/2024-audi-a3-side-view-17.jpg",
     "priceRange": "$36,000 - $43,000",
     "priceMin": 36000,
     "priceMax": 43000,
@@ -210,7 +210,7 @@
     "model": "A-Class",
     "bodyStyle": "Hatchback",
     "imageSource": null,
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a1019171231600085d0d45/2024-mercedes-amg-c63-s-e-performance-sedan-37.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/65a1019171231600085d0d45/2024-mercedes-amg-c63-s-e-performance-sedan-37.jpg",
     "priceRange": "$37,850 - $45,950",
     "priceMin": 37850,
     "priceMax": 45950,
@@ -245,11 +245,11 @@
     "model": "1 Series",
     "bodyStyle": "Hatchback",
     "imageSource": "2024 BMW 1 Series",
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/65a0e4ab97ef0a00087b620f/2024-bmw-5-series-1.jpeg",
+    "image": "https://hips.hearstapps.com/mtg-prod/65a0e4ab97ef0a00087b620f/2024-bmw-5-series-1.jpeg",
     "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a0e4ab97ef0a00087b620f/2024-bmw-5-series-1.jpeg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65f7f1ed8a0b89000868fea7/1-2025-bmw-4-series-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/65a4af51bc61bd00089f409d/1-2024-bmw-3-series-m340i-interior.jpg"
+      "https://hips.hearstapps.com/mtg-prod/65a0e4ab97ef0a00087b620f/2024-bmw-5-series-1.jpeg",
+      "https://hips.hearstapps.com/mtg-prod/65f7f1ed8a0b89000868fea7/1-2025-bmw-4-series-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65a4af51bc61bd00089f409d/1-2024-bmw-3-series-m340i-interior.jpg"
     ],
     "priceRange": "$35,900 - $42,500",
     "priceMin": 35900,
@@ -344,12 +344,12 @@
     "model": "Prius",
     "bodyStyle": "Hatchback",
     "imageSource": "2025 Toyota Prius",
-    "image": "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+    "image": "https://hips.hearstapps.com/mtg-prod/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
     "galleryImages": [
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6736957ca044ac0008cbef57/009-2025-toyota-prius-limited-fwd-side-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/673695791d14ea00080a7013/008-2025-toyota-prius-limited-fwd-front-view.jpg",
-      "https://d2kde5ohu8qb21.cloudfront.net/files/6736955fa044ac0008cbef56/001-2025-toyota-prius-limited-fwd-interior.jpg"
+      "https://hips.hearstapps.com/mtg-prod/6736958c3f9abd0008bdef3c/015-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6736957ca044ac0008cbef57/009-2025-toyota-prius-limited-fwd-side-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/673695791d14ea00080a7013/008-2025-toyota-prius-limited-fwd-front-view.jpg",
+      "https://hips.hearstapps.com/mtg-prod/6736955fa044ac0008cbef56/001-2025-toyota-prius-limited-fwd-interior.jpg"
     ],
     "priceRange": "$24,500 - $30,100",
     "priceMin": 24500,

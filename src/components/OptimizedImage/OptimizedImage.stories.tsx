@@ -36,12 +36,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // 2025 Chevrolet Trax images
-const TRAX_IMAGE_1 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg';
-const TRAX_IMAGE_2 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c171a38f50008ca1b6e/009-2025-chevrolet-trax-exterior-side-view.jpg';
-const TRAX_IMAGE_3 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg';
-const TRAX_IMAGE_4 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c1e811993000831eb00/012-2025-chevrolet-trax-exterior-front-view.jpg';
-const TRAX_IMAGE_5 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg';
-const TRAX_IMAGE_6 = 'https://d2kde5ohu8qb21.cloudfront.net/files/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg';
+const TRAX_IMAGE_1 = 'https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg';
+const TRAX_IMAGE_2 = 'https://hips.hearstapps.com/mtg-prod/66466c171a38f50008ca1b6e/009-2025-chevrolet-trax-exterior-side-view.jpg';
+const TRAX_IMAGE_3 = 'https://hips.hearstapps.com/mtg-prod/66466c139cbba1000852d79d/008-2025-chevrolet-trax-exterior-front-view.jpg';
+const TRAX_IMAGE_4 = 'https://hips.hearstapps.com/mtg-prod/66466c1e811993000831eb00/012-2025-chevrolet-trax-exterior-front-view.jpg';
+const TRAX_IMAGE_5 = 'https://hips.hearstapps.com/mtg-prod/66466c246e89190008af75b5/014-2025-chevrolet-trax-exterior-rear-view.jpg';
+const TRAX_IMAGE_6 = 'https://hips.hearstapps.com/mtg-prod/66466c05811993000831eaff/001-2025-chevrolet-trax-exterior-front-view.jpg';
 
 // Default
 export const Default: Story = {

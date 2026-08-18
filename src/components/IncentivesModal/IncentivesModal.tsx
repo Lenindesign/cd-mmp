@@ -138,7 +138,7 @@ export interface IncentivesModalProps {
 }
 
 /** Default sample: 2026 Honda CR-V with photo and incentives */
-const HONDA_CRV_IMAGE = 'https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg';
+const HONDA_CRV_IMAGE = 'https://hips.hearstapps.com/mtg-prod/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg';
 
 const DEFAULT_OFFER: IncentiveOfferDetail = {
   year: 2026,

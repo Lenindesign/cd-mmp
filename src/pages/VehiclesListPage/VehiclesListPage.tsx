@@ -128,7 +128,7 @@ const VehiclesListPage = () => {
   /** In-feed leaderboard after each batch of this many cards (e.g. 6 rows × 2 cols or 3 rows × 4 cols) */
   const GRID_BREAKER_AFTER_CARD_COUNT = 12;
   const LISTINGS_BREAKER_AD_URL =
-    'https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg';
+    'https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg';
   const resultsRef = useRef<HTMLDivElement>(null);
   
   // Get filter values from URL params

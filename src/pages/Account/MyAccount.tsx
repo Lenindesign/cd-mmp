@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { 
-  User, 
-  Bookmark, 
+import {
+  User,
+  Bookmark,
   Newspaper,
   Calendar,
   MapPin,
@@ -70,7 +70,7 @@ const sampleArticles = [
   {
     id: '1',
     title: 'Luxury on Training Wheels? Our Yearlong Test of the 2025 Acura ADX Begins',
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
     author: 'Alex Leanse',
     date: 'Nov 07, 2025',
     type: 'Article',
@@ -78,7 +78,7 @@ const sampleArticles = [
   {
     id: '2',
     title: '2026 Hyundai Ioniq 6 N First Drive: Watch Out, BMW M3, C63 AMG!',
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg',
     author: 'Alex Leanse',
     date: 'Nov 07, 2025',
     type: 'Article',
@@ -86,7 +86,7 @@ const sampleArticles = [
   {
     id: '3',
     title: '2025 Subaru WRX tS First Test: Points for STI-le, But...',
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/68d4789daa39b80002b684f4/2026-toyota-gr-corolla-premium-plus-at-supersonicred-014.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/68d4789daa39b80002b684f4/2026-toyota-gr-corolla-premium-plus-at-supersonicred-014.jpg',
     author: 'Alexander Stoklosa',
     date: 'Jan 21, 2025',
     type: 'Article',
@@ -94,7 +94,7 @@ const sampleArticles = [
   {
     id: '4',
     title: "Yes! Honda's Electric Sports Car Is Real, but Timing Remains Uncertain",
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
     author: 'Alisa Priddle',
     date: 'Nov 06, 2025',
     type: 'Article',
@@ -106,14 +106,14 @@ const sampleVideos = [
   {
     id: '1',
     title: 'Tested: The 2023 Honda Civic Type R Shares Our Faith',
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/68d4789daa39b80002b684f4/2026-toyota-gr-corolla-premium-plus-at-supersonicred-014.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/68d4789daa39b80002b684f4/2026-toyota-gr-corolla-premium-plus-at-supersonicred-014.jpg',
     author: 'Justin Banner',
     date: 'Oct 10, 2025',
   },
   {
     id: '2',
     title: 'The Shelby GT500 Is The Coolest Mustang Ever Produced',
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg',
     author: 'Justin Banner',
     date: 'Oct 10, 2025',
   },
@@ -124,7 +124,7 @@ const sampleComparisons = [
   {
     id: '1',
     title: '2025 Ford Bronco / 2025 Ford Bronco S',
-    image: 'https://d2kde5ohu8qb21.cloudfront.net/files/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg',
+    image: 'https://hips.hearstapps.com/mtg-prod/67b65771aeee54000885f0c5/39-2025-tesla-model-3-front-view.jpg',
     type: 'Comparison',
   },
 ];
@@ -145,7 +145,7 @@ const MyAccount: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, isAuthenticated, updateUser, addSavedVehicle, removeSavedVehicle, signOut } = useAuth();
-  
+
   // Get initial tab from URL query param or default to 'profile'
   const getInitialTab = (): TabType => {
     const tabParam = searchParams.get('tab');
@@ -154,21 +154,21 @@ const MyAccount: React.FC = () => {
     }
     return 'profile';
   };
-  
+
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab);
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
   const [editedUserType, setEditedUserType] = useState<'buyer' | 'enthusiast' | 'both' | null>(null);
-  
+
   // Danger zone state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  
+
   // Vehicle search state
   const [vehicleSearchQuery, setVehicleSearchQuery] = useState('');
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
   const [filteredVehicleSuggestions, setFilteredVehicleSuggestions] = useState(vehicleSuggestions);
   const vehicleInputRef = React.useRef<HTMLInputElement>(null);
   const vehicleSuggestionsRef = React.useRef<HTMLDivElement>(null);
-  
+
   // Add vehicle modal state
   const [showAddVehicleModal, setShowAddVehicleModal] = useState(false);
   const [addVehicleType, setAddVehicleType] = useState<'want' | 'own'>('want');
@@ -233,7 +233,7 @@ const MyAccount: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        vehicleSuggestionsRef.current && 
+        vehicleSuggestionsRef.current &&
         !vehicleSuggestionsRef.current.contains(event.target as Node) &&
         vehicleInputRef.current &&
         !vehicleInputRef.current.contains(event.target as Node)
@@ -339,10 +339,10 @@ const MyAccount: React.FC = () => {
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: '2-digit', 
-      day: '2-digit', 
-      year: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric'
     });
   };
 
@@ -350,13 +350,13 @@ const MyAccount: React.FC = () => {
   const getProfileCompletion = () => {
     let completed = 0;
     const total = 5;
-    
+
     if (user.name) completed++;
     if (user.userType) completed++;
     if (isBudgetPreferenceComplete(user.budgetPreferences)) completed++;
     if (user.savedVehicles && user.savedVehicles.length > 0) completed++;
     if (user.newsletterSubscriptions && user.newsletterSubscriptions.length > 0) completed++;
-    
+
     return { completed, total, percentage: Math.round((completed / total) * 100) };
   };
 
@@ -378,47 +378,47 @@ const MyAccount: React.FC = () => {
   // Get vehicles from database for display
   const getVehicleDetails = (vehicleName: string) => {
     const parts = vehicleName.split(' ');
-    
+
     // Check if first part is a year (4 digits)
     const firstPartIsYear = parts.length >= 1 && /^\d{4}$/.test(parts[0]);
-    
+
     if (firstPartIsYear && parts.length >= 3) {
       // Format: "2025 Chevrolet Trax"
       const year = parseInt(parts[0]);
       const make = parts[1];
       const model = parts.slice(2).join(' ');
-      
+
       // Try exact match first
       let vehicle = vehicleDatabase.find(
         v => Number(v.year) === year && v.make.toLowerCase() === make.toLowerCase() && v.model.toLowerCase() === model.toLowerCase()
       );
-      
+
       // If no match, try without year
       if (!vehicle) {
         vehicle = vehicleDatabase.find(
           v => v.make.toLowerCase() === make.toLowerCase() && v.model.toLowerCase() === model.toLowerCase()
         );
       }
-      
+
     return vehicle;
     } else if (parts.length >= 2) {
       // Format: "Chevrolet Trax" or "Ram 1500" (no year)
       const make = parts[0];
       const model = parts.slice(1).join(' ');
-      
+
       // Try exact match on make and model
       let vehicle = vehicleDatabase.find(
         v => v.make.toLowerCase() === make.toLowerCase() && v.model.toLowerCase() === model.toLowerCase()
       );
-      
+
       // If no match, try partial match
       if (!vehicle) {
         vehicle = vehicleDatabase.find(
-          v => v.make.toLowerCase() === make.toLowerCase() && 
+          v => v.make.toLowerCase() === make.toLowerCase() &&
                (v.model.toLowerCase().includes(model.toLowerCase()) || model.toLowerCase().includes(v.model.toLowerCase()))
         );
       }
-      
+
       // If still no match, try searching the full name anywhere
       if (!vehicle) {
         const searchName = vehicleName.toLowerCase();
@@ -427,10 +427,10 @@ const MyAccount: React.FC = () => {
                searchName.includes(`${v.make} ${v.model}`.toLowerCase())
         );
       }
-      
+
       return vehicle;
     }
-    
+
     return null;
   };
 
@@ -481,11 +481,11 @@ const MyAccount: React.FC = () => {
   // Toggle ownership - available for future use
   const _handleToggleOwnership = async (vehicleId: string, newOwnership: 'own' | 'want') => {
     if (!user.savedVehicles) return;
-    
-    const updatedVehicles = user.savedVehicles.map(v => 
+
+    const updatedVehicles = user.savedVehicles.map(v =>
       v.id === vehicleId ? { ...v, ownership: newOwnership } : v
     );
-    
+
     await updateUser({ savedVehicles: updatedVehicles });
   };
   void _handleToggleOwnership; // Suppress unused warning
@@ -495,9 +495,9 @@ const MyAccount: React.FC = () => {
       {/* Hero Header with Background */}
       <div className="my-account__hero">
         <div className="my-account__hero-bg">
-          <img 
-            src={getBannerImageUrl(user.banner)} 
-            alt="" 
+          <img
+            src={getBannerImageUrl(user.banner)}
+            alt=""
             className="my-account__hero-img"
           />
           <div className="my-account__hero-overlay" />
@@ -505,9 +505,9 @@ const MyAccount: React.FC = () => {
         <div className="my-account__hero-content">
           <div className="my-account__avatar">
             {getAvatarImageUrl(user.avatar) ? (
-              <img 
-                src={getAvatarImageUrl(user.avatar)!} 
-                alt={user.name || 'User avatar'} 
+              <img
+                src={getAvatarImageUrl(user.avatar)!}
+                alt={user.name || 'User avatar'}
                 className="my-account__avatar-img"
               />
             ) : (
@@ -529,7 +529,7 @@ const MyAccount: React.FC = () => {
               )}
             </div>
           </div>
-          <button 
+          <button
             className="my-account__edit-profile-btn"
             onClick={() => setShowEditProfileModal(true)}
           >
@@ -715,7 +715,7 @@ const MyAccount: React.FC = () => {
                         {profileCompletion.percentage === 100 ? 'Profile Complete!' : 'Complete Your Profile'}
                       </h3>
                       <p className="my-account__completion-subtitle">
-                        {profileCompletion.percentage === 100 
+                        {profileCompletion.percentage === 100
                           ? 'Your profile is all set up! You can edit any information below.'
                           : 'Complete your profile to get personalized recommendations.'}
                       </p>
@@ -725,8 +725,8 @@ const MyAccount: React.FC = () => {
                   <div className="my-account__progress">
                     <span className="my-account__progress-label">{profileCompletion.percentage}% Complete</span>
                     <div className="my-account__progress-bar">
-                      <div 
-                        className="my-account__progress-fill" 
+                      <div
+                        className="my-account__progress-fill"
                         style={{ width: `${profileCompletion.percentage}%` }}
                       />
                     </div>
@@ -735,7 +735,7 @@ const MyAccount: React.FC = () => {
                   <div className="my-account__steps">
                     {/* Step 1: Tell us about yourself */}
                     <div className="my-account__step-accordion">
-                      <button 
+                      <button
                         className={`my-account__step-header ${expandedStep === 1 ? 'my-account__step-header--expanded' : ''}`}
                         onClick={() => setExpandedStep(expandedStep === 1 ? null : 1)}
                       >
@@ -746,14 +746,14 @@ const MyAccount: React.FC = () => {
                           Step 1: {onboardingSteps[0].label}
                         </span>
                         <div className="my-account__step-actions">
-                          <button 
+                          <button
                             className="my-account__step-edit"
                             onClick={(e) => { e.stopPropagation(); setExpandedStep(expandedStep === 1 ? null : 1); }}
                           >
                             {expandedStep === 1 ? 'Cancel' : 'Edit'}
                           </button>
-                          <ChevronDown 
-                            size={18} 
+                          <ChevronDown
+                            size={18}
                             className={`my-account__step-chevron ${expandedStep === 1 ? 'my-account__step-chevron--expanded' : ''}`}
                           />
                         </div>
@@ -764,8 +764,8 @@ const MyAccount: React.FC = () => {
                             <h4 className="my-account__step-form-title">Tell Us About Yourself</h4>
                             <div className="my-account__step-field">
                               <label className="my-account__step-field-label">What is Your Name?</label>
-                              <input 
-                                type="text" 
+                              <input
+                                type="text"
                                 className="my-account__step-input"
                                 defaultValue={user.name || ''}
                                 placeholder="Enter your name"
@@ -774,8 +774,8 @@ const MyAccount: React.FC = () => {
                             <div className="my-account__step-field">
                               <label className="my-account__step-field-label">Where are you located? (Optional)</label>
                               <div className="my-account__step-input-wrapper">
-                                <input 
-                                  type="text" 
+                                <input
+                                  type="text"
                                   className="my-account__step-input"
                                   defaultValue={user.location || ''}
                                   placeholder="City, State"
@@ -785,7 +785,7 @@ const MyAccount: React.FC = () => {
                                 </button>
                               </div>
                             </div>
-                            <button 
+                            <button
                               className="my-account__step-save"
                               onClick={() => setExpandedStep(null)}
                             >
@@ -798,7 +798,7 @@ const MyAccount: React.FC = () => {
 
                     {/* Step 2: Your interests */}
                     <div className="my-account__step-accordion">
-                      <button 
+                      <button
                         className={`my-account__step-header ${expandedStep === 2 ? 'my-account__step-header--expanded' : ''}`}
                         onClick={() => setExpandedStep(expandedStep === 2 ? null : 2)}
                       >
@@ -809,14 +809,14 @@ const MyAccount: React.FC = () => {
                           Step 2: {onboardingSteps[1].label}
                         </span>
                         <div className="my-account__step-actions">
-                          <button 
+                          <button
                             className="my-account__step-edit"
                             onClick={(e) => { e.stopPropagation(); setExpandedStep(expandedStep === 2 ? null : 2); }}
                           >
                             {expandedStep === 2 ? 'Cancel' : 'Edit'}
                           </button>
-                          <ChevronDown 
-                            size={18} 
+                          <ChevronDown
+                            size={18}
                             className={`my-account__step-chevron ${expandedStep === 2 ? 'my-account__step-chevron--expanded' : ''}`}
                           />
                         </div>
@@ -827,7 +827,7 @@ const MyAccount: React.FC = () => {
                             <h4 className="my-account__step-form-title">What describes you best?</h4>
                             <p className="my-account__step-form-subtitle">Choose the option that best fits your automotive interests</p>
                             <div className="my-account__interest-options">
-                              <button 
+                              <button
                                 className={`my-account__interest-card ${editedUserType === 'buyer' ? 'my-account__interest-card--selected' : ''}`}
                                 type="button"
                                 onClick={() => setEditedUserType('buyer')}
@@ -839,7 +839,7 @@ const MyAccount: React.FC = () => {
                                 <h5 className="my-account__interest-title">Car Buyer</h5>
                                 <p className="my-account__interest-desc">I'm shopping for a new or used car.</p>
                               </button>
-                              <button 
+                              <button
                                 className={`my-account__interest-card ${editedUserType === 'enthusiast' ? 'my-account__interest-card--selected' : ''}`}
                                 type="button"
                                 onClick={() => setEditedUserType('enthusiast')}
@@ -851,7 +851,7 @@ const MyAccount: React.FC = () => {
                                 <h5 className="my-account__interest-title">Car Enthusiast</h5>
                                 <p className="my-account__interest-desc">I nerd out on all things car-related.</p>
                               </button>
-                              <button 
+                              <button
                                 className={`my-account__interest-card ${editedUserType === 'both' ? 'my-account__interest-card--selected' : ''}`}
                                 type="button"
                                 onClick={() => setEditedUserType('both')}
@@ -864,7 +864,7 @@ const MyAccount: React.FC = () => {
                                 <p className="my-account__interest-desc">I'm a car lover on the lookout for my next ride.</p>
                               </button>
                             </div>
-                            <button 
+                            <button
                               className="my-account__step-save"
                               onClick={async () => {
                                 if (editedUserType) {
@@ -882,7 +882,7 @@ const MyAccount: React.FC = () => {
 
                     {/* Step 3: Your vehicles */}
                     <div className="my-account__step-accordion">
-                      <button 
+                      <button
                         className={`my-account__step-header ${expandedStep === 3 ? 'my-account__step-header--expanded' : ''}`}
                         onClick={() => setExpandedStep(expandedStep === 3 ? null : 3)}
                       >
@@ -893,14 +893,14 @@ const MyAccount: React.FC = () => {
                           Step 3: {onboardingSteps[2].label}
                         </span>
                         <div className="my-account__step-actions">
-                          <button 
+                          <button
                             className="my-account__step-edit"
                             onClick={(e) => { e.stopPropagation(); setExpandedStep(expandedStep === 3 ? null : 3); }}
                           >
                             {expandedStep === 3 ? 'Cancel' : 'Edit'}
                           </button>
-                          <ChevronDown 
-                            size={18} 
+                          <ChevronDown
+                            size={18}
                             className={`my-account__step-chevron ${expandedStep === 3 ? 'my-account__step-chevron--expanded' : ''}`}
                           />
                         </div>
@@ -916,9 +916,9 @@ const MyAccount: React.FC = () => {
                                   <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2"/>
                                   <path d="M20 20L16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                                 </svg>
-                                <input 
+                                <input
                                   ref={vehicleInputRef}
-                                  type="text" 
+                                  type="text"
                                   className="my-account__step-input my-account__step-input--search"
                                   placeholder="Start typing to search..."
                                   value={vehicleSearchQuery}
@@ -927,7 +927,7 @@ const MyAccount: React.FC = () => {
                                   autoComplete="off"
                                 />
                               </div>
-                              
+
                               {/* Search Suggestions Dropdown */}
                               {showVehicleSuggestions && filteredVehicleSuggestions.length > 0 && (
                                 <div ref={vehicleSuggestionsRef} className="my-account__vehicle-suggestions">
@@ -962,8 +962,8 @@ const MyAccount: React.FC = () => {
                                           </div>
                                         </div>
                                         <div className="my-account__vehicle-image">
-                                          <img 
-                                            src={details?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg'} 
+                                          <img
+                                            src={details?.image || 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg'}
                                             alt={vehicle.name}
                                           />
                                         </div>
@@ -974,8 +974,8 @@ const MyAccount: React.FC = () => {
                                               ${details?.priceMin?.toLocaleString() || '27,295'}
                                             </span>
                                           </div>
-                                          <Link 
-                                            to={details?.slug ? `/${details.slug}` : '#'} 
+                                          <Link
+                                            to={details?.slug ? `/${details.slug}` : '#'}
                                             className="my-account__vehicle-cta"
                                           >
                                             Shop New
@@ -987,7 +987,7 @@ const MyAccount: React.FC = () => {
                                 </div>
                               </div>
                             )}
-                            <button 
+                            <button
                               className="my-account__step-save"
                               onClick={() => setExpandedStep(null)}
                             >
@@ -1000,7 +1000,7 @@ const MyAccount: React.FC = () => {
 
                     {/* Step 4: Newsletter preferences */}
                     <div className="my-account__step-accordion">
-                      <button 
+                      <button
                         className={`my-account__step-header ${expandedStep === 4 ? 'my-account__step-header--expanded' : ''}`}
                         onClick={() => setExpandedStep(expandedStep === 4 ? null : 4)}
                       >
@@ -1011,14 +1011,14 @@ const MyAccount: React.FC = () => {
                           Step 4: {onboardingSteps[3].label}
                         </span>
                         <div className="my-account__step-actions">
-                          <button 
+                          <button
                             className="my-account__step-edit"
                             onClick={(e) => { e.stopPropagation(); setExpandedStep(expandedStep === 4 ? null : 4); }}
                           >
                             {expandedStep === 4 ? 'Cancel' : 'Edit'}
                           </button>
-                          <ChevronDown 
-                            size={18} 
+                          <ChevronDown
+                            size={18}
                             className={`my-account__step-chevron ${expandedStep === 4 ? 'my-account__step-chevron--expanded' : ''}`}
                           />
                         </div>
@@ -1030,8 +1030,8 @@ const MyAccount: React.FC = () => {
                             <p className="my-account__step-form-subtitle">With Personalized Car Information and Inspiration</p>
                             <div className="my-account__newsletter-options">
                               <label className="my-account__newsletter-option">
-                                <input 
-                                  type="checkbox" 
+                                <input
+                                  type="checkbox"
                                   defaultChecked={user.newsletterSubscriptions?.includes('car-and-driver')}
                                 />
                                 <span className="my-account__newsletter-checkmark">
@@ -1040,8 +1040,8 @@ const MyAccount: React.FC = () => {
                                 <span className="my-account__newsletter-label">Subscribe to Car and Driver Newsletter</span>
                               </label>
                               <label className="my-account__newsletter-option">
-                                <input 
-                                  type="checkbox" 
+                                <input
+                                  type="checkbox"
                                   defaultChecked={user.newsletterSubscriptions?.includes('car-and-driver-deals')}
                                 />
                                 <span className="my-account__newsletter-checkmark">
@@ -1050,8 +1050,8 @@ const MyAccount: React.FC = () => {
                                 <span className="my-account__newsletter-label">Subscribe to Car and Driver Deals</span>
                               </label>
                               <label className="my-account__newsletter-option">
-                                <input 
-                                  type="checkbox" 
+                                <input
+                                  type="checkbox"
                                   defaultChecked={user.newsletterSubscriptions?.includes('car-and-driver-events')}
                                 />
                                 <span className="my-account__newsletter-checkmark">
@@ -1060,7 +1060,7 @@ const MyAccount: React.FC = () => {
                                 <span className="my-account__newsletter-label">Subscribe to Car and Driver Events</span>
                               </label>
                             </div>
-                            <button 
+                            <button
                               className="my-account__step-save"
                               onClick={() => setExpandedStep(null)}
                             >
@@ -1076,7 +1076,7 @@ const MyAccount: React.FC = () => {
                 {/* Connected Accounts Card */}
                 <div className="my-account__card">
                   <h3 className="my-account__card-title">Connected Accounts</h3>
-                  
+
                   <div className="my-account__social-accounts">
                     <div className="my-account__social-account">
                       <div className="my-account__social-info">
@@ -1127,12 +1127,12 @@ const MyAccount: React.FC = () => {
                     <div className="my-account__danger-info">
                       <h4 className="my-account__danger-subtitle">Delete Account</h4>
                       <p className="my-account__danger-text">
-                        Once you delete your account, there is no going back. 
+                        Once you delete your account, there is no going back.
                         All your data will be permanently removed.
                       </p>
                     </div>
                     {!showDeleteConfirm ? (
-                      <button 
+                      <button
                         className="my-account__danger-btn"
                         onClick={() => setShowDeleteConfirm(true)}
                       >
@@ -1145,13 +1145,13 @@ const MyAccount: React.FC = () => {
                           Are you sure? This action cannot be undone.
                         </p>
                         <div className="my-account__delete-actions">
-                          <button 
+                          <button
                             className="my-account__delete-cancel"
                             onClick={() => setShowDeleteConfirm(false)}
                           >
                             Cancel
                           </button>
-                          <button 
+                          <button
                             className="my-account__delete-confirm-btn"
                             onClick={async () => {
                               await signOut();
@@ -1244,7 +1244,7 @@ const MyAccount: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Cars I Want */}
                   <div className="my-account__vehicle-section">
                     <h3 className="my-account__vehicle-section-title">Cars I Want</h3>
@@ -1263,8 +1263,8 @@ const MyAccount: React.FC = () => {
                               </div>
                             </div>
                             <div className="my-account__vehicle-image">
-                              <img 
-                                src={details?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg'} 
+                              <img
+                                src={details?.image || 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg'}
                                 alt={vehicle.name}
                               />
                               <button
@@ -1283,8 +1283,8 @@ const MyAccount: React.FC = () => {
                                   ${details?.priceMin?.toLocaleString() || '20,290'}
                                 </span>
                               </div>
-                              <Link 
-                                to={details?.slug ? `/${details.slug}` : '#'} 
+                              <Link
+                                to={details?.slug ? `/${details.slug}` : '#'}
                                 className="my-account__vehicle-cta"
                               >
                                 Shop New
@@ -1293,9 +1293,9 @@ const MyAccount: React.FC = () => {
                           </div>
                         );
                       })}
-                      
+
                       {/* Add Vehicle Card */}
-                      <button 
+                      <button
                         className="my-account__add-vehicle-card"
                         onClick={() => handleOpenAddVehicleModal('want')}
                       >
@@ -1325,8 +1325,8 @@ const MyAccount: React.FC = () => {
                               </div>
                             </div>
                             <div className="my-account__vehicle-image">
-                              <img 
-                                src={details?.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg'} 
+                              <img
+                                src={details?.image || 'https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg'}
                                 alt={vehicle.name}
                               />
                               <button
@@ -1345,8 +1345,8 @@ const MyAccount: React.FC = () => {
                                   ${details?.priceMin?.toLocaleString() || '38,000'}
                                 </span>
                               </div>
-                              <Link 
-                                to={details?.slug ? `/${details.slug}` : '#'} 
+                              <Link
+                                to={details?.slug ? `/${details.slug}` : '#'}
                                 className="my-account__vehicle-cta"
                               >
                                 Shop New
@@ -1355,9 +1355,9 @@ const MyAccount: React.FC = () => {
                           </div>
                         );
                       })}
-                      
+
                       {/* Add Vehicle Card */}
-                      <button 
+                      <button
                         className="my-account__add-vehicle-card"
                         onClick={() => handleOpenAddVehicleModal('own')}
                       >
@@ -1381,8 +1381,8 @@ const MyAccount: React.FC = () => {
                           </div>
                         </div>
                         <div className="my-account__vehicle-image">
-                          <img 
-                            src="https://d2kde5ohu8qb21.cloudfront.net/files/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg" 
+                          <img
+                            src="https://hips.hearstapps.com/mtg-prod/679d37b47ff34400082301e7/19-2025-honda-accord-front-view.jpg"
                             alt="2024 Honda Pilot Base"
                           />
                           <button
@@ -1523,8 +1523,8 @@ const MyAccount: React.FC = () => {
                   </div>
                   <div className="my-account__subscription-options">
                     <label className="my-account__subscription-option">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={user.newsletterSubscriptions?.includes('car-and-driver-newsletter') || false}
                         onChange={(e) => {
                           const current = user.newsletterSubscriptions || [];
@@ -1539,8 +1539,8 @@ const MyAccount: React.FC = () => {
                       <span className="my-account__subscription-label">Subscribe to Car and Driver Newsletter</span>
                     </label>
                     <label className="my-account__subscription-option">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={user.newsletterSubscriptions?.includes('deals-and-offers') || false}
                         onChange={(e) => {
                           const current = user.newsletterSubscriptions || [];
@@ -1555,8 +1555,8 @@ const MyAccount: React.FC = () => {
                       <span className="my-account__subscription-label">Subscribe to Car and Driver Deals</span>
                     </label>
                     <label className="my-account__subscription-option">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={user.newsletterSubscriptions?.includes('events') || false}
                         onChange={(e) => {
                           const current = user.newsletterSubscriptions || [];
@@ -1586,7 +1586,7 @@ const MyAccount: React.FC = () => {
               <h3 className="my-account__modal-title">
                 {addVehicleType === 'want' ? 'Add a Car You Want' : 'Add a Car You Own'}
               </h3>
-              <button 
+              <button
                 className="my-account__modal-close"
                 onClick={() => setShowAddVehicleModal(false)}
                 aria-label="Close modal"
@@ -1613,8 +1613,8 @@ const MyAccount: React.FC = () => {
                     className="my-account__modal-result-item"
                     onClick={() => handleAddVehicleFromModal(vehicle)}
                   >
-                    <img 
-                      src={vehicle.image} 
+                    <img
+                      src={vehicle.image}
                       alt={vehicle.name}
                       className="my-account__modal-result-image"
                     />
@@ -1639,9 +1639,9 @@ const MyAccount: React.FC = () => {
       )}
 
       {/* Edit Profile Modal */}
-      <EditProfileModal 
-        isOpen={showEditProfileModal} 
-        onClose={() => setShowEditProfileModal(false)} 
+      <EditProfileModal
+        isOpen={showEditProfileModal}
+        onClose={() => setShowEditProfileModal(false)}
       />
     </div>
   );

@@ -217,7 +217,7 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
         
         {/* Full Width Ad Banner */}
         <AdBanner 
-          imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
+          imageUrl="https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg"
           altText="Nissan Advertisement"
           link="https://www.nissanusa.com"
         />
@@ -245,7 +245,7 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
         
         {/* Full Width Ad Banner - After Incentives */}
         <AdBanner 
-          imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
+          imageUrl="https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg"
           altText="Nissan Advertisement"
           link="https://www.nissanusa.com"
         />
@@ -277,7 +277,7 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
         
         {/* Full Width Ad Banner - After MarketSpeed */}
         <AdBanner 
-          imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg"
+          imageUrl="https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg"
           altText="Nissan Advertisement"
           link="https://www.nissanusa.com"
         />
@@ -318,7 +318,7 @@ const VehiclePageVariantD = ({ variant }: VehiclePageVariantDProps) => {
       {/* Exit Intent Modal */}
       <ExitIntentModal 
         vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        vehicleImage={vehicle.image || 'https://d2kde5ohu8qb21.cloudfront.net/files/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg'}
+        vehicleImage={vehicle.image || 'https://hips.hearstapps.com/mtg-prod/659f9ed490e84500088bd486/012-2024-lamborghini-revuelto.jpg'}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
