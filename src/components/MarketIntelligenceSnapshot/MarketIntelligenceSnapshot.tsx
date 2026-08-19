@@ -1,4 +1,5 @@
 import { type CSSProperties, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Info } from 'lucide-react';
 import { Badge } from '../Badge';
 import { OptimizedImage } from '../OptimizedImage';
 import { formatPrice } from '../../services/dealerService';
@@ -32,6 +33,10 @@ interface FactorItem {
   label: string;
   value: string;
   description: string;
+  help: {
+    why: string;
+    action: string;
+  };
   tone?: 'success' | 'dark';
   nowrap?: boolean;
 }
@@ -574,6 +579,7 @@ const MarketIntelligenceSnapshot = ({
   onSeeLocalInventory,
 }: MarketIntelligenceSnapshotProps) => {
   const zipErrorId = useId();
+  const factorHelpId = useId();
   const currentLocationZipCode = location.zipCode ?? '';
   const [zipInput, setZipInput] = useState<ZipInputState>({
     sourceZipCode: currentLocationZipCode,
@@ -791,6 +797,10 @@ const MarketIntelligenceSnapshot = ({
       label: 'Price Position',
       value: getPricePositionFactorCopy({ askingPrice, targetLow, targetHigh }),
       description: getPricePositionSignalCopy({ askingPrice, targetLow, targetHigh }),
+      help: {
+        why: 'Shows whether this price is above or below similar local listings.',
+        action: 'Confirm fees and use below-market pricing as leverage if the savings hold.',
+      },
       tone: getPricePositionTone({ askingPrice, targetHigh }),
       nowrap: true,
     },
@@ -798,12 +808,20 @@ const MarketIntelligenceSnapshot = ({
       label: 'Available Near You',
       value: `${market.inventoryCount} listings`,
       description: getInventorySignalCopy(market.inventoryCount),
+      help: {
+        why: 'More comparable listings make the local signal more reliable.',
+        action: 'Compare trims and nearby dealers before committing to one listing.',
+      },
       tone: market.inventoryCount >= 10 ? 'dark' : undefined,
     },
     {
       label: 'Price Trend',
       value: `Down ${priceTrend}`,
       description: 'Prices moving lower',
+      help: {
+        why: 'Recent movement shows whether sellers are adjusting prices.',
+        action: 'If prices are falling, ask the dealer to match the latest local movement.',
+      },
       tone: 'success',
       nowrap: true,
     },
@@ -811,6 +829,10 @@ const MarketIntelligenceSnapshot = ({
       label: 'Avg. days on lot',
       value: `${Math.round(market.averageDaysOnLot)} days`,
       description: getDaysOnLotSignalCopy(market.averageDaysOnLot),
+      help: {
+        why: 'Older inventory can mean the dealer has more reason to make a deal.',
+        action: 'Use longer days on lot to ask for a better price or added value.',
+      },
     },
   ];
 
@@ -942,15 +964,39 @@ const MarketIntelligenceSnapshot = ({
           style={priceRangeStyle}
         >
           <div className="market-snapshot__factor-grid" aria-label="Local market signal summary">
-            {factors.map((factor) => {
+            {factors.map((factor, index) => {
               const factorValueClassName = [
+                'market-snapshot__factor-value',
                 factor.tone ? `market-snapshot__factor-value--${factor.tone}` : null,
                 factor.nowrap ? 'market-snapshot__factor-value--nowrap' : null,
               ].filter(Boolean).join(' ') || undefined;
+              const tooltipId = `${factorHelpId}-factor-${index}`;
 
               return (
                 <div key={factor.label} className="market-snapshot__factor">
-                  <span>{factor.label}</span>
+                  <div className="market-snapshot__factor-head">
+                    <span className="market-snapshot__factor-label">{factor.label}</span>
+                    <span className="market-snapshot__factor-help">
+                      <button
+                        type="button"
+                        className="market-snapshot__factor-help-trigger"
+                        aria-label={`What to know about ${factor.label}`}
+                        aria-describedby={tooltipId}
+                      >
+                        <Info size={13} aria-hidden="true" />
+                      </button>
+                      <span id={tooltipId} className="market-snapshot__factor-tooltip" role="tooltip">
+                        <span>
+                          <strong>Why it matters</strong>
+                          {factor.help.why}
+                        </span>
+                        <span>
+                          <strong>What to do</strong>
+                          {factor.help.action}
+                        </span>
+                      </span>
+                    </span>
+                  </div>
                   <strong className={factorValueClassName}>
                     {factor.value}
                   </strong>
