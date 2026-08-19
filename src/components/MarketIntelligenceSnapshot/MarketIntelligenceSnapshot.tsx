@@ -656,6 +656,7 @@ const MarketIntelligenceSnapshot = ({
     localDealTrimFilter === LOCAL_DEAL_ALL_TRIMS || localDealTrimOptions.includes(localDealTrimFilter)
       ? localDealTrimFilter
       : defaultLocalDealTrim;
+  const marketContextLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model} near ${zipCode}`;
   const filteredLocalDeals =
     activeLocalDealTrim === LOCAL_DEAL_ALL_TRIMS
       ? plottedMatches
@@ -873,6 +874,7 @@ const MarketIntelligenceSnapshot = ({
         <header className="market-snapshot__header">
           <div className="market-snapshot__header-copy">
             <h2 id="market-snapshot-title">Local Signals</h2>
+            <p className="market-snapshot__context">{marketContextLabel}</p>
           </div>
 
           <div className="market-snapshot__market-form">
