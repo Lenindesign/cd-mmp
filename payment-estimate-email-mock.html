@@ -107,42 +107,128 @@
       }
 
       .payment-hero {
-        background: #eef5f7;
+        background: #ffffff;
         border-top: 1px solid #d8dee6;
         border-bottom: 1px solid #d8dee6;
       }
 
+      .payment-panel {
+        padding: 28px 28px 26px;
+        background: #f6fbfe;
+        border: 1px solid #c8d9e7;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .payment-panel .eyebrow {
+        margin-bottom: 10px;
+      }
+
       .payment-amount {
         margin: 0;
-        color: #1f6c99;
-        font-size: 56px;
+        color: #1d6797;
+        font-size: 74px;
         font-weight: 800;
-        line-height: 0.95;
+        line-height: 0.88;
+        letter-spacing: -1.5px;
       }
 
       .payment-amount span {
-        color: #555555;
-        font-size: 24px;
+        color: #444444;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .payment-cta {
+        display: inline-block;
+        min-width: 320px;
+        margin-top: 20px;
+        padding: 14px 22px;
+        border-radius: 3px;
+        background: #2a6f9e;
+        color: #ffffff !important;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .breakdown-card {
+        padding: 24px 24px 18px;
+        border: 1px solid #d8dee6;
+        border-radius: 10px;
+        background: #ffffff;
+      }
+
+      .breakdown-card-head {
+        margin-bottom: 18px;
+      }
+
+      .breakdown-card-head__title {
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .breakdown-highlight {
+        margin-bottom: 18px;
+        padding: 18px 14px 14px;
+        background: #f4fbfd;
+        border-radius: 6px;
+      }
+
+      .breakdown-highlight__eyebrow {
+        margin: 0 0 8px;
+        color: #5d6670;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+      }
+
+      .breakdown-highlight__value {
+        margin: 0 0 8px;
+        color: #222222;
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .breakdown-highlight__meta {
+        margin: 0;
+        color: #444444;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .accent-red {
+        color: #e23d3d;
         font-weight: 700;
       }
 
-      .payment-subcopy {
-        margin: 12px 0 20px;
-        color: #555555;
-        font-size: 16px;
-        line-height: 1.45;
+      .accent-green {
+        color: #289323;
+        font-weight: 700;
+      }
+
+      .accent-blue {
+        color: #1d6797;
+        font-weight: 800;
       }
 
       .breakdown {
         width: 100%;
         border-collapse: collapse;
         background: #ffffff;
-        border: 1px solid #d8dee6;
       }
 
       .breakdown td {
-        padding: 13px 16px;
-        border-bottom: 1px solid #e5e7eb;
+        padding: 16px 0;
+        border-bottom: 1px solid #d8dee6;
         color: #4b5563;
         font-size: 15px;
         line-height: 1.3;
@@ -159,8 +245,13 @@
         white-space: nowrap;
       }
 
+      .breakdown .summary td {
+        border-top: 2px solid #d8dee6;
+        color: #333333;
+      }
+
       .breakdown .total td {
-        border-top: 2px solid #b9cbd5;
+        border-top: 2px solid #d8dee6;
         color: #111827;
         font-size: 17px;
         font-weight: 800;
@@ -172,11 +263,133 @@
         border: 1px solid #d8dee6;
       }
 
+      .vehicle-heading {
+        margin: 0 0 10px;
+        color: #111111;
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1.02;
+      }
+
+      .vehicle-hero-layout {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 14px;
+      }
+
+      .vehicle-hero-layout td {
+        vertical-align: top;
+      }
+
+      .vehicle-hero-layout__media {
+        width: 100%;
+      }
+
+      .vehicle-hero-layout__stats {
+        width: 100%;
+      }
+
+      .vehicle-hero-panel {
+        padding: 18px 20px;
+        background: #f8f8f8;
+        border-radius: 10px;
+      }
+
+      .vehicle-rank {
+        margin: 0 0 18px;
+        color: #1d6797;
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.25;
+        text-align: left;
+      }
+
+      .vehicle-score-row {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 18px;
+      }
+
+      .vehicle-score-row td {
+        vertical-align: top;
+      }
+
+      .vehicle-score {
+        color: #111111;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 0.95;
+      }
+
+      .vehicle-score span {
+        font-size: 22px;
+      }
+
+      .vehicle-score-label {
+        display: block;
+        margin-top: 8px;
+        color: #222222;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .vehicle-badges {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .vehicle-badge-item {
+        display: inline-block;
+        width: 62px;
+        margin-left: 8px;
+        text-align: center;
+        vertical-align: top;
+        white-space: normal;
+      }
+
+      .vehicle-badge-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        border: 1px solid #d7dde5;
+        border-radius: 999px;
+        background: #ffffff;
+        vertical-align: middle;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      .vehicle-badge-label {
+        display: block;
+        margin-top: 5px;
+        color: #5d6670;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        line-height: 1.1;
+        text-transform: uppercase;
+      }
+
+      .vehicle-badge-mark img {
+        display: block;
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+      }
+
       .vehicle-image {
         display: block;
         width: 100%;
-        height: 345px;
+        height: 320px;
         object-fit: cover;
+        border-radius: 10px;
       }
 
       .vehicle-content {
@@ -203,7 +416,7 @@
       .vehicle-facts {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 18px;
+        margin-top: 16px;
       }
 
       .vehicle-facts td {
@@ -224,10 +437,116 @@
         text-transform: uppercase;
       }
 
+      .body-style-grid {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .body-style-grid td {
+        width: 50%;
+        padding: 0 12px 16px 0;
+        vertical-align: top;
+      }
+
+      .body-style-grid td:last-child {
+        padding-right: 0;
+      }
+
+      .body-style-grid td[colspan="2"] {
+        width: 100%;
+        padding-right: 0;
+      }
+
+      .body-style-card {
+        border: 1px solid #d8dee6;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      .body-style-card__image {
+        display: block;
+        width: 100%;
+        height: 168px;
+        object-fit: cover;
+        background: #eef5f7;
+      }
+
+      .body-style-card__image--lead {
+        height: 300px;
+      }
+
+      .body-style-card__content {
+        padding: 18px 16px 16px;
+      }
+
+      .body-style-card__title {
+        margin: 0 0 6px;
+        color: #111827;
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.08;
+      }
+
+      .body-style-card__rank {
+        margin: 0 0 12px;
+        color: #0b5f92;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .body-style-card__rating-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 14px;
+      }
+
+      .body-style-card__rating-row .vehicle-badge-item {
+        margin-left: 6px;
+      }
+
+      .body-style-card__score {
+        margin: 0 0 8px;
+      }
+
+      .body-style-card__rating-row .body-style-card__score {
+        margin: 0;
+      }
+
+      .body-style-card__accolades {
+        margin: 0 0 14px;
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .body-style-card__fact-label {
+        margin: 0 0 6px;
+        padding-top: 10px;
+        border-top: 1px solid #e5e7eb;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .body-style-card__fact-value {
+        margin: 0 0 12px;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
       .link-grid {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 18px;
+        margin-top: 14px;
       }
 
       .link-grid td {
@@ -349,36 +668,247 @@
         background: #111827;
       }
 
-      .footer {
-        padding: 24px 32px;
-        background: #111827;
-        color: #d1d5db;
+      .shopping-tools-panel {
+        padding: 18px 0 0;
+        background: transparent;
+        border: 0;
+      }
+
+      .shopping-tools-panel .eyebrow {
+        margin-bottom: 14px;
+      }
+
+      .shopping-tools-grid {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 12px 0;
+      }
+
+      .shopping-tools-grid td {
+        width: 33.333%;
+        vertical-align: top;
+      }
+
+      .shopping-tool-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 160px;
+        padding: 18px;
+        background: #050505;
+        border-radius: 6px;
+        color: #ffffff !important;
+        text-decoration: none;
+        box-sizing: border-box;
+      }
+
+      .shopping-tool-card--primary {
+        background: #1f6c99;
+        height: 220px;
+        min-height: 220px;
+      }
+
+      .shopping-tool-card__title {
+        display: block;
+        margin: 0 0 10px;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.05;
+      }
+
+      .shopping-tool-card__copy {
+        display: block;
+        margin: 0 0 14px;
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 14px;
+        line-height: 1.3;
+      }
+
+      .shopping-tool-card__cta {
+        display: block;
+        width: fit-content;
+        margin-top: auto;
+        padding: 11px 16px;
+        border-radius: 3px;
+        border: 1px solid rgba(255, 255, 255, 0.88);
+        background: transparent;
+        color: #ffffff !important;
         font-size: 12px;
-        line-height: 1.5;
+        font-weight: 800;
+        letter-spacing: 0.7px;
+        line-height: 1.2;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .footer {
+        padding: 54px 32px 50px;
+        background: #000000;
+        color: #b7b7b7;
+        font-size: 20px;
+        line-height: 1.4;
+        text-align: center;
+      }
+
+      .footer-powered {
+        margin: 0 0 30px;
+        color: #b7b7b7;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 8px;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .footer-logo {
+        display: inline-block;
+        width: auto;
+        max-width: 82%;
+        height: 45.67px;
+        filter: brightness(0) invert(1);
+      }
+
+      .footer-links {
+        margin: 34px 0 32px;
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 1.3;
       }
 
       .footer a {
         color: #ffffff;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      .footer-divider {
+        display: inline-block;
+        padding: 0 18px;
+        color: #b7b7b7;
+      }
+
+      .footer-publication {
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 17px;
+        line-height: 1.35;
+      }
+
+      .footer-rights {
+        margin: 0;
+        color: #b7b7b7;
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .footer-variant-link {
+        margin: 18px 0 0;
+        color: #8aa7bb;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .footer-variant-link a {
+        color: #8ed1ff;
+        text-decoration: underline;
       }
 
       @media (max-width: 560px) {
         .section,
-        .header,
-        .footer {
+        .header {
           padding: 22px 18px;
+        }
+
+        .footer {
+          padding: 38px 18px 36px;
+        }
+
+        .footer-powered {
+          margin-bottom: 22px;
+          font-size: 12px;
+          letter-spacing: 5px;
+        }
+
+        .footer-logo {
+          max-width: 88%;
+        }
+
+        .footer-links {
+          margin: 26px 0 24px;
+        }
+
+        .footer-publication {
+          font-size: 17px;
+        }
+
+        .footer-rights {
+          font-size: 14px;
+        }
+
+        .footer-divider {
+          padding: 0 10px;
         }
 
         h1 {
           font-size: 28px;
         }
 
+        .vehicle-heading {
+          font-size: 28px;
+        }
+
+        .body-style-grid,
+        .body-style-grid tbody,
+        .body-style-grid tr,
+        .body-style-grid td {
+          display: block;
+          width: 100% !important;
+        }
+
+        .body-style-grid td {
+          padding: 0 0 16px !important;
+        }
+
+        .body-style-card__title {
+          font-size: 22px;
+        }
+
         .payment-amount {
-          font-size: 48px;
+          font-size: 56px;
+        }
+
+        .payment-cta {
+          min-width: 0;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .vehicle-image {
           height: auto;
           aspect-ratio: 16 / 9;
+        }
+
+        .vehicle-score-row,
+        .vehicle-score-row tbody,
+        .vehicle-score-row tr,
+        .vehicle-score-row td {
+          display: block;
+          width: 100% !important;
+          box-sizing: border-box;
+        }
+
+        .vehicle-rank,
+        .vehicle-badges {
+          text-align: left;
+        }
+
+        .vehicle-badge-item {
+          margin: 8px 10px 0 0;
+        }
+
+        .vehicle-badge-mark {
+          margin: 0;
         }
 
         .cta-cell,
@@ -387,6 +917,27 @@
           display: block;
           width: 100%;
           box-sizing: border-box;
+        }
+
+        .shopping-tools-grid,
+        .shopping-tools-grid tbody,
+        .shopping-tools-grid tr,
+        .shopping-tools-grid td {
+          display: block;
+          width: 100% !important;
+          box-sizing: border-box;
+        }
+
+        .shopping-tools-grid {
+          border-spacing: 0;
+        }
+
+        .shopping-tools-grid td {
+          padding: 0 0 10px;
+        }
+
+        .shopping-tool-card {
+          min-height: 0;
         }
 
         .advice-mosaic td {
@@ -434,60 +985,294 @@
 
         <tr>
           <td class="section">
-            <p class="eyebrow">Your payment estimate</p>
-            <h1>Alex, your 2026 Honda CR-V Hybrid estimate</h1>
-            <p class="copy">
-              Hi Alex, thank you for using Car and Driver to calculate an estimated monthly payment for a
-              2026 Honda CR-V Hybrid Sport Touring. Use this estimate as a planning guide while
-              shopping, and keep in mind that final pricing, taxes, fees, trade-in value, and
-              financing terms may vary by vehicle and retailer.
+              <h1 id="mock-title">Your 2026 Honda CR-V Hybrid estimate</h1>
+            <p class="copy" id="mock-intro-copy">
+              Hi Alex,<br>
+              Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate for a new 2026 Toyota RAV4 XLE is designed to help you shop with confidence and better understand your budget. As you continue your search, remember that actual payments may vary based on vehicle pricing, financing approval, taxes, fees, trade-in value, and dealer-specific costs.
             </p>
           </td>
         </tr>
 
         <tr>
           <td class="section payment-hero">
-            <p class="eyebrow">Estimated monthly payment</p>
-            <p class="payment-amount">$688<span>/mo</span></p>
-            <p class="payment-subcopy">
-              Based on a $42,150 selected vehicle price, $4,000 down, 60 months, and 6.9% APR.
-            </p>
-            <table class="breakdown" role="presentation" cellspacing="0" cellpadding="0">
+            <div class="payment-panel">
+              <p class="eyebrow">Estimated monthly payment</p>
+              <p class="payment-amount" id="mock-payment-amount">$688<span>/mo</span></p>
+              <a class="payment-cta" id="mock-payment-cta" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">
+                See cars in your budget
+              </a>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="section">
+            <div class="breakdown-card">
+              <div class="breakdown-card-head">
+                <div class="breakdown-card-head__title">Your Personalized Cost Breakdown</div>
+              </div>
+
+              <div class="breakdown-highlight">
+                <p class="breakdown-highlight__eyebrow">Amount Financed</p>
+                <p class="breakdown-highlight__value" id="mock-highlight-value">$41,570</p>
+                <p class="breakdown-highlight__meta" id="mock-highlight-meta">
+                  $42,150 selected vehicle price + <span class="accent-red">$3,420</span> taxes &amp; fees
+                  - <span class="accent-green">$4,000</span> down = $41,570 financed
+                </p>
+              </div>
+
+              <table class="breakdown" role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>Vehicle Target Price</td>
+                  <td id="mock-breakdown-target-price">$42,150</td>
+                </tr>
+                <tr>
+                  <td>Down Payment</td>
+                  <td id="mock-breakdown-down-payment"><span class="accent-green">$4,000</span></td>
+                </tr>
+                <tr>
+                  <td>Total Interest Paid</td>
+                  <td id="mock-breakdown-interest"><span class="accent-red">$7,701</span></td>
+                </tr>
+                <tr>
+                  <td>Net Trade Value</td>
+                  <td id="mock-breakdown-trade">$0</td>
+                </tr>
+                <tr>
+                  <td>Estimated Taxes &amp; Fees</td>
+                  <td id="mock-breakdown-fees"><span class="accent-red">$3,420</span></td>
+                </tr>
+                <tr class="summary">
+                  <td>Total Loan Payments Over 60 Months</td>
+                  <td id="mock-breakdown-loan-payments">$49,271</td>
+                </tr>
+                <tr>
+                  <td>Monthly Payment</td>
+                  <td id="mock-breakdown-monthly">$688/mo</td>
+                </tr>
+                <tr class="total">
+                  <td>Estimated Total Paid</td>
+                  <td id="mock-breakdown-total"><span class="accent-blue">$53,271</span></td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+
+        <tr data-mock-variant="standard">
+          <td class="section">
+            <p class="eyebrow">Your next vehicle</p>
+            <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
               <tr>
-                <td>Rate &amp; Term</td>
-                <td>6.9% APR - 60 mo</td>
+                <td class="vehicle-content">
+                  <h2 class="vehicle-heading">2026 Honda CR-V Hybrid Sport Touring</h2>
+                  <p class="vehicle-rank">#2 in Compact SUVs</p>
+                  <table class="vehicle-hero-layout" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td class="vehicle-hero-layout__media">
+                        <img
+                          class="vehicle-image"
+                          src="https://hips.hearstapps.com/mtg-prod/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg"
+                          alt="2026 Honda CR-V Hybrid on road"
+                        >
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p class="copy" style="margin-top: 18px;">
+                    <strong>C/D Says:</strong> The CR-V Hybrid blends strong fuel economy, smart cargo packaging,
+                    and easy everyday drivability into a compact SUV that feels ready for family duty.
+                    <a href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Learn more</a>
+                  </p>
+
+                  <div class="vehicle-hero-panel" style="margin-top: 18px;">
+                    <table class="vehicle-score-row" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>
+                          <div class="vehicle-score">9.5<span>/10</span></div>
+                          <span class="vehicle-score-label">C/D Rating</span>
+                        </td>
+                        <td class="vehicle-badges">
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" alt="Editor's Choice">
+                            </span>
+                            <span class="vehicle-badge-label">Editor's Choice</span>
+                          </span>
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" alt="10Best">
+                            </span>
+                            <span class="vehicle-badge-label">10Best</span>
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                    <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td><a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Shop New CR-V Hybrid</a></td>
+                      </tr>
+                      <tr>
+                        <td><a class="button button--secondary" href="/vehicles?condition=used&amp;make=Honda&amp;model=CR-V">Shop Used CR-V Hybrid</a></td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr data-mock-variant="used-car" style="display:none;">
+          <td class="section">
+            <p class="eyebrow">Your next used SUV</p>
+            <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="vehicle-content">
+                  <h2 class="vehicle-heading">2023 Toyota RAV4 XLE</h2>
+                  <p class="vehicle-rank">#2 in Compact SUVs</p>
+                  <table class="vehicle-hero-layout" role="presentation" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td class="vehicle-hero-layout__media">
+                        <img
+                          class="vehicle-image"
+                          src="https://hips.hearstapps.com/mtg-prod/66f583e9a90c9e0008791b45/2025toyotarav4plug-inhybrid6.jpg"
+                          alt="Toyota RAV4 parked outdoors"
+                        >
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p class="copy" style="margin-top: 18px;">
+                    <strong>C/D Says:</strong> The RAV4 remains an easy used-car recommendation because it pairs practical cargo room,
+                    strong efficiency, and broad market availability in one familiar package.
+                    <a href="/vehicles?condition=used&amp;year=2023&amp;make=Toyota&amp;model=RAV4">Learn more</a>
+                  </p>
+
+                  <div class="vehicle-hero-panel" style="margin-top: 18px;">
+                    <table class="vehicle-score-row" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>
+                          <div class="vehicle-score">8.0<span>/10</span></div>
+                          <span class="vehicle-score-label">C/D Rating</span>
+                        </td>
+                        <td class="vehicle-badges">
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" alt="Editor's Choice">
+                            </span>
+                            <span class="vehicle-badge-label">Editor's Choice</span>
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                    <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td><a class="button" href="/vehicles?condition=used&amp;year=2023&amp;make=Toyota&amp;model=RAV4">Shop Used RAV4</a></td>
+                      </tr>
+                      <tr>
+                        <td><a class="button button--secondary" href="/vehicles?condition=used&amp;year=2023&amp;make=Toyota&amp;model=RAV4&amp;certified=true">Shop Certified Used RAV4</a></td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr data-mock-variant="body-style" style="display:none;">
+          <td class="section">
+            <p class="eyebrow">Popular picks in your budget</p>
+            <h2>Three SUVs worth shopping starting under $30,000</h2>
+            <table class="body-style-grid" role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td colspan="2" style="padding: 0 0 16px 0;">
+                  <div class="body-style-card">
+                    <img
+                      class="body-style-card__image body-style-card__image--lead"
+                      src="https://hips.hearstapps.com/mtg-prod/66466c119cbba1000852d79c/007-2025-chevrolet-trax-exterior-front-view.jpg"
+                      alt="2026 Chevrolet Trax"
+                    >
+                    <div class="body-style-card__content">
+                      <h3 class="body-style-card__title">2026 Chevrolet Trax</h3>
+                      <p class="body-style-card__rank">#1 among SUVs starting under $30,000</p>
+                      <div class="body-style-card__rating-row">
+                        <div class="body-style-card__score">
+                          <div class="vehicle-score">10.0<span>/10</span></div>
+                          <span class="vehicle-score-label">C/D Rating</span>
+                        </div>
+                        <div aria-label="Accolades">
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/editors-choice.7ecd596.svg?primary=%2523FEFEFE" alt="Editor's Choice">
+                            </span>
+                            <span class="vehicle-badge-label">Editor's Choice</span>
+                          </span>
+                          <span class="vehicle-badge-item">
+                            <span class="vehicle-badge-mark">
+                              <img src="https://www.caranddriver.com/_assets/design-tokens/caranddriver/static/images/badges-no-text/ten-best.bcb6ac1.svg" alt="10Best">
+                            </span>
+                            <span class="vehicle-badge-label">10Best</span>
+                          </span>
+                        </div>
+                      </div>
+                      <p class="body-style-card__fact-label">MSRP Range</p>
+                      <p class="body-style-card__fact-value">$20,400 - $24,400</p>
+                      <p class="body-style-card__fact-label">Fuel Economy</p>
+                      <p class="body-style-card__fact-value">28/32 mpg</p>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Chevrolet&amp;model=Trax">Shop New Trax</a>
+                    </div>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td>Selected Vehicle Price</td>
-                <td>$42,150</td>
-              </tr>
-              <tr>
-                <td>Estimated Taxes &amp; Fees</td>
-                <td>+$3,420</td>
-              </tr>
-              <tr>
-                <td>Down Payment</td>
-                <td>-$4,000</td>
-              </tr>
-              <tr>
-                <td>Trade-In Value</td>
-                <td>$0</td>
-              </tr>
-              <tr>
-                <td>Amount Financed</td>
-                <td>$41,570</td>
-              </tr>
-              <tr>
-                <td>Finance Charge</td>
-                <td>+$7,701</td>
-              </tr>
-              <tr>
-                <td>Loan Payments Over 60 Months</td>
-                <td>$49,271</td>
-              </tr>
-              <tr class="total">
-                <td>Estimated Total Paid</td>
-                <td>$53,271</td>
+                <td>
+                  <div class="body-style-card">
+                    <img
+                      class="body-style-card__image"
+                      src="https://hips.hearstapps.com/mtg-prod/690cf1b44df09200022170fe/023-2026-kia-sportage-hybrid.jpg"
+                      alt="2026 Kia Sportage Hybrid"
+                    >
+                    <div class="body-style-card__content">
+                      <h3 class="body-style-card__title">2026 Kia Sportage Hybrid</h3>
+                      <p class="body-style-card__rank">#2 among SUVs starting under $30,000</p>
+                      <div class="body-style-card__score">
+                        <div class="vehicle-score">8.5<span>/10</span></div>
+                        <span class="vehicle-score-label">C/D Rating</span>
+                      </div>
+                      <p class="body-style-card__accolades">Top-rated hybrid pick</p>
+                      <p class="body-style-card__fact-label">MSRP Range</p>
+                      <p class="body-style-card__fact-value">$28,290 - $38,490</p>
+                      <p class="body-style-card__fact-label">Fuel Economy</p>
+                      <p class="body-style-card__fact-value">38/43 mpg</p>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Kia&amp;model=Sportage">Shop New Sportage Hybrid</a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="body-style-card">
+                    <img
+                      class="body-style-card__image"
+                      src="https://hips.hearstapps.com/mtg-prod/67a2b8c5c277ba0008059b12/008-2025-subaru-forester-hybrid.jpg"
+                      alt="2026 Subaru Forester"
+                    >
+                    <div class="body-style-card__content">
+                      <h3 class="body-style-card__title">2026 Subaru Forester</h3>
+                      <p class="body-style-card__rank">#3 among SUVs starting under $30,000</p>
+                      <div class="body-style-card__score">
+                        <div class="vehicle-score">8.4<span>/10</span></div>
+                        <span class="vehicle-score-label">C/D Rating</span>
+                      </div>
+                      <p class="body-style-card__accolades">Top-rated family pick</p>
+                      <p class="body-style-card__fact-label">MSRP Range</p>
+                      <p class="body-style-card__fact-value">$29,695 - $38,195</p>
+                      <p class="body-style-card__fact-label">Fuel Economy</p>
+                      <p class="body-style-card__fact-value">26/33 mpg</p>
+                      <a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Subaru&amp;model=Forester">Shop New Forester</a>
+                    </div>
+                  </div>
+                </td>
               </tr>
             </table>
           </td>
@@ -495,49 +1280,34 @@
 
         <tr>
           <td class="section">
-            <p class="eyebrow">Your next vehicle</p>
-            <table class="vehicle-card" role="presentation" cellspacing="0" cellpadding="0">
-              <tr>
-                <td>
-                  <img
-                    class="vehicle-image"
-                    src="https://d2kde5ohu8qb21.cloudfront.net/files/685edb52f9d75b00021b1e55/07-2026-honda-cr-v-trailsport.jpg"
-                    alt="2026 Honda CR-V Hybrid on road"
-                  >
-                </td>
-              </tr>
-              <tr>
-                <td class="vehicle-content">
-                  <div class="rating-row">
-                    <span class="rating-pill">9.5/10 C/D Rating</span>
-                    <span class="rating-pill">Editors' Choice</span>
-                    <span class="rating-pill">#2 Compact SUVs</span>
-                  </div>
-                  <h2>2026 Honda CR-V Hybrid Sport Touring</h2>
-                  <p class="copy">
-                    <strong>C/D Says:</strong> The CR-V Hybrid blends strong fuel economy, smart cargo packaging,
-                    and easy everyday drivability into a compact SUV that feels ready for family duty.
-                  </p>
-
-                  <table class="vehicle-facts" role="presentation" cellspacing="0" cellpadding="0">
-                    <tr>
-                      <td><strong>YMMT</strong>2026 Honda CR-V Hybrid Sport Touring</td>
-                      <td><strong>MSRP Range</strong>$35,700 - $42,150</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Fuel Economy</strong>40 city / 34 highway mpg</td>
-                      <td><strong>Rank in Category</strong>#2 in Compact SUVs</td>
-                    </tr>
-                  </table>
-
-                  <table class="link-grid link-grid--single" role="presentation" cellspacing="0" cellpadding="0">
-                    <tr>
-                      <td><a class="button" href="/vehicles?condition=new&amp;year=2026&amp;make=Honda&amp;model=CR-V">Shop New CR-V Hybrid</a></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
+            <div class="shopping-tools-panel">
+              <p class="eyebrow">Shopping tools</p>
+              <table class="shopping-tools-grid" role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                    <a class="shopping-tool-card shopping-tool-card--primary" href="/vehicles">
+                      <span class="shopping-tool-card__title">Shop For Cars</span>
+                      <span class="shopping-tool-card__copy">Research, compare, and find the exact car you're looking for at a dealer near you.</span>
+                      <span class="shopping-tool-card__cta">Shop Now</span>
+                    </a>
+                  </td>
+                  <td>
+                    <a class="shopping-tool-card shopping-tool-card--primary" href="/whats-my-car-worth">
+                      <span class="shopping-tool-card__title">What's My Car Worth?</span>
+                      <span class="shopping-tool-card__copy">Get your car's value using the same Black Book data dealers use to appraise vehicles.</span>
+                      <span class="shopping-tool-card__cta">Get Estimate</span>
+                    </a>
+                  </td>
+                  <td>
+                    <a class="shopping-tool-card shopping-tool-card--primary" href="/compare">
+                      <span class="shopping-tool-card__title">Compare Cars</span>
+                      <span class="shopping-tool-card__copy">Compare features, specs, prices, and performance between different trim levels on any vehicle.</span>
+                      <span class="shopping-tool-card__cta">Compare</span>
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
         </tr>
 
@@ -591,30 +1361,123 @@
         </tr>
 
         <tr>
-          <td class="section">
-            <p class="eyebrow">Shopping tools</p>
-            <table class="cta-row" role="presentation" cellspacing="0" cellpadding="0">
-              <tr>
-                <td class="cta-cell"><a class="button button--secondary" href="/vehicles">Shop For Cars</a></td>
-                <td class="cta-cell"><a class="button button--secondary" href="/whats-my-car-worth">What's My Car Worth?</a></td>
-                <td class="cta-cell"><a class="button button--secondary" href="/compare">Compare Cars</a></td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
-        <tr>
           <td class="footer">
-            <p style="margin:0 0 8px;">
-              Estimates are for planning only and are not loan approvals or offers. Dealer pricing,
-              lender terms, taxes, fees, and incentives may change.
+            <p class="footer-powered">Powered by</p>
+            <img class="footer-logo" src="/car-and-driver-logo.svg" alt="Car and Driver">
+            <p class="footer-links">
+              <a href="/privacy">Privacy Notice</a>
+              <span class="footer-divider" aria-hidden="true">|</span>
+              <a href="/california-privacy">CA Notice at Collection</a>
             </p>
-            <p style="margin:0;">
-              Car and Driver Marketplace - <a href="/auto-loan-calculator/light-steps/review">Calculator Results Page</a>
+            <p class="footer-publication">Car and Driver is a publication of Hearst Autos, Inc.</p>
+            <p class="footer-rights">All Rights Reserved</p>
+            <p class="footer-variant-link">
+              Compare variants:
+              <a href="/payment-estimate-email-mock.html?variant=standard">New car</a>
+              <span class="footer-divider" aria-hidden="true">|</span>
+              <a href="/payment-estimate-email-mock.html?variant=used-car">Used car</a>
+              <span class="footer-divider" aria-hidden="true">|</span>
+              <a href="/payment-estimate-email-mock.html?variant=body-style">Body style</a>
+            </p>
+            <p class="footer-variant-link">
+              Prototype: <a href="/incentives-confirmation-email-mock.html">View the incentives confirmation email</a>
             </p>
           </td>
         </tr>
       </table>
     </div>
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const requestedVariant = params.get('variant');
+        const variant = requestedVariant === 'used-car' || requestedVariant === 'body-style' || requestedVariant === 'standard'
+          ? requestedVariant
+          : 'standard';
+        document.querySelectorAll('[data-mock-variant]').forEach((element) => {
+          const shouldShow = element.getAttribute('data-mock-variant') === variant;
+          element.style.display = shouldShow ? '' : 'none';
+        });
+
+        const variantContent = {
+          standard: {
+            title: 'Your 2026 Honda CR-V Hybrid estimate',
+            intro: 'Hi Alex,<br>Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate for a new 2026 Toyota RAV4 XLE is designed to help you shop with confidence and better understand your budget. As you continue your search, remember that actual payments may vary based on vehicle pricing, financing approval, taxes, fees, trade-in value, and dealer-specific costs.',
+            paymentAmount: '$688<span>/mo</span>',
+            ctaHref: '/vehicles?condition=new&year=2026&make=Honda&model=CR-V',
+            ctaLabel: 'See cars in your budget',
+            highlightValue: '$41,570',
+            highlightMeta: '$42,150 selected vehicle price + <span class="accent-red">$3,420</span> taxes &amp; fees - <span class="accent-green">$4,000</span> down = $41,570 financed',
+            targetPrice: '$42,150',
+            downPayment: '<span class="accent-green">$4,000</span>',
+            interest: '<span class="accent-red">$7,701</span>',
+            trade: '$0',
+            fees: '<span class="accent-red">$3,420</span>',
+            loanPayments: '$49,271',
+            monthly: '$688/mo',
+            total: '<span class="accent-blue">$53,271</span>',
+          },
+          'used-car': {
+            title: 'Your 2023 Toyota RAV4 estimate',
+            intro: 'Hi Alex,<br>Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate for a used 2023 Toyota RAV4 XLE is designed to help you shop with confidence and better understand your budget. As you continue your search, remember that actual payments may vary based on vehicle pricing, financing approval, taxes, fees, trade-in value, and dealer-specific costs.',
+            paymentAmount: '$688<span>/mo</span>',
+            ctaHref: '/vehicles?condition=used&year=2023&make=Toyota&model=RAV4',
+            ctaLabel: 'Shop used RAV4 listings',
+            highlightValue: '$27,734',
+            highlightMeta: '$28,400 selected vehicle price + <span class="accent-red">$3,334</span> taxes &amp; fees - <span class="accent-green">$4,000</span> down = $27,734 financed',
+            targetPrice: '$28,400',
+            downPayment: '<span class="accent-green">$4,000</span>',
+            interest: '<span class="accent-red">$13,546</span>',
+            trade: '$0',
+            fees: '<span class="accent-red">$3,334</span>',
+            loanPayments: '$41,280',
+            monthly: '$688/mo',
+            total: '<span class="accent-blue">$45,280</span>',
+          },
+          'body-style': {
+            title: 'Your SUV budget estimate',
+            intro: 'Hi Alex,<br>Thanks for using the Car and Driver Auto Loan Calculator. Your personalized estimate is designed to help you explore SUVs that fit your budget and shop with confidence. As you continue your search, remember that actual payments may vary based on the specific vehicle you choose, financing approval, taxes, fees, trade-in value, and dealer-specific costs.',
+            paymentAmount: '$688<span>/mo</span>',
+            ctaHref: '/vehicles?condition=new&bodyStyle=SUV&maxPrice=30000',
+            ctaLabel: 'Shop SUVs in your budget',
+            highlightValue: '$29,270',
+            highlightMeta: '$30,000 target vehicle price + <span class="accent-red">$3,270</span> taxes &amp; fees - <span class="accent-green">$4,000</span> down = $29,270 financed',
+            targetPrice: '$30,000',
+            downPayment: '<span class="accent-green">$4,000</span>',
+            interest: '<span class="accent-red">$11,986</span>',
+            trade: '$0',
+            fees: '<span class="accent-red">$3,270</span>',
+            loanPayments: '$41,256',
+            monthly: '$688/mo',
+            total: '<span class="accent-blue">$45,256</span>',
+          },
+        };
+
+        const content = variantContent[variant];
+        const setHtml = (selector, value) => {
+          const node = document.querySelector(selector);
+          if (node) node.innerHTML = value;
+        };
+        const setAttr = (selector, attr, value) => {
+          const node = document.querySelector(selector);
+          if (node) node.setAttribute(attr, value);
+        };
+
+        setHtml('#mock-title', content.title);
+        setHtml('#mock-intro-copy', content.intro);
+        setHtml('#mock-payment-amount', content.paymentAmount);
+        setAttr('#mock-payment-cta', 'href', content.ctaHref);
+        setHtml('#mock-payment-cta', content.ctaLabel);
+        setHtml('#mock-highlight-value', content.highlightValue);
+        setHtml('#mock-highlight-meta', content.highlightMeta);
+        setHtml('#mock-breakdown-target-price', content.targetPrice);
+        setHtml('#mock-breakdown-down-payment', content.downPayment);
+        setHtml('#mock-breakdown-interest', content.interest);
+        setHtml('#mock-breakdown-trade', content.trade);
+        setHtml('#mock-breakdown-fees', content.fees);
+        setHtml('#mock-breakdown-loan-payments', content.loanPayments);
+        setHtml('#mock-breakdown-monthly', content.monthly);
+        setHtml('#mock-breakdown-total', content.total);
+      })();
+    </script>
   </body>
 </html>
