@@ -120,7 +120,7 @@ const getPriceAssessment = ({
   if (amountBelowTarget >= 750 || priceAdvantagePercent >= 0.04) {
     return {
       label: 'Great Price',
-      copy: `About ${formatPriceDelta(amountBelowTarget)} below fair market value`,
+      copy: `About ${formatPriceDelta(amountBelowTarget)} below nearby asking prices`,
       tone: 'opportunity',
     };
   }
@@ -128,7 +128,7 @@ const getPriceAssessment = ({
   if (amountBelowTarget > 0) {
     return {
       label: 'Good Price',
-      copy: `About ${formatPriceDelta(amountBelowTarget)} below fair market value`,
+      copy: `About ${formatPriceDelta(amountBelowTarget)} below nearby asking prices`,
       tone: 'opportunity',
     };
   }
@@ -136,14 +136,14 @@ const getPriceAssessment = ({
   if (isInsideTargetRange) {
     return {
       label: 'Fair Market Price',
-      copy: 'Inside fair market range',
+      copy: 'Within the typical local asking range',
       tone: 'market',
     };
   }
 
   return {
     label: 'Over Market',
-    copy: `About ${formatPriceDelta(amountOverTarget)} above fair market value`,
+    copy: `About ${formatPriceDelta(amountOverTarget)} above nearby asking prices`,
     tone: 'over',
   };
 };
@@ -158,14 +158,14 @@ const getPriceRelationshipCopy = ({
   targetHigh: number;
 }) => {
   if (askingPrice < targetLow) {
-    return `${formatPrice(targetLow - askingPrice)} below the low end of fair market`;
+    return `${formatPrice(targetLow - askingPrice)} below the low end of the typical local range`;
   }
 
   if (askingPrice <= targetHigh) {
-    return 'Inside the estimated fair market range';
+    return 'within the typical local asking range';
   }
 
-  return `${formatPrice(askingPrice - targetHigh)} above the high end of fair market`;
+  return `${formatPrice(askingPrice - targetHigh)} above the high end of the typical local range`;
 };
 
 const getPricePositionFactorCopy = ({
@@ -178,14 +178,14 @@ const getPricePositionFactorCopy = ({
   targetHigh: number;
 }) => {
   if (askingPrice < targetLow) {
-    return `${formatPriceDelta(targetLow - askingPrice)} below market`;
+    return `About ${formatPriceDelta(targetLow - askingPrice)} below nearby listings`;
   }
 
   if (askingPrice <= targetHigh) {
-    return 'In fair market';
+    return 'Within the typical local range';
   }
 
-  return `${formatPriceDelta(askingPrice - targetHigh)} over market`;
+  return `About ${formatPriceDelta(askingPrice - targetHigh)} above nearby listings`;
 };
 
 const getPricePositionTone = ({
@@ -208,9 +208,9 @@ const getPricePositionSignalCopy = ({
   targetLow: number;
   targetHigh: number;
 }) => {
-  if (askingPrice < targetLow) return 'Good for buyers';
-  if (askingPrice <= targetHigh) return 'Normal price';
-  return 'Priced high';
+  if (askingPrice < targetLow) return 'C/D read: favorable';
+  if (askingPrice <= targetHigh) return 'C/D read: typical locally';
+  return 'C/D read: worth negotiating';
 };
 
 const getInventorySignalCopy = (inventoryCount: number) => {
@@ -243,10 +243,10 @@ const getBottomLineCopy = (assessment: PriceAssessment, hasHistoryRisk: boolean)
   }
 
   if (assessment.label === 'Fair Market Price') {
-    return 'Bottom line: This price is in line with the local market.';
+    return 'Bottom line: This price is in line with nearby asking prices.';
   }
 
-  return 'Bottom line: This is above market, so compare carefully and negotiate.';
+  return 'Bottom line: This looks high compared with nearby asking prices, so compare carefully and negotiate.';
 };
 
 const getBuyerGuidance = ({
@@ -267,7 +267,7 @@ const getBuyerGuidance = ({
   if (priceAssessment.tone === 'opportunity') {
     return {
       targetCopy: `At or below ${formatPrice(askingPrice)}`,
-      closeCopy: `I'd aim to close around ${formatPrice(askingPrice)}. It is already below fair market.`,
+      closeCopy: `I'd aim to close around ${formatPrice(askingPrice)}. It is already below the typical local asking range.`,
       position: negotiationLeverage === 'Low' ? 'Moderate' : 'Strong',
       positionCopy: 'The current price is already favorable. Ask the dealer to itemize the out-the-door price before you commit.',
     };
@@ -278,7 +278,7 @@ const getBuyerGuidance = ({
       targetCopy: formatPriceRange(targetLow, targetHigh),
       closeCopy: `I'd aim to stay near ${formatPrice(targetMidpoint)} or lower.`,
       position: negotiationLeverage === 'High' ? 'Strong' : 'Moderate',
-      positionCopy: 'The asking price is fair, but local supply and lot age may still give you room to negotiate.',
+      positionCopy: 'The asking price is in line with nearby listings, but local supply and lot age may still give you room to negotiate.',
       openingOffer: negotiationLeverage !== 'Low' ? formatPrice(targetLow) : undefined,
     };
   }
@@ -287,7 +287,7 @@ const getBuyerGuidance = ({
     targetCopy: formatPriceRange(targetLow, targetHigh),
     closeCopy: `I'd try to bring this closer to ${formatPrice(targetHigh)} before moving forward.`,
     position: negotiationLeverage === 'High' ? 'Moderate' : 'Limited',
-    positionCopy: 'The asking price is above fair market, so use comparable listings as your negotiation anchor.',
+    positionCopy: 'The asking price is above the typical local range, so use comparable listings as your negotiation anchor.',
     openingOffer: formatPrice(targetHigh),
   };
 };
@@ -762,11 +762,12 @@ const MarketIntelligenceSnapshot = ({
   const leadMarkerLabel = isUsed ? 'Best value' : 'Best price';
   const leadRowBadgeLabel = isUsed ? 'Best value' : 'Best price';
   const leadDotLabel = isUsed ? 'Best value' : 'Best local deal';
+  const localDealValueSortLabel = isUsed ? 'Best value' : 'Best price';
   const chartDescription = isUsed
     ? 'Representative matches. Best value balances price, mileage, history, and days on lot.'
     : 'Representative matches. Best price is the lowest comparable local listing for this trim.';
   const leadRecommendationCopy = priceAssessment.tone === 'over'
-    ? `${leadRecommendationLabel} because of ${recommendationSignalCopy}, even though it is above fair market.`
+    ? `${leadRecommendationLabel} because of ${recommendationSignalCopy}, even though it is above the typical local range.`
     : `${leadRecommendationLabel} based on ${recommendationSignalCopy}.`;
   const buyerGuidance = getBuyerGuidance({
     askingPrice,
@@ -794,15 +795,14 @@ const MarketIntelligenceSnapshot = ({
 
   const factors: FactorItem[] = [
     {
-      label: 'Price Position',
+      label: 'C/D Price Read',
       value: getPricePositionFactorCopy({ askingPrice, targetLow, targetHigh }),
       description: getPricePositionSignalCopy({ askingPrice, targetLow, targetHigh }),
       help: {
-        why: 'Shows whether this price is above or below similar local listings.',
-        action: 'Confirm fees and use below-market pricing as leverage if the savings hold.',
+        why: 'Shows how this asking price compares with similar local listings.',
+        action: 'Use nearby listings as a reference, then confirm condition, fees, and history.',
       },
       tone: getPricePositionTone({ askingPrice, targetHigh }),
-      nowrap: true,
     },
     {
       label: 'Available Near You',
@@ -863,7 +863,7 @@ const MarketIntelligenceSnapshot = ({
           <strong>{match.dealer.name}</strong>
           {match.dealer.distance !== undefined && <em>{match.dealer.distance.toFixed(1)} mi</em>}
           {isBestLocalDeal && (
-            <b className={leadRowBadgeLabel === 'Best value' ? 'market-snapshot__local-deal-badge--solid' : undefined}>
+            <b className={`market-snapshot__recommendation-label ${leadRowBadgeLabel === 'Best value' ? 'market-snapshot__local-deal-badge--solid' : ''}`}>
               {leadRowBadgeLabel}
             </b>
           )}
@@ -960,7 +960,7 @@ const MarketIntelligenceSnapshot = ({
 
         <section
           className="market-snapshot__price-range"
-          aria-label={`Fair market price ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, ${leadMarkerLabel.toLowerCase()} ${formatPrice(askingPrice)}`}
+          aria-label={`Typical local asking range ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, ${leadMarkerLabel.toLowerCase()} ${formatPrice(askingPrice)}`}
           style={priceRangeStyle}
         >
           <div className="market-snapshot__factor-grid" aria-label="Local market signal summary">
@@ -1008,21 +1008,22 @@ const MarketIntelligenceSnapshot = ({
 
           <div
             className="market-snapshot__price-visual"
-            aria-label={`Local price comparison plotting ${chartMatches.length} representative deals from ${plottedMatches.length} local matches across below market, fair market price, and above market`}
+            aria-label={`Car and Driver price read plotting ${chartMatches.length} representative deals from ${plottedMatches.length} local matches against the typical local asking range`}
           >
             <div className="market-snapshot__price-visual-head">
               <div className="market-snapshot__price-visual-copy">
                 <h4>Local Price Comparison</h4>
+                <p>C/D read based on nearby asking prices. Use it as a reference, not a guaranteed value.</p>
               </div>
             </div>
             <div className="market-snapshot__price-band-chart">
               <div className="market-snapshot__price-zone-labels" aria-hidden="true">
-                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--great">Below market</span>
+                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--great">Looks favorable</span>
                 <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--fair">
-                  Fair market price
+                  Typical local asking range
                   <span>{formatPriceRange(targetLow, targetHigh)}</span>
                 </span>
-                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--above">Above market</span>
+                <span className="market-snapshot__price-zone-label market-snapshot__price-zone-label--above">Worth negotiating</span>
               </div>
               <div className="market-snapshot__price-zones" aria-hidden="true">
                 <span className="market-snapshot__price-zone market-snapshot__price-zone--great" />
@@ -1067,10 +1068,10 @@ const MarketIntelligenceSnapshot = ({
                   const tooltipBadgeLabel = isLeadDot
                     ? leadDotLabel
                     : dotTone === 'great'
-                      ? 'Below market'
+                      ? 'Looks favorable'
                       : dotTone === 'fair'
-                        ? 'Fair market'
-                        : 'Above market';
+                        ? 'Typical locally'
+                        : 'Worth negotiating';
 
                   return (
                     <div
@@ -1130,7 +1131,7 @@ const MarketIntelligenceSnapshot = ({
               </div>
               <span className={`market-snapshot__your-car-marker market-snapshot__your-car-marker--${askingTone}`}>
                 <span className="market-snapshot__your-car-stem" />
-                <strong>{leadMarkerLabel}: {formatPrice(askingPrice)}</strong>
+                <strong className="market-snapshot__recommendation-label">{leadMarkerLabel}: {formatPrice(askingPrice)}</strong>
               </span>
               <div className="market-snapshot__price-axis">
                 {axisTickPrices.map((price, index) => (
@@ -1145,11 +1146,11 @@ const MarketIntelligenceSnapshot = ({
                   <span>Sort</span>
                   <button
                     type="button"
-                    className={localDealSort === 'value' ? 'market-snapshot__local-deal-sort-button--active' : undefined}
+                    className={`market-snapshot__recommendation-label ${localDealSort === 'value' ? 'market-snapshot__local-deal-sort-button--active' : ''}`}
                     aria-pressed={localDealSort === 'value'}
                     onClick={() => setLocalDealSort('value')}
                   >
-                    Best value
+                    {localDealValueSortLabel}
                   </button>
                   <button
                     type="button"
