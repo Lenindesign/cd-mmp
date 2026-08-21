@@ -1,5 +1,5 @@
 import { type CSSProperties, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Info } from 'lucide-react';
+import { ExternalLink, Info } from 'lucide-react';
 import { Badge } from '../Badge';
 import { OptimizedImage } from '../OptimizedImage';
 import { formatPrice } from '../../services/dealerService';
@@ -360,11 +360,11 @@ const getVehicleSignalBadges = ({
   }
 
   if (daysOnLot >= 50) {
-    badges.push({ label: '50+ Days on Market', variant: 'neutral' });
+    badges.push({ label: '50+ Days on Lot', variant: 'neutral' });
   } else if (daysOnLot >= 40) {
-    badges.push({ label: '40+ Days on Market', variant: 'neutral' });
+    badges.push({ label: '40+ Days on Lot', variant: 'neutral' });
   } else if (daysOnLot >= 30) {
-    badges.push({ label: '30+ Days on Market', variant: 'neutral' });
+    badges.push({ label: '30+ Days on Lot', variant: 'neutral' });
   }
 
   return badges.slice(0, 4);
@@ -799,8 +799,12 @@ const MarketIntelligenceSnapshot = ({
       value: getPricePositionFactorCopy({ askingPrice, targetLow, targetHigh }),
       description: getPricePositionSignalCopy({ askingPrice, targetLow, targetHigh }),
       help: {
-        why: 'Shows how this asking price compares with similar local listings.',
-        action: 'Use nearby listings as a reference, then confirm condition, fees, and history.',
+        why: isUsed
+          ? 'Shows how this asking price compares with similar local listings.'
+          : 'Shows how this asking price compares with similar new local listings.',
+        action: isUsed
+          ? 'Use nearby listings as a reference, then confirm condition, fees, and history.'
+          : 'Compare MSRP, incentives, dealer fees, and included equipment before deciding.',
       },
       tone: getPricePositionTone({ askingPrice, targetHigh }),
     },
@@ -810,7 +814,9 @@ const MarketIntelligenceSnapshot = ({
       description: getInventorySignalCopy(market.inventoryCount),
       help: {
         why: 'More comparable listings make the local signal more reliable.',
-        action: 'Compare trims and nearby dealers before committing to one listing.',
+        action: isUsed
+          ? 'Compare trims and nearby dealers before committing to one listing.'
+          : 'Compare trims, incentives, and nearby dealers before choosing an offer.',
       },
       tone: market.inventoryCount >= 10 ? 'dark' : undefined,
     },
@@ -820,7 +826,9 @@ const MarketIntelligenceSnapshot = ({
       description: 'Prices moving lower',
       help: {
         why: 'Recent movement shows whether sellers are adjusting prices.',
-        action: 'If prices are falling, ask the dealer to match the latest local movement.',
+        action: isUsed
+          ? 'If prices are falling, ask the dealer to match the latest local movement.'
+          : 'If prices are falling, ask dealers to compete with the latest local offers.',
       },
       tone: 'success',
       nowrap: true,
@@ -830,8 +838,12 @@ const MarketIntelligenceSnapshot = ({
       value: `${Math.round(market.averageDaysOnLot)} days`,
       description: getDaysOnLotSignalCopy(market.averageDaysOnLot),
       help: {
-        why: 'Older inventory can mean the dealer has more reason to make a deal.',
-        action: 'Use longer days on lot to ask for a better price or added value.',
+        why: isUsed
+          ? 'Older inventory can mean the dealer has more reason to make a deal.'
+          : 'Older new-car inventory can give a dealer more reason to adjust the offer.',
+        action: isUsed
+          ? 'Use longer days on lot to ask for a better price or added value.'
+          : 'Use longer days on lot to ask for a better price, incentives, or added equipment.',
       },
     },
   ];
@@ -860,10 +872,13 @@ const MarketIntelligenceSnapshot = ({
         onBlur={scheduleClearActiveLocalDeal}
       >
         <span className="market-snapshot__local-deal-dealer">
-          <strong>{match.dealer.name}</strong>
+          <span className="market-snapshot__local-deal-dealer-name">
+            <strong>{match.dealer.name}</strong>
+          </span>
+          <ExternalLink className="market-snapshot__local-deal-external-icon" size={13} strokeWidth={2} aria-hidden="true" />
           {match.dealer.distance !== undefined && <em>{match.dealer.distance.toFixed(1)} mi</em>}
           {isBestLocalDeal && (
-            <b className={`market-snapshot__recommendation-label ${leadRowBadgeLabel === 'Best value' ? 'market-snapshot__local-deal-badge--solid' : ''}`}>
+            <b className={`market-snapshot__recommendation-label ${leadRowBadgeLabel === 'Best value' || leadRowBadgeLabel === 'Best price' ? 'market-snapshot__local-deal-badge--solid' : ''}`}>
               {leadRowBadgeLabel}
             </b>
           )}
@@ -1121,7 +1136,7 @@ const MarketIntelligenceSnapshot = ({
                           <span>{tooltipHistoryLabel}</span>
                         </div>
                         <div className="market-snapshot__price-tooltip-actions">
-                          <span className={`market-snapshot__price-tooltip-badge ${tooltipBadgeLabel === 'Best value' ? 'market-snapshot__price-tooltip-badge--solid' : ''}`}>
+                          <span className={`market-snapshot__price-tooltip-badge ${tooltipBadgeLabel === 'Best value' || tooltipBadgeLabel === 'Best price' ? 'market-snapshot__price-tooltip-badge--solid' : ''}`}>
                             {tooltipBadgeLabel}
                           </span>
                           <span className="market-snapshot__price-tooltip-cta">View listing</span>
@@ -1358,8 +1373,8 @@ const MarketIntelligenceSnapshot = ({
 
                           <dl className="market-snapshot__vehicle-pick-metrics">
                             <div>
-                              <dt>Mileage</dt>
-                              <dd>{formatMileageValue(match.unit.mileage)}</dd>
+                              <dt>{isUsed ? 'Mileage' : 'MSRP'}</dt>
+                              <dd>{isUsed ? formatMileageValue(match.unit.mileage) : formatPrice(getDisplayMsrp(match))}</dd>
                             </div>
                             <div>
                               <dt>Dealer</dt>

@@ -817,7 +817,7 @@
 .market-snapshot__local-deal-header,
 .market-snapshot__local-deal-row {
   display: grid;
-  grid-template-columns: minmax(150px, 1.2fr) minmax(70px, 0.55fr) minmax(92px, 0.8fr) minmax(82px, 0.7fr) minmax(120px, 0.95fr);
+  grid-template-columns: minmax(190px, 1.25fr) minmax(85px, 0.7fr) repeat(2, minmax(100px, 0.85fr)) minmax(125px, 1fr);
   column-gap: var(--spacing-4);
   row-gap: var(--spacing-2);
   align-items: center;
@@ -864,12 +864,21 @@
 }
 
 .market-snapshot__local-deal-dealer {
+  position: relative;
   display: grid;
   gap: var(--spacing-1);
+  min-width: 0;
+  padding-right: var(--spacing-6);
+}
+
+.market-snapshot__local-deal-dealer-name {
+  display: block;
   min-width: 0;
 }
 
 .market-snapshot__local-deal-dealer strong {
+  display: block;
+  flex: 1 1 auto;
   min-width: 0;
   color: var(--color-black);
   font-size: var(--font-size-sm);
@@ -878,6 +887,21 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.market-snapshot__local-deal-external-icon {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  color: var(--color-gray-500);
+  transform: translateY(-50%);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.market-snapshot__local-deal-row:hover .market-snapshot__local-deal-external-icon,
+.market-snapshot__local-deal-row:focus-visible .market-snapshot__local-deal-external-icon {
+  color: var(--local-deal-tone-color);
+  transform: translate(1px, calc(-50% - 1px));
 }
 
 .market-snapshot__local-deal-dealer em {
@@ -2225,6 +2249,24 @@
   .market-snapshot__local-deal-dealer {
     grid-column: 1;
     grid-row: 1;
+    padding-right: 0;
+  }
+
+  .market-snapshot__local-deal-dealer-name {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+
+  .market-snapshot__local-deal-external-icon {
+    position: static;
+    flex: 0 0 auto;
+    transform: none;
+  }
+
+  .market-snapshot__local-deal-row:hover .market-snapshot__local-deal-external-icon,
+  .market-snapshot__local-deal-row:focus-visible .market-snapshot__local-deal-external-icon {
+    transform: translate(1px, -1px);
   }
 
   .market-snapshot__local-deal-price {
