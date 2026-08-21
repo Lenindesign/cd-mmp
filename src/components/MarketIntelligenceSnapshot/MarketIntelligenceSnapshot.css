@@ -1,13 +1,13 @@
 .market-snapshot {
-  --market-snapshot-fair-soft: #eef5f8;
+  --market-snapshot-fair-soft: color-mix(in srgb, var(--color-blue-cobalt) 7%, var(--color-white));
 
   width: 100%;
   margin: var(--spacing-8) 0;
   overflow: visible;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
+  background: color-mix(in srgb, var(--color-gray-50) 78%, var(--color-white));
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .market-snapshot,
@@ -104,7 +104,7 @@
 .market-snapshot__field input,
 .market-snapshot__field select {
   width: 100%;
-  min-height: 38px;
+  min-height: 44px;
   padding: 0 var(--spacing-3);
   color: var(--color-black);
   background: var(--color-white);
@@ -128,13 +128,13 @@
 .market-snapshot__field input:focus,
 .market-snapshot__field select:focus {
   border-color: var(--color-blue-cobalt);
-  box-shadow: 0 0 0 2px rgba(27, 95, 138, 0.18);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-cobalt) 18%, transparent);
   outline: none;
 }
 
 .market-snapshot__field input[aria-invalid='true'] {
   border-color: var(--color-error);
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.14);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-error) 14%, transparent);
 }
 
 .market-snapshot__error {
@@ -184,6 +184,9 @@
   gap: var(--spacing-1);
   min-height: 96px;
   padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-white);
+  border-color: var(--color-gray-300);
+  box-shadow: var(--shadow-sm);
   overflow: visible;
 }
 
@@ -210,24 +213,46 @@
 }
 
 .market-snapshot__factor-help-trigger {
+  position: relative;
   display: inline-grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   color: var(--color-gray-600);
   background: transparent;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--border-radius-pill);
   cursor: help;
   transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.market-snapshot__factor-help-trigger::before {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-pill);
+  content: '';
+}
+
+.market-snapshot__factor-help-trigger svg {
+  position: relative;
+  z-index: 1;
 }
 
 .market-snapshot__factor-help-trigger:hover,
 .market-snapshot__factor-help-trigger:focus-visible {
   color: var(--color-black);
-  background: var(--color-gray-50);
+  background: transparent;
   outline: none;
+}
+
+.market-snapshot__factor-help-trigger:hover::before,
+.market-snapshot__factor-help-trigger:focus-visible::before {
+  border-color: var(--color-gray-300);
+  background: var(--color-gray-100);
 }
 
 .market-snapshot__factor-tooltip {
@@ -496,9 +521,10 @@
   min-height: 226px;
   padding: var(--spacing-4);
   overflow: visible;
-  background: var(--color-gray-50);
-  border: 1px solid var(--color-gray-200);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-md);
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--color-blue-cobalt) 12%, transparent), var(--shadow-sm);
 }
 
 .market-snapshot__price-visual-head {
@@ -514,13 +540,23 @@
   min-width: 0;
 }
 
-.market-snapshot__price-visual-head h4 {
+.market-snapshot__price-visual-head h3 {
   margin: 0;
   color: var(--color-black);
   font-family: var(--font-heading);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
+}
+
+.market-snapshot__price-visual-head h3::before {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 var(--spacing-2) 2px 0;
+  background: var(--color-blue-cobalt);
+  border-radius: var(--border-radius-full);
+  content: '';
 }
 
 .market-snapshot__price-visual-head p {
@@ -600,7 +636,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-md);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  box-shadow: var(--shadow-xl);
 }
 
 .market-snapshot__local-deal-toolbar {
@@ -634,12 +670,12 @@
 
 .market-snapshot__local-deal-sort button {
   min-height: 28px;
-  padding: 0 var(--spacing-2);
-  color: var(--color-gray-700);
+  padding: 0 var(--spacing-3);
+  color: var(--color-gray-600);
   cursor: pointer;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--border-radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-pill);
   font-family: var(--font-heading);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
@@ -649,11 +685,10 @@
 }
 
 .market-snapshot__local-deal-sort button:hover,
-.market-snapshot__local-deal-sort button:focus-visible,
 .market-snapshot__local-deal-sort button.market-snapshot__local-deal-sort-button--active {
-  color: var(--color-white) !important;
-  background: var(--color-black) !important;
-  border-color: var(--color-black) !important;
+  color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-blue-cobalt) 8%, var(--color-white));
+  border-color: color-mix(in srgb, var(--color-blue-cobalt) 24%, var(--color-gray-200));
 }
 
 .market-snapshot__local-deal-sort button:focus-visible {
@@ -708,8 +743,9 @@
   display: grid;
   overflow: hidden;
   background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .market-snapshot__local-deal-list {
@@ -731,7 +767,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-3);
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 var(--spacing-3);
   color: var(--color-black);
   cursor: pointer;
@@ -959,6 +995,7 @@
   height: 74px;
   overflow: hidden;
   background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-md);
 }
 
@@ -1038,7 +1075,7 @@
   background: var(--color-gray-500);
   border: 3px solid var(--color-white);
   border-radius: var(--border-radius-pill);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--shadow-md);
 }
 
 .market-snapshot__price-point--great .market-snapshot__price-dot {
@@ -1080,7 +1117,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-md);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--shadow-lg);
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
@@ -1336,7 +1373,7 @@
   background: var(--color-black);
   border: 1px solid var(--color-black);
   border-radius: var(--border-radius-sm);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-md);
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -1440,7 +1477,7 @@
 }
 
 .market-snapshot__details-accordion {
-  border-top: 1px solid var(--color-gray-200);
+  margin-top: calc(var(--spacing-2) * -1);
 }
 
 .market-snapshot__details-accordion summary {
@@ -1448,8 +1485,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-4);
-  min-height: 52px;
-  padding: var(--spacing-3) 0;
+  min-height: 44px;
+  padding: var(--spacing-2) 0;
   color: var(--color-black);
   cursor: pointer;
   list-style: none;
@@ -1513,7 +1550,7 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 1px 8px color-mix(in srgb, var(--color-black) 6%, transparent);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   text-align: left;
 }
@@ -1522,7 +1559,7 @@
   display: grid;
   gap: var(--spacing-3);
   padding: var(--spacing-5);
-  background: #eef6e9;
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-white));
   border-bottom: 1px solid color-mix(in srgb, var(--color-success) 14%, var(--color-gray-200) 86%);
 }
 
@@ -1591,7 +1628,7 @@
   height: var(--spacing-7);
   margin-top: var(--spacing-0-5);
   color: var(--color-success);
-  background: #eef6e9;
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-white));
   border-radius: var(--border-radius-full);
   font-family: var(--font-heading);
   font-size: var(--font-size-sm);
@@ -2159,6 +2196,13 @@
   .market-snapshot__local-deal-toolbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .market-snapshot__local-deal-sort button,
+  .market-snapshot__local-deal-trim-filter select,
+  .market-snapshot__vehicle-pick-cta,
+  .market-snapshot__all-results {
+    min-height: 44px;
   }
 
   .market-snapshot__price-zone-labels span {

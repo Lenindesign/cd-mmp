@@ -963,7 +963,7 @@ const MarketIntelligenceSnapshot = ({
           aria-label={`Typical local asking range ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, ${leadMarkerLabel.toLowerCase()} ${formatPrice(askingPrice)}`}
           style={priceRangeStyle}
         >
-          <div className="market-snapshot__factor-grid" aria-label="Local market signal summary">
+          <div className="market-snapshot__factor-grid" role="group" aria-label="Local market signal summary">
             {factors.map((factor, index) => {
               const factorValueClassName = [
                 'market-snapshot__factor-value',
@@ -1008,11 +1008,13 @@ const MarketIntelligenceSnapshot = ({
 
           <div
             className="market-snapshot__price-visual"
+            role="region"
+            aria-labelledby="market-snapshot-price-comparison-title"
             aria-label={`Car and Driver price read plotting ${chartMatches.length} representative deals from ${plottedMatches.length} local matches against the typical local asking range`}
           >
             <div className="market-snapshot__price-visual-head">
               <div className="market-snapshot__price-visual-copy">
-                <h4>Local Price Comparison</h4>
+                <h3 id="market-snapshot-price-comparison-title">Local Price Comparison</h3>
                 <p>C/D read based on nearby asking prices. Use it as a reference, not a guaranteed value.</p>
               </div>
             </div>
@@ -1142,7 +1144,7 @@ const MarketIntelligenceSnapshot = ({
             <p className="market-snapshot__price-visual-note">{chartDescription}</p>
             <div className="market-snapshot__local-deals-inline">
               <div className="market-snapshot__local-deal-toolbar">
-                <div className="market-snapshot__local-deal-sort" aria-label="Sort local matches">
+                <div className="market-snapshot__local-deal-sort" role="group" aria-label="Sort local matches">
                   <span>Sort</span>
                   <button
                     type="button"
@@ -1195,7 +1197,7 @@ const MarketIntelligenceSnapshot = ({
                     <span>MSRP</span>
                     <span>Vs. MSRP</span>
                   </div>
-                  <div className="market-snapshot__local-deal-list" aria-label="Comparable local dealer inventory">
+                  <div className="market-snapshot__local-deal-list" role="region" aria-label="Comparable local dealer inventory">
                     {visibleLocalDeals.map(renderLocalDealRow)}
                   </div>
 
