@@ -1,5 +1,5 @@
 import { type CSSProperties, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { ExternalLink, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink, Info } from 'lucide-react';
 import { Badge } from '../Badge';
 import { OptimizedImage } from '../OptimizedImage';
 import { formatPrice } from '../../services/dealerService';
@@ -9,6 +9,7 @@ import {
   type DealerRadius,
   type MarketLocation,
   type MarketInventoryMatch,
+  type VehicleMarketStatistics,
 } from '../../services/marketIntelligenceService';
 import type { Vehicle } from '../../services/vehicleService';
 import './MarketIntelligenceSnapshot.css';
@@ -37,8 +38,9 @@ interface FactorItem {
     why: string;
     action: string;
   };
-  tone?: 'success' | 'dark';
+  tone?: 'success' | 'dark' | 'link';
   nowrap?: boolean;
+  onValueClick?: () => void;
 }
 
 interface ZipInputState {
@@ -168,51 +170,6 @@ const getPriceRelationshipCopy = ({
   return `${formatPrice(askingPrice - targetHigh)} above the high end of the typical local range`;
 };
 
-const getPricePositionFactorCopy = ({
-  askingPrice,
-  targetLow,
-  targetHigh,
-}: {
-  askingPrice: number;
-  targetLow: number;
-  targetHigh: number;
-}) => {
-  if (askingPrice < targetLow) {
-    return `About ${formatPriceDelta(targetLow - askingPrice)} below nearby listings`;
-  }
-
-  if (askingPrice <= targetHigh) {
-    return 'Within the typical local range';
-  }
-
-  return `About ${formatPriceDelta(askingPrice - targetHigh)} above nearby listings`;
-};
-
-const getPricePositionTone = ({
-  askingPrice,
-  targetHigh,
-}: {
-  askingPrice: number;
-  targetHigh: number;
-}): FactorItem['tone'] => {
-  if (askingPrice <= targetHigh) return 'success';
-  return undefined;
-};
-
-const getPricePositionSignalCopy = ({
-  askingPrice,
-  targetLow,
-  targetHigh,
-}: {
-  askingPrice: number;
-  targetLow: number;
-  targetHigh: number;
-}) => {
-  if (askingPrice < targetLow) return 'C/D read: favorable';
-  if (askingPrice <= targetHigh) return 'C/D read: typical locally';
-  return 'C/D read: worth negotiating';
-};
-
 const getInventorySignalCopy = (inventoryCount: number) => {
   if (inventoryCount >= 24) return 'Strong selection';
   if (inventoryCount >= 10) return 'Healthy selection';
@@ -223,6 +180,62 @@ const getDaysOnLotSignalCopy = (daysOnLot: number) => {
   if (daysOnLot >= 60) return 'Aged inventory';
   if (daysOnLot >= 30) return 'Normal timing';
   return 'Fresh inventory';
+};
+
+const capitalizeFirst = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
+
+const getChoiceNearbyCopy = ({
+  statistics,
+  inventoryCount,
+  isUsed,
+}: {
+  statistics: VehicleMarketStatistics;
+  inventoryCount: number;
+  isUsed: boolean;
+}) => {
+  const parts: string[] = [];
+
+  if (isUsed) {
+    if (statistics.oneOwnerCount > 0) parts.push(`${statistics.oneOwnerCount} with one owner`);
+    if (statistics.noAccidentCount > 0) parts.push('no accidents');
+    if (statistics.lowMileage !== undefined) parts.push('low miles');
+  } else {
+    if (statistics.goodGreatPriceCount > 0) parts.push(`${statistics.goodGreatPriceCount} priced to move`);
+    if (statistics.priceDropCount > 0) parts.push('recent price drops');
+    if (statistics.newlyListedCount > 0) parts.push('newly listed');
+  }
+
+  if (parts.length === 0) return getInventorySignalCopy(inventoryCount);
+
+  return capitalizeFirst(parts.join(', '));
+};
+
+const getDealChips = ({
+  match,
+  averageMileage,
+}: {
+  match: MarketInventoryMatch;
+  averageMileage?: number;
+}): string[] => {
+  if (match.unit.isNew) {
+    return [
+      getDisplayMsrp(match) > match.unit.price ? 'Priced below MSRP' : null,
+      (match.unit.recentPriceDropAmount ?? 0) > 0 ? 'Price dropped' : null,
+      match.unit.daysOnLot !== undefined && match.unit.daysOnLot <= 30 ? 'Newly listed' : null,
+      match.unit.isCertified ? 'Certified' : null,
+    ].filter(Boolean) as string[];
+  }
+
+  return [
+    match.unit.accidents === 0 ? 'No accidents reported' : null,
+    match.unit.owners === 1 ? 'One owner' : null,
+    (match.unit.recentPriceDropAmount ?? 0) > 0 ? 'Price dropped' : null,
+    match.unit.carfaxScore ? 'Free history report' : null,
+    averageMileage !== undefined && (match.unit.mileage ?? Number.POSITIVE_INFINITY) < averageMileage
+      ? 'Low mileage'
+      : null,
+  ].filter(Boolean) as string[];
 };
 
 const getBottomLineCopy = (assessment: PriceAssessment, hasHistoryRisk: boolean) => {
@@ -590,6 +603,7 @@ const MarketIntelligenceSnapshot = ({
   const [localDealTrimFilter, setLocalDealTrimFilter] = useState<string>('Base');
   const [activeLocalDealKey, setActiveLocalDealKey] = useState<string | null>(null);
   const activeLocalDealTimeoutRef = useRef<number | null>(null);
+  const dealsScrollerRef = useRef<HTMLDivElement>(null);
   const zipCode = zipInput.sourceZipCode === currentLocationZipCode ? zipInput.value : currentLocationZipCode;
   const zipError = zipInput.sourceZipCode === currentLocationZipCode ? zipInput.error : '';
 
@@ -793,32 +807,41 @@ const MarketIntelligenceSnapshot = ({
     'recent price trends',
   ].filter(Boolean).join(', ');
 
+  const typicalPriceNearYou = Math.round(market.averagePrice / 50) * 50;
+  const typicalPriceRangeCopy =
+    statistics.lowPrice !== undefined && statistics.highPrice !== undefined
+      ? `Range ${formatPrice(statistics.lowPrice)} to ${formatPrice(statistics.highPrice)}`
+      : 'Based on nearby listings';
+  const choiceNearbyCopy = getChoiceNearbyCopy({
+    statistics,
+    inventoryCount: market.inventoryCount,
+    isUsed,
+  });
+
   const factors: FactorItem[] = [
     {
-      label: 'C/D Price Read',
-      value: getPricePositionFactorCopy({ askingPrice, targetLow, targetHigh }),
-      description: getPricePositionSignalCopy({ askingPrice, targetLow, targetHigh }),
+      label: 'Typical Price Near You',
+      value: formatPrice(typicalPriceNearYou),
+      description: typicalPriceRangeCopy,
       help: {
-        why: isUsed
-          ? 'Shows how this asking price compares with similar local listings.'
-          : 'Shows how this asking price compares with similar new local listings.',
+        why: 'A typical local asking price for this vehicle, based on comparable nearby listings.',
         action: isUsed
-          ? 'Use nearby listings as a reference, then confirm condition, fees, and history.'
-          : 'Compare MSRP, incentives, dealer fees, and included equipment before deciding.',
+          ? 'Use it as a benchmark, then confirm condition, mileage, fees, and history.'
+          : 'Use it as a benchmark, then compare MSRP, incentives, and dealer fees before deciding.',
       },
-      tone: getPricePositionTone({ askingPrice, targetHigh }),
     },
     {
-      label: 'Available Near You',
-      value: `${market.inventoryCount} listings`,
-      description: getInventorySignalCopy(market.inventoryCount),
+      label: 'Choice Nearby',
+      value: `${market.inventoryCount} available`,
+      description: choiceNearbyCopy,
       help: {
-        why: 'More comparable listings make the local signal more reliable.',
+        why: 'How many comparable vehicles are listed near you right now.',
         action: isUsed
-          ? 'Compare trims and nearby dealers before committing to one listing.'
-          : 'Compare trims, incentives, and nearby dealers before choosing an offer.',
+          ? 'More choice means more leverage — compare trims and dealers before committing.'
+          : 'More choice means more leverage — compare trims, incentives, and dealers before committing.',
       },
-      tone: market.inventoryCount >= 10 ? 'dark' : undefined,
+      tone: 'link',
+      onValueClick: onSeeLocalInventory,
     },
     {
       label: 'Price Trend',
@@ -831,10 +854,9 @@ const MarketIntelligenceSnapshot = ({
           : 'If prices are falling, ask dealers to compete with the latest local offers.',
       },
       tone: 'success',
-      nowrap: true,
     },
     {
-      label: 'Avg. days on lot',
+      label: 'Avg. Days on Lot',
       value: `${Math.round(market.averageDaysOnLot)} days`,
       description: getDaysOnLotSignalCopy(market.averageDaysOnLot),
       help: {
@@ -847,6 +869,18 @@ const MarketIntelligenceSnapshot = ({
       },
     },
   ];
+
+  const strongDeals = plottedMatches
+    .map((match) => ({ match, chips: getDealChips({ match, averageMileage: statistics.averageMileage }) }))
+    .filter(({ match, chips }) => match.unit.price <= targetHigh && chips.length >= 2)
+    .sort((a, b) => a.match.unit.price - b.match.unit.price)
+    .slice(0, 8);
+
+  const scrollDeals = (direction: -1 | 1) => {
+    const scroller = dealsScrollerRef.current;
+    if (!scroller) return;
+    scroller.scrollBy({ left: direction * scroller.clientWidth * 0.9, behavior: 'smooth' });
+  };
 
   const renderLocalDealRow = (match: MarketInventoryMatch) => {
     const localDealTone = getPriceBandTone({
@@ -902,6 +936,7 @@ const MarketIntelligenceSnapshot = ({
   };
 
   return (
+    <>
     <section
       id="market-intelligence-snapshot"
       className={`market-snapshot market-snapshot--${market.condition}`}
@@ -910,8 +945,8 @@ const MarketIntelligenceSnapshot = ({
       <div className="market-snapshot__inner">
         <header className="market-snapshot__header">
           <div className="market-snapshot__header-copy">
-            <h2 id="market-snapshot-title">Local Signals</h2>
-            <p className="market-snapshot__context">{marketContextLabel}</p>
+            <p className="market-snapshot__eyebrow">Local Market Snapshot</p>
+            <h2 id="market-snapshot-title">{marketContextLabel}</h2>
           </div>
 
           <div className="market-snapshot__market-form">
@@ -1012,9 +1047,19 @@ const MarketIntelligenceSnapshot = ({
                       </span>
                     </span>
                   </div>
-                  <strong className={factorValueClassName}>
-                    {factor.value}
-                  </strong>
+                  {factor.onValueClick ? (
+                    <button
+                      type="button"
+                      className={factorValueClassName}
+                      onClick={factor.onValueClick}
+                    >
+                      {factor.value}
+                    </button>
+                  ) : (
+                    <strong className={factorValueClassName}>
+                      {factor.value}
+                    </strong>
+                  )}
                   <p>{factor.description}</p>
                 </div>
               );
@@ -1136,7 +1181,7 @@ const MarketIntelligenceSnapshot = ({
                           <span>{tooltipHistoryLabel}</span>
                         </div>
                         <div className="market-snapshot__price-tooltip-actions">
-                          <span className={`market-snapshot__price-tooltip-badge ${tooltipBadgeLabel === 'Best value' || tooltipBadgeLabel === 'Best price' ? 'market-snapshot__price-tooltip-badge--solid' : ''}`}>
+                          <span className={`market-snapshot__price-tooltip-badge ${tooltipBadgeLabel === 'Best value' ? 'market-snapshot__price-tooltip-badge--solid' : ''}`}>
                             {tooltipBadgeLabel}
                           </span>
                           <span className="market-snapshot__price-tooltip-cta">View listing</span>
@@ -1427,6 +1472,95 @@ const MarketIntelligenceSnapshot = ({
         </details>
       </div>
     </section>
+
+    {strongDeals.length > 0 && (
+      <section className="market-snapshot-deals" aria-labelledby="market-snapshot-deals-title">
+        <div className="market-snapshot-deals__head">
+          <h2 id="market-snapshot-deals-title">Strongest Deals Nearby</h2>
+          <p>At or under the typical local price, backed by at least two quality signals.</p>
+        </div>
+
+        <div className="market-snapshot-deals__scroller" ref={dealsScrollerRef}>
+          {strongDeals.map(({ match, chips }) => {
+            const listingUrl = getListingUrl(match);
+            const dealTitle = `${match.unit.year} ${match.unit.make} ${match.unit.model}`;
+            const dealTrim = getMatchTrimLabel(match) || match.unit.trim;
+            const dealMeta = [
+              !match.unit.isNew ? formatMileageValue(match.unit.mileage) : null,
+              match.unit.daysOnLot !== undefined ? `${match.unit.daysOnLot} days listed` : null,
+            ].filter(Boolean).join(' · ');
+
+            return (
+              <article key={`${getLocalDealKey(match)}-strong`} className="market-snapshot-deals__card">
+                <a
+                  className="market-snapshot-deals__media-link"
+                  href={listingUrl}
+                  aria-label={`View ${getVehicleMatchTitle(match)} at ${match.dealer.name}`}
+                >
+                  <span className="market-snapshot-deals__badge">Good Deal</span>
+                  <OptimizedImage
+                    src={match.unit.imageUrl ?? vehicle.image}
+                    alt={getVehicleMatchTitle(match)}
+                    aspectRatio="16/10"
+                    wrapperClassName="market-snapshot-deals__media"
+                  />
+                </a>
+
+                <div className="market-snapshot-deals__body">
+                  {dealTrim && <p className="market-snapshot-deals__trim">{dealTrim}</p>}
+                  <h3 className="market-snapshot-deals__title">{dealTitle}</h3>
+                  <strong className="market-snapshot-deals__price">{formatPrice(match.unit.price)}</strong>
+                  {dealMeta && <p className="market-snapshot-deals__meta">{dealMeta}</p>}
+
+                  {chips.length > 0 && (
+                    <div className="market-snapshot-deals__chips" aria-label="Quality signals">
+                      {chips.map((chip) => (
+                        <span
+                          key={chip}
+                          className={`market-snapshot-deals__chip ${chip === 'Price dropped' ? 'market-snapshot-deals__chip--drop' : ''}`}
+                        >
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="market-snapshot-deals__dealer">
+                    {match.dealer.name}
+                    {match.dealer.distance !== undefined ? ` · ${match.dealer.distance.toFixed(1)} mi away` : ''}
+                  </p>
+                  {match.unit.vin && <p className="market-snapshot-deals__vin">VIN {match.unit.vin}</p>}
+
+                  <div className="market-snapshot-deals__actions">
+                    <a className="market-snapshot-deals__cta market-snapshot-deals__cta--primary" href={listingUrl}>
+                      View listing
+                    </a>
+                    <a className="market-snapshot-deals__cta market-snapshot-deals__cta--secondary" href={listingUrl}>
+                      Compare
+                    </a>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="market-snapshot-deals__foot">
+          <span>
+            Showing {strongDeals.length} of {strongDeals.length} good deals — scroll for more.
+          </span>
+          <div className="market-snapshot-deals__nav" aria-label="Scroll deals">
+            <button type="button" aria-label="Previous deals" onClick={() => scrollDeals(-1)}>
+              <ChevronLeft size={18} aria-hidden="true" />
+            </button>
+            <button type="button" aria-label="Next deals" onClick={() => scrollDeals(1)}>
+              <ChevronRight size={18} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </section>
+    )}
+    </>
   );
 };
 

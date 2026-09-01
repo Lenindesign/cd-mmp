@@ -9,6 +9,9 @@ interface FooterProps {
   onAccountPromptOpen?: () => void;
 }
 
+const DESIGN_SYSTEM_STORYBOOK_URL =
+  'https://lenindesign.github.io/cd-mmp/?path=/docs/introduction--docs';
+
 const MARKET_INTELLIGENCE_STORYBOOK_URL =
   'https://lenindesign.github.io/cd-mmp/?path=/story/marketplace-marketintelligencesnapshot--kia-forte-feedback-review';
 
@@ -76,7 +79,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
     {
       title: 'Prototypes',
       links: [
-        { label: 'Design System', path: 'https://lenindesign.github.io/cd-mmp/?path=/docs/introduction--docs', external: true },
+        { label: 'Design System', path: DESIGN_SYSTEM_STORYBOOK_URL, external: true },
         { label: 'Market Intelligence Storybook', path: MARKET_INTELLIGENCE_STORYBOOK_URL, external: true },
         { label: 'Honda Accord (Concept)', path: '/2026/Honda/Accord/concept' },
         { label: 'Honda Accord (Standard)', path: '/2026/Honda/Accord' },
@@ -196,7 +199,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <a href="#" className="footer__legal-link">Terms of Use</a>
               <a href="#" className="footer__legal-link">Cookie Policy</a>
               <a href="#" className="footer__legal-link">Accessibility</a>
-              <Link to="/design-system" className="footer__legal-link">Design System</Link>
+              <a href={DESIGN_SYSTEM_STORYBOOK_URL} className="footer__legal-link" target="_blank" rel="noopener noreferrer">Design System</a>
               <a href={MARKET_INTELLIGENCE_STORYBOOK_URL} className="footer__legal-link" target="_blank" rel="noopener noreferrer">Market Intelligence Storybook</a>
               <Link to="/rankings" className="footer__legal-link">Vehicle Ranking</Link>
               <Link to="/admin/vehicle-ratings" className="footer__legal-link">Editor Portal</Link>
