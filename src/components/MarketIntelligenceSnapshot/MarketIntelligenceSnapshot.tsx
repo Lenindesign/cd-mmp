@@ -1,6 +1,7 @@
 import { type CSSProperties, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, ExternalLink, Info } from 'lucide-react';
 import { Badge } from '../Badge';
+import { Button } from '../Button';
 import { OptimizedImage } from '../OptimizedImage';
 import { formatPrice } from '../../services/dealerService';
 import {
@@ -21,6 +22,7 @@ interface MarketIntelligenceSnapshotProps {
   onLocationChange: (location: MarketLocation) => void;
   onRadiusChange: (radiusMiles: DealerRadius) => void;
   onSeeLocalInventory: () => void;
+  showLocalComparison?: boolean;
 }
 
 const DEALER_RADIUS_OPTIONS: DealerRadius[] = [10, 25, 50, 75];
@@ -583,6 +585,25 @@ const getRecommendationSignals = ({
   return signals.length > 0 ? signals.slice(0, 3) : ['local inventory benchmark'];
 };
 
+const getBuySignal = ({
+  priceTone,
+  inventoryLabel,
+  demandLabel,
+}: {
+  priceTone: PriceAssessment['tone'];
+  inventoryLabel: string;
+  demandLabel: string;
+}) => {
+  const score =
+    (priceTone === 'opportunity' ? 2 : priceTone === 'market' ? 1 : 0) +
+    (inventoryLabel === 'Limited' ? 2 : inventoryLabel === 'Moderate' ? 1 : 0) +
+    (demandLabel === 'Soft' ? 2 : demandLabel === 'Moderate' ? 1 : 0);
+
+  if (score >= 4) return { label: 'Strong', level: 3 };
+  if (score >= 2) return { label: 'Average', level: 2 };
+  return { label: 'Limited', level: 1 };
+};
+
 const MarketIntelligenceSnapshot = ({
   vehicle,
   location,
@@ -590,6 +611,7 @@ const MarketIntelligenceSnapshot = ({
   onLocationChange,
   onRadiusChange,
   onSeeLocalInventory,
+  showLocalComparison = true,
 }: MarketIntelligenceSnapshotProps) => {
   const zipErrorId = useId();
   const factorHelpId = useId();
@@ -748,6 +770,11 @@ const MarketIntelligenceSnapshot = ({
   const inventoryLabel = market.inventoryCount >= 24 ? 'High Supply' : market.inventoryCount >= 10 ? 'Moderate' : 'Limited';
   const demandLabel = market.averageDaysOnLot <= 22 ? 'High' : market.averageDaysOnLot >= 45 ? 'Soft' : 'Moderate';
   const priceAssessment = getPriceAssessment({ askingPrice, targetLow, targetHigh });
+  const buySignal = getBuySignal({
+    priceTone: priceAssessment.tone,
+    inventoryLabel: inventoryLabel === 'High Supply' ? 'High' : inventoryLabel,
+    demandLabel,
+  });
   const priceRelationshipCopy = getPriceRelationshipCopy({ askingPrice, targetLow, targetHigh });
   const hasHistoryRisk = isUsed && Boolean(leadMatch) && (
     (leadMatch?.unit.accidents ?? 0) > 0 ||
@@ -817,6 +844,14 @@ const MarketIntelligenceSnapshot = ({
     inventoryCount: market.inventoryCount,
     isUsed,
   });
+  const marketSnapshotPills = [
+    market.inventoryCount > 0 ? `${market.inventoryCount} local matches give you real choice` : null,
+    isUsed && statistics.oneOwnerCount > 0 && statistics.noAccidentCount > 0
+      ? `${statistics.oneOwnerCount} of ${market.inventoryCount} are one-owner and ${statistics.noAccidentCount} report no accidents`
+      : !isUsed && statistics.goodGreatPriceCount > 0
+        ? `${statistics.goodGreatPriceCount} local matches are priced to move`
+        : null,
+  ].filter(Boolean) as string[];
 
   const factors: FactorItem[] = [
     {
@@ -947,6 +982,17 @@ const MarketIntelligenceSnapshot = ({
           <div className="market-snapshot__header-copy">
             <p className="market-snapshot__eyebrow">Local Market Snapshot</p>
             <h2 id="market-snapshot-title">{marketContextLabel}</h2>
+            <div
+              className={`market-snapshot__buy-signal market-snapshot__buy-signal--${buySignal.level}`}
+              aria-label={`Buy signal: ${buySignal.label}`}
+            >
+              <span className="market-snapshot__buy-signal-bars" aria-hidden="true">
+                {[1, 2, 3].map((bar) => (
+                  <span key={bar} className={bar <= buySignal.level ? 'is-active' : undefined} />
+                ))}
+              </span>
+              <span>Buy signal: {buySignal.label}</span>
+            </div>
           </div>
 
           <div className="market-snapshot__market-form">
@@ -1013,6 +1059,17 @@ const MarketIntelligenceSnapshot = ({
           aria-label={`Typical local asking range ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, ${leadMarkerLabel.toLowerCase()} ${formatPrice(askingPrice)}`}
           style={priceRangeStyle}
         >
+          {marketSnapshotPills.length > 0 && (
+            <div className="market-snapshot__evidence-pills" aria-label="Local market evidence">
+              {marketSnapshotPills.map((pill) => (
+                <span key={pill} className="market-snapshot__evidence-pill">
+                  <span aria-hidden="true">+</span>
+                  {pill}
+                </span>
+              ))}
+            </div>
+          )}
+
           <div className="market-snapshot__factor-grid" role="group" aria-label="Local market signal summary">
             {factors.map((factor, index) => {
               const factorValueClassName = [
@@ -1066,7 +1123,7 @@ const MarketIntelligenceSnapshot = ({
             })}
           </div>
 
-          <div
+          {showLocalComparison && <div
             className="market-snapshot__price-visual"
             role="region"
             aria-labelledby="market-snapshot-price-comparison-title"
@@ -1277,17 +1334,28 @@ const MarketIntelligenceSnapshot = ({
                 <p className="market-snapshot__local-deals-empty">No local matches for this trim.</p>
               )}
             </div>
-          </div>
+          </div>}
         </section>
 
-        <details className="market-snapshot__details-accordion">
-          <summary>
+        <div className="market-snapshot__details-cta">
+          <div className="market-snapshot__details-cta-copy">
+            <strong>More market details</strong>
+            <em>Buying guidance, price details, and comparable listings</em>
+          </div>
+          <button type="button" onClick={onSeeLocalInventory}>
+            See market trends
+          </button>
+        </div>
+
+        <div className="market-snapshot__details-content" hidden>
+          <details>
+            <summary>
             <span>
               <strong>More market details</strong>
               <em>Buying guidance, price details, and comparable listings</em>
             </span>
             <span className="market-snapshot__details-icon" aria-hidden="true" />
-          </summary>
+            </summary>
 
           <div className="market-snapshot__details-content">
             <section className="market-snapshot__expert-tips" aria-labelledby="market-snapshot-expert-tips-title">
@@ -1469,7 +1537,8 @@ const MarketIntelligenceSnapshot = ({
               Estimated from modeled listings for this vehicle and selected area. Prices exclude taxes and fees; availability may change.
             </p>
           </div>
-        </details>
+          </details>
+        </div>
       </div>
     </section>
 
@@ -1532,12 +1601,25 @@ const MarketIntelligenceSnapshot = ({
                   {match.unit.vin && <p className="market-snapshot-deals__vin">VIN {match.unit.vin}</p>}
 
                   <div className="market-snapshot-deals__actions">
-                    <a className="market-snapshot-deals__cta market-snapshot-deals__cta--primary" href={listingUrl}>
+                    <Button
+                      as="a"
+                      href={listingUrl}
+                      variant="primary"
+                      size="medium"
+                      fullWidth
+                      className="market-snapshot-deals__cta market-snapshot-deals__cta--primary"
+                    >
                       View listing
-                    </a>
-                    <a className="market-snapshot-deals__cta market-snapshot-deals__cta--secondary" href={listingUrl}>
+                    </Button>
+                    <Button
+                      as="a"
+                      href={listingUrl}
+                      variant="outline"
+                      size="medium"
+                      className="market-snapshot-deals__cta market-snapshot-deals__cta--secondary"
+                    >
                       Compare
-                    </a>
+                    </Button>
                   </div>
                 </div>
               </article>

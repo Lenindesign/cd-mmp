@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
@@ -101,6 +101,7 @@ const buildHeroReviewSummary = (vehicle: Vehicle, rating: number) => {
 
 const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProps) => {
   const params = useParams<{ year: string; make: string; model: string }>();
+  const [searchParams] = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTradeInModalOpen, setIsTradeInModalOpen] = useState(false);
   const [isMarketIntelligenceOpen, setIsMarketIntelligenceOpen] = useState(false);
@@ -112,6 +113,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
   const year = defaultYear || params.year;
   const make = defaultMake || params.make;
   const model = defaultModel || params.model;
+  const showLocalComparison = searchParams.get('marketSnapshot') !== 'focused';
   
   const slug = `${year}/${make}/${model}`;
   
@@ -273,6 +275,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               onLocationChange={setMarketLocation}
               onRadiusChange={setMarketIntelligenceRadius}
               onSeeLocalInventory={() => setIsMarketIntelligenceOpen(true)}
+              showLocalComparison={showLocalComparison}
             />
             <VehicleOverview 
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}

@@ -93,6 +93,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'EV Incentives Experience Guide', path: '/ev-incentives-experience' },
         { label: 'Used MMP Shopping CTAs', path: '/2025/Chevrolet/Trax' },
         { label: 'Market Snapshot (New Car)', path: '/2026/Chevrolet/Trax#market-intelligence-snapshot' },
+        { label: 'Local Market Snapshot (Focused)', path: '/2026/Chevrolet/Trax?marketSnapshot=focused#market-intelligence-snapshot' },
         { label: 'Market Snapshot (Used Car)', path: '/2025/Chevrolet/Trax#market-intelligence-snapshot' },
         { label: 'Payment Estimate Email Mock (New Car)', path: '/payment-estimate-email-mock.html?variant=standard', external: true },
         { label: 'Payment Estimate Email Mock (Used Car)', path: '/payment-estimate-email-mock.html?variant=used-car', external: true },
