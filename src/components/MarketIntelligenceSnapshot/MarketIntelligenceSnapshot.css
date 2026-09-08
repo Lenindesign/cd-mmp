@@ -53,6 +53,14 @@
   display: inline-flex;
   gap: 4px;
 }
+.market-snapshot__buy-signal-summary {
+  max-width: 46rem;
+  margin: var(--spacing-2) 0 0;
+  color: var(--color-gray-700);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
 
 .market-snapshot__buy-signal-bars span {
   width: 36px;

@@ -9,6 +9,8 @@ interface FooterProps {
   onAccountPromptOpen?: () => void;
 }
 
+const STORYBOOK_URL = 'https://lenindesign.github.io/cd-mmp/';
+
 const DESIGN_SYSTEM_STORYBOOK_URL =
   'https://lenindesign.github.io/cd-mmp/?path=/docs/introduction--docs';
 
@@ -201,6 +203,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <a href="#" className="footer__legal-link">Cookie Policy</a>
               <a href="#" className="footer__legal-link">Accessibility</a>
               <a href={DESIGN_SYSTEM_STORYBOOK_URL} className="footer__legal-link" target="_blank" rel="noopener noreferrer">Design System</a>
+              <a href={STORYBOOK_URL} className="footer__legal-link" target="_blank" rel="noopener noreferrer">Storybook</a>
               <a href={MARKET_INTELLIGENCE_STORYBOOK_URL} className="footer__legal-link" target="_blank" rel="noopener noreferrer">Market Intelligence Storybook</a>
               <Link to="/rankings" className="footer__legal-link">Vehicle Ranking</Link>
               <Link to="/admin/vehicle-ratings" className="footer__legal-link">Editor Portal</Link>
@@ -209,6 +212,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <Link to="/2026/Chevrolet/Trax?modalVersion=b" className="footer__legal-link">Modal Version B</Link>
               <Link to="/2026/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot New</Link>
               <Link to="/2025/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot Used</Link>
+              <Link to="/2026/Chevrolet/Trax/snapshot-v3#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot Graphic Only</Link>
               <Link to={EV_INCENTIVES_PATH} className="footer__legal-link">EV Incentives</Link>
               <Link to="/ev-incentives-experience" className="footer__legal-link">EV Experience Guide</Link>
             </div>

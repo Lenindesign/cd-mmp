@@ -23,7 +23,14 @@ interface MarketIntelligenceSnapshotProps {
   onRadiusChange: (radiusMiles: DealerRadius) => void;
   onSeeLocalInventory: () => void;
   showLocalComparison?: boolean;
+  /**
+   * 'full' shows the four market factor cards above the price comparison.
+   * 'compact' drops them so the price comparison graphic carries the market read.
+   */
+  variant?: MarketSnapshotVariant;
 }
+
+export type MarketSnapshotVariant = 'full' | 'compact';
 
 const DEALER_RADIUS_OPTIONS: DealerRadius[] = [10, 25, 50, 75];
 
@@ -596,12 +603,71 @@ const getBuySignal = ({
 }) => {
   const score =
     (priceTone === 'opportunity' ? 2 : priceTone === 'market' ? 1 : 0) +
-    (inventoryLabel === 'Limited' ? 2 : inventoryLabel === 'Moderate' ? 1 : 0) +
+    (inventoryLabel === 'High' ? 2 : inventoryLabel === 'Moderate' ? 1 : 0) +
     (demandLabel === 'Soft' ? 2 : demandLabel === 'Moderate' ? 1 : 0);
 
   if (score >= 4) return { label: 'Strong', level: 3 };
   if (score >= 2) return { label: 'Average', level: 2 };
   return { label: 'Limited', level: 1 };
+};
+
+const formatFactorList = (factors: string[]) =>
+  factors.length <= 1
+    ? factors.join('')
+    : `${factors.slice(0, -1).join(', ')} and ${factors[factors.length - 1]}`;
+
+const getBuySignalSummary = ({
+  level,
+  priceTone,
+  inventoryLabel,
+  demandLabel,
+}: {
+  level: number;
+  priceTone: PriceAssessment['tone'];
+  inventoryLabel: string;
+  demandLabel: string;
+}) => {
+  const favorable = [
+    priceTone === 'opportunity' ? 'local asking prices sit below the typical range' : null,
+    inventoryLabel === 'High' ? 'there is plenty of local supply to compare' : null,
+    demandLabel === 'Soft' ? 'cars are sitting on lots longer than usual' : null,
+  ].filter((factor): factor is string => factor !== null);
+
+  const unfavorable = [
+    priceTone === 'over' ? 'local asking prices sit above the typical range' : null,
+    inventoryLabel === 'Limited' ? 'local supply is tight' : null,
+    demandLabel === 'High' ? 'cars are selling quickly' : null,
+  ].filter((factor): factor is string => factor !== null);
+
+  if (level === 3) {
+    const lead = favorable.length > 0
+      ? `This is a good market to buy in: ${formatFactorList(favorable)}.`
+      : 'This is a good market to buy in.';
+
+    return unfavorable.length > 0
+      ? `${lead} Keep in mind that ${formatFactorList(unfavorable)}, so move on the right car rather than waiting for a better window.`
+      : `${lead} If the car fits, there is little reason to wait.`;
+  }
+
+  if (level === 2) {
+    if (favorable.length > 0 && unfavorable.length > 0) {
+      return `This is an average market to buy in: ${formatFactorList(favorable)}, but ${formatFactorList(unfavorable)}. You can buy now without overpaying, though it is worth comparing a few listings first.`;
+    }
+
+    if (unfavorable.length > 0) {
+      return `This is an average market to buy in, and ${formatFactorList(unfavorable)}. You can buy now without overpaying, though it is worth comparing a few listings first.`;
+    }
+
+    return favorable.length > 0
+      ? `This is an average market to buy in: ${formatFactorList(favorable)}. Nothing here argues for waiting, but nothing pushes you to hurry either.`
+      : 'This is an average market to buy in. Nothing here argues for waiting, but nothing pushes you to hurry either.';
+  }
+
+  const lead = unfavorable.length > 0
+    ? `This is a tougher market to buy in: ${formatFactorList(unfavorable)}.`
+    : 'This is a tougher market to buy in.';
+
+  return `${lead} Widening your search or waiting for supply to build will likely get you a better price.`;
 };
 
 const MarketIntelligenceSnapshot = ({
@@ -612,7 +678,9 @@ const MarketIntelligenceSnapshot = ({
   onRadiusChange,
   onSeeLocalInventory,
   showLocalComparison = true,
+  variant = 'full',
 }: MarketIntelligenceSnapshotProps) => {
+  const showFactorGrid = variant === 'full';
   const zipErrorId = useId();
   const factorHelpId = useId();
   const currentLocationZipCode = location.zipCode ?? '';
@@ -770,9 +838,16 @@ const MarketIntelligenceSnapshot = ({
   const inventoryLabel = market.inventoryCount >= 24 ? 'High Supply' : market.inventoryCount >= 10 ? 'Moderate' : 'Limited';
   const demandLabel = market.averageDaysOnLot <= 22 ? 'High' : market.averageDaysOnLot >= 45 ? 'Soft' : 'Moderate';
   const priceAssessment = getPriceAssessment({ askingPrice, targetLow, targetHigh });
+  const buySignalInventoryLabel = inventoryLabel === 'High Supply' ? 'High' : inventoryLabel;
   const buySignal = getBuySignal({
     priceTone: priceAssessment.tone,
-    inventoryLabel: inventoryLabel === 'High Supply' ? 'High' : inventoryLabel,
+    inventoryLabel: buySignalInventoryLabel,
+    demandLabel,
+  });
+  const buySignalSummary = getBuySignalSummary({
+    level: buySignal.level,
+    priceTone: priceAssessment.tone,
+    inventoryLabel: buySignalInventoryLabel,
     demandLabel,
   });
   const priceRelationshipCopy = getPriceRelationshipCopy({ askingPrice, targetLow, targetHigh });
@@ -974,7 +1049,7 @@ const MarketIntelligenceSnapshot = ({
     <>
     <section
       id="market-intelligence-snapshot"
-      className={`market-snapshot market-snapshot--${market.condition}`}
+      className={`market-snapshot market-snapshot--${market.condition} market-snapshot--${variant}`}
       aria-labelledby="market-snapshot-title"
     >
       <div className="market-snapshot__inner">
@@ -993,6 +1068,7 @@ const MarketIntelligenceSnapshot = ({
               </span>
               <span>Buy signal: {buySignal.label}</span>
             </div>
+            <p className="market-snapshot__buy-signal-summary">{buySignalSummary}</p>
           </div>
 
           <div className="market-snapshot__market-form">
@@ -1070,7 +1146,7 @@ const MarketIntelligenceSnapshot = ({
             </div>
           )}
 
-          <div className="market-snapshot__factor-grid" role="group" aria-label="Local market signal summary">
+          {showFactorGrid && <div className="market-snapshot__factor-grid" role="group" aria-label="Local market signal summary">
             {factors.map((factor, index) => {
               const factorValueClassName = [
                 'market-snapshot__factor-value',
@@ -1121,7 +1197,7 @@ const MarketIntelligenceSnapshot = ({
                 </div>
               );
             })}
-          </div>
+          </div>}
 
           {showLocalComparison && <div
             className="market-snapshot__price-visual"

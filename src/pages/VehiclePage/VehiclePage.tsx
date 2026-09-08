@@ -17,7 +17,7 @@ import VehicleRanking from '../../components/VehicleRanking';
 import MarketSpeed from '../../components/MarketSpeed';
 import VehicleOverview from '../../components/VehicleOverview';
 import OfficialELotCarousel from '../../components/OfficialELotCarousel';
-import MarketIntelligenceSnapshot from '../../components/MarketIntelligenceSnapshot';
+import MarketIntelligenceSnapshot, { type MarketSnapshotVariant } from '../../components/MarketIntelligenceSnapshot';
 import VehicleMarketIntelligenceModal from '../../components/VehicleMarketIntelligenceModal/VehicleMarketIntelligenceModal';
 import ExitIntentModal from '../../components/ExitIntentModal';
 import AdBanner from '../../components/AdBanner';
@@ -40,6 +40,8 @@ interface VehiclePageProps {
   defaultYear?: string;
   defaultMake?: string;
   defaultModel?: string;
+  /** Presentation of the local market snapshot. 'compact' drops the market factor cards. */
+  marketSnapshotVariant?: MarketSnapshotVariant;
 }
 
 interface CalculatorTradeInEstimate {
@@ -99,7 +101,7 @@ const buildHeroReviewSummary = (vehicle: Vehicle, rating: number) => {
   };
 };
 
-const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProps) => {
+const VehiclePage = ({ defaultYear, defaultMake, defaultModel, marketSnapshotVariant = 'full' }: VehiclePageProps) => {
   const params = useParams<{ year: string; make: string; model: string }>();
   const [searchParams] = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -276,6 +278,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel }: VehiclePageProp
               onRadiusChange={setMarketIntelligenceRadius}
               onSeeLocalInventory={() => setIsMarketIntelligenceOpen(true)}
               showLocalComparison={showLocalComparison}
+              variant={marketSnapshotVariant}
             />
             <VehicleOverview 
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}

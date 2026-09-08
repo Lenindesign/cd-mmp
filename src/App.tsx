@@ -1,5 +1,5 @@
 import { Fragment, lazy, Suspense, useMemo, useState } from 'react';
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useParams, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ExitIntentModal from './components/ExitIntentModal';
@@ -111,6 +111,13 @@ const PageLoader = () => (
     <LoadingSpinner size="large" centered label="Loading page..." />
   </div>
 );
+
+/** Redirect the former vehicle-prefixed URL shape to the canonical Y/M/M route. */
+const LegacyVehicleRedirect = () => {
+  const { year, make, model } = useParams<{ year: string; make: string; model: string }>();
+
+  return <Navigate to={`/${year}/${make}/${model}`} replace />;
+};
 
 /** Renders CarFinderChat only when user has enabled it from the footer */
 const CarFinderChatGate = () => {
@@ -245,8 +252,10 @@ const internalRoutes = (
 
 const vehicleDetailRoutes = (
   <>
+    <Route path="/vehicle/:year/:make/:model" element={<LegacyVehicleRedirect />} />
     <Route path="/:year/:make/:model/reliability-recalls" element={<ReliabilityRecallsPage />} />
     <Route path="/:year/:make/:model" element={<VehiclePage />} />
+    <Route path="/:year/:make/:model/snapshot-v3" element={<VehiclePage marketSnapshotVariant="compact" />} />
     <Route path="/:year/:make/:model/v1" element={<VehiclePageVariant variant="v1" />} />
     <Route path="/:year/:make/:model/v2" element={<VehiclePageVariant variant="v2" />} />
     <Route path="/:year/:make/:model/v3" element={<VehiclePageVariant variant="v3" />} />
