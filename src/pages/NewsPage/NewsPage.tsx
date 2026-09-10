@@ -205,7 +205,7 @@ export const NewsPage: React.FC = () => {
             href="/deals"
           >
             {bestDeals.map(deal => (
-              <Link key={deal.id} to={`/vehicle/${deal.slug}`} className="news-page__deal-card">
+              <Link key={deal.id} to={`/${deal.slug}`} className="news-page__deal-card">
                 <DealCardImage src={deal.image} alt={deal.vehicleName} badge={deal.type} />
                 <div className="news-page__deal-card-body">
                   <h3 className="news-page__deal-card-name">{deal.vehicleName}</h3>

@@ -21,6 +21,7 @@ import type { IncentiveOfferDetail } from '../../components/IncentivesModal/Ince
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
 import { DealCard } from '../../components/DealCard';
+import DealsViewToggle, { type DealsViewMode } from '../../components/DealsViewToggle';
 import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveBuyingFilterDestination } from '../../utils/buyingFilterNavigation';
@@ -203,6 +204,7 @@ const ZeroAprDealsPage = () => {
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
+  const [viewMode, setViewMode] = useState<DealsViewMode>('grid');
 
   const initialFiltersFromNavState = (location.state as { filters?: DealsFilterState } | null)?.filters;
   const [filters, setFilters] = useState<DealsFilterState>(() => {
@@ -968,11 +970,12 @@ const ZeroAprDealsPage = () => {
               <span className="deals-filter-badge" aria-label={`${activeFilterPills.length} active filters`}>{activeFilterPills.length}</span>
             )}
           </button>
+          <DealsViewToggle value={viewMode} onChange={setViewMode} />
         </div>
       </div>
 
       {deals.length > 0 && (
-        <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
+        <AdBanner imageUrl="https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
       )}
 
       <div className="zero-apr-page__content">
@@ -1038,7 +1041,7 @@ const ZeroAprDealsPage = () => {
                   <div className="zero-apr-page__segment">
                     <div className="zero-apr-page__main">
                       <section className="zero-apr-page__deals-section">
-                        <div className="zero-apr-page__grid" role="list">
+                        <div className={`zero-apr-page__grid deals-results-grid deals-results-grid--${viewMode}`} role="list">
                           {chunk.map((deal, i) => (
                             <Fragment key={deal.id}>
                               {i > 0 && i % 4 === 0 && <GridAd />}

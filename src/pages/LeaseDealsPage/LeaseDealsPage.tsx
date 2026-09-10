@@ -18,6 +18,7 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
+import DealsViewToggle, { type DealsViewMode } from '../../components/DealsViewToggle';
 import { BEST_BUYING_DEALS_PATH, EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
 import { useFilterOpen } from '../../hooks/useFilterOpen';
 import { resolveLeaseFilterDestination } from '../../utils/leaseFilterNavigation';
@@ -59,6 +60,7 @@ const LeaseDealsPage = () => {
   const [pendingSaveVehicle, setPendingSaveVehicle] = useState<{ name: string; slug: string; image?: string } | null>(null);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useFilterOpen();
+  const [viewMode, setViewMode] = useState<DealsViewMode>('grid');
   const initialFiltersFromState = (location.state as { filters?: DealsFilterState } | null)?.filters;
   const [filters, setFilters] = useState<DealsFilterState>(initialFiltersFromState ?? DEFAULT_FILTERS);
 
@@ -293,10 +295,11 @@ const LeaseDealsPage = () => {
               <span className="deals-filter-badge" aria-label={`${activeFilterPills.length} active filters`}>{activeFilterPills.length}</span>
             )}
           </button>
+          <DealsViewToggle value={viewMode} onChange={setViewMode} />
         </div>
       </div>
 
-      <AdBanner imageUrl="https://d2kde5ohu8qb21.cloudfront.net/files/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
+      <AdBanner imageUrl="https://hips.hearstapps.com/mtg-prod/693a37c1e2108b000272edd6/nissan.jpg" altText="Advertisement" minimalDesktop mobileCompact />
 
       <div className="lease-deals-page__content">
         <div className={`container${deals.length > 0 ? ' lease-deals-page__container--stacked' : ''}`}>
@@ -329,7 +332,7 @@ const LeaseDealsPage = () => {
                   <div className="lease-deals-page__segment">
                     <div className="lease-deals-page__main">
                       <section className="lease-deals-page__section">
-                        <div className="lease-deals-page__grid" role="list">
+                        <div className={`lease-deals-page__grid deals-results-grid deals-results-grid--${viewMode}`} role="list">
                           {chunk.map((deal, i) => {
                             const vehicleName = `${deal.vehicle.year} ${deal.vehicle.make} ${deal.vehicle.model}`;
                             const saved = isVehicleSaved(vehicleName);

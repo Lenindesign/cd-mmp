@@ -4,6 +4,7 @@ import { ChevronRight, SlidersHorizontal, X } from 'lucide-react';
 import { DealCard } from '../../components/DealCard';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterOptions, DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
+import DealsViewToggle, { type DealsViewMode } from '../../components/DealsViewToggle';
 import AdBanner from '../../components/AdBanner';
 import AdSidebar from '../../components/AdSidebar';
 import { GridAd } from '../../components/GridAd';
@@ -109,6 +110,7 @@ const EvIncentivesPage = () => {
   const [filterOpen, setFilterOpen] = useFilterOpen();
   const [activeIncentive, setActiveIncentive] = useState<EvIncentive | null>(null);
   const [savedIncentives, setSavedIncentives] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<DealsViewMode>('grid');
 
   useEffect(() => {
     setFilters(initialFilters);
@@ -324,6 +326,7 @@ const EvIncentivesPage = () => {
               <span className="deals-filter-badge" aria-label={`${activeFilterPills.pills.length} active filters`}>{activeFilterPills.pills.length}</span>
             )}
           </button>
+          <DealsViewToggle value={viewMode} onChange={setViewMode} />
         </div>
       </div>
 
@@ -353,7 +356,7 @@ const EvIncentivesPage = () => {
                   <div className="zero-apr-page__segment">
                     <div className="zero-apr-page__main">
                       <section className="zero-apr-page__deals-section">
-                        <div className="zero-apr-page__grid" role="list">
+                        <div className={`zero-apr-page__grid deals-results-grid deals-results-grid--${viewMode}`} role="list">
                           {chunk.map((incentive, index) => {
                             const vehicle = getVehicleBySlug(incentive.vehicleSlug);
                             const displayType = getEvIncentiveDisplayType(incentive);
