@@ -91,6 +91,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Rate Your Car', path: '/rate-your-car' },
         { label: 'Chatbot Experience Guide', path: '/chatbot-experience' },
         { label: 'Market Snapshot Concepts', path: '/market-snapshot-concepts' },
+        { label: 'Local Signals 2', path: '/local-signals-2' },
         { label: 'EV Incentives Page', path: EV_INCENTIVES_PATH },
         { label: 'EV Incentives Experience Guide', path: '/ev-incentives-experience' },
         { label: 'Used MMP Shopping CTAs', path: '/2025/Chevrolet/Trax' },
@@ -213,6 +214,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
               <Link to="/2026/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot New</Link>
               <Link to="/2025/Chevrolet/Trax#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot Used</Link>
               <Link to="/2026/Chevrolet/Trax/snapshot-v3#market-intelligence-snapshot" className="footer__legal-link">Market Snapshot Graphic Only</Link>
+              <Link to="/local-signals-2" className="footer__legal-link">Local Signals 2</Link>
               <Link to={EV_INCENTIVES_PATH} className="footer__legal-link">EV Incentives</Link>
               <Link to="/ev-incentives-experience" className="footer__legal-link">EV Experience Guide</Link>
             </div>

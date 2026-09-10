@@ -1314,7 +1314,7 @@ const MarketIntelligenceSnapshot = ({
                           <span>{tooltipHistoryLabel}</span>
                         </div>
                         <div className="market-snapshot__price-tooltip-actions">
-                          <span className={`market-snapshot__price-tooltip-badge ${tooltipBadgeLabel === 'Best value' ? 'market-snapshot__price-tooltip-badge--solid' : ''}`}>
+                          <span className={`market-snapshot__price-tooltip-badge ${tooltipBadgeLabel === 'Best value' || tooltipBadgeLabel === 'Best local deal' ? 'market-snapshot__price-tooltip-badge--solid' : ''}`}>
                             {tooltipBadgeLabel}
                           </span>
                           <span className="market-snapshot__price-tooltip-cta">View listing</span>

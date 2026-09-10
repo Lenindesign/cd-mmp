@@ -356,6 +356,7 @@ const EvIncentivesPage = () => {
                       <section className="zero-apr-page__deals-section">
                         <div className={`zero-apr-page__grid deals-results-grid deals-results-grid--${viewMode}`} role="list">
                           {chunk.map((incentive, index) => {
+                            if (!incentive) return null;
                             const vehicle = getVehicleBySlug(incentive.vehicleSlug);
                             const displayType = getEvIncentiveDisplayType(incentive);
                             const incentiveTypeLabel = EV_INCENTIVE_TYPE_LABELS[displayType];

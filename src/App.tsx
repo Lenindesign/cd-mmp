@@ -24,6 +24,7 @@ const VehiclesListPage = lazy(() => import('./pages/VehiclesListPage/VehiclesLis
 const DesignSystem = lazy(() => import('./pages/DesignSystem/DesignSystem'));
 const ChatbotExperiencePage = lazy(() => import('./pages/ChatbotExperiencePage/ChatbotExperiencePage'));
 const MarketSnapshotConceptsPage = lazy(() => import('./pages/MarketSnapshotConceptsPage/MarketSnapshotConceptsPage'));
+const LocalSignals2Page = lazy(() => import('./pages/LocalSignals2Page/LocalSignals2Page'));
 const EvIncentivesExperiencePage = lazy(() => import('./pages/EvIncentivesExperiencePage/EvIncentivesExperiencePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 
@@ -241,6 +242,8 @@ const internalRoutes = (
     <Route path="/design-system" element={<DesignSystem />} />
     <Route path="/chatbot-experience" element={<ChatbotExperiencePage />} />
     <Route path="/market-snapshot-concepts" element={<MarketSnapshotConceptsPage />} />
+    <Route path="/local-signals-2" element={<LocalSignals2Page />} />
+    <Route path="/local-signals-v2" element={<LocalSignals2Page />} />
     <Route path="/ev-incentives-experience" element={<EvIncentivesExperiencePage />} />
     <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
     <Route path="/admin/feedback" element={<FeedbackAdmin />} />
