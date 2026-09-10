@@ -152,8 +152,7 @@
   padding: 0;
   color: var(--color-white);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--border-radius-circle);
+  border: 0;
   cursor: help;
 }
 
