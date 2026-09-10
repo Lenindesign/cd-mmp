@@ -976,6 +976,45 @@
   text-decoration-color: currentColor;
 }
 
+.hero__offers-b-ev-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+}
+
+.hero__offers-b-ev-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--spacing-1-5);
+  padding: var(--spacing-1-5) var(--spacing-2-5);
+  color: var(--color-dark);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  text-decoration: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.hero__offers-b-ev-tag:hover,
+.hero__offers-b-ev-tag:focus-visible {
+  border-color: var(--color-blue-cobalt);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero__offers-b-ev-tag-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  color: var(--color-blue-cobalt-dark);
+}
+
+.hero__offers-b-ev-tag-text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
 .hero__offers-b-deal-link:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--color-blue-cobalt) 50%, transparent);
   outline-offset: 2px;

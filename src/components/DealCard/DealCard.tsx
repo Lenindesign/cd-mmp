@@ -26,6 +26,7 @@ export interface DealCardPayment {
   savingsTooltip?: string;
   expirationDate: string;
   expirationLabel?: string;
+  hideExpiration?: boolean;
   /** Optional cash back label for tiered finance deals (e.g. "+ up to $2,000 cash back") */
   cashBackLabel?: string;
 }
@@ -278,7 +279,7 @@ const DealCard: React.FC<DealCardProps> = ({
               )}
             </span>
           )}
-          <span className="deal-card__payment-expires">
+          {!payment.hideExpiration && <span className="deal-card__payment-expires">
             {payment.expirationLabel ?? `Expires ${formatExpiration(payment.expirationDate)}`}
             {eligibilityLabels && eligibilityLabels.length > 0 && (
               <>
@@ -288,7 +289,7 @@ const DealCard: React.FC<DealCardProps> = ({
                 </span>
               </>
             )}
-          </span>
+          </span>}
         </div>
 
         {/* Deal pill */}

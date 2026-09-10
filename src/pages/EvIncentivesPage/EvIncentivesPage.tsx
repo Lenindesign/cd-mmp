@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronRight, SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 import { DealCard } from '../../components/DealCard';
 import { DealsFilterModal } from '../../components/DealsFilterModal';
 import type { DealsFilterOptions, DealsFilterState, DealTypeOption } from '../../components/DealsFilterModal';
@@ -19,6 +19,7 @@ import {
   EV_INCENTIVE_TYPE_DESCRIPTIONS,
   getEvIncentiveDisplayType,
   getEvIncentives,
+  getEvIncentivePresentation,
   type EvIncentive,
 } from '../../services/evIncentivesService';
 import type { Incentive } from '../../services/incentiveAdapter';
@@ -207,6 +208,7 @@ const EvIncentivesPage = () => {
         const priceParts = activeIncentive.msrpRange.replace(/[^0-9,-]/g, '').split('-');
         const vehicleLabel = `${activeIncentive.year} ${activeIncentive.make} ${activeIncentive.model}`;
         const displayType = getEvIncentiveDisplayType(activeIncentive);
+        const presentation = getEvIncentivePresentation(activeIncentive);
         return {
           year: activeIncentive.year,
           make: activeIncentive.make,
@@ -215,17 +217,17 @@ const EvIncentivesPage = () => {
           imageUrl: activeIncentive.imageUrl || vehicle?.image,
           msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
           msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
-          offerHeadline: activeIncentive.amountLabel,
-          whatItMeans: activeIncentive.description,
+          offerHeadline: presentation?.modalOfferValue ?? activeIncentive.amountLabel,
+          whatItMeans: presentation?.modalWhatIsThisOffer ?? activeIncentive.description,
           yourSavings: activeIncentive.purchaseLeaseImpact,
           whoQualifies: activeIncentive.eligibility,
           eligibleTrims: activeIncentive.trimNames,
-          dontWaitText: activeIncentive.expirationDate
+          dontWaitText: presentation?.modalDontWaitText ?? (activeIncentive.expirationDate
             ? `This program expires ${formatExpiration(activeIncentive.expirationDate)}. Confirm eligibility, local availability, and stackability before you shop.`
-            : `${activeIncentive.stackabilityNote} Confirm local availability before you shop.`,
+            : `${activeIncentive.stackabilityNote} Confirm local availability before you shop.`),
           eventLabel: `EV incentive: ${EV_INCENTIVE_TYPE_LABELS[displayType]} from ${activeIncentive.providerName}`,
-          expirationDate: activeIncentive.expirationDate ?? 'Expiration varies by program',
-          offerChipLabel: EV_INCENTIVE_TYPE_LABELS[displayType],
+          expirationDate: presentation?.hideExpiration ? '' : activeIncentive.expirationDate ?? 'Expiration varies by program',
+          offerChipLabel: presentation?.modalOfferLabel ?? EV_INCENTIVE_TYPE_LABELS[displayType],
           formHeading: 'Questions About This EV Incentive?',
           defaultLeadMessage: `I would like more information about the ${activeIncentive.programName} EV incentive for the ${vehicleLabel}.`,
           primaryFormCtaLabel: 'ASK ABOUT INCENTIVE',
@@ -240,15 +242,15 @@ const EvIncentivesPage = () => {
         id: activeIncentive.id,
         type: 'special',
         title: activeIncentive.programName,
-        description: activeIncentive.description,
-        value: activeIncentive.amountLabel,
-        expirationDate: activeIncentive.expirationDate ?? 'Expiration varies by program',
-        terms: activeIncentive.purchaseLeaseImpact,
+        description: getEvIncentivePresentation(activeIncentive)?.modalWhatIsThisOffer ?? activeIncentive.description,
+        value: getEvIncentivePresentation(activeIncentive)?.modalOfferValue ?? activeIncentive.amountLabel,
+        expirationDate: getEvIncentivePresentation(activeIncentive)?.hideExpiration ? '' : activeIncentive.expirationDate ?? 'Expiration varies by program',
+        terms: getEvIncentivePresentation(activeIncentive) ? undefined : activeIncentive.purchaseLeaseImpact,
         eligibility: activeIncentive.eligibility,
         programName: activeIncentive.providerName,
-        programDescription: activeIncentive.description,
-        programRules: activeIncentive.requirement,
-        groupAffiliation: isConditional(activeIncentive) ? 'targeted' : 'everyone',
+        programDescription: getEvIncentivePresentation(activeIncentive)?.modalWhatIsThisOffer ?? activeIncentive.description,
+        programRules: getEvIncentivePresentation(activeIncentive)?.modalProgramRules ?? activeIncentive.requirement,
+        groupAffiliation: getEvIncentivePresentation(activeIncentive) ? 'everyone' : (isConditional(activeIncentive) ? 'targeted' : 'everyone'),
       }]
     : undefined;
 
@@ -281,10 +283,6 @@ const EvIncentivesPage = () => {
             <p className="zero-apr-page__description">
               Compare electric and hybrid rebates, financing support, bill credits, vehicle retirement programs, tax credits, and tax exemptions. These incentives are grouped into the same deals experience, but each card makes clear what the benefit actually applies to.
             </p>
-            <div className="ev-incentives-page__hero-links">
-              <Link to={BEST_BUYING_DEALS_PATH}>Buying Deals <ChevronRight size={14} aria-hidden /></Link>
-              <Link to="/deals/lease">Leasing Deals <ChevronRight size={14} aria-hidden /></Link>
-            </div>
           </div>
         </div>
       </div>
@@ -361,6 +359,7 @@ const EvIncentivesPage = () => {
                             const vehicle = getVehicleBySlug(incentive.vehicleSlug);
                             const displayType = getEvIncentiveDisplayType(incentive);
                             const incentiveTypeLabel = EV_INCENTIVE_TYPE_LABELS[displayType];
+                            const presentation = getEvIncentivePresentation(incentive);
                             const expirationLabel = incentive.expirationDate ? undefined : 'Expiration varies by program';
                             return (
                               <Fragment key={incentive.id}>
@@ -374,8 +373,8 @@ const EvIncentivesPage = () => {
                                   vehicleModel={incentive.model}
                                   rating={vehicle?.staffRating ?? null}
                                   dealTypeTag="EV"
-                                  imageBadge={incentiveTypeLabel}
-                                  imageBadgeTooltip={EV_INCENTIVE_TYPE_DESCRIPTIONS[displayType]}
+                                  imageBadge={presentation?.cardTagLabel ?? incentiveTypeLabel}
+                                  imageBadgeTooltip={presentation?.cardTagTooltip ?? EV_INCENTIVE_TYPE_DESCRIPTIONS[displayType]}
                                   editorsChoice={vehicle?.editorsChoice}
                                   tenBest={vehicle?.tenBest}
                                   isSaved={savedIncentives.has(incentive.id)}
@@ -385,17 +384,25 @@ const EvIncentivesPage = () => {
                                   onToggleOffersPopup={(event) => event.preventDefault()}
                                   onCloseOffersPopup={(event) => event.preventDefault()}
                                   payment={{
-                                    amount: incentive.amountLabel,
-                                    period: incentiveTypeLabel,
-                                    savings: { type: 'plain', text: incentive.purchaseLeaseImpact },
+                                    amount: presentation?.cardOfferLabel ?? incentive.amountLabel,
+                                    period: presentation ? '' : incentiveTypeLabel,
+                                    savings: presentation ? undefined : { type: 'plain', text: incentive.purchaseLeaseImpact },
                                     expirationDate: incentive.expirationDate ?? '',
-                                    expirationLabel,
+                                    expirationLabel: presentation?.hideExpiration ? undefined : expirationLabel,
+                                    hideExpiration: presentation?.hideExpiration,
                                   }}
                                   details={[
-                                    { label: 'Source', value: incentive.providerName },
-                                    { label: 'Eligibility', value: isConditional(incentive) ? 'Conditional' : 'Open to all' },
-                                    { label: 'Applies To', value: incentive.requirement },
-                                    { label: 'Eligible Trims', value: incentive.trimNames.join(', '), fullWidth: true },
+                                    ...(presentation ? [
+                                      { label: 'Program', value: presentation.cardProgramLabel, fullWidth: true },
+                                      { label: 'MSRP Range', value: incentive.msrpRange },
+                                      { label: 'Support For', value: presentation.cardSupportLabel },
+                                      { label: 'Eligible Trims', value: incentive.trimNames.join(', '), fullWidth: true },
+                                    ] : [
+                                      { label: 'Source', value: incentive.providerName },
+                                      { label: 'Eligibility', value: isConditional(incentive) ? 'Conditional' : 'Open to all' },
+                                      { label: 'Applies To', value: incentive.requirement },
+                                      { label: 'Eligible Trims', value: incentive.trimNames.join(', '), fullWidth: true },
+                                    ]),
                                   ]}
                                   eligibilityLabels={[isConditional(incentive) ? 'Conditional' : 'Open to all']}
                                   onDealClick={(event) => {

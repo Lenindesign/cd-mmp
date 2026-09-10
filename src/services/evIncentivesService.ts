@@ -53,6 +53,21 @@ export interface EvIncentive {
   vehicleSlug: string;
 }
 
+export interface EvIncentivePresentation {
+  cardOfferLabel: string;
+  cardProgramLabel: string;
+  cardSupportLabel: string;
+  cardTagLabel: string;
+  cardTagTooltip: string;
+  modalOfferLabel: string;
+  modalOfferValue: string;
+  modalWhatIsThisOffer: string;
+  modalProgramRules: string;
+  modalDontWaitText: string;
+  hideExpiration: boolean;
+  vehicleTagContent: string;
+}
+
 export const EV_INCENTIVE_CATEGORY_LABELS: Record<EvIncentiveCategory, string> = {
   'direct-vehicle-savings': 'Vehicle Savings',
   'lease-rate': 'Lease Rate',
@@ -125,6 +140,61 @@ export function getEvIncentiveDisplayType(incentive: EvIncentive): EvIncentiveDi
   if (offerType.includes('bill credit')) return 'bill-credit';
   if (offerType.includes('financing')) return 'financing';
   return 'rebate';
+}
+
+const EV_DONT_WAIT_TEXT = 'EV incentives may end when a sales threshold is reached or the program changes, so availability isn’t guaranteed—if you qualify, it may be worth acting soon.';
+
+export function getEvIncentivePresentation(incentive: EvIncentive): EvIncentivePresentation | null {
+  switch (getEvIncentiveDisplayType(incentive)) {
+    case 'vehicle-retirement':
+      return {
+        cardOfferLabel: '$12,000 EV Offer',
+        cardProgramLabel: 'Vehicle Retirement Consumer Assistance Program',
+        cardSupportLabel: 'Vehicle Purchase',
+        cardTagLabel: 'Rebate',
+        cardTagTooltip: 'Rebate support for retiring an older vehicle and purchasing a qualifying EV.',
+        modalOfferLabel: 'EV Offer',
+        modalOfferValue: '$12,000 Vehicle Retirement',
+        modalWhatIsThisOffer: 'Vehicle Retirement Consumer Assistance Program sponsored by San Joaquin Valley AQMD',
+        modalProgramRules: "Valley Air District's Replace program is available to individuals whose household income is at or below 300% of the federal poverty level to support the replacement of old, polluting vehicles. The Replace program cannot be cumulated with San Joaquin Valley's Drive Clean program. Restrictions do apply if combining/stacking this program with other California incentives. Dealer registration is required to be eligible for the incentive.",
+        modalDontWaitText: EV_DONT_WAIT_TEXT,
+        hideExpiration: true,
+        vehicleTagContent: '$12,000 for Vehicle Retirement',
+      };
+    case 'rebate':
+      if (!/clean cars 4 all|driving clean assistance/i.test(incentive.programName)) return null;
+      return {
+        cardOfferLabel: '$12,000 EV Offer',
+        cardProgramLabel: incentive.programName,
+        cardSupportLabel: 'Charging Station',
+        cardTagLabel: 'Rebate',
+        cardTagTooltip: 'Rebate support for purchasing or leasing a qualifying clean vehicle.',
+        modalOfferLabel: 'EV Offer',
+        modalOfferValue: '$12,000 Rebate',
+        modalWhatIsThisOffer: 'Driving Clean Assistance Program / Clean Cars 4 All sponsored by Pacific Gas and Electric',
+        modalProgramRules: 'DCAP provides incentives for eligible low-income consumers to purchase or lease new or used clean vehicles up to $12K to those in DACs who scrap an older vehicle ($10K to those outside of DACs). The program also provides access to low-interest loans up to $45K capped at 8%. Some customers may be required to complete financing and credit counseling prior. DCAPs financial assistance pathway is only available for tier applicants. Dealer registration is required to be eligible for the incentive.',
+        modalDontWaitText: EV_DONT_WAIT_TEXT,
+        hideExpiration: true,
+        vehicleTagContent: '$12,000 for Charging Station',
+      };
+    case 'bill-credit':
+      return {
+        cardOfferLabel: '$100 EV Offer',
+        cardProgramLabel: 'SmartHome Charging',
+        cardSupportLabel: 'Electricity',
+        cardTagLabel: 'Bill Credit',
+        cardTagTooltip: 'Bill credit support for eligible home EV charging customers.',
+        modalOfferLabel: 'EV Offer',
+        modalOfferValue: '$100 Bill Credit',
+        modalWhatIsThisOffer: 'SmartHome Charging sponsored by Community',
+        modalProgramRules: 'Ava customers who charge their EVs and PHEVs at home can join the program and earn up to $75 in one-time rewards and $25 annually per vehicle, in addition to an average of $140 annual electricity bill savings.',
+        modalDontWaitText: EV_DONT_WAIT_TEXT,
+        hideExpiration: true,
+        vehicleTagContent: '$100 for Electricity Bill Credit',
+      };
+    default:
+      return null;
+  }
 }
 
 export function getTopEvIncentive(incentives = EV_INCENTIVES): EvIncentive | null {

@@ -5,6 +5,7 @@ import HeroOffersA from './HeroOffersA';
 import HeroOffersB from './HeroOffersB';
 import { getAvailableYears } from '../../services/vehicleService';
 import { getVehicleIncentives } from '../../services/incentivesService';
+import { getEvIncentiveDisplayType, getEvIncentivePresentation, getEvIncentives } from '../../services/evIncentivesService';
 import type { Incentive } from '../../services/incentivesService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../Button';
@@ -181,6 +182,27 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
     [vehicle.make, vehicle.model]
   );
 
+  const evIncentiveTags = useMemo(() => {
+    const matching = getEvIncentives().filter((incentive) => (
+      incentive.year === vehicle.year
+      && incentive.make.toLowerCase() === vehicle.make.toLowerCase()
+      && incentive.model.toLowerCase() === vehicle.model.toLowerCase()
+    ));
+    const seen = new Set<string>();
+    return matching.flatMap((incentive) => {
+      const presentation = getEvIncentivePresentation(incentive);
+      if (!presentation) return [];
+      const type = getEvIncentiveDisplayType(incentive);
+      if (seen.has(type)) return [];
+      seen.add(type);
+      return [{
+        label: presentation.modalOfferLabel,
+        text: presentation.vehicleTagContent,
+        tooltip: presentation.cardTagTooltip,
+      }];
+    });
+  }, [vehicle.year, vehicle.make, vehicle.model]);
+
 
   const handleOfferClick = useCallback((inc: Incentive) => {
     setSelectedIncentive(inc);
@@ -259,8 +281,8 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
       make: vehicle.make,
       model: vehicle.model,
       imageUrl: vehicle.image,
-      msrpMin: parseInt((vehicle.priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0,
-      msrpMax: parseInt((vehicle.priceRange?.split(/[–\-]/)[1] || vehicle.priceRange?.split(/[–\-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0,
+      msrpMin: parseInt((vehicle.priceRange?.split(/[–-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0,
+      msrpMax: parseInt((vehicle.priceRange?.split(/[–-]/)[1] || vehicle.priceRange?.split(/[–-]/)[0] || '').replace(/[^0-9]/g, '') || '0') || 0,
       offerHeadline: selectedIncentive.title,
       whatItMeans: selectedIncentive.description,
       yourSavings: selectedIncentive.terms || selectedIncentive.description,
@@ -582,6 +604,7 @@ const Hero = ({ vehicle, animateButtons = false, showModelInButtons = false }: H
               onOfferClick={handleOfferClick}
               showEvIncentivesLink={showEvIncentivesLink}
               evIncentivesPath={evIncentivesUrl}
+              evIncentiveTags={evIncentiveTags}
             />
           )}
 

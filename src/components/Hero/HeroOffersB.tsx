@@ -19,6 +19,7 @@ interface HeroOffersBProps {
   showEvIncentivesLink?: boolean;
   evIncentivesPath?: string;
   evIncentivesLabel?: string;
+  evIncentiveTags?: Array<{ label: string; text: string; tooltip?: string }>;
   showMoreDealsAccordion?: boolean;
   showToggleIndicator?: boolean;
 }
@@ -81,6 +82,7 @@ const HeroOffersB = ({
   showEvIncentivesLink = false,
   evIncentivesPath = '/deals/ev-incentives',
   evIncentivesLabel = 'EV & Hybrid Incentives',
+  evIncentiveTags = [],
   showMoreDealsAccordion = false,
   showToggleIndicator = false,
 }: HeroOffersBProps) => {
@@ -289,6 +291,21 @@ const HeroOffersB = ({
       <div className="hero__offers-b-pills">
         {topOffers.map(renderOfferPill)}
       </div>
+      {evIncentiveTags.length > 0 && (
+        <div className="hero__offers-b-ev-tags" aria-label="EV incentives">
+          {evIncentiveTags.map((tag) => (
+            <Link
+              key={`${tag.label}-${tag.text}`}
+              to={evIncentivesPath}
+              className="hero__offers-b-ev-tag"
+              title={tag.tooltip}
+            >
+              <span className="hero__offers-b-ev-tag-label">{tag.label}</span>
+              <span className="hero__offers-b-ev-tag-text">{tag.text}</span>
+            </Link>
+          ))}
+        </div>
+      )}
       {showMoreDealsControl && (
         <div className="hero__offers-b-more-wrap">
           {showMoreDeals && (

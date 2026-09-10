@@ -721,9 +721,11 @@ const IncentivesModal = ({
                           })()}
                         </div>
                         <span className="incentives-modal__v5-offer-divider" aria-hidden />
-                        <span className="incentives-modal__v5-offer-expires">
-                          expires {formatExpiration(activeIncentive.expirationDate)}
-                        </span>
+                        {activeIncentive.expirationDate && (
+                          <span className="incentives-modal__v5-offer-expires">
+                            expires {formatExpiration(activeIncentive.expirationDate)}
+                          </span>
+                        )}
                       </div>
 
                       {activeIncentive.eligibilityTags && activeIncentive.eligibilityTags.length > 0 && (
@@ -824,7 +826,7 @@ const IncentivesModal = ({
                         {activeIncentive.type === 'lease' ? (
                           <>
                             <div className="incentives-modal__v5-key-section">
-                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS DEAL?</h4>
+                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
                               <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                             </div>
 
@@ -891,17 +893,19 @@ const IncentivesModal = ({
                         ) : (
                           <>
                             <div className="incentives-modal__v5-key-section">
-                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS DEAL?</h4>
+                              <h4 className="incentives-modal__v5-key-section-title">WHAT IS THIS OFFER?</h4>
                               <p className="incentives-modal__v5-key-section-text">{activeIncentive.programDescription || activeIncentive.description}</p>
                             </div>
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">PROGRAM RULES</h4>
                               <p className="incentives-modal__v5-key-section-text">{activeIncentive.programRules || activeIncentive.eligibility || offer.whoQualifies}</p>
                             </div>
-                            <div className="incentives-modal__v5-key-section">
-                              <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
-                              <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms || activeIncentive.value}</p>
-                            </div>
+                            {activeIncentive.terms && (
+                              <div className="incentives-modal__v5-key-section">
+                                <h4 className="incentives-modal__v5-key-section-title">TERMS</h4>
+                                <p className="incentives-modal__v5-key-section-text">{activeIncentive.terms}</p>
+                              </div>
+                            )}
                             <div className="incentives-modal__v5-key-section">
                               <h4 className="incentives-modal__v5-key-section-title">ELIGIBLE TRIMS</h4>
                               <p className="incentives-modal__v5-key-section-text">{offer.eligibleTrims.join(', ')}</p>
