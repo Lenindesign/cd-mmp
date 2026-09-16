@@ -194,7 +194,7 @@ const EXPERT_TIPS: Record<Incentive['type'], string> = {
   special: "Review eligibility, expiration, and whether the program applies at purchase, lease, tax filing, charging, or utility enrollment before you shop.",
 };
 
-const getExpertTip = (inc: Incentive): string => EXPERT_TIPS[inc.type] ?? (inc.terms || inc.description);
+const getExpertTip = (inc: Incentive): string => inc.expertTip ?? EXPERT_TIPS[inc.type] ?? (inc.terms || inc.description);
 
 const AFFILIATION_META: Record<GroupAffiliation, { label: string; restricted: boolean; description: string }> = {
   everyone:         { label: 'Open to All Buyers',        restricted: false, description: 'All qualified buyers. See dealer for complete details.' },
@@ -720,12 +720,12 @@ const IncentivesModal = ({
                             );
                           })()}
                         </div>
-                        <span className="incentives-modal__v5-offer-divider" aria-hidden />
-                        {activeIncentive.expirationDate && (
+                        {activeIncentive.expirationDate && <>
+                          <span className="incentives-modal__v5-offer-divider" aria-hidden />
                           <span className="incentives-modal__v5-offer-expires">
                             expires {formatExpiration(activeIncentive.expirationDate)}
                           </span>
-                        )}
+                        </>}
                       </div>
 
                       {activeIncentive.eligibilityTags && activeIncentive.eligibilityTags.length > 0 && (
@@ -1155,10 +1155,12 @@ const IncentivesModal = ({
                             );
                           })()}
                         </div>
-                        <span className="incentives-modal__v5-offer-divider" aria-hidden />
-                        <span className="incentives-modal__v5-offer-expires">
-                          expires {formatExpiration(activeIncentive.expirationDate)}
-                        </span>
+                        {activeIncentive.expirationDate && <>
+                          <span className="incentives-modal__v5-offer-divider" aria-hidden />
+                          <span className="incentives-modal__v5-offer-expires">
+                            expires {formatExpiration(activeIncentive.expirationDate)}
+                          </span>
+                        </>}
                       </div>
 
                       {activeIncentive.eligibilityTags && activeIncentive.eligibilityTags.length > 0 && (

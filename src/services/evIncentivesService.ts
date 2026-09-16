@@ -55,6 +55,8 @@ export interface EvIncentive {
 
 export interface EvIncentivePresentation {
   cardOfferLabel: string;
+  cardOfferAmount: string;
+  cardOfferSuffix: string;
   cardProgramLabel: string;
   cardSupportLabel: string;
   cardTagLabel: string;
@@ -149,6 +151,8 @@ export function getEvIncentivePresentation(incentive: EvIncentive): EvIncentiveP
     case 'vehicle-retirement':
       return {
         cardOfferLabel: '$12,000 EV Offer',
+        cardOfferAmount: '$12,000',
+        cardOfferSuffix: 'EV Offer',
         cardProgramLabel: 'Vehicle Retirement Consumer Assistance Program',
         cardSupportLabel: 'Vehicle Purchase',
         cardTagLabel: 'Rebate',
@@ -165,6 +169,8 @@ export function getEvIncentivePresentation(incentive: EvIncentive): EvIncentiveP
       if (!/clean cars 4 all|driving clean assistance/i.test(incentive.programName)) return null;
       return {
         cardOfferLabel: '$12,000 EV Offer',
+        cardOfferAmount: '$12,000',
+        cardOfferSuffix: 'EV Offer',
         cardProgramLabel: incentive.programName,
         cardSupportLabel: 'Charging Station',
         cardTagLabel: 'Rebate',
@@ -180,6 +186,8 @@ export function getEvIncentivePresentation(incentive: EvIncentive): EvIncentiveP
     case 'bill-credit':
       return {
         cardOfferLabel: '$100 EV Offer',
+        cardOfferAmount: '$100',
+        cardOfferSuffix: 'EV Offer',
         cardProgramLabel: 'SmartHome Charging',
         cardSupportLabel: 'Electricity',
         cardTagLabel: 'Bill Credit',

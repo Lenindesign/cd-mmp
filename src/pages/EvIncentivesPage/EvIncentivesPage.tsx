@@ -77,6 +77,12 @@ const isConditional = (incentive: EvIncentive) => (
   !/no specific group affiliation/i.test(incentive.eligibility)
 );
 
+const EV_EXPERT_TIPS = {
+  'vehicle-retirement': 'Vehicle retirement incentives reward eligible consumers for taking an older vehicle off the road—typically by scrapping or permanently retiring it when they purchase or lease an EV. Eligibility may depend on the vehicle’s age, ownership history, income, and location.',
+  rebate: 'EV rebates return money to you after you purchase or lease an eligible vehicle. The rebate may come from a government agency, utility, or other organization, and eligibility and payment timing vary by program.',
+  'bill-credit': 'Bill credits apply EV-related savings directly to your utility bill, often for charging an EV or installing qualifying home charging equipment. Credits may be distributed over multiple billing cycles and typically require participation in an eligible utility program.',
+} as const;
+
 const getSortValue = (incentive: EvIncentive) => {
   const displayType = getEvIncentiveDisplayType(incentive);
   const index = EV_INCENTIVE_DISPLAY_TYPE_ORDER.indexOf(displayType);
@@ -250,6 +256,7 @@ const EvIncentivesPage = () => {
         programName: activeIncentive.providerName,
         programDescription: getEvIncentivePresentation(activeIncentive)?.modalWhatIsThisOffer ?? activeIncentive.description,
         programRules: getEvIncentivePresentation(activeIncentive)?.modalProgramRules ?? activeIncentive.requirement,
+        expertTip: EV_EXPERT_TIPS[getEvIncentiveDisplayType(activeIncentive) as keyof typeof EV_EXPERT_TIPS],
         groupAffiliation: getEvIncentivePresentation(activeIncentive) ? 'everyone' : (isConditional(activeIncentive) ? 'targeted' : 'everyone'),
       }]
     : undefined;
@@ -385,8 +392,9 @@ const EvIncentivesPage = () => {
                                   onToggleOffersPopup={(event) => event.preventDefault()}
                                   onCloseOffersPopup={(event) => event.preventDefault()}
                                   payment={{
-                                    amount: presentation?.cardOfferLabel ?? incentive.amountLabel,
-                                    period: presentation ? '' : incentiveTypeLabel,
+                                    amount: presentation?.cardOfferAmount ?? presentation?.cardOfferLabel ?? incentive.amountLabel,
+                                    period: presentation?.cardOfferSuffix ?? (presentation ? '' : incentiveTypeLabel),
+                                    subLabel: presentation?.cardProgramLabel,
                                     savings: presentation ? undefined : { type: 'plain', text: incentive.purchaseLeaseImpact },
                                     expirationDate: incentive.expirationDate ?? '',
                                     expirationLabel: presentation?.hideExpiration ? undefined : expirationLabel,
@@ -394,10 +402,8 @@ const EvIncentivesPage = () => {
                                   }}
                                   details={[
                                     ...(presentation ? [
-                                      { label: 'Program', value: presentation.cardProgramLabel, fullWidth: true },
                                       { label: 'MSRP Range', value: incentive.msrpRange },
                                       { label: 'Support For', value: presentation.cardSupportLabel },
-                                      { label: 'Eligible Trims', value: incentive.trimNames.join(', '), fullWidth: true },
                                     ] : [
                                       { label: 'Source', value: incentive.providerName },
                                       { label: 'Eligibility', value: isConditional(incentive) ? 'Conditional' : 'Open to all' },

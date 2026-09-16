@@ -21,6 +21,8 @@ export interface DealCardDetail {
 export interface DealCardPayment {
   amount: string;
   period: string;
+  /** Optional supporting line shown directly beneath the offer value. */
+  subLabel?: string;
   /** Pre-formatted savings text passed to <SavingsText>, OR a plain string rendered as-is. */
   savings?: { type: 'savings-text'; text: string } | { type: 'plain'; text: string };
   savingsTooltip?: string;
@@ -263,6 +265,9 @@ const DealCard: React.FC<DealCardProps> = ({
             <span className="deal-card__payment-amount">{payment.amount}</span>
             <span className="deal-card__payment-period">{payment.period}</span>
           </div>
+          {payment.subLabel && (
+            <span className="deal-card__payment-sub-label">{payment.subLabel}</span>
+          )}
           {payment.cashBackLabel && (
             <span className="deal-card__payment-cashback">{payment.cashBackLabel}</span>
           )}

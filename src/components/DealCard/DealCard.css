@@ -509,6 +509,16 @@
   color: var(--color-gray-600);
 }
 
+.deal-card__payment-sub-label {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
 .deal-card__payment-cashback {
   display: block;
   font-family: var(--font-heading);

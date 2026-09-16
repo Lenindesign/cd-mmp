@@ -49,6 +49,7 @@ export interface Incentive {
   programDescription?: string;
   programRules?: string;
   groupAffiliation?: GroupAffiliation;
+  expertTip?: string;
   /** Tiered rate data for finance deals with multiple terms and/or variable cash back. */
   rateTiers?: RateTier[];
   eligibilityTags?: EligibilityTag[];
