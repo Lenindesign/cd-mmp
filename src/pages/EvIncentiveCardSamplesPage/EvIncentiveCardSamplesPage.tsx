@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DealCard } from '../../components/DealCard';
+import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
+import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { SEO } from '../../components/SEO';
 import {
   EV_INCENTIVE_DISPLAY_TYPE_ORDER,
@@ -12,6 +14,7 @@ import {
   type EvIncentive,
   type EvIncentiveDisplayType,
 } from '../../services/evIncentivesService';
+import type { Incentive } from '../../services/incentiveAdapter';
 import { getVehicleBySlug } from '../../services/vehicleService';
 import './EvIncentiveCardSamplesPage.css';
 
@@ -52,7 +55,57 @@ const getSamples = () => sampleTypes.map((type) => (
 
 const EvIncentiveCardSamplesPage = () => {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [activeSample, setActiveSample] = useState<EvIncentive | null>(null);
   const samples = useMemo(getSamples, []);
+
+  const activeOffer: Partial<IncentiveOfferDetail> | undefined = activeSample
+    ? (() => {
+        const vehicle = getVehicleBySlug(activeSample.vehicleSlug);
+        const priceParts = activeSample.msrpRange.replace(/[^0-9,-]/g, '').split('-');
+        const displayType = getEvIncentiveDisplayType(activeSample);
+        const presentation = getEvIncentivePresentation(activeSample);
+        return {
+          year: activeSample.year,
+          make: activeSample.make,
+          model: activeSample.model,
+          slug: activeSample.vehicleSlug,
+          imageUrl: activeSample.imageUrl || vehicle?.image,
+          msrpMin: parseInt(priceParts[0]?.replace(/,/g, '') || '0', 10),
+          msrpMax: parseInt(priceParts[1]?.replace(/,/g, '') || '0', 10),
+          offerHeadline: presentation?.modalOfferValue ?? activeSample.amountLabel,
+          whatItMeans: presentation?.modalWhatIsThisOffer ?? activeSample.description,
+          yourSavings: activeSample.purchaseLeaseImpact,
+          whoQualifies: activeSample.eligibility,
+          eligibleTrims: activeSample.trimNames,
+          dontWaitText: presentation?.modalDontWaitText ?? `${activeSample.stackabilityNote} Confirm local availability before you shop.`,
+          eventLabel: `EV incentive: ${EV_INCENTIVE_TYPE_LABELS[displayType]} from ${activeSample.providerName}`,
+          expirationDate: presentation?.hideExpiration ? '' : activeSample.expirationDate ?? 'Expiration varies by program',
+          offerChipLabel: presentation?.modalOfferLabel ?? EV_INCENTIVE_TYPE_LABELS[displayType],
+          formHeading: 'Questions About This EV Incentive?',
+          defaultLeadMessage: `I would like more information about the ${activeSample.programName} EV incentive for the ${activeSample.year} ${activeSample.make} ${activeSample.model}.`,
+          primaryFormCtaLabel: 'ASK ABOUT INCENTIVE',
+          secondaryActionLabel: `VIEW ${activeSample.model.toUpperCase()}`,
+        };
+      })()
+    : undefined;
+
+  const activeModalIncentives: Incentive[] | undefined = activeSample
+    ? [{
+        id: activeSample.id,
+        type: 'special',
+        title: activeSample.programName,
+        description: getEvIncentivePresentation(activeSample)?.modalWhatIsThisOffer ?? activeSample.description,
+        value: getEvIncentivePresentation(activeSample)?.modalOfferValue ?? activeSample.amountLabel,
+        expirationDate: getEvIncentivePresentation(activeSample)?.hideExpiration ? '' : activeSample.expirationDate ?? 'Expiration varies by program',
+        terms: getEvIncentivePresentation(activeSample) ? undefined : activeSample.purchaseLeaseImpact,
+        eligibility: activeSample.eligibility,
+        programName: activeSample.providerName,
+        programDescription: activeSample.description,
+        programRules: activeSample.requirement,
+        expertTip: activeSample.description,
+        groupAffiliation: 'everyone',
+      }]
+    : undefined;
 
   return (
     <div className="ev-samples-page">
@@ -134,7 +187,10 @@ const EvIncentiveCardSamplesPage = () => {
                     { label: 'Source', value: incentive.providerName },
                     { label: 'Applies To', value: incentive.requirement },
                   ]}
-                  onDealClick={(event) => event.preventDefault()}
+                  onDealClick={(event) => {
+                    event.preventDefault();
+                    setActiveSample(incentive);
+                  }}
                   secondaryCta={{ type: 'link', to: `/${incentive.vehicleSlug}`, label: `View ${incentive.model}` }}
                 />
               </article>
@@ -142,6 +198,15 @@ const EvIncentiveCardSamplesPage = () => {
           })}
         </section>
       </main>
+
+      <IncentivesModal
+        isOpen={!!activeSample}
+        onClose={() => setActiveSample(null)}
+        variant="conversion-b"
+        offer={activeOffer}
+        allIncentives={activeModalIncentives}
+        selectedIncentiveId={activeSample?.id}
+      />
     </div>
   );
 };
