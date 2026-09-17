@@ -74,7 +74,7 @@
 
 .ev-samples-page__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--spacing-8) var(--spacing-6);
 }
 
@@ -114,5 +114,11 @@
   .ev-samples-page__notice span {
     display: block;
     margin-top: var(--spacing-2);
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .ev-samples-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
