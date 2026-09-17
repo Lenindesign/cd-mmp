@@ -1,6 +1,6 @@
 import { Facebook, Twitter, Instagram, Youtube, Mail, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH } from '../../constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH, EV_INCENTIVE_SAMPLES_PATH } from '../../constants/dealRoutes';
 import { Button } from '../Button';
 import { useCarFinder } from '../../contexts/CarFinderContext';
 import './Footer.css';
@@ -93,6 +93,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Market Snapshot Concepts', path: '/market-snapshot-concepts' },
         { label: 'Local Signals 2', path: '/local-signals-2' },
         { label: 'EV Incentives Page', path: EV_INCENTIVES_PATH },
+        { label: 'EV Incentive Card Samples', path: EV_INCENTIVE_SAMPLES_PATH },
         { label: 'EV Incentives Experience Guide', path: '/ev-incentives-experience' },
         { label: 'Used MMP Shopping CTAs', path: '/2025/Chevrolet/Trax' },
         { label: 'Market Snapshot (New Car)', path: '/2026/Chevrolet/Trax#market-intelligence-snapshot' },

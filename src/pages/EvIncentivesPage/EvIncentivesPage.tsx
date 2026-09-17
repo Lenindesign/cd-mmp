@@ -89,6 +89,29 @@ const getSortValue = (incentive: EvIncentive) => {
   return index === -1 ? EV_INCENTIVE_DISPLAY_TYPE_ORDER.length : index;
 };
 
+const dedupeProgramLevelIncentives = (incentives: EvIncentive[]) => {
+  const seen = new Set<string>();
+  return incentives.filter((incentive) => {
+    const displayType = getEvIncentiveDisplayType(incentive);
+    if (displayType !== 'financing' && displayType !== 'bill-credit') return true;
+
+    const key = [displayType, incentive.programName, incentive.providerName, incentive.requirement].join('|');
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
+const getVisibleIncentives = (incentives: EvIncentive[], filters: DealsFilterState) => (
+  dedupeProgramLevelIncentives(incentives.filter(incentive => matchesEvFilters(incentive, filters)))
+);
+
+const getCardTypeLabel = (incentive: EvIncentive, displayType: ReturnType<typeof getEvIncentiveDisplayType>) => (
+  displayType === 'financing' && /charging|home improvement/i.test(incentive.requirement + incentive.programName)
+    ? 'Charging Financing'
+    : EV_INCENTIVE_TYPE_LABELS[displayType]
+);
+
 const matchesEvFilters = (incentive: EvIncentive, filters: DealsFilterState) => {
   if (filters.bodyTypes.length > 0 && !filters.bodyTypes.includes(incentive.bodyStyle)) return false;
   if (filters.makes.length > 0 && !filters.makes.includes(incentive.make)) return false;
@@ -151,7 +174,7 @@ const EvIncentivesPage = () => {
   }, [allIncentives]);
 
   const filteredIncentives = useMemo(() => {
-    const filtered = allIncentives.filter(incentive => matchesEvFilters(incentive, filters));
+    const filtered = getVisibleIncentives(allIncentives, filters);
     return [...filtered].sort((a, b) => {
       if (filters.sortBy === 'expiring-soon') {
         const aDate = a.expirationDate ? new Date(a.expirationDate).getTime() : Number.MAX_SAFE_INTEGER;
@@ -176,7 +199,7 @@ const EvIncentivesPage = () => {
   );
 
   const getResultCount = useCallback((draftFilters: DealsFilterState) => {
-    return allIncentives.filter(incentive => matchesEvFilters(incentive, draftFilters)).length;
+    return getVisibleIncentives(allIncentives, draftFilters).length;
   }, [allIncentives]);
 
   const handleFilterApply = useCallback((applied: DealsFilterState) => {
@@ -366,8 +389,9 @@ const EvIncentivesPage = () => {
                             if (!incentive) return null;
                             const vehicle = getVehicleBySlug(incentive.vehicleSlug);
                             const displayType = getEvIncentiveDisplayType(incentive);
-                            const incentiveTypeLabel = EV_INCENTIVE_TYPE_LABELS[displayType];
+                            const incentiveTypeLabel = getCardTypeLabel(incentive, displayType);
                             const presentation = getEvIncentivePresentation(incentive);
+                            const isProgramLevelIncentive = displayType === 'financing' || displayType === 'bill-credit';
                             const expirationLabel = incentive.expirationDate ? undefined : 'Expiration varies by program';
                             return (
                               <Fragment key={incentive.id}>
@@ -392,10 +416,10 @@ const EvIncentivesPage = () => {
                                   onToggleOffersPopup={(event) => event.preventDefault()}
                                   onCloseOffersPopup={(event) => event.preventDefault()}
                                   payment={{
-                                    amount: presentation?.cardOfferAmount ?? presentation?.cardOfferLabel ?? incentive.amountLabel,
-                                    period: presentation?.cardOfferSuffix ?? (presentation ? '' : incentiveTypeLabel),
-                                    subLabel: presentation?.cardProgramLabel,
-                                    savings: presentation ? undefined : { type: 'plain', text: incentive.purchaseLeaseImpact },
+                                    amount: presentation?.cardOfferAmount ?? presentation?.cardOfferLabel ?? (displayType === 'financing' ? 'Charging Financing' : incentive.amountLabel),
+                                    period: presentation?.cardOfferSuffix ?? (presentation || displayType === 'financing' ? '' : incentiveTypeLabel),
+                                    subLabel: presentation?.cardProgramLabel ?? (displayType === 'financing' ? incentive.programName : undefined),
+                                    savings: presentation || displayType === 'financing' ? undefined : { type: 'plain', text: incentive.purchaseLeaseImpact },
                                     expirationDate: incentive.expirationDate ?? '',
                                     expirationLabel: presentation?.hideExpiration ? undefined : expirationLabel,
                                     hideExpiration: presentation?.hideExpiration,
@@ -408,7 +432,7 @@ const EvIncentivesPage = () => {
                                       { label: 'Source', value: incentive.providerName },
                                       { label: 'Eligibility', value: isConditional(incentive) ? 'Conditional' : 'Open to all' },
                                       { label: 'Applies To', value: incentive.requirement },
-                                      { label: 'Eligible Trims', value: incentive.trimNames.join(', '), fullWidth: true },
+                                      ...(!isProgramLevelIncentive ? [{ label: 'Eligible Trims', value: incentive.trimNames.join(', '), fullWidth: true }] : []),
                                     ]),
                                   ]}
                                   eligibilityLabels={[isConditional(incentive) ? 'Conditional' : 'Open to all']}

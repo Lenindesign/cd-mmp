@@ -9,3 +9,6 @@ export const CASH_BACK_DEALS_PATH = '/deals/cash-back';
 
 /** EV incentive finder for direct EV savings, tax programs, charging rebates, and utility programs. */
 export const EV_INCENTIVES_PATH = '/deals/ev-incentives';
+
+/** Internal curator page showing one representative card for each EV incentive type. */
+export const EV_INCENTIVE_SAMPLES_PATH = '/ev-incentive-card-samples';

@@ -9,7 +9,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { CarFinderProvider, useCarFinder } from './contexts/CarFinderContext';
 import { CarFinderChat } from './components/CarFinderChat';
 import { getVehicleBySlug } from './services/vehicleService';
-import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH } from './constants/dealRoutes';
+import { BEST_BUYING_DEALS_PATH, ZERO_PERCENT_APR_DEALS_PATH, CASH_BACK_DEALS_PATH, EV_INCENTIVES_PATH, EV_INCENTIVE_SAMPLES_PATH } from './constants/dealRoutes';
 import './App.css';
 
 // Lazy load pages for code splitting
@@ -26,6 +26,7 @@ const ChatbotExperiencePage = lazy(() => import('./pages/ChatbotExperiencePage/C
 const MarketSnapshotConceptsPage = lazy(() => import('./pages/MarketSnapshotConceptsPage/MarketSnapshotConceptsPage'));
 const LocalSignals2Page = lazy(() => import('./pages/LocalSignals2Page/LocalSignals2Page'));
 const EvIncentivesExperiencePage = lazy(() => import('./pages/EvIncentivesExperiencePage/EvIncentivesExperiencePage'));
+const EvIncentiveCardSamplesPage = lazy(() => import('./pages/EvIncentiveCardSamplesPage/EvIncentiveCardSamplesPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 
 // Onboarding pages - lazy loaded as a group (2-step flow)
@@ -245,6 +246,7 @@ const internalRoutes = (
     <Route path="/local-signals-2" element={<LocalSignals2Page />} />
     <Route path="/local-signals-v2" element={<LocalSignals2Page />} />
     <Route path="/ev-incentives-experience" element={<EvIncentivesExperiencePage />} />
+    <Route path={EV_INCENTIVE_SAMPLES_PATH} element={<EvIncentiveCardSamplesPage />} />
     <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
     <Route path="/admin/feedback" element={<FeedbackAdmin />} />
     <Route path="/audit/cards" element={<CardAudit />} />
