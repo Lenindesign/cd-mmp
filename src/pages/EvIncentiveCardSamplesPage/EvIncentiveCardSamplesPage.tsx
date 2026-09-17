@@ -5,7 +5,6 @@ import IncentivesModal from '../../components/IncentivesModal/IncentivesModal';
 import type { IncentiveOfferDetail } from '../../components/IncentivesModal/IncentivesModal';
 import { SEO } from '../../components/SEO';
 import {
-  EV_INCENTIVE_DISPLAY_TYPE_ORDER,
   EV_INCENTIVE_TYPE_DESCRIPTIONS,
   EV_INCENTIVE_TYPE_LABELS,
   getEvIncentiveDisplayType,
@@ -20,38 +19,11 @@ import './EvIncentiveCardSamplesPage.css';
 
 const BASE_URL = 'https://www.caranddriver.com';
 
-const sampleTypes: EvIncentiveDisplayType[] = EV_INCENTIVE_DISPLAY_TYPE_ORDER;
-
-const createCuratorSample = (type: 'tax-credit' | 'tax-exemption'): EvIncentive => ({
-  id: `curator-sample-${type}`,
-  year: 2026,
-  make: 'Audi',
-  model: 'e-tron GT',
-  trimNames: [],
-  bodyStyle: 'Sedan',
-  msrpRange: '$129,095 - $171,895',
-  fuelType: 'Electric',
-  imageUrl: null,
-  programName: type === 'tax-credit' ? 'Clean Vehicle Tax Credit' : 'State EV Tax Exemption',
-  description: EV_INCENTIVE_TYPE_DESCRIPTIONS[type],
-  category: type,
-  offerType: EV_INCENTIVE_TYPE_LABELS[type],
-  amountLabel: type === 'tax-credit' ? 'Up to $7,500' : 'Varies by jurisdiction',
-  providerName: type === 'tax-credit' ? 'Federal' : 'State program',
-  providerType: type === 'tax-credit' ? 'federal' : 'state',
-  requirement: type === 'tax-credit' ? 'Tax filing' : 'Eligible vehicle purchase',
-  eligibility: 'Eligibility varies by program',
-  purchaseLeaseImpact: 'May reduce taxes owed',
-  stackabilityNote: 'Review current program rules',
-  sourceLabel: 'Curator sample',
-  locationLabel: 'United States',
-  vehicleSlug: '2026/Audi/e-tron-GT',
-});
+const sampleTypes: EvIncentiveDisplayType[] = ['vehicle-retirement', 'rebate', 'bill-credit'];
 
 const getSamples = () => sampleTypes.map((type) => (
   getEvIncentives().find((incentive) => getEvIncentiveDisplayType(incentive) === type)
-    ?? (type === 'tax-credit' || type === 'tax-exemption' ? createCuratorSample(type) : null)
-)).filter((incentive): incentive is EvIncentive => Boolean(incentive));
+)).filter((incentive): incentive is NonNullable<typeof incentive> => Boolean(incentive));
 
 const EvIncentiveCardSamplesPage = () => {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
@@ -129,7 +101,7 @@ const EvIncentiveCardSamplesPage = () => {
       <main className="container ev-samples-page__content">
         <div className="ev-samples-page__notice">
           <strong>How to read this page</strong>
-          <span>These are representative records from the current EV incentive data. Program-level financing and bill-credit offers are shown once here; tax-credit and tax-exemption cards are curator samples because the current source has no records for those types.</span>
+          <span>These are representative records from the current EV incentive data. The card label is sourced from the data’s three consumer-facing incentive types: Vehicle Retirement, Rebate, and Bill Credit.</span>
         </div>
 
         <section className="ev-samples-page__grid" aria-label="EV incentive card samples">

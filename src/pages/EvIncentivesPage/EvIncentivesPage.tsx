@@ -106,10 +106,8 @@ const getVisibleIncentives = (incentives: EvIncentive[], filters: DealsFilterSta
   dedupeProgramLevelIncentives(incentives.filter(incentive => matchesEvFilters(incentive, filters)))
 );
 
-const getCardTypeLabel = (incentive: EvIncentive, displayType: ReturnType<typeof getEvIncentiveDisplayType>) => (
-  displayType === 'financing' && /charging|home improvement/i.test(incentive.requirement + incentive.programName)
-    ? 'Charging Financing'
-    : EV_INCENTIVE_TYPE_LABELS[displayType]
+const getCardTypeLabel = (displayType: ReturnType<typeof getEvIncentiveDisplayType>) => (
+  EV_INCENTIVE_TYPE_LABELS[displayType]
 );
 
 const matchesEvFilters = (incentive: EvIncentive, filters: DealsFilterState) => {
@@ -389,7 +387,7 @@ const EvIncentivesPage = () => {
                             if (!incentive) return null;
                             const vehicle = getVehicleBySlug(incentive.vehicleSlug);
                             const displayType = getEvIncentiveDisplayType(incentive);
-                            const incentiveTypeLabel = getCardTypeLabel(incentive, displayType);
+                            const incentiveTypeLabel = getCardTypeLabel(displayType);
                             const presentation = getEvIncentivePresentation(incentive);
                             const isProgramLevelIncentive = displayType === 'financing' || displayType === 'bill-credit';
                             const expirationLabel = incentive.expirationDate ? undefined : 'Expiration varies by program';
