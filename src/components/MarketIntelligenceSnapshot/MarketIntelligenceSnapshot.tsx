@@ -929,8 +929,8 @@ const MarketIntelligenceSnapshot = ({
       onValueClick: onSeeLocalInventory,
     },
     trendOrMileageFactor,
-    {
-      label: 'Avg. Days on Lot',
+      {
+        label: 'Typical Days on Lot',
       value: `${Math.round(market.averageDaysOnLot)} days`,
       description: getDaysOnLotSignalCopy(market.averageDaysOnLot),
       help: {
@@ -1134,8 +1134,8 @@ const MarketIntelligenceSnapshot = ({
           >
             <div className="market-snapshot__price-visual-head">
               <div className="market-snapshot__price-visual-copy">
-                <h3 id="market-snapshot-price-comparison-title">Local Price Comparison</h3>
-                <p>C/D read based on nearby asking prices. Use it as a reference, not a guaranteed value.</p>
+                <h3 id="market-snapshot-price-comparison-title">How local asking prices compare</h3>
+                <p className="market-snapshot__price-visual-prompt">Select a dot to view vehicle details.</p>
               </div>
             </div>
             <div className="market-snapshot__price-band-chart">
@@ -1265,7 +1265,7 @@ const MarketIntelligenceSnapshot = ({
           </div>}
 
           <nav className="market-snapshot__model-years" aria-label="Other model years">
-            <span className="market-snapshot__model-years-label">Other years</span>
+            <span className="market-snapshot__model-years-label">Compare model year</span>
             <div className="market-snapshot__model-years-list">
               {modelYearOptions.map(({ year, count }) => {
                 const isCurrentYear = year === modelYear;
