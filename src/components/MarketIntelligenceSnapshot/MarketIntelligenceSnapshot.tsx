@@ -28,9 +28,12 @@ interface MarketIntelligenceSnapshotProps {
    * 'compact' drops them so the price comparison graphic carries the market read.
    */
   variant?: MarketSnapshotVariant;
+  /** Keeps the current presentation as the default while enabling a decision-support comparison in Storybook. */
+  experience?: MarketSnapshotExperience;
 }
 
 export type MarketSnapshotVariant = 'full' | 'compact';
+export type MarketSnapshotExperience = 'current' | 'decision-support';
 
 const DEALER_RADIUS_OPTIONS: DealerRadius[] = [10, 25, 50, 75];
 
@@ -679,6 +682,7 @@ const MarketIntelligenceSnapshot = ({
   onSeeLocalInventory,
   showLocalComparison = true,
   variant = 'full',
+  experience = 'current',
 }: MarketIntelligenceSnapshotProps) => {
   const showFactorGrid = variant === 'full';
   const zipErrorId = useId();
@@ -1069,6 +1073,22 @@ const MarketIntelligenceSnapshot = ({
               <span>Buy signal: {buySignal.label}</span>
             </div>
             <p className="market-snapshot__buy-signal-summary">{buySignalSummary}</p>
+            {experience === 'decision-support' && (
+              <div className="market-snapshot__decision-support" aria-label="How to use this market signal">
+                <p>
+                  Buy Signal describes local market conditions—not vehicle quality or affordability.
+                </p>
+                <div className="market-snapshot__decision-evidence" aria-label="Market signal evidence">
+                  <span><strong>{formatPrice(askingPrice)}</strong> best comparable</span>
+                  <span><strong>{formatPriceRange(targetLow, targetHigh)}</strong> typical range</span>
+                  <span><strong>{market.inventoryCount}</strong> nearby listings</span>
+                  <span><strong>{Math.round(market.averageDaysOnLot)} days</strong> average on lot</span>
+                </div>
+                <button type="button" className="market-snapshot__decision-cta" onClick={onSeeLocalInventory}>
+                  See best-value listings
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="market-snapshot__market-form">

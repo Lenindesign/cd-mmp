@@ -1,2 +1,2 @@
 export { default } from './MarketIntelligenceSnapshot';
-export type { MarketSnapshotVariant } from './MarketIntelligenceSnapshot';
+export type { MarketSnapshotExperience, MarketSnapshotVariant } from './MarketIntelligenceSnapshot';

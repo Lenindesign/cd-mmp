@@ -7,6 +7,7 @@ import {
 } from '../../services/marketIntelligenceService';
 import { getVehicleBySlug, type Vehicle } from '../../services/vehicleService';
 import MarketIntelligenceSnapshot from './MarketIntelligenceSnapshot';
+import type { MarketSnapshotExperience, MarketSnapshotVariant } from './MarketIntelligenceSnapshot';
 
 const getStoryVehicle = (slug: string): Vehicle => {
   const vehicle = getVehicleBySlug(slug);
@@ -51,12 +52,18 @@ interface SnapshotStoryProps {
   vehicle: Vehicle;
   initialLocation?: MarketLocation;
   initialRadiusMiles?: DealerRadius;
+  showLocalComparison?: boolean;
+  variant?: MarketSnapshotVariant;
+  experience?: MarketSnapshotExperience;
 }
 
 const SnapshotStory = ({
   vehicle,
   initialLocation = MARKET_LOCATION_OPTIONS[0],
   initialRadiusMiles = 25,
+  showLocalComparison = true,
+  variant = 'full',
+  experience = 'current',
 }: SnapshotStoryProps) => {
   const [location, setLocation] = useState<MarketLocation>(initialLocation);
   const [radiusMiles, setRadiusMiles] = useState<DealerRadius>(initialRadiusMiles);
@@ -69,6 +76,9 @@ const SnapshotStory = ({
       onLocationChange={setLocation}
       onRadiusChange={setRadiusMiles}
       onSeeLocalInventory={() => undefined}
+      showLocalComparison={showLocalComparison}
+      variant={variant}
+      experience={experience}
     />
   );
 };
@@ -76,14 +86,85 @@ const SnapshotStory = ({
 const renderSnapshot = (
   vehicle: Vehicle,
   initialLocation?: MarketLocation,
-  initialRadiusMiles?: DealerRadius
+  initialRadiusMiles?: DealerRadius,
+  options?: Pick<SnapshotStoryProps, 'experience' | 'showLocalComparison' | 'variant'>,
 ) => (
   <SnapshotStory
     vehicle={vehicle}
     initialLocation={initialLocation}
     initialRadiusMiles={initialRadiusMiles}
+    {...options}
   />
 );
+
+export const FullExperience: Story = {
+  name: 'Full experience',
+  args: { vehicle: kiaForte },
+  render: () => renderSnapshot(kiaForte, MARKET_LOCATION_OPTIONS[0], 25, {
+    variant: 'full',
+    showLocalComparison: true,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Complete Local Signals experience with the four market-factor cards, buy-signal summary, price comparison graphic, and local listings.',
+      },
+    },
+  },
+};
+
+export const DecisionSupportV2: Story = {
+  name: 'Decision support v2',
+  args: { vehicle: kiaForte },
+  render: () => renderSnapshot(kiaForte, MARKET_LOCATION_OPTIONS[0], 25, {
+    experience: 'decision-support',
+    variant: 'full',
+    showLocalComparison: true,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Experimental decision-support layer that explains the buy signal, exposes the evidence behind it, and provides a direct path to best-value listings. The current experience remains the default.',
+      },
+    },
+  },
+};
+
+export const FocusedExperience: Story = {
+  name: 'Focused experience',
+  args: { vehicle: kiaForte },
+  render: () => renderSnapshot(kiaForte, MARKET_LOCATION_OPTIONS[0], 25, {
+    variant: 'full',
+    showLocalComparison: false,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Focused Local Signals experience that keeps the market-factor cards and guidance visible while omitting the local comparison section.',
+      },
+    },
+  },
+};
+
+export const GraphExperience: Story = {
+  name: 'Graph experience',
+  args: { vehicle: kiaForte },
+  render: () => renderSnapshot(kiaForte, MARKET_LOCATION_OPTIONS[0], 25, {
+    variant: 'compact',
+    showLocalComparison: true,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Graph-led Local Signals experience with the price comparison graphic and local listings, without the four market-factor cards.',
+      },
+    },
+  },
+};
 
 export const KiaForteFeedbackReview: Story = {
   name: 'Feedback review, Kia Forte',

@@ -279,6 +279,7 @@ const VehiclePage = ({ defaultYear, defaultMake, defaultModel, marketSnapshotVar
               onSeeLocalInventory={() => setIsMarketIntelligenceOpen(true)}
               showLocalComparison={showLocalComparison}
               variant={marketSnapshotVariant}
+              experience="decision-support"
             />
             <VehicleOverview 
               content={`The ${vehicle.make} ${vehicle.model} delivers ${vehicle.features?.slice(0, 2).join(' and ') || 'excellent value'}. With ${vehicle.horsepower || 'competitive'} horsepower and ${vehicle.mpg || 'efficient'} MPG, it's a compelling choice for buyers in this segment.`}
