@@ -1073,28 +1073,6 @@ const MarketIntelligenceSnapshot = ({
             </div>
           )}
 
-          <nav className="market-snapshot__model-years" aria-label="Other model years">
-            <span className="market-snapshot__model-years-label">Other years</span>
-            <div className="market-snapshot__model-years-list">
-              {modelYearOptions.map(({ year, count }) => {
-                const isCurrentYear = year === modelYear;
-                const yearPath = `/${year}/${toVehicleSlug(vehicle.make)}/${toVehicleSlug(vehicle.model)}`;
-                const status = getModelYearStatus(count);
-                const yearLabel = `${year} ${status}`;
-
-                return isCurrentYear ? (
-                  <span key={year} className={`market-snapshot__model-year market-snapshot__model-year--${status.toLowerCase()} market-snapshot__model-year--active`} aria-current="page" aria-label={yearLabel}>
-                    {year} <strong>{status}</strong>
-                  </span>
-                ) : (
-                  <Link key={year} to={yearPath} className={`market-snapshot__model-year market-snapshot__model-year--${status.toLowerCase()}`} aria-label={yearLabel}>
-                    {year} <strong>{status}</strong>
-                  </Link>
-                );
-              })}
-            </div>
-          </nav>
-
           {showFactorGrid && <div className="market-snapshot__factor-grid" role="group" aria-label="Local market signal summary">
             {factors.map((factor, index) => {
               const factorValueClassName = [
@@ -1285,6 +1263,28 @@ const MarketIntelligenceSnapshot = ({
             </div>
             <p className="market-snapshot__price-visual-note">{chartDescription}</p>
           </div>}
+
+          <nav className="market-snapshot__model-years" aria-label="Other model years">
+            <span className="market-snapshot__model-years-label">Other years</span>
+            <div className="market-snapshot__model-years-list">
+              {modelYearOptions.map(({ year, count }) => {
+                const isCurrentYear = year === modelYear;
+                const yearPath = `/${year}/${toVehicleSlug(vehicle.make)}/${toVehicleSlug(vehicle.model)}`;
+                const status = getModelYearStatus(count);
+                const yearLabel = `${year} ${status}`;
+
+                return isCurrentYear ? (
+                  <span key={year} className={`market-snapshot__model-year market-snapshot__model-year--${status.toLowerCase()} market-snapshot__model-year--active`} aria-current="page" aria-label={yearLabel}>
+                    {year} <strong>{status}</strong>
+                  </span>
+                ) : (
+                  <Link key={year} to={yearPath} className={`market-snapshot__model-year market-snapshot__model-year--${status.toLowerCase()}`} aria-label={yearLabel}>
+                    {year} <strong>{status}</strong>
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
         </section>
 
         <div className="market-snapshot__details-content" hidden>
