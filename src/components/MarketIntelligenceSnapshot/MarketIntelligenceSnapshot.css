@@ -312,6 +312,74 @@
   line-height: 1;
 }
 
+.market-snapshot__model-years {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-2) 0;
+}
+
+.market-snapshot__model-years-label {
+  color: var(--color-gray-600);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.market-snapshot__model-years-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.market-snapshot__model-year {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-height: 28px;
+  padding: 0 var(--spacing-2);
+  color: var(--color-blue-cobalt);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-pill);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+
+.market-snapshot__model-year strong {
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.market-snapshot__model-year:hover,
+.market-snapshot__model-year:focus-visible,
+.market-snapshot__model-year--active {
+  color: var(--color-white);
+  background: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.market-snapshot__model-year--active strong {
+  color: var(--color-white);
+}
+
+.market-snapshot__model-year--strong:not(.market-snapshot__model-year--active) strong {
+  color: var(--color-success);
+}
+
+.market-snapshot__model-year--fair:not(.market-snapshot__model-year--active) strong {
+  color: var(--color-blue-cobalt);
+}
+
+.market-snapshot__model-year--weak:not(.market-snapshot__model-year--active) strong {
+  color: var(--color-gray-600);
+}
+
 .market-snapshot__factor-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1278,18 +1346,18 @@
 }
 
 .market-snapshot__price-point--great .market-snapshot__price-dot {
-  color: var(--color-success);
-  background: var(--color-success);
+  color: var(--color-black);
+  background: var(--color-black);
 }
 
 .market-snapshot__price-point--fair .market-snapshot__price-dot {
-  color: var(--color-blue-cobalt);
-  background: var(--color-blue-cobalt);
+  color: var(--color-black);
+  background: var(--color-black);
 }
 
 .market-snapshot__price-point--above .market-snapshot__price-dot {
-  color: var(--color-error);
-  background: var(--color-error);
+  color: var(--color-black);
+  background: var(--color-black);
 }
 
 .market-snapshot__price-point--lead {
@@ -1299,6 +1367,7 @@
 .market-snapshot__price-point--lead .market-snapshot__price-dot {
   width: 20px;
   height: 20px;
+  background: var(--color-black);
   box-shadow: 0 0 0 4px var(--color-white), 0 0 0 6px color-mix(in srgb, currentColor 18%, transparent);
 }
 

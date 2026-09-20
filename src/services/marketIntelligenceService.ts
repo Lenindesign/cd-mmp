@@ -36,8 +36,10 @@ export interface VehicleMarketInventory {
 
 export interface VehicleMarketStatistics {
   currentYearCount: number;
+  twoYearsAgoCount: number;
   previousYearCount: number;
   followingYearCount: number;
+  twoYearsAheadCount: number;
   priceDropCount: number;
   newlyListedCount: number;
   goodGreatPriceCount: number;
@@ -263,12 +265,28 @@ export const getVehicleMarketInventory = ({
     targetYear: year - 1,
     condition,
   });
+  const twoYearsAgoCount = getAdjacentYearCount({
+    vehicle,
+    location,
+    radiusMiles,
+    targetYear: year - 2,
+    condition,
+  });
   const followingYearCount = condition === 'used'
     ? getAdjacentYearCount({
         vehicle,
         location,
         radiusMiles,
         targetYear: year + 1,
+        condition,
+      })
+    : 0;
+  const twoYearsAheadCount = condition === 'used'
+    ? getAdjacentYearCount({
+        vehicle,
+        location,
+        radiusMiles,
+        targetYear: year + 2,
         condition,
       })
     : 0;
@@ -283,8 +301,10 @@ export const getVehicleMarketInventory = ({
     averageDaysOnLot: Math.round(average(daysOnLot)),
     statistics: {
       currentYearCount: matches.length,
+      twoYearsAgoCount,
       previousYearCount,
       followingYearCount,
+      twoYearsAheadCount,
       priceDropCount: matches.filter(({ unit }) => (unit.recentPriceDropAmount ?? 0) > 0).length,
       newlyListedCount: matches.filter(
         ({ unit }) => (unit.daysOnLot ?? Number.POSITIVE_INFINITY) <= NEWLY_LISTED_DAYS

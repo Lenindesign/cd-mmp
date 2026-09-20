@@ -1,5 +1,6 @@
 import { type CSSProperties, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, ExternalLink, Info } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import { Badge } from '../Badge';
 import { Button } from '../Button';
 import { OptimizedImage } from '../OptimizedImage';
@@ -75,10 +76,6 @@ interface BuyerGuidance {
   openingOffer?: string;
 }
 
-type LocalDealSort = 'value' | 'price' | 'discount';
-
-const LOCAL_DEAL_ALL_TRIMS = 'all';
-
 const formatMileageValue = (mileage?: number) =>
   mileage !== undefined ? `${mileage.toLocaleString()} mi` : 'New';
 
@@ -91,6 +88,9 @@ const formatPriceRange = (low: number, high: number) =>
 const normalizeTrim = (trim?: string) =>
   (trim ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
+const toVehicleSlug = (value: string) =>
+  value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
 const getMatchTrimLabel = (match: MarketInventoryMatch) => {
   const vehicleTitle = `${match.unit.year} ${match.unit.make} ${match.unit.model}`;
   return match.unit.trim.replace(vehicleTitle, '').replace(/\s+/g, ' ').trim();
@@ -98,15 +98,6 @@ const getMatchTrimLabel = (match: MarketInventoryMatch) => {
 
 const getDisplayMsrp = (match: MarketInventoryMatch) =>
   match.unit.msrp ?? match.unit.price;
-
-const getMsrpDifference = (match: MarketInventoryMatch) =>
-  getDisplayMsrp(match) - match.unit.price;
-
-const getMsrpDifferenceCopy = (difference: number) => {
-  if (difference > 0) return `${formatPrice(difference)} off`;
-  if (difference < 0) return `${formatPrice(Math.abs(difference))} over`;
-  return 'At MSRP';
-};
 
 const isGoodOrGreatPrice = (match: MarketInventoryMatch, averagePrice: number) =>
   match.unit.price <= averagePrice * 0.985;
@@ -693,8 +684,6 @@ const MarketIntelligenceSnapshot = ({
     value: currentLocationZipCode,
     error: '',
   });
-  const [localDealSort, setLocalDealSort] = useState<LocalDealSort>('value');
-  const [localDealTrimFilter, setLocalDealTrimFilter] = useState<string>('Base');
   const [activeLocalDealKey, setActiveLocalDealKey] = useState<string | null>(null);
   const activeLocalDealTimeoutRef = useRef<number | null>(null);
   const dealsScrollerRef = useRef<HTMLDivElement>(null);
@@ -757,57 +746,7 @@ const MarketIntelligenceSnapshot = ({
   const plottedMatches = leadMatch && !plottedMatchesBase.some((match) => getLocalDealKey(match) === getLocalDealKey(leadMatch))
     ? [leadMatch, ...plottedMatchesBase].slice(0, 10)
     : plottedMatchesBase;
-  const trims = plottedMatches
-    .map((match) => getMatchTrimLabel(match) || match.unit.trim)
-    .filter((trim): trim is string => Boolean(trim));
-  const uniqueTrims = Array.from(new Set(trims));
-  const baseTrim = uniqueTrims.find((trim) => normalizeTrim(trim) === 'base');
-  const remainingTrims = uniqueTrims.filter((trim) => trim !== baseTrim);
-  const localDealTrimOptions = baseTrim ? [baseTrim, ...remainingTrims] : uniqueTrims;
-
-  const defaultLocalDealTrim = localDealTrimOptions.find((trim) => normalizeTrim(trim) === 'base') ?? LOCAL_DEAL_ALL_TRIMS;
-  const activeLocalDealTrim =
-    localDealTrimFilter === LOCAL_DEAL_ALL_TRIMS || localDealTrimOptions.includes(localDealTrimFilter)
-      ? localDealTrimFilter
-      : defaultLocalDealTrim;
   const marketContextLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model} near ${zipCode}`;
-  const filteredLocalDeals =
-    activeLocalDealTrim === LOCAL_DEAL_ALL_TRIMS
-      ? plottedMatches
-      : plottedMatches.filter((match) => (getMatchTrimLabel(match) || match.unit.trim) === activeLocalDealTrim);
-  const sortedLocalDeals = [...filteredLocalDeals].sort((a, b) => {
-    if (localDealSort === 'value') {
-      const leadMatchKey = leadMatch ? getLocalDealKey(leadMatch) : null;
-      const aIsLeadMatch = leadMatchKey !== null && getLocalDealKey(a) === leadMatchKey;
-      const bIsLeadMatch = leadMatchKey !== null && getLocalDealKey(b) === leadMatchKey;
-
-      if (aIsLeadMatch !== bIsLeadMatch) return aIsLeadMatch ? -1 : 1;
-
-      const bScore = getMatchScore({
-        match: b,
-        averagePrice: market.averagePrice,
-        averageMileage: statistics.averageMileage,
-        condition: market.condition,
-      });
-      const aScore = getMatchScore({
-        match: a,
-        averagePrice: market.averagePrice,
-        averageMileage: statistics.averageMileage,
-        condition: market.condition,
-      });
-
-      if (bScore !== aScore) return bScore - aScore;
-      return a.unit.price - b.unit.price;
-    }
-
-    if (localDealSort === 'discount') {
-      return getMsrpDifference(b) - getMsrpDifference(a);
-    }
-
-    return a.unit.price - b.unit.price;
-  });
-  const visibleLocalDeals = sortedLocalDeals.slice(0, 3);
-  const remainingLocalDeals = sortedLocalDeals.slice(3);
   const targetLow = Math.round((market.averagePrice * 0.94) / 100) * 100;
   const targetHigh = Math.round((market.averagePrice * 0.975) / 100) * 100;
   const askingPrice = leadMatch ? leadMatch.unit.price : market.averagePrice;
@@ -880,9 +819,7 @@ const MarketIntelligenceSnapshot = ({
         ? 'Best Available Match'
         : 'Best Balanced Match';
   const leadMarkerLabel = isUsed ? 'Best value' : 'Best price';
-  const leadRowBadgeLabel = isUsed ? 'Best value' : 'Best price';
   const leadDotLabel = isUsed ? 'Best value' : 'Best local deal';
-  const localDealValueSortLabel = isUsed ? 'Best value' : 'Best price';
   const chartDescription = isUsed
     ? 'Representative matches. Best value balances price, mileage, history, and days on lot.'
     : 'Representative matches. Best price is the lowest comparable local listing for this trim.';
@@ -931,6 +868,15 @@ const MarketIntelligenceSnapshot = ({
         ? `${statistics.goodGreatPriceCount} local matches are priced to move`
         : null,
   ].filter(Boolean) as string[];
+  const modelYear = parseInt(vehicle.year, 10);
+  const getModelYearStatus = (count: number) => count >= 24 ? 'Strong' : count >= 10 ? 'Fair' : 'Weak';
+  const modelYearOptions = [
+    { year: modelYear - 2, count: statistics.twoYearsAgoCount },
+    { year: modelYear - 1, count: statistics.previousYearCount },
+    { year: modelYear, count: statistics.currentYearCount },
+    { year: modelYear + 1, count: statistics.followingYearCount },
+    { year: modelYear + 2, count: statistics.twoYearsAheadCount },
+  ].filter(({ year, count }) => Number.isFinite(year) && (count > 0 || year === modelYear));
 
   const trendOrMileageFactor: FactorItem = isUsed
     ? {
@@ -1008,59 +954,6 @@ const MarketIntelligenceSnapshot = ({
     const scroller = dealsScrollerRef.current;
     if (!scroller) return;
     scroller.scrollBy({ left: direction * scroller.clientWidth * 0.9, behavior: 'smooth' });
-  };
-
-  const renderLocalDealRow = (match: MarketInventoryMatch) => {
-    const localDealTone = getPriceBandTone({
-      price: match.unit.price,
-      targetLow,
-      targetHigh,
-    });
-    const trimLabel = getMatchTrimLabel(match) || match.unit.trim;
-    const displayMsrp = getDisplayMsrp(match);
-    const msrpDifference = getMsrpDifference(match);
-    const isBestLocalDeal = match === leadMatch;
-    const localDealKey = getLocalDealKey(match);
-
-    return (
-      <a
-        key={`${localDealKey}-list`}
-        className={`market-snapshot__local-deal-row market-snapshot__local-deal-row--${localDealTone}`}
-        href={getListingUrl(match)}
-        aria-label={`View ${getVehicleMatchTitle(match)} at ${match.dealer.name} for ${formatPrice(match.unit.price)}`}
-        onMouseEnter={() => showActiveLocalDeal(localDealKey)}
-        onMouseLeave={scheduleClearActiveLocalDeal}
-        onFocus={() => showActiveLocalDeal(localDealKey)}
-        onBlur={scheduleClearActiveLocalDeal}
-      >
-        <span className="market-snapshot__local-deal-dealer">
-          <span className="market-snapshot__local-deal-dealer-name">
-            <strong>{match.dealer.name}</strong>
-          </span>
-          <ExternalLink className="market-snapshot__local-deal-external-icon" size={13} strokeWidth={2} aria-hidden="true" />
-          {match.dealer.distance !== undefined && <em>{match.dealer.distance.toFixed(1)} mi</em>}
-          {isBestLocalDeal && (
-            <b className={`market-snapshot__recommendation-label ${leadRowBadgeLabel === 'Best value' || leadRowBadgeLabel === 'Best price' ? 'market-snapshot__local-deal-badge--solid' : ''}`}>
-              {leadRowBadgeLabel}
-            </b>
-          )}
-        </span>
-        <span className="market-snapshot__local-deal-trim" data-label="Trim">{trimLabel}</span>
-        <strong className="market-snapshot__local-deal-price">{formatPrice(match.unit.price)}</strong>
-        <span className="market-snapshot__local-deal-msrp" data-label="MSRP">{formatPrice(displayMsrp)}</span>
-        <strong className={`market-snapshot__local-deal-discount ${
-          msrpDifference < 0
-            ? 'market-snapshot__local-deal-discount--over'
-            : msrpDifference === 0
-              ? 'market-snapshot__local-deal-discount--empty'
-              : ''
-        }`}
-        data-label="Vs. MSRP"
-        >
-          {getMsrpDifferenceCopy(msrpDifference)}
-        </strong>
-      </a>
-    );
   };
 
   return (
@@ -1179,6 +1072,28 @@ const MarketIntelligenceSnapshot = ({
               ))}
             </div>
           )}
+
+          <nav className="market-snapshot__model-years" aria-label="Other model years">
+            <span className="market-snapshot__model-years-label">Other years</span>
+            <div className="market-snapshot__model-years-list">
+              {modelYearOptions.map(({ year, count }) => {
+                const isCurrentYear = year === modelYear;
+                const yearPath = `/${year}/${toVehicleSlug(vehicle.make)}/${toVehicleSlug(vehicle.model)}`;
+                const status = getModelYearStatus(count);
+                const yearLabel = `${year} ${status}`;
+
+                return isCurrentYear ? (
+                  <span key={year} className={`market-snapshot__model-year market-snapshot__model-year--${status.toLowerCase()} market-snapshot__model-year--active`} aria-current="page" aria-label={yearLabel}>
+                    {year} <strong>{status}</strong>
+                  </span>
+                ) : (
+                  <Link key={year} to={yearPath} className={`market-snapshot__model-year market-snapshot__model-year--${status.toLowerCase()}`} aria-label={yearLabel}>
+                    {year} <strong>{status}</strong>
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
 
           {showFactorGrid && <div className="market-snapshot__factor-grid" role="group" aria-label="Local market signal summary">
             {factors.map((factor, index) => {
@@ -1369,93 +1284,8 @@ const MarketIntelligenceSnapshot = ({
               </div>
             </div>
             <p className="market-snapshot__price-visual-note">{chartDescription}</p>
-            <div className="market-snapshot__local-deals-inline">
-              <div className="market-snapshot__local-deal-toolbar">
-                <div className="market-snapshot__local-deal-sort" role="group" aria-label="Sort local matches">
-                  <span>Sort</span>
-                  <button
-                    type="button"
-                    className={`market-snapshot__recommendation-label ${localDealSort === 'value' ? 'market-snapshot__local-deal-sort-button--active' : ''}`}
-                    aria-pressed={localDealSort === 'value'}
-                    onClick={() => setLocalDealSort('value')}
-                  >
-                    {localDealValueSortLabel}
-                  </button>
-                  <button
-                    type="button"
-                    className={localDealSort === 'price' ? 'market-snapshot__local-deal-sort-button--active' : undefined}
-                    aria-pressed={localDealSort === 'price'}
-                    onClick={() => setLocalDealSort('price')}
-                  >
-                    Price
-                  </button>
-                  <button
-                    type="button"
-                    className={localDealSort === 'discount' ? 'market-snapshot__local-deal-sort-button--active' : undefined}
-                    aria-pressed={localDealSort === 'discount'}
-                    onClick={() => setLocalDealSort('discount')}
-                  >
-                    Savings
-                  </button>
-                </div>
-
-                <label className="market-snapshot__local-deal-trim-filter">
-                  <span>Trim</span>
-                  <select
-                    value={activeLocalDealTrim}
-                    onChange={(event) => setLocalDealTrimFilter(event.target.value)}
-                  >
-                    <option value={LOCAL_DEAL_ALL_TRIMS}>All trims</option>
-                    {localDealTrimOptions.map((trim) => (
-                      <option key={trim} value={trim}>
-                        {trim}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              {sortedLocalDeals.length > 0 ? (
-                <>
-                  <div className="market-snapshot__local-deal-header" aria-hidden="true">
-                    <span>Dealer</span>
-                    <span>Trim</span>
-                    <span>Price</span>
-                    <span>MSRP</span>
-                    <span>Vs. MSRP</span>
-                  </div>
-                  <div className="market-snapshot__local-deal-list" role="region" aria-label="Comparable local dealer inventory">
-                    {visibleLocalDeals.map(renderLocalDealRow)}
-                  </div>
-
-                  {remainingLocalDeals.length > 0 && (
-                    <details className="market-snapshot__local-deals-more">
-                      <summary>
-                        <span>Show {remainingLocalDeals.length} more local matches</span>
-                        <span className="market-snapshot__local-deals-menu-icon" aria-hidden="true" />
-                      </summary>
-                      <div className="market-snapshot__local-deal-list">
-                        {remainingLocalDeals.map(renderLocalDealRow)}
-                      </div>
-                    </details>
-                  )}
-                </>
-              ) : (
-                <p className="market-snapshot__local-deals-empty">No local matches for this trim.</p>
-              )}
-            </div>
           </div>}
         </section>
-
-        <div className="market-snapshot__details-cta">
-          <div className="market-snapshot__details-cta-copy">
-            <strong>More market details</strong>
-            <em>Buying guidance, price details, and comparable listings</em>
-          </div>
-          <button type="button" onClick={onSeeLocalInventory}>
-            See market trends
-          </button>
-        </div>
 
         <div className="market-snapshot__details-content" hidden>
           <details>
