@@ -932,6 +932,31 @@ const MarketIntelligenceSnapshot = ({
         : null,
   ].filter(Boolean) as string[];
 
+  const trendOrMileageFactor: FactorItem = isUsed
+    ? {
+        label: 'Typical Mileage',
+        value: statistics.averageMileage !== undefined
+          ? `${Math.round(statistics.averageMileage).toLocaleString()} mi`
+          : '—',
+        description: statistics.lowMileage !== undefined && statistics.highMileage !== undefined
+          ? `Range ${Math.round(statistics.lowMileage).toLocaleString()} to ${Math.round(statistics.highMileage).toLocaleString()} mi`
+          : 'Local mileage unavailable',
+        help: {
+          why: 'Used-car prices only make sense when you also account for how many miles are on the car.',
+          action: 'Compare mileage against the typical local listing before judging the price.',
+        },
+      }
+    : {
+        label: 'Price Trend',
+        value: `Down ${priceTrend}`,
+        description: 'Prices moving lower',
+        help: {
+          why: 'Recent movement shows whether sellers are adjusting prices.',
+          action: 'If prices are falling, ask dealers to compete with the latest local offers.',
+        },
+        tone: 'success',
+      };
+
   const factors: FactorItem[] = [
     {
       label: 'Typical Price Near You',
@@ -957,18 +982,7 @@ const MarketIntelligenceSnapshot = ({
       tone: 'link',
       onValueClick: onSeeLocalInventory,
     },
-    {
-      label: 'Price Trend',
-      value: `Down ${priceTrend}`,
-      description: 'Prices moving lower',
-      help: {
-        why: 'Recent movement shows whether sellers are adjusting prices.',
-        action: isUsed
-          ? 'If prices are falling, ask the dealer to match the latest local movement.'
-          : 'If prices are falling, ask dealers to compete with the latest local offers.',
-      },
-      tone: 'success',
-    },
+    trendOrMileageFactor,
     {
       label: 'Avg. Days on Lot',
       value: `${Math.round(market.averageDaysOnLot)} days`,
