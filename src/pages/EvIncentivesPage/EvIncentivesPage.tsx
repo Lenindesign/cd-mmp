@@ -20,6 +20,7 @@ import {
   getEvIncentiveDisplayType,
   getEvIncentives,
   getEvIncentivePresentation,
+  isConsumerEvIncentive,
   type EvIncentive,
 } from '../../services/evIncentivesService';
 import type { Incentive } from '../../services/incentiveAdapter';
@@ -144,7 +145,7 @@ const EvIncentivesPage = () => {
     setFilters(initialFilters);
   }, [initialFilters]);
 
-  const allIncentives = useMemo(() => getEvIncentives(), []);
+  const allIncentives = useMemo(() => getEvIncentives().filter(isConsumerEvIncentive), []);
   const evFilterOptions = useMemo<DealsFilterOptions>(() => {
     const modelOptionsByMake = new Map<string, Set<string>>();
     for (const incentive of allIncentives) {

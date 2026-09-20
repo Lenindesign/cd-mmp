@@ -111,11 +111,12 @@ export const EV_INCENTIVE_TYPE_DESCRIPTIONS: Record<EvIncentiveDisplayType, stri
 export const EV_INCENTIVE_DISPLAY_TYPE_ORDER: EvIncentiveDisplayType[] = [
   'vehicle-retirement',
   'rebate',
-  'financing',
   'bill-credit',
-  'tax-credit',
-  'tax-exemption',
 ];
+
+export function isConsumerEvIncentive(incentive: EvIncentive): boolean {
+  return ['Vehicle Retirement', 'Rebate', 'Bill Credit'].includes(incentive.offerType);
+}
 
 export const EV_INCENTIVES: EvIncentive[] = evIncentivesData as EvIncentive[];
 

@@ -10,6 +10,7 @@ import {
   getEvIncentiveDisplayType,
   getEvIncentives,
   getEvIncentivePresentation,
+  isConsumerEvIncentive,
   type EvIncentive,
   type EvIncentiveDisplayType,
 } from '../../services/evIncentivesService';
@@ -22,7 +23,7 @@ const BASE_URL = 'https://www.caranddriver.com';
 const sampleTypes: EvIncentiveDisplayType[] = ['vehicle-retirement', 'rebate', 'bill-credit'];
 
 const getSamples = () => sampleTypes.map((type) => (
-  getEvIncentives().find((incentive) => getEvIncentiveDisplayType(incentive) === type)
+  getEvIncentives().filter(isConsumerEvIncentive).find((incentive) => getEvIncentiveDisplayType(incentive) === type)
 )).filter((incentive): incentive is NonNullable<typeof incentive> => Boolean(incentive));
 
 const EvIncentiveCardSamplesPage = () => {
@@ -109,7 +110,7 @@ const EvIncentiveCardSamplesPage = () => {
             const vehicle = getVehicleBySlug(incentive.vehicleSlug);
             const displayType = getEvIncentiveDisplayType(incentive);
             const presentation = getEvIncentivePresentation(incentive);
-            const typeLabel = displayType === 'financing' ? 'Charging Financing' : EV_INCENTIVE_TYPE_LABELS[displayType];
+            const typeLabel = EV_INCENTIVE_TYPE_LABELS[displayType];
             const isSaved = savedIds.has(incentive.id);
 
             return (
@@ -146,7 +147,7 @@ const EvIncentiveCardSamplesPage = () => {
                   onToggleOffersPopup={(event) => event.preventDefault()}
                   onCloseOffersPopup={(event) => event.preventDefault()}
                   payment={{
-                    amount: presentation?.cardOfferAmount ?? (displayType === 'financing' ? 'Charging Financing' : incentive.amountLabel),
+                    amount: presentation?.cardOfferAmount ?? incentive.amountLabel,
                     period: presentation?.cardOfferSuffix ?? '',
                     subLabel: presentation?.cardProgramLabel ?? incentive.programName,
                     expirationDate: incentive.expirationDate ?? '',
