@@ -123,6 +123,8 @@ const HeroOffersB = ({
   const showHeader = Boolean(title) || showBuyLink || showLeaseLink || showEvIncentivesLink;
   const showMoreDealsControl = showMoreDealsAccordion && moreOffers.length > 0;
   const moreDealsId = `hero-offers-b-more-${slugify(vehicleIncentives.make)}-${slugify(vehicleIncentives.model)}`;
+  const featuredEvTag = evIncentiveTags.find((tag) => /bill credit/i.test(tag.text)) ?? evIncentiveTags[0];
+  const visibleTopOffers = topOffers.slice(0, featuredEvTag ? 2 : 3);
 
   const renderOfferPill = (inc: Incentive) => {
     const isSelected = selectedOfferIds.includes(inc.id);
@@ -289,23 +291,19 @@ const HeroOffersB = ({
         </div>
       )}
       <div className="hero__offers-b-pills">
-        {topOffers.map(renderOfferPill)}
+        {featuredEvTag && (
+          <Link
+            key={`${featuredEvTag.label}-${featuredEvTag.text}`}
+            to={evIncentivesPath}
+            className="hero__offers-b-pill hero__offers-b-ev-tag"
+            title={featuredEvTag.tooltip}
+          >
+            <span className="hero__offers-b-pill-chip hero__offers-b-ev-tag-label">{featuredEvTag.label}</span>
+            <span className="hero__offers-b-pill-text hero__offers-b-ev-tag-text">{featuredEvTag.text}</span>
+          </Link>
+        )}
+        {visibleTopOffers.map(renderOfferPill)}
       </div>
-      {evIncentiveTags.length > 0 && (
-        <div className="hero__offers-b-ev-tags" aria-label="EV incentives">
-          {evIncentiveTags.map((tag) => (
-            <Link
-              key={`${tag.label}-${tag.text}`}
-              to={evIncentivesPath}
-              className="hero__offers-b-ev-tag"
-              title={tag.tooltip}
-            >
-              <span className="hero__offers-b-ev-tag-label">{tag.label}</span>
-              <span className="hero__offers-b-ev-tag-text">{tag.text}</span>
-            </Link>
-          ))}
-        </div>
-      )}
       {showMoreDealsControl && (
         <div className="hero__offers-b-more-wrap">
           {showMoreDeals && (
