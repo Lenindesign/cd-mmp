@@ -16,6 +16,7 @@ import {
 } from '../../services/evIncentivesService';
 import type { Incentive } from '../../services/incentiveAdapter';
 import { getVehicleBySlug } from '../../services/vehicleService';
+import { validateEvIncentivesWithTypeSafe, type TypeSafeEvValidation } from '../../services/typesafeEvIncentiveService';
 import './EvIncentiveCardSamplesPage.css';
 
 const BASE_URL = 'https://www.caranddriver.com';
@@ -29,7 +30,23 @@ const getSamples = () => sampleTypes.map((type) => (
 const EvIncentiveCardSamplesPage = () => {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [activeSample, setActiveSample] = useState<EvIncentive | null>(null);
+  const [typeSafeResult, setTypeSafeResult] = useState<TypeSafeEvValidation | null>(null);
+  const [typeSafeError, setTypeSafeError] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
   const samples = useMemo(getSamples, []);
+
+  const validateWithTypeSafe = async () => {
+    setIsValidating(true);
+    setTypeSafeError(null);
+    try {
+      setTypeSafeResult(await validateEvIncentivesWithTypeSafe(samples));
+    } catch (error) {
+      setTypeSafeResult(null);
+      setTypeSafeError(error instanceof Error ? error.message : 'TypeSafe validation failed.');
+    } finally {
+      setIsValidating(false);
+    }
+  };
 
   const activeOffer: Partial<IncentiveOfferDetail> | undefined = activeSample
     ? (() => {
@@ -103,6 +120,15 @@ const EvIncentiveCardSamplesPage = () => {
         <div className="ev-samples-page__notice">
           <strong>How to read this page</strong>
           <span>These are representative records from the current EV incentive data. The card label is sourced from the data’s three consumer-facing incentive types: Vehicle Retirement, Rebate, and Bill Credit.</span>
+          <button type="button" className="ev-samples-page__validate-button" onClick={validateWithTypeSafe} disabled={isValidating}>
+            {isValidating ? 'Validating…' : 'Validate with TypeSafe'}
+          </button>
+          {typeSafeResult && (
+            <span className="ev-samples-page__validation-result">
+              TypeSafe evaluated {typeSafeResult.records.length} records. {typeSafeResult.records.filter((record) => !record.needsReview).length} match the source label; {typeSafeResult.records.filter((record) => record.needsReview).length} record(s) need review.
+            </span>
+          )}
+          {typeSafeError && <span className="ev-samples-page__validation-error">{typeSafeError}</span>}
         </div>
 
         <section className="ev-samples-page__grid" aria-label="EV incentive card samples">
