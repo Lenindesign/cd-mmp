@@ -579,30 +579,6 @@ const getTrimOptionPrice = (vehicle: Vehicle, trim: TrimData, index: number) => 
   return index === 0 ? vehicle.priceMin : parsedTrimPrice || vehicle.priceMin;
 };
 
-const getRegistrationDealerFeeGuidance = (stateFeeEstimate: number) => {
-  if (stateFeeEstimate <= 500) {
-    return {
-      label: 'Low Fee States',
-      range: '~$300-$500',
-      copy: 'These are separate from sales tax and may include title, registration, documentation, plate, and dealer processing charges. In your state, they often range from $300-$500, but the final itemized dealer quote can change.',
-    };
-  }
-
-  if (stateFeeEstimate <= 900) {
-    return {
-      label: 'Medium Fee States',
-      range: '~$600-$900',
-      copy: 'These are separate from sales tax and may include title, registration, documentation, plate, and dealer processing charges. In your state, they often range from $600-$900, but the final itemized dealer quote can change.',
-    };
-  }
-
-  return {
-    label: 'High Fee States',
-    range: '~$1,000-$1,500',
-    copy: 'These are separate from sales tax and may include title, registration, documentation, plate, and dealer processing charges. In your state, they are often higher and may range from $1,000-$1,500, but the final itemized dealer quote can change.',
-  };
-};
-
 const parseApr = (value: string) => {
   const match = value.match(/([\d.]+)%/);
   return match ? Number(match[1]) : 0;
@@ -2441,7 +2417,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const registrationFees = feesOverride ? numberInput(feesOverride) : stateRule.titleRegistrationFees;
   const dealerFees = dealerFeesOverride ? numberInput(dealerFeesOverride) : stateRule.dealerFeesEstimate;
   const defaultEstimatedRegistrationDealerFees = registrationFees + dealerFees;
-  const registrationDealerFeeGuidance = getRegistrationDealerFeeGuidance(defaultEstimatedRegistrationDealerFees);
   const fees = estimatedFeesOverride ? numberInput(estimatedFeesOverride) : defaultEstimatedRegistrationDealerFees;
   const extendedWarrantyAmount = includeExtendedWarranty ? Math.max(0, extendedWarrantyCost) : 0;
   const monthlyInsuranceAmount = includeInsuranceEstimate ? Math.max(0, monthlyInsuranceEstimate) : 0;
@@ -5786,7 +5761,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           </div>
                         </div>
                         <TextField
-                          label="Registration & Dealer Fees"
+                          label="Est. Registration & Dealer Fees"
                           wrapperClassName="aio-payment__light-trade-fees-field"
                           labelHelp={renderLightGuidanceTooltip({
                             id: lightRegistrationFeesGuidanceId,
@@ -5805,10 +5780,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         />
                       </div>
                     </div>
-
-                    <p className="aio-payment__light-trade-step__dealer-note">
-                      {registrationDealerFeeGuidance.copy}
-                    </p>
 
                     <div className="aio-payment__light-trade-step__finance-box">
                       <button
