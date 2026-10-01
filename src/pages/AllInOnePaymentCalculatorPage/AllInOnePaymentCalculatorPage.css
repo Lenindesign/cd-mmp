@@ -3092,7 +3092,7 @@ label.aio-payment__light-loan-step__label {
   border-top: 0;
 }
 
-.aio-payment__light-vehicle-step__category-match-button {
+.aio-payment__light-vehicle-step__category-match-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -3100,23 +3100,54 @@ label.aio-payment__light-loan-step__label {
   width: 100%;
   margin: 0;
   padding: var(--spacing-3) 0;
-  border: 0;
   border-radius: var(--border-radius-md);
   background: transparent;
   color: inherit;
-  cursor: pointer;
   font: inherit;
-  text-align: left;
   transition:
     background-color var(--transition-fast),
     box-shadow var(--transition-fast);
 }
 
-.aio-payment__light-vehicle-step__category-match-button:hover {
+.aio-payment__light-vehicle-step__category-match-row:hover {
   background: color-mix(in srgb, var(--color-blue-cobalt) 6%, transparent);
 }
 
-.aio-payment__light-vehicle-step__category-match-button:focus-visible {
+.aio-payment__light-vehicle-step__category-match-row--selected {
+  background: color-mix(in srgb, var(--color-blue-cobalt) 7%, var(--color-white));
+  box-shadow: inset 0 0 0 1px var(--color-blue-cobalt);
+}
+
+.aio-payment__light-vehicle-step__category-match-select-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  min-height: 38px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 2px solid var(--color-blue);
+  border-radius: var(--border-radius-md);
+  background: var(--color-white);
+  color: var(--color-blue);
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.aio-payment__light-vehicle-step__category-match-select-button:hover {
+  background: var(--color-blue);
+  color: var(--color-white);
+}
+
+.aio-payment__light-vehicle-step__category-match-select-button:focus-visible {
   outline: 2px solid var(--color-blue-cobalt);
   outline-offset: 2px;
 }
@@ -3124,22 +3155,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-vehicle-step__category-match-main {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-3);
   min-width: 0;
-}
-
-.aio-payment__light-vehicle-step__category-match-rank {
-  flex: 0 0 auto;
-  display: inline-grid;
-  place-items: center;
-  width: var(--spacing-7);
-  height: var(--spacing-7);
-  border-radius: var(--border-radius-full);
-  background: var(--color-teal-light);
-  color: var(--color-blue-cobalt);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
 }
 
 .aio-payment__light-vehicle-step__category-match-copy {
@@ -3151,7 +3167,16 @@ label.aio-payment__light-loan-step__label {
   line-height: 1.35;
 }
 
+.aio-payment__light-vehicle-step__category-match-title-line {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
 .aio-payment__light-vehicle-step__category-match-copy strong {
+  flex: 0 1 auto;
+  min-width: 0;
   overflow: hidden;
   color: var(--color-dark);
   font-family: var(--font-heading);
@@ -3209,6 +3234,23 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-vehicle-step__category-match-range {
   flex: 0 0 auto;
+  padding: var(--spacing-1) var(--spacing-3);
+  border: 0;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  white-space: nowrap;
+}
+
+.aio-payment__light-vehicle-step__category-match-range--in {
+  background: var(--color-success-50);
+  color: var(--color-success-dark);
+}
+
+.aio-payment__light-vehicle-step__category-match-range--near {
+  background: color-mix(in srgb, var(--color-warning-light) 72%, var(--color-white) 28%);
+  color: var(--color-warning-dark);
 }
 
 .aio-payment__light-vehicle-step__category-matches-empty {
@@ -3221,7 +3263,7 @@ label.aio-payment__light-loan-step__label {
 
 @media (max-width: 639px) {
   .aio-payment__light-vehicle-step__category-matches-summary,
-  .aio-payment__light-vehicle-step__category-match-button {
+  .aio-payment__light-vehicle-step__category-match-row {
     align-items: flex-start;
   }
 
@@ -3229,13 +3271,8 @@ label.aio-payment__light-loan-step__label {
     flex-wrap: wrap;
   }
 
-  .aio-payment__light-vehicle-step__category-match-button {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .aio-payment__light-vehicle-step__category-match-meta {
     justify-content: flex-start;
-    padding-left: calc(var(--spacing-7) + var(--spacing-3));
   }
 
   .aio-payment__light-vehicle-step__category-match-copy strong {

@@ -1737,6 +1737,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [condition, setCondition] = useState<VehicleCondition>('new');
   const [selectedSlug, setSelectedSlug] = useState(defaultVehicle.slug);
   const [selectedYear, setSelectedYear] = useState(defaultVehicle.year);
+  const [selectedBrowseMatchSlug, setSelectedBrowseMatchSlug] = useState<string | null>(null);
   const [startMode, setStartMode] = useState<PurchaseStartMode>(() => isLightVariant ? 'price' : 'monthly');
   const [price, setPrice] = useState(() => (isLightVariant ? LIGHT_DEFAULT_VEHICLE_PRICE : defaultVehicle.priceMin));
   const [selectedTrimId, setSelectedTrimId] = useState<string | null>(null);
@@ -4126,6 +4127,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const handleLightVehicleStepModeChange = useCallback((nextMode: 'known' | 'browsing') => {
     setLightVehicleStepMode(nextMode);
+    setSelectedBrowseMatchSlug(null);
     if (nextMode === 'browsing') {
       clearLightSpecificVehicleSelection();
     }
@@ -4133,10 +4135,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
   const handleLightBrowseBodyStyleChange = useCallback((nextBodyStyle: string) => {
     setLightBrowseBodyStyle(nextBodyStyle);
+    setSelectedBrowseMatchSlug(null);
     clearLightSpecificVehicleSelection();
   }, [clearLightSpecificVehicleSelection]);
 
   const handleLightBrowseVehicleMatchSelect = useCallback((vehicle: Vehicle) => {
+    setSelectedBrowseMatchSlug(vehicle.slug);
     applySelectedVehicle(vehicle, {
       selectedYear: vehicle.year,
       syncCatalogPrice: condition !== 'used',
@@ -5304,43 +5308,53 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                   Top-rated {lightBrowseVehicleMatchesLabel} priced from {currency(LIGHT_BODY_STYLE_MATCH_BELOW_TARGET)} below to {currency(LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET)} above your Vehicle Target Price.
                                 </p>
                                 <div className="aio-payment__light-vehicle-step__category-matches-list" role="list">
-                                  {lightBrowseVehicleMatches.map(({ vehicle, isNearRange }, index) => (
-                                    <div key={vehicle.slug} className="aio-payment__light-vehicle-step__category-match" role="listitem">
-                                      <button
-                                        type="button"
-                                        className="aio-payment__light-vehicle-step__category-match-button"
-                                        onClick={() => handleLightBrowseVehicleMatchSelect(vehicle)}
-                                        aria-label={`Select ${vehicle.year} ${vehicle.make} ${vehicle.model} for this estimate`}
-                                      >
-                                        <span className="aio-payment__light-vehicle-step__category-match-main">
-                                          <span className="aio-payment__light-vehicle-step__category-match-rank">
-                                            #{index + 1}
-                                          </span>
-                                          <span className="aio-payment__light-vehicle-step__category-match-copy">
-                                            <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong>
-                                            <span className="aio-payment__light-vehicle-step__category-match-price">
-                                              Starts at {currency(vehicle.priceMin)}
-                                              <span className="aio-payment__light-vehicle-step__category-match-price-divider" aria-hidden="true">|</span>
-                                              <span
-                                                className="aio-payment__light-vehicle-step__category-match-rating"
-                                                aria-label={`C/D rating ${formatLightStaffRating(vehicle.staffRating)} out of 10`}
-                                              >
-                                                <SealCheck size={16} weight="regular" aria-hidden="true" />
-                                                <span>C/D RATING: <strong>{formatLightStaffRating(vehicle.staffRating)}/10</strong></span>
+                                  {lightBrowseVehicleMatches.map(({ vehicle, isNearRange }) => {
+                                    const isSelected = selectedBrowseMatchSlug === vehicle.slug;
+                                    const suggestedTrim = getVehicleTrims(
+                                      vehicle.make,
+                                      vehicle.model,
+                                      vehicle.priceMin,
+                                      vehicle.priceMax,
+                                    )[0]?.name;
+                                    return (
+                                      <div key={vehicle.slug} className="aio-payment__light-vehicle-step__category-match" role="listitem">
+                                        <div className={`aio-payment__light-vehicle-step__category-match-row${isSelected ? ' aio-payment__light-vehicle-step__category-match-row--selected' : ''}`}>
+                                          <span className="aio-payment__light-vehicle-step__category-match-main">
+                                            <span className="aio-payment__light-vehicle-step__category-match-copy">
+                                              <span className="aio-payment__light-vehicle-step__category-match-title-line">
+                                                <strong>{vehicle.year} {vehicle.make} {vehicle.model}{suggestedTrim ? ` ${suggestedTrim}` : ''}</strong>
+                                              </span>
+                                              <span className="aio-payment__light-vehicle-step__category-match-price">
+                                                <span className={`aio-payment__light-vehicle-step__category-match-range aio-payment__light-vehicle-step__category-match-range--${isNearRange ? 'near' : 'in'}`}>
+                                                  {isNearRange ? 'Near range' : 'In range'}
+                                                </span>
+                                                Starts at {currency(vehicle.priceMin)}
+                                                <span className="aio-payment__light-vehicle-step__category-match-price-divider" aria-hidden="true">|</span>
+                                                <span
+                                                  className="aio-payment__light-vehicle-step__category-match-rating"
+                                                  aria-label={`C/D rating ${formatLightStaffRating(vehicle.staffRating)} out of 10`}
+                                                >
+                                                  <SealCheck size={16} weight="regular" aria-hidden="true" />
+                                                  <span>C/D RATING: <strong>{formatLightStaffRating(vehicle.staffRating)}/10</strong></span>
+                                                </span>
                                               </span>
                                             </span>
                                           </span>
-                                        </span>
-                                        <span className="aio-payment__light-vehicle-step__category-match-meta">
-                                          <span
-                                            className={`aio-payment__light-vehicle-step__category-match-range aio-payment__light-listbox-select__status aio-payment__light-listbox-select__status--${isNearRange ? 'neutral' : 'fit'}`}
-                                          >
-                                            {isNearRange ? 'Near range' : 'In range'}
+                                          <span className="aio-payment__light-vehicle-step__category-match-meta">
+                                            <button
+                                              type="button"
+                                              className="aio-payment__light-vehicle-step__category-match-select-button"
+                                              onClick={() => handleLightBrowseVehicleMatchSelect(vehicle)}
+                                              aria-label={`Select ${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                                              aria-pressed={isSelected}
+                                            >
+                                              Select
+                                            </button>
                                           </span>
-                                        </span>
-                                      </button>
-                                    </div>
-                                  ))}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               </>
                             ) : (
