@@ -3162,6 +3162,14 @@ label.aio-payment__light-loan-step__label {
   white-space: nowrap;
 }
 
+.aio-payment__light-vehicle-step__category-match-price {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-2);
+  row-gap: var(--spacing-1);
+}
+
 .aio-payment__light-vehicle-step__category-match-meta {
   display: inline-flex;
   align-items: center;
@@ -3172,18 +3180,31 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-vehicle-step__category-match-rating {
   flex: 0 0 auto;
-  border-radius: var(--border-radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: 0;
+  color: var(--color-dark);
   font-family: var(--font-body);
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-regular);
   line-height: 1;
   white-space: nowrap;
 }
 
-.aio-payment__light-vehicle-step__category-match-rating {
-  padding: var(--spacing-1) var(--spacing-2);
+.aio-payment__light-vehicle-step__category-match-rating svg {
+  flex: 0 0 auto;
   color: var(--color-blue-cobalt);
-  background: var(--color-teal-light);
+}
+
+.aio-payment__light-vehicle-step__category-match-rating strong {
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-vehicle-step__category-match-price-divider {
+  color: var(--color-gray-400);
+  line-height: 1;
 }
 
 .aio-payment__light-vehicle-step__category-match-range {
@@ -5035,6 +5056,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__advantage-heading.aio-payment__faq-heading {
   margin-bottom: 0 !important;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .aio-payment__advantage-points {
@@ -5051,12 +5073,15 @@ label.aio-payment__light-loan-step__label {
   text-align: center;
 }
 
-.aio-payment__advantage-image {
+.aio-payment__advantage-icon {
+  display: grid;
   width: 150px;
   height: 150px;
   aspect-ratio: 1;
+  place-items: center;
   border-radius: 50%;
-  object-fit: cover;
+  background: var(--color-blue-cobalt);
+  color: var(--color-white);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--color-black) 14%, transparent);
 }
 
@@ -6365,7 +6390,7 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--font-size-6xl);
   font-weight: var(--font-weight-extrabold);
   line-height: 0.95;
-  letter-spacing: 0;
+  letter-spacing: 0.015em;
 }
 
 .aio-payment__light-review-hero-amount .payment-calc__mo {
@@ -7098,8 +7123,11 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-breakdown-financed {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  grid-column: 1 / -1;
   gap: var(--spacing-1);
-  margin-bottom: var(--spacing-4);
+  margin: var(--spacing-3) 0;
   padding: var(--spacing-4);
   background: var(--color-teal-light);
   border-radius: var(--border-radius-md);
@@ -7107,20 +7135,18 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-breakdown-financed-label {
   margin: 0;
-  color: var(--color-gray-600);
+  color: var(--color-dark);
   font-family: var(--font-heading);
-  font-size: var(--aio-light-meta);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.08em;
+  font-size: var(--aio-light-section-label);
+  font-weight: var(--aio-light-heading-weight);
   line-height: var(--line-height-tight);
-  text-transform: uppercase;
 }
 
 .aio-payment__light-breakdown-financed-value {
   margin: 0;
-  color: var(--color-dark);
+  color: var(--color-blue-cobalt);
   font-family: var(--font-heading);
-  font-size: clamp(var(--font-size-2xl), 2vw, var(--font-size-3xl));
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   line-height: var(--line-height-tight);
 }
@@ -7135,6 +7161,7 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-breakdown-financed-formula {
+  grid-column: 1 / -1;
   margin-top: var(--spacing-2);
   color: #222222;
   font-size: var(--font-size-sm);
@@ -7560,6 +7587,16 @@ label.aio-payment__light-loan-step__label {
   border-bottom: none;
 }
 
+.aio-payment__light-breakdown .aio-payment__light-breakdown__total.aio-payment__light-breakdown-row--highlight {
+  grid-column: 1 / -1;
+  align-items: center;
+  margin-top: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 0;
+  border-radius: var(--border-radius-md);
+  background: var(--color-teal-light);
+}
+
 .aio-payment__light-breakdown .aio-payment__light-breakdown__total .aio-payment__light-breakdown-row-label {
   color: var(--color-dark);
   font-family: var(--font-heading);
@@ -7772,7 +7809,8 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--aio-light-meta);
   font-weight: var(--font-weight-extrabold);
   line-height: 1.2;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
   white-space: nowrap;
 }
 
@@ -7786,8 +7824,18 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-breakdown-expert-link:hover,
 .aio-payment__light-breakdown-expert-link:focus-visible {
   color: var(--color-success);
-  text-decoration: underline;
-  text-underline-offset: 2px;
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-start-over--review {
+  border-color: var(--color-gray-300);
+  background: var(--color-white);
+  color: var(--color-blue-cobalt);
+}
+
+.aio-payment--light-steps .aio-payment__light-wizard-start-over--review:hover {
+  border-color: var(--color-blue-cobalt);
+  background: color-mix(in srgb, var(--color-blue-cobalt) 5%, var(--color-white));
+  color: var(--color-blue-cobalt);
 }
 
 .aio-payment--light-steps2 .aio-payment__light-review2-card {
@@ -9883,9 +9931,9 @@ label.aio-payment__light-loan-step__label {
     gap: var(--spacing-7);
   }
 
-  .aio-payment__advantage-image {
+  .aio-payment__advantage-icon {
     width: clamp(88px, 27vw, 128px);
-    height: auto;
+    height: clamp(88px, 27vw, 128px);
   }
 
   .aio-payment__advantage-point h3 {
