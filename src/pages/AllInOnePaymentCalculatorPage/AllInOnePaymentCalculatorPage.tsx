@@ -1806,6 +1806,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const savedEstimatePriceLockRef = useRef<string | null>(null);
   const lightVehicleBodyStyleHeadingId = useId();
   const lightVehicleBodyStyleGuidanceId = useId();
+  const lightVehicleSuggestionsGuidanceId = useId();
   const lightVehicleConditionGuidanceId = useId();
   const lightVehicleSearchInputId = useId();
   const lightVehicleSearchGuidanceId = useId();
@@ -1827,7 +1828,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightSalesTaxGuidanceId = useId();
   const lightRegistrationFeesGuidanceId = useId();
   const lightStateGuidanceId = useId();
-  const lightCategoryBudgetInputId = useId();
   const lightEstimateTotalsId = useId();
   const lightMarketplaceHandoffId = useId();
   const lightMarketplaceHandoffTitleId = useId();
@@ -1852,7 +1852,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const [showLightVehicleSearchSuggestions, setShowLightVehicleSearchSuggestions] = useState(false);
   const [lightVehicleSearchActiveIndex, setLightVehicleSearchActiveIndex] = useState(0);
   const [lightBrowseBodyStyle, setLightBrowseBodyStyle] = useState('SUV');
-  const [lightCategoryBudgetInputDraft, setLightCategoryBudgetInputDraft] = useState<string | null>(null);
   const [lightAffordableOffersSlug, setLightAffordableOffersSlug] = useState<string | null>(null);
   const [lightDealModalVehicle, setLightDealModalVehicle] = useState<Vehicle | null>(null);
   const [showLightMobileTotals, setShowLightMobileTotals] = useState(false);
@@ -3177,44 +3176,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   };
   const schedule = buildAnnualSchedule(totalLoanAmount, activeApr, loanTerm, estimatedMonthly);
   const lightAffordableBudgetCeiling = startMode === 'monthly' ? affordableMsrp : Math.max(0, price);
-  const lightCategoryBudgetIsMonthly = startMode === 'monthly';
-  const lightCategoryBudgetValue = lightCategoryBudgetIsMonthly ? targetMonthlyPayment : lightAffordableBudgetCeiling;
-  const lightCategoryBudgetInputValue = lightCategoryBudgetInputDraft ?? numberWithCommas(lightCategoryBudgetValue);
-  const lightCategoryBudgetPreposition = lightCategoryBudgetIsMonthly ? 'for' : 'around';
-  const lightCategoryBudgetAriaLabel = lightCategoryBudgetIsMonthly
-    ? 'Update monthly budget for vehicle recommendations'
-    : 'Update vehicle price budget for vehicle recommendations';
-  const handleLightCategoryBudgetInputChange = useCallback((value: string) => {
-    const nextValue = normalizeMoneyInputValue(value);
-    setLightCategoryBudgetInputDraft(nextValue);
-
-    if (nextValue.trim() === '') return;
-
-    const nextAmount = currencyInput(nextValue);
-    if (lightCategoryBudgetIsMonthly) {
-      setTargetMonthlyPayment(nextAmount);
-      return;
-    }
-
-    handlePriceChange(nextAmount);
-  }, [handlePriceChange, lightCategoryBudgetIsMonthly]);
-  const handleLightCategoryBudgetInputBlur = useCallback(() => {
-    const nextAmount = lightCategoryBudgetInputValue.trim() === ''
-      ? lightCategoryBudgetIsMonthly ? LIGHT_MONTHLY_BUDGET_MIN : LIGHT_VEHICLE_PRICE_MIN
-      : currencyInput(lightCategoryBudgetInputValue);
-
-    if (lightCategoryBudgetIsMonthly) {
-      setTargetMonthlyPayment(boundLightMonthlyBudget(nextAmount));
-    } else {
-      handlePriceChange(boundLightVehiclePrice(nextAmount));
-    }
-
-    setLightCategoryBudgetInputDraft(null);
-  }, [
-    handlePriceChange,
-    lightCategoryBudgetInputValue,
-    lightCategoryBudgetIsMonthly,
-  ]);
   const lightBrowseVehicleMatches = useMemo<LightBrowseVehicleMatch[]>(() => {
     const ceiling = Math.max(0, lightAffordableBudgetCeiling);
     const floor = Math.max(0, ceiling - LIGHT_BODY_STYLE_MATCH_BELOW_TARGET);
@@ -5234,6 +5195,19 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           </button>
                         </div>
                         {lightKnownVehicleSelected ? (
+                          <>
+                          <div className="aio-payment__light-vehicle-step__label-row aio-payment__light-vehicle-step__category-matches-heading">
+                            <span className="aio-payment__light-vehicle-step__category-matches-heading-meta">
+                              <h3 className="aio-payment__light-vehicle-step__body-style-label">Next Vehicle Suggestions</h3>
+                              {renderLightGuidanceTooltip({
+                                id: lightVehicleSuggestionsGuidanceId,
+                                title: 'Next Vehicle Suggestions',
+                                copy: `Top-rated ${lightBrowseVehicleMatchesLabel} priced from ${currency(LIGHT_BODY_STYLE_MATCH_BELOW_TARGET)} below to ${currency(LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET)} above your Vehicle Target Price.`,
+                                ariaLabel: 'Next vehicle suggestions guidance',
+                              })}
+                            </span>
+                            <span className="aio-payment__light-vehicle-step__category-matches-optional">Selecting a Vehicle is Optional</span>
+                          </div>
                           <div className="aio-payment__light-vehicle-step__price-bar">
                             <div className="aio-payment__light-vehicle-step__price-summary">
                               <Link
@@ -5267,36 +5241,25 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               </button>
                             </div>
                           </div>
+                          </>
                         ) : canShowLightBrowseVehicleMatches ? (
+                          <>
+                          <div className="aio-payment__light-vehicle-step__label-row aio-payment__light-vehicle-step__category-matches-heading">
+                            <span className="aio-payment__light-vehicle-step__category-matches-heading-meta">
+                              <h3 className="aio-payment__light-vehicle-step__body-style-label">Next Vehicle Suggestions</h3>
+                              {renderLightGuidanceTooltip({
+                                id: lightVehicleSuggestionsGuidanceId,
+                                title: 'Next Vehicle Suggestions',
+                                copy: `Top-rated ${lightBrowseVehicleMatchesLabel} priced from ${currency(LIGHT_BODY_STYLE_MATCH_BELOW_TARGET)} below to ${currency(LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET)} above your Vehicle Target Price.`,
+                                ariaLabel: 'Next vehicle suggestions guidance',
+                              })}
+                            </span>
+                            <span className="aio-payment__light-vehicle-step__category-matches-optional">Selecting a Vehicle is Optional</span>
+                          </div>
                           <details className="aio-payment__light-vehicle-step__category-matches" open>
                             <summary className="aio-payment__light-vehicle-step__category-matches-summary">
                               <span className="aio-payment__light-vehicle-step__category-matches-summary-title">
-                                <span>Best {lightBrowseVehicleMatchesLabel} {lightCategoryBudgetPreposition}</span>
-                                <span
-                                  className="aio-payment__light-vehicle-step__category-budget"
-                                  onClick={(event) => event.stopPropagation()}
-                                  onKeyDown={(event) => event.stopPropagation()}
-                                >
-                                  <span className="aio-payment__light-vehicle-step__category-budget-prefix" aria-hidden="true">$</span>
-                                  <input
-                                    id={lightCategoryBudgetInputId}
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="[0-9,]*"
-                                    className="aio-payment__light-vehicle-step__category-budget-input"
-                                    aria-label={lightCategoryBudgetAriaLabel}
-                                    value={lightCategoryBudgetInputValue}
-                                    onFocus={(event) => {
-                                      setLightCategoryBudgetInputDraft(String(Math.round(lightCategoryBudgetValue)));
-                                      selectCalculatorInputValueOnFocus(event);
-                                    }}
-                                    onChange={(event) => handleLightCategoryBudgetInputChange(event.target.value)}
-                                    onBlur={handleLightCategoryBudgetInputBlur}
-                                  />
-                                  {lightCategoryBudgetIsMonthly ? (
-                                    <span className="aio-payment__light-vehicle-step__category-budget-suffix">/mo</span>
-                                  ) : null}
-                                </span>
+                                <span>Best {lightBrowseVehicleMatchesLabel} Near Your Budget</span>
                               </span>
                               <span className="aio-payment__light-vehicle-step__category-matches-count">
                                 {lightBrowseVehicleMatches.length} shown
@@ -5304,9 +5267,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             </summary>
                             {lightBrowseVehicleMatches.length ? (
                               <>
-                                <p className="aio-payment__light-vehicle-step__category-matches-rule">
-                                  Top-rated {lightBrowseVehicleMatchesLabel} priced from {currency(LIGHT_BODY_STYLE_MATCH_BELOW_TARGET)} below to {currency(LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET)} above your Vehicle Target Price.
-                                </p>
                                 <div className="aio-payment__light-vehicle-step__category-matches-list" role="list">
                                   {lightBrowseVehicleMatches.map(({ vehicle, isNearRange }) => {
                                     const isSelected = selectedBrowseMatchSlug === vehicle.slug;
@@ -5363,6 +5323,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               </p>
                             )}
                           </details>
+                          </>
                         ) : null}
                       </div>
                     )}
