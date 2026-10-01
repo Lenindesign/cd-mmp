@@ -72,7 +72,7 @@ export const handler: Handler = async (event) => {
     const questions = Object.fromEntries(incentives.map((_, index) => [`consumer_type_${index}`, {
       type: 'choice',
       instructions: {
-        record: `Evaluate the incentive record at `records[${index}]`.`,
+        record: `Evaluate the incentive record at records[${index}].`,
         question: 'Identify its consumer-facing EV incentive type. Choose Vehicle Retirement when the program requires retiring or replacing an older vehicle; choose Bill Credit when the benefit is applied to an electricity or utility bill; otherwise choose Rebate for a purchase, lease, charger, or clean-vehicle rebate.',
       },
       criteria: {
