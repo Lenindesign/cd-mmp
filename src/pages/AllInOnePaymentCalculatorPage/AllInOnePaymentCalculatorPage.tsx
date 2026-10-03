@@ -1,7 +1,7 @@
 import { Fragment, type CSSProperties, type FocusEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, ArrowRight, Bookmark, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Info, Mail, RotateCcw, SearchCheck, SkipForward } from 'lucide-react';
-import { CarProfile, CreditCard as PhosphorCreditCard, Receipt, SealCheck, ShieldCheck as PhosphorShieldCheck, Sparkle, Umbrella as PhosphorUmbrella, Wallet } from '@phosphor-icons/react';
+import { CarProfile, CreditCard as PhosphorCreditCard, Note, SealCheck, ShieldCheck as PhosphorShieldCheck, Umbrella as PhosphorUmbrella, Wallet } from '@phosphor-icons/react';
 import { getAllVehicles, type Vehicle } from '../../services/vehicleService';
 import { getVehicleIncentives, type Incentive } from '../../services/incentivesService';
 import { getVehicleTrims, type TrimData } from '../../services/trimService';
@@ -1227,11 +1227,11 @@ const CAR_AND_DRIVER_ADVANTAGE_ITEMS = [
   },
   {
     title: 'Taxes, Fees, and Trade-In Context',
-    icon: Receipt,
+    icon: Note,
   },
   {
     title: 'Personalized Recommendations for Your Budget',
-    icon: Sparkle,
+    icon: SealCheck,
   },
 ];
 
@@ -1414,9 +1414,6 @@ function LightLoanTermsStepPanel({
               </span>
             </LightGuidanceTooltip>
           </div>
-          <span aria-live="polite">
-            {formatAprPercent(activeApr)}
-          </span>
         </div>
         {!aprLocked ? (
           <>
@@ -1731,6 +1728,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     const params = new URLSearchParams(location.search);
     return params.get('savedEstimate');
   }, [location.search]);
+  const isBodyStyleGridVariant = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('bodyStyles') === 'grid';
+  }, [location.search]);
   const routeLightWizardStep = isLightStepsVariant ? getLightWizardStepFromSlug(stepSlug) : 1;
   const defaultVehicle = vehicles.find((vehicle) => vehicle.make === 'Honda' && vehicle.model === 'CR-V') ?? vehicles[0];
 
@@ -1818,7 +1819,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightReviewInterestPaidGuidanceId = useId();
   const lightReviewNetTradeGuidanceId = useId();
   const lightReviewTaxesFeesGuidanceId = useId();
-  const lightReviewMonthlyPaymentGuidanceId = useId();
   const lightFinanceChargeGuidanceId = useId();
   const lightReviewLoanPaymentsGuidanceId = useId();
   const lightTotalPaidGuidanceId = useId();
@@ -2462,11 +2462,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : usesUsedListingPriceInput
         ? startMode === 'monthly' ? 'Listing Price Target' : 'Vehicle Listing Price'
         : 'Vehicle Target Price';
-  const workingPriceFormulaLabel = usesSelectedCatalogPriceForEstimate
-    ? 'selected vehicle price'
-    : usesUsedListingPriceInput
-      ? startMode === 'monthly' ? 'listing-price target' : 'listing price'
-      : 'target price';
   const lightBudgetSupportBasis = optionalFinancedAddOns > 0 || monthlyInsuranceAmount > 0
     ? 'before tax and fees, after selected coverage assumptions'
     : 'before tax and fees';
@@ -2563,16 +2558,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         ? 'Estimated Cash Due'
         : 'Estimated Total Paid';
   const estimatedOutTheDoorPrice = workingPrice + taxesAndFees + optionalFinancedAddOns;
-  const amountFinancedFormulaParts = [
-    { value: workingPrice, label: workingPriceFormulaLabel },
-    includeTaxesAndFeesInLoan && taxesAndFees > 0 ? { operation: 'add', value: taxesAndFees, label: 'financed taxes & fees' } : null,
-    optionalFinancedAddOns > 0 ? { operation: 'add', value: optionalFinancedAddOns, label: 'extended warranty' } : null,
-    tradeEquityAppliedToAmountFinanced > 0 ? { operation: 'subtract', value: tradeEquityAppliedToAmountFinanced, label: 'trade credit applied' } : null,
-    tradeEquity < 0 ? { operation: 'add', value: Math.abs(tradeEquity), label: 'trade payoff' } : null,
-    rebateTotal > 0 ? { operation: 'subtract', value: rebateTotal, label: 'incentives' } : null,
-    downPayment > 0 ? { operation: 'subtract', value: purchasePaymentSummary.downPaymentApplied, label: 'down' } : null,
-    { operation: 'total', value: totalLoanAmount, label: 'financed' },
-  ].filter((part): part is { operation?: 'add' | 'subtract' | 'total'; value: number; label: string } => Boolean(part));
   const downPaymentApplied = purchasePaymentSummary.downPaymentApplied;
   const cashDueAtSigning = purchasePaymentSummary.cashDueAtSigning;
   const totalPaidFromPocket = cashDueAtSigning + totalLoanPayments;
@@ -2583,6 +2568,13 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightReview2WhatYouPayHelper = purchasePaymentSummary.upfrontTaxesAndFeesDue > 0
     ? 'Your cash paid up front plus all loan payments over the life of the loan.'
     : 'Your cash down payment plus all loan payments over the life of the loan.';
+  const lightEstimatedTotalFormulaParts = [
+    `${currency(cashDueAtSigning)} cash due at signing`,
+    `${currency(totalLoanPayments)} total loan payments`,
+    totalInsuranceCost > 0 ? `${currency(totalInsuranceCost)} insurance` : null,
+    showTotalIncludingTradeCredit ? `${currency(tradeEquityApplied)} trade credit` : null,
+  ].filter((part): part is string => Boolean(part));
+  const lightEstimatedTotalTooltipCopy = `Calculated as ${lightEstimatedTotalFormulaParts.join(' + ')} = ${currency(estimatedTotalValue)}.`;
   const lightReview2VehicleCostCovered = totalPaidFromPocket + tradeEquityApplied;
   const lightReview2AmountFinancedTooltipCopy = 'Amount financed is the estimated amount you borrow after the vehicle price, financed taxes and fees, optional add-ons, trade-in credit, incentives, and down payment are applied.';
   const lightReview2TradeTooltipCopy = 'Trade-in contribution is the value from your trade-in, after any payoff, that reduces the amount you need to finance. Final trade value depends on appraisal and payoff.';
@@ -2668,7 +2660,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       : monthlyInsuranceAmount > 0
         ? `Includes ${currency(estimatedMonthly)}/mo loan payment plus ${currency(monthlyInsuranceAmount)}/mo insurance.`
         : lightEstimateSummaryCopy;
-  const showLightStepOneAssumptionNote = isLightStepsVariant && routeLightWizardStep === 1;
   const renderLightBreakdownValue = (value: number, operation?: 'add' | 'subtract') => {
     if (!operation) return currency(value);
 
@@ -2940,17 +2931,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       value: renderLightBreakdownValue(totalLoanPayments),
       className: 'aio-payment__light-breakdown-row--loan-cost-start',
     },
-    {
-      key: 'monthly-payment',
-      label: renderLightBreakdownLabelWithHelp(
-        isLoanCoveredByTradeEquity ? 'Loan Payment' : 'Monthly Payment',
-        lightReviewMonthlyPaymentGuidanceId,
-        isLoanCoveredByTradeEquity ? 'Loan payment' : 'Monthly payment',
-        'Your estimated monthly loan payment based on the information provided.',
-        'Monthly payment guidance',
-      ),
-      value: monthlyLoanPaymentDisplay,
-    },
     ...(monthlyInsuranceAmount > 0 ? [{
       key: 'insurance-estimate',
       label: 'Insurance Estimate',
@@ -2970,7 +2950,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         {renderLightGuidanceTooltip({
           id: lightTotalPaidGuidanceId,
           title: estimatedTotalLabel,
-          copy: 'The total amount you will pay over the life of the loan, including both principal and interest.',
+          copy: lightEstimatedTotalTooltipCopy,
           ariaLabel: `${estimatedTotalLabel} guidance`,
         })}
       </span>
@@ -5140,7 +5120,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             ariaLabel: 'Vehicle type guidance',
                           })}
                         </div>
-                        <div className="aio-payment__light-vehicle-step__body-carousel">
+                        <div className={`aio-payment__light-vehicle-step__body-carousel${isBodyStyleGridVariant ? ' aio-payment__light-vehicle-step__body-carousel--grid' : ''}`}>
                           <button
                             type="button"
                             className="aio-payment__light-vehicle-step__body-carousel-nav aio-payment__light-vehicle-step__body-carousel-nav--previous"
@@ -6081,33 +6061,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                 })}
                               </div>
                               <p className="aio-payment__light-breakdown-financed-value">{currency(totalLoanAmount)}</p>
-                              <p className="aio-payment__light-breakdown-financed-formula">
-                                {amountFinancedFormulaParts.map((part, index) => (
-                                  <span
-                                    key={`${part.operation ?? 'base'}-${part.label}`}
-                                    className={`aio-payment__light-breakdown-financed-formula-part ${
-                                      part.operation === 'add'
-                                        ? 'aio-payment__light-breakdown-financed-formula-part--add'
-                                        : part.operation === 'subtract'
-                                          ? 'aio-payment__light-breakdown-financed-formula-part--subtract'
-                                          : part.operation === 'total'
-                                            ? 'aio-payment__light-breakdown-financed-formula-part--total'
-                                            : ''
-                                    }`}
-                                  >
-                                    {part.operation && (
-                                      <>
-                                        <span className={`aio-payment__light-breakdown-financed-sign aio-payment__light-breakdown-financed-sign--${part.operation}`}>
-                                          {part.operation === 'add' ? '+' : part.operation === 'subtract' ? '-' : '='}
-                                        </span>{' '}
-                                      </>
-                                    )}
-                                    <span className="aio-payment__light-breakdown-financed-amount">{currency(part.value)}</span>{' '}
-                                    {part.label}
-                                    {index < amountFinancedFormulaParts.length - 1 ? ' ' : ''}
-                                  </span>
-                                ))}
-                              </p>
                               {isLoanCoveredByTradeEquity ? (
                                 <p className="aio-payment__light-breakdown-note">
                                   Trade equity covers the full financed amount. There is no estimated loan payment unless you change the trade, fees, add-ons, or down payment.
@@ -6443,11 +6396,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         </p>
                       )}
                     </div>
-                    {showLightStepOneAssumptionNote && (
-                      <p className="aio-payment__light-result-assumption-note">
-                        Starting estimate using common loan assumptions. You can adjust down payment, APR, term, trade-in, taxes, and fees as you go.
-                      </p>
-                    )}
                   </div>
                   {showSummaryBudgetFit && (
                     <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${displayedSummaryBudgetFitStatus}`}>

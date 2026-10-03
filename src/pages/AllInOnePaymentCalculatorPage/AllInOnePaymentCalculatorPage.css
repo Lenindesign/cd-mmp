@@ -2872,6 +2872,28 @@ label.aio-payment__light-loan-step__label {
   display: none;
 }
 
+.aio-payment__light-vehicle-step__body-carousel--grid {
+  display: block;
+}
+
+.aio-payment__light-vehicle-step__body-carousel--grid .aio-payment__light-vehicle-step__body-carousel-nav {
+  display: none;
+}
+
+.aio-payment__light-vehicle-step__body-carousel--grid .aio-payment__light-vehicle-step__body-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-2);
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.aio-payment__light-vehicle-step__body-carousel--grid .aio-payment__light-vehicle-step__body-tile {
+  flex: none;
+  width: 100%;
+  min-width: 0;
+}
+
 .aio-payment__light-vehicle-step__body-carousel-nav {
   display: inline-flex;
   align-items: center;
@@ -5158,8 +5180,8 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__advantage-icon {
   display: grid;
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   aspect-ratio: 1;
   place-items: center;
   border-radius: 50%;
@@ -6831,6 +6853,22 @@ label.aio-payment__light-loan-step__label {
     0 10px 28px color-mix(in srgb, var(--color-blue-cobalt) 10%, transparent);
 }
 
+.aio-payment--light-steps .aio-payment__light-vehicle-step__body-grid {
+  gap: var(--spacing-2);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step__body-tile {
+  flex-basis: clamp(6.75rem, 20%, 8.5rem);
+  gap: var(--spacing-1);
+  min-height: var(--spacing-24);
+  padding-block: var(--spacing-2);
+  padding-inline: var(--spacing-2);
+}
+
+.aio-payment--light-steps .aio-payment__light-vehicle-step__body-tile-icon-wrap {
+  max-width: var(--spacing-16);
+}
+
 .aio-payment--light-steps .aio-payment__light-vehicle-step__nu-btn:not(.aio-payment__light-vehicle-step__nu-btn--active) {
   border: 1px solid var(--color-gray-300);
   color: var(--color-dark);
@@ -7206,7 +7244,7 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-breakdown-financed {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 8rem;
   align-items: center;
   grid-column: 1 / -1;
   gap: var(--spacing-1);
@@ -7232,51 +7270,15 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   line-height: var(--line-height-tight);
+  text-align: left;
 }
 
-.aio-payment__light-breakdown-financed-formula,
 .aio-payment__light-breakdown-note {
   margin: 0;
   color: var(--color-gray-700);
   font-family: var(--font-body);
   font-size: var(--aio-light-body);
   line-height: var(--line-height-normal);
-}
-
-.aio-payment__light-breakdown-financed-formula {
-  grid-column: 1 / -1;
-  margin-top: var(--spacing-2);
-  color: #222222;
-  font-size: var(--font-size-sm);
-}
-
-.aio-payment__light-breakdown-financed-formula-part {
-  display: inline;
-}
-
-.aio-payment__light-breakdown-financed-amount {
-  font-weight: var(--font-weight-bold);
-}
-
-.aio-payment__light-breakdown-financed-formula-part--add .aio-payment__light-breakdown-financed-amount {
-  color: var(--color-red);
-}
-
-.aio-payment__light-breakdown-financed-formula-part--subtract .aio-payment__light-breakdown-financed-amount {
-  color: var(--color-success);
-}
-
-.aio-payment__light-breakdown-financed-sign {
-  color: var(--color-gray-700);
-  font-weight: var(--font-weight-bold);
-}
-
-.aio-payment__light-breakdown-financed-sign--add {
-  color: var(--color-red);
-}
-
-.aio-payment__light-breakdown-financed-sign--subtract {
-  color: var(--color-success);
 }
 
 .aio-payment__light-breakdown-financed-heading {
@@ -7440,8 +7442,8 @@ label.aio-payment__light-loan-step__label {
 
 .aio-payment__light-breakdown-row,
 .aio-payment__light-breakdown-expander > summary {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8rem;
   align-items: baseline;
   gap: var(--spacing-4);
   padding: var(--spacing-3) 0;
@@ -7471,7 +7473,7 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-breakdown-row-value {
   flex-shrink: 0;
   margin: 0;
-  text-align: right;
+  text-align: left;
   color: var(--color-dark);
   font-family: var(--font-heading);
   font-size: var(--font-size-xl);
@@ -7482,8 +7484,10 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-breakdown-row-meta {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: var(--spacing-2);
-  flex-shrink: 0;
+  width: 100%;
+  text-align: left;
 }
 
 .aio-payment__light-breakdown-row-chevron {
@@ -7503,8 +7507,8 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-breakdown-detail-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8rem;
   align-items: baseline;
   gap: var(--spacing-4);
   padding: var(--spacing-2) 0 var(--spacing-2) var(--spacing-4);
@@ -7514,6 +7518,7 @@ label.aio-payment__light-loan-step__label {
   display: block;
   padding-top: var(--spacing-3);
   padding-bottom: var(--spacing-3);
+  padding-left: 0;
 }
 
 .aio-payment__light-breakdown-detail-label,
@@ -7532,7 +7537,7 @@ label.aio-payment__light-loan-step__label {
   flex-shrink: 0;
   color: var(--color-dark);
   font-weight: var(--font-weight-semibold);
-  text-align: right;
+  text-align: left;
 }
 
 .aio-payment__light-amortization {
@@ -7658,9 +7663,8 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment__light-breakdown .aio-payment__light-breakdown__total {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8rem;
   align-items: baseline;
   gap: var(--spacing-4);
   margin-top: 0;
@@ -7839,7 +7843,13 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-breakdown-financed {
+    margin-inline: calc(var(--spacing-4) * -1);
     padding: var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown .aio-payment__light-breakdown__total.aio-payment__light-breakdown-row--highlight {
+    margin-inline: calc(var(--spacing-4) * -1);
+    padding-inline: var(--spacing-4);
   }
 
   .aio-payment--light-steps .aio-payment__light-breakdown-row,
@@ -7880,6 +7890,21 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps .aio-payment__light-breakdown-card-heading {
   margin-bottom: var(--spacing-5);
   padding: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-breakdown-financed,
+.aio-payment--light-steps .aio-payment__light-breakdown .aio-payment__light-breakdown__total.aio-payment__light-breakdown-row--highlight {
+  padding-inline: 0;
+}
+
+.aio-payment--light-steps .aio-payment__light-breakdown-financed {
+  margin-inline: calc(var(--spacing-8) * -1);
+  padding-inline: var(--spacing-8);
+}
+
+.aio-payment--light-steps .aio-payment__light-breakdown .aio-payment__light-breakdown__total.aio-payment__light-breakdown-row--highlight {
+  margin-inline: calc(var(--spacing-8) * -1);
+  padding-inline: var(--spacing-8);
 }
 
 .aio-payment__light-breakdown-expert-link {
@@ -10234,7 +10259,7 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-toggle.payment-calc__tabs {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .aio-payment--light-steps .aio-payment__light-result-metrics {
@@ -10520,6 +10545,52 @@ label.aio-payment__light-loan-step__label {
 }
 
 @media (max-width: 768px) {
+  .aio-payment--light-steps .aio-payment__light-toggle-button {
+    display: grid;
+    grid-template-columns: var(--spacing-8) minmax(0, 1fr);
+    grid-template-areas:
+      'icon title'
+      'icon copy';
+    column-gap: var(--spacing-3);
+    row-gap: var(--spacing-1);
+    align-items: start;
+    padding: var(--spacing-4);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-toggle-icon {
+    grid-area: icon;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-toggle-button-title {
+    grid-area: title;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-toggle-button-copy {
+    grid-area: copy;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-breakdown-card .aio-payment__light-estimate-email {
+    margin-top: var(--spacing-4);
+    padding-top: var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-estimate-email__panel {
+    padding: var(--spacing-4);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-dot-label {
+    display: none;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-steps-shell {
+    padding-bottom: var(--spacing-3);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-wizard-dot {
+    min-height: var(--aio-light-wizard-dot-size);
+    gap: 0;
+  }
+
   .aio-payment--light-steps .aio-payment__light-card--step-panel {
     --aio-light-step-mobile-slide-distance: min(72vw, var(--spacing-28));
 
