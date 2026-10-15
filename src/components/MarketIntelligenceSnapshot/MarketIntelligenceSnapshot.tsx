@@ -605,65 +605,6 @@ const getBuySignal = ({
   return { label: 'Limited', level: 1 };
 };
 
-const formatFactorList = (factors: string[]) =>
-  factors.length <= 1
-    ? factors.join('')
-    : `${factors.slice(0, -1).join(', ')} and ${factors[factors.length - 1]}`;
-
-const getBuySignalSummary = ({
-  level,
-  priceTone,
-  inventoryLabel,
-  demandLabel,
-}: {
-  level: number;
-  priceTone: PriceAssessment['tone'];
-  inventoryLabel: string;
-  demandLabel: string;
-}) => {
-  const favorable = [
-    priceTone === 'opportunity' ? 'local asking prices sit below the typical range' : null,
-    inventoryLabel === 'High' ? 'there is plenty of local supply to compare' : null,
-    demandLabel === 'Soft' ? 'cars are sitting on lots longer than usual' : null,
-  ].filter((factor): factor is string => factor !== null);
-
-  const unfavorable = [
-    priceTone === 'over' ? 'local asking prices sit above the typical range' : null,
-    inventoryLabel === 'Limited' ? 'local supply is tight' : null,
-    demandLabel === 'High' ? 'cars are selling quickly' : null,
-  ].filter((factor): factor is string => factor !== null);
-
-  if (level === 3) {
-    const lead = favorable.length > 0
-      ? `This is a good market to buy in: ${formatFactorList(favorable)}.`
-      : 'This is a good market to buy in.';
-
-    return unfavorable.length > 0
-      ? `${lead} Keep in mind that ${formatFactorList(unfavorable)}, so move on the right car rather than waiting for a better window.`
-      : `${lead} If the car fits, there is little reason to wait.`;
-  }
-
-  if (level === 2) {
-    if (favorable.length > 0 && unfavorable.length > 0) {
-      return `This is an average market to buy in: ${formatFactorList(favorable)}, but ${formatFactorList(unfavorable)}. You can buy now without overpaying, though it is worth comparing a few listings first.`;
-    }
-
-    if (unfavorable.length > 0) {
-      return `This is an average market to buy in, and ${formatFactorList(unfavorable)}. You can buy now without overpaying, though it is worth comparing a few listings first.`;
-    }
-
-    return favorable.length > 0
-      ? `This is an average market to buy in: ${formatFactorList(favorable)}. Nothing here argues for waiting, but nothing pushes you to hurry either.`
-      : 'This is an average market to buy in. Nothing here argues for waiting, but nothing pushes you to hurry either.';
-  }
-
-  const lead = unfavorable.length > 0
-    ? `This is a tougher market to buy in: ${formatFactorList(unfavorable)}.`
-    : 'This is a tougher market to buy in.';
-
-  return `${lead} Widening your search or waiting for supply to build will likely get you a better price.`;
-};
-
 const MarketIntelligenceSnapshot = ({
   vehicle,
   location,
@@ -745,7 +686,6 @@ const MarketIntelligenceSnapshot = ({
   const plottedMatches = leadMatch && !plottedMatchesBase.some((match) => getLocalDealKey(match) === getLocalDealKey(leadMatch))
     ? [leadMatch, ...plottedMatchesBase].slice(0, 10)
     : plottedMatchesBase;
-  const marketContextLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model} near ${zipCode}`;
   const targetLow = Math.round((market.averagePrice * 0.94) / 100) * 100;
   const targetHigh = Math.round((market.averagePrice * 0.975) / 100) * 100;
   const askingPrice = leadMatch ? leadMatch.unit.price : market.averagePrice;
@@ -782,12 +722,6 @@ const MarketIntelligenceSnapshot = ({
   const priceAssessment = getPriceAssessment({ askingPrice, targetLow, targetHigh });
   const buySignalInventoryLabel = inventoryLabel === 'High Supply' ? 'High' : inventoryLabel;
   const buySignal = getBuySignal({
-    priceTone: priceAssessment.tone,
-    inventoryLabel: buySignalInventoryLabel,
-    demandLabel,
-  });
-  const buySignalSummary = getBuySignalSummary({
-    level: buySignal.level,
     priceTone: priceAssessment.tone,
     inventoryLabel: buySignalInventoryLabel,
     demandLabel,
@@ -965,20 +899,8 @@ const MarketIntelligenceSnapshot = ({
       <div className="market-snapshot__inner">
         <header className="market-snapshot__header">
           <div className="market-snapshot__header-copy">
-            <p className="market-snapshot__eyebrow">Local Market Snapshot</p>
-            <h2 id="market-snapshot-title">{marketContextLabel}</h2>
-            <div
-              className={`market-snapshot__buy-signal market-snapshot__buy-signal--${buySignal.level}`}
-              aria-label={`Buy signal: ${buySignal.label}`}
-            >
-              <span className="market-snapshot__buy-signal-bars" aria-hidden="true">
-                {[1, 2, 3].map((bar) => (
-                  <span key={bar} className={bar <= buySignal.level ? 'is-active' : undefined} />
-                ))}
-              </span>
-              <span>Buy signal: {buySignal.label}</span>
-            </div>
-            <p className="market-snapshot__buy-signal-summary">{buySignalSummary}</p>
+            <p className="market-snapshot__eyebrow">{vehicle.year} {vehicle.make} {vehicle.model}</p>
+            <h2 id="market-snapshot-title">Local market snapshot</h2>
           </div>
 
           <div className="market-snapshot__market-form">
@@ -1041,11 +963,39 @@ const MarketIntelligenceSnapshot = ({
         </header>
 
         <section
+          className={`market-snapshot__buy-panel market-snapshot__buy-panel--${buySignal.level}`}
+          aria-label={`Buy signal: ${buySignal.label}`}
+        >
+          <span className="market-snapshot__buy-panel-icon" aria-hidden="true" />
+          <div className="market-snapshot__buy-panel-copy">
+            <h3>{buySignal.level === 3 ? "It's a good time to buy" : buySignal.level === 2 ? 'Take your time and compare' : 'Consider waiting for a better price'}</h3>
+            <p>
+              {buySignal.level === 3
+                ? <>Buy at or under <strong>{formatPrice(targetLow)}</strong> and you're getting a good price.</>
+                : buySignal.level === 2
+                  ? <>Look for a price near <strong>{formatPriceRange(targetLow, targetHigh)}</strong> and compare your options.</>
+                  : <>Prices are less favorable right now. Try to negotiate below <strong>{formatPrice(targetLow)}</strong>.</>}
+            </p>
+          </div>
+          <div
+            className={`market-snapshot__buy-signal market-snapshot__buy-signal--${buySignal.level}`}
+            aria-label={`Buy signal: ${buySignal.label}`}
+          >
+            <span className="market-snapshot__buy-signal-bars" aria-hidden="true">
+              {[1, 2, 3].map((bar) => (
+                <span key={bar} className={bar <= buySignal.level ? 'is-active' : undefined} />
+              ))}
+            </span>
+            <span>Buy signal: {buySignal.label}</span>
+          </div>
+        </section>
+
+        <section
           className="market-snapshot__price-range"
           aria-label={`Typical local asking range ${formatPrice(targetLow)} to ${formatPrice(targetHigh)}, ${leadMarkerLabel.toLowerCase()} ${formatPrice(askingPrice)}`}
           style={priceRangeStyle}
         >
-          {marketSnapshotPills.length > 0 && (
+          {variant !== 'full' && marketSnapshotPills.length > 0 && (
             <div className="market-snapshot__evidence-pills" aria-label="Local market evidence">
               {marketSnapshotPills.map((pill) => (
                 <span key={pill} className="market-snapshot__evidence-pill">
@@ -1109,7 +1059,7 @@ const MarketIntelligenceSnapshot = ({
             })}
           </div>}
 
-          {showLocalComparison && <div
+          {variant !== 'full' && showLocalComparison && <div
             className="market-snapshot__price-visual"
             role="region"
             aria-labelledby="market-snapshot-price-comparison-title"
@@ -1246,6 +1196,27 @@ const MarketIntelligenceSnapshot = ({
             </div>
             <p className="market-snapshot__price-visual-note">{chartDescription}</p>
           </div>}
+
+          {variant === 'full' && (
+            <div className="market-snapshot__actions">
+              <Button
+                variant="primary"
+                size="small"
+                className="market-snapshot__action market-snapshot__action--primary"
+                onClick={() => scrollDeals(1)}
+              >
+                Shop All Best Deals ({strongDeals.length})
+              </Button>
+              <Button
+                variant="outline"
+                size="small"
+                className="market-snapshot__action market-snapshot__action--outline"
+                onClick={onSeeLocalInventory}
+              >
+                Shop All {vehicle.make} {vehicle.model}
+              </Button>
+            </div>
+          )}
 
           <nav className="market-snapshot__model-years" aria-label="Other model years">
             <span className="market-snapshot__model-years-label">Compare model year</span>
@@ -1466,7 +1437,7 @@ const MarketIntelligenceSnapshot = ({
     </section>
 
     {strongDeals.length > 0 && (
-      <section className="market-snapshot-deals" aria-labelledby="market-snapshot-deals-title">
+      <section id="market-snapshot-deals" className="market-snapshot-deals" aria-labelledby="market-snapshot-deals-title">
         <div className="market-snapshot-deals__head">
           <h2 id="market-snapshot-deals-title">Strongest Deals Nearby</h2>
           <p>At or under the typical local price, backed by at least two quality signals.</p>
