@@ -64,6 +64,8 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'Advanced payment calculator', path: '/auto-loan-calculator/light' },
         { label: 'Step-by-step payment estimate', path: '/auto-loan-calculator/light-steps' },
         { label: 'Step-by-step estimate v2', path: '/auto-loan-calculator/light-steps2' },
+        { label: 'Step-by-step estimate QA', path: '/auto-loan-calculator/light-steps-qa' },
+        { label: 'Step-by-step feedback QA · Trade', path: '/auto-loan-calculator/light-steps/trade' },
         { label: 'Vehicle Type Grid', path: '/auto-loan-calculator/light-steps/vehicle?bodyStyles=grid' },
         { label: 'AI Lease vs Buy Analyzer', path: '/auto-loan-calculator/lease-vs-buy-ai' },
         { label: 'Car Finder', path: '/vehicles' },

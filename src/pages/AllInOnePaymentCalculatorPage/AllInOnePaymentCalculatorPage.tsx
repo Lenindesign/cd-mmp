@@ -154,6 +154,14 @@ const LIGHT_AFFORDABLE_DEAL_CARD_LIMIT = 9;
 const LIGHT_BODY_STYLE_MATCH_LIMIT = 5;
 const LIGHT_BODY_STYLE_MATCH_BELOW_TARGET = 5000;
 const LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET = 2000;
+type LightPriceRangeStatus = 'in' | 'near' | 'out';
+
+const getLightPriceRangeStatus = (vehiclePrice: number, targetPrice: number): LightPriceRangeStatus => {
+  const lowerBound = Math.max(0, targetPrice - LIGHT_BODY_STYLE_MATCH_BELOW_TARGET);
+  const upperBound = targetPrice + LIGHT_BODY_STYLE_MATCH_ABOVE_TARGET;
+  if (vehiclePrice < lowerBound || vehiclePrice > upperBound) return 'out';
+  return vehiclePrice > targetPrice ? 'near' : 'in';
+};
 const LIGHT_CURRENT_MODEL_YEAR = 2026;
 const AREA_ESTIMATE_TOOLTIP_COPY = 'This is an estimation based on your area.';
 const USED_PRICING_GUIDANCE_LEAD = 'Used car prices can vary widely due to factors like mileage, condition, and features.';
@@ -1173,6 +1181,7 @@ const LIGHT_WIZARD_STEP_META: LightWizardStepMeta[] = [
 
 const LIGHT_WIZARD_STEP_ROUTE_BASE = '/auto-loan-calculator/light-steps';
 const LIGHT_WIZARD_STEP_ROUTE_BASE_V2 = '/auto-loan-calculator/light-steps2';
+const LIGHT_WIZARD_STEP_ROUTE_BASE_QA = '/auto-loan-calculator/light-steps-qa';
 const LIGHT_WIZARD_STEP_REVEAL_OFFSET = 24;
 
 const clampLightWizardStep = (step: number) => Math.min(LIGHT_WIZARD_STEP_META.length, Math.max(1, step));
@@ -1258,6 +1267,7 @@ const getLightLoanTermWarning = (loanTerm: number) => {
 interface LightLoanTermsStepPanelProps {
   downPayment: number;
   onDownPaymentChange: (next: number) => void;
+  principal: number;
   activeApr: number;
   customApr: number;
   onCustomAprChange: (next: number) => void;
@@ -1266,11 +1276,13 @@ interface LightLoanTermsStepPanelProps {
   onLoanTermChange: (next: number) => void;
   termChipOptions: number[];
   usesMonthlyBudgetMode: boolean;
+  qaGuidance?: boolean;
 }
 
 function LightLoanTermsStepPanel({
   downPayment,
   onDownPaymentChange,
+  principal,
   activeApr,
   customApr,
   onCustomAprChange,
@@ -1279,6 +1291,7 @@ function LightLoanTermsStepPanel({
   onLoanTermChange,
   termChipOptions,
   usesMonthlyBudgetMode,
+  qaGuidance = false,
 }: LightLoanTermsStepPanelProps) {
   const downId = useId();
   const aprId = useId();
@@ -1294,6 +1307,11 @@ function LightLoanTermsStepPanel({
   const [aprInputDraft, setAprInputDraft] = useState<string | null>(null);
   const aprInputValue = aprInputDraft ?? customAprDisplayValue;
   const loanTermWarning = getLightLoanTermWarning(loanTerm);
+  const customAprInterest = Math.max(0, monthlyPayment(principal, customApr, loanTerm) * loanTerm - principal);
+  const onePointLowerApr = Math.max(0, customApr - 1);
+  const onePointLowerInterest = Math.max(0, monthlyPayment(principal, onePointLowerApr, loanTerm) * loanTerm - principal);
+  const onePointAprSavings = Math.max(0, customAprInterest - onePointLowerInterest);
+  const aprConcernLevel = customApr >= 20 ? 'very-high' : customApr >= 15 ? 'high' : 'elevated';
 
   const handleDownPaymentInputChange = (value: string) => {
     const nextValue = normalizeMoneyInputValue(value);
@@ -1455,6 +1473,19 @@ function LightLoanTermsStepPanel({
               <span>0%</span>
               <span>20%</span>
             </div>
+            {qaGuidance && customApr >= 10 ? (
+              <div className={`aio-payment__qa-apr-guidance aio-payment__qa-apr-guidance--${aprConcernLevel}`}>
+                <AlertTriangle size={17} strokeWidth={2.25} aria-hidden="true" />
+                <div>
+                  <strong>{customApr >= 20 ? 'Very high borrowing cost' : customApr >= 15 ? 'High borrowing cost' : 'Rate to review'}</strong>
+                  <p>
+                    At {formatAprPercent(customApr)} APR, estimated interest is about {currency(customAprInterest)} over {loanTerm} months.
+                    {onePointAprSavings > 0 ? ` A rate 1 point lower could save about ${currency(onePointAprSavings)} in interest.` : ''}
+                    {' '}Compare offers from more than one lender.
+                  </p>
+                </div>
+              </div>
+            ) : null}
           </>
         ) : (
           <p className="payment-calc__note payment-calc__note--inline">
@@ -1511,7 +1542,7 @@ function LightLoanTermsStepPanel({
 }
 
 interface AllInOnePaymentCalculatorPageProps {
-  variant?: 'classic' | 'budget-first' | 'light' | 'light-steps' | 'light-steps2';
+  variant?: 'classic' | 'budget-first' | 'light' | 'light-steps' | 'light-steps2' | 'light-steps-qa';
 }
 
 function LightListboxSelect({
@@ -1711,9 +1742,15 @@ function LightListboxSelect({
 const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentCalculatorPageProps) => {
   const isBudgetFirstVariant = variant === 'budget-first';
   const isLightSteps2Variant = variant === 'light-steps2';
-  const isLightStepsVariant = variant === 'light-steps' || isLightSteps2Variant;
+  const isLightStepsQaVariant = variant === 'light-steps-qa';
+  const isLightStepsFeedbackVariant = isLightStepsQaVariant || variant === 'light-steps';
+  const isLightStepsVariant = variant === 'light-steps' || isLightSteps2Variant || isLightStepsQaVariant;
   const isLightVariant = variant === 'light' || isLightStepsVariant;
-  const lightWizardStepRouteBase = isLightSteps2Variant ? LIGHT_WIZARD_STEP_ROUTE_BASE_V2 : LIGHT_WIZARD_STEP_ROUTE_BASE;
+  const lightWizardStepRouteBase = isLightStepsQaVariant
+    ? LIGHT_WIZARD_STEP_ROUTE_BASE_QA
+    : isLightSteps2Variant
+      ? LIGHT_WIZARD_STEP_ROUTE_BASE_V2
+      : LIGHT_WIZARD_STEP_ROUTE_BASE;
   const { stepSlug } = useParams<{ stepSlug?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -1811,6 +1848,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightVehicleConditionGuidanceId = useId();
   const lightVehicleSearchInputId = useId();
   const lightVehicleSearchGuidanceId = useId();
+  const lightVehicleRatingGuidanceId = useId();
   const lightVehicleSearchListId = useId();
   const lightBreakdownLabelId = useId();
   const lightBreakdownGuidanceId = useId();
@@ -2261,11 +2299,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const suggestedExtendedWarrantyCost = suggestedCoverageEstimates.extendedWarranty;
   const suggestedMonthlyInsuranceEstimate = suggestedCoverageEstimates.monthlyInsurance;
   const selectedVehicleStyle = selectedTrimStyleOption?.trimName || selectedVehicle.trim || selectedVehicle.drivetrain || selectedVehicle.bodyStyle;
+  const selectedVehicleBaseLabel = `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}`;
   const selectedVehicleLabel = lightHasSpecificVehicleSelection
-    ? `${selectedYear} ${selectedVehicle.make} ${selectedVehicle.model}${selectedTrimStyleOption ? ` ${selectedTrimStyleOption.trimName}` : ''}`
+    ? `${selectedVehicleBaseLabel}${selectedTrimStyleOption ? ` ${selectedTrimStyleOption.trimName}` : ''}`
     : lightVehicleStepMode === 'browsing'
       ? getBodyStyleListingsLabel(lightBrowseBodyStyle)
       : 'No vehicle selected';
+  const renderSelectedVehicleTitle = (className: string) => isLightStepsFeedbackVariant ? (
+    <p className={`${className} aio-payment__qa-selected-vehicle-title`}>
+      <span>{selectedVehicleBaseLabel}</span>
+      {selectedTrimStyleOption ? <span className="aio-payment__qa-selected-vehicle-trim">{selectedTrimStyleOption.trimName}</span> : null}
+    </p>
+  ) : (
+    <p className={className}>{selectedVehicleLabel}</p>
+  );
 
   useEffect(() => {
     if (hasEditedExtendedWarrantyCost) return;
@@ -2720,6 +2767,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
           No loan balance to amortize with the current trade-in, down payment, and incentive assumptions.
         </p>
       )}
+      {isLightStepsFeedbackVariant && loanAmortizationSchedule[0] ? (
+        <div className="aio-payment__qa-amortization-guidance">
+          <p>
+            In year one, about {currency(loanAmortizationSchedule[0].interest)} goes to interest and {currency(loanAmortizationSchedule[0].principal)} reduces principal. The estimated balance after year one is {currency(loanAmortizationSchedule[0].endBalance)}.
+          </p>
+          <p>If the vehicle loses value faster than your loan balance falls, you could owe more than it is worth. A longer loan term can extend that risk.</p>
+        </div>
+      ) : null}
     </div>
   );
   const renderLightBreakdownDetailRows = (details: LightBreakdownDetailRow[]) => (
@@ -3138,6 +3193,34 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const displayedSummaryBudgetFitHeadline = useLightReview2BudgetMessaging ? lightReview2BudgetFitHeadline : summaryBudgetFitHeadline;
   const displayedSummaryBudgetFitCopy = useLightReview2BudgetMessaging ? lightReview2BudgetFitCopy : summaryBudgetFitCopy;
   const showSummaryBudgetFit = !isLightStepsVariant || (lightWizardStep > 1 && lightHasSpecificVehicleSelection);
+  const showQaVehicleTargetComparison = isLightStepsFeedbackVariant &&
+    lightWizardStep === 3 &&
+    startMode === 'price' &&
+    lightKnownVehicleSelected &&
+    canUseCatalogPrice &&
+    Math.abs(selectedCatalogPrice - price) > 10;
+  const renderQaVehicleTargetComparison = () => {
+    if (!showQaVehicleTargetComparison) return null;
+
+    const difference = Math.abs(selectedCatalogPrice - price);
+    const isOverTarget = selectedCatalogPrice > price;
+
+    return (
+      <aside className={`aio-payment__qa-vehicle-target${isOverTarget ? ' aio-payment__qa-vehicle-target--over' : ' aio-payment__qa-vehicle-target--under'}`}>
+        {isOverTarget ? <AlertTriangle size={18} strokeWidth={2.25} aria-hidden="true" /> : <Info size={18} strokeWidth={2.25} aria-hidden="true" />}
+        <div className="aio-payment__qa-vehicle-target-copy">
+          <strong>
+            Selected MSRP is about {currency(difference)} {isOverTarget ? 'above' : 'below'} your {currency(price)} vehicle target.
+          </strong>
+          <p>Your estimate keeps the original target until you choose to update it. Taxes, fees, incentives, and dealer pricing may differ from MSRP.</p>
+        </div>
+        <button type="button" onClick={() => handlePriceChange(selectedCatalogPrice)}>
+          Use MSRP as target
+        </button>
+      </aside>
+    );
+  };
+  const showRightRailBudgetFit = showSummaryBudgetFit && !showQaVehicleTargetComparison;
 
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
     const vehicleTaxableAmount = getTaxableAmount(vehiclePrice, tradeInValue, rebateTotal, stateRule.taxRule);
@@ -4659,7 +4742,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     ) : null;
 
     return (
-      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightSteps2Variant ? ' aio-payment--light-steps2' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && lightWizardStep === 5 && showLightSidebarVehicleCta ? ' aio-payment--light-review-cta' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
+      <div className={`aio-payment aio-payment--light${isLightStepsVariant ? ' aio-payment--light-steps' : ''}${isLightSteps2Variant ? ' aio-payment--light-steps2' : ''}${isLightStepsFeedbackVariant ? ' aio-payment--light-steps-feedback' : ''}${isLightStepsQaVariant ? ' aio-payment--light-steps-qa' : ''}${isLightStepsVariant && lightWizardStep === 5 ? ' aio-payment--light-review-step' : ''}${isLightStepsVariant && lightWizardStep === 5 && showLightSidebarVehicleCta ? ' aio-payment--light-review-cta' : ''}${isLightStepsVariant && showLightMobileTotals ? ' aio-payment--light-mobile-totals-open' : ''}`}>
+        {isLightStepsQaVariant && (
+          <div className="aio-payment__qa-banner" role="note">
+            QA version · calculator feedback updates
+          </div>
+        )}
         <section className="aio-payment__light-hero">
           <div className="container">
             <nav className="aio-payment__light-breadcrumb" aria-label="Breadcrumb">
@@ -4901,6 +4989,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                   <LightLoanTermsStepPanel
                     downPayment={downPayment}
                     onDownPaymentChange={handleLightDownPaymentChange}
+                    principal={totalLoanAmount}
                     activeApr={activeApr}
                     customApr={customApr}
                     onCustomAprChange={handleLightCustomAprChange}
@@ -4909,6 +4998,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     onLoanTermChange={setLoanTerm}
                     termChipOptions={lightLoanTermChips}
                     usesMonthlyBudgetMode={startMode === 'monthly'}
+                    qaGuidance={isLightStepsFeedbackVariant}
                   />
                 )}
                 {!isLightStepsVariant && (
@@ -5055,6 +5145,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               copy: 'Choose a vehicle or trim to compare its estimated price against your budget.',
                               ariaLabel: 'My next vehicle guidance',
                             })}
+                            {isLightStepsFeedbackVariant ? renderLightGuidanceTooltip({
+                              id: lightVehicleRatingGuidanceId,
+                              title: 'C/D rating and price range',
+                              copy: 'The C/D rating is Car and Driver’s editorial score out of 10. Price range compares the starting MSRP with your target: In range is within the target band, Near range is up to $2,000 above it, and Out of range is outside that band.',
+                              ariaLabel: 'C/D rating and price range guidance',
+                            }) : null}
                           </div>
                           <input
                             id={lightVehicleSearchInputId}
@@ -5101,6 +5197,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                   <span className="aio-payment__light-vehicle-search__option-meta">
                                     {option.meta}
                                   </span>
+                                  {isLightStepsFeedbackVariant ? (
+                                    <span className="aio-payment__qa-vehicle-option-signals">
+                                      <span>C/D rating {formatLightStaffRating(option.vehicle.staffRating)}/10</span>
+                                      {condition === 'new' ? (() => {
+                                        const optionPrice = option.trimPrice ?? option.vehicle.priceMin;
+                                        const rangeStatus = getLightPriceRangeStatus(optionPrice, startMode === 'monthly' ? affordableMsrp : price);
+                                        return (
+                                          <span className={`aio-payment__qa-vehicle-range aio-payment__qa-vehicle-range--${rangeStatus}`}>
+                                            {rangeStatus === 'in' ? 'In range' : rangeStatus === 'near' ? 'Near range' : 'Out of range'}
+                                          </span>
+                                        );
+                                      })() : null}
+                                    </span>
+                                  ) : null}
                                 </button>
                               ))}
                             </div>
@@ -5205,7 +5315,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               </Link>
                               <div className="aio-payment__light-vehicle-step__price-meta">
                                 <span className="aio-payment__light-vehicle-step__price-kicker">Selected trim price</span>
-                                <p className="aio-payment__light-vehicle-step__price-vehicle">{selectedVehicleLabel}</p>
+                                {renderSelectedVehicleTitle('aio-payment__light-vehicle-step__price-vehicle')}
                               </div>
                             </div>
                             <div className="aio-payment__light-vehicle-step__price-detail">
@@ -5221,6 +5331,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               </button>
                             </div>
                           </div>
+                          {renderQaVehicleTargetComparison()}
                           </>
                         ) : canShowLightBrowseVehicleMatches ? (
                           <>
@@ -5334,11 +5445,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <span className="aio-payment__light-vehicle-step__price-kicker">
                               {canUseCatalogPrice ? 'Selected trim price' : 'Used pricing guidance'}
                             </span>
-                            <p className="aio-payment__light-vehicle-step__price-vehicle">
-                              {lightKnownVehicleSelected
-                                ? selectedVehicleLabel
-                                : 'Choose a vehicle'}
-                            </p>
+                            {lightKnownVehicleSelected
+                              ? renderSelectedVehicleTitle('aio-payment__light-vehicle-step__price-vehicle')
+                              : <p className="aio-payment__light-vehicle-step__price-vehicle">Choose a vehicle</p>}
                           </div>
                         </div>
                         <div className="aio-payment__light-vehicle-step__price-detail">
@@ -5413,6 +5522,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         )}
                       </div>
                     )}
+                    {lightVehicleStepMode === 'known' ? renderQaVehicleTargetComparison() : null}
                     {SHOW_LIGHT_COVERAGE_MODULE && (
                       <section className="aio-payment__light-vehicle-step__coverage" aria-labelledby="aio-payment-light-coverage-heading">
                         <div className="aio-payment__light-vehicle-step__coverage-head">
@@ -5644,13 +5754,14 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       </div>
 
                       {tradeEquity > 0 ? (
-                        <p className="aio-payment__light-trade-step__equity-note" role="status">
+                        <p className={`aio-payment__light-trade-step__equity-note${isLightStepsFeedbackVariant ? ' aio-payment__light-trade-step__equity-note--feedback' : ''}`} role="status">
                           <Check size={18} strokeWidth={2.25} aria-hidden="true" />
                           <span>
-                            <strong>{currency(tradeEquity)} net trade equity is applied as trade credit.</strong>{' '}
-                            {startMode === 'monthly'
+                            {isLightStepsFeedbackVariant && hasRemainingTradeEquity ? (
+                              <><strong>{currency(tradeEquityApplied)} of your net trade equity is applied to this estimate.</strong>{' '}{currency(remainingTradeEquity)} remains outside the estimate because it exceeds the amount needed to cover the purchase.</>
+                            ) : <><strong>{currency(tradeEquity)} net trade equity is applied as trade credit.</strong>{' '}{startMode === 'monthly'
                               ? 'In monthly-budget mode, that can raise the vehicle price your payment target supports. Any unused equity appears as remaining trade equity on review.'
-                              : 'It lowers the amount financed and cash due before interest is calculated. Any unused equity appears as remaining trade equity on review.'}
+                              : 'It lowers the amount financed and cash due before interest is calculated. Any unused equity appears as remaining trade equity on review.'}</>}
                           </span>
                         </p>
                       ) : null}
@@ -6242,7 +6353,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     </div>
                     {isLightStepsVariant && lightWizardStep === 3 && lightHasSpecificVehicleSelection && (summaryBudgetFitStatus === 'over' || summaryBudgetFitStatus === 'under') && (
                       <p className={`aio-payment__light-sticky-budget-alert aio-payment__light-sticky-budget-alert--${summaryBudgetFitStatus}`} role="status" aria-live="polite">
-                        {summaryBudgetFitHeadline}
+                        {summaryBudgetFitStatus === 'over' ? (
+                          <AlertTriangle className="aio-payment__light-sticky-budget-alert-icon" size={14} strokeWidth={2.25} aria-hidden="true" />
+                        ) : (
+                          <Check className="aio-payment__light-sticky-budget-alert-icon" size={14} strokeWidth={3} aria-hidden="true" />
+                        )}
+                        <span>{summaryBudgetFitHeadline}</span>
                       </p>
                     )}
                     <div className={`aio-payment__light-result-details ${showLightReviewSidebarNextSteps ? 'aio-payment__light-result-details--review' : ''} ${showLightReviewSidebarNextSteps && !showLightReviewNextStepsCard ? 'aio-payment__light-result-details--marketplace' : ''} ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
@@ -6402,7 +6518,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                       )}
                     </div>
                   </div>
-                  {showSummaryBudgetFit && (
+                  {showRightRailBudgetFit && (
                     <div className={`aio-payment__light-budget-fit aio-payment__light-budget-fit--${displayedSummaryBudgetFitStatus}`}>
                       <div
                         className={`aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--${displayedSummaryBudgetFitStatus === 'over' ? 'alert' : displayedSummaryBudgetFitStatus === 'neutral' ? 'info' : 'success'}`}
