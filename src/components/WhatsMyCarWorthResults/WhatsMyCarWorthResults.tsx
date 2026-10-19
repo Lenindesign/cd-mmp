@@ -5,6 +5,8 @@ import { VehicleCard } from '../VehicleCard/VehicleCard';
 import ForSaleNearYou from '../ForSaleNearYou';
 import { DealerMapModal } from '../DealerLocatorMap';
 import { vehicleDatabase } from '../../data/vehicles';
+import { CpoOpportunityCallout } from '../CpoOpportunityCallout/CpoOpportunityCallout';
+import { getCpoAssessment } from '../../utils/cpoEligibility';
 import './WhatsMyCarWorthResults.css';
 
 // Black Book logo component - using official logo from Black Book
@@ -139,6 +141,10 @@ const WhatsMyCarWorthResults = ({
   // Use first dealer as primary (the one who purchased the lead)
   const primaryDealer = dealers[0];
   const [showDealersModal, setShowDealersModal] = useState(false);
+  const cpoAssessment = useMemo(
+    () => getCpoAssessment(tradeEstimate.vehicle.year, tradeEstimate.vehicle.make, tradeEstimate.vehicle.mileage),
+    [tradeEstimate.vehicle.year, tradeEstimate.vehicle.make, tradeEstimate.vehicle.mileage]
+  );
 
   // Find vehicle image from database
   const vehicleImage = useMemo(() => {
@@ -364,6 +370,8 @@ const WhatsMyCarWorthResults = ({
             </span>
           </div>
         </div>
+
+        <CpoOpportunityCallout assessment={cpoAssessment} placement="results" />
 
         {/* Private Party Link */}
         <div className="value-section__private-party">

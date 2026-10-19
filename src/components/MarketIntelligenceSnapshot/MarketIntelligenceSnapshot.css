@@ -2729,7 +2729,6 @@
 .market-snapshot--full {
   margin: 0 0 28px;
   max-width: 707px;
-  min-height: 656px;
   background: #fff;
   border: 0;
   border-radius: 8px;
@@ -2737,8 +2736,7 @@
 }
 
 .market-snapshot--full .market-snapshot__inner {
-  grid-template-rows: 54px 91px minmax(0, 1fr);
-  min-height: 656px;
+  grid-template-rows: 54px 91px auto;
   gap: 16px;
   padding: 32px 24px 24px;
 }
@@ -2989,7 +2987,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  margin-top: auto;
+  margin-top: 0;
   padding: 8px 0 0;
 }
 
