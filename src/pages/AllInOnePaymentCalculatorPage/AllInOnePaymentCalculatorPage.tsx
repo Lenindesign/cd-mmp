@@ -6240,6 +6240,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         {lightResultLede}
                       </p>
                     </div>
+                    {isLightStepsVariant && lightWizardStep === 3 && lightHasSpecificVehicleSelection && (summaryBudgetFitStatus === 'over' || summaryBudgetFitStatus === 'under') && (
+                      <p className={`aio-payment__light-sticky-budget-alert aio-payment__light-sticky-budget-alert--${summaryBudgetFitStatus}`} role="status" aria-live="polite">
+                        {summaryBudgetFitHeadline}
+                      </p>
+                    )}
                     <div className={`aio-payment__light-result-details ${showLightReviewSidebarNextSteps ? 'aio-payment__light-result-details--review' : ''} ${showLightReviewSidebarNextSteps && !showLightReviewNextStepsCard ? 'aio-payment__light-result-details--marketplace' : ''} ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
                       <button
                         type="button"
