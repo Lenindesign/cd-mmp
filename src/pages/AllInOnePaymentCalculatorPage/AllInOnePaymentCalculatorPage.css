@@ -3277,9 +3277,10 @@ label.aio-payment__light-loan-step__label {
   white-space: nowrap;
 }
 
-.aio-payment__light-vehicle-step__category-match-rating svg {
+.aio-payment__light-vehicle-step__category-match-rating-icon {
   flex: 0 0 auto;
-  color: var(--color-blue-cobalt);
+  width: 16px;
+  height: 16px;
 }
 
 .aio-payment__light-vehicle-step__category-match-rating strong {
@@ -10784,6 +10785,38 @@ label.aio-payment__light-loan-step__label {
   flex-wrap: wrap;
 }
 
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target--over {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  align-items: start;
+  padding: var(--spacing-4) var(--spacing-5);
+  border-color: color-mix(in srgb, var(--color-error) 35%, var(--color-gray-200));
+  background: var(--color-error-50);
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target--over .aio-payment__light-budget-fit-icon-wrap {
+  grid-row: 1 / span 2;
+  align-self: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0;
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target--over .aio-payment__qa-vehicle-target-copy,
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target--over > button {
+  grid-column: 2;
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target--over > button {
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target--over .aio-payment__qa-vehicle-target-copy {
+  min-width: 0;
+}
+
 .aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target-copy {
   flex: 1 1 18rem;
 }
@@ -10820,6 +10853,12 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--font-size-xs);
 }
 
+@media (max-width: 767px) {
+  .aio-payment--light-steps-feedback .aio-payment__qa-rating-word {
+    display: none;
+  }
+}
+
 .aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range {
   font-weight: var(--font-weight-bold);
 }
@@ -10835,10 +10874,4 @@ label.aio-payment__light-loan-step__label {
 .aio-payment--light-steps-feedback .aio-payment__qa-amortization-guidance {
   display: block;
   font-size: var(--font-size-sm);
-}
-
-@media (max-width: 640px) {
-  .aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target > button {
-    width: 100%;
-  }
 }

@@ -37,6 +37,7 @@ type LightWizardStepMotion = 'none' | 'forward' | 'backward';
 type LightReviewFormulaOperation = 'add' | 'subtract' | 'total';
 
 const CAD_INFO_ICON_SRC = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/info-regular.348beca.svg?primary=%2523222222';
+const CAD_VERIFIED_ICON_SRC = 'https://www.caranddriver.com/_assets/design-tokens/fre/static/icons/verified.a84216f.svg?primary=%25231B5F8A';
 
 interface StateTaxRule {
   code: string;
@@ -954,6 +955,7 @@ interface LightGuidanceTooltipProps {
   copy?: ReactNode;
   note?: ReactNode;
   ariaLabel?: string;
+  iconSrc?: string;
   align?: 'start' | 'end';
   compact?: boolean;
   children?: ReactNode;
@@ -965,6 +967,7 @@ function LightGuidanceTooltip({
   copy,
   note,
   ariaLabel,
+  iconSrc = CAD_INFO_ICON_SRC,
   align = 'start',
   compact = true,
   children,
@@ -986,7 +989,7 @@ function LightGuidanceTooltip({
       >
         <img
           className="aio-payment__light-loan-guidance-trigger-icon"
-          src={CAD_INFO_ICON_SRC}
+          src={iconSrc}
           width="24"
           height="24"
           alt=""
@@ -1847,7 +1850,6 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   const lightVehicleSuggestionsGuidanceId = useId();
   const lightVehicleConditionGuidanceId = useId();
   const lightVehicleSearchInputId = useId();
-  const lightVehicleSearchGuidanceId = useId();
   const lightVehicleRatingGuidanceId = useId();
   const lightVehicleSearchListId = useId();
   const lightBreakdownLabelId = useId();
@@ -3207,15 +3209,22 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
     return (
       <aside className={`aio-payment__qa-vehicle-target${isOverTarget ? ' aio-payment__qa-vehicle-target--over' : ' aio-payment__qa-vehicle-target--under'}`}>
-        {isOverTarget ? <AlertTriangle size={18} strokeWidth={2.25} aria-hidden="true" /> : <Info size={18} strokeWidth={2.25} aria-hidden="true" />}
-        <div className="aio-payment__qa-vehicle-target-copy">
-          <strong>
-            Selected MSRP is about {currency(difference)} {isOverTarget ? 'above' : 'below'} your {currency(price)} vehicle target.
+        {isOverTarget ? (
+          <div className="aio-payment__light-budget-fit-icon-wrap aio-payment__light-budget-fit-icon-wrap--alert" aria-hidden="true">
+            <AlertTriangle size={20} strokeWidth={2.25} />
+          </div>
+        ) : (
+          <Info size={18} strokeWidth={2.25} aria-hidden="true" />
+        )}
+        <div className="aio-payment__qa-vehicle-target-copy aio-payment__light-budget-fit-text">
+          <span className="aio-payment__light-budget-fit-label">{isOverTarget ? 'Above budget' : 'Below budget'}</span>
+          <strong className="aio-payment__light-budget-fit-headline">
+            About {currency(difference)} {isOverTarget ? 'over' : 'under'} your {currency(price)} target
           </strong>
           <p>Your estimate keeps the original target until you choose to update it. Taxes, fees, incentives, and dealer pricing may differ from MSRP.</p>
         </div>
         <button type="button" onClick={() => handlePriceChange(selectedCatalogPrice)}>
-          Use MSRP as target
+          Update vehicle price target
         </button>
       </aside>
     );
@@ -5139,15 +5148,10 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         <div className="aio-payment__light-vehicle-search">
                           <div className="aio-payment__light-vehicle-step__label-row">
                             <label className="aio-payment__light-vehicle-search__label" htmlFor={lightVehicleSearchInputId}>My Next Vehicle</label>
-                            {renderLightGuidanceTooltip({
-                              id: lightVehicleSearchGuidanceId,
-                              title: 'My Next Vehicle',
-                              copy: 'Choose a vehicle or trim to compare its estimated price against your budget.',
-                              ariaLabel: 'My next vehicle guidance',
-                            })}
                             {isLightStepsFeedbackVariant ? renderLightGuidanceTooltip({
                               id: lightVehicleRatingGuidanceId,
                               title: 'C/D rating and price range',
+                              iconSrc: CAD_VERIFIED_ICON_SRC,
                               copy: 'The C/D rating is Car and Driver’s editorial score out of 10. Price range compares the starting MSRP with your target: In range is within the target band, Near range is up to $2,000 above it, and Out of range is outside that band.',
                               ariaLabel: 'C/D rating and price range guidance',
                             }) : null}
@@ -5199,7 +5203,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                   </span>
                                   {isLightStepsFeedbackVariant ? (
                                     <span className="aio-payment__qa-vehicle-option-signals">
-                                      <span>C/D rating {formatLightStaffRating(option.vehicle.staffRating)}/10</span>
+                                      <span>C/D<span className="aio-payment__qa-rating-word"> rating</span> {formatLightStaffRating(option.vehicle.staffRating)}/10</span>
                                       {condition === 'new' ? (() => {
                                         const optionPrice = option.trimPrice ?? option.vehicle.priceMin;
                                         const rangeStatus = getLightPriceRangeStatus(optionPrice, startMode === 'monthly' ? affordableMsrp : price);
@@ -5385,8 +5389,15 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                                   className="aio-payment__light-vehicle-step__category-match-rating"
                                                   aria-label={`C/D rating ${formatLightStaffRating(vehicle.staffRating)} out of 10`}
                                                 >
-                                                  <SealCheck size={16} weight="regular" aria-hidden="true" />
-                                                  <span>C/D RATING: <strong>{formatLightStaffRating(vehicle.staffRating)}/10</strong></span>
+                                                  <img
+                                                    className="aio-payment__light-vehicle-step__category-match-rating-icon"
+                                                    src={CAD_VERIFIED_ICON_SRC}
+                                                    width="16"
+                                                    height="16"
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                  />
+                                                  <span>C/D<span className="aio-payment__qa-rating-word"> RATING</span>: <strong>{formatLightStaffRating(vehicle.staffRating)}/10</strong></span>
                                                 </span>
                                               </span>
                                             </span>
