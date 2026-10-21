@@ -1,43 +1,20 @@
 {
   "main": {
-    "id": "4accf44ca85fc5df",
+    "id": "904379915cb8c8c2",
     "type": "split",
     "children": [
       {
-        "id": "e71fadb58a9bebb7",
+        "id": "3749730054982797",
         "type": "tabs",
         "children": [
           {
-            "id": "c1d87bc6432d5933",
+            "id": "fff0193206cf02fa",
             "type": "leaf",
             "state": {
               "type": "graph",
               "state": {},
               "icon": "lucide-git-fork",
               "title": "Graph view"
-<<<<<<< Updated upstream
-=======
-            }
-          }
-        ]
-      },
-      {
-        "id": "2e253bcf85852a0f",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "0694fb0852cfdd82",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/obsidian-app-audit/Flows/Vehicle Research to Finance.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Vehicle Research to Finance"
->>>>>>> Stashed changes
             }
           }
         ]
@@ -46,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "16eca1273d599390",
+    "id": "c84d096a99dfd225",
     "type": "split",
     "children": [
       {
-        "id": "06746cf20433a90e",
+        "id": "7c72a557a43e5da4",
         "type": "tabs",
         "children": [
           {
-            "id": "b1afdf9465accadd",
+            "id": "0e35c9e7861a6e7f",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -69,12 +46,12 @@
             }
           },
           {
-            "id": "7eb8a3a014c75d54",
+            "id": "8bac2954e5a8297a",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#express",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -86,37 +63,38 @@
             }
           },
           {
-            "id": "f7438dcd18e8f1c5",
+            "id": "ad4aa37c408f32cb",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {},
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
               "icon": "lucide-bookmark",
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
     "width": 300
   },
   "right": {
-    "id": "f68f12829d48cc0a",
+    "id": "efbf08be75fed34b",
     "type": "split",
     "children": [
       {
-        "id": "5d0830c8c81b2e52",
+        "id": "5a11fde034c84f96",
         "type": "tabs",
         "children": [
           {
-            "id": "d04f48f26b6e9599",
+            "id": "2e9cbfa7b5748fd3",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Untitled 1.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -126,25 +104,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Untitled 1"
+              "title": "Backlinks"
             }
           },
           {
-            "id": "61edb44033a5d47e",
+            "id": "88270afabf75d0d4",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Untitled 1.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Untitled 1"
+              "title": "Outgoing links"
             }
           },
           {
-            "id": "d3264ed6e7499469",
+            "id": "5fb8da1a69206f09",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -159,7 +136,7 @@
             }
           },
           {
-            "id": "1d349b541828a124",
+            "id": "7139a3a334d57d4f",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -173,18 +150,17 @@
             }
           },
           {
-            "id": "f6acda19772d9dba",
+            "id": "abc343bea92af779",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Untitled 1.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Untitled 1"
+              "title": "Outline"
             }
           }
         ]
@@ -205,62 +181,8 @@
       "bases:Create new base": false
     }
   },
-  "active": "c1d87bc6432d5933",
+  "active": "0e35c9e7861a6e7f",
   "lastOpenFiles": [
-<<<<<<< Updated upstream
-    "node_modules/@types/d3-time/README.md",
-    "dist/assets/AllInOnePaymentCalculatorPage-s6BH1Sjt.js",
-    "dist/assets/ArticlePage-CYBwNgq3.js",
-    "dist/assets/AllInOnePaymentCalculatorLightStepsPage-92ZfuFNg.js",
-    "dist/assets/AllInOnePaymentCalculatorLightSteps2Page-CshFdS2b.js",
-    "dist/assets/AllInOnePaymentCalculatorLightPage-DLzFoHJq.js",
-    "dist/assets/AllInOnePaymentCalculatorBudgetPage-DkS0otn8.js",
-    "dist/assets/ArticleCard-CQIuRyEB.js",
-    "dist/assets/AutoLoanCalculatorPage-BfivUWwF.js",
-    "dist/assets/AdSidebar-CihmdCUf.js",
-    "dist/assets/AdBanner-suJ6F_GA.js",
-    "node_modules/jest-matcher-utils/node_modules/react-is/README.md",
-=======
-    "node_modules/jest-runtime/node_modules/path-scurry/LICENSE.md",
-    "dist/assets/LineChart-nS6u39Kh.js",
-    "dist/assets/index-C06FQWz3.js",
-    "dist/assets/RateYourCarPage-BfHVQNhF.js",
-    "dist/assets/EmailPreviewPage-DgQoDuV2.js",
-    "dist/assets/WhatsMyCarWorthResultsPage-CPnEDi1z.js",
-    "dist/assets/ListiclePage-Dozt9-ni.js",
-    "dist/assets/WhatsMyCarWorthPage-DnN1pYxW.js",
-    "dist/assets/ExpertReviewsPage-BCcqA-kI.js",
-    "dist/assets/NewsPage-DlMWSrM1.js",
-    "dist/assets/ArticlePage-C0HB4xUS.js",
-    "dist/vite.svg",
-    "node_modules/@types/d3-time/README.md",
->>>>>>> Stashed changes
-    "docs/obsidian-app-audit/Flows/Vehicle Research to Finance.md",
-    "docs/obsidian-app-audit/Modules/Vehicle Detail.md",
-    "docs/obsidian-app-audit/Flows/Editorial to Shopping.md",
-    "docs/obsidian-app-audit/Routes/Year Make Model V1d.md",
-    "node_modules/cors/CONTRIBUTING.md",
-    "PRODUCT.md",
-    "node_modules/ms/license.md",
-    "Untitled 1.md",
-    "output/playwright/vehicle-step-icon-search-check-full.png",
-    "output/playwright/vehicle-step-icon-search-check.png",
-    "output/playwright/vehicle-step-icon.png",
-    "node_modules/jest-matcher-utils/node_modules/react-is/README.md",
-    "Untitled.md",
-    "docs/obsidian-app-audit/Modules/Authentication and Onboarding.md",
-    "docs/obsidian-app-audit/Modules/Account and Garage.md",
-    "docs/obsidian-app-audit/Flows/Deals Discovery.md",
-    "docs/obsidian-app-audit/Routes/Year Make Model V2c.md",
-    "docs/obsidian-app-audit/Routes/News Stories.md",
-    "docs/obsidian-app-audit/Modules/Home and Editorial.md",
-    "docs/obsidian-app-audit/Routes/Expert Reviews.md",
-    "docs/obsidian-app-audit/Routes/Deals Best Buying Deals.md",
-    "node_modules/flat-cache/README.md",
-    "docs/obsidian-app-audit/Routes/Deals.md",
-    "docs/obsidian-app-audit/Modules/Deals and Incentives.md",
-    "docs/obsidian-app-audit/Routes/Year Make Model V4d.md",
-    "node_modules/constants-browserify/README.md",
-    "node_modules/jose/README.md"
+    "docs/audits/local-data-quality-audit.ipynb"
   ]
 }
