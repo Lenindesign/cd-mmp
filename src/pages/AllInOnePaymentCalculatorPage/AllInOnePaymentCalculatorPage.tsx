@@ -5150,12 +5150,40 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <label className="aio-payment__light-vehicle-search__label" htmlFor={lightVehicleSearchInputId}>My Next Vehicle</label>
                             {isLightStepsFeedbackVariant ? renderLightGuidanceTooltip({
                               id: lightVehicleRatingGuidanceId,
-                              title: 'C/D rating and price range',
-                              iconSrc: CAD_VERIFIED_ICON_SRC,
-                              copy: 'The C/D rating is Car and Driver’s editorial score out of 10. Range compares starting MSRP with your vehicle price target: In range is $5,000 below through your target, Near range is up to $2,000 above, and Out of range is beyond those limits.',
-                              ariaLabel: 'C/D rating and price range guidance',
+                              title: 'How to read these details',
+                              ariaLabel: 'How to read vehicle ratings and price range',
+                              compact: false,
+                              children: (
+                                <>
+                                  <span className="aio-payment__light-rating-guidance">
+                                    <span className="aio-payment__light-rating-guidance-title">
+                                      <img
+                                        src={CAD_VERIFIED_ICON_SRC}
+                                        width="16"
+                                        height="16"
+                                        alt=""
+                                        aria-hidden="true"
+                                      />
+                                      <strong>C/D rating</strong>
+                                    </span>
+                                    <span className="aio-payment__light-rating-guidance-description">Car and Driver’s editorial score out of 10.</span>
+                                  </span>
+                                  <span className="aio-payment__light-rating-range-heading">Price range</span>
+                                  <span className="aio-payment__light-loan-guidance-copy">Compares starting MSRP with your vehicle price target.</span>
+                                  <dl className="aio-payment__light-rating-range-list">
+                                    <div><dt><span className="aio-payment__light-vehicle-step__category-match-range aio-payment__light-vehicle-step__category-match-range--in">In range</span></dt><dd>$5,000 below to your target</dd></div>
+                                    <div><dt><span className="aio-payment__light-vehicle-step__category-match-range aio-payment__light-vehicle-step__category-match-range--near">Near range</span></dt><dd>Above your target through $2,000 over</dd></div>
+                                    <div><dt><span className="aio-payment__light-vehicle-step__category-match-range aio-payment__light-vehicle-step__category-match-range--out">Out of range</span></dt><dd>Beyond those limits</dd></div>
+                                  </dl>
+                                </>
+                              ),
                             }) : null}
                           </div>
+                          {isLightStepsFeedbackVariant ? (
+                            <p className="aio-payment__light-vehicle-search__helper">
+                              Search a specific car to compare its starting price and C/D rating with your budget.
+                            </p>
+                          ) : null}
                           <input
                             id={lightVehicleSearchInputId}
                             type="text"
@@ -5203,7 +5231,17 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                   </span>
                                   {isLightStepsFeedbackVariant ? (
                                     <span className="aio-payment__qa-vehicle-option-signals">
-                                      <span>C/D<span className="aio-payment__qa-rating-word"> rating</span> {formatLightStaffRating(option.vehicle.staffRating)}/10</span>
+                                      <span className="aio-payment__qa-vehicle-option-rating">
+                                        <img
+                                          className="aio-payment__qa-vehicle-option-rating-icon"
+                                          src={CAD_VERIFIED_ICON_SRC}
+                                          width="12"
+                                          height="12"
+                                          alt=""
+                                          aria-hidden="true"
+                                        />
+                                        <span>C/D<span className="aio-payment__qa-rating-word"> rating</span> <strong>{formatLightStaffRating(option.vehicle.staffRating)}/10</strong></span>
+                                      </span>
                                       {condition === 'new' ? (() => {
                                         const optionPrice = option.trimPrice ?? option.vehicle.priceMin;
                                         const rangeStatus = getLightPriceRangeStatus(optionPrice, startMode === 'monthly' ? affordableMsrp : price);

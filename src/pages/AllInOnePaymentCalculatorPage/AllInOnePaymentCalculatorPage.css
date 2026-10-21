@@ -2536,6 +2536,90 @@ label.aio-payment__light-loan-step__label {
   color: var(--color-dark);
 }
 
+.aio-payment--light-steps-feedback .aio-payment__light-vehicle-search__helper {
+  margin: calc(-1 * var(--spacing-1)) 0 0;
+  color: var(--color-gray-600);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.aio-payment__light-rating-guidance {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.aio-payment__light-rating-guidance-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.aio-payment__light-rating-guidance-title > img {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.aio-payment__light-rating-guidance-title > strong {
+  color: #222222;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.35;
+}
+
+.aio-payment__light-rating-guidance-description {
+  margin-left: 0;
+  color: #222222;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.45;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+.aio-payment__light-rating-range-heading {
+  margin-top: var(--spacing-1);
+  color: #222222;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.35;
+}
+
+.aio-payment__light-rating-range-list {
+  display: grid;
+  gap: var(--spacing-1);
+  margin: calc(-1 * var(--spacing-1)) 0 0;
+  padding: 0;
+}
+
+.aio-payment__light-rating-range-list > div {
+  display: grid;
+  grid-template-columns: minmax(5.25rem, 0.7fr) minmax(0, 1.3fr);
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-1);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__light-rating-range-list dt,
+.aio-payment__light-rating-range-list dd {
+  margin: 0;
+  color: #222222;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  line-height: 1.35;
+}
+
+.aio-payment__light-rating-range-list dt {
+  font-weight: var(--font-weight-bold);
+}
+
+.aio-payment__light-rating-range-list dd {
+  font-weight: var(--font-weight-regular);
+}
+
 .aio-payment__light-vehicle-search__input.payment-calc__input {
   width: 100%;
   min-height: var(--spacing-11);
@@ -3312,6 +3396,11 @@ label.aio-payment__light-loan-step__label {
 .aio-payment__light-vehicle-step__category-match-range--near {
   background: color-mix(in srgb, var(--color-warning-light) 72%, var(--color-white) 28%);
   color: var(--color-warning-dark);
+}
+
+.aio-payment__light-vehicle-step__category-match-range--out {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
 }
 
 .aio-payment__light-vehicle-step__category-matches-empty {
@@ -10853,6 +10942,23 @@ label.aio-payment__light-loan-step__label {
   font-size: var(--font-size-xs);
 }
 
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-option-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-option-rating-icon {
+  display: block;
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-option-rating strong {
+  font-weight: var(--font-weight-bold);
+}
+
 @media (max-width: 767px) {
   .aio-payment--light-steps-feedback .aio-payment__qa-rating-word {
     display: none;
@@ -10860,12 +10966,30 @@ label.aio-payment__light-loan-step__label {
 }
 
 .aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range {
-  font-weight: var(--font-weight-bold);
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  white-space: nowrap;
 }
 
-.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range--in { color: var(--color-success-dark); }
-.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range--near { color: #806000; }
-.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range--out { color: var(--color-gray-600); }
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range--in {
+  background: var(--color-success-50);
+  color: var(--color-success-dark);
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range--near {
+  background: color-mix(in srgb, var(--color-warning-light) 72%, var(--color-white) 28%);
+  color: var(--color-warning-dark);
+}
+
+.aio-payment--light-steps-feedback .aio-payment__qa-vehicle-range--out {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
 
 .aio-payment--light-steps-feedback .aio-payment__light-trade-step__equity-note--feedback {
   background: #f2f7f5;
