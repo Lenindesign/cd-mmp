@@ -5152,7 +5152,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                               id: lightVehicleRatingGuidanceId,
                               title: 'C/D rating and price range',
                               iconSrc: CAD_VERIFIED_ICON_SRC,
-                              copy: 'The C/D rating is Car and Driver’s editorial score out of 10. Price range compares the starting MSRP with your target: In range is within the target band, Near range is up to $2,000 above it, and Out of range is outside that band.',
+                              copy: 'The C/D rating is Car and Driver’s editorial score out of 10. Range compares starting MSRP with your vehicle price target: In range is $5,000 below through your target, Near range is up to $2,000 above, and Out of range is beyond those limits.',
                               ariaLabel: 'C/D rating and price range guidance',
                             }) : null}
                           </div>
