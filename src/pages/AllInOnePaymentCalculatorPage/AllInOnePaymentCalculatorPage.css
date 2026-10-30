@@ -10005,6 +10005,12 @@ label.aio-payment__light-loan-step__label {
     box-shadow: 0 18px 48px color-mix(in srgb, var(--color-black) 24%, transparent);
   }
 
+  .aio-payment--light-steps .aio-payment__light-result-details--open > .aio-payment__light-sticky-budget-alert {
+    grid-column: auto;
+    grid-row: auto;
+    margin: var(--spacing-2) var(--spacing-3);
+  }
+
   .aio-payment--light-steps .aio-payment__light-result-details--open::before {
     content: '';
     display: block;
@@ -10016,15 +10022,55 @@ label.aio-payment__light-loan-step__label {
   }
 
   .aio-payment--light-steps .aio-payment__light-result-details--open .aio-payment__light-result-details-toggle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    align-items: center;
+    column-gap: var(--spacing-3);
     position: sticky;
     top: 0;
     z-index: 1;
-    justify-content: space-between;
     width: 100%;
-    min-height: var(--spacing-12);
+    min-height: var(--spacing-16);
     padding: 0 var(--spacing-4);
     background: var(--color-white);
     border-bottom: 1px solid var(--color-gray-200);
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details-toggle-payment-label {
+    min-width: 0;
+    color: var(--color-gray-600);
+    font-family: var(--font-body);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-align: left;
+    text-transform: none;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details-toggle-payment-value {
+    color: var(--color-blue-cobalt);
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 6.5vw, 2.5rem);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details-toggle-payment-suffix {
+    margin-left: 0.15em;
+    color: var(--color-gray-600);
+    font-family: var(--font-body);
+    font-size: 0.42em;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0;
+  }
+
+  .aio-payment--light-steps .aio-payment__light-result-details--open .aio-payment__light-result-details-toggle-text {
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
   }
 
   .aio-payment--light-steps .aio-payment__light-result-details--open .aio-payment__light-result-metrics.payment-calc__sum {
@@ -10881,6 +10927,13 @@ label.aio-payment__light-loan-step__label {
   padding: var(--spacing-4) var(--spacing-5);
   border-color: color-mix(in srgb, var(--color-error) 35%, var(--color-gray-200));
   background: var(--color-error-50);
+}
+
+.aio-payment--light-steps-feedback .aio-payment__light-vehicle-step__price-bar > .aio-payment__qa-vehicle-target {
+  grid-column: 1 / -1;
+  flex: 1 0 100%;
+  width: 100%;
+  margin-top: 0;
 }
 
 .aio-payment--light-steps-feedback .aio-payment__qa-vehicle-target--over .aio-payment__light-budget-fit-icon-wrap {

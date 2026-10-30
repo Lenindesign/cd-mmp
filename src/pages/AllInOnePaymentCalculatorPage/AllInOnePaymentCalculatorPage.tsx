@@ -3229,6 +3229,22 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       </aside>
     );
   };
+  const renderLightStickyBudgetAlert = () => {
+    if (!isLightStepsVariant || lightWizardStep < 3 || lightWizardStep > 4 || !lightHasSpecificVehicleSelection || (summaryBudgetFitStatus !== 'over' && summaryBudgetFitStatus !== 'under')) {
+      return null;
+    }
+
+    return (
+      <p className={`aio-payment__light-sticky-budget-alert aio-payment__light-sticky-budget-alert--${summaryBudgetFitStatus}`} role="status" aria-live="polite">
+        {summaryBudgetFitStatus === 'over' ? (
+          <AlertTriangle className="aio-payment__light-sticky-budget-alert-icon" size={14} strokeWidth={2.25} aria-hidden="true" />
+        ) : (
+          <Check className="aio-payment__light-sticky-budget-alert-icon" size={14} strokeWidth={3} aria-hidden="true" />
+        )}
+        <span>{summaryBudgetFitHeadline}</span>
+      </p>
+    );
+  };
   const showRightRailBudgetFit = showSummaryBudgetFit && !showQaVehicleTargetComparison;
 
   const getEstimatedMonthlyForVehiclePrice = (vehiclePrice: number) => {
@@ -5569,9 +5585,9 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             </div>
                           </div>
                         )}
+                        {lightKnownVehicleSelected && renderQaVehicleTargetComparison()}
                       </div>
                     )}
-                    {lightVehicleStepMode === 'known' ? renderQaVehicleTargetComparison() : null}
                     {SHOW_LIGHT_COVERAGE_MODULE && (
                       <section className="aio-payment__light-vehicle-step__coverage" aria-labelledby="aio-payment-light-coverage-heading">
                         <div className="aio-payment__light-vehicle-step__coverage-head">
@@ -6400,16 +6416,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                         {lightResultLede}
                       </p>
                     </div>
-                    {isLightStepsVariant && lightWizardStep === 3 && lightHasSpecificVehicleSelection && (summaryBudgetFitStatus === 'over' || summaryBudgetFitStatus === 'under') && (
-                      <p className={`aio-payment__light-sticky-budget-alert aio-payment__light-sticky-budget-alert--${summaryBudgetFitStatus}`} role="status" aria-live="polite">
-                        {summaryBudgetFitStatus === 'over' ? (
-                          <AlertTriangle className="aio-payment__light-sticky-budget-alert-icon" size={14} strokeWidth={2.25} aria-hidden="true" />
-                        ) : (
-                          <Check className="aio-payment__light-sticky-budget-alert-icon" size={14} strokeWidth={3} aria-hidden="true" />
-                        )}
-                        <span>{summaryBudgetFitHeadline}</span>
-                      </p>
-                    )}
+                    {!showLightMobileTotals && renderLightStickyBudgetAlert()}
                     <div className={`aio-payment__light-result-details ${showLightReviewSidebarNextSteps ? 'aio-payment__light-result-details--review' : ''} ${showLightReviewSidebarNextSteps && !showLightReviewNextStepsCard ? 'aio-payment__light-result-details--marketplace' : ''} ${showLightMobileTotals ? 'aio-payment__light-result-details--open' : ''}`}>
                       <button
                         type="button"
@@ -6421,9 +6428,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           : `Open ${lightResultDetailsToggleActionLabel}`}
                         onClick={() => setShowLightMobileTotals((isOpen) => !isOpen)}
                       >
-                        <span className="aio-payment__light-result-details-toggle-text">
-                          {lightResultDetailsToggleText}
-                        </span>
+                        {showLightMobileTotals ? (
+                          <>
+                            <span className="aio-payment__light-result-details-toggle-payment-label">{lightResultKicker}</span>
+                            <span className="aio-payment__light-result-details-toggle-payment-value">
+                              {lightResultAmount}
+                              {showLightResultMonthlySuffix && <span className="aio-payment__light-result-details-toggle-payment-suffix">/mo</span>}
+                            </span>
+                            <span className="aio-payment__light-result-details-toggle-text">Totals</span>
+                          </>
+                        ) : (
+                          <span className="aio-payment__light-result-details-toggle-text">
+                            {lightResultDetailsToggleText}
+                          </span>
+                        )}
                         {showLightMobileTotals ? (
                           <ChevronDown size={18} strokeWidth={2.25} aria-hidden="true" />
                         ) : (
@@ -6565,6 +6583,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           dealer-installed add-ons, protection packages, or market adjustments in the trade and fees step.
                         </p>
                       )}
+                      {showLightMobileTotals && renderLightStickyBudgetAlert()}
                     </div>
                   </div>
                   {showRightRailBudgetFit && (
