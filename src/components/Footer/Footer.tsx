@@ -98,6 +98,7 @@ const Footer = ({ onAccountPromptOpen }: FooterProps) => {
         { label: 'EV Incentives Page', path: EV_INCENTIVES_PATH },
         { label: 'EV Incentive Card Samples', path: EV_INCENTIVE_SAMPLES_PATH },
         { label: 'EV Incentives Experience Guide', path: '/ev-incentives-experience' },
+        { label: 'CPO Integration Journey', path: '/cpo-integration' },
         { label: 'Used MMP Shopping CTAs', path: '/2025/Chevrolet/Trax' },
         { label: 'Market Snapshot (New Car)', path: '/2026/Chevrolet/Trax#market-intelligence-snapshot' },
         { label: 'Local Market Snapshot (Focused)', path: '/2026/Chevrolet/Trax?marketSnapshot=focused#market-intelligence-snapshot' },

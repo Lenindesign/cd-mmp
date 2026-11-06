@@ -103,6 +103,7 @@ function Estimator({ onEstimate }: { onEstimate: (data: EstimateData) => void })
 
     {step === 2 && <div className="bb-step-panel">
       <h2>{carName}</h2><p>We’ve included the standard features for this vehicle in your estimate. No additional equipment is needed to continue.</p>
+      {cpoAssessment?.status === 'potential' && <CpoOpportunityCallout assessment={cpoAssessment} placement="options" />}
       <div className="bb-step-actions"><button type="button" className="bb-secondary" onClick={() => setStep(1)}>BACK</button><button type="button" className="bb-primary" onClick={() => setStep(3)}>NEXT: YOUR NEXT VEHICLE <span aria-hidden>→</span></button></div>
     </div>}
 

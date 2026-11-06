@@ -103,6 +103,7 @@ const ListiclePage = lazy(() => import('./pages/ListiclePage/ListiclePage'));
 // What's My Car Worth page - lazy loaded
 const WhatsMyCarWorthPage = lazy(() => import('./pages/WhatsMyCarWorthPage/WhatsMyCarWorthPage'));
 const WhatsMyCarWorthResultsPage = lazy(() => import('./pages/WhatsMyCarWorthResultsPage/WhatsMyCarWorthResultsPage'));
+const CpoIntegrationPage = lazy(() => import('./pages/CpoIntegrationPage/CpoIntegrationPage'));
 
 // Email Preview page - for testing personalized emails
 const EmailPreviewPage = lazy(() => import('./pages/EmailPreviewPage/EmailPreviewPage'));
@@ -249,6 +250,7 @@ const internalRoutes = (
     <Route path="/local-signals-2" element={<LocalSignals2Page />} />
     <Route path="/local-signals-v2" element={<LocalSignals2Page />} />
     <Route path="/ev-incentives-experience" element={<EvIncentivesExperiencePage />} />
+    <Route path="/cpo-integration" element={<CpoIntegrationPage />} />
     <Route path={EV_INCENTIVE_SAMPLES_PATH} element={<EvIncentiveCardSamplesPage />} />
     <Route path="/admin/vehicle-ratings" element={<VehicleRatingEditor />} />
     <Route path="/admin/feedback" element={<FeedbackAdmin />} />
