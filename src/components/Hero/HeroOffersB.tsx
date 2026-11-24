@@ -172,50 +172,52 @@ const HeroOffersB = ({
             }
           }}
         >
-          <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
-          <span className="hero__offers-b-pill-text">{label}</span>
-          <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
-          {showInlineToggleIndicator && (
-            <span
-              className={`hero__offers-b-pill-toggle ${isSelected ? 'hero__offers-b-pill-toggle--selected' : ''}`}
-              aria-hidden="true"
-            >
-              {canSelectRateTier
-                ? isRateTierExpanded
-                  ? <ChevronUp size={14} strokeWidth={3} />
-                  : <ChevronDown size={14} strokeWidth={3} />
-                : isSelected
-                  ? <Minus size={14} strokeWidth={3} />
-                  : <Plus size={14} strokeWidth={3} />}
-            </span>
-          )}
-          {isSelected && !onApplyOffer && (
-            <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
-              Applied
-            </span>
-          )}
-          {onApplyOffer && (
-            <span className="hero__offers-b-pill-actions">
-              <button
-                type="button"
-                className="hero__offers-b-pill-apply"
-                disabled={isDisabled}
-                title={isDisabled ? 'Cannot be combined with an applied offer' : undefined}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onApplyOffer(inc);
-                }}
+          <span className="hero__offers-b-pill-row">
+            <span className="hero__offers-b-pill-chip">{getChipLabel(inc.type)}</span>
+            <span className="hero__offers-b-pill-text">{label}</span>
+            <span className="hero__offers-b-pill-exp">expires {formatExpiration(inc.expirationDate)}</span>
+            {showInlineToggleIndicator && (
+              <span
+                className={`hero__offers-b-pill-toggle ${isSelected ? 'hero__offers-b-pill-toggle--selected' : ''}`}
+                aria-hidden="true"
               >
-                {isSelected ? 'Applied' : 'Apply'}
-              </button>
+                {canSelectRateTier
+                  ? isRateTierExpanded
+                    ? <ChevronUp size={14} strokeWidth={3} />
+                    : <ChevronDown size={14} strokeWidth={3} />
+                  : isSelected
+                    ? <Minus size={14} strokeWidth={3} />
+                    : <Plus size={14} strokeWidth={3} />}
+              </span>
+            )}
+            {isSelected && !onApplyOffer && (
+              <span className="hero__offers-b-pill-applied" aria-label="Applied to estimate">
+                Applied
+              </span>
+            )}
+            {onApplyOffer && (
+              <span className="hero__offers-b-pill-actions">
+                <button
+                  type="button"
+                  className="hero__offers-b-pill-apply"
+                  disabled={isDisabled}
+                  title={isDisabled ? 'Cannot be combined with an applied offer' : undefined}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onApplyOffer(inc);
+                  }}
+                >
+                  {isSelected ? 'Applied' : 'Apply'}
+                </button>
+              </span>
+            )}
+          </span>
+          {isDisabled && (
+            <span className="hero__offers-b-disabled-reason">
+              Cannot be combined with the applied offer.
             </span>
           )}
         </div>
-        {isDisabled && (
-          <span className="hero__offers-b-disabled-reason">
-            Cannot be combined with the applied offer.
-          </span>
-        )}
         {isRateTierExpanded && (
           <div id={rateTierPanelId} className="hero__offers-b-rate-tiers">
             <div className="hero__offers-b-rate-tiers-heading">

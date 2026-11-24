@@ -2815,6 +2815,12 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       ))}
     </div>
   );
+  const renderLightBreakdownIncentiveLabel = (name: string, expirationDate: string) => (
+    <span className="aio-payment__light-breakdown-incentive-label">
+      <strong>{name}</strong>
+      <span>Expires {expirationDate}</span>
+    </span>
+  );
   const renderLightBreakdownRow = ({ key, label, value, details, className }: LightBreakdownRow) => {
     if (details?.length) {
       return (
@@ -2955,25 +2961,11 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       value: `${activeApr === 0 ? '0%' : formatAprPercent(activeApr)} APR`,
       details: [{
         key: `financing-incentive-${selectedFinance.id}`,
-        content: (
-          <div className="aio-payment__light-breakdown-incentive-detail">
-            <strong className="aio-payment__light-breakdown-incentive-detail-title">
-              {selectedFinance.programName || selectedFinance.title}
-            </strong>
-            <p><strong>Applied offer:</strong> {formatAprPercent(activeApr)} APR for {loanTerm} months.</p>
-            <p>{selectedFinance.programDescription || selectedFinance.description}</p>
-            {selectedFinance.eligibility ? (
-              <p><strong>Who qualifies:</strong> {selectedFinance.eligibility}</p>
-            ) : null}
-            {selectedFinance.terms ? (
-              <p><strong>Terms:</strong> {selectedFinance.terms}</p>
-            ) : null}
-            {selectedFinance.eligibleTrims?.length ? (
-              <p><strong>Eligible trims:</strong> {selectedFinance.eligibleTrims.join(', ')}</p>
-            ) : null}
-            <p><strong>Expires:</strong> {selectedFinance.expirationDate}</p>
-          </div>
+        label: renderLightBreakdownIncentiveLabel(
+          selectedFinance.programName || selectedFinance.title,
+          selectedFinance.expirationDate,
         ),
+        value: `${formatAprPercent(activeApr)} APR · ${loanTerm} mo`,
       }],
     }] : []),
     ...(rebateTotal > 0 ? [{
@@ -2987,32 +2979,20 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
 
           return [{
             key: `cash-incentive-${id}`,
-            content: (
-              <div className="aio-payment__light-breakdown-incentive-detail">
-                <strong className="aio-payment__light-breakdown-incentive-detail-title">
-                  {incentive.programName || incentive.title}
-                </strong>
-                <p>{incentive.programDescription || incentive.description}</p>
-                {incentive.eligibleTrims?.length ? (
-                  <p><strong>Eligible trims:</strong> {incentive.eligibleTrims.join(', ')}</p>
-                ) : null}
-                <p><strong>Expires:</strong> {incentive.expirationDate}</p>
-              </div>
+            label: renderLightBreakdownIncentiveLabel(
+              incentive.programName || incentive.title,
+              incentive.expirationDate,
             ),
+            value: currency(parseMoney(incentive.value)),
           }];
         }),
         ...(tierCashBack > 0 && selectedFinance ? [{
           key: `finance-cash-back-${selectedFinance.id}`,
-          content: (
-            <div className="aio-payment__light-breakdown-incentive-detail">
-              <strong className="aio-payment__light-breakdown-incentive-detail-title">
-                {selectedFinance.programName || selectedFinance.title}
-              </strong>
-              <p>{currency(tierCashBack)} cash back is included with the selected financing offer.</p>
-              <p>{selectedFinance.programDescription || selectedFinance.description}</p>
-              <p><strong>Expires:</strong> {selectedFinance.expirationDate}</p>
-            </div>
+          label: renderLightBreakdownIncentiveLabel(
+            `${selectedFinance.programName || selectedFinance.title} Cash Back`,
+            selectedFinance.expirationDate,
           ),
+          value: currency(tierCashBack),
         }] : []),
       ],
     }] : []),

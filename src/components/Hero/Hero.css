@@ -991,9 +991,9 @@
 
 .hero__offers-b-pill {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
   flex: 1 1 0;
   min-width: 0;
   padding: 12px 16px;
@@ -1006,6 +1006,15 @@
   text-align: left;
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero__offers-b-pill-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
 }
 
 .hero__offers-b-pill--expanded,
@@ -1030,10 +1039,11 @@
 }
 
 .hero__offers-b-disabled-reason {
-  padding: 5px 16px 0;
+  padding: 0;
   color: var(--color-gray-600);
   font-family: var(--font-body);
   font-size: 12px;
+  line-height: 1.4;
 }
 
 .hero__offers-b-pill--selected {
