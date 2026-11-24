@@ -7761,6 +7761,31 @@ label.aio-payment__light-loan-step__label {
   text-align: left;
 }
 
+.aio-payment__light-breakdown-incentive-detail {
+  display: grid;
+  gap: var(--spacing-2);
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.aio-payment__light-breakdown-incentive-detail + .aio-payment__light-breakdown-incentive-detail {
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.aio-payment__light-breakdown-incentive-detail p {
+  margin: 0;
+}
+
+.aio-payment__light-breakdown-incentive-detail-title {
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+}
+
 .aio-payment__light-amortization {
   display: grid;
   gap: var(--spacing-3);

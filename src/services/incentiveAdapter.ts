@@ -53,6 +53,9 @@ export interface Incentive {
   /** Tiered rate data for finance deals with multiple terms and/or variable cash back. */
   rateTiers?: RateTier[];
   eligibilityTags?: EligibilityTag[];
+  /** Offer types that cannot be combined with this incentive. */
+  incompatibleTypes?: Array<'cash' | 'finance' | 'lease' | 'special'>;
+  eligibleTrims?: string[];
   leaseMonthlyPaymentNum?: number;
   leaseTermMonths?: number;
 }
@@ -129,6 +132,8 @@ function buildEntry(make: string, model: string): CachedEntry {
       programDescription: d.programDescription,
       groupAffiliation: 'everyone',
       eligibilityTags: d.eligibilityTags,
+      incompatibleTypes: d.incompatibleTypes,
+      eligibleTrims: d.trimsEligible,
     });
   }
 

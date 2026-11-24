@@ -273,6 +273,8 @@ export interface CashSpec {
   programDescription?: string;
   trims?: string[];
   eligibilityTags?: EligibilityTag[];
+  /** Offer types that cannot be combined with this cash incentive. */
+  incompatibleTypes?: Array<'cash' | 'finance' | 'lease' | 'special'>;
 }
 
 /** Output shape matches `CASH_DEAL_DEFS` in `cashFinanceDealsService.ts`. */
@@ -288,6 +290,7 @@ export interface CashDealDef {
   programDescription: string;
   trimsEligible: string[];
   eligibilityTags?: EligibilityTag[];
+  incompatibleTypes?: Array<'cash' | 'finance' | 'lease' | 'special'>;
 }
 
 /**
@@ -320,5 +323,6 @@ export function cashDeal(spec: CashSpec): CashDealDef {
     programDescription,
     trimsEligible: spec.trims ?? [],
     eligibilityTags: spec.eligibilityTags,
+    incompatibleTypes: spec.incompatibleTypes,
   };
 }

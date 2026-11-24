@@ -23,6 +23,7 @@ export interface CashDeal {
   programDescription: string;
   trimsEligible: string[];
   eligibilityTags?: EligibilityTag[];
+  incompatibleTypes?: Array<'cash' | 'finance' | 'lease' | 'special'>;
 }
 
 export interface FinanceDeal {
@@ -56,7 +57,7 @@ const CURRENT_YEAR = new Date().getFullYear();
  */
 const CASH_DEAL_DEFS: CashDealDef[] = [
   // Chevrolet
-  cashDeal({ make: 'Chevrolet', model: 'Trax', amount: 2000, percentOffMsrp: '8–10%', programName: 'Chevrolet Customer Cash', programDescription: '$1,500 customer cash plus $500 bonus cash on select 2026 Chevrolet Trax models. Cannot be combined with special financing.', trims: ['LS', '1RS', 'LT', 'ACTIV'] }),
+  cashDeal({ make: 'Chevrolet', model: 'Trax', amount: 2000, percentOffMsrp: '8–10%', programName: 'Chevrolet Customer Cash', programDescription: '$1,500 customer cash plus $500 bonus cash on select 2026 Chevrolet Trax models. Cannot be combined with special financing.', trims: ['LS', '1RS', 'LT', 'ACTIV'], incompatibleTypes: ['finance'] }),
   cashDeal({ make: 'Chevrolet', model: 'Equinox', amount: 2500, percentOffMsrp: '7–9%', programName: 'Chevrolet Equinox Cash Allowance', programDescription: 'Customer cash allowance of $2,500 on the 2026 Chevrolet Equinox. Take delivery by expiration date.', trims: ['LS', 'LT', 'RS'] }),
   cashDeal({ make: 'Chevrolet', model: 'Silverado', amount: 3500, percentOffMsrp: '6–8%', programName: 'Chevrolet Truck Month Cash Back', programDescription: '$3,500 customer cash on select 2026 Silverado 1500 models during Chevy Truck Month. Additional appreciation deals may be available for military and first responder households.', trims: ['WT', 'Custom', 'LT', 'RST', 'LT Trail Boss'], eligibilityTags: ['military', 'firstResponder'] }),
   cashDeal({ make: 'Chevrolet', model: 'Trailblazer', amount: 1500, programName: 'Chevrolet Trailblazer Cash Back', trims: ['LS', 'LT', 'ACTIV'] }),
@@ -496,6 +497,7 @@ export const getCashDeals = (): CashDeal[] => {
         programDescription: def.programDescription,
         trimsEligible: def.trimsEligible,
         eligibilityTags: def.eligibilityTags,
+        incompatibleTypes: def.incompatibleTypes,
       });
     }
   }

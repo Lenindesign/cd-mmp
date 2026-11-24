@@ -1020,6 +1020,22 @@
   box-shadow: 0 2px 8px color-mix(in srgb, var(--color-black) 8%, transparent);
 }
 
+.hero__offers-b-pill--disabled,
+.hero__offers-b-pill--disabled:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-200);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.hero__offers-b-disabled-reason {
+  padding: 5px 16px 0;
+  color: var(--color-gray-600);
+  font-family: var(--font-body);
+  font-size: 12px;
+}
+
 .hero__offers-b-pill--selected {
   background: var(--color-white);
   border: none;
@@ -1157,6 +1173,12 @@
 .hero__offers-b-pill-apply:hover,
 .hero__offers-b-pill-apply:focus-visible {
   background: var(--color-dark);
+}
+
+.hero__offers-b-pill-apply:disabled {
+  background: var(--color-gray-300);
+  color: var(--color-gray-600);
+  cursor: not-allowed;
 }
 
 .hero__offers-b-rate-tiers {

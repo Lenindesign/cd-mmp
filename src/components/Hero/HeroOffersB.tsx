@@ -12,6 +12,7 @@ interface HeroOffersBProps {
   onRateTierSelect?: (inc: Incentive, tier: NonNullable<Incentive['rateTiers']>[number]) => void;
   onRateTierRemove?: (inc: Incentive) => void;
   selectedOfferIds?: string[];
+  disabledOfferIds?: string[];
   selectedRateTierTerm?: number | null;
   title?: string | null;
   showBuyDealLink?: boolean;
@@ -75,6 +76,7 @@ const HeroOffersB = ({
   onRateTierSelect,
   onRateTierRemove,
   selectedOfferIds = [],
+  disabledOfferIds = [],
   selectedRateTierTerm = null,
   title = 'SPECIAL DEALS AND INCENTIVES',
   showBuyDealLink = true,
@@ -128,6 +130,7 @@ const HeroOffersB = ({
 
   const renderOfferPill = (inc: Incentive) => {
     const isSelected = selectedOfferIds.includes(inc.id);
+    const isDisabled = !isSelected && disabledOfferIds.includes(inc.id);
     const rateTiers = inc.rateTiers ?? [];
     const canSelectRateTier = inc.type === 'finance'
       && rateTiers.length > 1
@@ -141,6 +144,7 @@ const HeroOffersB = ({
       : getOfferDisplayLabel(inc);
     const rateTierPanelId = `hero-offers-b-rate-tiers-${slugify(inc.id)}`;
     const handlePillClick = () => {
+      if (isDisabled) return;
       if (canSelectRateTier) {
         setExpandedRateTierOfferId((current) => current === inc.id ? null : inc.id);
         return;
@@ -154,12 +158,14 @@ const HeroOffersB = ({
         <div
           role="button"
           aria-pressed={isSelected}
+          aria-disabled={isDisabled}
           aria-expanded={canSelectRateTier ? isRateTierExpanded : undefined}
           aria-controls={canSelectRateTier ? rateTierPanelId : undefined}
-          tabIndex={0}
-          className={`hero__offers-b-pill ${isSelected ? 'hero__offers-b-pill--selected' : ''} ${isRateTierExpanded ? 'hero__offers-b-pill--expanded' : ''}`}
+          tabIndex={isDisabled ? -1 : 0}
+          className={`hero__offers-b-pill ${isSelected ? 'hero__offers-b-pill--selected' : ''} ${isDisabled ? 'hero__offers-b-pill--disabled' : ''} ${isRateTierExpanded ? 'hero__offers-b-pill--expanded' : ''}`}
           onClick={handlePillClick}
           onKeyDown={(event) => {
+            if (isDisabled) return;
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault();
               handlePillClick();
@@ -193,6 +199,8 @@ const HeroOffersB = ({
               <button
                 type="button"
                 className="hero__offers-b-pill-apply"
+                disabled={isDisabled}
+                title={isDisabled ? 'Cannot be combined with an applied offer' : undefined}
                 onClick={(event) => {
                   event.stopPropagation();
                   onApplyOffer(inc);
@@ -203,6 +211,11 @@ const HeroOffersB = ({
             </span>
           )}
         </div>
+        {isDisabled && (
+          <span className="hero__offers-b-disabled-reason">
+            Cannot be combined with the applied offer.
+          </span>
+        )}
         {isRateTierExpanded && (
           <div id={rateTierPanelId} className="hero__offers-b-rate-tiers">
             <div className="hero__offers-b-rate-tiers-heading">
@@ -216,6 +229,7 @@ const HeroOffersB = ({
                   <button
                     key={`${tier.term}-${tier.apr}`}
                     type="button"
+                    disabled={isDisabled}
                     className={`hero__offers-b-rate-tier ${isTierSelected ? 'hero__offers-b-rate-tier--selected' : ''}`}
                     aria-pressed={isTierSelected}
                     onClick={() => {

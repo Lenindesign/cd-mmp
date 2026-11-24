@@ -2438,6 +2438,18 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     };
   }, [cashIncentives, financeIncentives, vehicleIncentives]);
   const selectedFinance = financeIncentives.find((incentive) => incentive.id === selectedFinanceId);
+  const selectedOfferIds = [
+    ...selectedCashIds,
+    ...(selectedFinance ? [selectedFinance.id] : []),
+  ];
+  const selectedOffers = incentives.filter((incentive) => selectedOfferIds.includes(incentive.id));
+  const disabledOfferIds = incentives
+    .filter((incentive) => !selectedOfferIds.includes(incentive.id))
+    .filter((incentive) => selectedOffers.some((selectedOffer) => (
+      incentive.incompatibleTypes?.includes(selectedOffer.type) ||
+      selectedOffer.incompatibleTypes?.includes(incentive.type)
+    )))
+    .map((incentive) => incentive.id);
   const termOptions = useMemo(
     () => (selectedFinance ? getFinanceTermOptions(selectedFinance) : CUSTOM_RATE_TERMS),
     [selectedFinance],
@@ -2941,6 +2953,41 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
       key: 'cash-incentives',
       label: 'Cash Incentives',
       value: renderLightBreakdownValue(rebateTotal, 'subtract'),
+      details: [
+        ...selectedCashIds.flatMap((id) => {
+          const incentive = cashIncentives.find((item) => item.id === id);
+          if (!incentive) return [];
+
+          return [{
+            key: `cash-incentive-${id}`,
+            content: (
+              <div className="aio-payment__light-breakdown-incentive-detail">
+                <strong className="aio-payment__light-breakdown-incentive-detail-title">
+                  {incentive.programName || incentive.title}
+                </strong>
+                <p>{incentive.programDescription || incentive.description}</p>
+                {incentive.eligibleTrims?.length ? (
+                  <p><strong>Eligible trims:</strong> {incentive.eligibleTrims.join(', ')}</p>
+                ) : null}
+                <p><strong>Expires:</strong> {incentive.expirationDate}</p>
+              </div>
+            ),
+          }];
+        }),
+        ...(tierCashBack > 0 && selectedFinance ? [{
+          key: `finance-cash-back-${selectedFinance.id}`,
+          content: (
+            <div className="aio-payment__light-breakdown-incentive-detail">
+              <strong className="aio-payment__light-breakdown-incentive-detail-title">
+                {selectedFinance.programName || selectedFinance.title}
+              </strong>
+              <p>{currency(tierCashBack)} cash back is included with the selected financing offer.</p>
+              <p>{selectedFinance.programDescription || selectedFinance.description}</p>
+              <p><strong>Expires:</strong> {selectedFinance.expirationDate}</p>
+            </div>
+          ),
+        }] : []),
+      ],
     }] : []),
     {
       key: 'down-payment',
@@ -4431,10 +4478,16 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
   };
 
   const applyOfferToEstimate = (incentive: Incentive) => {
+    if (disabledOfferIds.includes(incentive.id)) return;
+
     if (incentive.type === 'cash') {
-      setSelectedCashIds((current) => current.includes(incentive.id)
-        ? current.filter((id) => id !== incentive.id)
-        : [...current, incentive.id]);
+      const isSelected = selectedCashIds.includes(incentive.id);
+      if (isSelected) {
+        setSelectedCashIds((current) => current.filter((id) => id !== incentive.id));
+        return;
+      }
+
+      setSelectedCashIds((current) => [...current, incentive.id]);
       return;
     }
 
@@ -4454,6 +4507,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
     incentive: Incentive,
     tier: NonNullable<Incentive['rateTiers']>[number],
   ) => {
+    if (disabledOfferIds.includes(incentive.id)) return;
     setLoanTerm(tier.term);
     setSelectedFinanceId(incentive.id);
   };
@@ -5592,7 +5646,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             {hasAvailableBuyingIncentives ? (
                               <>
                                 <p className="aio-payment__light-vehicle-step__price-incentives-copy">
-                                  Select an incentive to apply it to this estimate. Select it again to remove it.
+                                  Applying an offer disables any offers that can’t be combined with it. Eligibility and terms vary; confirm details with your dealer.
                                 </p>
                                 <div className="aio-payment__light-offers aio-payment__light-offers--hero">
                                   <HeroOffersB
@@ -5610,6 +5664,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                                       ...selectedCashIds,
                                       ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
                                     ]}
+                                    disabledOfferIds={disabledOfferIds}
                                   />
                                 </div>
                               </>
@@ -6115,7 +6170,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     <div className="aio-payment__light-offers aio-payment__light-offers--hero">
                       <p className="aio-payment__light-offer-help">
                         {isLightStepsVariant
-                          ? 'Select a deal to apply it to this estimate. Select it again to remove it.'
+                          ? 'Applying an offer disables any offers that can’t be combined with it.'
                           : 'Select a deal to see details, then apply or remove it from this estimate.'}
                       </p>
                       <HeroOffersB
@@ -6133,6 +6188,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                           ...selectedCashIds,
                           ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
                         ]}
+                        disabledOfferIds={disabledOfferIds}
                       />
                     </div>
                   </details>
@@ -7307,6 +7363,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                     ...selectedCashIds,
                     ...(selectedFinanceId === 'custom' ? [] : [selectedFinanceId]),
                   ]}
+                  disabledOfferIds={disabledOfferIds}
                 />
                 {selectedFinanceId !== 'custom' && (
                   <Button variant="ghost" size="small" onClick={() => setSelectedFinanceId('custom')}>
