@@ -114,6 +114,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       programDescription: d.programDescription,
       groupAffiliation: 'everyone',
       eligibilityTags: d.eligibilityTags,
+      eligibleTrims: d.trimsEligible,
     });
   }
 
@@ -162,6 +163,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       groupAffiliation: 'everyone',
       rateTiers: d.rateTiers,
       eligibilityTags: d.eligibilityTags,
+      eligibleTrims: d.trimsEligible,
     });
   }
 
@@ -182,6 +184,7 @@ function buildEntry(make: string, model: string): CachedEntry {
       groupAffiliation: 'everyone',
       leaseMonthlyPaymentNum: d.monthlyPaymentNum,
       leaseTermMonths: parseInt(d.term, 10) || undefined,
+      eligibleTrims: d.trimsEligible,
     });
   }
 

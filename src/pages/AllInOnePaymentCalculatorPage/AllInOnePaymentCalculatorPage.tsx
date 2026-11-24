@@ -2949,6 +2949,33 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
         },
       ],
     },
+    ...(selectedFinance ? [{
+      key: 'financing-incentive',
+      label: 'Financing Incentive',
+      value: `${activeApr === 0 ? '0%' : formatAprPercent(activeApr)} APR`,
+      details: [{
+        key: `financing-incentive-${selectedFinance.id}`,
+        content: (
+          <div className="aio-payment__light-breakdown-incentive-detail">
+            <strong className="aio-payment__light-breakdown-incentive-detail-title">
+              {selectedFinance.programName || selectedFinance.title}
+            </strong>
+            <p><strong>Applied offer:</strong> {formatAprPercent(activeApr)} APR for {loanTerm} months.</p>
+            <p>{selectedFinance.programDescription || selectedFinance.description}</p>
+            {selectedFinance.eligibility ? (
+              <p><strong>Who qualifies:</strong> {selectedFinance.eligibility}</p>
+            ) : null}
+            {selectedFinance.terms ? (
+              <p><strong>Terms:</strong> {selectedFinance.terms}</p>
+            ) : null}
+            {selectedFinance.eligibleTrims?.length ? (
+              <p><strong>Eligible trims:</strong> {selectedFinance.eligibleTrims.join(', ')}</p>
+            ) : null}
+            <p><strong>Expires:</strong> {selectedFinance.expirationDate}</p>
+          </div>
+        ),
+      }],
+    }] : []),
     ...(rebateTotal > 0 ? [{
       key: 'cash-incentives',
       label: 'Cash Incentives',
@@ -6602,7 +6629,7 @@ const AllInOnePaymentCalculatorPage = ({ variant = 'classic' }: AllInOnePaymentC
                             <dd>{currency(downPaymentApplied)}</dd>
                           </div>
                           <div className="payment-calc__sum-row">
-                            <dt>Rate &amp; Term</dt>
+                            <dt>{selectedFinance ? 'APR Offer' : 'Rate & Term'}</dt>
                             <dd>{formatAprPercent(activeApr)} APR · {loanTerm} mo</dd>
                           </div>
                           {rebateTotal > 0 && (
